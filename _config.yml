@@ -1,12 +1,10 @@
-# Welcome to the Jekyll config file for Scalar product documentation!
+# Welcome to the Jekyll config file for ScalarDB product documentation!
 #
 # This config file is meant for settings that affect the entire site for this set of Scalar parent product docs. 
 # After initially setting up this parent product docs site, the values in this config file should rarely be edited. 
 # If edits are needed to this config file, you may need to consider editing the config files of other Scalar parent product docs sites so that we can ensure consistency.
 # For technical reasons, this file is *NOT* reloaded automatically when you use `jekyll serve`. 
-# If you change this file, please restart the server process.
-
-# When adding versioned docs, add a new config file in the root folder of the repository, with a base URL containing the product and version in the following format: `_config.<PARENT_PRODUCT_NAME>.<X.X.X>`
+# If you make changes to this file, please restart the server process.
 
 remote_theme             : "mmistakes/minimal-mistakes@4.24.0"
 
@@ -92,6 +90,7 @@ include:
   - "3.5.6"
   - "3.4.9"
   - "3.4.8"
+  # - "<VERSION>" # Add additional versions as necessary. This version number included here must match the folder name containing that version.
 # exclude:
 #   - '*.sublime-project'
 #   - '*.sublime-workspace'
@@ -117,15 +116,11 @@ include:
 #   - Rakefile
 #   - README
 #   - tmp
-#   - /docs # ignore Minimal Mistakes /docs
-#   - /test # ignore Minimal Mistakes /test
 #   - "assets/cs/*"
 #   - "assets/js/*"
 #   - robots.txt
 #   - banner.js
 #   - feed.xml
-#   - search_data.json
-#   - scripts
 keep_files:
   - .git
   - .svn
@@ -153,7 +148,7 @@ kramdown:
   smart_quotes: lsquo,rsquo,ldquo,rdquo
   enable_coderay: false
 
-#  Collections - Add list of folders to add to site
+# Collection directories - Add list of folders containing versioned docs to add to the site.
 collection_dir: 
   - "latest@3.8.0"
   - "3.7.3"
@@ -166,151 +161,115 @@ collection_dir:
   - "3.4.9"
   - "3.4.8"
 
+# Collections - This collection is for sitewide usage.
 collections:
-# Must add `pages` so that the parent product home page appears.
-  home:
+  home: # Must add `home` so that the parent product docs home page, error page, and other common pages are is located. Jekyll recognizes that this collection starts with an underscore, so we do not need to include the underscore in the name.
     output: true
     permalink: /:collection/:path/
 
-  # "3.8.0": # This version must match the name of the folder where the versioned docs live.
-  #   output: true
-  #   permalink: /:path/
-  # "3.7.3": # This version must match the name of the folder where the versioned docs live.
-  #   output: true
-  #   permalink: /:path/
-  # "3.7.2": # This version must match the name of the folder where the versioned docs live.
-  #   output: true
-  #   permalink: /:path/
-  # "3.7.1": # This version must match the name of the folder where the versioned docs live.
-  #   output: true
-  #   permalink: /:path/
-  # "3.6.4": # This version must match the name of the folder where the versioned docs live.
-  #   output: true
-  #   permalink: /:path/
-  # "3.6.3": # This version must match the name of the folder where the versioned docs live.
-  #   output: true
-  #   permalink: /:path/
-  # "3.5.7": # This version must match the name of the folder where the versioned docs live.
-  #   output: true
-  #   permalink: /:path/
-  # "3.5.6": # This version must match the name of the folder where the versioned docs live.
-  #   output: true
-  #   permalink: /:path/
-  # "3.4.9": # This version must match the name of the folder where the versioned docs live.
-  #   output: true
-  #   permalink: /:path/
-  # "3.4.8": # This version must match the name of the folder where the versioned docs live.
-  #   output: true
-  #   permalink: /:path/
-
-  # Collection template
-  # "<VERSION>": # This version must match the name of the folder where the versioned docs live.
-  #   output: true
-  #   permalink: /:path/
-
 # Defaults
 defaults:
-  # _home
+  # _home - Do not change the `_home` scope.
   - scope:
-      path: "_home" # This path is the name of the folder where the parent product docs home page, error page, and other common pages are is located.
-      type: home # for the parent product home page, `home` is the default
+      path: "_home" # Specifies the name of the folder where the parent product docs home page, error page, and other common pages are located.
+      type: home # Specifies the collection type for the parent product home page.
     values:
-      layout: page # the type of template used from the "_layouts" folder
-      read_time: false # show the average reading time for the page
-      share: false # show social media buttons to share the page
-      sidebar: # navigation content
+      layout: page # Specifies the type of template used from the "_layouts" folder.
+      read_time: false # Shows the average reading time for pages.
+      share: false # Shows social media buttons to share pages.
+      sidebar: # Shows side navigation content from `_data/navigation.yml`.
         nav: "latest"
       toc: false
       toc_sticky: false
       search: false
-      classes: wide # Expands page to take up space where the TOC would normally be
-  # latest version
+      classes: wide # Expands the page to take up space where the TOC would normally be.
+  # latest@3.8.0
   - scope:
-      path: "latest@3.8.0" # the name of the folder where the docs home page is located
-      # type: "pages" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+      path: "latest@3.8.0" # Specifies the name of the folder where the latest version of the docs are located.
+      # type: "" # Since this scope uses `collection_dir`, we do not need to specify the type here.
     values:
-      layout: page # the type of template used from the "_layouts" folder
-      read_time: false # show the average reading time for the page
-      share: false # show social media buttons to share the page
-      sidebar: # navigation content
+      layout: page # Specifies the type of template used from the "_layouts" folder.
+      read_time: false # Shows the average reading time for pages.
+      share: false # Shows social media buttons to share pages.
+      sidebar: # Shows side navigation content from `_data/navigation.yml`.
         nav: "latest" # If this version is the latest version of the docs, this must be `latest`. If this points to an previous version, change this to the appropriate navigation for the version that you added in `_data/navigation.yml`.
       toc: true
       toc_sticky: true
       search: true
   # 3.7.3
   - scope:
-      path: "3.7.3" # This can be left blank since we specified the path for this set of versioned docs in `collections`.
-      # type: "3.7.3" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+      path: "3.7.3" # Specifies the name of the folder where this version of docs are located.
+      # type: "" # Since this scope uses `collection_dir`, we do not need to specify the type here.
     values:
-      layout: page # the type of template used from the "_layouts" folder
-      read_time: false # show the average reading time for the page
-      share: false # show social media buttons to share the page
-      sidebar: # navigation content
+      layout: page # Specifies the type of template used from the "_layouts" folder.
+      read_time: false # Shows the average reading time for pages.
+      share: false # Shows social media buttons to share pages.
+      sidebar: # Shows side navigation content from `_data/navigation.yml`.
         nav: "3.7.3" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
       toc: true
       toc_sticky: true
       search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
   # 3.7.2
   - scope:
-      path: "3.7.2" # This can be left blank since we specified the path for this set of versioned docs in `collections`.
-      # type: "3.7.2" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+      path: "3.7.2" # Specifies the name of the folder where this version of docs are located.
+      # type: "" # Since this scope uses `collection_dir`, we do not need to specify the type here.
     values:
-      layout: page # the type of template used from the "_layouts" folder
-      read_time: false # show the average reading time for the page
-      share: false # show social media buttons to share the page
-      sidebar: # navigation content
+      layout: page # Specifies the type of template used from the "_layouts" folder.
+      read_time: false # Shows the average reading time for pages.
+      share: false # Shows social media buttons to share pages.
+      sidebar: # Shows side navigation content from `_data/navigation.yml`.
         nav: "3.7.2" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
       toc: true
       toc_sticky: true
       search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
   # 3.7.1
   - scope:
-      path: "3.7.1" # This can be left blank since we specified the path for this set of versioned docs in `collections`.
-      # type: "3.7.1" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+      path: "3.7.1" # Specifies the name of the folder where this version of docs are located.
+      # type: "" # Since this scope uses `collection_dir`, we do not need to specify the type here.
     values:
-      layout: page # the type of template used from the "_layouts" folder
+      layout: page # Specifies the type of template used from the "_layouts" folder.
       read_time: false # show the average reading time for the page
-      share: false # show social media buttons to share the page
-      sidebar: # navigation content
+      share: false # Shows social media buttons to share pages.
+      sidebar: # Shows side navigation content from `_data/navigation.yml`.
         nav: "3.7.1" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
       toc: true
       toc_sticky: true
       search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
   # 3.6.4
   - scope:
-      path: "3.6.4" # This can be left blank since we specified the path for this set of versioned docs in `collections`.
-      # type: "3.6.4" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+      path: "3.6.4" # Specifies the name of the folder where this version of docs are located.
+      # type: "" # Since this scope uses `collection_dir`, we do not need to specify the type here.
     values:
-      layout: page # the type of template used from the "_layouts" folder
+      layout: page # Specifies the type of template used from the "_layouts" folder.
       read_time: false # show the average reading time for the page
-      share: false # show social media buttons to share the page
-      sidebar: # navigation content
+      share: false # Shows social media buttons to share pages.
+      sidebar: # Shows side navigation content from `_data/navigation.yml`.
         nav: "3.6.4" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
       toc: true
       toc_sticky: true
       search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
   # 3.6.3
   - scope:
-      path: "3.6.3" # This can be left blank since we specified the path for this set of versioned docs in `collections`.
-      # type: "3.6.3" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+      path: "3.6.3" # Specifies the name of the folder where this version of docs are located.
+      # type: "" # Since this scope uses `collection_dir`, we do not need to specify the type here.
     values:
-      layout: page # the type of template used from the "_layouts" folder
-      read_time: false # show the average reading time for the page
-      share: false # show social media buttons to share the page
-      sidebar: # navigation content
+      layout: page # Specifies the type of template used from the "_layouts" folder.
+      read_time: false # Shows the average reading time for pages.
+      share: false # Shows social media buttons to share pages.
+      sidebar: # Shows side navigation content from `_data/navigation.yml`.
         nav: "3.6.3" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
       toc: true
       toc_sticky: true
       search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
-# 3.5.7
+  # 3.5.7
   - scope:
-      path: "3.5.7" # This can be left blank since we specified the path for this set of versioned docs in `collections`.
-      # type: "3.5.7" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+      path: "3.5.7" # Specifies the name of the folder where this version of docs are located.
+      # type: "" # Since this scope uses `collection_dir`, we do not need to specify the type here.
     values:
-      layout: page # the type of template used from the "_layouts" folder
-      read_time: false # show the average reading time for the page
-      share: false # show social media buttons to share the page
-      sidebar: # navigation content
+      layout: page # Specifies the type of template used from the "_layouts" folder.
+      read_time: false # Shows the average reading time for pages.
+      share: false # Shows social media buttons to share pages.
+      sidebar: # Shows side navigation content from `_data/navigation.yml`.
         nav: "3.5.7" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
       toc: true
       toc_sticky: true
@@ -318,55 +277,55 @@ defaults:
 
   # 3.5.6
   - scope:
-      path: "3.5.6" # This can be left blank since we specified the path for this set of versioned docs in `collections`.
-      # type: "3.5.6" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+      path: "3.5.6" # Specifies the name of the folder where this version of docs are located.
+      # type: "" # Since this scope uses `collection_dir`, we do not need to specify the type here.
     values:
-      layout: page # the type of template used from the "_layouts" folder
-      read_time: false # show the average reading time for the page
-      share: false # show social media buttons to share the page
-      sidebar: # navigation content
+      layout: page # Specifies the type of template used from the "_layouts" folder.
+      read_time: false # Shows the average reading time for pages.
+      share: false # Shows social media buttons to share pages.
+      sidebar: # Shows side navigation content from `_data/navigation.yml`.
         nav: "3.5.6" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
       toc: true
       toc_sticky: true
       search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
   # 3.4.9
   - scope:
-      path: "3.4.9" # This can be left blank since we specified the path for this set of versioned docs in `collections`.
-      # type: "3.4.9" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+      path: "3.4.9" # Specifies the name of the folder where this version of docs are located.
+      # type: "" # Since this scope uses `collection_dir`, we do not need to specify the type here.
     values:
       layout: page # the type of template used from the "_layouts" folder
-      read_time: false # show the average reading time for the page
-      share: false # show social media buttons to share the page
-      sidebar: # navigation content
+      read_time: false # Shows the average reading time for pages.
+      share: false # Shows social media buttons to share pages.
+      sidebar: # Shows side navigation content from `_data/navigation.yml`.
         nav: "3.4.9" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
       toc: true
       toc_sticky: true
       search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
   # 3.4.8
   - scope:
-      path: "3.4.8" # This can be left blank since we specified the path for this set of versioned docs in `collections`.
-      # type: "3.4.8" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+      path: "3.4.8" # Specifies the name of the folder where this version of docs are located.
+      # type: "" # Since this scope uses `collection_dir`, we do not need to specify the type here.
     values:
-      layout: page # the type of template used from the "_layouts" folder
-      read_time: false # show the average reading time for the page
-      share: false # show social media buttons to share the page
-      sidebar: # navigation content
+      layout: page # Specifies the type of template used from the "_layouts" folder.
+      read_time: false # Shows the average reading time for pages.
+      share: false # Shows social media buttons to share pages.
+      sidebar: # Shows side navigation content from `_data/navigation.yml`.
         nav: "3.4.8" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
       toc: true
       toc_sticky: true
       search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
 
-  # Template for versions. When adding a new version, be sure to copy this template, then paste it directly below the `latest` navigation. 
+  # Template for versions. When adding a new version, be sure to copy this template, then paste it directly below the `latest` navigation.
 
-  # <VERSION> # Specify the version number here as a comment so that we can easily see lists of versions. After adding the version number, delete the remaining part of this comment.
+  # # <VERSION>
   # - scope:
-  #     path: "" # This can be left blank since we specified the path for this set of versioned docs in `collections`.
-  #     type: "<VERSION>" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+  #     path: "<VERSION>" # Specifies the name of the folder where this version of docs are located.
+  #     # type: "" # Since this scope uses `collection_dir`, we do not need to specify the type here.
   #   values:
-  #     layout: page # the type of template used from the "_layouts" folder
-  #     read_time: false # show the average reading time for the page
-  #     share: false # show social media buttons to share the page
-  #     sidebar: # navigation content
+  #     layout: page # Specifies the type of template used from the "_layouts" folder.
+  #     read_time: false # Shows the average reading time for pages.
+  #     share: false # Shows social media buttons to share pages.
+  #     sidebar: # Shows side navigation content from `_data/navigation.yml`.
   #       nav: "<VERSION>" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
   #     toc: true
   #     toc_sticky: true
