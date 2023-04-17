@@ -315,6 +315,47 @@ defaults:
       toc_sticky: true
       search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
 
+  # Remove irrelevant search results
+  - scope:
+      path: "assets"
+    values:
+      layout: none
+      hidden: true
+      search: false
+      sitemap: false
+  - scope:
+      path: "robots.txt"
+    values:
+      layout: none
+      search: false
+  - scope:
+      path: "sitemap.xml"
+    values:
+      layout: none
+      search: false
+  - scope:
+      path: "sitemap"
+    values:
+      layout: none
+      search: false
+  - scope:
+      path: "package.json"
+    values:
+      layout: none
+      search: false
+      sitemap: false
+  - scope:
+      path: "banner.js"
+    values:
+      layout: none
+      search: false
+      sitemap: false
+  - scope:
+      path: "feed.xml"
+    values:
+      layout: none
+      search: false
+
   # Template for versions. When adding a new version, be sure to copy this template, then paste it directly below the `latest` navigation.
 
   # # <VERSION>
