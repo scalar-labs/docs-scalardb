@@ -79,30 +79,53 @@ footer:
 # Reading Files
 include:
   - .htaccess
-exclude:
-  - "*.sublime-project"
-  - "*.sublime-workspace"
-  - vendor
-  - .asset-cache
-  - .bundle
-  - .jekyll-assets-cache
-  - .sass-cache
-  - assets/js/plugins
-  - assets/js/_main.js
-  - assets/js/vendor
-  - Capfile
-  - CHANGELOG
-  - config
-  - Gemfile
-  - Gruntfile.js
-  - gulpfile.js
-  - LICENSE
-  - log
-  - node_modules
-  - package.json
-  - Rakefile
-  - README
-  - tmp
+  - _pages
+  - _posts
+  - _home
+  - "latest@3.8.0"
+  - "3.7.3"
+  - "3.7.2"
+  - "3.7.1"
+  - "3.6.4"
+  - "3.6.3"
+  - "3.5.7"
+  - "3.5.6"
+  - "3.4.9"
+  - "3.4.8"
+# exclude:
+#   - '*.sublime-project'
+#   - '*.sublime-workspace'
+#   - vendor
+#   - .asset-cache
+#   - .bundle
+#   - .jekyll-assets-cache
+#   - .sass-cache
+#   - assets/js/plugins
+#   - assets/js/_main.js
+#   - assets/js/vendor
+#   - Capfile
+#   - CHANGELOG
+#   - config
+#   - Gemfile
+#   - Gruntfile.js
+#   - gulpfile.js
+#   - LICENSE
+#   - log
+#   - node_modules
+#   - package.json
+#   - package-lock.json
+#   - Rakefile
+#   - README
+#   - tmp
+#   - /docs # ignore Minimal Mistakes /docs
+#   - /test # ignore Minimal Mistakes /test
+#   - "assets/cs/*"
+#   - "assets/js/*"
+#   - robots.txt
+#   - banner.js
+#   - feed.xml
+#   - search_data.json
+#   - scripts
 keep_files:
   - .git
   - .svn
@@ -130,39 +153,224 @@ kramdown:
   smart_quotes: lsquo,rsquo,ldquo,rdquo
   enable_coderay: false
 
-# Collections
+#  Collections - Add list of folders to add to site
+collection_dir: 
+  - "latest@3.8.0"
+  - "3.7.3"
+  - "3.7.2"
+  - "3.7.1"
+  - "3.6.4"
+  - "3.6.3"
+  - "3.5.7"
+  - "3.5.6"
+  - "3.4.9"
+  - "3.4.8"
+
 collections:
+# Must add `pages` so that the parent product home page appears.
   home:
     output: true
     permalink: /:collection/:path/
 
+  # "3.8.0": # This version must match the name of the folder where the versioned docs live.
+  #   output: true
+  #   permalink: /:path/
+  # "3.7.3": # This version must match the name of the folder where the versioned docs live.
+  #   output: true
+  #   permalink: /:path/
+  # "3.7.2": # This version must match the name of the folder where the versioned docs live.
+  #   output: true
+  #   permalink: /:path/
+  # "3.7.1": # This version must match the name of the folder where the versioned docs live.
+  #   output: true
+  #   permalink: /:path/
+  # "3.6.4": # This version must match the name of the folder where the versioned docs live.
+  #   output: true
+  #   permalink: /:path/
+  # "3.6.3": # This version must match the name of the folder where the versioned docs live.
+  #   output: true
+  #   permalink: /:path/
+  # "3.5.7": # This version must match the name of the folder where the versioned docs live.
+  #   output: true
+  #   permalink: /:path/
+  # "3.5.6": # This version must match the name of the folder where the versioned docs live.
+  #   output: true
+  #   permalink: /:path/
+  # "3.4.9": # This version must match the name of the folder where the versioned docs live.
+  #   output: true
+  #   permalink: /:path/
+  # "3.4.8": # This version must match the name of the folder where the versioned docs live.
+  #   output: true
+  #   permalink: /:path/
+
+  # Collection template
+  # "<VERSION>": # This version must match the name of the folder where the versioned docs live.
+  #   output: true
+  #   permalink: /:path/
+
 # Defaults
 defaults:
-  # Parent product home page defaults
+  # _home
   - scope:
-      path: "_home" # the name of the folder where the parent product docs home page is located
+      path: "_home" # This path is the name of the folder where the parent product docs home page, error page, and other common pages are is located.
       type: home # for the parent product home page, `home` is the default
     values:
       layout: page # the type of template used from the "_layouts" folder
       read_time: false # show the average reading time for the page
       share: false # show social media buttons to share the page
       sidebar: # navigation content
-        nav: "side-nav"
+        nav: "latest"
       toc: false
       toc_sticky: false
+      search: false
       classes: wide # Expands page to take up space where the TOC would normally be
-  # Documentation page defaults
+  # latest version
   - scope:
-      path: "" # the name of the folder where the docs home page is located
-      type: pages # for docs pages, `pages` is the default
+      path: "latest@3.8.0" # the name of the folder where the docs home page is located
+      # type: "pages" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
     values:
       layout: page # the type of template used from the "_layouts" folder
       read_time: false # show the average reading time for the page
       share: false # show social media buttons to share the page
       sidebar: # navigation content
-        nav: "side-nav"
+        nav: "latest" # If this version is the latest version of the docs, this must be `latest`. If this points to an previous version, change this to the appropriate navigation for the version that you added in `_data/navigation.yml`.
       toc: true
       toc_sticky: true
+      search: true
+  # 3.7.3
+  - scope:
+      path: "3.7.3" # This can be left blank since we specified the path for this set of versioned docs in `collections`.
+      # type: "3.7.3" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+    values:
+      layout: page # the type of template used from the "_layouts" folder
+      read_time: false # show the average reading time for the page
+      share: false # show social media buttons to share the page
+      sidebar: # navigation content
+        nav: "3.7.3" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
+      toc: true
+      toc_sticky: true
+      search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
+  # 3.7.2
+  - scope:
+      path: "3.7.2" # This can be left blank since we specified the path for this set of versioned docs in `collections`.
+      # type: "3.7.2" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+    values:
+      layout: page # the type of template used from the "_layouts" folder
+      read_time: false # show the average reading time for the page
+      share: false # show social media buttons to share the page
+      sidebar: # navigation content
+        nav: "3.7.2" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
+      toc: true
+      toc_sticky: true
+      search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
+  # 3.7.1
+  - scope:
+      path: "3.7.1" # This can be left blank since we specified the path for this set of versioned docs in `collections`.
+      # type: "3.7.1" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+    values:
+      layout: page # the type of template used from the "_layouts" folder
+      read_time: false # show the average reading time for the page
+      share: false # show social media buttons to share the page
+      sidebar: # navigation content
+        nav: "3.7.1" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
+      toc: true
+      toc_sticky: true
+      search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
+  # 3.6.4
+  - scope:
+      path: "3.6.4" # This can be left blank since we specified the path for this set of versioned docs in `collections`.
+      # type: "3.6.4" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+    values:
+      layout: page # the type of template used from the "_layouts" folder
+      read_time: false # show the average reading time for the page
+      share: false # show social media buttons to share the page
+      sidebar: # navigation content
+        nav: "3.6.4" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
+      toc: true
+      toc_sticky: true
+      search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
+  # 3.6.3
+  - scope:
+      path: "3.6.3" # This can be left blank since we specified the path for this set of versioned docs in `collections`.
+      # type: "3.6.3" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+    values:
+      layout: page # the type of template used from the "_layouts" folder
+      read_time: false # show the average reading time for the page
+      share: false # show social media buttons to share the page
+      sidebar: # navigation content
+        nav: "3.6.3" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
+      toc: true
+      toc_sticky: true
+      search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
+# 3.5.7
+  - scope:
+      path: "3.5.7" # This can be left blank since we specified the path for this set of versioned docs in `collections`.
+      # type: "3.5.7" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+    values:
+      layout: page # the type of template used from the "_layouts" folder
+      read_time: false # show the average reading time for the page
+      share: false # show social media buttons to share the page
+      sidebar: # navigation content
+        nav: "3.5.7" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
+      toc: true
+      toc_sticky: true
+      search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
+
+  # 3.5.6
+  - scope:
+      path: "3.5.6" # This can be left blank since we specified the path for this set of versioned docs in `collections`.
+      # type: "3.5.6" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+    values:
+      layout: page # the type of template used from the "_layouts" folder
+      read_time: false # show the average reading time for the page
+      share: false # show social media buttons to share the page
+      sidebar: # navigation content
+        nav: "3.5.6" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
+      toc: true
+      toc_sticky: true
+      search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
+  # 3.4.9
+  - scope:
+      path: "3.4.9" # This can be left blank since we specified the path for this set of versioned docs in `collections`.
+      # type: "3.4.9" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+    values:
+      layout: page # the type of template used from the "_layouts" folder
+      read_time: false # show the average reading time for the page
+      share: false # show social media buttons to share the page
+      sidebar: # navigation content
+        nav: "3.4.9" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
+      toc: true
+      toc_sticky: true
+      search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
+  # 3.4.8
+  - scope:
+      path: "3.4.8" # This can be left blank since we specified the path for this set of versioned docs in `collections`.
+      # type: "3.4.8" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+    values:
+      layout: page # the type of template used from the "_layouts" folder
+      read_time: false # show the average reading time for the page
+      share: false # show social media buttons to share the page
+      sidebar: # navigation content
+        nav: "3.4.8" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
+      toc: true
+      toc_sticky: true
+      search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
+
+  # Template for versions. When adding a new version, be sure to copy this template, then paste it directly below the `latest` navigation. 
+
+  # <VERSION> # Specify the version number here as a comment so that we can easily see lists of versions. After adding the version number, delete the remaining part of this comment.
+  # - scope:
+  #     path: "" # This can be left blank since we specified the path for this set of versioned docs in `collections`.
+  #     type: "<VERSION>" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `collections`.
+  #   values:
+  #     layout: page # the type of template used from the "_layouts" folder
+  #     read_time: false # show the average reading time for the page
+  #     share: false # show social media buttons to share the page
+  #     sidebar: # navigation content
+  #       nav: "<VERSION>" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
+  #     toc: true
+  #     toc_sticky: true
+  #     search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
 
 # Sass/SCSS
 sass:
@@ -177,12 +385,21 @@ sass:
 
 # Plugins (previously gems:)
 plugins:
+  - jekyll-mermaid
   - jekyll-paginate
   - jekyll-sitemap
   - jekyll-gist
   - jekyll-feed
   - jemoji
   - jekyll-include-cache
+  - json
+  - nokogiri
+  - premonition
+  - kramdown
+  - kramdown-parser-gfm
+  - mdl
+  - webrick
+  - faraday-retry
 
 # mimic GitHub Pages with --safe
 whitelist:
@@ -190,8 +407,17 @@ whitelist:
   - jekyll-sitemap
   - jekyll-gist
   - jekyll-feed
-  - jemoji
   - jekyll-include-cache
+  - jekyll-mermaid
+  - jemoji
+  - json
+  - nokogiri
+  - premonition
+  - kramdown
+  - kramdown-parser-gfm
+  - mdl
+  - webrick
+  - faraday-retry
 
 # Archives
 #  Type
