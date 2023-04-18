@@ -17,7 +17,7 @@
           {% endif %}
           {% if link.version-children %}
           <li class="version-dropdown {{ class }}">
-            <label for="touch"><a class="version-dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ link.version-top-title }}&nbsp;3.8.9 (latest)&nbsp;<span><svg class="version-dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"></path></svg></span></a></label>
+            <label for="touch"><a class="version-dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ include.title | default: site.data.ui-text[site.locale].version_label }}&nbsp;<!-- Would be nice to have the version number automatically appear in the dropdown menu header (modified by josh-wong) -->&nbsp;<span><svg class="version-dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"></path></svg></span></a></label>
             <input type="checkbox" id="touch">
             <ul class="version-dropdown-content">
               {% for version-children in link.version-children %}
