@@ -5,9 +5,9 @@
     <div class="masthead__menu">
       <nav id="site-nav" class="greedy-nav">
         {% unless logo_path == empty %}
-          <a class="site-logo" href="{{ '/' | relative_url }}"><img src="{{ logo_path | relative_url }}" alt="{{ site.masthead_title | default:  }}"></a>
+          <a class="site-logo" href="https://docs.scalar-labs.com/"><img src="{{ logo_path | relative_url }}" alt="{{ site.masthead_title | default:  }}"></a>
         {% endunless %}
-        <a class="site-title" href="{{ '/' | relative_url }}">
+        <a class="site-title" href="https://docs.scalar-labs.com/">
           {{ site.masthead_title | default: "|&nbsp;&nbsp;Docs" }}
           {% if site.subtitle %}<span class="site-subtitle">{{ site.subtitle }}</span>{% endif %}
         </a>
@@ -24,7 +24,7 @@
                 <ul class="dropdown-content">
                   {% for children in link.children %}
                     <li>
-                      <a href="{{ site.baseurl }}{{ children.url }}">
+                      <a href="{{ children.url }}"> <!-- links in the header row point to Scalar home page pages, so no need to include the docs site base URL; originally `<a href="{{ site.baseurl }}{{ children.url }}"></a>` (modified by josh-wong) -->
                         <span>{{ children.title }}</span><br />
                         <span class="dropdown-content-description">{{ children.description }}</span>
                       </a>
@@ -34,7 +34,7 @@
               </li>
               {% else %}
               <li class="masthead__menu-item">
-                <a href="{{ site.baseurl }}{{ link.url }}">{{ link.title }}</a>
+                <a href="{{ link.url }}">{{ link.title }}</a>
               </li>
             {% endif %}
           {% endfor %}
@@ -51,9 +51,11 @@
         </button>
 
         <!-- Add `Contact us` button (added by josh-wong) -->
-        <a href="https://scalar-labs.com/en/contact" class="btn">
-          <span class="btn btn--primary">{{ site.data.ui-text[site.locale].contact_label | default: "Contact Us" }}</span>
-        </a>
+        <div class="contact-greedy-nav">
+          <a href="https://scalar-labs.com/en/contact">
+            <span class="btn btn--primary">{{ site.data.ui-text[site.locale].contact_label | default: "Contact us" }}</span>
+          </a>
+        </div>
 
         <ul class="hidden-links hidden"></ul>
       </nav>
