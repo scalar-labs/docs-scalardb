@@ -138,7 +138,7 @@ kramdown:
 # Collection directories - Add list of folders containing versioned docs to add to the site.
 collection_dir: 
   - "community"
-  - "latest@3.8.0"
+  - "3.8.0"
   - "3.7.3"
   - "3.7.2"
   - "3.7.1"
@@ -166,21 +166,40 @@ defaults:
       read_time: false # Shows the average reading time for pages.
       share: false # Shows social media buttons to share pages.
       sidebar: # Shows side navigation content from `_data/navigation.yml`.
-        nav: "latest"
+        nav: "3.8.0"
       toc: false
       toc_sticky: false
       search: false
       classes: wide # Expands the page to take up space where the TOC would normally be.
-  # latest@3.8.0
+
+  ############### Template for versions. When adding a new version (`scope`), copy this template and replace `<VERSION>` with the version number`. ###############
+
+  # # <VERSION>
+  # - scope:
+  #     path: "<VERSION>" # Specifies the name of the folder where this version of docs are located.
+  #     # type: "" # Since this scope uses `collection_dir`, we do not need to specify the type here.
+  #   values:
+  #     layout: page # Specifies the type of template used from the "_layouts" folder.
+  #     read_time: false # Shows the average reading time for pages.
+  #     share: false # Shows social media buttons to share pages.
+  #     sidebar: # Shows side navigation content from `_data/navigation.yml`.
+  #       nav: "<VERSION>"  # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
+  #     toc: true
+  #     toc_sticky: true
+  #     search: true
+
+  ############### Add new versions (`scopes`) below this line. Be sure to update the `nav` for the previous version. ###############
+
+  # 3.8.0
   - scope:
-      path: "latest@3.8.0" # Specifies the name of the folder where the latest version of the docs are located.
+      path: "3.8.0" # Specifies the name of the folder where this version of docs are located.
       # type: "" # Since this scope uses `collection_dir`, we do not need to specify the type here.
     values:
       layout: page # Specifies the type of template used from the "_layouts" folder.
       read_time: false # Shows the average reading time for pages.
       share: false # Shows social media buttons to share pages.
       sidebar: # Shows side navigation content from `_data/navigation.yml`.
-        nav: "latest" # If this version is the latest version of the docs, this must be `latest`. If this points to an previous version, change this to the appropriate navigation for the version that you added in `_data/navigation.yml`.
+        nav: "3.8.0" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
       toc: true
       toc_sticky: true
       search: true
@@ -356,22 +375,6 @@ defaults:
     values:
       layout: none
       search: false
-
-  # Template for versions. When adding a new version, be sure to copy this template, then paste it directly below the `latest` navigation.
-
-  # # <VERSION>
-  # - scope:
-  #     path: "<VERSION>" # Specifies the name of the folder where this version of docs are located.
-  #     # type: "" # Since this scope uses `collection_dir`, we do not need to specify the type here.
-  #   values:
-  #     layout: page # Specifies the type of template used from the "_layouts" folder.
-  #     read_time: false # Shows the average reading time for pages.
-  #     share: false # Shows social media buttons to share pages.
-  #     sidebar: # Shows side navigation content from `_data/navigation.yml`.
-  #       nav: "<VERSION>" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
-  #     toc: true
-  #     toc_sticky: true
-  #     search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
 
 # Sass/SCSS
 sass:
