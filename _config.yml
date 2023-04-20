@@ -16,7 +16,7 @@ title                    : "ScalarDB documentation &#124; Scalar, Inc." # To cha
 title_separator          : "-"
 #subtitle                 : ""
 description              : &description "Cloud-native universal transaction manager in microservice era" # the official description of the parent product
-url                      : "https://scalar-labs.github.io/docs-scalardb" # the base hostname & protocol for your site (i.e., "https://docs.scalar-labs.com"); use `localhost` for testing locally
+url                      : "https://scalar-labs.github.io" # the base hostname & protocol for your site (i.e., "https://docs.scalar-labs.com"); use `localhost` for testing locally
 baseurl                  : "" # The subpath of the parent product docs site (e.g. "/scalardb"). When selecting the "Scalar Docs" logo, you will be taken to the Scalar Docs site (`https://docs.scalar-labs.com/`). For the URL, see `includes/masthead.html`.
 repository               : "scalar-labs/docs-scalardb" # the repository path of the Scalar parent product (e.g., scalar-labs/docs-scalardb)
 logo                     : "/assets/images/scalar-logo.png" # the Scalar company logo
@@ -90,6 +90,7 @@ include:
   - "3.5.6"
   - "3.4.9"
   - "3.4.8"
+  - "community"
   # - "<VERSION>" # Add additional versions as necessary. This version number included here must match the folder name containing that version.
 # exclude:
 #   - '*.sublime-project'
@@ -150,6 +151,7 @@ kramdown:
 
 # Collection directories - Add list of folders containing versioned docs to add to the site.
 collection_dir: 
+  - "community"
   - "latest@3.8.0"
   - "3.7.3"
   - "3.7.2"
@@ -183,6 +185,19 @@ defaults:
       toc_sticky: false
       search: false
       classes: wide # Expands the page to take up space where the TOC would normally be.
+  # community
+  - scope:
+      path: "community" # Specifies the name of the folder where this version of docs are located.
+      # type: "" # Since this scope uses `collection_dir`, we do not need to specify the type here.
+    values:
+      layout: page # Specifies the type of template used from the "_layouts" folder.
+      read_time: false # Shows the average reading time for pages.
+      share: false # Shows social media buttons to share pages.
+      sidebar: # Shows side navigation content from `_data/navigation.yml`.
+        nav: "community" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
+      toc: true
+      toc_sticky: true
+      search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
   # latest@3.8.0
   - scope:
       path: "latest@3.8.0" # Specifies the name of the folder where the latest version of the docs are located.
