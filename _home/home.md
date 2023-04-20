@@ -1,7 +1,6 @@
 ---
 layout: parent-product-home
 permalink: /
-title: ""
 hidden: true
 toc: false
 product_row:
