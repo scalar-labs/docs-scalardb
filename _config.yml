@@ -185,19 +185,6 @@ defaults:
       toc_sticky: false
       search: false
       classes: wide # Expands the page to take up space where the TOC would normally be.
-  # community
-  - scope:
-      path: "community" # Specifies the name of the folder where this version of docs are located.
-      # type: "" # Since this scope uses `collection_dir`, we do not need to specify the type here.
-    values:
-      layout: page # Specifies the type of template used from the "_layouts" folder.
-      read_time: false # Shows the average reading time for pages.
-      share: false # Shows social media buttons to share pages.
-      sidebar: # Shows side navigation content from `_data/navigation.yml`.
-        nav: "community" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
-      toc: true
-      toc_sticky: true
-      search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
   # latest@3.8.0
   - scope:
       path: "latest@3.8.0" # Specifies the name of the folder where the latest version of the docs are located.
@@ -329,6 +316,19 @@ defaults:
       toc: true
       toc_sticky: true
       search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
+  # community
+  - scope:
+      path: "community" # Specifies the name of the folder where this version of docs are located.
+      # type: "" # Since this scope uses `collection_dir`, we do not need to specify the type here.
+    values:
+      layout: page # Specifies the type of template used from the "_layouts" folder.
+      read_time: false # Shows the average reading time for pages.
+      share: false # Shows social media buttons to share pages.
+      sidebar: # Shows side navigation content from `_data/navigation.yml`.
+        nav: "community" # Add the version enclosed within quotation marks. This version must match the version that you previously specified in `_data/navigation.yml`.
+      toc: true
+      toc_sticky: true
+      search: false # Excludes previous versions from search to reduce noise and search loading time. We should improve this function in the future to allow people to search for versioned docs.
 
   # Remove irrelevant search results
   - scope:
@@ -415,6 +415,7 @@ plugins:
   - mdl
   - webrick
   - faraday-retry
+  - jekyll-optional-front-matter
 
 # mimic GitHub Pages with --safe
 whitelist:
@@ -433,6 +434,7 @@ whitelist:
   - mdl
   - webrick
   - faraday-retry
+  - jekyll-optional-front-matter
 
 # Archives
 #  Type
