@@ -23,4 +23,5 @@ group :jekyll_plugins do
   gem "jekyll-sitemap", "~> 1.4.0"
   gem "jekyll-gist"
   gem "jekyll-feed"
+  gem "jekyll-optional-front-matter", "~> 0.3.2"
 end

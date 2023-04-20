@@ -1,7 +1,6 @@
 ---
 layout: parent-product-home
 permalink: /
-title: ""
 hidden: true
 toc: false
 product_row:
@@ -9,21 +8,21 @@ product_row:
     alt: ""
     title: "ScalarDB" # This title will appear in the header for the feature item on the home page; space is limited, so keep it short but descriptive; try to keep all feature item titles around the same length
     excerpt: "Cloud-native universal transaction manager" # Add a brief product description (approximately 8 words)
-    url: "latest@3.8.0" # Add a relative URL to the product home page doc that is within this parent product docs site
+    url: "stable" # Add a relative URL to the product home page doc that is within this parent product docs site
     btn_class: "btn--primary"
     btn_label: "Get started" # This can be any other type of call to action
   - image_path: 
     alt: ""
     title: "ScalarDB Server" # This title will appear in the header for the feature item on the home page; space is limited, so keep it short but descriptive; try to keep all feature item titles around the same length
     excerpt: "gRPC server that implements ScalarDB interface" # Add a brief product description (approximately 8 words)
-    url: "latest@3.8.0/scalardb-server" # Add a relative URL to the product home page doc that is within this parent product docs site
+    url: "stable/scalardb-server" # Add a relative URL to the product home page doc that is within this parent product docs site
     btn_class: "btn--primary"
     btn_label: "Get started" # This can be any other type of call to action
   - image_path: 
     alt: ""
     title: "ScalarDB Schema Loader" # This title will appear in the header for the feature item on the home page; space is limited, so keep it short but descriptive; try to keep all feature item titles around the same length
     excerpt: "Tool for creating schema" # Add a brief product description (approximately 8 words)
-    url: "latest@3.8.0/schema-loader" # Add a relative URL to the product home page doc that is within this parent product docs site
+    url: "stable/schema-loader" # Add a relative URL to the product home page doc that is within this parent product docs site
     btn_class: "btn--primary"
     btn_label: "Get started" # This can be any other type of call to action
 recommended_row:
@@ -31,21 +30,21 @@ recommended_row:
     alt: ""
     title: "Getting Started with ScalarDB" # The title for a recommended doc will appear in the header for the feature item on the home page; space is limited, so keep it short but descriptive; try to keep all feature item titles around the same length
     excerpt: "Set up a simple electronic money application" # Add a brief description about the doc (approximately 8 words)
-    url: "latest@3.8.0/getting-started" # Add a relative URL to the product home page doc that is within this parent product docs site
+    url: "stable/getting-started" # Add a relative URL to the product home page doc that is within this parent product docs site
     btn_class: "btn--primary"
     btn_label: "Learn more" # This can be any other type of call to action
   - image_path: assets/images/book-green.svg # Choose the appropriate icon for the doc recommended here: (`book-green.svg`, `cloud-purple.svg`, `page-blue.svg`)
     alt: ""
     title: "ScalarDB Samples" # The title for a recommended doc will appear in the header for the feature item on the home page; space is limited, so keep it short but descriptive; try to keep all feature item titles around the same length
     excerpt: "Try running sample applications for ScalarDB" # Add a brief description about the doc (approximately 8 words)
-    url: "latest@3.8.0/scalardb-samples" # Add a relative URL to the product home page doc that is within this parent product docs site
+    url: "stable/scalardb-samples" # Add a relative URL to the product home page doc that is within this parent product docs site
     btn_class: "btn--primary"
     btn_label: "Learn more" # This can be any other type of call to action
   - image_path: assets/images/page-blue.svg # Choose the appropriate icon for the doc recommended here: (`book-green.svg`, `cloud-purple.svg`, `page-blue.svg`)
     alt: ""
     title: "ScalarDB Benchmarks" # The title for a recommended doc will appear in the header for the feature item on the home page; space is limited, so keep it short but descriptive; try to keep all feature item titles around the same length
     excerpt: "Run benchmark programs for ScalarDB" # Add a brief description about the doc (approximately 8 words)
-    url: "latest@3.8.0/scalardb-benchmarks" # Add a relative URL to the product home page doc that is within this parent product docs site
+    url: "stable/scalardb-benchmarks" # Add a relative URL to the product home page doc that is within this parent product docs site
     btn_class: "btn--primary"
     btn_label: "Learn more" # This can be any other type of call to action
   
