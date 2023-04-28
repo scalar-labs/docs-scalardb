@@ -18,6 +18,7 @@ var store = [
         "title": {{ doc.title | jsonify }},
         "excerpt":
           {%- if site.search_full_content == true -%}
+            // Added  `markdownify | ` to remove Markdown from search result descriptions (added by josh-wong)
             {{ doc.content | newline_to_br |
               replace:"<br />", " " |
               replace:"</p>", " " |
@@ -29,6 +30,7 @@ var store = [
               replace:"</h6>", " "|
             strip_html | strip_newlines | jsonify }},
           {%- else -%}
+            // Added  `markdownify | ` to remove Markdown from search result descriptions (added by josh-wong)
             {{ doc.content | newline_to_br |
               replace:"<br />", " " |
               replace:"</p>", " " |
@@ -56,7 +58,8 @@ var store = [
     "title": {{ doc.title | jsonify }},
     "excerpt":
         {%- if site.search_full_content == true -%}
-          {{ doc.content | newline_to_br |
+          // Added  `markdownify | ` to remove Markdown from search result descriptions (added by josh-wong)
+          {{ doc.content | markdownify | newline_to_br |
             replace:"<br />", " " |
             replace:"</p>", " " |
             replace:"</h1>", " " |
@@ -67,7 +70,8 @@ var store = [
             replace:"</h6>", " "|
           strip_html | strip_newlines | jsonify }},
         {%- else -%}
-          {{ doc.content | newline_to_br |
+          // Added  `markdownify | ` to remove Markdown from search result descriptions (added by josh-wong)
+          {{ doc.content | markdownify | newline_to_br |
             replace:"<br />", " " |
             replace:"</p>", " " |
             replace:"</h1>", " " |
