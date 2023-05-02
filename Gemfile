@@ -24,4 +24,5 @@ group :jekyll_plugins do
   gem "jekyll-gist"
   gem "jekyll-feed"
   gem "jekyll-optional-front-matter", "~> 0.3.2"
+  gem "jekyll-titles-from-headings", "~> 0.5.3"
 end
