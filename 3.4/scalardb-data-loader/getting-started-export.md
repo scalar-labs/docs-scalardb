@@ -1,0 +1,61 @@
+# Getting started with Export
+
+This document explains how you can get started with the Scalar DB Data Loader Export function.
+
+## Features
+
+The Scalar DB Data Loader allows you to export data in the following formats:
+
+- JSON
+- JSONLines
+- CSV
+
+Each export will run a Scalar DB scan operation based on the provided CLI arguments when running data loader.  A partition key is always required to execute this scan.
+
+Both Scalar DB storage and transaction mode are supported.
+
+## Usage
+
+The data loader export function can be started with the following minimal configuration:
+
+```
+./scalardb-data-loader export --config scalardb.properties --namespace namespace --table tableName --key column=value
+```
+
+
+
+- --config:   the path to the scalardb connection properties file
+- --namespace:  the namespace of the table that contains the data
+- --table: name of the table that contains the data
+- --key:  the partition key to execute the Scalar DB scan with
+
+By default, the data loader will create the output file in the working directory if the `--output-file` argument is omitted as well.
+
+Scalar DB Storage mode is active by default.
+
+### Command-line flags
+
+Here is a list of flags (options) that can be used with the scalardb data loader.
+
+| Flag              | Description                                                  | Usage                                                  |
+| ----------------- | ------------------------------------------------------------ | ------------------------------------------------------ |
+| --mode            | The mode in which Scalar DB is running . If omitted, the default value is `storage` | `scalardb-data-loader --mode transaction`              |
+| --config          | the path to the scalardb.properties file. If omitted the tool looks for a file named `scalardb.properties` in the current folder | `scalardb-data-loader --config scalardb.properties`    |
+| --namespace       | Namespace to export table data from. Required.               | `scalardb-data-loader --namespace namespace`           |
+| --table           | name of table to export data from. Required.                 | `scalardb-data-loader --table tableName`               |
+| --key             | Partition key for the scan. Required.                        | `scalardb-data-loader --key columnName=value`          |
+| --sort            | specify a column to sort on. The column needs to be a clustering key. The argument can be repeated to provide multiple sortings. | `scalardb-data-loader --sort columnName=desc`          |
+| --projection      | limit the columns that are exported by providing a projection. The argument can be repeated to provide multiple projections. | `scalardb-data-loader --projection columnName`         |
+| --start           | clustering key to mark scan start                            | `scalardb-data-loader --start columnName=value`        |
+| --start-exclusive | is the scan start exclusive or not. If omitted, the default value is `false` | `scalardb-data-loader --start-exclusive`               |
+| --end             | clustering key to mark scan end                              | `scalardb-data-loader --end columnName=value`          |
+| --end-exclusive   | is the scan start exclusive or not. If omitted, the default value is `false` | `scalardb-data-loader --end-exclusive`                 |
+| --limit           | Limit the results of the scan. If omitted, the default value is `0` which means their is no limit. | `scalardb-data-loader --limit 1000`                    |
+| --output-file     | The name and path of the output file. If omitted, the tool will save the file in the current folder with the following name format:<br />`export_namespace.tableName_timestamp.json` or `export_namespace.tableName_timestamp.csv`<br /><br />The ouput folder needs to exists. The dataloader does not create the output folder for you. | `scalardb-data-loader --output-file ./out/output.json` |
+| --format          | The output format. By default `JSONL` is selected.           | `scalardb-data-loader --format json`                   |
+| --metadata        | When set to true the transaction metadata is included in the export. By default this is set to `false` | `scalardb-data-loader --metadata`                      |
+| --coordinator     | When set to true, the coordinator state is exported for each record if Scalar DB is running in transaction mode. If omitted, or Scalar DB is running in storage mode, the default value is `false`. | `scalardb-data-loader --coordinator`                   |
+| --delimiter       | The delimiter used in CSV files. Default value is `;`        | `scalardb-data-loader --delimiter ;`                   |
+| --no-headers      | Exclude header row in CSV file. Default is `false`           | `scalardb-data-loader --no-headers`                    |
+| --threads         | Thread count for concurrent processing                       | `scalardb-data-loader --threads 500`                   |
+
