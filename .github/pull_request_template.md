@@ -16,6 +16,7 @@
 - [ ] Bug fix (nonbreaking change that fixes an issue)
 - [ ] New feature (nonbreaking change that adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality to not work as expected)
+- [ ] Improvement (an improvement to the existing state)
 - [ ] This change requires a documentation update
 
 ## How has this been tested?
