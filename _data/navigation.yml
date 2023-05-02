@@ -26,7 +26,7 @@ main:
         url: https://scalar-labs.com/company
       - title: "News"
         description: Scalar's announcements, product news, case studies, etc. are posted here.
-        url:  https://scalar-labs.com/news
+        url: https://scalar-labs.com/news
   - title: "Support"
     url: https://support.scalar-labs.com/
 
@@ -48,6 +48,12 @@ versions:
       version-url: /3.5
     - version-title: "3.4"
       version-url: /3.4
+
+# ----- Adding navigation for versions ----- #
+
+# When adding a version, copy the existing navigation and paste it below the latest version in the navigation. 
+# Then, replace the version with the new version number and confirm if any docs need to be added or removed from the new navigation.
+# After that, add a new scope in `_config.yml` to include an item that provides the proper versioned navigation to the site when someone visits the page (i.e., make sure people who visit a version 3.8 doc are shown a side navigation that includes only 3.8 docs.)
 
 "3.9":
   - title: "⬅ ScalarDB home" 
@@ -326,8 +332,6 @@ versions:
         url: /3.8/scalardb-sql/configurations    
       - title: "ScalarDB SQL Grammar"
         url: /3.8/scalardb-sql/grammar
-
-# Need to add remaining version navigation here once we're happy with navigation titles. Will need to confirm docs exist across versions after.
 
 "3.7":
   - title: "⬅ ScalarDB home" 
@@ -848,11 +852,3 @@ versions:
         url: /3.4/scalardb-data-loader/getting-started-export
       - title: "Import Function for ScalarDB Data Loader"
         url: /3.4/scalardb-data-loader/getting-started-import
-
-# ----- Navigation template for versions ----- #
-
-# The following is a version navigation template. When adding a version, copy the following navigation and paste it below the `latest` navigation, which shows the latest version. 
-# Then, uncomment the navigation, and replace `<VERSION>` with the appropriate version number. 
-# After that, be sure to add a new scope in `_config.yml` to include an item that provides the proper versioned navigation to the site when someone visits the page (i.e., make sure people who visit a version v3.8 doc are shown a side navigation that includes only v3.8 docs.)
-
-# After adding docs and links, creating a template based on those docs would be helpful to reuse when new versions are published.
