@@ -26,17 +26,17 @@ main:
         url: https://scalar-labs.com/company
       - title: "News"
         description: Scalar's announcements, product news, case studies, etc. are posted here.
-        url:  https://scalar-labs.com/news
+        url: https://scalar-labs.com/news
   - title: "Support"
     url: https://support.scalar-labs.com/
 
-# This navigation is for adding product versions that appear in the dropdown menu. Make sure the latest version is labeled `<VERSION> (stable)`.
+# This navigation is for adding product versions that appear in the dropdown menu. Make sure the latest version is labeled `<VERSION> (latest)`.
 versions:
   - version-top-title: "" # This title is taken from the `version_label` in `_data/ui-text.yml`.
     version-children:
-    - version-title: "Community"
-      version-url: /community
-    - version-title: "3.9 (stable)"
+    - version-title: "Community version"
+      version-url: "https://scalar-labs.github.io/docs-scalardb-community"
+    - version-title: "3.9 (latest)"
       version-url: /3.9
     - version-title: "3.8"
       version-url: /3.8
@@ -49,10 +49,16 @@ versions:
     - version-title: "3.4"
       version-url: /3.4
 
+# ----- Adding navigation for versions ----- #
+
+# When adding a version, copy the existing navigation and paste it below the latest version in the navigation. 
+# Then, replace the version with the new version number and confirm if any docs need to be added or removed from the new navigation.
+# After that, add a new scope in `_config.yml` to include an item that provides the proper versioned navigation to the site when someone visits the page (i.e., make sure people who visit a version 3.8 doc are shown a side navigation that includes only 3.8 docs.)
+
 "3.9":
   - title: "⬅ ScalarDB home" 
     url: / # Don't change this URL. This links back to the parent product home page.
-  - title: "ScalarDB 3.9 (stable)"
+  - title: "ScalarDB 3.9 (latest)"
     children:
   # Get Started docs
   - title: "Get Started"
@@ -327,8 +333,6 @@ versions:
       - title: "ScalarDB SQL Grammar"
         url: /3.8/scalardb-sql/grammar
 
-# Need to add remaining version navigation here once we're happy with navigation titles. Will need to confirm docs exist across versions after.
-
 "3.7":
   - title: "⬅ ScalarDB home" 
     url: / # Don't change this URL. This links back to the parent product home page.
@@ -389,8 +393,6 @@ versions:
     children:
       - title: "ScalarDB Java API Guide"
         url: /3.7/api-guide
-      - title: "ScalarDB Schema Loader"
-        url: /3.7/schema-loader
       - title: "Multi-storage Transactions"
         url: /3.7/multi-storage-transactions
       - title: "Two-Phase Commit Transactions"
@@ -528,8 +530,6 @@ versions:
     children:
       - title: "ScalarDB Java API Guide"
         url: /3.6/api-guide
-      - title: "ScalarDB Schema Loader"
-        url: /3.6/schema-loader
       - title: "Multi-storage Transactions"
         url: /3.6/multi-storage-transactions
       - title: "Two-Phase Commit Transactions"
@@ -663,8 +663,6 @@ versions:
     children:
       - title: "ScalarDB Java API Guide"
         url: /3.5/api-guide
-      - title: "ScalarDB Schema Loader"
-        url: /3.5/schema-loader
       - title: "Multi-storage Transactions"
         url: /3.5/multi-storage-transactions
       - title: "Two-Phase Commit Transactions"
@@ -784,8 +782,6 @@ versions:
     children:
       - title: "ScalarDB Java API Guide"
         url: /3.4/api-guide
-      - title: "ScalarDB Schema Loader"
-        url: /3.4/schema-loader
       - title: "Multi-storage Transactions"
         url: /3.4/multi-storage-transactions
       - title: "Two-Phase Commit Transactions"
@@ -848,11 +844,3 @@ versions:
         url: /3.4/scalardb-data-loader/getting-started-export
       - title: "Import Function for ScalarDB Data Loader"
         url: /3.4/scalardb-data-loader/getting-started-import
-
-# ----- Navigation template for versions ----- #
-
-# The following is a version navigation template. When adding a version, copy the following navigation and paste it below the `latest` navigation, which shows the latest version. 
-# Then, uncomment the navigation, and replace `<VERSION>` with the appropriate version number. 
-# After that, be sure to add a new scope in `_config.yml` to include an item that provides the proper versioned navigation to the site when someone visits the page (i.e., make sure people who visit a version v3.8 doc are shown a side navigation that includes only v3.8 docs.)
-
-# After adding docs and links, creating a template based on those docs would be helpful to reuse when new versions are published.
