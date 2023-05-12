@@ -295,9 +295,7 @@ Transaction #2 (Placing an order) achieves the microservice transaction, so we f
 
 The sequence diagram of transaction #2 is as follows:
 
-<p align="center">
-<img src="images/sequence_diagram.png" width="400" />
-</p>
+![](images/sequence_diagram.png)
 
 ### 1. Start a two-phase commit transaction
 
