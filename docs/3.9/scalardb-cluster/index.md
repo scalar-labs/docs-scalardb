@@ -81,7 +81,7 @@ spec:
     spec:
       containers:
         - name: scalardb-cluster-node
-          image: ghcr.io/scalar-labs/scalardb-cluster-node:3.8.0
+          image: ghcr.io/scalar-labs/scalardb-cluster-node:3.9.0
           env:
             - name: SCALAR_DB_STORAGE
               value: "jdbc"
@@ -256,7 +256,7 @@ And then, you can install the library in your application using your build tool 
 To add a dependency on ScalarDB Cluster Client using Gradle, use the following:
 ```gradle
 dependencies {
-    implementation 'com.scalar-labs:scalardb-cluster-client:3.8.0'
+    implementation 'com.scalar-labs:scalardb-cluster-client:3.9.0'
 }
 ```
 
@@ -265,11 +265,11 @@ To add a dependency using Maven:
 <dependency>
   <groupId>com.scalar-labs</groupId>
   <artifactId>scalardb-cluster-client</artifactId>
-  <version>3.8.0</version>
+  <version>3.9.0</version>
 </dependency>
 ```
 
-### Load schema
+### Schema Loader for Cluster
 
 To load a schema via ScalarDB Cluster, you need to use the dedicated Schema Loader for ScalarDB Cluster (Schema Loader for Cluster).
 
@@ -283,6 +283,19 @@ java -jar scalardb-cluster-schema-loader-<version>-all.jar --config <PATH_TO_CON
 The release versions of Schema Loader for Cluster can be downloaded from [the releases page](https://github.com/scalar-labs/scalardb-cluster/releases).
 
 See [this](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader.md) for the details.
+
+### SQL CLI for Cluster
+
+You need to use the dedicated SQL CLI for ScalarDB Cluster (SQL CLI for Cluster).
+
+The usage of SQL CLI for Cluster is basically the same as [ScalarDB SQL Command Line Interface](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/command-line-interface.md) except for the name of the jar file.
+For example, you can run SQL CLI for Cluster with the following command:
+
+```shell
+java -jar scalardb-cluster-sql-cli-<version>-all.jar --config <PATH_TO_CONFIG_FILE>
+```
+
+The release versions of SQL CLI for Cluster can be downloaded from [the releases page](https://github.com/scalar-labs/scalardb-cluster/releases).
 
 ## Configurations
 
@@ -323,14 +336,33 @@ The configurations for GraphQL are as follows:
 | scalar.db.graphql.graphiql                        | Whether the GraphQL server serves [GraphiQL](https://github.com/graphql/graphiql) IDE.                                                      | true     |
 | scalar.db.graphql.schema_checking_interval_millis | The interval at which GraphQL server will rebuild the GraphQL schema if any change is detected in the ScalarDB schema.                      | 30000    |
 
+#### For SQL
+
+The configurations for SQL are as follows:
+
+| name                                  | description                             | default |
+|---------------------------------------|-----------------------------------------|---------|
+| scalar.db.sql.enabled                 | Whether SQL is enabled.                 | false   |
+| scalar.db.sql.statement_cache.enabled | Enable the statement cache.             | false   |
+| scalar.db.sql.statement_cache.size    | The maximum number of cached statement. | 100     |
+
 ### Client
 
 The configurations for Client are as follows:
 
-| name                          | description                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | default |
-|-------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
-| scalar.db.transaction_manager | Specify `cluster`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | -       |
-| scalar.db.contact_points      | The contact point of the cluster. If you use the `indirect` client mode, specify the IP address of the load balancer in front of your cluster nodes using the format `indirect:<the load balancer IP address>`. If you use the `direct-kubernetes` client mode, specify the namespace name (optional) and the name of the endpoint to get the membership information using the format `direct-kubernetes:<namespace name>/<endpoint name>` or just `direct-kubernetes:<endpoint name>`.  |         |
+#### For CRUD
+
+| name                          | description                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | default |
+|-------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
+| scalar.db.transaction_manager | Specify `cluster`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | -       |
+| scalar.db.contact_points      | The contact point of the cluster. If you use the `indirect` client mode, specify the IP address of the load balancer in front of your cluster nodes using the format `indirect:<the load balancer IP address>`. If you use the `direct-kubernetes` client mode, specify the namespace name (optional) and the name of the endpoint to get the membership information using the format `direct-kubernetes:<namespace name>/<endpoint name>` or just `direct-kubernetes:<endpoint name>`. |         |
+
+#### For SQL
+
+| name                                       | description                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | default |
+|--------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
+| scalar.db.sql.connection_mode              | Specify `cluster`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | -       |
+| scalar.db.sql.cluster_mode.contact_points  | The contact point of the cluster. If you use the `indirect` client mode, specify the IP address of the load balancer in front of your cluster nodes using the format `indirect:<the load balancer IP address>`. If you use the `direct-kubernetes` client mode, specify the namespace name (optional) and the name of the endpoint to get the membership information using the format `direct-kubernetes:<namespace name>/<endpoint name>` or just `direct-kubernetes:<endpoint name>`.  |         |
 
 <!-- commented out for now since it's private
 ## Development
