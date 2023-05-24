@@ -67,12 +67,12 @@ This runs the ScalarDB GraphQL Server (you need to specify your local configurat
 
 ```console
 docker run -d -p 8080:8080 \
-  -v <ScalarDB properties file path>:/scalardb-graphql/database.properties.tmpl \
+  -v <ScalarDB properties file path>:/scalardb-graphql/database.properties \
   ghcr.io/scalar-labs/scalardb-graphql:<version>
 
 # For DEBUG logging
 docker run -d -p 8080:8080 \
-  -v <ScalarDB properties file path>:/scalardb-graphql/database.properties.tmpl \
+  -v <ScalarDB properties file path>:/scalardb-graphql/database.properties \
   -e SCALAR_DB_GRAPHQL_LOG_LEVEL=DEBUG \
   ghcr.io/scalar-labs/scalardb-graphql:<version>
 ```

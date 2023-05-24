@@ -397,7 +397,7 @@ DropNamespaceStatement statement3 = StatementBuilder.dropNamespace("ns").cascade
 #### Grammar
 
 ```sql
-CREATE COORDINATOR TABLES [IF NOT EXISTS] [WITH creation_options]
+CREATE COORDINATOR TABLES [IF NOT EXIST] [WITH creation_options]
 
 creation_options: <option name>=<option value> [AND <option name>=<option value>] ...
 ```
@@ -464,7 +464,7 @@ TruncateCoordinatorTablesStatement statement =
 #### Grammar
 
 ```sql
-DROP COORDINATOR TABLES [IF EXISTS]
+DROP COORDINATOR TABLES [IF EXIST]
 ```
 
 #### Examples
@@ -476,7 +476,7 @@ Examples of `DROP COORDINATOR TABLES` are as follows:
 DROP COORDINATOR TABLES;
 
 # Drop coordinator tables if they exist
-DROP COORDINATOR TABLES IF EXISTS;
+DROP COORDINATOR TABLES IF EXIST;
 ```
 
 Examples of building statement objects for `DROP COORDINATOR TABLES` are as follows:
