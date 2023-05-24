@@ -1,5 +1,9 @@
 # Guide of Spring Data JDBC for ScalarDB
 
+Directly using the ScalarDB API may be difficult because you need to write a lot of code and consider how and when to call the APIs (e.g., `rollback()` and `commit()`) for transactions. Since we assume most ScalarDB users develop their applications in Java, you can take advantage of the Spring Framework, which is one of the most popular application frameworks for developing in Java. By using Spring Data JDBC for ScalarDB, you can streamline development by using a familiar framework.
+
+![Rough overall architecture of Spring Data JDBC for ScalarDB](images/spring_data_ingegration_overall_arch.png)
+
 The usage of Spring Data JDBC for ScalarDB basically follows [Spring Data JDBC - Reference Documentation](https://docs.spring.io/spring-data/jdbc/docs/current/reference/html/).
 This guide describes several important topics to use Spring Data JDBC for ScalarDB and its limitations.
 
@@ -316,6 +320,32 @@ As you see in the above example, Spring Data JDBC's @Id annotation doesn't suppo
 - delete(T entity)
 - deleteById(ID id)
 - deleteAllById(Iterable<? extends ID> ids)
+
+#### One-to-many relationships between two entities
+
+Spring Data JDBC supports one-to-many relationships. But it implicitly deletes and re-creates all the associated child records even if only parent's attributes are changed. This behavior would result in a performance penalty. Additionally, certain use cases of the one-to-many relationship in Spring Data JDBC for ScalarDB fail because of the combination with some limitations of ScalarDB SQL. Considering those concerns and limitations, it's not recommended to use the feature in Spring Data JDBC for ScalarDB.
+
+For instance, assuming a Bank record contains many Account records, the following implementation fails when calling `BankRepository#update()`
+
+```java
+@Autowired BankRepository bankRepository;
+
+...
+
+bankRepository.insert(new Bank(42, "My bank", ImmutableSet.of(
+    new Account(1, "Alice"),
+    new Account(2, "Bob"),
+    new Account(3, "Carol")
+)));
+
+Bank bank = bankRepository.findById(42).get();
+System.out.printf("Bank: " + bank);
+
+// Fails here as `DELETE FROM "account" WHERE "account"."bank_id" = ?` is implicitly issued by Spring Data JDBC
+// while ScalarDB SQL doesn't support DELETE with a secondary index
+// (Spring Data JDBC's custom query might avoid these limitations)
+bankRepository.update(new Bank(bank.bankId, bank.name + " 2", bank.accounts));
+```
 
 ## Advanced features
 
