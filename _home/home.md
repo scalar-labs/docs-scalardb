@@ -37,14 +37,14 @@ recommended_row:
     alt: ""
     title: "ScalarDB Samples" # The title for a recommended doc will appear in the header for the feature item on the home page; space is limited, so keep it short but descriptive; try to keep all feature item titles around the same length
     excerpt: "Try running sample applications for ScalarDB" # Add a brief description about the doc (approximately 8 words)
-    url: "docs/3.9/scalardb-samples" # Add a relative URL to the product home page doc that is within this parent product docs site
+    url: "docs/3.9/scalardb-samples/README" # Add a relative URL to the product home page doc that is within this parent product docs site
     btn_class: "btn--primary"
     btn_label: "Learn more" # This can be any other type of call to action
   - image_path: assets/images/page-blue.svg # Choose the appropriate icon for the doc recommended here: (`book-green.svg`, `cloud-purple.svg`, `page-blue.svg`)
     alt: ""
     title: "ScalarDB Benchmarks" # The title for a recommended doc will appear in the header for the feature item on the home page; space is limited, so keep it short but descriptive; try to keep all feature item titles around the same length
     excerpt: "Run benchmark programs for ScalarDB" # Add a brief description about the doc (approximately 8 words)
-    url: "docs/3.9/scalardb-benchmarks" # Add a relative URL to the product home page doc that is within this parent product docs site
+    url: "docs/3.9/scalardb-benchmarks/README" # Add a relative URL to the product home page doc that is within this parent product docs site
     btn_class: "btn--primary"
     btn_label: "Learn more" # This can be any other type of call to action
   
