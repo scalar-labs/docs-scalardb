@@ -64,7 +64,7 @@ scalar.db.graphql.graphiql=true
 The following command starts up the ScalarDB GraphQL server. The first time you run the command, it will download the Docker image from GitHub Container Registry.
 
 ```console
-$ docker run -v /path/to/database.properties:/scalardb-graphql/database.properties -p 8080:8080 ghcr.io/scalar-labs/scalardb-graphql:<version>
+$ docker run -v /path/to/database.properties:/scalardb-graphql/database.properties.tmpl -p 8080:8080 ghcr.io/scalar-labs/scalardb-graphql:<version>
 ```
 
 At this point, the server reads the tables in the specified namespaces and generates a GraphQL schema to perform CRUD operations on the them.
