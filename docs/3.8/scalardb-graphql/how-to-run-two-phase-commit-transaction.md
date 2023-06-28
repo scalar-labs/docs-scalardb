@@ -66,7 +66,7 @@ You first need to prepare the transaction in all the coordinator/participant app
 you
 need to commit the transaction in all the coordinator/participant applications.
 
-If the consensus commit manager is configured with the `EXTRA_READ` serializable strategy
+If the Consensus Commit transaction manager is configured with the `EXTRA_READ` serializable strategy
 in `SERIALIZABLE` isolation level, an extra "validate" phase is required between prepare and
 commit phases.
 Similarly to prepare and commit, validate need to be executed in all the coordinator/participants

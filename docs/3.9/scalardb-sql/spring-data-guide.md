@@ -537,8 +537,8 @@ The above primitive APIs are powerful and make it possible to explicitly control
 - Prepare phase: Local and remote prepare operations (**) in parallel
 - Validation phase: Local and remote validation operations (**) in parallel
   - This is needed only if `scalar.db.consensus_commit.isolation_level` is `SERIALIZABLE` and `scalar.db.consensus_commit.serializable_strategy` is `EXTRA_READ`
-- Commit phase: Local and remote commit operations (**) in parallel
-- (If any operation fails) rollback phase: Local and remote rollback operations (**) in parallel
+- Commit phase: Local commit operation is first executed. Remote commit operations are executed (**) in parallel after the local commit operation succeeded
+- (If any operation except for remote commit operation fails) rollback phase: Local and remote rollback operations (**) in parallel
 
 (* This implementation of local and remote operation callbacks is injected by users)\
 (** This implementation of remote operation callbacks is injected by users)
