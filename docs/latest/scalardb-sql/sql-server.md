@@ -29,56 +29,61 @@ Of course, you can archive the jar and libraries by `./gradlew distZip` and so o
 
 ## Configure ScalarDB SQL Server
 
-You need a property file holding the configuration for ScalarDB SQL Server.
-It contains two sections, ScalarDB SQL Server configurations and underlying storage/database configurations.
+You need a properties file that includes the configurations for ScalarDB SQL Server.
+The properties file must contain two sections: ScalarDB SQL Server configurations and transaction manager configurations.
 
 ```properties
 #
-# For ScalarDB SQL Server
+# ScalarDB SQL Server configurations
 #
 
-# Enable the statement cache. Default is false.
+# Enable the statement cache. The default is `false`.
 scalar.db.sql.statement_cache.enabled=false
 
-# The maximum number of cached statement. Default is 100.
+# Maximum number of cached statements. The default is `100`.
 scalar.db.sql.statement_cache.size=100
 
-# Port number for grpc server. Default port number is 60052.
+# Port number for grpc server. The default is `60052`.
 scalar.db.sql.server.port=60052
 
-# The decommissioning duration in seconds. 30 seconds by default.                 
+# Port number for the Prometheus exporter. The Prometheus exporter will not be started if a negative number is given. The default is `8080`.
+scalar.db.sql.server.prometheus_exporter_port=8080
+
+# Decommissioning duration in seconds. The default is `30`. 
 scalar.db.sql.server.decommissioning_duration_secs=30
 
 #
-# For underlying storage/database configurations
+# Transaction manager configurations
 #
 
-# Comma separated contact points. For DynamoDB, the region is specified by this parameter.
+# Transaction manager implementation. The default is `consensus-commit`.
+scalar.db.transaction_manager=consensus-commit
+
+# Storage implementation used for Consensus Commit. The default is `cassandra`.
+scalar.db.storage=cassandra
+
+# Comma-separated contact points.
 scalar.db.contact_points=localhost
 
-# Port number for all the contact points. Default port number for each database is used if empty.
+# Port number for all the contact points.
 #scalar.db.contact_port=
 
-# Credential information to access the database. For Cosmos DB, username isn't used. For DynamoDB, AWS_ACCESS_KEY_ID is specified by the username and AWS_ACCESS_SECRET_KEY is specified by the password.
+# Credential information to access the database.
 scalar.db.username=cassandra
 scalar.db.password=cassandra
 
-# Storage implementation. "cassandra" or "cosmos" or "dynamo" or "jdbc" or "grpc" can be set. Default storage is "cassandra".
-scalar.db.storage=cassandra
-
-# The type of the transaction manager. "consensus-commit" or "jdbc" or "grpc" can be set. The default is "consensus-commit".
-scalar.db.transaction_manager=consensus-commit
-
-# Isolation level used for ConsensusCommit. Either SNAPSHOT or SERIALIZABLE can be specified. SNAPSHOT is used by default.
+# Isolation level used for Consensus Commit. Either `SNAPSHOT` or `SERIALIZABLE` can be specified. The default is `SNAPSHOT`.
 scalar.db.consensus_commit.isolation_level=SNAPSHOT
 
-# Serializable strategy used for ConsensusCommit transaction manager.
-# Either EXTRA_READ or EXTRA_WRITE can be specified. EXTRA_READ is used by default.
-# If SNAPSHOT is specified in the property "scalar.db.consensus_commit.isolation_level", this is ignored.
+# Serializable strategy used for Consensus Commit.
+# Either `EXTRA_READ` or `EXTRA_WRITE` can be specified. The default is `EXTRA_READ`.
+# If `SNAPSHOT` is specified in the property `scalar.db.consensus_commit.isolation_level`, this is ignored.
 scalar.db.consensus_commit.serializable_strategy=
 ```
 
-Please see [ScalarDB SQL Configurations](configurations.md) for more details of the configurations of ScalarDB SQL Server.
+For more details about the configurations for the transaction manager, see [Transaction manager configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#transaction-manager-configurations).
+
+In addition, for more details about the configurations for ScalarDB SQL Server, see [ScalarDB SQL Configurations](configurations.md).
 
 ## Start ScalarDB SQL Server
 
