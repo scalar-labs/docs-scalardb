@@ -12,7 +12,7 @@ To build and install the ScalarDB GraphQL Server, use `./gradlew installDist`, w
 
 ## Run
 
-In addition to the properties in the [ScalarDB database.properties](https://github.com/scalar-labs/scalardb/blob/master/conf/database.properties) file, the GraphQL server reads the following:
+In addition to the configurations described in [Transaction manager configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#transaction-manager-configurations) and [Other configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#other-configurations), the GraphQL server reads the following:
 
 * `scalar.db.graphql.port` ... Port number for GraphQL server. The default is `8080`.
 * `scalar.db.graphql.path` ... Path component of the URL of the GraphQL endpoint. The default is `/graphql`.
@@ -67,12 +67,12 @@ This runs the ScalarDB GraphQL Server (you need to specify your local configurat
 
 ```console
 docker run -d -p 8080:8080 \
-  -v <ScalarDB properties file path>:/scalardb-graphql/database.properties \
+  -v <ScalarDB properties file path>:/scalardb-graphql/database.properties.tmpl \
   ghcr.io/scalar-labs/scalardb-graphql:<version>
 
 # For DEBUG logging
 docker run -d -p 8080:8080 \
-  -v <ScalarDB properties file path>:/scalardb-graphql/database.properties \
+  -v <ScalarDB properties file path>:/scalardb-graphql/database.properties.tmpl \
   -e SCALAR_DB_GRAPHQL_LOG_LEVEL=DEBUG \
   ghcr.io/scalar-labs/scalardb-graphql:<version>
 ```
