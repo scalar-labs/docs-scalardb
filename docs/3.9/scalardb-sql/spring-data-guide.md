@@ -92,8 +92,7 @@ spring.datasource.url=jdbc:scalardb:\
 &scalar.db.username=root\
 &scalar.db.password=mysql\
 &scalar.db.storage=jdbc\
-&scalar.db.consensus_commit.isolation_level=SERIALIZABLE\
-&scalar.db.consensus_commit.async_commit.enabled=false
+&scalar.db.consensus_commit.isolation_level=SERIALIZABLE
 ```
 
 ## Annotations
@@ -105,8 +104,8 @@ spring.datasource.url=jdbc:scalardb:\
 @EnableScalarDbRepositories
 public class MyApplication {
   //  These repositories are described in the next section in details
-  @Autowired GroupRepository groupRepository;
-  @Autowired UserRepository userRepository;
+  @Autowired private GroupRepository groupRepository;
+  @Autowired private UserRepository userRepository;
 ```
 
 ## Persistent entity model
@@ -182,6 +181,8 @@ public class Group {
   }
 }
 ```
+
+[This sample implementation](https://github.com/scalar-labs/scalardb-samples/tree/main/spring-data-sample/src/main/java/sample/domain/model) can be used as a reference as well.
 
 ### domain/repository/UserRepository
 
@@ -289,6 +290,8 @@ public interface GroupRepository extends ScalarDbRepository<Group, Long> {
 }
 ```
 
+[This sample implementation](https://github.com/scalar-labs/scalardb-samples/tree/main/spring-data-sample/src/main/java/sample/domain/repository) can be used as a reference as well.
+
 ### Error handling
 
 Spring Data JDBC for ScalarDB can throw the following exceptions.
@@ -312,7 +315,7 @@ These exceptions include the transaction ID, which can be useful for troubleshoo
 
 #### Multiple column PRIMARY KEY
 
-As you see in the above example, Spring Data JDBC's @Id annotation doesn't support multiple columns. So, if a table has a primary key consisting of multiple columns, users can't use the following APIs and may need to write Scalar SQL DB query in @Query annotation
+As you see in the above example, Spring Data JDBC's `@Id` annotation doesn't support multiple columns. So, if a table has a primary key consisting of multiple columns, users can't use the following APIs and may need to write Scalar SQL DB query in `@Query` annotation.
 
 - findById()
 - existsById()
@@ -461,11 +464,14 @@ spring.datasource.url=jdbc:scalardb:\
 &scalar.db.sql.default_transaction_mode=two_phase_commit_transaction
 ```
 
+#### Configuration of Spring Data transaction manager
+
+Spring Data JDBC for ScalarDB provides a custom Spring Data transaction manager to achieve 2PC transactions. You need to configure either of the following annotations to enable the custom transaction manager.
+
+- Set `transactionManager` parameter of all the `@Transactional` to `scalarDbSuspendableTransactionManager`
+- Set `transactionManagerRef` parameter of the `@EnableScalarDbRepositories` to `scalarDbSuspendableTransactionManager`
+
 #### Repository classes
-
-##### @Transaction annotation
-
-- `transactionManager` parameter: `scalarDbSuspendableTransactionManager`
 
 ##### APIs
 
@@ -474,6 +480,7 @@ Spring Data JDBC for ScalarDB supports 2 types of APIs for 2PC transaction. One 
 ###### Primitive 2PC APIs
 
 `ScalarDbTwoPcRepository` is an extension of `ScalarDbRepository` and it has the following APIs that correspond to the same name methods in ScalarDB and users can use them to build custom repository methods for 2PC transaction.
+
 - begin()
   - returns an auto-generated transaction ID
 - prepare()
@@ -530,7 +537,9 @@ public interface TwoPcPlayerRepository extends ScalarDbTwoPcRepository<Player, S
 
 The above primitive APIs are powerful and make it possible to explicitly control 2PC transaction operations in flexible and fine-grained ways. On the other hand, users need to consider which APIs to call in a proper order when using the APIs. Especially coordinator side operations for local state and remote service calls would be easily complicated.
 
-`ScalarDbTwoPcRepository` also provides `executeTwoPcTransaction` API for coordinator side that implicitly executes 2PC related operations in the following order.
+`ScalarDbTwoPcRepository` also provides some user-friendly APIs called high-level APIs to cover common use cases. With these APIs, you can develop your microservice applications more easily and securely.
+
+For the development of coordinator service in a microservice, `ScalarDbTwoPcRepository` provides `executeTwoPcTransaction` API that implicitly executes 2PC related operations in the following order. By using the API, you don’t need to think about how and when to execute transactional operations.
 
 - Start a local transaction with a global transaction ID
 - Execution phase: Local and remote CRUD operations (*)
@@ -546,6 +555,7 @@ The above primitive APIs are powerful and make it possible to explicitly control
 Rollback operations for local and remote participants will be executed when an exception is thrown from any operation.
 
 As for the error handling of `executeTwoPcTransaction()`,
+
 - The following exceptions can be thrown from the API
   - `ScalarDbTransientException`
     - Users should retry the 2PC transaction operations from the beginning when this exception is thrown
@@ -555,10 +565,31 @@ As for the error handling of `executeTwoPcTransaction()`,
 - The exceptions contain the 2PC global transaction ID. It should be useful for trouble shootings
 
 As for the implementations of Execution phase operations (in local and remote participants) and remote operations of Prepare/Validation/Commit/Rollback phases that are passed by users, those callbacks need to throw either of the exceptions when it fails:
+
 - `ScalarDbTransientException` when any transient issue happens including network disconnection and database transaction conflict
 - `ScalarDbNonTransientException` when any non-transient issue happens including authentication error and permission error
 - `ScalarDbUnknownTransactionStateException` when any exception that contains `UnknownTransactionStatusException` as a cause
 - Other exceptions thrown from the callbacks are treated as `ScalarDbTransientException`
+
+For the development of participant service in a microservice, `ScalarDbTwoPcRepository` provides the following APIs. By using the API, you don’t need to think about how and when to join, resume and suspend a transaction in details.
+
+- `joinTransactionOnParticipant`
+  - Join the transaction, execute the CRUD operations and suspend the transaction on the participant service. This API should be called first, and then `prepareTransactionOnParticipant` and following APIs are supposed to be called.
+- `resumeTransactionOnParticipant`
+  - Resume the transaction, execute the CRUD operations and suspend the transaction on the participant service. This API can be called after `joinTransactionOnParticipant` before `prepareTransactionOnParticipant` if needed.
+- `prepareTransactionOnParticipant`
+  - Prepare the transaction and suspend the transaction on the participant service. This API should be called after `joinTransactionOnParticipant`, and then `validateTransactionOnParticipant` and following APIs are supposed to be called.
+- `validateTransactionOnParticipant`
+  - Validate the transaction and suspend the transaction on the participant service. This API should be called after `prepareTransactionOnParticipant`, and then `commitTransactionOnParticipant` or `rollbackTransactionOnParticipant` is supposed to be called.
+  - This is needed only if `scalar.db.consensus_commit.isolation_level` is `SERIALIZABLE` and `scalar.db.consensus_commit.serializable_strategy` is `EXTRA_READ`
+- `commitTransactionOnParticipant`
+  - Commit the transaction on the participant service. This API should be called after `prepareTransactionOnParticipant` or `validateTransactionOnParticipant, depending on the transaction manager configurations.
+- `rollbackTransactionOnParticipant`
+  - Rollback the transaction on the participant service. This API should be called after `prepareTransactionOnParticipant` or `validateTransactionOnParticipant, depending on the transaction manager configurations.
+
+With the high-level 2PC APIs of Spring Data JDBC for ScalarDB, you can focus on the business logic by hiding complicated transaction operations inside the APIs as follows:
+
+**Coordinator service**
 
 ```java
   @Autowired private AccountRepository accountRepository;
@@ -567,10 +598,10 @@ As for the implementations of Execution phase operations (in local and remote pa
   private final List<RemotePrepareCommitPhaseOperations> remotePrepareCommitOpsList =
     Arrays.asList(
         RemotePrepareCommitPhaseOperations.createSerializable(
-          stockService::prepare,
-          stockService::validate,
-          stockService::commit,
-          stockService::rollback),
+          stockService::prepareTransaction,
+          stockService::validateTransaction,
+          stockService::commitTransaction,
+          stockService::rollbackTransaction),
         RemotePrepareCommitPhaseOperations.createSerializable(
           notificationService::prepareTxn,
           notificationService::validateTxn,
@@ -645,17 +676,66 @@ As for the implementations of Execution phase operations (in local and remote pa
             executeTwoPcTransactionUsingHighLevelApi(account, itemName, itemPrice, notificationEventName));
 ```
 
-The example application described below contains `two-pc-transaction-modes` subproject, and it can be used as a reference.
+[This sample implementation](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/order-service/src/main/java/sample/order/OrderService.java) can be used as a reference as well.
+
+**Participant service**
+
+```java
+@RestController
+public class StockController {
+  @Autowired private StockRepository stockRepository;
+
+  @PostMapping("/purchaseItem")
+  public Optional<Integer> purchaseItem(
+                               @RequestParam("transactionId") String transactionId,
+                               @RequestParam("accountId") int accountId,
+                               @RequestParam("itemName") String itemName) {
+    return stockRepository.joinTransactionOnParticipant(txId, () -> {
+        Optional<Item> item = stockRepository.findById(itemName);
+
+        ...
+
+        return Optional.of(item.price);
+    });
+  }
+
+  @PostMapping("/prepareTransaction")
+  public void prepareTransaction(@RequestParam("transactionId") String transactionId) {
+    return stockRepository.prepareTransactionOnParticipant(txId);
+  }
+
+  @PostMapping("/validateTransaction")
+  public void validateTransaction(@RequestParam("transactionId") String transactionId) {
+    return stockRepository.validateTransactionOnParticipant(txId);
+  }
+
+  @PostMapping("/commitTransaction")
+  public void commitTransaction(@RequestParam("transactionId") String transactionId) {
+    return stockRepository.commitTransactionOnParticipant(txId);
+  }
+
+  @PostMapping("/rollbackTransaction")
+  public void rollbackTransaction(@RequestParam("transactionId") String transactionId) {
+    return stockRepository.rollbackTransactionOnParticipant(txId);
+  }
+}
+```
+
+[This sample implementation](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/customer-service/src/main/java/sample/customer/CustomerService.java) uses gRPC not REST API, but it can be used as a reference as well.
 
 #### How to use both 2PC and normal transaction modes in a JVM application
 
 In most cases, only one of the 2PC and normal transaction modes is supposed to be used in an application. But there might be some use cases for using both transaction modes. For instance, assuming a service that is used as a participant in 2PC also has some APIs that are directly called by other services or clients without 2PC protocol. In this case, developers would want to simply use normal transaction mode for the APIs not used in 2PC.
 
-To achieve this use case, different `scalar.db.sql.default_transaction_mode` parameters for 2PC and normal transaction modes need to be passed to Spring Data JDBC framework via `spring.datasource.url` property. Spring Data JDBC doesn't provide a simple way to use multiple datasource configurations, though. But with some custom configuration classes, users can use both 2PC and normal transaction modes in a JVM application using multiple datasource configurations. The example application described below contains `mixed-transaction-modes` subproject, and it can be used as a reference.
+To achieve this use case, different `scalar.db.sql.default_transaction_mode` parameters for 2PC and normal transaction modes need to be passed to Spring Data JDBC framework via `spring.datasource.url` property. Spring Data JDBC doesn't provide a simple way to use multiple datasource configurations, though. But with some custom configuration classes, users can use both 2PC and normal transaction modes in a JVM application using multiple datasource configurations.
 
-## Example application
+## Sample application
 
-[Example application](../spring-data/example) is a JVM application that uses Spring Data JDBC for ScalarDB. It only serves as a reference and does not necessarily meet production code standards.
+You can see the following sample applications that use Spring Data JDBC for ScalarDB. It only serves as a reference and does not necessarily meet production code standards.
+
+- [Sample application of Spring Data JDBC for ScalarDB](https://github.com/scalar-labs/scalardb-samples/tree/main/spring-data-sample)
+- [Sample application of Spring Data JDBC for ScalarDB with Multi-storage Transactions](https://github.com/scalar-labs/scalardb-samples/tree/main/spring-data-multi-storage-transaction-sample)
+- [Sample application of Spring Data JDBC for ScalarDB with Microservice Transactions](https://github.com/scalar-labs/scalardb-samples/tree/main/spring-data-microservice-transaction-sample)
 
 ## How it works
 
