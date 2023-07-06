@@ -4,6 +4,7 @@ This document describes the ScalarDB Cluster SQL gRPC API.
 
 ScalarDB Cluster SQL provides a Java API that uses the gRPC API internally.
 If you use Java or a JVM language, you can use the Java API instead of the ScalarDB Cluster SQL gRPC API directly.
+For details about the Java API, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.md).
 
 For details about the services and messages for the ScalarDB Cluster gRPC API, see the definitions in [scalardb-cluster.proto](../rpc/src/main/proto/scalardb-cluster.proto).
 
