@@ -1,6 +1,6 @@
 # Developer Guides for ScalarDB
 
-The following are a list of developer guides for ScalarDB:
+The following is a list of developer guides for ScalarDB:
 
 - [ScalarDB Data Loader API](scalardb-data-loader/easy-to-start.md)
 - [ScalarDB Java API Guide](api-guide.md)
