@@ -7,6 +7,20 @@ This tutorial describes how to create a sample application for ScalarDB Analytic
 - Docker
 - psql
 
+## Clone the ScalarDB samples repository
+
+Open Terminal, then clone the ScalarDB samples repository by running the following command:
+
+```shell
+$ git clone https://github.com/scalar-labs/scalardb-samples
+```
+
+Then, go to the directory with this sample by running the following command:
+
+```shell
+$ cd scalardb-samples/scalardb-analytics-postgresql-sample
+```
+
 ## Set up the database
 
 First, you must set up the database to run analytical queries with ScalarDB Analytics with PostgreSQL. If you have not set up the database yet, please follow the instructions in [Getting Started](https://scalardb.scalar-labs.com/docs/3.9/scalardb-analytics-postgresql/getting-started.md).

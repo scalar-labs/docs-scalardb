@@ -212,6 +212,20 @@ spring.datasource.url=jdbc:scalardb:\
 
 ## Setup
 
+### Clone the ScalarDB samples repository
+
+Open Terminal, then clone the ScalarDB samples repository by running the following command:
+
+```shell
+$ git clone https://github.com/scalar-labs/scalardb-samples
+```
+
+Then, go to the directory with this sample by running the following command:
+
+```shell
+$ cd scalardb-samples/spring-data-microservice-transaction-sample
+```
+
 ### Start Cassandra and MySQL
 
 To start Cassandra and MySQL, you need to run the following `docker-compose` command:
