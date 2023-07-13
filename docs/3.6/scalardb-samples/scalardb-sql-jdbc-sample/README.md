@@ -111,6 +111,20 @@ scalar.db.username=cassandra
 scalar.db.password=cassandra
 ```
 
+## Clone the ScalarDB samples repository
+
+Open Terminal, then clone the ScalarDB samples repository by running the following command:
+
+```shell
+$ git clone https://github.com/scalar-labs/scalardb-samples
+```
+
+Then, go to the directory with this sample by running the following command:
+
+```shell
+$ cd scalardb-samples/scalardb-sql-jdbc-sample
+```
+
 Since this sample application uses Cassandra, as shown above, you need to configure your settings for Cassandra in this configuration.
 
 ## Setup Cassandra

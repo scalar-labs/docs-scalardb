@@ -22,6 +22,20 @@ You need a Personal Access Token (PAT) to access the Docker image of ScalarDB Gr
 
 This section describes the steps to start the database and the GraphQL server and build the client application.
 
+### Clone the ScalarDB samples repository
+
+Open Terminal, then clone the ScalarDB samples repository by running the following command:
+
+```shell
+$ git clone https://github.com/scalar-labs/scalardb-samples
+```
+
+Then, go to the directory with this sample by running the following command:
+
+```shell
+$ cd scalardb-samples/scalardb-graphql-sample
+```
+
 ### Start Cassandra
 
 First, let's start the Cassandra server with `docker-compose`:

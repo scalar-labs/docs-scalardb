@@ -33,6 +33,22 @@ scalar.db.password=cassandra
 scalar.db.storage=cassandra
 ```
 
+#### Clone the ScalarDB samples repository
+
+Open Terminal, then clone the ScalarDB samples repository by running the following command:
+
+```shell
+$ git clone https://github.com/scalar-labs/scalardb-samples
+```
+
+Then, go to the directory with this sample by running the following command:
+
+```shell
+$ cd scalardb-samples/scalardb-server-sample
+```
+
+#### Start Cassandra
+
 To start Cassandra and ScalarDB Server, we use the following command.
 Please note that we should wait around a bit more than one minute because ScalarDB container has to wait for Cassandra container to be fully started.
 ```shell
