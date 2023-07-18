@@ -19,7 +19,7 @@ The primary design goal of Scalar DB is achieving ACID transaction capability wi
 
 Scalar DB is composed of universal transaction manager, storage abstraction, and storage adapters. Universal transaction manager and storage abstraction are storage-agnostic. On the other hand, storage adapters are storage-specific so there is an adapter for each storage implementation.
 
-![](/images/software_stack.png)
+![](images/software_stack.png)
 
 ## Data Model
 
