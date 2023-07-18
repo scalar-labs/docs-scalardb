@@ -186,25 +186,24 @@ try {
 
   // Commit the transaction
   connection.commit();
-} catch (SQLTransientException e) {
-  // If you catch SQLTransientException, it indicates a transient and retryable error occurs
-  // (e.g., a transaction conflict), so you can retry the transaction from the beginning
-
-  // Rollback the transaction
-  connection.rollback();
 } catch (SQLException e) {
-  // If you catch SQLException, it indicates that an unexpected failure occurs, so you should
-  // cancel or retry the transaction after the failure/error is fixed
-
   if (e.getErrorCode() == 301) {
-    // The error code 301 indicates that you catch UnknownTransactionStatusException.
-    // If you catch UnknownTransactionStatusException when committing the transaction, you are
-    // not sure if the transaction succeeds or not. In such a case, you need to check if the
-    // transaction is committed successfully or not and retry it if it failed. How to identify a
-    // transaction status is delegated to users
+    // The error code 301 indicates that you catch `UnknownTransactionStatusException`.
+    // If you catch `UnknownTransactionStatusException`, it indicates that the status of the 
+    // transaction, whether it has succeeded or not, is unknown. In such a case, you need to check
+    // if the transaction is committed successfully or not and retry it if it failed. How to 
+    // identify a transaction status is delegated to users
   } else {
+    // For other cases, you can try retrying the transaction
+
     // Rollback the transaction
     connection.rollback();
+
+    // The cause of the exception can be `TransactionRetryableException` or the other
+    // exceptions. For `TransactionRetryableException`, you can basically retry the transaction.
+    // However, for the other exceptions, the transaction may still fail if the cause of the
+    // exception is nontransient. For such a case, you need to limit the number of retries and
+    // give up retrying
   }
 }
 ```

@@ -292,7 +292,7 @@ public interface GroupRepository extends ScalarDbRepository<Group, Long> {
 
 [This sample implementation](https://github.com/scalar-labs/scalardb-samples/tree/main/spring-data-sample/src/main/java/sample/domain/repository) can be used as a reference as well.
 
-### Error handling
+## Error handling
 
 Spring Data JDBC for ScalarDB can throw the following exceptions.
 
@@ -311,9 +311,9 @@ Spring Data JDBC for ScalarDB can throw the following exceptions.
 
 These exceptions include the transaction ID, which can be useful for troubleshooting purposes.
 
-### Limitations
+## Limitations
 
-#### Multiple column PRIMARY KEY
+### Multiple column PRIMARY KEY
 
 As you see in the above example, Spring Data JDBC's `@Id` annotation doesn't support multiple columns. So, if a table has a primary key consisting of multiple columns, users can't use the following APIs and may need to write Scalar SQL DB query in `@Query` annotation.
 
@@ -324,7 +324,7 @@ As you see in the above example, Spring Data JDBC's `@Id` annotation doesn't sup
 - deleteById(ID id)
 - deleteAllById(Iterable<? extends ID> ids)
 
-#### One-to-many relationships between two entities
+### One-to-many relationships between two entities
 
 Spring Data JDBC supports one-to-many relationships. But it implicitly deletes and re-creates all the associated child records even if only parent's attributes are changed. This behavior would result in a performance penalty. Additionally, certain use cases of the one-to-many relationship in Spring Data JDBC for ScalarDB fail because of the combination with some limitations of ScalarDB SQL. Considering those concerns and limitations, it's not recommended to use the feature in Spring Data JDBC for ScalarDB.
 
@@ -728,6 +728,74 @@ public class StockController {
 In most cases, only one of the 2PC and normal transaction modes is supposed to be used in an application. But there might be some use cases for using both transaction modes. For instance, assuming a service that is used as a participant in 2PC also has some APIs that are directly called by other services or clients without 2PC protocol. In this case, developers would want to simply use normal transaction mode for the APIs not used in 2PC.
 
 To achieve this use case, different `scalar.db.sql.default_transaction_mode` parameters for 2PC and normal transaction modes need to be passed to Spring Data JDBC framework via `spring.datasource.url` property. Spring Data JDBC doesn't provide a simple way to use multiple datasource configurations, though. But with some custom configuration classes, users can use both 2PC and normal transaction modes in a JVM application using multiple datasource configurations.
+
+#### Limitations
+
+##### `@Transactional` methods don't implicitly call `commit()`
+
+In microservice applications with ScalarDB, commits must be explicitly invoked by a coordinator service, not be locally triggered by the Spring Data transaction framework when exiting `@Transactional` methods. The `@Transactional(transactionManager = "scalarDbSuspendableTransactionManager")` annotation prevents such local commits.
+
+This extended behavior may confuse developers who expect `@Transactional` methods to implicitly commit transactions.
+
+For instance, assuming you want to use the `@Transactional` annotation on methods of a service class, the following code works in the **normal** transaction mode.
+
+```java
+@Service
+public class SampleService {
+
+  ...
+
+  // For the normal transaction mode
+  @Transactional
+  // For the 2PC transaction mode
+  // @Transactional(transactionManager = "scalarDbSuspendableTransactionManager")
+  public void repayment(int customerId, int amount) {
+    Customer customer = customerRepository.getById(customerId);
+
+    int updatedCreditTotal = customer.creditTotal - amount;
+
+    // Check if over repayment or not
+    if (updatedCreditTotal < 0) {
+      throw new RuntimeException(
+          String.format(
+              "Over repayment. creditTotal:%d, payment:%d", customer.creditTotal, amount));
+    }
+
+    // Reduce credit_total for the customer
+    customerRepository.update(customer.withCreditTotal(updatedCreditTotal));
+  }
+}
+```
+
+However, that code doesn't work in the 2PC transaction mode even with `transactionManager = "scalarDbSuspendableTransactionManager"`. Instead, use `ScalarDbTwoPcRepository.executeOneshotOperations()` as follows.
+
+```java
+@Service
+public class SampleService {
+
+  ...
+
+  public void repayment(int customerId, int amount) {
+    customerRepository.executeOneshotOperations(() -> {
+      Customer customer = customerRepository.getById(customerId);
+
+      int updatedCreditTotal = customer.creditTotal - amount;
+
+      // Check if over repayment or not
+      if (updatedCreditTotal < 0) {
+        throw new RuntimeException(
+            String.format(
+                "Over repayment. creditTotal:%d, payment:%d", customer.creditTotal, amount));
+      }
+
+      // Reduce credit_total for the customer
+      customerRepository.update(customer.withCreditTotal(updatedCreditTotal));
+
+      return null;
+    });
+  }
+}
+```
 
 ## Sample application
 

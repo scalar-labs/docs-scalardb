@@ -1,6 +1,6 @@
 # ScalarDB Server
 
-ScalarDB Server is a gRPC server that implements ScalarDB interface. 
+ScalarDB Server is a gRPC server that implements ScalarDB interface.
 With ScalarDB Server, you can use ScalarDB features from multiple programming languages that are supported by gRPC.
 
 Currently, we provide only a Java client officially, and we will support other language clients officially in the future.
@@ -19,19 +19,13 @@ ScalarDB Server is written in Java. So the following software is required to run
 
 We have Docker images in [our repository](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-server) and zip archives of ScalarDB Server available in [releases](https://github.com/scalar-labs/scalardb/releases).
 
-If you are interested in building from source, run the following command: 
+If you are interested in building from source, run the following command:
 
 ```shell
 $ ./gradlew installDist
 ```
 
 Of course, you can archive the jar and libraries by `./gradlew distZip` and so on.
-
-Also, you can build a Docker image from the source as follows.
-
-```shell
-$ ./gradlew :server:docker
-```
 
 ## Configure ScalarDB Server
 
@@ -87,13 +81,6 @@ scalar.db.consensus_commit.isolation_level=SNAPSHOT
 scalar.db.consensus_commit.serializable_strategy=
 ```
 
-You can set some sensitive data (e.g., credentials) as the values of properties using environment variables.
-
-```properties
-scalar.db.username=${env:SCALAR_DB_USERNAME}
-scalar.db.password=${env:SCALAR_DB_PASSWORD}
-```
-
 For details about transaction manager configurations, see [ScalarDB Configurations](configurations.md).
 
 ## Start ScalarDB Server
@@ -107,17 +94,17 @@ $ docker pull ghcr.io/scalar-labs/scalardb-server:<version>
 
 And then, you can start ScalarDB Server with the following command:
 ```shell
-$ docker run -v <your local property file path>:/scalardb/server/database.properties -d -p 60051:60051 -p 8080:8080 ghcr.io/scalar-labs/scalardb-server:<version>
+$ docker run -v <your local property file path>:/scalardb/server/database.properties.tmpl -d -p 60051:60051 -p 8080:8080 ghcr.io/scalar-labs/scalardb-server:<version>
 ```
 
 You can also start it with DEBUG logging as follows:
 ```shell
-$ docker run -v <your local property file path>:/scalardb/server/database.properties -e SCALAR_DB_LOG_LEVEL=DEBUG -d -p 60051:60051 -p 8080:8080 ghcr.io/scalar-labs/scalardb-server:<version>
+$ docker run -v <your local property file path>:/scalardb/server/database.properties.tmpl -e SCALAR_DB_LOG_LEVEL=DEBUG -d -p 60051:60051 -p 8080:8080 ghcr.io/scalar-labs/scalardb-server:<version>
 ````
 
 You can also start it with your custom log configuration as follows:
 ```shell
-$ docker run -v <your local property file path>:/scalardb/server/database.properties -v <your custom log4j2 configuration file path>:/scalardb/server/log4j2.properties -d -p 60051:60051 -p 8080:8080 ghcr.io/scalar-labs/scalardb-server:<version>
+$ docker run -v <your local property file path>:/scalardb/server/database.properties.tmpl -v <your custom log4j2 configuration file path>:/scalardb/server/log4j2.properties.tmpl -d -p 60051:60051 -p 8080:8080 ghcr.io/scalar-labs/scalardb-server:<version>
 ```
 
 You can also start it with environment variables as follows:
@@ -127,7 +114,7 @@ $ docker run --env SCALAR_DB_CONTACT_POINTS=cassandra --env SCALAR_DB_CONTACT_PO
 
 You can also start it with JMX as follows:
 ```shell
-$ docker run -v <your local property file path>:/scalardb/server/database.properties -e JAVA_OPTS="-Dlog4j.configurationFile=file:log4j2.properties -Djava.rmi.server.hostname=<your container hostname or IP address> -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.port=9990 -Dcom.sun.management.jmxremote.rmi.port=9990 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false" -d -p 60051:60051 -p 8080:8080 -p 9990:9990 ghcr.io/scalar-labs/scalardb-server:<version>
+$ docker run -v <your local property file path>:/scalardb/server/database.properties.tmpl -e JAVA_OPTS="-Dlog4j.configurationFile=file:log4j2.properties -Djava.rmi.server.hostname=<your container hostname or IP address> -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.port=9990 -Dcom.sun.management.jmxremote.rmi.port=9990 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false" -d -p 60051:60051 -p 8080:8080 -p 9990:9990 ghcr.io/scalar-labs/scalardb-server:<version>
 ```
 
 ### Zip archives

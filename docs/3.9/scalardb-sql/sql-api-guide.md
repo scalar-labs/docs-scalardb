@@ -270,34 +270,32 @@ try {
 
   // Commit the transaction
   sqlSession.commit();
-} catch (TransactionRetryableException e) {
-  // If you catch TransactionRetryableException, it indicates a retryable error occurs (e.g., a
-  // transaction conflict), so you can retry the transaction from the beginning
-
-  // Rollback the transaction
-  sqlSession.rollback();
 } catch (UnknownTransactionStatusException e) {
-  // If you catch UnknownTransactionStatusException when committing the transaction, you are not
-  // sure if the transaction succeeds or not. In such a case, you need to check if the
-  // transaction is committed successfully or not and retry it if it failed. How to identify a
+  // If you catch `UnknownTransactionStatusException`, it indicates that the status of the 
+  // transaction, whether it has succeeded or not, is unknown. In such a case, you need to check if
+  // the transaction is committed successfully or not and retry it if it failed. How to identify a
   // transaction status is delegated to users
-} catch (Exception e) {
-  // If you catch an exceptions other than the above, it indicates that an unexpected failure
-  // occurs, so you should cancel or retry the transaction after the failure/error is fixed
+} catch (SqlException e) {
+  // For other exceptions, you can try retrying the transaction
 
   // Rollback the transaction
   sqlSession.rollback();
+
+  // For `TransactionRetryableException`, you can basically retry the transaction. However, for
+  // the other exceptions, the transaction may still fail if the cause of the exception is
+  // nontransient. For such a case, you need to limit the number of retries and give up retrying
 }
 ```
 
-If you catch `TransactionRetryableException`, it indicates that a retryable error occurs (e.g., a transaction conflict), so you can retry the transaction from the beginning, preferably with a well-adjusted exponential backoff based on your application and environment.
-
-If you catch `UnknownTransactionStatusException` when committing the transaction, you are not sure if the transaction succeeds or not.
+If you catch `UnknownTransactionStatusException`, it indicates that the status of the transaction, whether it has succeeded or not, is unknown.
 In such a case, you need to check if the transaction is committed successfully or not and retry it if it fails.
 How to identify a transaction status is delegated to users.
 You may want to create a transaction status table and update it transactionally with other application data so that you can get the status of a transaction from the status table.
 
-If you catch an exception other than the above, it indicates that an unexpected failure occurs, so you should cancel or retry the transaction after the failure/error is fixed.
+If you catch another exception, you can try retrying the transaction.
+For `TransactionRetryableException`, you can basically retry the transaction.
+However, for the other exceptions, the transaction may still fail if the cause of the exception is nontransient. 
+For such a case, you need to limit the number of retries and give up retrying.
 
 ### Two-phase Commit Transaction Mode
 
@@ -333,23 +331,20 @@ try {
 
   // Commit the transaction
   sqlSession.commit();
-} catch (TransactionRetryableException e) {
-  // If you catch TransactionRetryableException, it indicates a retryable error occurs (e.g., a
-  // transaction conflict), so you can retry the transaction from the beginning
-
-  // Rollback the transaction
-  sqlSession.rollback();
 } catch (UnknownTransactionStatusException e) {
-  // If you catch UnknownTransactionStatusException when committing the transaction, you are not
-  // sure if the transaction succeeds or not. In such a case, you need to check if the
-  // transaction is committed successfully or not and retry it if it failed. How to identify a
-  // transaction status is delegated to users
-} catch (Exception e) {
-  // If you catch an exceptions other than the above, it indicates that an unexpected failure
-  // occurs, so you should cancel or retry the transaction after the failure/error is fixed
-
+  // If you catch `UnknownTransactionStatusException` when committing the transaction, it
+  // indicates that the status of the transaction, whether it has succeeded or not, is unknown.
+  // In such a case, you need to check if the transaction is committed successfully or not and
+  // retry it if it failed. How to identify a transaction status is delegated to users
+} catch (SqlException e) {
+  // For other exceptions, you can try retrying the transaction
+    
   // Rollback the transaction
   sqlSession.rollback();
+
+  // For `TransactionRetryableException`, you can basically retry the transaction. However, for
+  // the other exceptions, the transaction may still fail if the cause of the exception is
+  // nontransient. For that case, you need to limit the number of retries and give up retrying
 }
 ```
 
