@@ -1,4 +1,4 @@
-# Getting Started with ScalarDB Cluster with Python
+# Getting Started with Using Python for ScalarDB Cluster
 
 This document explains how to write gRPC client code for ScalarDB Cluster by using Python.
 
@@ -15,6 +15,7 @@ This repository is available only to users with a commercial license and permiss
 To get a license and permission, please [contact us](https://scalar-labs.com/contact_us/).
 
 ## Sample application
+
 This tutorial illustrates the process of creating an electronic money application, where money can be transferred between accounts.
 
 ## Step 1. Create `schema.json`
@@ -90,9 +91,9 @@ Let's install the gRPC packages with the `pip` command:
 $ pip install grpcio grpcio-tools
 ```
 
-## Step 5. Generate stub code for ScalarDB Cluster gRPC
+## Step 5. Generate the stub code for ScalarDB Cluster gRPC
 
-To communicate with the gRPC server of the ScalarDB Cluster, you will need to generate the stub code from the proto file.
+To communicate with the gRPC server for ScalarDB Cluster, you will need to generate the stub code from the proto file.
 
 First, download the [`scalardb-cluster.proto`](https://github.com/scalar-labs/scalardb-cluster/blob/v3.9.1/rpc/src/main/proto/scalardb-cluster.proto) file, then save it in the working directory.
 
@@ -108,10 +109,9 @@ The following files will be generated:
 - `scalardb_cluster_pb2.pyi`
 - `scalardb_cluster_pb2_grpc.py`
 
-
 ## Step 6. Write a sample application
 
-Here is the sample Python application (`electronic_money.py`) that uses the stub code. This program does the same thing as the `ElectronicMoney.java` program in [Getting Started with ScalarDB](https://scalardb.scalar-labs.com/docs/latest/getting-started-with-scalardb/). Note that you have to update the value of `SERVER_ADDRESS` based on the `EXTERNAL-IP` value of the ScalarDB Cluster `LoadBalancer` service in your environment.
+The following is the sample Python application (`electronic_money.py`) that uses the stub code. This program does the same thing as the `ElectronicMoney.java` program in [Getting Started with ScalarDB](https://scalardb.scalar-labs.com/docs/latest/getting-started-with-scalardb/). Note that you have to update the value of `SERVER_ADDRESS` based on the `EXTERNAL-IP` value of the ScalarDB Cluster `LoadBalancer` service in your environment.
 
 ```python
 import argparse
