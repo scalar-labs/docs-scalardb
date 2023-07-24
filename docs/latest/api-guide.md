@@ -305,18 +305,31 @@ DistributedTransaction transaction = transactionManager.start("<transaction ID>"
 
 Note that you must guarantee uniqueness of the transaction ID in this case.
 
+### Join a transaction
+
+You can join an ongoing transaction that has already begun with specifying a transaction ID as follows:
+
+```java
+// Join a transaction
+DistributedTransaction transaction = transactionManager.join("<transaction ID>");
+```
+
+This is particularly useful in a stateful application where a transaction spans across multiple client requests.
+In such a scenario, the application can start a transaction during the first client request.
+Then, in the subsequent client requests, it can join the ongoing transaction using the `join()` method.
+
 ### Resume a transaction
 
-You can resume a transaction you have already begun with specifying a transaction ID as follows:
+You can resume an ongoing transaction you have already begun with specifying a transaction ID as follows:
 
 ```java
 // Resume a transaction
 DistributedTransaction transaction = transactionManager.resume("<transaction ID>");
 ```
 
-It is helpful in a stateful application where a transaction spans multiple client requests.
-In that case, the application can begin a transaction in the first client request.
-And in the following client requests, it can resume the transaction with the `resume()` method.
+This is particularly useful in a stateful application where a transaction spans across multiple client requests.
+In such a scenario, the application can start a transaction during the first client request.
+Then, in the subsequent client requests, it can resume the ongoing transaction using the `resume()` method.
 
 ### CRUD operations
 
@@ -607,6 +620,79 @@ Delete delete =
 transaction.delete(delete);
 ```
 
+#### Put and Delete with a condition
+You can write arbitrary conditions (e.g., a bank account balance must be equal to or more than zero) that you require a transaction to meet before being committed by having logic that checks the conditions in the transaction.
+Alternatively, you can write simple conditions in a mutation operation, such as Put and Delete.
+
+When a Put or Delete operation includes a condition, the operation is executed only if the specified condition is met.
+If the condition fails to be satisfied when the operation is executed, an exception called `UnsatisfiedConditionException` is thrown.
+
+##### Conditions for Put
+You can specify a condition in a Put operation as follows:
+
+```java
+// Build a condition
+MutationCondition condition =
+    ConditionBuilder.putIf(ConditionBuilder.column("c4").isEqualToFloat(0.0F))
+        .and(ConditionBuilder.column("c5").isEqualToDouble(0.0))
+        .build();
+
+Put put =
+    Put.newBuilder()
+        .namespace("ns")
+        .table("tbl")
+        .partitionKey(partitionKey)
+        .clusteringKey(clusteringKey)
+        .floatValue("c4", 1.23F)
+        .doubleValue("c5", 4.56)
+        .condition(condition) // condition
+        .build();
+
+// Execute the Put operation
+transaction.put(put);
+```
+
+In addition to using the `putIf` condition, you can specify the `putIfExists` and `putIfNotExists` conditions as follows:
+
+```java
+// Build a putIfExists condition
+MutationCondition putIfExistsCondition = ConditionBuilder.putIfExists();
+
+// Build a putIfNotExists condition
+MutationCondition putIfNotExistsCondition = ConditionBuilder.putIfNotExists();
+```
+
+##### Conditions for Delete
+
+You can specify a condition in a Delete operation as follows:
+
+```java
+// Build a condition
+MutationCondition condition =
+    ConditionBuilder.deleteIf(ConditionBuilder.column("c4").isEqualToFloat(0.0F))
+        .and(ConditionBuilder.column("c5").isEqualToDouble(0.0))
+        .build();
+
+Delete delete =
+    Delete.newBuilder()
+        .namespace("ns")
+        .table("tbl")
+        .partitionKey(partitionKey)
+        .clusteringKey(clusteringKey)
+        .condition(condition)  // condition
+        .build();
+
+// Execute the Delete operation
+transaction.delete(delete);
+```
+
+In addition to using the `deleteIf` condition, you can specify the `deleteIfExists` condition as follows:
+
+```java
+// Build a deleteIfExists condition
+MutationCondition deleteIfExistsCondition = ConditionBuilder.deleteIfExists();
+```
+
 #### Mutate operation
 
 Mutate is an operation to execute multiple mutations (Put and Delete operations).
@@ -672,9 +758,7 @@ Scan scanUsingSpecifiedNamespace =
 
 #### Notes
 
-- All the builders of the CRUD operations can specify consistency with the `consistency()` methods, but it's ignored, and the `LINEARIZABLE` consistency level is always used in transactions.
-- Also, the builders of the mutation operations (Put and Delete operations) can specify a condition with the `condition()` methods, but it's ignored, too. 
-Please program such conditions in a transaction if you want to implement conditional mutation.
+Although all the builders of the CRUD operations can specify consistency by using the `consistency()` methods, those methods are ignored. Instead, the `LINEARIZABLE` consistency level is always used in transactions.
 
 ### Commit a transaction
 
@@ -747,6 +831,20 @@ public class Sample {
 
         // Commit the transaction
         transaction.commit();
+      } catch (UnsatisfiedConditionException e) {
+        // You need to handle `UnsatisfiedConditionException` only if a mutation operation specifies
+        // a condition. This exception indicates the condition for the mutation operation is not met
+
+        try {
+          transaction.rollback();
+        } catch (RollbackException ex) {
+          // Rolling back the transaction failed. As the transaction should eventually recover, you
+          // don't need to do anything further. You can simply log the occurrence here
+        }
+
+        // You can handle the exception here, according to your application requirements
+
+        return;
       } catch (UnknownTransactionStatusException e) {
         // If you catch `UnknownTransactionStatusException` when committing the transaction, it
         // indicates that the status of the transaction, whether it has succeeded or not, is
@@ -785,7 +883,11 @@ If you catch `TransactionNotFoundException`, it indicates that the transaction h
 
 The APIs for CRUD operations (`get()`/`scan()`/`put()`/`delete()`/`mutate()`) could throw `CrudException` and `CrudConflictException`.
 If you catch `CrudException`, it indicates that the transaction CRUD operation has failed due to transient or nontransient faults. You can try retrying the transaction from the beginning, but the transaction may still fail if the cause is nontransient.
-If you catch `CrudConflictException`, it indicates that the transaction CRUD operation has failed due to transient faults (e.g., a conflict error). You can retry the transaction from the beginning.
+If you catch `CrudConflictException`, it indicates that the transaction CRUD operation has failed due to transient faults (e.g., a conflict error). You can retry the transaction from the beginning. 
+
+The APIs for mutation operations (`put()`/`delete()`/`mutate()`) could also throw `UnsatisfiedConditionException`.
+If you can this exception, it indicates that the condition for the mutation operation is not met.
+You can handle this exception according to your application requirements.
 
 Also, the `commit()` API could throw `CommitException`, `CommitConflictException`, and `UnknownTransactionStatusException`.
 If you catch `CommitException`, it indicates that committing the transaction fails due to transient or nontransient faults. You can try retrying the transaction from the beginning, but the transaction may still fail if the cause is nontransient.
@@ -800,6 +902,7 @@ This exception indicates that the transaction associated with the specified ID w
 In such cases, you can retry the transaction from the beginning since the cause of this exception is basically transient.
 
 In the sample code, for `UnknownTransactionStatusException`, the transaction doesn't retry because the cause of the exception is nontransient.
+Also, for `UnsatisfiedConditionException`, the transaction doesn't retry because how to handle this exception depends on your application requirements.
 For other exceptions, the transaction tries retrying because the cause of the exception is transient or nontransient.
 If the cause of the exception is transient, the transaction may succeed if you retry it.
 However, if the cause of the exception is nontransient, the transaction may still fail even if you retry it.

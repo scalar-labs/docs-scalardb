@@ -506,6 +506,15 @@ public class Sample {
 
         // Commit the transaction
         commit(transaction1, transaction2);
+      } catch (UnsatisfiedConditionException e) {
+        // You need to handle `UnsatisfiedConditionException` only if a mutation operation specifies
+        // a condition. This exception indicates the condition for the mutation operation is not met
+
+        rollback(transaction1, transaction2);
+
+        // You can handle the exception here, according to your application requirements
+
+        return;
       } catch (UnknownTransactionStatusException e) {
         // If you catch `UnknownTransactionStatusException` when committing the transaction, it
         // indicates that the status of the transaction, whether it has succeeded or not, is
@@ -650,6 +659,10 @@ The APIs for CRUD operations (`get()`, `scan()`, `put()`, `delete()`, and `mutat
 If you catch `CrudException`, it indicates that the transaction CRUD operation has failed due to transient or nontransient faults. You can try retrying the transaction from the beginning, but the transaction may still fail if the cause is nontransient.
 If you catch `CrudConflictException`, it indicates that the transaction CRUD operation has failed due to transient faults (e.g., a conflict error). You can retry the transaction from the beginning.
 
+The APIs for mutation operations (`put()`, `delete()`, and `mutate()`) could also throw `UnsatisfiedConditionException`.
+If you catch this exception, it indicates that the condition for the mutation operation is not met.
+You can handle this exception according to your application requirements.
+
 The `prepare()` API could throw `PreparationException` or `PreparationConflictException`.
 If you catch `PreparationException`, it indicates that preparing the transaction fails due to transient or nontransient faults. You can try retrying the transaction from the beginning, but the transaction may still fail if the cause is nontransient.
 If you catch `PreparationConflictException`, it indicates that preparing the transaction has failed due to transient faults (e.g., a conflict error). You can retry the transaction from the beginning.
@@ -671,6 +684,7 @@ This exception indicates that the transaction associated with the specified ID w
 In either case, you can retry the transaction from the beginning since the cause of this exception is basically transient.
 
 In the sample code, for `UnknownTransactionStatusException`, the transaction is not retried because the cause of the exception is nontransient.
+Also, for `UnsatisfiedConditionException`, the transaction is not retried because how to handle this exception depends on your application requirements.
 For other exceptions, the transaction is retried because the cause of the exception is transient or nontransient.
 If the cause of the exception is transient, the transaction may succeed if you retry it.
 However, if the cause of the exception is nontransient, the transaction may still fail even if you retry it.
