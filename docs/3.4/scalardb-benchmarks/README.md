@@ -1,3 +1,5 @@
+{% include out-of-support.html %}
+
 # ScalarDB Benchmarks
 
 This repository contains benchmark programs for ScalarDB.

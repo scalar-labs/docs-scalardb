@@ -1,3 +1,5 @@
+{% include out-of-support.html %}
+
 # ScalarDL Deployment Sample on Kubernetes (Auditor mode)
 
 ## Version

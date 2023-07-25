@@ -1,3 +1,5 @@
+{% include out-of-support.html %}
+
 # Multi-storage Transactions
 
 Scalar DB transactions can span multiple storages/databases while preserving ACID property with a

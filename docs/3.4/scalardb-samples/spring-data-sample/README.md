@@ -1,3 +1,5 @@
+{% include out-of-support.html %}
+
 # Sample application of Spring Data JDBC for ScalarDB
 
 This tutorial describes how to create a sample Spring Boot application by using Spring Data JDBC for ScalarDB.
