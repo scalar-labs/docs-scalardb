@@ -1,4 +1,6 @@
-## Scalar DB design document
+{% include out-of-support.html %}
+
+# Scalar DB design document
 
 ## Introduction
 

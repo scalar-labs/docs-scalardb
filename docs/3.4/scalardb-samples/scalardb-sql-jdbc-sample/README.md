@@ -1,3 +1,5 @@
+{% include out-of-support.html %}
+
 # ScalarDB SQL (JDBC) Sample
 
 This tutorial describes how to create a sample application by using ScalarDB SQL (JDBC).
