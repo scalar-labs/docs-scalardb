@@ -1,5 +1,3 @@
-{% include out-of-support.html %}
-
 # Release Flow
 
 ## Requirements

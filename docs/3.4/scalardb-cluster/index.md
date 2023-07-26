@@ -1,5 +1,3 @@
-{% include out-of-support.html %}
-
 # ScalarDB Cluster
 
 ScalarDB Cluster is a distributed transaction state manager for ScalarDB.

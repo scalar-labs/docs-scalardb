@@ -1,5 +1,3 @@
-{% include out-of-support.html %}
-
 # How to deploy ScalarDB GraphQL
 
 This document explains how to deploy ScalarDB GraphQL using Scalar Helm Charts. You must prepare your custom values file. Please refer to the following document for more details on the custom values file for ScalarDB GraphQL.

@@ -1,5 +1,3 @@
-{% include out-of-support.html %}
-
 # Index
 
 ## For users

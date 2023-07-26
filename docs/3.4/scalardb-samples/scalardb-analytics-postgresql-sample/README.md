@@ -1,5 +1,3 @@
-{% include out-of-support.html %}
-
 # Sample Application for ScalarDB Analytics with PostgreSQL
 
 This tutorial describes how to create a sample application for ScalarDB Analytics with PostgreSQL.

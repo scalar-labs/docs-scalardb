@@ -1,5 +1,3 @@
-{% include out-of-support.html %}
-
 # Configure a custom values file for ScalarDB Server
 
 This document explains how to create your custom values file for the ScalarDB Server chart. If you want to know the details of the parameters, please refer to the [README](https://github.com/scalar-labs/helm-charts/blob/main/charts/scalardb/README.md) of the ScalarDB Server chart.

@@ -1,5 +1,3 @@
-{% include out-of-support.html %}
-
 # Configuration Guides for ScalarDB
 
 The following is a list of configuration guides for ScalarDB:

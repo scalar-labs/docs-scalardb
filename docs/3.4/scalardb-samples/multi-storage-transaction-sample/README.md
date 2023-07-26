@@ -1,5 +1,3 @@
-{% include out-of-support.html %}
-
 # Multi-storage Transaction Sample
 
 This tutorial describes how to create a sample application by using ScalarDB with Multi-storage Transactions.
