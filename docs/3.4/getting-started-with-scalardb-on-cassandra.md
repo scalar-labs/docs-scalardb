@@ -1,5 +1,3 @@
-{% include out-of-support.html %}
-
 # Getting Started with Scalar DB on Cassandra
     
 ## Overview

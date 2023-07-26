@@ -1,5 +1,3 @@
-{% include out-of-support.html %}
-
 # Scalar DB server
 
 Scalar DB server is a gRPC server that implements Scalar DB interface. 

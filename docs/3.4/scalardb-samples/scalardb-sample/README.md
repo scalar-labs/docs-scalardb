@@ -1,5 +1,3 @@
-{% include out-of-support.html %}
-
 # ScalarDB Sample
 
 This tutorial describes how to create a sample application by using ScalarDB.

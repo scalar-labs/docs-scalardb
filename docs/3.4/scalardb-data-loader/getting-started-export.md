@@ -1,5 +1,3 @@
-{% include out-of-support.html %}
-
 # Getting started with Export
 
 This document explains how you can get started with the Scalar DB Data Loader Export function.
