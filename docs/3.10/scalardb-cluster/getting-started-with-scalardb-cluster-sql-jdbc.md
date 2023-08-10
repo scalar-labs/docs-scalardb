@@ -90,13 +90,13 @@ repositories {
 }
 ```
 
-Then, delete the existing dependency for `com.scalar-labs:scalardb-sql-direct-mode:3.10.0` from the `dependencies` section, and add the following dependency to the `dependencies` section:
+Then, delete the existing dependency for `com.scalar-labs:scalardb-sql-direct-mode:3.10.1` from the `dependencies` section, and add the following dependency to the `dependencies` section:
 
 ```gradle
 dependencies {
     ...
 
-    implementation 'com.scalar-labs:scalardb-cluster-client:3.10.0'
+    implementation 'com.scalar-labs:scalardb-cluster-client:3.10.1'
 }
 ```
 
@@ -134,11 +134,11 @@ For details about the client modes, see [Developer Guide for ScalarDB Cluster wi
 
 To load a schema via ScalarDB Cluster SQL, you need to use the dedicated SQL CLI for ScalarDB Cluster (SQL CLI for Cluster).
 Using the SQL CLI for Cluster is basically the same as using the [ScalarDB SQL Command Line Interface](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/command-line-interface.md) except the name of the JAR file is different.
-You can download the SQL CLI for Cluster from [Releases](https://github.com/scalar-labs/scalardb-cluster/releases/tag/v3.10.0).
+You can download the SQL CLI for Cluster from [Releases](https://github.com/scalar-labs/scalardb-cluster/releases/tag/v3.10.1).
 After downloading the JAR file, you can use SQL CLI for Cluster by running the following command:
 
 ```shell
-$ java -jar scalardb-cluster-sql-cli-3.10.0-all.jar --config scalardb-sql.properties --file schema.sql
+$ java -jar scalardb-cluster-sql-cli-3.10.1-all.jar --config scalardb-sql.properties --file schema.sql
 ```
 
 ## Step 5. Load the initial data

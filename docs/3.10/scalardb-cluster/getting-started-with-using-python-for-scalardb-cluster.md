@@ -71,7 +71,7 @@ For details about the client modes, see [Developer Guide for ScalarDB Cluster wi
 To load a schema via ScalarDB Cluster, you need to use the dedicated Schema Loader for ScalarDB Cluster (Schema Loader for Cluster). Using the Schema Loader for Cluster is basically the same as using the [Schema Loader for ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader.md) except the name of the JAR file is different. You can download the Schema Loader for Cluster at [Releases](https://github.com/scalar-labs/scalardb-cluster/releases). After downloading the JAR file, you can run the Schema Loader for Cluster with the following command:
 
 ```shell
-$ java -jar scalardb-cluster-schema-loader-3.10.0-all.jar --config database.properties -f schema.json --coordinator
+$ java -jar scalardb-cluster-schema-loader-3.10.1-all.jar --config database.properties -f schema.json --coordinator
 ```
 
 ## Step 4. Set up a Python environment
@@ -95,7 +95,7 @@ $ pip install grpcio grpcio-tools
 
 To communicate with the gRPC server for ScalarDB Cluster, you will need to generate the stub code from the proto file.
 
-First, download the [`scalardb-cluster.proto`](https://github.com/scalar-labs/scalardb-cluster/blob/v3.10.0/rpc/src/main/proto/scalardb-cluster.proto) file, then save it in the working directory.
+First, download the [`scalardb-cluster.proto`](https://github.com/scalar-labs/scalardb-cluster/blob/v3.10.1/rpc/src/main/proto/scalardb-cluster.proto) file, then save it in the working directory.
 
 You can generate the stub code by running the following command:
 
