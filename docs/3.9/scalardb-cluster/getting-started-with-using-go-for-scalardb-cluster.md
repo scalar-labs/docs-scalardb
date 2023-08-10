@@ -71,7 +71,7 @@ For details about the client modes, see [Developer Guide for ScalarDB Cluster wi
 To load a schema via ScalarDB Cluster, you need to use the dedicated Schema Loader for ScalarDB Cluster (Schema Loader for Cluster). Using the Schema Loader for Cluster is basically the same as using the [Schema Loader for ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader.md) except the name of the JAR file is different. You can download the Schema Loader for Cluster at [Releases](https://github.com/scalar-labs/scalardb-cluster/releases). After downloading the JAR file, you can run the Schema Loader for Cluster with the following command:
 
 ```shell
-$ java -jar scalardb-cluster-schema-loader-3.9.1-all.jar --config database.properties -f schema.json --coordinator
+$ java -jar scalardb-cluster-schema-loader-3.9.2-all.jar --config database.properties -f schema.json --coordinator
 ```
 
 ## Step 4. Set up a Go environment
@@ -92,7 +92,7 @@ First, in a new working directory, create a directory named `scalardb-cluster`, 
 $ mkdir scalardb-cluster
 ```
 
-Then, download the [`scalardb-cluster.proto`](https://github.com/scalar-labs/scalardb-cluster/blob/v3.9.1/rpc/src/main/proto/scalardb-cluster.proto) file and save it in the directory that you created.
+Then, download the [`scalardb-cluster.proto`](https://github.com/scalar-labs/scalardb-cluster/blob/v3.9.2/rpc/src/main/proto/scalardb-cluster.proto) file and save it in the directory that you created.
 
 Generate the gRPC code by running the following command:
 
