@@ -85,10 +85,10 @@ To add a dependency on ScalarDB SQL using Gradle, use the following:
 ```gradle
 dependencies {
     // For Direct mode
-    implementation 'com.scalar-labs:scalardb-sql-direct-mode:3.9.1'
+    implementation 'com.scalar-labs:scalardb-sql-direct-mode:3.9.2'
 
     // For Server mode
-    implementation 'com.scalar-labs:scalardb-sql-server-mode:3.9.1'
+    implementation 'com.scalar-labs:scalardb-sql-server-mode:3.9.2'
 }
 ```
 
@@ -99,14 +99,14 @@ To add a dependency using Maven:
   <dependency>
     <groupId>com.scalar-labs</groupId>
     <artifactId>scalardb-sql-direct-mode</artifactId>
-    <version>3.9.1</version>
+    <version>3.9.2</version>
   </dependency>
 
   <!-- For Server mode -->
   <dependency>
     <groupId>com.scalar-labs</groupId>
     <artifactId>scalardb-sql-server-mode</artifactId>
-    <version>3.9.1</version>
+    <version>3.9.2</version>
   </dependency>
 </dependencies>
 ```
