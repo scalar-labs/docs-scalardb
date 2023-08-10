@@ -90,13 +90,13 @@ repositories {
 }
 ```
 
-Then, delete the existing dependency for `com.scalar-labs:scalardb:3.10.0` from the `dependencies` section, and add the following dependency to the `dependencies` section:
+Then, delete the existing dependency for `com.scalar-labs:scalardb:3.10.1` from the `dependencies` section, and add the following dependency to the `dependencies` section:
 
 ```gradle
 dependencies {
     ...
 
-    implementation 'com.scalar-labs:scalardb-cluster-client:3.10.0'
+    implementation 'com.scalar-labs:scalardb-cluster-client:3.10.1'
 }
 ```
 
@@ -134,11 +134,11 @@ For details about the client modes, see [Developer Guide for ScalarDB Cluster wi
 
 To load a schema via ScalarDB Cluster, you need to use the dedicated Schema Loader for ScalarDB Cluster (Schema Loader for Cluster).
 Using the Schema Loader for Cluster is basically the same as using the [Schema Loader](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader.md) except the name of the JAR file is different.
-You can download the Schema Loader for Cluster from [Releases](https://github.com/scalar-labs/scalardb-cluster/releases/tag/v3.10.0).
+You can download the Schema Loader for Cluster from [Releases](https://github.com/scalar-labs/scalardb-cluster/releases/tag/v3.10.1).
 After downloading the JAR file, you can run Schema Loader for Cluster with the following command:
 
 ```shell
-$ java -jar scalardb-cluster-schema-loader-3.10.0-all.jar --config database.properties -f schema.json --coordinator
+$ java -jar scalardb-cluster-schema-loader-3.10.1-all.jar --config database.properties -f schema.json --coordinator
 ```
 
 ## Step 5. Load the initial data
