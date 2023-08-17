@@ -2,7 +2,7 @@
 
 This document briefly explains how you can get started with Scalar DB SQL with a simple electronic money application.
 Here we assume Oracle JDK 8 and the underlying storage/database such as Cassandra are properly configured.
-Please see [Getting Started with Scalar DB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started.md) for the details of how to configure the underlying storage/database.
+Please see [Getting Started with Scalar DB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.md) for the details of how to configure the underlying storage/database.
 
 From this point forward, we will assume that **scalardb.properties** that holds the configuration for Scalar DB exists.
 
@@ -217,7 +217,7 @@ $ ./gradlew run --args="-action getBalance -id merchant1"
 
 These are just simple examples of how Scalar DB SQL is used. For more information, please take a look at the following documents.
 
-* [Getting Started with Scalar DB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started.md)
+* [Getting Started with Scalar DB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.md)
 * [Scalar DB SQL API Guide](sql-api-guide.md)
 * [Scalar DB SQL Grammar](grammar.md)
 * [Scalar DB SQL Command Line interface](command-line-interface.md)
