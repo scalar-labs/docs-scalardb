@@ -101,6 +101,6 @@ If you catch `ValidationConflictException`, like the `CrudConflictException` cas
 
 ## References
 
-- [Getting Started with Scalar DB](getting-started.md)
+- [Getting Started with Scalar DB](getting-started-with-scalardb.md)
 - [Two-phase Commit Transactions](two-phase-commit-transactions.md)
 - [Microservice Transaction Sample](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transaction-sample)

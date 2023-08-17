@@ -29,7 +29,7 @@ The configurations for Direct mode are as follows:
 | scalar.db.sql.statement_cache.size | The maximum number of cached statement. | 100 |
 
 Note that in the Direct mode, you need to configure underlining storage/database, as well.
-Please see [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started.md) for the details of the underlining storage/database configurations.
+Please see [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.md) for the details of the underlining storage/database configurations.
 
 Please see also [ScalarDB SQL Server](sql-server.md) for the details of ScalarDB SQL Server.
 
