@@ -148,5 +148,5 @@ scalar.db.sql.default_transaction_mode=TRANSACTION
 
 * [Getting Started with Scalar DB SQL](getting-started-with-sql.md)
 * [Getting Started with Scalar DB JDBC](getting-started-with-jdbc.md)
-* [Getting Started with Scalar DB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started.md)
+* [Getting Started with Scalar DB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.md)
 * [Scalar DB SQL Configurations](configurations.md)
