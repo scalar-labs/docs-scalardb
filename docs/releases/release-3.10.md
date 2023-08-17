@@ -2,6 +2,25 @@
 
 This page includes a list of release notes for ScalarDB 3.10.
 
+## v3.10.1
+
+**Release date:** August 7, 2023 
+
+### Summary
+
+This release has several small improvements and document improvements.
+
+### Change logs
+
+#### Improvements
+
+- Fix java warnings in MutationConditionsValidatorTest ([#970](https://github.com/scalar-labs/scalardb/pull/970))
+
+#### Documentation
+
+- Revise document for handling exceptions for Two-phase Commit Transactions ([#934](https://github.com/scalar-labs/scalardb/pull/934))
+- Revise document for Handle exceptions ([#975](https://github.com/scalar-labs/scalardb/pull/975))
+
 ## v3.10.0
 
 **Release date:** July 20, 2023 
