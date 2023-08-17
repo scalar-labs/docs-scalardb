@@ -153,5 +153,5 @@ Please see [ScalarDB SQL Configurations](configurations.md) for more details of 
 
 * [Getting Started with ScalarDB SQL](getting-started-with-sql.md)
 * [Getting Started with ScalarDB JDBC](getting-started-with-jdbc.md)
-* [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started.md)
+* [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.md)
 * [ScalarDB SQL Configurations](configurations.md)
