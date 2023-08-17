@@ -8,67 +8,87 @@ This page includes a list of release notes for ScalarDB 3.10.
 
 ### Summary
 
-ScalarDB 3.10 includes many new features, improvements, bug fixes, vulnerability fixes, and documentation updates. Please see the following for a list of detailed changes.
+ScalarDB 3.10 includes many enhancements, improvements, bug fixes, and documentation updates. Please see the following for a list of detailed changes.
 
-### Change logs
+ScalarDB provides a Community edition and an Enterprise edition. The Community edition is available as open-source software that you can use under the Apache 2.0 License. The Enterprise edition includes not only the features of the Community edition but also many advanced features. Release notes for the Enterprise edition are available under the “Enterprise edition” section. To use the features in the Enterprise edition, you must have a license agreement with Scalar Inc.
+
+### Community edition
 
 #### Enhancements
 
-- Make transaction metadata nullable to support existing databases ([#841](https://github.com/scalar-labs/scalardb/pull/841))
-- Add validation for consensus commit mutation operation ([#873](https://github.com/scalar-labs/scalardb/pull/873))
-- Add an interface to add conditions in ScanAll ([#889](https://github.com/scalar-labs/scalardb/pull/889))
-- Add relational scan for JDBC storage and consensus commit transaction ([#900](https://github.com/scalar-labs/scalardb/pull/900))
-- Support condition for transactional operations ([#899](https://github.com/scalar-labs/scalardb/pull/899))
-- Add relational scan for JDBC transactions ([#925](https://github.com/scalar-labs/scalardb/pull/925))
-- Add integration tests for MariaDB to CI ([#916](https://github.com/scalar-labs/scalardb/pull/916))
-- Add join() to DistributedTransactionManager ([#944](https://github.com/scalar-labs/scalardb/pull/944))
-- Add table importing feature ([#931](https://github.com/scalar-labs/scalardb/pull/931))
-
-#### Improvements
-
-- Bump com.azure:azure-cosmos from 4.44.0 to 4.45.0 ([#883](https://github.com/scalar-labs/scalardb/pull/883))
-- Add GHA workflow to automatically create pull requests to apply a merged PR changes ([#884](https://github.com/scalar-labs/scalardb/pull/884))
-- Bump slackapi/slack-github-action from 1.23.0 to 1.24.0 ([#886](https://github.com/scalar-labs/scalardb/pull/886))
-- Bump com.azure:azure-cosmos from 4.45.0 to 4.45.1 ([#887](https://github.com/scalar-labs/scalardb/pull/887))
-- Remove untagged container images ([#890](https://github.com/scalar-labs/scalardb/pull/890))
-- Bump com.oracle.database.jdbc:ojdbc8 from 21.9.0.0 to 21.10.0.0 ([#892](https://github.com/scalar-labs/scalardb/pull/892))
-- Bump dropwizardMetricsVersion from 4.2.18 to 4.2.19 ([#895](https://github.com/scalar-labs/scalardb/pull/895))
-- Bump info.picocli:picocli from 4.7.3 to 4.7.4 ([#896](https://github.com/scalar-labs/scalardb/pull/896))
-- Handle PRs created by dependabot in auto-pr GHA workflow ([#898](https://github.com/scalar-labs/scalardb/pull/898))
-- Bump com.azure:azure-cosmos from 4.45.1 to 4.46.0 ([#904](https://github.com/scalar-labs/scalardb/pull/904))
-- Bump com.scalar-labs:scalar-admin from 2.1.0 to 2.1.1 ([#910](https://github.com/scalar-labs/scalardb/pull/910))
-- Bump com.scalar-labs:scalar-admin from 2.1.1 to 2.1.2 ([#918](https://github.com/scalar-labs/scalardb/pull/918))
-- Bump com.azure:azure-cosmos from 4.46.0 to 4.47.0 ([#929](https://github.com/scalar-labs/scalardb/pull/929))
-- Revise Javadoc for exceptions ([#930](https://github.com/scalar-labs/scalardb/pull/930))
-- Add integration tests for transaction with relational scan ([#913](https://github.com/scalar-labs/scalardb/pull/913))
-- Add a constructor to UnsatisfiedConditionException ([#917](https://github.com/scalar-labs/scalardb/pull/917))
-- Improve some `toString` expressions of Selection Operators ([#920](https://github.com/scalar-labs/scalardb/pull/920))
+- Added functionality to treat the transaction metadata columns in a record as committed if the metadata in ScalarDB is empty (i.e., `null`). This functionality allows ScalarDB to import tables from another existing database. ([#841](https://github.com/scalar-labs/scalardb/pull/841) [#931](https://github.com/scalar-labs/scalardb/pull/931))
+- Added validation for the consensus commit mutation operation. ([#873](https://github.com/scalar-labs/scalardb/pull/873))
+- Added an interface to `Scan` to allow conditions (AND, OR, etc.) to be specified. ([#889](https://github.com/scalar-labs/scalardb/pull/889) [#900](https://github.com/scalar-labs/scalardb/pull/900) [#925](https://github.com/scalar-labs/scalardb/pull/925))
+- Added support for specifying conditions for `Put` and `Delete` in the transaction API. ([#899](https://github.com/scalar-labs/scalardb/pull/899))
 
 #### Bug fixes
 
-- Bump scalar-labs/jre8 from 1.1.12 to 1.1.13 in /server ([#881](https://github.com/scalar-labs/scalardb/pull/881))
-- Bump scalar-labs/jre8 from 1.1.12 to 1.1.13 in /schema-loader ([#882](https://github.com/scalar-labs/scalardb/pull/882))
-- Use a proper PAT in the GHA workflow for automated PR creation ([#885](https://github.com/scalar-labs/scalardb/pull/885))
-- Use the original Git commit author info not a response from GitHub API for the automated PR creation workflow ([#891](https://github.com/scalar-labs/scalardb/pull/891))
-- Fix the wrong argument validations in Auto PR workflow ([#906](https://github.com/scalar-labs/scalardb/pull/906))
-- Bump scalar-labs/jre8 from 1.1.13 to 1.1.14 in /schema-loader ([#903](https://github.com/scalar-labs/scalardb/pull/903))
-- Bump scalar-labs/jre8 from 1.1.13 to 1.1.14 in /server ([#902](https://github.com/scalar-labs/scalardb/pull/902))
-- Fix relational scan builder to keep ordering information and so on ([#908](https://github.com/scalar-labs/scalardb/pull/908))
-- Bump org.xerial:sqlite-jdbc from 3.41.2.1 to 3.42.0.0 ([#888](https://github.com/scalar-labs/scalardb/pull/888))
-- Run `git cherry-pick --abort` after it fails ([#924](https://github.com/scalar-labs/scalardb/pull/924))
-- Records should not be rolled back in rollback() when the transaction state is marked as COMMITTED in 2PC ([#909](https://github.com/scalar-labs/scalardb/pull/909))
-- Avoid decrementing outstanding requests counter duplicately ([#935](https://github.com/scalar-labs/scalardb/pull/935))
-- Should call abort() when aborting transaction in transaction wrapper classes ([#919](https://github.com/scalar-labs/scalardb/pull/919))
-- Fix [CVE-2023-1428](https://github.com/advisories/GHSA-6628-q6j9-w8vg "CVE-2023-1428") and [CVE-2023-32731](https://github.com/advisories/GHSA-cfgp-2977-2fmm "CVE-2023-32731") ([#943](https://github.com/scalar-labs/scalardb/pull/943))
-- Fix [CVE-2023-2976](https://github.com/advisories/GHSA-7g45-4rm6-3mm3 "CVE-2023-2976") ([#954](https://github.com/scalar-labs/scalardb/pull/954))
-- Fix utility method to check transactional table metadata ([#950](https://github.com/scalar-labs/scalardb/pull/950))
+- Upgraded the integrated JRE Docker image to 1.1.13 to fix security issues. [CVE-2022-29458](https://nvd.nist.gov/vuln/detail/CVE-2022-29458) ([#881](https://github.com/scalar-labs/scalardb/pull/881) [#882](https://github.com/scalar-labs/scalardb/pull/882))
+- Upgraded the integrated JRE Docker image to 1.1.14 to fix security issues. [CVE-2023-0464](https://nvd.nist.gov/vuln/detail/CVE-2023-0464) [CVE-2023-2650](https://nvd.nist.gov/vuln/detail/CVE-2023-2650) ([#902](https://github.com/scalar-labs/scalardb/pull/902) [#903](https://github.com/scalar-labs/scalardb/pull/903))
+- Upgraded sqlite-jdbc to 3.42.0.0 to fix security issues. [CVE-2023-32697](https://nvd.nist.gov/vuln/detail/CVE-2023-32697) ([#888](https://github.com/scalar-labs/scalardb/pull/888))
+- Revised the method for checking transaction status before rollback to fix a bug that caused a partial commit during `rollback()` in the two-phase commit (2PC) interface. ([#909](https://github.com/scalar-labs/scalardb/pull/909))
+- Resolved a race condition in the counter that counts transactions to fix a bug that prevented ScalarDB Server from pausing. ([#935](https://github.com/scalar-labs/scalardb/pull/935))
+- Fixed a problem with the metrics for ScalarDB Server not properly displaying the number of aborts and rollbacks. ([#919](https://github.com/scalar-labs/scalardb/pull/919))
+- Upgraded gRPC library to 1.53.0 to fix security issues. [CVE-2023-1428](https://nvd.nist.gov/vuln/detail/CVE-2023-1428) [CVE-2023-32731](https://nvd.nist.gov/vuln/detail/CVE-2023-32731) ([#943](https://github.com/scalar-labs/scalardb/pull/943))
 
 #### Documentation
 
-- Change HTML syntax to Markdown for images (master) ([#880](https://github.com/scalar-labs/scalardb/pull/880))
-- Improve documents for Handle Exceptions ([#897](https://github.com/scalar-labs/scalardb/pull/897))
-- Move Jekyll files for redirecting from the docs site hosted in this repository to the new docs site ([#907](https://github.com/scalar-labs/scalardb/pull/907))
-- Revise configuration related documents ([#905](https://github.com/scalar-labs/scalardb/pull/905))
-- Update the ScalarDB dependency version to 3.9.1 ([#927](https://github.com/scalar-labs/scalardb/pull/927))
-- Add a redirect from the docs site hosted in this repository to the new docs site ([#901](https://github.com/scalar-labs/scalardb/pull/901))
-- Revise document for handling exceptions ([#932](https://github.com/scalar-labs/scalardb/pull/932))
+- Improved documentation for handling errors in ScalarDB transactions. ([#897](https://github.com/scalar-labs/scalardb/pull/897) [#932](https://github.com/scalar-labs/scalardb/pull/932))
+- Added detailed descriptions for all ScalarDB configurations to the documentation. ([#905](https://github.com/scalar-labs/scalardb/pull/905))
+
+### Enterprise edition
+
+#### Enhancements
+
+##### ScalarDB Cluster
+
+- Implemented AWS Marketplace usage reporting so that users can run a ScalarDB Cluster node (Standard or Premium edition) from AWS Marketplace with pay-as-you-go pricing plan.
+- Added support for specifying conditions for Put and Delete in the transaction API.
+- Added support for the table-importing feature in ScalarDB.
+
+#### Improvements
+
+##### ScalarDB Cluster
+
+- Updated GraphQL Server to allow graceful shutdown by waiting to shutdown until there are no more requests for the server.
+
+##### ScalarDB GraphQL
+
+- Updated GraphQL Server to allow graceful shutdown by waiting to shutdown until there are no more requests for the server.
+
+##### ScalarDB SQL
+
+- Added a two-phase commit (2PC) high-level API for participants into the `ScalarDbTwoPcRepository` class for `Spring Data JDBC for ScalarDB` so that users can implement a 2PC transaction participant safely and easily.
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Upgraded the Guava library to 32.1.1-jre to fix security issues. [[CVE-2023-2976](https://github.com/advisories/GHSA-7g45-4rm6-3mm3 "CVE-2023-2976")]
+
+##### ScalarDB GraphQL
+
+- Upgraded the Guava library to 32.1.1-jre to fix security issues. [[CVE-2023-2976](https://github.com/advisories/GHSA-7g45-4rm6-3mm3 "CVE-2023-2976")]
+- Modified error handling to fix a bug that caused the GraphQL schema update process to stop.
+
+##### ScalarDB SQL
+
+- Updated ScalarDB SQL Server to always rollback a transaction when an error occurs.
+- Added a null check in the `close()` method of the `SqlJdbcDriver` class to fix a bug where `NullPointerException` could occur when executing the `close()` method.
+- Fixed a partial commit issue that occurred in 2PC when using `Spring Data JDBC for ScalarDB` by preventing any rollback after the coordinator successfully processes the commit.
+- Fixed a problem with the metrics for ScalarDB Server not properly displaying the number of aborts and rollbacks.
+- Upgraded the Guava library to 32.1.1-jre to fix security issues. [[CVE-2023-2976](https://github.com/advisories/GHSA-7g45-4rm6-3mm3 "CVE-2023-2976")]
+
+#### Documentations
+
+##### ScalarDB Cluster
+
+- Added the ScalarDB Cluster gRPC API guide.
+- Reorganized ScalarDB Cluster documents.
+- Added a getting started tutorial for ScalarDB Cluster with Python.
+
+##### ScalarDB SQL
+
+- Revised `Spring Data JDBC for ScalarDB` documentation, such as adding an architectural diagram, adding limitations, and updating some usage guides.
+- Added detailed descriptions for all ScalarDB configurations to the documentation.
+- Improved documentation for handling errors in ScalarDB transactions.
