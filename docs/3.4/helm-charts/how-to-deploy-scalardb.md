@@ -1,3 +1,5 @@
+{% include end-of-support.html %}
+
 # How to deploy ScalarDB Server
 
 This document explains how to deploy ScalarDB Server using Scalar Helm Charts. You must prepare your custom values file. Please refer to the following document for more details on the custom values file for ScalarDB Server.

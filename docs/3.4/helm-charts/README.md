@@ -1,3 +1,5 @@
+{% include end-of-support.html %}
+
 # Index
 
 ## For users
