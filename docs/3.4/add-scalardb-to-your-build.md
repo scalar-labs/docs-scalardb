@@ -1,3 +1,5 @@
+{% include end-of-support.html %}
+
 # Add ScalarDB to your build
 
 The library is available on [maven central repository](https://mvnrepository.com/artifact/com.scalar-labs/scalardb).

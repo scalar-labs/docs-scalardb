@@ -1,3 +1,5 @@
+{% include end-of-support.html %}
+
 # Microservice Transaction Sample
 
 This tutorial describes how to create a sample application for Microservice Transaction that uses Two-phase Commit Transactions in ScalarDB.
