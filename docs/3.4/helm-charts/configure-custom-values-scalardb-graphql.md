@@ -1,3 +1,5 @@
+{% include end-of-support.html %}
+
 # Configure a custom values file for ScalarDB GraphQL
 
 This document explains how to create your custom values file for the ScalarDB GraphQL chart. If you want to know the details of the parameters, please refer to the [README](https://github.com/scalar-labs/helm-charts/blob/main/charts/scalardb-graphql/README.md) of the ScalarDB GraphQL chart.
