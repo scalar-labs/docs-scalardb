@@ -1,3 +1,5 @@
+{% include end-of-support.html %}
+
 # Sample application of Spring Data JDBC for ScalarDB with Multi-storage Transactions
 
 This tutorial describes how to create a sample Spring Boot application by using Spring Data JDBC for ScalarDB with Multi-storage Transactions.

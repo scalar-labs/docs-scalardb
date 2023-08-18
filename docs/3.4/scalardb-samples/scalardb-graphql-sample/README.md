@@ -1,3 +1,5 @@
+{% include end-of-support.html %}
+
 # ScalarDB GraphQL Sample
 
 This sample application is a simple CLI electronic money application that has the following features:
