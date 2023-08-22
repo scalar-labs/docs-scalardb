@@ -21,7 +21,7 @@ TransactionFactory transactionFactory = TransactionFactory.create("<configuratio
 DistributedTransactionAdmin admin = transactionFactory.getTransactionAdmin();
 ```
 
-Please see [Getting Started with ScalarDB](getting-started-with-scalardb.md) for the details of the configuration file.
+Please see [Getting Started](getting-started.md) for the details of the configuration file.
 
 Once you have executed all administrative operations, you should close the `DistributedTransactionAdmin` instance as follows:
 
@@ -729,7 +729,7 @@ If you catch `ValidationConflictException`, like the `CrudConflictException` cas
 ## References
 
 * [Design document](design.md)
-* [Getting Started with ScalarDB](getting-started-with-scalardb.md)
+* [Getting started](getting-started-with-scalardb.md)
 * [Multi-storage Transactions](multi-storage-transactions.md)
 * [Two-phase Commit Transactions](two-phase-commit-transactions.md)
 * [Scalar DB server](scalardb-server.md)
