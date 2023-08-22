@@ -25,7 +25,7 @@ scalar.db.password=cassandra
 scalar.db.storage=cassandra
 ```
 
-Please see [Getting Started with ScalarDB](getting-started-with-scalardb.md) for configurations of other databases/storages.
+Please see [Getting Started](getting-started.md) for configurations of other databases/storages.
 
 ### Scalar DB server
 

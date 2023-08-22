@@ -27,7 +27,7 @@ To add a dependency using Maven:
 ```
 
 ## Docs
-* [Getting Started with ScalarDB](getting-started-with-scalardb.md)
+* [Getting started](getting-started-with-scalardb.md)
 * [Java API Guide](api-guide.md)
 * [ScalarDB Samples](https://github.com/scalar-labs/scalardb-samples)
 * [ScalarDB Server](scalardb-server.md)
