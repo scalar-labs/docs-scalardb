@@ -21,7 +21,7 @@ This section explains how the Storage API can be used in a simple electronic mon
 ### ScalarDB configuration
 
 The configuration is the same as when you use the ACID transaction manager.
-Please see [Getting Started with ScalarDB](getting-started-with-scalardb.md) for the details of the configuration.
+Please see [Getting Started](getting-started-with-scalardb.md) for the details of the configuration.
 
 From here, we assume that the configuration file **scalardb.properties** exists.
 
@@ -195,7 +195,7 @@ StorageFactory storageFactory = StorageFactory.create("<configuration file path>
 DistributedStorageAdmin admin = storageFactory.getStorageAdmin();
 ```
 
-Please see [Getting Started with ScalarDB](getting-started-with-scalardb.md) for the details of the configuration file.
+Please see [Getting Started](getting-started.md) for the details of the configuration file.
 
 Once you have executed all administrative operations, you should close the `DistributedStorageAdmin` instance as follows:
 
@@ -746,6 +746,6 @@ And if you specify multiple conditions in a Mutate operation, the operation is e
 
 * [Java API Guide](api-guide.md)
 * [Design document](design.md)
-* [Getting Started with ScalarDB](getting-started-with-scalardb.md)
+* [Getting started](getting-started-with-scalardb.md)
 * [ScalarDB Server](scalardb-server.md)
 * [Schema Loader](schema-loader.md)
