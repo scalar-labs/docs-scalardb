@@ -15,6 +15,7 @@ You must install the helm command to use Scalar Helm Charts. Please install the 
 ```console
 helm repo add scalar-labs https://scalar-labs.github.io/helm-charts
 ```
+
 ```console
 helm repo update scalar-labs
 ```
@@ -48,6 +49,9 @@ If you use a Kubernetes cluster other than EKS or AKS, you need to create a Secr
 
 Please refer to the following documents for more details on how to deploy each product.
 
+* [ScalarDB Server](./how-to-deploy-scalardb.md)
 * [ScalarDB GraphQL](./how-to-deploy-scalardb-graphql.md)
 * [ScalarDB Cluster](./how-to-deploy-scalardb-cluster.md)
+* [ScalarDL Ledger](./how-to-deploy-scalardl-ledger.md)
+* [ScalarDL Auditor](./how-to-deploy-scalardl-auditor.md)
 * [Scalar Manager](./how-to-deploy-scalar-manager.md)
