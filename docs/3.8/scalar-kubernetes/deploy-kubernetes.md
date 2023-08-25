@@ -13,11 +13,6 @@ The following documentation is to help you set up and deploy a ScalarDB environm
 * [How to install Scalar products through Azure Marketplace](AzureMarketplaceGuide.md)
 * [Create a bastion server](CreateBastionServer.md)
 
-## Cluster guides
-
-* [Guidelines for creating an EKS cluster for ScalarDB Server](CreateEKSClusterForScalarDB.md)
-* [Guidelines for creating an AKS cluster for ScalarDB Server](CreateAKSClusterForScalarDB.md)
-
 ## Deployment guides
 
 * [Deploy ScalarDB Server on Amazon Elastic Kubernetes Service (EKS)](ManualDeploymentGuideScalarDBServerOnEKS.md)
