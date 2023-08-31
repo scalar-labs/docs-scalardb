@@ -301,11 +301,9 @@ implements java.lang.AutoCloseable</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a transaction ID associated with the begun transaction</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if the transaction fails to begin due to retryable
-     faults. You can retry the transaction.</dd>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if the transaction fails to begin due to transient or nontransient faults.
-     You can try retrying the transaction, but you may not be able to begin the transaction due
-     to nontransient faults</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if a retryable error happens (e.g., a transaction
+     conflict)</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if an unexpected error happens</dd>
 </dl>
 </li>
 </ul>
@@ -322,11 +320,9 @@ implements java.lang.AutoCloseable</pre>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>transactionId</code> - a transaction ID associated with the transaction to join</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if the transaction fails to join due to retryable faults.
-     You can retry the transaction from the beginning.</dd>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if the transaction fails to join due to transient or nontransient faults.
-     You can try retrying the transaction from the beginning, but the transaction may still fail
-     if the cause is nontranient</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if a retryable error happens (e.g., a transaction
+     conflict)</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if an unexpected error happens</dd>
 </dl>
 </li>
 </ul>
@@ -340,7 +336,7 @@ implements java.lang.AutoCloseable</pre>
 <div class="block">Suspends the current transaction.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if an unexpected error occurs</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if an unexpected error happens</dd>
 </dl>
 </li>
 </ul>
@@ -356,11 +352,9 @@ implements java.lang.AutoCloseable</pre>
 <dt><span class="paramLabel">Parameters:</span></dt>
 <dd><code>transactionId</code> - a transaction ID associated with the transaction to resume</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if the transaction fails to resume due to retryable
-     faults (e.g., the transaction not found). You can retry the transaction from the beginning.</dd>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if the transaction fails to resume due to transient or nontransient
-     faults. You can try retrying the transaction from the beginning, but the transaction may
-     still fail if the cause is nontranient</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if a retryable error happens (e.g., the transaction not
+     found)</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if an unexpected error happens</dd>
 </dl>
 </li>
 </ul>
@@ -378,14 +372,11 @@ implements java.lang.AutoCloseable</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a <a href="../../../../com/scalar/db/sql/ResultSet.html" title="interface in com.scalar.db.sql"><code>ResultSet</code></a> object that contains the data produced by the query</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if the transaction operation execution fails due to
-     retryable faults (e.g., a transaction conflict). You can retry the transaction from the
-     beginning.</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if a retryable error happens (e.g., a transaction
+     conflict)</dd>
 <dd><code><a href="../../../../com/scalar/db/sql/exception/UnknownTransactionStatusException.html" title="class in com.scalar.db.sql.exception">UnknownTransactionStatusException</a></code> - if the transaction status (committed or aborted) is
      unknown when executing the COMMIT statement</dd>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if the transaction operation execution fails due to transient or
-     nontransient faults. You can try retrying the transaction from the beginning, but the
-     transaction may still fail if the cause is nontranient</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if an unexpected error happens</dd>
 </dl>
 </li>
 </ul>
@@ -403,14 +394,11 @@ implements java.lang.AutoCloseable</pre>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a <a href="../../../../com/scalar/db/sql/ResultSet.html" title="interface in com.scalar.db.sql"><code>ResultSet</code></a> object that contains the data produced by the query</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if the transaction operation execution fails due to
-     retryable faults (e.g., a transaction conflict). You can retry the transaction from the
-     beginning.</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if a retryable error happens (e.g., a transaction
+     conflict)</dd>
 <dd><code><a href="../../../../com/scalar/db/sql/exception/UnknownTransactionStatusException.html" title="class in com.scalar.db.sql.exception">UnknownTransactionStatusException</a></code> - if the transaction status (committed or aborted) is
      unknown when executing the COMMIT statement</dd>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if the transaction operation execution fails due to transient or
-     nontransient faults. You can try retrying the transaction from the beginning, but the
-     transaction may still fail if the cause is nontranient</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if an unexpected error happens</dd>
 </dl>
 </li>
 </ul>
@@ -457,11 +445,9 @@ implements java.lang.AutoCloseable</pre>
  mode.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if the transaction fails to prepare due to retryable
-     faults (e.g., a transaction conflict). You can retry the transaction from the beginning.</dd>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if the transaction fails to prepare due to transient or nontransient
-     faults. You can try retrying the transaction from the beginning, but the transaction may
-     still fail if the cause is nontranient</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if a retryable error happens (e.g., a transaction
+     conflict)</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if an unexpected error happens</dd>
 </dl>
 </li>
 </ul>
@@ -476,11 +462,9 @@ implements java.lang.AutoCloseable</pre>
  mode.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if the transaction fails to validate due to retryable
-     faults (e.g., a transaction conflict). You can retry the transaction from the beginning.</dd>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if the transaction fails to validate due to transient or nontransient
-     faults. You can try retrying the transaction from the beginning, but the transaction may
-     still fail if the cause is nontranient</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if a retryable error happens (e.g., a transaction
+     conflict)</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if an unexpected error happens</dd>
 </dl>
 </li>
 </ul>
@@ -494,13 +478,11 @@ implements java.lang.AutoCloseable</pre>
 <div class="block">Commits the current transaction.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if the transaction fails to commit due to retryable
-     faults (e.g., a transaction conflict). You can retry the transaction from the beginning.</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if a retryable error happens (e.g., a transaction
+     conflict)</dd>
 <dd><code><a href="../../../../com/scalar/db/sql/exception/UnknownTransactionStatusException.html" title="class in com.scalar.db.sql.exception">UnknownTransactionStatusException</a></code> - if the transaction status (committed or aborted) is
      unknown</dd>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if the transaction fails to commit due to transient or nontransient
-     faults. You can try retrying the transaction from the beginning, but the transaction may
-     still fail if the cause is nontranient</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if an unexpected error happens</dd>
 </dl>
 </li>
 </ul>

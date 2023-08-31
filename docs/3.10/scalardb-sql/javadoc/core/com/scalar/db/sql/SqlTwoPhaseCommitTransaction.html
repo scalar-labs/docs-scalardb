@@ -200,11 +200,9 @@ extends <a href="../../../../com/scalar/db/sql/SqlStatementExecutable.html" titl
 <div class="block">Prepares a transaction.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if the transaction fails to prepare due to retryable
-     faults (e.g., a transaction conflict). You can retry the transaction from the beginning.</dd>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if the transaction fails to prepare due to transient or nontransient
-     faults. You can try retrying the transaction from the beginning, but the transaction may
-     still fail if the cause is nontranient</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if a retryable error happens (e.g., a transaction
+     conflict)</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if an unexpected error happens</dd>
 </dl>
 </li>
 </ul>
@@ -218,11 +216,9 @@ extends <a href="../../../../com/scalar/db/sql/SqlStatementExecutable.html" titl
 <div class="block">Validates a transaction.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if the transaction fails to validate due to retryable
-     faults (e.g., a transaction conflict). You can retry the transaction from the beginning.</dd>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if the transaction fails to validate due to transient or nontransient
-     faults. You can try retrying the transaction from the beginning, but the transaction may
-     still fail if the cause is nontranient</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if a retryable error happens (e.g., a transaction
+     conflict)</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if an unexpected error happens</dd>
 </dl>
 </li>
 </ul>
@@ -236,13 +232,11 @@ extends <a href="../../../../com/scalar/db/sql/SqlStatementExecutable.html" titl
 <div class="block">Commits a transaction.</div>
 <dl>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if the transaction fails to commit due to retryable
-     faults (e.g., a transaction conflict). You can retry the transaction from the beginning.</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if a retryable error happens (e.g., a transaction
+     conflict)</dd>
 <dd><code><a href="../../../../com/scalar/db/sql/exception/UnknownTransactionStatusException.html" title="class in com.scalar.db.sql.exception">UnknownTransactionStatusException</a></code> - if the transaction status (committed or aborted) is
      unknown</dd>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if the transaction fails to commit due to transient or nontransient
-     faults. You can try retrying the transaction from the beginning, but the transaction may
-     still fail if the cause is nontranient</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if an unexpected error happens</dd>
 </dl>
 </li>
 </ul>
