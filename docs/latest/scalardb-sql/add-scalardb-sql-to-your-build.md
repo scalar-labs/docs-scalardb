@@ -1,39 +1,93 @@
-# Add ScalarDB SQL to your build
+# Add ScalarDB SQL to Your Build
 
-The libraries for ScalarDB SQL are available on [Packages in this repository](https://github.com/orgs/scalar-labs/packages?repo_name=scalardb-sql).
-Since they are available under a commercial license, you need to get the license and permission to access them.
-For more details, please [contact us](https://scalar-labs.com/contact_us/).
+The ScalarDB SQL libraries are available as [packages on GitHub](https://github.com/orgs/scalar-labs/packages?repo_name=scalardb-sql). You can add the libraries as a build dependency to your application by using Gradle or Maven.
 
-Before you add the dependency, you need to add the Maven repository using your build tool such as Gradle and Maven.
+{% capture notice--warning %}
+**Attention**
 
-To add the Maven repository using Gradle, add the following repository to your `build.gradle`:
+You must have a commmercial license and permission to access the ScalarDB SQL libraries. If you need a commercial license, please [contact us](https://scalar-labs.com/contact_us/).
+{% endcapture %}
+
+<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+
+## Configure your application based on your build tool
+
+Select your build tool, and follow the instructions to add the build dependency for ScalarDB SQL for your application.
+
+<div id="tabset-1">
+<div class="tab">
+  <button class="tablinks" onclick="openTab(event, 'Gradle', 'tabset-1')" id="defaultOpen-1">Gradle</button>
+  <button class="tablinks" onclick="openTab(event, 'Maven', 'tabset-1')">Maven</button>
+</div>
+
+<div id="Gradle" class="tabcontent" markdown="1">
+
+The following instructions describe how to add the build dependency for ScalarDB SQL to your application by using Gradle. For details about using package repositories with Gradle, see [Working with the Gradle registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry).
+
+## Configure your GitHub credentials for Gradle
+{:.no_toc}
+
+Before adding the build dependency for ScalarDB SQL to your application by using Gradle, you need to configure your GitHub credentials to access the package repository.
+
+To access the dependency on GitHub, add the following to `build.gradle` in your application:
+
 ```gradle
 repositories {
-    maven {
-        url = uri("https://maven.pkg.github.com/scalar-labs/scalardb-sql")
-        credentials {
-            username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-            password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
-        }
+  maven {
+    url = uri("https://maven.pkg.github.com/scalar-labs/scalardb-sql")
+    credentials {
+      username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
+      password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
     }
+  }
 }
 ```
 
-In this case, you need the `gpr.user` property for your GitHub username and the `gpr.key` property for your personal access token.
-So you need to have the properties in `~/.gradle/gradle.properties`, or specify the properties with the `-P` option when running the `./gradlew` command as follows:
+To configure the `gpr.user` property for your GitHub username and the `gpr.key` property for your personal access token, do one of the following:
 
-```shell
-$ ./gradlew build -Pgpr.user=<your GitHub username> -Pgpr.key=<your personal access token>
+- **Store your GitHub credentials as properties in `~/.gradle/gradle.properties`**
+  - Open `~/.gradle/gradle.properties`, and store your GitHub credentials as properties by running the following command, replacing `<GITHUB_USERNAME>` with your username and `<GITHUB_PERSONAL_ACCESS_TOKEN>` with a personal access token:
+  ```shell
+  $ ./gradlew build -Pgpr.user=<GITHUB_USERNAME> -Pgpr.key=<GITHUB_PERSONAL_ACCESS_TOKEN>
+  ```
+
+- **Store your GitHub credentials as environment variables**
+  1. Open a terminal window, and store your GitHub username as an environment variable by running the following command, replacing `<GITHUB_USERNAME>` with your username:
+  ```shell
+  $ export USERNAME=<GITHUB_USERNAME>
+  ```
+  1. Store your GitHub personal access token as an environment variable by running the following command, replacing `<GITHUB_PERSONAL_ACCESS_TOKEN>` with a personal access token:
+  ```shell
+  $ export TOKEN=<GITHUB_PERSONAL_ACCESS_TOKEN>
+  ```
+
+## Add the build dependency for ScalarDB SQL by using Gradle
+{:.no_toc}
+
+After specifying your GitHub credentials, add the following ScalarDB SQL dependency to `build.gradle` in your application, replacing `<VERSION>` with the version of ScalarDB SQL that you want to use:
+
+```gradle
+dependencies {
+  // For Direct mode
+  implementation 'com.scalar-labs:scalardb-sql-direct-mode:<VERSION>'
+
+  // For Server mode
+  implementation 'com.scalar-labs:scalardb-sql-server-mode:<VERSION>'
+}
 ```
 
-Or you can also use environment variables, `USERNAME` for your GitHub username and `TOKEN` for your personal access token.
+</div>
+<div id="Maven" class="tabcontent" markdown="1">
 
-```shell
-$ export USERNAME=<your GitHub username>
-$ export TOKEN=<your personal access token>
-```
+The following instructions describe how to add the build dependency for ScalarDB SQL to your application by using Maven. For details about using package repositories with Maven, see [Working with the Apache Maven registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry)
 
-To add the Maven repository using Maven, edit your `~/.m2/settings.xml` file as follows:
+## Configure your GitHub credentials for Maven
+{:.no_toc}
+
+Before adding the build dependency for ScalarDB SQL to your application by using Maven, you need to configure your GitHub credentials to access the package repository.
+
+To access the dependency on GitHub, add the following to `~/.m2/settings.xml` in your application, replacing `<GITHUB_USERNAME>` with your username and `<GITHUB_PERSONAL_ACCESS_TOKEN>` with a personal access token in the child `server` in the `servers` tag:
+
 ```xml
 <settings xmlns="http://maven.apache.org/SETTINGS/1.0.0"
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
@@ -66,47 +120,35 @@ To add the Maven repository using Maven, edit your `~/.m2/settings.xml` file as 
   <servers>
     <server>
       <id>github</id>
-      <username>USERNAME</username>
-      <password>TOKEN</password>
+      <username><GITHUB_USERNAME></username>
+      <password><GITHUB_PERSONAL_ACCESS_TOKEN></password>
     </server>
   </servers>
 </settings>
 ```
 
-In the `servers` tag, add a child `server` tag with an `id`, replacing *USERNAME* with your GitHub username, and *TOKEN* with your personal access token.
+## Add the build dependency for ScalarDB SQL by using Maven
+{:.no_toc}
 
-Please see also the following documents for more details:
-- [Working with the Gradle registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-gradle-registry)
-- [Working with the Apache Maven registry](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-apache-maven-registry)
+After specifying your GitHub credentials, add the following ScalarDB SQL dependency to `pom.xml` in your application, replacing `<VERSION>` with the version of ScalarDB SQL that you want to use:
 
-And then, you can install the library in your application using your build tool such as Gradle and Maven.
-
-To add a dependency on ScalarDB SQL using Gradle, use the following:
-```gradle
-dependencies {
-    // For Direct mode
-    implementation 'com.scalar-labs:scalardb-sql-direct-mode:3.10.1'
-
-    // For Server mode
-    implementation 'com.scalar-labs:scalardb-sql-server-mode:3.10.1'
-}
-```
-
-To add a dependency using Maven:
 ```xml
 <dependencies>
   <!-- For Direct mode -->
   <dependency>
     <groupId>com.scalar-labs</groupId>
     <artifactId>scalardb-sql-direct-mode</artifactId>
-    <version>3.10.1</version>
+    <version><VERSION></version>
   </dependency>
 
   <!-- For Server mode -->
   <dependency>
     <groupId>com.scalar-labs</groupId>
     <artifactId>scalardb-sql-server-mode</artifactId>
-    <version>3.10.1</version>
+    <version><VERSION></version>
   </dependency>
 </dependencies>
 ```
+
+</div>
+</div>
