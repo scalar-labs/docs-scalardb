@@ -2,7 +2,7 @@
 
 The libraries for ScalarDB SQL are available on [Packages in this repository](https://github.com/orgs/scalar-labs/packages?repo_name=scalardb-sql).
 Since they are available under a commercial license, you need to get the license and permission to access them.
-For more details, please [contact us](https://scalar-labs.com/contact_us/).
+For more details, please [contact us](https://www.scalar-labs.com/contact/).
 
 Before you add the dependency, you need to add the Maven repository using your build tool such as Gradle and Maven.
 
