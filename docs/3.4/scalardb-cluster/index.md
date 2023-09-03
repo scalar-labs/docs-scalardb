@@ -9,7 +9,7 @@ It consists of multiple cluster nodes that have ScalarDB capabilities and a rout
 
 The docker images are available on [our repository](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-cluster-node).
 Since they are available under a commercial license, you need to get the license and permission to access them.
-For more details, please [contact us](https://scalar-labs.com/contact_us/).
+For more details, please [contact us](https://www.scalar-labs.com/contact/).
 
 ### How to run ScalarDB Cluster on Kubernetes
 
@@ -176,7 +176,7 @@ kubectl apply -f scalardb-cluster.yaml
 
 The client libraries are available on [Packages in this repository](https://github.com/orgs/scalar-labs/packages?repo_name=scalardb-cluster).
 Since they are available under a commercial license, you need to get the license and permission to access them.
-For more details, please [contact us](https://scalar-labs.com/contact_us/).
+For more details, please [contact us](https://www.scalar-labs.com/contact/).
 
 Before you add the dependency, you need to add the Maven repository using your build tool such as Gradle and Maven.
 
