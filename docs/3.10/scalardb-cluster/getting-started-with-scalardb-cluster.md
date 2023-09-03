@@ -13,7 +13,7 @@ If you don't have ScalarDB Cluster set up, please follow the instructions in [Se
 
 In addition, you need access to the [ScalarDB Cluster GitHub repository](https://github.com/scalar-labs/scalardb-cluster) and [packages in the ScalarDB Cluster repository](https://github.com/orgs/scalar-labs/packages?repo_name=scalardb-cluster).
 These repositories are available only to users with a commercial license and permission.
-To get a license and permission, please [contact us](https://scalar-labs.com/contact_us/).
+To get a license and permission, please [contact us](https://www.scalar-labs.com/contact/).
 
 You also need to set the `gpr.user` property to your GitHub username and the `gpr.key` property to your personal access token.
 To do so, you must either add these properties in `~/.gradle/gradle.properties` or specify the properties by using the `-P` option when running the `./gradlew` command as follows:

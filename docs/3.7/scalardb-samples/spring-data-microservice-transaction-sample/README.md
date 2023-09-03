@@ -12,7 +12,7 @@ For details about these features, see [Two-phase Commit Transactions](https://gi
 
 In addition, you need access to the [ScalarDB SQL GitHub repository](https://github.com/scalar-labs/scalardb-sql) and [Packages in ScalarDB SQL repository](https://github.com/orgs/scalar-labs/packages?repo_name=scalardb-sql).
 These repositories are available only to users with a commercial license and permission.
-To get a license and permission, please [contact us](https://scalar-labs.com/contact_us/).
+To get a license and permission, please [contact us](https://www.scalar-labs.com/contact/).
 
 You also need the `gpr.user` property for your GitHub username and the `gpr.key` property for your personal access token.
 You must either add these properties in `~/.gradle/gradle.properties` or specify the properties by using the `-P` option when running the `./gradlew` command as follows:

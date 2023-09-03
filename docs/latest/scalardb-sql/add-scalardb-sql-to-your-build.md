@@ -5,7 +5,7 @@ The ScalarDB SQL libraries are available as [packages on GitHub](https://github.
 {% capture notice--warning %}
 **Attention**
 
-You must have a commmercial license and permission to access the ScalarDB SQL libraries. If you need a commercial license, please [contact us](https://scalar-labs.com/contact_us/).
+You must have a commmercial license and permission to access the ScalarDB SQL libraries. If you need a commercial license, please [contact us](https://www.scalar-labs.com/contact/).
 {% endcapture %}
 
 <div class="notice--warning">{{ notice--warning | markdownify }}</div>
