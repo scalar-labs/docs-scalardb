@@ -7,7 +7,7 @@ This document explains how to use the Java API.
 
 The client libraries are available in the [packages for ScalarDB Cluster](https://github.com/orgs/scalar-labs/packages?repo_name=scalardb-cluster).
 Since the packages are available under a commercial license, you need to get a commercial license and permission to access the packages.
-For more details, please [contact us](https://scalar-labs.com/contact_us/).
+For more details, please [contact us](https://www.scalar-labs.com/contact/).
 
 Before you add the dependency, you need to add the Maven repository by using your build tool, such as Gradle and Maven.
 

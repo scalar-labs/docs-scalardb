@@ -9,7 +9,7 @@ If you don't have ScalarDB Cluster set up, please follow the instructions in [Se
 
 In addition, you need access to the [ScalarDB Cluster GitHub repository](https://github.com/scalar-labs/scalardb-cluster).
 This repository is available only to users with a commercial license and permission.
-To get a license and permission, please [contact us](https://scalar-labs.com/contact_us/).
+To get a license and permission, please [contact us](https://www.scalar-labs.com/contact/).
 
 ## Sample application
 
