@@ -35,7 +35,7 @@ To add a dependency using Maven:
 * [Two-phase Commit Transactions](two-phase-commit-transactions.md)
 * [Design document](design.md)
 * [Schema Loader](schema-loader.md)
-* [Requirements in the underlying databases](requirements.md)
+* [Requirements and Recommendations for the Underlying Databases of ScalarDB](requirements.md)
 * [How to Back up and Restore](backup-restore.md)
 * [ScalarDB supported databases](scalardb-supported-databases.md)
 * [Configurations for Consensus Commit](configurations-for-consensus-commit.md)
@@ -66,4 +66,4 @@ Here are the contributors we are especially thankful for:
 ScalarDB is dual-licensed under both the Apache 2.0 License (found in the LICENSE file in the root directory) and a commercial license.
 You may select, at your option, one of the above-listed licenses.
 The commercial license includes several enterprise-grade features such as management tools and declarative query interfaces like GraphQL and SQL interfaces.
-Regarding the commercial license, please [contact us](https://www.scalar-labs.com/contact/) for more information.
+Regarding the commercial license, please [contact us](https://scalar-labs.com/contact_us/) for more information.
