@@ -34,11 +34,10 @@ To add a dependency using Maven:
 * [Multi-storage Transactions](multi-storage-transactions.md)
 * [Two-phase Commit Transactions](two-phase-commit-transactions.md)
 * [Design document](design.md)
-* [Schema Loader](schema-loader.md)
-* [Requirements in the underlying databases](requirements.md)
+* [Requirements and Recommendations for the Underlying Databases of ScalarDB](requirements.md)
 * [How to Back up and Restore](backup-restore.md)
 * [ScalarDB supported databases](scalardb-supported-databases.md)
-* [Configurations](configurations.md)
+* [Configurations for Consensus Commit](configurations-for-consensus-commit.md)
 * [Storage abstraction](storage-abstraction.md)
 * Slides
     * [Making Cassandra more capable, faster, and more reliable](https://speakerdeck.com/scalar/making-cassandra-more-capable-faster-and-more-reliable-at-apachecon-at-home-2020) at ApacheCon@Home 2020
@@ -62,22 +61,8 @@ Here are the contributors we are especially thankful for:
 - [Toshihiro Suzuki](https://github.com/brfrn169) - created [Phoenix adapter](https://github.com/scalar-labs/scalardb-phoenix) for ScalarDB
 - [Yonezawa-T2](https://github.com/Yonezawa-T2) - reported bugs around Serializable and proposed a new Serializable strategy (now named Extra-Read)
 
-## Development
-
-### Pre-commit hook
-
-This project uses [pre-commit](https://pre-commit.com/) to automate code format and so on as much as possible. If you're interested in the development of ScalarDB, please [install pre-commit](https://pre-commit.com/#installation) and the git hook script as follows.
-
-```
-$ ls -a .pre-commit-config.yaml
-.pre-commit-config.yaml
-$ pre-commit install
-```
-
-The code formatter is automatically executed when committing files. A commit will fail and be formatted by the formatter when any invalid code format is detected. Try to commit the change again.
-
 ## License
 ScalarDB is dual-licensed under both the Apache 2.0 License (found in the LICENSE file in the root directory) and a commercial license.
 You may select, at your option, one of the above-listed licenses.
 The commercial license includes several enterprise-grade features such as management tools and declarative query interfaces like GraphQL and SQL interfaces.
-Regarding the commercial license, please [contact us](https://www.scalar-labs.com/contact/) for more information.
+Regarding the commercial license, please [contact us](https://scalar-labs.com/contact_us/) for more information.
