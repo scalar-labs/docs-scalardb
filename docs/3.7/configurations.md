@@ -4,7 +4,7 @@ This page describes the available configurations for ScalarDB.
 
 ## ScalarDB client configurations
 
-ScalarDB provides its own transaction protocol called Consensus Commit. You can use the Consensus Commit protocol directly through the ScalarDB client library.
+ScalarDB provides its own transaction protocol called Consensus Commit. You can use the Consensus Commit protocol directly through the ScalarDB client library or through the gRPC-based ScalarDB Server, which is a daemon process that manages ScalarDB transactions.
 
 ### Use Consensus Commit directly
 
@@ -32,7 +32,6 @@ The following basic configurations are available for the Consensus Commit transa
 | `scalar.db.consensus_commit.isolation_level`          | Isolation level used for Consensus Commit. Either `SNAPSHOT` or `SERIALIZABLE` can be specified.                                                                                                                                                                                                                                                                                                        | `SNAPSHOT`    |
 | `scalar.db.consensus_commit.serializable_strategy`    | Serializable strategy used for Consensus Commit. Either `EXTRA_READ` or `EXTRA_WRITE` can be specified. If `SNAPSHOT` is specified in the property `scalar.db.consensus_commit.isolation_level`, this configuration will be ignored.                                                                                                                                                                                       | `EXTRA_READ`  |
 | `scalar.db.consensus_commit.coordinator.namespace`    | Namespace name of Coordinator tables.                                                                                                                                                                                                                                                                                                                                                                   | `coordinator` |
-| `scalar.db.consensus_commit.include_metadata.enabled` | If set to `true`, `Get` and `Scan` operations results will contain transaction metadata. To see the transaction metadata columns details for a given table, you can use the `DistributedTransactionAdmin.getTableMetadata()` method, which will return the table metadata augmented with the transaction metadata columns. Using this configuration can be useful to investigate transaction-related issues. | `false`       |
 
 #### Performance-related configurations
 
@@ -73,7 +72,6 @@ The following configurations are available for Cassandra:
 | `scalar.db.contact_port`                | Port number for all the contact points.                               |            |
 | `scalar.db.username`                    | Username to access the database.                                      |            |
 | `scalar.db.password`                    | Password to access the database.                                      |            |
-| `scalar.db.cassandra.metadata.keyspace` | Keyspace name for the namespace and table metadata used for ScalarDB. | `scalardb` |
 
 </div>
 <div id="CosmosDB_for_NoSQL" class="tabcontent" markdown="1">
@@ -133,6 +131,42 @@ ScalarDB supports using multiple storage implementations simultaneously. You can
 
 For details about using multiple storages, see [Multi-Storage Transactions](multi-storage-transactions.md).
 
+### Use Consensus Commit through ScalarDB Server
+
+[ScalarDB Server](scalardb-server.md) is a standalone server that provides a gRPC interface to ScalarDB. To interact with ScalarDB Server, you must add the following to the ScalarDB properties file:
+
+```properties
+scalar.db.transaction_manager=grpc
+```
+
+The following configurations are available for the gRPC transaction manager for ScalarDB Server:
+
+| Name                                       | Description                                                 | Default                 |
+|--------------------------------------------|-------------------------------------------------------------|-------------------------|
+| `scalar.db.transaction_manager`            | `grpc` should be specified.                                 | -                       |
+| `scalar.db.contact_points`                 | ScalarDB Server host.                                       |                         |
+| `scalar.db.contact_port`                   | Port number for ScalarDB Server.                            | `60051`                 |
+| `scalar.db.grpc.deadline_duration_millis`  | The deadline duration for gRPC connections in milliseconds. | `60000` (60 seconds)    |
+| `scalar.db.grpc.max_inbound_message_size`  | The maximum message size allowed for a single gRPC frame.   | The gRPC default value. |
+| `scalar.db.grpc.max_inbound_metadata_size` | The maximum size of metadata allowed to be received.        | The gRPC default value. |
+
+For details about ScalarDB Server, see [ScalarDB Server](scalardb-server.md).
+
+## ScalarDB Server configurations
+
+[ScalarDB Server](scalardb-server.md) is a standalone server that provides a gRPC interface to ScalarDB. This section explains ScalarDB Server configurations.
+
+In addition to the [configurations when using Consensus Commit directly](#use-consensus-commit-directly) and [other ScalarDB configurations](#other-scalardb-configurations), the following configurations are available for ScalarDB Server:
+
+| Name                                              | Description                                                                                      | Default                 |
+|---------------------------------------------------|--------------------------------------------------------------------------------------------------|-------------------------|
+| `scalar.db.server.port`                           | Port number for ScalarDB Server.                                                                 | `60051`                 |
+| `scalar.db.server.prometheus_exporter_port`       | Prometheus exporter port. Prometheus exporter will not be started if a negative number is given. | `8080`                  |
+| `scalar.db.server.grpc.max_inbound_message_size`  | The maximum message size allowed to be received.                                                 | The gRPC default value. |
+| `scalar.db.server.grpc.max_inbound_metadata_size` | The maximum size of metadata allowed to be received.                                             | The gRPC default value. |
+
+For details about ScalarDB Server, see [ScalarDB Server](scalardb-server.md).
+
 ## Other ScalarDB configurations
 
 The following are additional configurations available for ScalarDB:
@@ -140,8 +174,6 @@ The following are additional configurations available for ScalarDB:
 | Name                                                             | Description                                                                                                                                                                                                       | Default              |
 |------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------|
 | `scalar.db.metadata.cache_expiration_time_secs`                  | ScalarDB has a metadata cache to reduce the number of requests to the database. This setting specifies the expiration time of the cache in seconds.                                                               | `-1` (no expiration) |
-| `scalar.db.active_transaction_management.expiration_time_millis` | ScalarDB maintains ongoing transactions, which can be resumed by using a transaction ID. This setting specifies the expiration time of this transaction management feature in milliseconds.                       | `-1` (no expiration) |
-| `scalar.db.default_namespace_name`                               | The given namespace name will be used by operations that do not already specify a namespace. |                      |
 
 ### Two-phase commit support
 
@@ -149,7 +181,11 @@ ScalarDB supports transactions with a two-phase commit interface. With transacti
 
 For details about using two-phase commit, see [Transactions with a Two-Phase Commit Interface](two-phase-commit-transactions.md).
 
-## Configuration example
+## Configuration examples
+
+This section provides some configuration examples.
+
+### Configuration example #1 - App and database
 
 ```mermaid
 flowchart LR
@@ -173,6 +209,50 @@ The following is an example of the configuration for connecting the app to the u
 ```properties
 # Transaction manager implementation.
 scalar.db.transaction_manager=consensus-commit
+
+# Storage implementation.
+scalar.db.storage=cassandra
+
+# Comma-separated contact points.
+scalar.db.contact_points=<CASSANDRA_HOST>
+
+# Credential information to access the database.
+scalar.db.username=<USERNAME>
+scalar.db.password=<PASSWORD>
+```
+
+### Configuration example #2 - App, ScalarDB Server, and database
+
+```mermaid
+flowchart LR
+    app["App -<br />ScalarDB library with gRPC"]
+    server["ScalarDB Server -<br />(ScalarDB library with<br />Consensus Commit)"]
+    db[(Underlying storage or database)]
+    app --> server --> db
+```
+
+In this example configuration, the app (ScalarDB library with gRPC) connects to an underlying storage or database (in this case, Cassandra) through ScalarDB Server.
+
+{% capture notice--info %}
+**Note**
+
+This configuration is acceptable for production use because ScalarDB Server implements the [Scalar Admin](https://github.com/scalar-labs/scalar-admin) interface, which enables you to take transactionally consistent backups for ScalarDB by pausing ScalarDB Server.
+
+{% endcapture %}
+
+<div class="notice--info">{{ notice--info | markdownify }}</div>
+
+The following is an example of the configuration for connecting the app to the underlying database through ScalarDB Server:
+
+```properties
+# Transaction manager implementation.
+scalar.db.transaction_manager=grpc
+
+# ScalarDB Server host.
+scalar.db.contact_points=<SCALARDB_SERVER_HOST>
+
+# ScalarDB Server port.
+scalar.db.contact_port=<SCALARDB_SERVER_PORT>
 
 # Storage implementation.
 scalar.db.storage=cassandra

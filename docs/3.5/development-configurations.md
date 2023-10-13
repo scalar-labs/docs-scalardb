@@ -2,5 +2,6 @@
 
 The following is a list of configuration guides for ScalarDB:
 
-- [Configure Multi-Storage Transactions](multi-storage-transactions.md)
-- [Configure Two-Phase Commit Transactions](two-phase-commit-transactions.md)
+- [ScalarDB Configurations](configurations.md)
+- [Multi-Storage Transactions](multi-storage-transactions.md)
+- [Transactions with a Two-Phase Commit Interface](two-phase-commit-transactions.md)
