@@ -61,28 +61,28 @@ For the process or application that begins the transaction to act as Coordinator
 
 ```java
 // Begin a transaction.
-TwoPhaseCommitTransaction tx = manager.begin();
+TwoPhaseCommitTransaction tx = transactionManager.begin();
 ```
 
 Or, for the process or application that begins the transaction to act as Coordinator, you should use the following `start` method:
 
 ```java
 // Start a transaction.
-TwoPhaseCommitTransaction tx = manager.start();
+TwoPhaseCommitTransaction tx = transactionManager.start();
 ```
 
 Alternatively, you can use the `begin` method for a transaction by specifying a transaction ID as follows:
 
 ```java
 // Begin a transaction by specifying a transaction ID.
-TwoPhaseCommitTransaction tx = manager.begin("<TRANSACTION_ID>");
+TwoPhaseCommitTransaction tx = transactionManager.begin("<TRANSACTION_ID>");
 ```
 
 Or, you can use the `start` method for a transaction by specifying a transaction ID as follows:
 
 ```java
 // Start a transaction by specifying a transaction ID.
-TwoPhaseCommitTransaction tx = manager.start("<TRANSACTION_ID>");
+TwoPhaseCommitTransaction tx = transactionManager.start("<TRANSACTION_ID>");
 ```
 
 ### Join a transaction (for participants)
@@ -90,7 +90,7 @@ TwoPhaseCommitTransaction tx = manager.start("<TRANSACTION_ID>");
 For participants, you can join a transaction by specifying the transaction ID associated with the transaction that Coordinator has started or begun as follows:
 
 ```java
-TwoPhaseCommitTransaction tx = manager.join("<TRANSACTION_ID>")
+TwoPhaseCommitTransaction tx = transactionManager.join("<TRANSACTION_ID>")
 ```
 
 {% capture notice--info %}
@@ -307,12 +307,12 @@ The following shows how `resume()` works:
 
 ```java
 // Join (or begin) the transaction.
-TwoPhaseCommitTransaction tx = manager.join("<TRANSACTION_ID>");
+TwoPhaseCommitTransaction tx = transactionManager.join("<TRANSACTION_ID>");
 
 ...
 
 // Resume the transaction by using the transaction ID.
-TwoPhaseCommitTransaction tx1 = manager.resume("<TRANSACTION_ID>")
+TwoPhaseCommitTransaction tx1 = transactionManager.resume("<TRANSACTION_ID>")
 ```
 
 {% capture notice--info %}
@@ -359,7 +359,7 @@ public class ServiceAImpl implements ServiceA {
 
   @Override
   public void facadeEndpoint() throws Exception {
-    TwoPhaseCommitTransaction tx = manager.begin();
+    TwoPhaseCommitTransaction tx = transactionManager.begin();
 
     try {
       ...
@@ -404,19 +404,19 @@ public class ServiceBImpl implements ServiceB {
   @Override
   public void endpoint1(String txId) throws Exception {
     // Join the transaction.
-    TwoPhaseCommitTransaction tx = manager.join(txId);
+    TwoPhaseCommitTransaction tx = transactionManager.join(txId);
   }
 
   @Override
   public void endpoint2(String txId) throws Exception {
     // Resume the transaction that you joined in `endpoint1()`.
-    TwoPhaseCommitTransaction tx = manager.resume(txId);
+    TwoPhaseCommitTransaction tx = transactionManager.resume(txId);
   }
 
   @Override
   public void prepare(String txId) throws Exception {
     // Resume the transaction.
-    TwoPhaseCommitTransaction tx = manager.resume(txId);
+    TwoPhaseCommitTransaction tx = transactionManager.resume(txId);
 
     ...
 
@@ -427,7 +427,7 @@ public class ServiceBImpl implements ServiceB {
   @Override
   public void commit(String txId) throws Exception {
     // Resume the transaction.
-    TwoPhaseCommitTransaction tx = manager.resume(txId);
+    TwoPhaseCommitTransaction tx = transactionManager.resume(txId);
 
     ...
 
@@ -438,7 +438,7 @@ public class ServiceBImpl implements ServiceB {
   @Override
   public void rollback(String txId) throws Exception {
     // Resume the transaction.
-    TwoPhaseCommitTransaction tx = manager.resume(txId);
+    TwoPhaseCommitTransaction tx = transactionManager.resume(txId);
 
     ...
 
@@ -517,6 +517,15 @@ public class Sample {
 
         // Commit the transaction.
         commit(transaction1, transaction2);
+      } catch (UnsatisfiedConditionException e) {
+        // You need to handle `UnsatisfiedConditionException` only if a mutation operation specifies
+        // a condition. This exception indicates the condition for the mutation operation is not met.
+
+        rollback(transaction1, transaction2);
+
+        // You can handle the exception here, according to your application requirements.
+
+        return;
       } catch (UnknownTransactionStatusException e) {
         // If you catch `UnknownTransactionStatusException` when committing the transaction, 
         // it indicates that the status of the transaction, whether it was successful or not, is unknown.
@@ -663,6 +672,12 @@ The APIs for CRUD operations (`get()`, `scan()`, `put()`, `delete()`, and `mutat
 - If you catch `CrudException`, this exception indicates that the transaction CRUD operation has failed due to transient or non-transient faults. You can try retrying the transaction from the beginning, but the transaction will still fail if the cause is non-transient.
 - If you catch `CrudConflictException`, this exception indicates that the transaction CRUD operation has failed due to transient faults (for example, a conflict error). In this case, you can retry the transaction from the beginning.
 
+### `UnsatisfiedConditionException`
+
+The APIs for mutation operations (`put()`, `delete()`, and `mutate()`) could also throw `UnsatisfiedConditionException`.
+
+If you catch `UnsatisfiedConditionException`, this exception indicates that the condition for the mutation operation is not met. You can handle this exception according to your application requirements.
+
 ### `PreparationException` and `PreparationConflictException`
 
 The `prepare()` API could throw `PreparationException` or `PreparationConflictException`:
@@ -691,7 +706,7 @@ How to identify a transaction status is delegated to users. You may want to crea
 
 Although not illustrated in the example code, the `resume()` API could also throw `TransactionNotFoundException`. This exception indicates that the transaction associated with the specified ID was not found and/or the transaction might have expired. In either case, you can retry the transaction from the beginning since the cause of this exception is basically transient.
 
-In the sample code, for `UnknownTransactionStatusException`, the transaction is not retried because the application must check if the transaction was successful to avoid potential duplicate operations. For other exceptions, the transaction is retried because the cause of the exception is transient or non-transient. If the cause of the exception is transient, the transaction may succeed if you retry it. However, if the cause of the exception is non-transient, the transaction will still fail even if you retry it. In such a case, you will exhaust the number of retries.
+In the sample code, for `UnknownTransactionStatusException`, the transaction is not retried because the application must check if the transaction was successful to avoid potential duplicate operations. Also, for `UnsatisfiedConditionException`, the transaction is not retried because how to handle this exception depends on your application requirements. For other exceptions, the transaction is retried because the cause of the exception is transient or non-transient. If the cause of the exception is transient, the transaction may succeed if you retry it. However, if the cause of the exception is non-transient, the transaction will still fail even if you retry it. In such a case, you will exhaust the number of retries.
 
 {% capture notice--info %}
 **Note**
