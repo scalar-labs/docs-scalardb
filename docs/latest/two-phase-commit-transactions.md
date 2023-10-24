@@ -14,32 +14,6 @@ In transactions with a two-phase commit interface, there are two roles—Coordin
 
 The Coordinator process and the participant processes all have different transaction manager instances. The Coordinator process first begins or starts a transaction, and the participant processes join the transaction. After executing CRUD operations, the Coordinator process and the participant processes commit the transaction by using the two-phase interface.
 
-## How to configure ScalarDB to support transactions with a two-phase commit interface
-
-To enable transactions with a two-phase commit interface, you need to specify `consensus-commit` as the value for `scalar.db.transaction_manager` in the ScalarDB properties file.
-
-The following is an example of a configuration for transactions with a two-phase commit interface when using Cassandra:
-
-```properties
-# Consensus Commit is required to support transactions with a two-phase commit interface.
-scalar.db.transaction_manager=consensus-commit
-
-# Storage implementation.
-scalar.db.storage=cassandra
-
-# Comma-separated contact points.
-scalar.db.contact_points=cassandra
-
-# Port number for all the contact points.
-scalar.db.contact_port=9042
-
-# Credential information to access the database.
-scalar.db.username=cassandra
-scalar.db.password=cassandra
-```
-
-For additional configurations, see [ScalarDB Configurations](configurations.md).
-
 ## How to execute transactions with a two-phase commit interface
 
 To execute a two-phase commit transaction, you must get the transaction manager instance. Then, the Coordinator process can begin or start the transaction, and the participant can process the transaction.
@@ -213,7 +187,7 @@ Similar to `prepare()`, if any of the Coordinator or participant processes fail 
 {% capture notice--info %}
 **Note**
 
-When using the [Consensus Commit](configurations/#consensus-commit) transaction manager with `EXTRA_READ` set as the value for `scalar.db.consensus_commit.serializable_strategy` and `SERIALIZABLE` set as the value for `scalar.db.consensus_commit.isolation_level`, you need to call `validate()`. However, if you are not using Consensus Commit, specifying `validate()` will not have any effect.
+When using the [Consensus Commit](configurations.md#use-consensus-commit-directly) transaction manager with `EXTRA_READ` set as the value for `scalar.db.consensus_commit.serializable_strategy` and `SERIALIZABLE` set as the value for `scalar.db.consensus_commit.isolation_level`, you need to call `validate()`. However, if you are not using Consensus Commit, specifying `validate()` will not have any effect.
 {% endcapture %}
 
 <div class="notice--info">{{ notice--info | markdownify }}</div>
@@ -517,15 +491,6 @@ public class Sample {
 
         // Commit the transaction.
         commit(transaction1, transaction2);
-      } catch (UnsatisfiedConditionException e) {
-        // You need to handle `UnsatisfiedConditionException` only if a mutation operation specifies
-        // a condition. This exception indicates the condition for the mutation operation is not met.
-
-        rollback(transaction1, transaction2);
-
-        // You can handle the exception here, according to your application requirements.
-
-        return;
       } catch (UnknownTransactionStatusException e) {
         // If you catch `UnknownTransactionStatusException` when committing the transaction, 
         // it indicates that the status of the transaction, whether it was successful or not, is unknown.
@@ -672,12 +637,6 @@ The APIs for CRUD operations (`get()`, `scan()`, `put()`, `delete()`, and `mutat
 - If you catch `CrudException`, this exception indicates that the transaction CRUD operation has failed due to transient or non-transient faults. You can try retrying the transaction from the beginning, but the transaction will still fail if the cause is non-transient.
 - If you catch `CrudConflictException`, this exception indicates that the transaction CRUD operation has failed due to transient faults (for example, a conflict error). In this case, you can retry the transaction from the beginning.
 
-### `UnsatisfiedConditionException`
-
-The APIs for mutation operations (`put()`, `delete()`, and `mutate()`) could also throw `UnsatisfiedConditionException`.
-
-If you catch `UnsatisfiedConditionException`, this exception indicates that the condition for the mutation operation is not met. You can handle this exception according to your application requirements.
-
 ### `PreparationException` and `PreparationConflictException`
 
 The `prepare()` API could throw `PreparationException` or `PreparationConflictException`:
@@ -706,7 +665,7 @@ How to identify a transaction status is delegated to users. You may want to crea
 
 Although not illustrated in the example code, the `resume()` API could also throw `TransactionNotFoundException`. This exception indicates that the transaction associated with the specified ID was not found and/or the transaction might have expired. In either case, you can retry the transaction from the beginning since the cause of this exception is basically transient.
 
-In the sample code, for `UnknownTransactionStatusException`, the transaction is not retried because the application must check if the transaction was successful to avoid potential duplicate operations. Also, for `UnsatisfiedConditionException`, the transaction is not retried because how to handle this exception depends on your application requirements. For other exceptions, the transaction is retried because the cause of the exception is transient or non-transient. If the cause of the exception is transient, the transaction may succeed if you retry it. However, if the cause of the exception is non-transient, the transaction will still fail even if you retry it. In such a case, you will exhaust the number of retries.
+In the sample code, for `UnknownTransactionStatusException`, the transaction is not retried because the application must check if the transaction was successful to avoid potential duplicate operations. For other exceptions, the transaction is retried because the cause of the exception is transient or non-transient. If the cause of the exception is transient, the transaction may succeed if you retry it. However, if the cause of the exception is non-transient, the transaction will still fail even if you retry it. In such a case, you will exhaust the number of retries.
 
 {% capture notice--info %}
 **Note**
@@ -728,7 +687,7 @@ In addition, each service typically has multiple servers (or hosts) for scalabil
 
 ![Load balancing for transactions with a two-phase commit interface](images/two_phase_commit_load_balancing.png)
 
-There are several approaches to achieve load balancing for transactions with a two-phase commit interface depending on the protocol between the services. Some approaches for this include using gRPC and HTTP/1.1.
+There are several approaches to achieve load balancing for transactions with a two-phase commit interface depending on the protocol between the services. Some approaches for this include using gRPC, HTTP/1.1, and [ScalarDB Cluster (redirects to the Enterprise docs site)](https://scalardb.scalar-labs.com/docs/latest/scalardb-cluster/), which is a component that is available only in the ScalarDB Enterprise edition.
 
 ### gRPC
 
@@ -747,8 +706,11 @@ For more details about load balancing in gRPC, see [gRPC Load Balancing](https:/
 Typically, you use a server-side (proxy) load balancer with HTTP/1.1:
 
 - When using an L3/L4 load balancer, you can use the same HTTP connection to send requests in a transaction, which guarantees the requests go to the same server.
-- When using an L7 load balancer, since requests in the same HTTP connection don't necessarily go to the same server, you need to use cookies or similar method to route requests to the correct server.
-You can use session affinity (sticky session) in that case.
+- When using an L7 load balancer, since requests in the same HTTP connection don't necessarily go to the same server, you need to use cookies or similar method to route requests to the correct server. You can use session affinity (sticky session) in that case.
+
+### ScalarDB Cluster
+
+ScalarDB Cluster addresses request routing by providing a routing mechanism that is capable of directing requests to the appropriate cluster node within the cluster. For details about ScalarDB Cluster, see [ScalarDB Cluster (redirects to the Enterprise docs site)](https://scalardb.scalar-labs.com/docs/latest/scalardb-cluster/).
 
 ## Hands-on tutorial
 
