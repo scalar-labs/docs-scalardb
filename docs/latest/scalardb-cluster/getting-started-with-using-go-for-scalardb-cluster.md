@@ -110,6 +110,7 @@ After running the command, you should see two files in the `scalardb-cluster` su
 
 The following is the program that uses the gRPC code. Save it as `main.go` in the working directory. This program does the same thing as the `ElectronicMoney.java` program in [Getting Started with ScalarDB](https://scalardb.scalar-labs.com/docs/latest/getting-started-with-scalardb/). Note that you have to update the value of `SERVER_ADDRESS` based on the `EXTERNAL-IP` value of the ScalarDB Cluster `LoadBalancer` service in your environment.
 
+{% raw %}
 ```go
 package main
 
@@ -359,6 +360,7 @@ func printUsageAndExit() {
 	os.Exit(1)
 }
 ```
+{% endraw %}
 
 After creating the `main.go` file, you need to create the `go.mod` file by running the following commands:
 
