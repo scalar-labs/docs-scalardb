@@ -53,13 +53,13 @@ Please see [ScalarDB Java API Guide - Creation Options](https://github.com/scala
 Examples of `CREATE NAMESPACE` are as follows:
 
 ```sql
-# Create a namespace "ns"
+-- Create a namespace "ns"
 CREATE NAMESPACE ns;
 
-# Create a namespace only if it does not already exist
+-- Create a namespace only if it does not already exist
 CREATE NAMESPACE IF NOT EXISTS ns;
 
-# Create a namespace with options
+-- Create a namespace with options
 CREATE NAMESPACE ns WITH 'option1' = 'value1' AND 'option2' = 'value2' AND 'option3' = 'value3';
 ```
 
@@ -138,7 +138,7 @@ CREATE TABLE [IF NOT EXISTS] [<namespace name>.]<table name> (
 Examples of `CREATE TABLE` are as follows:
 
 ```sql
-# Create a table with a primary key ("c1") and creation options
+-- Create a table with a primary key ("c1") and creation options
 CREATE TABLE ns.tbl (
   c1 INT PRIMARY KEY,
   c2 TEXT,
@@ -147,7 +147,7 @@ CREATE TABLE ns.tbl (
   c5 BOOLEAN
 ) WITH 'option1' = 'value1' AND 'option2' = 'value2' AND 'option3' = 'value3';
 
-# Create a table with a partition key ("c1") and a clustering key ("c2" and "c3") with clustering order definition only if it does not already exist
+-- Create a table with a partition key ("c1") and a clustering key ("c2" and "c3") with clustering order definition only if it does not already exist
 CREATE TABLE IF NOT EXISTS tbl (
   c1 INT,
   c2 TEXT,
@@ -157,7 +157,7 @@ CREATE TABLE IF NOT EXISTS tbl (
   PRIMARY KEY (c1, c2, c3)
 ) WITH CLUSTERING ORDER BY (c2 DESC, c3 ASC);
 
-# Create a table with a partition key ("c1", "c2") and a clustering key ("c3" and "c4") with clustering order definition and creation options
+-- Create a table with a partition key ("c1", "c2") and a clustering key ("c3" and "c4") with clustering order definition and creation options
 CREATE TABLE ns.tbl (
   c1 INT,
   c2 TEXT,
@@ -228,13 +228,13 @@ CREATE INDEX [IF NOT EXISTS] ON [<namespace name>.]<table name> (<column name>)
 Examples of `CREATE INDEX` are as follows:
 
 ```sql
-# Create a secondary index on a column "c4" of a table "ns.tbl"
+-- Create a secondary index on a column "c4" of a table "ns.tbl"
 CREATE INDEX ON ns.tbl (c4);
 
-# Create a secondary index only if it does not already exist
+-- Create a secondary index only if it does not already exist
 CREATE INDEX IF NOT EXISTS ON tbl (c4);
 
-# Create a secondary index with options
+-- Create a secondary index with options
 CREATE INDEX ON ns.tbl (c4) WITH 'option1' = 'value1' AND 'option2' = 'value2' AND 'option3' = 'value3';
 ```
 
@@ -275,7 +275,7 @@ TRUNCATE TABLE [<namespace name>.]<table name>
 Examples of `TRUNCATE TABLE` are as follows:
 
 ```sql
-# Truncate a table "ns.tbl"
+-- Truncate a table "ns.tbl"
 TRUNCATE TABLE ns.tbl;
 ```
 
@@ -301,10 +301,10 @@ DROP INDEX [IF EXISTS] ON [<namespace name>.]<table name> (<column name>)
 Examples of `DROP INDEX` are as follows:
 
 ```sql
-# Drop a secondary index on a column "c4" of a table "ns.tbl"
+-- Drop a secondary index on a column "c4" of a table "ns.tbl"
 DROP INDEX ON ns.tbl (c4);
 
-# Drop a secondary index only if it exists
+-- Drop a secondary index only if it exists
 DROP INDEX IF EXISTS ON tbl (c4);
 ```
 
@@ -335,10 +335,10 @@ DROP TABLE [IF EXISTS] [<namespace name>.]<table name>
 Examples of `DROP TABLE` are as follows:
 
 ```sql
-# Drop a table "ns.tbl"
+-- Drop a table "ns.tbl"
 DROP TABLE ns.tbl;
 
-# Drop a table only if it exists
+-- Drop a table only if it exists
 DROP TABLE IF EXISTS tbl;
 ```
 
@@ -367,13 +367,13 @@ DROP NAMESPACE [IF EXISTS] <namespace name> [CASCADE]
 Examples of `DROP NAMESPACE` are as follows:
 
 ```sql
-# Drop a namespace "ns"
+-- Drop a namespace "ns"
 DROP NAMESPACE ns;
 
-# Drop a namespace only if it exists
+-- Drop a namespace only if it exists
 DROP NAMESPACE IF EXISTS ns;
 
-# Drop a namespace with cascade
+-- Drop a namespace with cascade
 DROP NAMESPACE ns CASCADE;
 ```
 
@@ -407,13 +407,13 @@ creation_options: <option name>=<option value> [AND <option name>=<option value>
 Examples of `CREATE COORDINATOR TABLES` are as follows:
 
 ```sql
-# Create coordinator tables
+-- Create coordinator tables
 CREATE COORDINATOR TABLES;
 
-# Create coordinator tables only if they do not already exist
+-- Create coordinator tables only if they do not already exist
 CREATE COORDINATOR TABLES IF NOT EXIST;
 
-# Create coordinator tables with options
+-- Create coordinator tables with options
 CREATE COORDINATOR TABLES WITH 'option1' = 'value1' AND 'option2' = 'value2' AND 'option3' = 'value3';
 ```
 
@@ -472,10 +472,10 @@ DROP COORDINATOR TABLES [IF EXIST]
 Examples of `DROP COORDINATOR TABLES` are as follows:
 
 ```sql
-# Drop coordinator tables
+-- Drop coordinator tables
 DROP COORDINATOR TABLES;
 
-# Drop coordinator tables if they exist
+-- Drop coordinator tables if they exist
 DROP COORDINATOR TABLES IF EXIST;
 ```
 
@@ -507,7 +507,7 @@ data_type: BOOLEAN | INT | BIGINT | FLOAT | DOUBLE | TEXT | BLOB
 Examples of `ALTER TABLE` are as follows:
 
 ```sql
-# Add a new column "new_col" to "ns.tbl"
+-- Add a new column "new_col" to "ns.tbl"
 ALTER TABLE ns.tbl ADD COLUMN new_col INT;
 ```
 
@@ -573,31 +573,31 @@ CREATE INDEX ON ns.tbl (c4);
 Examples of `SELECT` are as follows:
 
 ```sql
-# With a full primary key
+-- With a full primary key
 SELECT * FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23;
 
-# With a partial primary key
+-- With a partial primary key
 SELECT * FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa';
 
-# With projections and a partition key and clustering key boundaries
+-- With projections and a partition key and clustering key boundaries
 SELECT c1, c2, c3, c5 FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 >= 1.23 AND c3 < 4.56;
 
-# With projections and a partition key and clustering key boundaries and orders and limit
+-- With projections and a partition key and clustering key boundaries and orders and limit
 SELECT c1 AS a, c2 AS b, c3 AS c, c5 FROM ns.tbl WHERE c1 = 10 AND c2 > 'aaa' AND c2 <= 'ddd' ORDER BY c2 ASC, c3 DESC LIMIT 10;
 
-# Without WHERE clause to retrieve all the records of a table
+-- Without WHERE clause to retrieve all the records of a table
 SELECT * FROM ns.tbl;
 
-# Without WHERE clause and with projections and limit
+-- Without WHERE clause and with projections and limit
 SELECT c1, c2, c3, c5 FROM ns.tbl LIMIT 10;
 
-# With an indexed column
+-- With an indexed column
 SELECT * FROM ns.tbl WHERE c4 = 100;
 
-# With projections and an indexed column and limit
+-- With projections and an indexed column and limit
 SELECT c1, c2, c3, c4 FROM ns.tbl WHERE c4 = 100 LIMIT 10;
 
-# With positional bind markers
+-- With positional bind markers
 SELECT * FROM ns.tbl WHERE c1 = ? AND c2 > ? AND c2 <= ? ORDER BY c2 ASC, c3 DESC LIMIT ?;
 ```
 
@@ -701,13 +701,13 @@ And you can specify `<column value>` to a bind marker (positional `?` and named 
 Examples of `INSERT` are as follows:
 
 ```sql
-# Insert a record without specifying column names
+-- Insert a record without specifying column names
 INSERT INTO ns.tbl VALUES (10, 'aaa', 1.23, 100, true);
 
-# Insert a record with column names
+-- Insert a record with column names
 INSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100);
 
-# With positional bind markers
+-- With positional bind markers
 INSERT INTO tbl VALUES (?, ?, ?, ?, ?);
 ```
 
@@ -760,10 +760,10 @@ And you can specify `<column value>` to a bind marker (positional `?` and named 
 Examples of `UPDATE` are as follows:
 
 ```sql
-# Update a record
+-- Update a record
 UPDATE ns.tbl SET c4 = 200, c5 = false WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23;
 
-# With positional bind markers
+-- With positional bind markers
 UPDATE ns.tbl SET c4 = ?, c5 = ? WHERE c1 = ? AND c2 = ? AND c3 = ?;
 ```
 
@@ -813,10 +813,10 @@ And you can specify `<column value>` to a bind marker (positional `?` and named 
 Examples of `DELETE` are as follows:
 
 ```sql
-# Update a record
+-- Update a record
 DELETE FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23;
 
-# With positional bind markers
+-- With positional bind markers
 DELETE FROM tbl WHERE c1 = ? AND c2 = ? AND c3 = ?;
 ```
 
@@ -858,7 +858,7 @@ USE <namespace name>
 An example of `USE` is as follows:
 
 ```sql
-# Specify a default namespace name "ns"
+-- Specify a default namespace name "ns"
 USE ns;
 ```
 
@@ -907,7 +907,7 @@ JOIN <transaction ID>
 An example of `JOIN` is as follows:
 
 ```sql
-# Join a transaction
+-- Join a transaction
 JOIN 'id';
 ```
 
@@ -1011,7 +1011,7 @@ transaction_mode: TRANSACTION | TWO_PHASE_COMMIT_TRANSACTION
 An example of `SET MODE` is as follows:
 
 ```sql
-# Switch the current transaction mode to Two-phase Commit Transaction
+-- Switch the current transaction mode to Two-phase Commit Transaction
 SET MODE TWO_PHASE_COMMIT_TRANSACTION;
 ```
 
@@ -1043,10 +1043,10 @@ SHOW TABLES [FROM <namespace name>]
 Examples of `SHOW TABLES` is as follows:
 
 ```sql
-# Show table names in the default namespace
+-- Show table names in the default namespace
 SHOW TABLES;
 
-# Show table names in a namespace "ns"
+-- Show table names in a namespace "ns"
 SHOW TABLES FROM ns;
 ```
 
@@ -1087,10 +1087,10 @@ DESC [<namespace name>.]<table name>
 Examples of `DESCRIBE` is as follows:
 
 ```sql
-# Returns column metadata for "ns.tbl"
+-- Returns column metadata for "ns.tbl"
 DESCRIBE ns.tbl;
 
-# Returns column metadata for "tbl"
+-- Returns column metadata for "tbl"
 DESC tbl;
 ```
 
@@ -1138,7 +1138,7 @@ RESUME <transaction ID>
 An example of `RESUME` is as follows:
 
 ```sql
-# Resume a transaction
+-- Resume a transaction
 RESUME 'id';
 ```
 
