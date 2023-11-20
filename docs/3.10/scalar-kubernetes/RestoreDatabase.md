@@ -115,9 +115,9 @@ When using the PITR feature, Azure Cosmos DB restores data by using another acco
      ```console
      helm install repair-schema-ledger scalar-labs/schema-loading -n <namespace> -f /path/to/<your custom values file for ScalarDL Schema Loader for Ledger> --set "schemaLoading.commandArgs={--repair-all}"
      ```
-     
-   * ScalarDL Auditor tables
 
+   * ScalarDL Auditor tables
+   
      ```console
      helm install repair-schema-auditor scalar-labs/schema-loading -n <namespace> -f /path/to/<your custom values file for ScalarDL Schema Loader for Auditor> --set "schemaLoading.commandArgs={--repair-all}"
      ```

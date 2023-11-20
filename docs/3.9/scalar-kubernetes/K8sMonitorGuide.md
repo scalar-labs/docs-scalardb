@@ -133,11 +133,13 @@ You can access each dashboard from your local machine using the `kubectl port-fo
      ```console
      http://localhost:9090/
      ```
+
    * Alertmanager
 
      ```console
      http://localhost:9093/
      ```
+
    * Grafana
 
      ```console

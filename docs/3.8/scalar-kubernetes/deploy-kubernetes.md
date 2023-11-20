@@ -9,14 +9,15 @@ The following documentation is to help you set up and deploy a ScalarDB environm
 
 ## Installation guides
 
+* [Production checklist for ScalarDB Cluster](ProductionChecklistForScalarDBCluster.md)
+* [Guidelines for creating an EKS cluster for ScalarDB Cluster](CreateEKSClusterForScalarDBCluster.md)
 * [How to install Scalar products through AWS Marketplace](AwsMarketplaceGuide.md)
 * [How to install Scalar products through Azure Marketplace](AzureMarketplaceGuide.md)
 * [Create a bastion server](CreateBastionServer.md)
 
 ## Deployment guides
 
-* [Deploy ScalarDB Server on Amazon Elastic Kubernetes Service (EKS)](ManualDeploymentGuideScalarDBServerOnEKS.md)
-* [Deploy ScalarDB Server on Azure Kubernetes Service (AKS)](ManualDeploymentGuideScalarDBServerOnAKS.md)
+* [Deploy ScalarDB Cluster on Amazon Elastic Kubernetes Service (EKS)](ManualDeploymentGuideScalarDBClusterOnEKS.md)
 
 ## Configuration guides
 
