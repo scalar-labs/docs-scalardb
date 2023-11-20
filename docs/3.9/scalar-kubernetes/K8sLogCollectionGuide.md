@@ -65,6 +65,7 @@ Since the promtail pods deployed in this document collect only Scalar product lo
     nodeSelector:
       scalar-labs.com/dedicated-node: scalardl-ledger
   ```
+
 * ScalarDL Auditor Example
 
   ```yaml
@@ -103,7 +104,9 @@ Since promtail pods are deployed as DaemonSet, you must set tolerations in the c
         operator: Equal
         value: scalardb
   ```
+
 * ScalarDL Ledger Example
+
   ```yaml
   promtail:
     tolerations:
@@ -112,7 +115,7 @@ Since promtail pods are deployed as DaemonSet, you must set tolerations in the c
         operator: Equal
         value: scalardl-ledger
   ```
-  
+
 * ScalarDL Auditor Example
 
   ```yaml
