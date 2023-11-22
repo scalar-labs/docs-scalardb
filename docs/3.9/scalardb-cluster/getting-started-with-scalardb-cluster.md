@@ -1,80 +1,146 @@
 # Getting Started with ScalarDB Cluster
 
-This tutorial describes how to create a sample application by using ScalarDB Cluster though the Java API.
-You'll be using the same sample application as found in the [ScalarDB Sample](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-sample).
+This tutorial describes how to create a sample application that uses [ScalarDB Cluster](index.md) through the Java API.
+
+## Overview
+
+The sample e-commerce application shows how users can order and pay for items by using a line of credit. The use case described in this tutorial is the same as the basic [ScalarDB sample](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-sample/README.md) but takes advantage of ScalarDB Cluster.
+
+The following diagram shows the system architecture of the sample application:
+
+```mermaid
+stateDiagram-v2  
+  state "Schema Loader<br/>(indirect client mode)" as SL
+  state "Sample application using the Java API<br/>(indirect client mode)" as SA
+  state "Kubernetes Cluster" as KC
+  state "Service (Envoy)" as SE
+  state "Pod" as P1
+  state "Pod" as P2
+  state "Pod" as P3
+  state "Envoy" as E1
+  state "Envoy" as E2
+  state "Envoy" as E3
+  state "Service (ScalarDB Cluster)" as SSC
+  state "ScalarDB Cluster" as SC1
+  state "ScalarDB Cluster" as SC2
+  state "ScalarDB Cluster" as SC3
+  state "PostgreSQL" as PSQL
+  SL --> SE
+  SA --> SE
+  state KC {
+    SE --> E1
+    SE --> E2
+    SE --> E3
+    state P1 {
+      E1 --> SSC
+      E2 --> SSC
+      E3 --> SSC
+    }
+      SSC --> SC1
+      SSC --> SC2
+      SSC --> SC3
+    state P2 {
+      SC1 --> PSQL
+      SC1 --> SC2
+      SC1 --> SC3
+      SC2 --> PSQL
+      SC2 --> SC1
+      SC2 --> SC3
+      SC3 --> PSQL
+      SC3 --> SC1
+      SC3 --> SC2
+    }
+    state P3 {
+      PSQL
+    }
+  }
+```
+
+### What you can do in this sample application
+
+The sample application supports the following types of transactions:
+
+- Get customer information.
+- Place an order by using a line of credit.
+  - Checks if the cost of the order is below the customer's credit limit.
+  - If the check passes, records the order history and updates the amount the customer has spent.
+- Get order information by order ID.
+- Get order information by customer ID.
+- Make a payment.
+  - Reduces the amount the customer has spent.
 
 ## Prerequisites
 
-- Java (OpenJDK 8 or higher)
-- Gradle
+- One of the following Java Development Kits (JDKs):
+  - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) LTS version (8, 11, or 17)
+  - [OpenJDK](https://openjdk.org/install/) LTS version (8, 11, or 17)
+- ScalarDB Cluster running on a Kubernetes cluster
+  - If you don't have ScalarDB Cluster set up, please follow the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.md).
 
-In this tutorial, we assume that you have a ScalarDB Cluster running on a Kubernetes cluster.
-If you don't have ScalarDB Cluster set up, please follow the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.md).
+{% capture notice--info %}
+**Note**
 
-In addition, you need access to the [ScalarDB Cluster GitHub repository](https://github.com/scalar-labs/scalardb-cluster) and [packages in the ScalarDB Cluster repository](https://github.com/orgs/scalar-labs/packages?repo_name=scalardb-cluster).
-These repositories are available only to users with a commercial license and permission.
-To get a license and permission, please [contact us](https://www.scalar-labs.com/contact/).
+We recommend using the LTS versions mentioned above, but other non-LTS versions may work.
 
-You also need to set the `gpr.user` property to your GitHub username and the `gpr.key` property to your personal access token.
-To do so, you must either add these properties in `~/.gradle/gradle.properties` or specify the properties by using the `-P` option when running the `./gradlew` command as follows:
+In addition, other JDKs should work with ScalarDB, but we haven't tested them.
+{% endcapture %}
 
-```shell
+<div class="notice--info">{{ notice--info | markdownify }}</div>
+
+In addition, you need access to the [ScalarDB Cluster GitHub repository](https://github.com/scalar-labs/scalardb-cluster) and the [packages in the ScalarDB Cluster repository](https://github.com/orgs/scalar-labs/packages?repo_name=scalardb-cluster), which are private. The packages and repository are available only those who are using ScalarDB Enterprise. If you need a license for ScalarDB Enterprise, please [contact us](https://scalar-labs.com/contact_us/).
+
+After confirming that you have access to the ScalarDB SQL repository and its packages, you will need to set your GitHub username and your personal access token. To specify these properties, you can do one of the following:
+
+<div id="tabset-1">
+<div class="tab">
+  <button class="tablinks" onclick="openTab(event, 'Gradle_properties_via_command', 'tabset-1')" id="defaultOpen-1">Add to Gradle properties via Terminal</button>
+  <button class="tablinks" onclick="openTab(event, 'Environment_variables', 'tabset-1')">Add as environment variables</button>
+</div>
+
+<div id="Gradle_properties_via_command" class="tabcontent" markdown="1">
+
+Specify the properties with the `-P` option by running the `./gradlew` command as follows, replacing `<YOUR_GITHUB_USERNAME>` with your GitHub username and `<YOUR_PERSONAL_ACCESS_TOKEN>` with your personal access token:
+
+```console
 $ ./gradlew run ... -Pgpr.user=<YOUR_GITHUB_USERNAME> -Pgpr.key=<YOUR_PERSONAL_ACCESS_TOKEN>
 ```
 
-Or you can use environment variables, such as `USERNAME` for your GitHub username and `TOKEN` for your personal access token.
+</div>
+<div id="Environment_variables" class="tabcontent" markdown="1">
 
-```shell
+Specify the properties as environment variables by running the following commands, replacing `<YOUR_GITHUB_USERNAME>` with your GitHub username and `<YOUR_PERSONAL_ACCESS_TOKEN>` with your personal access token:
+
+```console
 $ export USERNAME=<YOUR_GITHUB_USERNAME>
 $ export TOKEN=<YOUR_PERSONAL_ACCESS_TOKEN>
 ```
 
+</div>
+</div>
+
 For more details, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.md).
 
-## Sample application
+## Set up ScalarDB Cluster
 
-This tutorial illustrates the process of creating a sample e-commerce application, where items can be ordered and paid for with a credit card by using ScalarDB.
-For details about the sample application, see the [sample application for ScalarDB](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-sample#sample-application).
+The following sections describe how to set up the sample e-commerce application.
 
-The following diagram shows the system architecture of the sample application:
+### Clone the ScalarDB samples repository
 
-```
-                                 +------------------------------------------------------------------------------------------------------------------------------+
-                                 | [Kubernetes Cluster]                                                                                                         |
-                                 |                                                                                                                              |
-                                 |                          [Pod]                                                     [Pod]                         [Pod]       |
- +------------------------+      |                                                                                                                              |
- |     Schema Loader      |      |                        +-------+                                          +-----------------------+                          |
- | (indirect client mode) | --+  |                  +---> | Envoy | ---+                               +---> | ScalarDB Cluster Node | ---+                     |
- +------------------------+   |  |                  |     +-------+    |                               |     +-----------------------+    |                     |
-                              |  |                  |                  |                               |                                  |                     |
-                              |  |   +---------+    |     +-------+    |     +--------------------+    |     +-----------------------+    |     +------------+  |
-                              +--+-> | Service | ---+---> | Envoy | ---+---> |      Service       | ---+---> | ScalarDB Cluster Node | ---+---> | PostgreSQL |  |
-                              |  |   | (Envoy) |    |     +-------+    |     | (ScalarDB Cluster) |    |     +-----------------------+    |     +------------+  |
- +------------------------+   |  |   +---------+    |                  |     +--------------------+    |                                  |                     |
- |   Sample application   |   |  |                  |     +-------+    |                               |     +-----------------------+    |                     |
- |     with Java API      | --+  |                  +---> | Envoy | ---+                               +---> | ScalarDB Cluster Node | ---+                     |
- | (indirect client mode) |      |                        +-------+                                          +-----------------------+                          |
- +------------------------+      |                                                                                                                              |
-                                 +------------------------------------------------------------------------------------------------------------------------------+
+Open **Terminal**, then clone the ScalarDB samples repository by running the following command:
+
+```console
+$ git clone https://github.com/scalar-labs/scalardb-samples
 ```
 
-## Step 1. Clone the ScalarDB Samples repository
+Then, go to the directory that contains the sample application by running the following command:
 
-```shell
-$ git clone https://github.com/scalar-labs/scalardb-samples.git
+```console
 $ cd scalardb-samples/scalardb-sample
 ```
 
-## Step 2. Modify `build.gradle`
+### Modify `build.gradle`
 
-To use ScalarDB Cluster, you need to modify `build.gradle`:
-
-```shell
-$ vim build.gradle
-```
-
-First, add the following repository for ScalarDB Cluster to the `repositories` section:
+To use ScalarDB Cluster, open `build.gradle` in your preferred text editor. Then, add the following repository for ScalarDB Cluster to the `repositories` section:
 
 ```gradle
 repositories {
@@ -90,32 +156,38 @@ repositories {
 }
 ```
 
-Then, delete the existing dependency for `com.scalar-labs:scalardb:3.9.2` from the `dependencies` section, and add the following dependency to the `dependencies` section:
+Then, delete the existing dependency for `com.scalar-labs:scalardb:3.10.1` from the `dependencies` section, and add the following dependency to the `dependencies` section:
 
 ```gradle
 dependencies {
     ...
 
-    implementation 'com.scalar-labs:scalardb-cluster-client:3.9.2'
+    implementation 'com.scalar-labs:scalardb-cluster-client:3.10.1'
 }
 ```
 
-## Step 3. Modify `database.properties`
+### Modify `database.properties`
 
-You need to modify `database.properties` to connect to ScalarDB Cluster as well.
-But before doing so, you need to get the `EXTERNAL-IP` address of the service resource of Envoy (`scalardb-cluster-envoy`) as follows:
+You need to modify `database.properties` to connect to ScalarDB Cluster as well. But before doing so, you need to get the `EXTERNAL-IP` address of the Envoy service resource (`scalardb-cluster-envoy`). To get the service resource, run the following command:
 
-```shell
+```console
 $ kubectl get svc scalardb-cluster-envoy
+```
+
+You should see a similar output as below, with different values for `CLUSTER-IP`, `PORT(S)`, and `AGE`:
+
+```console
 NAME                     TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)           AGE
 scalardb-cluster-envoy   LoadBalancer   10.105.121.51   localhost     60053:30641/TCP   16h
 ```
 
 In this case, the `EXTERNAL-IP` address is `localhost`.
 
-Next, open `database.properties`:
+In `database.properties`, you need to specify `cluster` for the `scalar.db.transaction_manager` property and use `indirect` as the client mode for `scalar.db.contact_points` to connect to the Envoy service resource.
 
-```shell
+Open `database.properties` by running the following command:
+
+```console
 $ vim database.properties
 ```
 
@@ -126,32 +198,52 @@ scalar.db.transaction_manager=cluster
 scalar.db.contact_points=indirect:localhost
 ```
 
-To connect to ScalarDB Cluster, you need to specify `cluster` for the `scalar.db.transaction_manager` property.
-In addition, you will use the `indirect` client mode and connect to the service resource of Envoy in this tutorial.
+{% capture notice--info %}
+**Note**
+
 For details about the client modes, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.md).
+{% endcapture %}
 
-## Step 4. Load a schema
+<div class="notice--info">{{ notice--info | markdownify }}</div>
 
-To load a schema via ScalarDB Cluster, you need to use the dedicated Schema Loader for ScalarDB Cluster (Schema Loader for Cluster).
-Using the Schema Loader for Cluster is basically the same as using the [Schema Loader](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader.md) except the name of the JAR file is different.
-You can download the Schema Loader for Cluster from [Releases](https://github.com/scalar-labs/scalardb-cluster/releases/tag/v3.9.2).
-After downloading the JAR file, you can run Schema Loader for Cluster with the following command:
+### Load the schema
 
-```shell
-$ java -jar scalardb-cluster-schema-loader-3.9.2-all.jar --config database.properties -f schema.json --coordinator
+The database schema (the method in which the data will be organized) for the sample application has already been defined in [`schema.json`](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-sample/schema.json).
+
+To apply the schema, go to the [ScalarDB Cluster Releases](https://github.com/scalar-labs/scalardb-cluster/releases) page and download the ScalarDB Cluster Schema Loader that matches the version of ScalarDB Cluster that you want to use to the `scalardb-samples/scalardb-sample` folder.
+
+Then, run the following command, replacing `<VERSION>` with the version of the ScalarDB Cluster Schema Loader that you downloaded:
+
+```console
+$ java -jar scalardb-cluster-schema-loader-<VERSION>-all.jar --config database.properties -f schema.json --coordinator
 ```
 
-## Step 5. Load the initial data
+#### Schema details
+
+As shown in [`schema.json`](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-sample/schema.json) for the sample application, all the tables are created in the `sample` namespace.
+
+- `sample.customers`: a table that manages customer information
+  - `credit_limit`: the maximum amount of money that the lender will allow the customer to spend from their line of credit
+  - `credit_total`: the amount of money that the customer has spent from their line of credit
+- `sample.orders`: a table that manages order information
+- `sample.statements`: a table that manages order statement information
+- `sample.items`: a table that manages information for items to be ordered
+
+The Entity Relationship Diagram for the schema is as follows:
+
+![ERD](https://scalardb.scalar-labs.com/docs/latest/scalardb-samples/scalardb-sample/images/ERD.png)
+
+### Load the initial data
 
 Before running the sample application, you need to load the initial data by running the following command:
 
-```shell
+```console
 $ ./gradlew run --args="LoadInitialData"
 ```
 
-After the initial data has loaded, the following records should be stored in the tables:
+After the initial data has loaded, the following records should be stored in the tables.
 
-- For the `sample.customers` table:
+**`sample.customers` table**
 
 | customer_id | name          | credit_limit | credit_total |
 |-------------|---------------|--------------|--------------|
@@ -159,7 +251,7 @@ After the initial data has loaded, the following records should be stored in the
 | 2           | Yamada Hanako | 10000        | 0            |
 | 3           | Suzuki Ichiro | 10000        | 0            |
 
-- For the `sample.items` table:
+**`sample.items` table**
 
 | item_id | name   | price |
 |---------|--------|-------|
@@ -169,62 +261,123 @@ After the initial data has loaded, the following records should be stored in the
 | 4       | Mango  | 5000  |
 | 5       | Melon  | 3000  |
 
-## Step 6. Run the sample application
+## Execute transactions and retrieve data in the sample application
 
-Let's start with getting information about the customer whose ID is `1`:
+The following sections describe how to execute transactions and retrieve data in the sample e-commerce application.
 
-```shell
+### Get customer information
+
+Start with getting information about the customer whose ID is `1` by running the following command:
+
+```console
 $ ./gradlew run --args="GetCustomerInfo 1"
+```
+
+You should see the following output:
+
+```console
 ...
 {"id": 1, "name": "Yamada Taro", "credit_limit": 10000, "credit_total": 0}
 ...
 ```
 
-Then, place an order for three apples and two oranges by using customer ID `1`.
-Note that the order format is `<Item ID>:<Count>,<Item ID>:<Count>,...`:
+### Place an order
 
-```shell
+Then, have customer ID `1` place an order for three apples and two oranges by running the following command:
+
+{% capture notice--info %}
+**Note**
+
+The order format in this command is `./gradlew run --args="PlaceOrder <CUSTOMER_ID> <ITEM_ID>:<COUNT>,<ITEM_ID>:<COUNT>,..."`.
+{% endcapture %}
+
+<div class="notice--info">{{ notice--info | markdownify }}</div>
+
+```console
 $ ./gradlew run --args="PlaceOrder 1 1:3,2:2"
+```
+
+You should see a similar output as below, with a different UUID for `order_id`, which confirms that the order was successful:
+
+```console
 ...
 {"order_id": "dea4964a-ff50-4ecf-9201-027981a1566e"}
 ...
 ```
 
-You can see that running this command shows the order ID.
+### Check order details
 
-Let's check the details of the order by using the order ID:
+Check details about the order by running the following command, replacing `<ORDER_ID_UUID>` with the UUID for the `order_id` that was shown after running the previous command:
 
-```shell
-$ ./gradlew run --args="GetOrder dea4964a-ff50-4ecf-9201-027981a1566e"
+```console
+$ ./gradlew run --args="GetOrder <ORDER_ID_UUID>"
+```
+
+You should see a similar output as below, with different UUIDs for `order_id` and `timestamp`:
+
+```console
 ...
 {"order": {"order_id": "dea4964a-ff50-4ecf-9201-027981a1566e","timestamp": 1650948340914,"customer_id": 1,"customer_name": "Yamada Taro","statement": [{"item_id": 1,"item_name": "Apple","price": 1000,"count": 3,"total": 3000},{"item_id": 2,"item_name": "Orange","price": 2000,"count": 2,"total": 4000}],"total": 7000}}
 ...
 ```
 
-Then, let's place another order and get the order history of customer ID `1`:
+### Place another order
 
-```shell
+Place an order for one melon that uses the remaining amount in `credit_total` for customer ID `1` by running the following command:
+
+```console
 $ ./gradlew run --args="PlaceOrder 1 5:1"
+```
+
+You should see a similar output as below, with a different UUID for `order_id`, which confirms that the order was successful:
+
+```console
 ...
 {"order_id": "bcc34150-91fa-4bea-83db-d2dbe6f0f30d"}
 ...
+```
+
+### Check order history
+
+Get the history of all orders for customer ID `1` by running the following command:
+
+```console
 $ ./gradlew run --args="GetOrders 1"
+```
+
+You should see a similar output as below, with different UUIDs for `order_id` and `timestamp`, which shows the history of all orders for customer ID `1` in descending order by timestamp:
+
+```console
 ...
 {"order": [{"order_id": "dea4964a-ff50-4ecf-9201-027981a1566e","timestamp": 1650948340914,"customer_id": 1,"customer_name": "Yamada Taro","statement": [{"item_id": 1,"item_name": "Apple","price": 1000,"count": 3,"total": 3000},{"item_id": 2,"item_name": "Orange","price": 2000,"count": 2,"total": 4000}],"total": 7000},{"order_id": "bcc34150-91fa-4bea-83db-d2dbe6f0f30d","timestamp": 1650948412766,"customer_id": 1,"customer_name": "Yamada Taro","statement": [{"item_id": 5,"item_name": "Melon","price": 3000,"count": 1,"total": 3000}],"total": 3000}]}
 ...
 ```
 
-This order history is shown in descending order by timestamp.
+### Check credit total
 
-The customer's current `credit_total` is `10000`.
-Since the customer has now reached their `credit_limit`, which was shown when retrieving their information, they cannot place anymore orders.
+Get the credit total for customer ID `1` by running the following command:
 
-```shell
+```console
 $ ./gradlew run --args="GetCustomerInfo 1"
+```
+
+You should see the following output, which shows that customer ID `1` has reached their `credit_limit` in `credit_total` and cannot place anymore orders:
+
+```console
 ...
 {"id": 1, "name": "Yamada Taro", "credit_limit": 10000, "credit_total": 10000}
 ...
+```
+
+Try to place an order for one grape and one mango by running the following command:
+
+```console
 $ ./gradlew run --args="PlaceOrder 1 3:1,4:1"
+```
+
+You should see the following output, which shows that the order failed because the `credit_total` amount would exceed the `credit_limit` amount.
+
+```console
 ...
 java.lang.RuntimeException: Credit limit exceeded
         at sample.Sample.placeOrder(Sample.java:205)
@@ -240,38 +393,52 @@ java.lang.RuntimeException: Credit limit exceeded
 ...
 ```
 
-After making a payment, the customer will be able to place orders again.
+### Make a payment
 
-```shell
+To continue making orders, customer ID `1` must make a payment to reduce the `credit_total` amount.
+
+Make a payment by running the following command:
+
+```console
 $ ./gradlew run --args="Repayment 1 8000"
-...
+```
+
+Then, check the `credit_total` amount for customer ID `1` by running the following command:
+
+```console
 $ ./gradlew run --args="GetCustomerInfo 1"
+```
+
+You should see the following output, which shows that a payment was applied to customer ID `1`, reducing the `credit_total` amount:
+
+```console
 ...
 {"id": 1, "name": "Yamada Taro", "credit_limit": 10000, "credit_total": 2000}
 ...
+```
+
+Now that customer ID `1` has made a payment, place an order for one grape and one melon by running the following command:
+
+```console
 $ ./gradlew run --args="PlaceOrder 1 3:1,4:1"
+```
+
+You should see a similar output as below, with a different UUID for `order_id`, which confirms that the order was successful:
+
+```
 ...
 {"order_id": "8911cab3-1c2b-4322-9386-adb1c024e078"}
 ...
 ```
 
-## Source code of the sample application
+## Reference
 
-To learn more about the ScalarDB Cluster Java API, you can check the [source code of the sample application](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-sample/src/main/java/sample).
+For details about developing applications that use ScalarDB Cluster with the Java API, refer to [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.md).
 
 ## Next steps
 
-If you have not tried the other ScalarDB Cluster tutorials, we encourage you to read the following:
+For other ScalarDB Cluster tutorials, see the following:
 
 * [Getting Started with ScalarDB Cluster GraphQL](getting-started-with-scalardb-cluster-graphql.md)
 * [Getting Started with ScalarDB Cluster SQL via JDBC](getting-started-with-scalardb-cluster-sql-jdbc.md)
 * [Getting Started with ScalarDB Cluster SQL via Spring Data JDBC for ScalarDB](getting-started-with-scalardb-cluster-sql-spring-data-jdbc.md)
-
-For details about developing applications that use ScalarDB Cluster with the Java API, refer to the following:
-
-* [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.md)
-
-For details about the ScalarDB Cluster gRPC API, refer to the following:
-
-* [ScalarDB Cluster gRPC API Guide](scalardb-cluster-grpc-api-guide.md)
-* [ScalarDB Cluster SQL gRPC API Guide](scalardb-cluster-sql-grpc-api-guide.md)
