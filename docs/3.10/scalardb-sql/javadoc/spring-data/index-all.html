@@ -98,6 +98,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html#commit--">commit()</a></span> - Method in interface com.scalar.db.sql.springdata.twopc.<a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html" title="interface in com.scalar.db.sql.springdata.twopc">ScalarDbTwoPcRepository</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html#commitTransactionOnParticipant-java.lang.String-">commitTransactionOnParticipant(String)</a></span> - Method in interface com.scalar.db.sql.springdata.twopc.<a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html" title="interface in com.scalar.db.sql.springdata.twopc">ScalarDbTwoPcRepository</a></dt>
+<dd>
+<div class="block">Commit the transaction on the participant service.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/scalar/db/sql/springdata/ScalarDbJdbcAggregateTemplate.html#count-java.lang.Class-">count(Class&lt;?&gt;)</a></span> - Method in class com.scalar.db.sql.springdata.<a href="com/scalar/db/sql/springdata/ScalarDbJdbcAggregateTemplate.html" title="class in com.scalar.db.sql.springdata">ScalarDbJdbcAggregateTemplate</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/scalar/db/sql/springdata/twopc/RemotePrepareCommitPhaseOperations.html#createSerializable-com.scalar.db.sql.springdata.twopc.RemotePrepareCommitPhaseOperations.Operation-com.scalar.db.sql.springdata.twopc.RemotePrepareCommitPhaseOperations.Operation-com.scalar.db.sql.springdata.twopc.RemotePrepareCommitPhaseOperations.Operation-com.scalar.db.sql.springdata.twopc.RemotePrepareCommitPhaseOperations.Operation-">createSerializable(RemotePrepareCommitPhaseOperations.Operation, RemotePrepareCommitPhaseOperations.Operation, RemotePrepareCommitPhaseOperations.Operation, RemotePrepareCommitPhaseOperations.Operation)</a></span> - Static method in class com.scalar.db.sql.springdata.twopc.<a href="com/scalar/db/sql/springdata/twopc/RemotePrepareCommitPhaseOperations.html" title="class in com.scalar.db.sql.springdata.twopc">RemotePrepareCommitPhaseOperations</a></dt>
@@ -134,9 +138,13 @@
 <dd>
 <div class="block">Execute a remote prepare/commit operation</div>
 </dd>
+<dt><span class="memberNameLink"><a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html#executeOneshotOperations-java.util.function.Supplier-">executeOneshotOperations(Supplier&lt;T&gt;)</a></span> - Method in interface com.scalar.db.sql.springdata.twopc.<a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html" title="interface in com.scalar.db.sql.springdata.twopc">ScalarDbTwoPcRepository</a></dt>
+<dd>
+<div class="block">Execute oneshot operations in two-phase commit mode.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html#executeTwoPcTransaction-com.scalar.db.sql.springdata.twopc.ExecutionPhaseOperations-java.util.Collection-">executeTwoPcTransaction(ExecutionPhaseOperations&lt;R&gt;, Collection&lt;RemotePrepareCommitPhaseOperations&gt;)</a></span> - Method in interface com.scalar.db.sql.springdata.twopc.<a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html" title="interface in com.scalar.db.sql.springdata.twopc">ScalarDbTwoPcRepository</a></dt>
 <dd>
-<div class="block">Execute a 2PC transaction.</div>
+<div class="block">Execute a 2PC transaction on the coordinator service.</div>
 </dd>
 <dt><a href="com/scalar/db/sql/springdata/twopc/ExecutionPhaseOperations.html" title="interface in com.scalar.db.sql.springdata.twopc"><span class="typeNameLink">ExecutionPhaseOperations</span></a>&lt;<a href="com/scalar/db/sql/springdata/twopc/ExecutionPhaseOperations.html" title="type parameter in ExecutionPhaseOperations">R</a>&gt; - Interface in <a href="com/scalar/db/sql/springdata/twopc/package-summary.html">com.scalar.db.sql.springdata.twopc</a></dt>
 <dd>
@@ -215,6 +223,11 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html#join-java.lang.String-">join(String)</a></span> - Method in interface com.scalar.db.sql.springdata.twopc.<a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html" title="interface in com.scalar.db.sql.springdata.twopc">ScalarDbTwoPcRepository</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html#joinTransactionOnParticipant-java.lang.String-java.util.function.Supplier-">joinTransactionOnParticipant(String, Supplier&lt;T&gt;)</a></span> - Method in interface com.scalar.db.sql.springdata.twopc.<a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html" title="interface in com.scalar.db.sql.springdata.twopc">ScalarDbTwoPcRepository</a></dt>
+<dd>
+<div class="block">Join the transaction, execute the CRUD operations and suspend the transaction on the
+ participant service.</div>
+</dd>
 </dl>
 <a name="I:L">
 <!--   -->
@@ -247,6 +260,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html#prepare--">prepare()</a></span> - Method in interface com.scalar.db.sql.springdata.twopc.<a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html" title="interface in com.scalar.db.sql.springdata.twopc">ScalarDbTwoPcRepository</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html#prepareTransactionOnParticipant-java.lang.String-">prepareTransactionOnParticipant(String)</a></span> - Method in interface com.scalar.db.sql.springdata.twopc.<a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html" title="interface in com.scalar.db.sql.springdata.twopc">ScalarDbTwoPcRepository</a></dt>
+<dd>
+<div class="block">Prepare the transaction and suspend the transaction on the participant service.</div>
+</dd>
 </dl>
 <a name="I:R">
 <!--   -->
@@ -263,12 +280,21 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html#resume-java.lang.String-">resume(String)</a></span> - Method in interface com.scalar.db.sql.springdata.twopc.<a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html" title="interface in com.scalar.db.sql.springdata.twopc">ScalarDbTwoPcRepository</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html#resumeTransactionOnParticipant-java.lang.String-java.util.function.Supplier-">resumeTransactionOnParticipant(String, Supplier&lt;T&gt;)</a></span> - Method in interface com.scalar.db.sql.springdata.twopc.<a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html" title="interface in com.scalar.db.sql.springdata.twopc">ScalarDbTwoPcRepository</a></dt>
+<dd>
+<div class="block">Resume the transaction, execute the CRUD operations and suspend the transaction on the
+ participant service.</div>
+</dd>
 <dt><span class="memberNameLink"><a href="com/scalar/db/sql/springdata/ScalarDbJdbcAggregateTemplate.html#rollback--">rollback()</a></span> - Method in class com.scalar.db.sql.springdata.<a href="com/scalar/db/sql/springdata/ScalarDbJdbcAggregateTemplate.html" title="class in com.scalar.db.sql.springdata">ScalarDbJdbcAggregateTemplate</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/scalar/db/sql/springdata/ScalarDbRepositoryImpl.html#rollback--">rollback()</a></span> - Method in class com.scalar.db.sql.springdata.<a href="com/scalar/db/sql/springdata/ScalarDbRepositoryImpl.html" title="class in com.scalar.db.sql.springdata">ScalarDbRepositoryImpl</a></dt>
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html#rollback--">rollback()</a></span> - Method in interface com.scalar.db.sql.springdata.twopc.<a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html" title="interface in com.scalar.db.sql.springdata.twopc">ScalarDbTwoPcRepository</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html#rollbackTransactionOnParticipant-java.lang.String-">rollbackTransactionOnParticipant(String)</a></span> - Method in interface com.scalar.db.sql.springdata.twopc.<a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html" title="interface in com.scalar.db.sql.springdata.twopc">ScalarDbTwoPcRepository</a></dt>
+<dd>
+<div class="block">Rollback the transaction on the participant service.</div>
+</dd>
 </dl>
 <a name="I:S">
 <!--   -->
@@ -436,6 +462,10 @@
 <dd>&nbsp;</dd>
 <dt><span class="memberNameLink"><a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html#validate--">validate()</a></span> - Method in interface com.scalar.db.sql.springdata.twopc.<a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html" title="interface in com.scalar.db.sql.springdata.twopc">ScalarDbTwoPcRepository</a></dt>
 <dd>&nbsp;</dd>
+<dt><span class="memberNameLink"><a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html#validateTransactionOnParticipant-java.lang.String-">validateTransactionOnParticipant(String)</a></span> - Method in interface com.scalar.db.sql.springdata.twopc.<a href="com/scalar/db/sql/springdata/twopc/ScalarDbTwoPcRepository.html" title="interface in com.scalar.db.sql.springdata.twopc">ScalarDbTwoPcRepository</a></dt>
+<dd>
+<div class="block">Validate the transaction and suspend the transaction on the participant service.</div>
+</dd>
 </dl>
 <a href="#I:B">B</a>&nbsp;<a href="#I:C">C</a>&nbsp;<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:J">J</a>&nbsp;<a href="#I:L">L</a>&nbsp;<a href="#I:N">N</a>&nbsp;<a href="#I:P">P</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:V">V</a>&nbsp;</div>
 <!-- ======= START OF BOTTOM NAVBAR ====== -->
