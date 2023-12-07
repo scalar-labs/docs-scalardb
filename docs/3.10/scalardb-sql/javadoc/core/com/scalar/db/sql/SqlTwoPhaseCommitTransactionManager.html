@@ -195,9 +195,11 @@ extends <a href="../../../../com/scalar/db/sql/SqlStatementExecutable.html" titl
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>an instance of <a href="../../../../com/scalar/db/sql/SqlTwoPhaseCommitTransaction.html" title="interface in com.scalar.db.sql"><code>SqlTwoPhaseCommitTransaction</code></a> for the begun transaction</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if a retryable error happens (e.g., a transaction
-     conflict)</dd>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if an unexpected error happens</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if the transaction fails to begin due to retryable
+     faults. You can retry the transaction.</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if the transaction fails to begin due to transient or nontransient faults.
+     You can try retrying the transaction, but the transaction may still fail if the cause is
+     nontranient</dd>
 </dl>
 </li>
 </ul>
@@ -217,9 +219,11 @@ extends <a href="../../../../com/scalar/db/sql/SqlStatementExecutable.html" titl
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>an instance of <a href="../../../../com/scalar/db/sql/SqlTwoPhaseCommitTransaction.html" title="interface in com.scalar.db.sql"><code>SqlTwoPhaseCommitTransaction</code></a> for the begun transaction</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if a retryable error happens (e.g., a transaction
-     conflict)</dd>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if an unexpected error happens</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if the transaction fails to begin due to retryable
+     faults. You can retry the transaction.</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if the transaction fails to begin due to transient or nontransient faults.
+     You can try retrying the transaction, but you may not be able to begin the transaction due
+     to nontransient faults</dd>
 </dl>
 </li>
 </ul>
@@ -237,9 +241,11 @@ extends <a href="../../../../com/scalar/db/sql/SqlStatementExecutable.html" titl
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>an instance of <a href="../../../../com/scalar/db/sql/SqlTwoPhaseCommitTransaction.html" title="interface in com.scalar.db.sql"><code>SqlTwoPhaseCommitTransaction</code></a> for the joined transaction</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if a retryable error happens (e.g., a transaction
-     conflict)</dd>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if an unexpected error happens</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if the transaction fails to join due to retryable faults.
+     You can retry the transaction from the beginning.</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if the transaction fails to join due to transient or nontransient faults.
+     You can try retrying the transaction from the beginning, but the transaction may still fail
+     if the cause is nontranient</dd>
 </dl>
 </li>
 </ul>
@@ -257,9 +263,11 @@ extends <a href="../../../../com/scalar/db/sql/SqlStatementExecutable.html" titl
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>an instance of <a href="../../../../com/scalar/db/sql/SqlTwoPhaseCommitTransaction.html" title="interface in com.scalar.db.sql"><code>SqlTwoPhaseCommitTransaction</code></a> for the resumed transaction</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if a retryable error happens (e.g., a transaction
-     conflict)</dd>
-<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if an unexpected error happens</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if the transaction fails to resume due to retryable
+     faults (e.g., the transaction not found). You can retry the transaction from the beginning.</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if the transaction fails to resume due to transient or nontransient
+     faults. You can try retrying the transaction from the beginning, but the transaction may
+     still fail if the cause is nontranient</dd>
 </dl>
 </li>
 </ul>

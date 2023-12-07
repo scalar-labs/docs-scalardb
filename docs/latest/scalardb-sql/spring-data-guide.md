@@ -4,7 +4,7 @@ Directly using the ScalarDB API may be difficult because you need to write a lot
 
 ![Rough overall architecture of Spring Data JDBC for ScalarDB](images/spring_data_ingegration_overall_arch.png)
 
-The usage of Spring Data JDBC for ScalarDB basically follows [Spring Data JDBC - Reference Documentation](https://docs.spring.io/spring-data/jdbc/docs/current/reference/html/).
+The usage of Spring Data JDBC for ScalarDB basically follows [Spring Data JDBC - Reference Documentation](https://docs.spring.io/spring-data/jdbc/docs/3.0.x/reference/html/).
 This guide describes several important topics to use Spring Data JDBC for ScalarDB and its limitations.
 
 ## Add Spring Data JDBC for ScalarDB to your project
@@ -110,7 +110,7 @@ public class MyApplication {
 
 ## Persistent entity model
 
-The users of Spring Data JDBC for ScalarDB needs to write classes for object mapping to ScalarDB tables. How to write those classes are written in [Persisting Entities](https://docs.spring.io/spring-data/jdbc/docs/current/reference/html/#jdbc.entity-persistence), so this section describes some limitations on the integration.
+The users of Spring Data JDBC for ScalarDB needs to write classes for object mapping to ScalarDB tables. How to write those classes are written in [Persisting Entities](https://docs.spring.io/spring-data/jdbc/docs/3.0.x/reference/html/#jdbc.entity-persistence), so this section describes some limitations on the integration.
 
 These are example model classes:
 
@@ -194,11 +194,11 @@ public interface UserRepository extends ScalarDbRepository<User, Long> {
   // `insert()` and `update()` are automatically enabled with `ScalarDbRepository` (or `ScalarDbTwoPcRepository`).
 
   // Many APIs of `CrudRepository` and `PagingAndSortingRepository` are automatically enabled.
-  // https://docs.spring.io/spring-data/commons/docs/current/api/org/springframework/data/repository/CrudRepository.html
-  // https://docs.spring.io/spring-data/commons/docs/current/api/org/springframework/data/repository/PagingAndSortingRepository.html
+  // https://docs.spring.io/spring-data/commons/docs/3.0.x/api/org/springframework/data/repository/CrudRepository.html
+  // https://docs.spring.io/spring-data/commons/docs/3.0.x/api/org/springframework/data/repository/PagingAndSortingRepository.html
 
   // Also, you can prepare complicated APIs with the combination of the method naming conventions.
-  // https://docs.spring.io/spring-data/jdbc/docs/current/reference/html/#repositories.definition-tuning
+  // https://docs.spring.io/spring-data/jdbc/docs/3.0.x/reference/html/#repositories.definition-tuning
 
   // These APIs use the ScalarDB secondary index
   List<User> findByName(String name);
@@ -826,5 +826,5 @@ In order to use Spring Data JDBC for ScalarDB, the following features are implem
 
 ## References
 
-- [Spring Data JDBC - Reference Documentation](https://docs.spring.io/spring-data/jdbc/docs/current/reference/html/)
+- [Spring Data JDBC - Reference Documentation](https://docs.spring.io/spring-data/jdbc/docs/3.0.x/reference/html/)
 - [ScalarDB JDBC Guide](jdbc-guide.md)
