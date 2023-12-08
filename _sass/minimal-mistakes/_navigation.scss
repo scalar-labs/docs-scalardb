@@ -8,9 +8,8 @@
 
    .breadcrumbs {
     @include clearfix;
-    margin: 0 auto;
-    max-width: 100%;
-    padding-left: 1em;
+    /* margin: 0 auto; */ /* Commented out because the spacing on the left was indented too far (modified by josh-wong) */    max-width: 100%;
+    /* padding-left: 1em; */ /* Commented out because the spacing on the left was indented too far (modified by josh-wong) */
     padding-right: 1em;
     font-family: $sans-serif;
     -webkit-animation: $intro-transition;
@@ -28,7 +27,7 @@
       font-size: $type-size-6;
   
       @include breakpoint($large) {
-        float: right;
+        float: left; /* Changed so that the breadcrumbs would be left aligned and flush with the page content; originally `float: right;`, which caused the breadcrumbs to be in the middle of the page (modified by josh-wong). */
         width: calc(100% - #{$right-sidebar-width-narrow});
       }
   
