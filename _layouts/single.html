@@ -8,16 +8,6 @@ layout: default
   {% include page__hero_video.html %}
 {% endif %}
 
-{% assign breadcrumbs_enabled = site.breadcrumbs %}
-{% if page.breadcrumbs != null %}
-  {% assign breadcrumbs_enabled = page.breadcrumbs %}
-{% endif %}
-{% if page.url != "/" and breadcrumbs_enabled %}
-  {% unless paginator %}
-    {% include breadcrumbs.html %}
-  {% endunless %}
-{% endif %}
-
 <div id="main" role="main">
   {% include sidebar.html %}
 
@@ -27,8 +17,19 @@ layout: default
     {% if page.date %}<meta itemprop="datePublished" content="{{ page.date | date_to_xmlschema }}">{% endif %}
     {% if page.last_modified_at %}<meta itemprop="dateModified" content="{{ page.last_modified_at | date_to_xmlschema }}">{% endif %}
 
+    <!-- The following breadcrumb section was above the `<div id="main" role="main">` section, which caused the breadcrumbs to be hidden behind the masthead (modified by josh-wong). -->
+    {% assign breadcrumbs_enabled = site.breadcrumbs %}
+    {% if page.breadcrumbs != null %}
+      {% assign breadcrumbs_enabled = page.breadcrumbs %}
+    {% endif %}
+    {% if page.url != "/" and breadcrumbs_enabled %}
+      {% unless paginator %}
+        {% include breadcrumbs.html %}
+      {% endunless %}
+    {% endif %}
+    {% unless page.header.overlay_color or page.header.overlay_image %}
+    
     <div class="page__inner-wrap">
-      {% unless page.header.overlay_color or page.header.overlay_image %}
         <header>
           {% if page.title %}<h1 id="page-title" class="page__title p-name" itemprop="headline">
             <a href="{{ page.url | absolute_url }}" class="u-url" itemprop="url">{{ page.title | markdownify | remove: "<p>" | remove: "</p>" }}</a>

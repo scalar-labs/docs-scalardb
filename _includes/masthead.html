@@ -11,6 +11,32 @@
           {{ site.masthead_title | default: "|&nbsp;&nbsp;Docs" }}
           {% if site.subtitle %}<span class="site-subtitle">{{ site.subtitle }}</span>{% endif %}
         </a>
+        <!-- Adds dropdown for editions (added by josh-wong) -->
+        <nav id="site-nav" class="edition-greedy-nav">
+          <ul class="edition-visible-links">
+          {%- for link in site.data.navigation.editions -%}
+            {% assign class = nil %}
+            {% if page.edition-url contains link.edition-url %}
+              {% assign class = 'active' %}
+            {% endif %}
+            {% if link.edition-children %}
+            <li class="edition-dropdown {{ class }}">
+              <label for="touch-edition"><a class="edition-dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ include.title | default: site.data.ui-text[site.locale].edition_label }}&nbsp;&nbsp;<span><svg class="edition-dropdown-arrow" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z" clip-rule="evenodd"></path></svg></span></a></label>
+              <input type="checkbox" id="touch-edition">
+              <ul class="edition-dropdown-content">
+                {% for edition-children in link.edition-children %}
+                  <li>
+                    <a href="{{ site.baseurl }}{{ edition-children.edition-url }}">
+                      <span>{{ edition-children.edition-title }}</span>
+                    </a>
+                  </li>
+                {% endfor %}
+              </ul>
+            </li>
+            {% endif %}
+          {% endfor %}
+          </ul>
+        </nav>
         <ul class="visible-links">
           {%- for link in site.data.navigation.main -%}
             <!-- Add navigation that matches our home page (added by josh-wong) -->
