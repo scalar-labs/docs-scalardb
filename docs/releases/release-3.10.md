@@ -98,7 +98,7 @@ ScalarDB provides a Community edition and an Enterprise edition. The Community e
 - Fixed a problem with the metrics for ScalarDB Server not properly displaying the number of aborts and rollbacks.
 - Upgraded the Guava library to 32.1.1-jre to fix security issues. [[CVE-2023-2976](https://github.com/advisories/GHSA-7g45-4rm6-3mm3 "CVE-2023-2976")]
 
-#### Documentations
+#### Documentation
 
 ##### ScalarDB Cluster
 
