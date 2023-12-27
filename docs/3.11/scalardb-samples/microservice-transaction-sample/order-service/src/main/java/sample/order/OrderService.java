@@ -5,9 +5,12 @@ import com.scalar.db.api.DistributedTransactionManager;
 import com.scalar.db.api.TwoPhaseCommitTransaction;
 import com.scalar.db.api.TwoPhaseCommitTransactionManager;
 import com.scalar.db.exception.transaction.AbortException;
+import com.scalar.db.exception.transaction.CommitException;
 import com.scalar.db.exception.transaction.CrudException;
-import com.scalar.db.exception.transaction.RollbackException;
+import com.scalar.db.exception.transaction.PreparationException;
 import com.scalar.db.exception.transaction.TransactionException;
+import com.scalar.db.exception.transaction.UnknownTransactionStatusException;
+import com.scalar.db.exception.transaction.ValidationException;
 import com.scalar.db.service.TransactionFactory;
 import io.grpc.ManagedChannel;
 import io.grpc.Status;
@@ -54,7 +57,7 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase implemen
 
   // For gRPC connection to Customer service
   private final ManagedChannel channel;
-  private final CustomerServiceGrpc.CustomerServiceBlockingStub customerServiceStub;
+  private final CustomerServiceGrpc.CustomerServiceBlockingStub stub;
 
   public OrderService(String configFile) throws TransactionException, IOException {
     // Initialize the transaction managers
@@ -64,7 +67,7 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase implemen
 
     // Initialize the gRPC connection to Customer service
     channel = NettyChannelBuilder.forAddress("customer-service", 10010).usePlaintext().build();
-    customerServiceStub = CustomerServiceGrpc.newBlockingStub(channel);
+    stub = CustomerServiceGrpc.newBlockingStub(channel);
 
     loadInitialData();
   }
@@ -80,7 +83,7 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase implemen
       loadItemIfNotExists(transaction, 5, "Melon", 3000);
       transaction.commit();
     } catch (TransactionException e) {
-      logger.error("Loading initial data failed", e);
+      logger.error("loading initial data failed", e);
       abortTransaction(transaction);
       throw e;
     }
@@ -116,7 +119,9 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase implemen
         // Retrieve the item info from the items table
         Optional<Item> item = Item.get(transaction, itemOrder.getItemId());
         if (!item.isPresent()) {
-          throw Status.NOT_FOUND.withDescription("Item not found").asRuntimeException();
+          responseObserver.onError(
+              Status.NOT_FOUND.withDescription("Item not found").asRuntimeException());
+          return;
         }
 
         // Calculate the total amount
@@ -137,61 +142,65 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase implemen
       transaction.validate();
       callValidateEndpoint(transaction.getId());
 
-      // Commit the transaction. If any of services succeed in committing the transaction, you can
-      // consider the transaction as committed.
-      boolean committed = false;
-      Exception exception = null;
-      try {
-        transaction.commit();
-        committed = true;
-      } catch (TransactionException e) {
-        exception = e;
-      }
-      try {
-        callCommitEndpoint(transaction.getId());
-        committed = true;
-      } catch (StatusRuntimeException e) {
-        exception = e;
-      }
-      if (!committed) {
-        throw exception;
-      }
+      // Commit the transaction
+      transaction.commit();
+      callCommitEndpoint(transaction.getId());
 
       // Return the order id
       responseObserver.onNext(PlaceOrderResponse.newBuilder().setOrderId(orderId).build());
       responseObserver.onCompleted();
-    } catch (StatusRuntimeException e) {
-      logger.error("Placing an order failed", e);
-      rollbackTransaction(transaction);
-      responseObserver.onError(e);
-    } catch (Exception e) {
-      String message = "Placing an order failed";
+    } catch (UnknownTransactionStatusException e) {
+      String message =
+          "the transaction status is unknown. need to check the status manually and handle it properly";
       logger.error(message, e);
-      rollbackTransaction(transaction);
+
+      // Rollback the transaction
+      if (transaction != null) {
+        try {
+          transaction.rollback();
+          callRollbackEndpoint(transaction.getId());
+        } catch (Exception ex) {
+          logger.warn("rollback failed", ex);
+        }
+      }
+
       responseObserver.onError(
           Status.INTERNAL.withDescription(message).withCause(e).asRuntimeException());
-    }
-  }
+    } catch (TransactionException e) {
+      String message = "placing order failed";
+      logger.error(message, e);
 
-  private void rollbackTransaction(@Nullable TwoPhaseCommitTransaction transaction) {
-    if (transaction == null) {
-      return;
-    }
+      // Rollback the transaction
+      if (transaction != null) {
+        try {
+          transaction.rollback();
+          callRollbackEndpoint(transaction.getId());
+        } catch (Exception ex) {
+          logger.warn("rollback failed", ex);
+        }
+      }
 
-    try {
-      transaction.rollback();
-    } catch (RollbackException ex) {
-      logger.warn("Rollback failed", ex);
-    }
-    try {
-      callRollbackEndpoint(transaction.getId());
-    } catch (StatusRuntimeException ex) {
-      logger.warn("Rollback failed", ex);
+      responseObserver.onError(
+          Status.INTERNAL.withDescription(message).withCause(e).asRuntimeException());
+    } catch (StatusRuntimeException e) {
+      logger.error("placing order failed", e);
+
+      // Rollback the transaction
+      if (transaction != null) {
+        try {
+          transaction.rollback();
+          callRollbackEndpoint(transaction.getId());
+        } catch (Exception ex) {
+          logger.warn("rollback failed", ex);
+        }
+      }
+
+      responseObserver.onError(e);
     }
   }
 
   private void callPaymentEndpoint(String transactionId, int customerId, int amount) {
-    customerServiceStub.payment(
+    stub.payment(
         PaymentRequest.newBuilder()
             .setTransactionId(transactionId)
             .setCustomerId(customerId)
@@ -199,23 +208,21 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase implemen
             .build());
   }
 
-  private void callPrepareEndpoint(String transactionId) {
-    customerServiceStub.prepare(
-        PrepareRequest.newBuilder().setTransactionId(transactionId).build());
+  private void callPrepareEndpoint(String transactionId) throws PreparationException {
+    stub.prepare(PrepareRequest.newBuilder().setTransactionId(transactionId).build());
   }
 
-  private void callValidateEndpoint(String transactionId) {
-    customerServiceStub.validate(
-        ValidateRequest.newBuilder().setTransactionId(transactionId).build());
+  private void callValidateEndpoint(String transactionId) throws ValidationException {
+    stub.validate(ValidateRequest.newBuilder().setTransactionId(transactionId).build());
   }
 
-  private void callCommitEndpoint(String transactionId) {
-    customerServiceStub.commit(CommitRequest.newBuilder().setTransactionId(transactionId).build());
+  private void callCommitEndpoint(String transactionId)
+      throws CommitException, UnknownTransactionStatusException {
+    stub.commit(CommitRequest.newBuilder().setTransactionId(transactionId).build());
   }
 
   private void callRollbackEndpoint(String transactionId) {
-    customerServiceStub.rollback(
-        RollbackRequest.newBuilder().setTransactionId(transactionId).build());
+    stub.rollback(RollbackRequest.newBuilder().setTransactionId(transactionId).build());
   }
 
   /** Get Order information by order ID */
@@ -229,7 +236,9 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase implemen
       // Retrieve the order info for the specified order ID
       Optional<Order> order = Order.getById(transaction, request.getOrderId());
       if (!order.isPresent()) {
-        throw Status.NOT_FOUND.withDescription("Order not found").asRuntimeException();
+        responseObserver.onError(
+            Status.NOT_FOUND.withDescription("Order not found").asRuntimeException());
+        return;
       }
 
       // Make an order protobuf to return
@@ -240,16 +249,16 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase implemen
 
       responseObserver.onNext(GetOrderResponse.newBuilder().setOrder(rpcOrder).build());
       responseObserver.onCompleted();
-    } catch (StatusRuntimeException e) {
-      logger.error("Getting an order failed", e);
-      abortTransaction(transaction);
-      responseObserver.onError(e);
-    } catch (Exception e) {
-      String message = "Getting an order failed";
+    } catch (TransactionException e) {
+      String message = "getting order failed";
       logger.error(message, e);
       abortTransaction(transaction);
       responseObserver.onError(
           Status.INTERNAL.withDescription(message).withCause(e).asRuntimeException());
+    } catch (StatusRuntimeException e) {
+      logger.error("getting order failed", e);
+      abortTransaction(transaction);
+      responseObserver.onError(e);
     }
   }
 
@@ -277,16 +286,16 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase implemen
 
       responseObserver.onNext(builder.build());
       responseObserver.onCompleted();
-    } catch (StatusRuntimeException e) {
-      logger.error("Getting orders failed", e);
-      abortTransaction(transaction);
-      responseObserver.onError(e);
-    } catch (Exception e) {
-      String message = "Getting orders failed";
+    } catch (TransactionException e) {
+      String message = "getting order failed";
       logger.error(message, e);
       abortTransaction(transaction);
       responseObserver.onError(
           Status.INTERNAL.withDescription(message).withCause(e).asRuntimeException());
+    } catch (StatusRuntimeException e) {
+      logger.error("getting order failed", e);
+      abortTransaction(transaction);
+      responseObserver.onError(e);
     }
   }
 
@@ -334,8 +343,7 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase implemen
 
   private String getCustomerName(int customerId) {
     GetCustomerInfoResponse customerInfo =
-        customerServiceStub.getCustomerInfo(
-            GetCustomerInfoRequest.newBuilder().setCustomerId(customerId).build());
+        stub.getCustomerInfo(GetCustomerInfoRequest.newBuilder().setCustomerId(customerId).build());
     return customerInfo.getName();
   }
 
@@ -346,7 +354,7 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase implemen
     try {
       transaction.abort();
     } catch (AbortException e) {
-      logger.warn("Abort failed", e);
+      logger.warn("abort failed", e);
     }
   }
 
@@ -355,7 +363,7 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase implemen
     try {
       channel.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     } catch (InterruptedException e) {
-      logger.warn("Failed to shutdown the channel", e);
+      logger.warn("failed to shutdown the channel", e);
     }
 
     transactionManager.close();
