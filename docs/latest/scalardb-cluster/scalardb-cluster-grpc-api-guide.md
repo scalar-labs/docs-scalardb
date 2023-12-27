@@ -42,7 +42,7 @@ The `DistributedTransaction` service provides the following RPCs:
 - `Scan`: Scans records.
 - `Put`: Puts a record.
 - `Delete`: Deletes a record.
-- `Mutate` Mutates records in a partition.
+- `Mutate` Mutates (puts and deletes) multiple records.
 - `Commit`: Commits a transaction.
 - `Rollback`: Rolls back a transaction.
 
@@ -114,7 +114,7 @@ The `TwoPhaseCommitTransaction` service provides the following RPCs:
 - `Scan`: Scans records.
 - `Put`: Puts a record.
 - `Delete`: Deletes a record.
-- `Mutate`: Mutates records in a partition.
+- `Mutate`: Mutates (puts and deletes) multiple records.
 - `Prepare`: Prepares a transaction.
 - `Validate`: Validates a transaction.
 - `Commit`: Commits a transaction.
@@ -199,15 +199,16 @@ The `DistributedTransactionAdmin` service provides the following RPCs:
 - `CreateIndex`: Creates an index.
 - `DropIndex`: Drops an index.
 - `IndexExists`: Returns whether the specified index exists or not.
-- `RepairTable`: Repairs a table.
+- `RepairTable`: Repairs a namespace that may be in an unknown state.
 - `AddNewColumnToTable`: Adds a new column to a table.
-- `CreateCoordinatorTables`: Creates the coordinator tables.
-- `DropCoordinatorTables`: Drops the coordinator tables.
-- `TruncateCoordinatorTables`: Truncates the coordinator tables.
-- `CoordinatorTablesExist`: Returns whether the coordinator tables exist or not.
-- `RepairCoordinatorTables`: Repairs the coordinator tables.
+- `CreateCoordinatorTables`: Creates the Coordinator tables.
+- `DropCoordinatorTables`: Drops the Coordinator tables.
+- `TruncateCoordinatorTables`: Truncates the Coordinator tables.
+- `CoordinatorTablesExist`: Returns whether the Coordinator tables exist or not.
+- `RepairCoordinatorTables`: Repairs the Coordinator tables.
 - `GetTableMetadata`: Returns table metadata of the specified table.
 - `GetNamespaceTableNames`: Returns tables in the specified namespace.
+- `ImportTable`: Imports an existing table that is not managed by ScalarDB.
 
 ### Error handling
 

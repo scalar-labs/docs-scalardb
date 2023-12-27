@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10};
+var methods = {"i0":10,"i1":10,"i2":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../../com/scalar/db/sql/statement/builder/InsertStatementBuilder.html" title="class in com.scalar.db.sql.statement.builder"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../../com/scalar/db/sql/statement/builder/InsertStatementBuilder.Start.html" title="class in com.scalar.db.sql.statement.builder"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../../com/scalar/db/sql/statement/builder/InsertStatementBuilder.InsertValues.html" title="class in com.scalar.db.sql.statement.builder"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../index.html?com/scalar/db/sql/statement/builder/InsertStatementBuilder.Buildable.html" target="_top">Frames</a></li>
@@ -73,13 +73,13 @@ var activeTableTab = "activeTableTab";
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>
@@ -106,19 +106,51 @@ var activeTableTab = "activeTableTab";
 <ul class="blockList">
 <li class="blockList">
 <dl>
+<dt>All Implemented Interfaces:</dt>
+<dd><a href="../../../../../../com/scalar/db/sql/statement/builder/Values.html" title="interface in com.scalar.db.sql.statement.builder">Values</a>&lt;<a href="../../../../../../com/scalar/db/sql/statement/builder/InsertStatementBuilder.Buildable.html" title="class in com.scalar.db.sql.statement.builder">InsertStatementBuilder.Buildable</a>&gt;</dd>
+</dl>
+<dl>
 <dt>Enclosing class:</dt>
 <dd><a href="../../../../../../com/scalar/db/sql/statement/builder/InsertStatementBuilder.html" title="class in com.scalar.db.sql.statement.builder">InsertStatementBuilder</a></dd>
 </dl>
 <hr>
 <br>
 <pre>public static class <span class="typeNameLabel">InsertStatementBuilder.Buildable</span>
-extends java.lang.Object</pre>
+extends java.lang.Object
+implements <a href="../../../../../../com/scalar/db/sql/statement/builder/Values.html" title="interface in com.scalar.db.sql.statement.builder">Values</a>&lt;<a href="../../../../../../com/scalar/db/sql/statement/builder/InsertStatementBuilder.Buildable.html" title="class in com.scalar.db.sql.statement.builder">InsertStatementBuilder.Buildable</a>&gt;</pre>
 </li>
 </ul>
 </div>
 <div class="summary">
 <ul class="blockList">
 <li class="blockList">
+<!-- =========== FIELD SUMMARY =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.summary">
+<!--   -->
+</a>
+<h3>Field Summary</h3>
+<table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Field Summary table, listing fields, and an explanation">
+<caption><span>Fields</span><span class="tabEnd">&nbsp;</span></caption>
+<tr>
+<th class="colFirst" scope="col">Modifier and Type</th>
+<th class="colLast" scope="col">Field and Description</th>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected com.google.common.collect.ImmutableList&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/scalar/db/sql/statement/builder/InsertStatementBuilder.Buildable.html#columnNames">columnNames</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/scalar/db/sql/statement/builder/InsertStatementBuilder.Buildable.html#namespaceName">namespaceName</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/scalar/db/sql/statement/builder/InsertStatementBuilder.Buildable.html#tableName">tableName</a></span></code>&nbsp;</td>
+</tr>
+</table>
+</li>
+</ul>
 <!-- ========== METHOD SUMMARY =========== -->
 <ul class="blockList">
 <li class="blockList"><a name="method.summary">
@@ -137,6 +169,18 @@ extends java.lang.Object</pre>
 <div class="block">Builds a InsertStatement object.</div>
 </td>
 </tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code><a href="../../../../../../com/scalar/db/sql/statement/builder/InsertStatementBuilder.Buildable.html" title="class in com.scalar.db.sql.statement.builder">InsertStatementBuilder.Buildable</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/scalar/db/sql/statement/builder/InsertStatementBuilder.Buildable.html#values-java.util.List-">values</a></span>(java.util.List&lt;<a href="../../../../../../com/scalar/db/sql/Term.html" title="interface in com.scalar.db.sql">Term</a>&gt;&nbsp;values)</code>
+<div class="block">Sets values to insert or upsert.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code><a href="../../../../../../com/scalar/db/sql/statement/builder/InsertStatementBuilder.Buildable.html" title="class in com.scalar.db.sql.statement.builder">InsertStatementBuilder.Buildable</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/scalar/db/sql/statement/builder/InsertStatementBuilder.Buildable.html#values-com.scalar.db.sql.Term...-">values</a></span>(<a href="../../../../../../com/scalar/db/sql/Term.html" title="interface in com.scalar.db.sql">Term</a>...&nbsp;values)</code>
+<div class="block">Sets values to insert or upsert.</div>
+</td>
+</tr>
 </table>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -153,12 +197,86 @@ extends java.lang.Object</pre>
 <div class="details">
 <ul class="blockList">
 <li class="blockList">
+<!-- ============ FIELD DETAIL =========== -->
+<ul class="blockList">
+<li class="blockList"><a name="field.detail">
+<!--   -->
+</a>
+<h3>Field Detail</h3>
+<a name="namespaceName">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>namespaceName</h4>
+<pre>@Nullable
+protected final&nbsp;java.lang.String namespaceName</pre>
+</li>
+</ul>
+<a name="tableName">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>tableName</h4>
+<pre>protected final&nbsp;java.lang.String tableName</pre>
+</li>
+</ul>
+<a name="columnNames">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>columnNames</h4>
+<pre>protected final&nbsp;com.google.common.collect.ImmutableList&lt;java.lang.String&gt; columnNames</pre>
+</li>
+</ul>
+</li>
+</ul>
 <!-- ============ METHOD DETAIL ========== -->
 <ul class="blockList">
 <li class="blockList"><a name="method.detail">
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="values-com.scalar.db.sql.Term...-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>values</h4>
+<pre>public&nbsp;<a href="../../../../../../com/scalar/db/sql/statement/builder/InsertStatementBuilder.Buildable.html" title="class in com.scalar.db.sql.statement.builder">InsertStatementBuilder.Buildable</a>&nbsp;values(<a href="../../../../../../com/scalar/db/sql/Term.html" title="interface in com.scalar.db.sql">Term</a>...&nbsp;values)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/scalar/db/sql/statement/builder/Values.html#values-com.scalar.db.sql.Term...-">Values</a></code></span></div>
+<div class="block">Sets values to insert or upsert.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../../com/scalar/db/sql/statement/builder/Values.html#values-com.scalar.db.sql.Term...-">values</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/scalar/db/sql/statement/builder/Values.html" title="interface in com.scalar.db.sql.statement.builder">Values</a>&lt;<a href="../../../../../../com/scalar/db/sql/statement/builder/InsertStatementBuilder.Buildable.html" title="class in com.scalar.db.sql.statement.builder">InsertStatementBuilder.Buildable</a>&gt;</code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>values</code> - values to insert or upsert</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a builder object</dd>
+</dl>
+</li>
+</ul>
+<a name="values-java.util.List-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>values</h4>
+<pre>public&nbsp;<a href="../../../../../../com/scalar/db/sql/statement/builder/InsertStatementBuilder.Buildable.html" title="class in com.scalar.db.sql.statement.builder">InsertStatementBuilder.Buildable</a>&nbsp;values(java.util.List&lt;<a href="../../../../../../com/scalar/db/sql/Term.html" title="interface in com.scalar.db.sql">Term</a>&gt;&nbsp;values)</pre>
+<div class="block"><span class="descfrmTypeLabel">Description copied from interface:&nbsp;<code><a href="../../../../../../com/scalar/db/sql/statement/builder/Values.html#values-java.util.List-">Values</a></code></span></div>
+<div class="block">Sets values to insert or upsert.</div>
+<dl>
+<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
+<dd><code><a href="../../../../../../com/scalar/db/sql/statement/builder/Values.html#values-java.util.List-">values</a></code>&nbsp;in interface&nbsp;<code><a href="../../../../../../com/scalar/db/sql/statement/builder/Values.html" title="interface in com.scalar.db.sql.statement.builder">Values</a>&lt;<a href="../../../../../../com/scalar/db/sql/statement/builder/InsertStatementBuilder.Buildable.html" title="class in com.scalar.db.sql.statement.builder">InsertStatementBuilder.Buildable</a>&gt;</code></dd>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>values</code> - values to insert or upsert</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a builder object</dd>
+</dl>
+</li>
+</ul>
 <a name="build--">
 <!--   -->
 </a>
@@ -201,7 +319,7 @@ extends java.lang.Object</pre>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../../../com/scalar/db/sql/statement/builder/InsertStatementBuilder.html" title="class in com.scalar.db.sql.statement.builder"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../../com/scalar/db/sql/statement/builder/InsertStatementBuilder.Start.html" title="class in com.scalar.db.sql.statement.builder"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../../com/scalar/db/sql/statement/builder/InsertStatementBuilder.InsertValues.html" title="class in com.scalar.db.sql.statement.builder"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../index.html?com/scalar/db/sql/statement/builder/InsertStatementBuilder.Buildable.html" target="_top">Frames</a></li>
@@ -226,13 +344,13 @@ extends java.lang.Object</pre>
 <ul class="subNavList">
 <li>Summary:&nbsp;</li>
 <li>Nested&nbsp;|&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.summary">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.summary">Method</a></li>
 </ul>
 <ul class="subNavList">
 <li>Detail:&nbsp;</li>
-<li>Field&nbsp;|&nbsp;</li>
+<li><a href="#field.detail">Field</a>&nbsp;|&nbsp;</li>
 <li>Constr&nbsp;|&nbsp;</li>
 <li><a href="#method.detail">Method</a></li>
 </ul>

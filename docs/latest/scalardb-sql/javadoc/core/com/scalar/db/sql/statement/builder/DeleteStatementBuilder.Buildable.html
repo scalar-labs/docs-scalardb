@@ -47,8 +47,8 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../../com/scalar/db/sql/statement/builder/DeleteStatementBuilder.html" title="class in com.scalar.db.sql.statement.builder"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../../com/scalar/db/sql/statement/builder/DeleteStatementBuilder.OngoingWhere.html" title="class in com.scalar.db.sql.statement.builder"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../../com/scalar/db/sql/statement/builder/DeleteStatementBuilder.AsOrDeleteWhereStart.html" title="class in com.scalar.db.sql.statement.builder"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../../../com/scalar/db/sql/statement/builder/DeleteStatementBuilder.DeleteOngoingWhere.html" title="class in com.scalar.db.sql.statement.builder"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../index.html?com/scalar/db/sql/statement/builder/DeleteStatementBuilder.Buildable.html" target="_top">Frames</a></li>
@@ -107,7 +107,7 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>Direct Known Subclasses:</dt>
-<dd><a href="../../../../../../com/scalar/db/sql/statement/builder/DeleteStatementBuilder.OngoingWhere.html" title="class in com.scalar.db.sql.statement.builder">DeleteStatementBuilder.OngoingWhere</a></dd>
+<dd><a href="../../../../../../com/scalar/db/sql/statement/builder/DeleteStatementBuilder.DeleteOngoingWhere.html" title="class in com.scalar.db.sql.statement.builder">DeleteStatementBuilder.DeleteOngoingWhere</a>, <a href="../../../../../../com/scalar/db/sql/statement/builder/DeleteStatementBuilder.DeleteOngoingWhereAnd.html" title="class in com.scalar.db.sql.statement.builder">DeleteStatementBuilder.DeleteOngoingWhereAnd</a>, <a href="../../../../../../com/scalar/db/sql/statement/builder/DeleteStatementBuilder.DeleteOngoingWhereOr.html" title="class in com.scalar.db.sql.statement.builder">DeleteStatementBuilder.DeleteOngoingWhereOr</a>, <a href="../../../../../../com/scalar/db/sql/statement/builder/DeleteStatementBuilder.DeleteWhereStart.html" title="class in com.scalar.db.sql.statement.builder">DeleteStatementBuilder.DeleteWhereStart</a></dd>
 </dl>
 <dl>
 <dt>Enclosing class:</dt>
@@ -136,8 +136,28 @@ extends java.lang.Object</pre>
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>protected com.google.common.collect.ImmutableList.Builder&lt;<a href="../../../../../../com/scalar/db/sql/Predicate.html" title="class in com.scalar.db.sql">Predicate</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/scalar/db/sql/statement/builder/DeleteStatementBuilder.Buildable.html#predicatesBuilder">predicatesBuilder</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/scalar/db/sql/statement/builder/DeleteStatementBuilder.Buildable.html#alias">alias</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected com.google.common.collect.ImmutableList.Builder&lt;<a href="../../../../../../com/scalar/db/sql/AndPredicateList.html" title="class in com.scalar.db.sql">AndPredicateList</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/scalar/db/sql/statement/builder/DeleteStatementBuilder.Buildable.html#andPredicateListsBuilder">andPredicateListsBuilder</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/scalar/db/sql/statement/builder/DeleteStatementBuilder.Buildable.html#namespaceName">namespaceName</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected com.google.common.collect.ImmutableList.Builder&lt;<a href="../../../../../../com/scalar/db/sql/OrPredicateList.html" title="class in com.scalar.db.sql">OrPredicateList</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/scalar/db/sql/statement/builder/DeleteStatementBuilder.Buildable.html#orPredicateListsBuilder">orPredicateListsBuilder</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colFirst"><code>protected <a href="../../../../../../com/scalar/db/sql/Predicate.html" title="class in com.scalar.db.sql">Predicate</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/scalar/db/sql/statement/builder/DeleteStatementBuilder.Buildable.html#predicate">predicate</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colFirst"><code>protected java.lang.String</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../../com/scalar/db/sql/statement/builder/DeleteStatementBuilder.Buildable.html#tableName">tableName</a></span></code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -182,13 +202,61 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="predicatesBuilder">
+<a name="namespaceName">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>namespaceName</h4>
+<pre>@Nullable
+protected final&nbsp;java.lang.String namespaceName</pre>
+</li>
+</ul>
+<a name="tableName">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>tableName</h4>
+<pre>protected final&nbsp;java.lang.String tableName</pre>
+</li>
+</ul>
+<a name="alias">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>alias</h4>
+<pre>@Nullable
+protected final&nbsp;java.lang.String alias</pre>
+</li>
+</ul>
+<a name="predicate">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>predicate</h4>
+<pre>@Nullable
+protected final&nbsp;<a href="../../../../../../com/scalar/db/sql/Predicate.html" title="class in com.scalar.db.sql">Predicate</a> predicate</pre>
+</li>
+</ul>
+<a name="andPredicateListsBuilder">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>andPredicateListsBuilder</h4>
+<pre>protected final&nbsp;com.google.common.collect.ImmutableList.Builder&lt;<a href="../../../../../../com/scalar/db/sql/AndPredicateList.html" title="class in com.scalar.db.sql">AndPredicateList</a>&gt; andPredicateListsBuilder</pre>
+</li>
+</ul>
+<a name="orPredicateListsBuilder">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>predicatesBuilder</h4>
-<pre>protected final&nbsp;com.google.common.collect.ImmutableList.Builder&lt;<a href="../../../../../../com/scalar/db/sql/Predicate.html" title="class in com.scalar.db.sql">Predicate</a>&gt; predicatesBuilder</pre>
+<h4>orPredicateListsBuilder</h4>
+<pre>protected final&nbsp;com.google.common.collect.ImmutableList.Builder&lt;<a href="../../../../../../com/scalar/db/sql/OrPredicateList.html" title="class in com.scalar.db.sql">OrPredicateList</a>&gt; orPredicateListsBuilder</pre>
 </li>
 </ul>
 </li>
@@ -240,8 +308,8 @@ extends java.lang.Object</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../../com/scalar/db/sql/statement/builder/DeleteStatementBuilder.html" title="class in com.scalar.db.sql.statement.builder"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../../../com/scalar/db/sql/statement/builder/DeleteStatementBuilder.OngoingWhere.html" title="class in com.scalar.db.sql.statement.builder"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../../../com/scalar/db/sql/statement/builder/DeleteStatementBuilder.AsOrDeleteWhereStart.html" title="class in com.scalar.db.sql.statement.builder"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../../../com/scalar/db/sql/statement/builder/DeleteStatementBuilder.DeleteOngoingWhere.html" title="class in com.scalar.db.sql.statement.builder"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../../../index.html?com/scalar/db/sql/statement/builder/DeleteStatementBuilder.Buildable.html" target="_top">Frames</a></li>

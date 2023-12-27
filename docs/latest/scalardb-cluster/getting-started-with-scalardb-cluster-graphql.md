@@ -9,7 +9,7 @@ If you don't have ScalarDB Cluster set up, please follow the instructions in [Se
 
 In addition, you need access to the [ScalarDB Cluster GitHub repository](https://github.com/scalar-labs/scalardb-cluster).
 This repository is available only to users with a commercial license and permission.
-To get a license and permission, please [contact us](https://www.scalar-labs.com/contact/).
+To get a license and permission, please [contact us](https://scalar-labs.com/contact_us/).
 
 ## Sample application
 
@@ -101,11 +101,11 @@ For details about the client modes, see [Developer Guide for ScalarDB Cluster wi
 
 To load a schema via ScalarDB Cluster, you need to use the dedicated Schema Loader for ScalarDB Cluster (Schema Loader for Cluster).
 Using the Schema Loader for Cluster is basically the same as using the [Schema Loader for ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader.md) except the name of the JAR file is different.
-You can download the Schema Loader for Cluster at [Releases](https://github.com/scalar-labs/scalardb-cluster/releases/tag/v3.10.1).
+You can download the Schema Loader for Cluster at [Releases](https://github.com/scalar-labs/scalardb-cluster/releases/tag/v3.11.0).
 After downloading the JAR file, you can run the Schema Loader for Cluster with the following command:
 
 ```shell
-$ java -jar scalardb-cluster-schema-loader-3.10.1-all.jar --config database.properties -f schema.json --coordinator
+$ java -jar scalardb-cluster-schema-loader-3.11.0-all.jar --config database.properties -f schema.json --coordinator
 ```
 
 ## Step 4. Run operations from GraphiQL

@@ -20,6 +20,7 @@ The basic configurations for a cluster node are as follows:
 | `scalar.db.cluster.node.port`                                     | Port number of the ScalarDB Cluster node.                                                                                                                                                           | `60053`                |
 | `scalar.db.cluster.node.prometheus_exporter_port`                 | Port number of the Prometheus exporter.                                                                                                                                                             | `9080`                 |
 | `scalar.db.cluster.grpc.deadline_duration_millis`                 | Deadline duration for gRPC in milliseconds.                                                                                                                                                         | `60000` (60 seconds)   |
+| `scalar.db.cluster.node.standalone_mode.enabled`                  | Whether standalone mode is enabled. Note that if standalone mode is enabled, the membership configurations (`scalar.db.cluster.membership.*`) will be ignored.                                      | `false`                |
 
 ## ScalarDB Cluster GraphQL Configurations
 

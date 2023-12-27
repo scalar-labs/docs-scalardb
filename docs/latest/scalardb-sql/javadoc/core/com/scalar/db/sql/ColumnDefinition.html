@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -126,13 +126,25 @@ var activeTableTab = "activeTableTab";
 <tr id="i0" class="altColor">
 <td class="colFirst"><code>java.lang.String</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/scalar/db/sql/ColumnDefinition.html#getColumnName--">getColumnName</a></span>()</code>
-<div class="block">Returns a column name.</div>
+<div class="block">Returns the name of the column.</div>
 </td>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code><a href="../../../../com/scalar/db/sql/DataType.html" title="enum in com.scalar.db.sql">DataType</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/scalar/db/sql/ColumnDefinition.html#getDataType--">getDataType</a></span>()</code>
-<div class="block">Returns a data type.</div>
+<div class="block">Returns the data type of the column.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>java.util.Optional&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/scalar/db/sql/ColumnDefinition.html#getNamespaceName--">getNamespaceName</a></span>()</code>
+<div class="block">Returns the name of the namespace of the table.</div>
+</td>
+</tr>
+<tr id="i3" class="rowColor">
+<td class="colFirst"><code>java.util.Optional&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/scalar/db/sql/ColumnDefinition.html#getTableName--">getTableName</a></span>()</code>
+<div class="block">Returns the name of the table of the column.</div>
 </td>
 </tr>
 </table>
@@ -150,6 +162,34 @@ var activeTableTab = "activeTableTab";
 <!--   -->
 </a>
 <h3>Method Detail</h3>
+<a name="getNamespaceName--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getNamespaceName</h4>
+<pre>java.util.Optional&lt;java.lang.String&gt;&nbsp;getNamespaceName()</pre>
+<div class="block">Returns the name of the namespace of the table.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the name of the namespace of the table or empty if not applicable</dd>
+</dl>
+</li>
+</ul>
+<a name="getTableName--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTableName</h4>
+<pre>java.util.Optional&lt;java.lang.String&gt;&nbsp;getTableName()</pre>
+<div class="block">Returns the name of the table of the column.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>the name of the table of the column or empty if not applicable</dd>
+</dl>
+</li>
+</ul>
 <a name="getColumnName--">
 <!--   -->
 </a>
@@ -157,10 +197,10 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>getColumnName</h4>
 <pre>java.lang.String&nbsp;getColumnName()</pre>
-<div class="block">Returns a column name.</div>
+<div class="block">Returns the name of the column.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>a column name</dd>
+<dd>the name of the column</dd>
 </dl>
 </li>
 </ul>
@@ -171,10 +211,10 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <h4>getDataType</h4>
 <pre><a href="../../../../com/scalar/db/sql/DataType.html" title="enum in com.scalar.db.sql">DataType</a>&nbsp;getDataType()</pre>
-<div class="block">Returns a data type.</div>
+<div class="block">Returns the data type of the column.</div>
 <dl>
 <dt><span class="returnLabel">Returns:</span></dt>
-<dd>a data type</dd>
+<dd>the data type of the column</dd>
 </dl>
 </li>
 </ul>

@@ -48,7 +48,7 @@ var activeTableTab = "activeTableTab";
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../com/scalar/db/sql/Predicate.Builder.html" title="class in com.scalar.db.sql"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../com/scalar/db/sql/PreparedStatement.html" title="class in com.scalar.db.sql"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../com/scalar/db/sql/PredicateList.html" title="interface in com.scalar.db.sql"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/scalar/db/sql/Predicate.Operator.html" target="_top">Frames</a></li>
@@ -149,10 +149,25 @@ extends java.lang.Enum&lt;<a href="../../../../com/scalar/db/sql/Predicate.Opera
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/scalar/db/sql/Predicate.Operator.html#GREATER_THAN_OR_EQUAL_TO">GREATER_THAN_OR_EQUAL_TO</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/scalar/db/sql/Predicate.Operator.html#IS_NOT_NULL">IS_NOT_NULL</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/scalar/db/sql/Predicate.Operator.html#IS_NULL">IS_NULL</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/scalar/db/sql/Predicate.Operator.html#LESS_THAN">LESS_THAN</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
 <td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/scalar/db/sql/Predicate.Operator.html#LESS_THAN_OR_EQUAL_TO">LESS_THAN_OR_EQUAL_TO</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/scalar/db/sql/Predicate.Operator.html#LIKE">LIKE</a></span></code>&nbsp;</td>
+</tr>
+<tr class="altColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/scalar/db/sql/Predicate.Operator.html#NOT_EQUAL_TO">NOT_EQUAL_TO</a></span></code>&nbsp;</td>
+</tr>
+<tr class="rowColor">
+<td class="colOne"><code><span class="memberNameLink"><a href="../../../../com/scalar/db/sql/Predicate.Operator.html#NOT_LIKE">NOT_LIKE</a></span></code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -220,6 +235,15 @@ the order they are declared.</div>
 <pre>public static final&nbsp;<a href="../../../../com/scalar/db/sql/Predicate.Operator.html" title="enum in com.scalar.db.sql">Predicate.Operator</a> EQUAL_TO</pre>
 </li>
 </ul>
+<a name="NOT_EQUAL_TO">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>NOT_EQUAL_TO</h4>
+<pre>public static final&nbsp;<a href="../../../../com/scalar/db/sql/Predicate.Operator.html" title="enum in com.scalar.db.sql">Predicate.Operator</a> NOT_EQUAL_TO</pre>
+</li>
+</ul>
 <a name="GREATER_THAN">
 <!--   -->
 </a>
@@ -250,10 +274,46 @@ the order they are declared.</div>
 <a name="LESS_THAN_OR_EQUAL_TO">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>LESS_THAN_OR_EQUAL_TO</h4>
 <pre>public static final&nbsp;<a href="../../../../com/scalar/db/sql/Predicate.Operator.html" title="enum in com.scalar.db.sql">Predicate.Operator</a> LESS_THAN_OR_EQUAL_TO</pre>
+</li>
+</ul>
+<a name="IS_NULL">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>IS_NULL</h4>
+<pre>public static final&nbsp;<a href="../../../../com/scalar/db/sql/Predicate.Operator.html" title="enum in com.scalar.db.sql">Predicate.Operator</a> IS_NULL</pre>
+</li>
+</ul>
+<a name="IS_NOT_NULL">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>IS_NOT_NULL</h4>
+<pre>public static final&nbsp;<a href="../../../../com/scalar/db/sql/Predicate.Operator.html" title="enum in com.scalar.db.sql">Predicate.Operator</a> IS_NOT_NULL</pre>
+</li>
+</ul>
+<a name="LIKE">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>LIKE</h4>
+<pre>public static final&nbsp;<a href="../../../../com/scalar/db/sql/Predicate.Operator.html" title="enum in com.scalar.db.sql">Predicate.Operator</a> LIKE</pre>
+</li>
+</ul>
+<a name="NOT_LIKE">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>NOT_LIKE</h4>
+<pre>public static final&nbsp;<a href="../../../../com/scalar/db/sql/Predicate.Operator.html" title="enum in com.scalar.db.sql">Predicate.Operator</a> NOT_LIKE</pre>
 </li>
 </ul>
 </li>
@@ -334,7 +394,7 @@ not permitted.)</div>
 <div class="subNav">
 <ul class="navList">
 <li><a href="../../../../com/scalar/db/sql/Predicate.Builder.html" title="class in com.scalar.db.sql"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
-<li><a href="../../../../com/scalar/db/sql/PreparedStatement.html" title="class in com.scalar.db.sql"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
+<li><a href="../../../../com/scalar/db/sql/PredicateList.html" title="interface in com.scalar.db.sql"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
 <li><a href="../../../../index.html?com/scalar/db/sql/Predicate.Operator.html" target="_top">Frames</a></li>

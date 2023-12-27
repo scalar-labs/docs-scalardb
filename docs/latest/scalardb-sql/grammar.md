@@ -15,16 +15,25 @@
 - DML
   - [SELECT](#select)
   - [INSERT](#insert)
+  - [UPSERT](#upsert)
   - [UPDATE](#update)
   - [DELETE](#delete)
+- DCL
+  - [CREATE USER](#create-user)
+  - [ALTER USER](#alter-user)
+  - [DROP USER](#drop-user)
+  - [GRANT](#grant)
+  - [REVOKE](#revoke)
 - Others
   - [USE](#use)
   - [BEGIN](#begin)
+  - [START TRANSACTION](#start-transaction)
   - [JOIN](#join)
   - [PREPARE](#prepare)
   - [VALIDATE](#validate)
   - [COMMIT](#commit)
   - [ROLLBACK](#rollback)
+  - [ABORT](#abort)
   - [SET MODE](#set-mode)
   - [SHOW TABLES](#show-tables)
   - [DESCRIBE](#describe)
@@ -36,7 +45,7 @@
 ### CREATE NAMESPACE
 
 Before creating tables, namespaces must be created since a table belongs to one namespace.
-`CREATE NAMESPACE` command creates a namespace.
+The `CREATE NAMESPACE` command creates a namespace.
 
 #### Grammar
 
@@ -46,7 +55,7 @@ CREATE NAMESPACE [IF NOT EXISTS] <namespace name> [WITH creation_options]
 creation_options: <option name>=<option value> [AND <option name>=<option value>] ...
 ```
 
-Please see [ScalarDB Java API Guide - Creation Options](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#creation-options) for the details of Creation Options.
+For details about `creation_options`, see [Creation options](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#creation-options).
 
 #### Examples
 
@@ -84,9 +93,9 @@ CreateNamespaceStatement statement3 =
 
 ### CREATE TABLE
 
-`CREATE TABLE` command creates a table.
+The `CREATE TABLE` command creates a table.
 
-Please see [ScalarDB design document - Data Model](https://github.com/scalar-labs/scalardb/blob/master/docs/design.md#data-model) for the details of the ScalarDB Data Model.
+For details about the ScalarDB data model, see [ScalarDB Design Document](https://github.com/scalar-labs/scalardb/blob/master/docs/design.md).
 
 #### Grammar
 
@@ -215,7 +224,7 @@ CreateTableStatement statement3 =
 
 ### CREATE INDEX
 
-`CREATE INDEX` command creates a secondary index on a table.
+The `CREATE INDEX` command creates a secondary index on a table.
 
 #### Grammar
 
@@ -262,7 +271,7 @@ CreateIndexStatement statement3 =
 
 ### TRUNCATE TABLE
 
-`TRUNCATE TABLE` command truncates a table.
+The `TRUNCATE TABLE` command truncates a table.
 
 #### Grammar
 
@@ -288,7 +297,7 @@ TruncateTableStatement statement = StatementBuilder.truncateTable("ns", "tbl").b
 
 ### DROP INDEX
 
-`DROP INDEX` command drops a secondary index.
+The `DROP INDEX` command drops a secondary index.
 
 #### Grammar
 
@@ -322,7 +331,7 @@ DropIndexStatement statement2 =
 
 ### DROP TABLE
 
-`DROP TABLE` command drops a table.
+The `DROP TABLE` command drops a table.
 
 #### Grammar
 
@@ -354,7 +363,7 @@ DropTableStatement statement2 = StatementBuilder.dropTable("ns", "tbl").ifExists
 
 ### DROP NAMESPACE
 
-`DROP NAMESPACE` command drops a namespace.
+The `DROP NAMESPACE` command drops a namespace.
 
 #### Grammar
 
@@ -392,7 +401,7 @@ DropNamespaceStatement statement3 = StatementBuilder.dropNamespace("ns").cascade
 
 ### CREATE COORDINATOR TABLES
 
-`CREATE COORDINATOR TABLES` command creates coordinator tables.
+The `CREATE COORDINATOR TABLES` command creates coordinator tables.
 
 #### Grammar
 
@@ -439,7 +448,7 @@ CreateCoordinatorTablesStatement statement3 =
 
 ### TRUNCATE COORDINATOR TABLES
 
-`TRUNCATE COORDINATOR TABLES` command truncates coordinator tables.
+The `TRUNCATE COORDINATOR TABLES` command truncates coordinator tables.
 
 #### Grammar
 
@@ -459,7 +468,7 @@ TruncateCoordinatorTablesStatement statement =
 
 ### DROP COORDINATOR TABLES
 
-`DROP COORDINATOR TABLES` command drops coordinator tables.
+The `DROP COORDINATOR TABLES` command drops coordinator tables.
 
 #### Grammar
 
@@ -492,7 +501,7 @@ DropCoordinatorTablesStatement statement2 =
 
 ### ALTER TABLE
 
-`ALTER TABLE` command alters a table (ex. adding a column). 
+The `ALTER TABLE` command alters a table (ex. adding a column).
 
 #### Grammar
 
@@ -523,36 +532,44 @@ AlterTableAddColumnStatement statement =
 
 ### SELECT
 
-`SELECT` command retrieves records of the database.
+The `SELECT` command retrieves records from the database. By default, the `SELECT` command requires the `WHERE` clause to filter records by primary key or an indexed column value. If you want to retrieve all records without specifying the `WHERE` clause, see [SELECT (with cross-partition scan)](#select-with-cross-partition-scan). For JDBC databases only, you can use the `SELECT` command with arbitrary conditions and orderings. For details, see [SELECT (with cross-partition scan filtering and ordering)](#select-with-cross-partition-scan-filtering-and-ordering).
 
 #### Grammar
 
 ```sql
 SELECT projection [, projection] ...
-  FROM [<namespace name>.]<table name>
-  [WHERE <identifier> operator <column value> [AND <identifier> operator <column value>] ...]
+  FROM [<namespace name>.]<table name> [AS <alias>] [join_specification [join_specification] ...]
+  WHERE predicate [AND predicate] ...
   [ORDER BY <clustering key identifier> [order] [, <clustering key identifier> [order]] ...]
   [LIMIT <limit>]
 
 projection: * | identifier [AS <alias>]
-identifier: [[<namespace name>.]<table name>.]<column name>
+join_specification: [INNER] JOIN [<namespace name>.]<table name> [AS <alias>] ON join_predicate [AND join_predicate] ... | {LEFT|RIGHT} [OUTER] JOIN [<namespace name>.]<table name> [AS <alias>] ON join_predicate [AND join_predicate] ...
+join_predicate: <identifier> = <identifier>
+predicate: <identifier> operator <column value> | <identifier> BETWEEN <column value> AND <column value>
+identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
 operator: = | > | >= | < | <=
 order: ASC | DESC
 ```
 
 ##### Note
 
-- You can specify `WHERE` clause to primary key columns
-- In `WHERE` clause, you can use only the `equal to`(`=`) operator for partition key columns, and you can use all the operators for clustering key columns
-- You can also omit `WHERE` clause to retrieve all the records of a table
-- If you omit `WHERE` clause, you cannot specify `ORDER BY`
-- You can also specify `WHERE` clause to an indexed column
-- If you specify `WHERE` clause to an indexed column, you can use only the `equal to`(`=`) operator for the index column
-- If you specify `WHERE` clause to an indexed column, you cannot specify `ORDER BY`
-- You can specify `<column value>` and `<limit>` to a bind marker (positional `?` and named `:<name>`)
-- If you omit `order`, the default order `ASC` is used
+- You need to specify primary key columns or an indexed column in the `WHERE` clause.
+- In the `WHERE` clause, you can use only the `equal to` (`=`) operator for partition key columns, and you can use the operators above for clustering key columns.
+- You can also use the `BETWEEN` operator for clustering key columns.
+- If you specify the `WHERE` clause to an indexed column, you can only use the `equal to` (`=`) operator for the index column.
+- If you specify the `WHERE` clause to an indexed column, you cannot specify `ORDER BY`.
+- You can specify `<column value>` and `<limit>` to a bind marker (positional `?` and named `:<name>`).
+- If you omit `order`, the default order `ASC` will be used.
+- For `[INNER] JOIN` and `LEFT [OUTER] JOIN`:
+  - The `join_predicate`s must include either all primary key columns or a secondary index column from the right table.
+  - The `WHERE` predicates and the `ORDER BY` clause can only include columns from the table specified in the `FROM` clause.
+- For `RIGHT [OUTER] JOIN`:
+  - It must be specified as the first `join_specification`.
+  - The `join_predicate`s must contain all primary key columns or a secondary index column from the left table.
+  - The `WHERE` predicates and the `ORDER BY` clause can only specify columns from the table specified in the `RIGHT OUTER JOIN` clause.
 
-Please see also [Java API Guide - Get operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#get-operation) and [Scan operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#scan-operation) for more details of retrieving data from the database in ScalarDB
+For details about retrieving data from a database in ScalarDB, see [Get operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#get-operation) and [Scan operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#scan-operation).
 
 #### Examples
 
@@ -584,12 +601,6 @@ SELECT c1, c2, c3, c5 FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 >= 1.23 AN
 
 -- With projections and a partition key and clustering key boundaries and orders and limit
 SELECT c1 AS a, c2 AS b, c3 AS c, c5 FROM ns.tbl WHERE c1 = 10 AND c2 > 'aaa' AND c2 <= 'ddd' ORDER BY c2 ASC, c3 DESC LIMIT 10;
-
--- Without WHERE clause to retrieve all the records of a table
-SELECT * FROM ns.tbl;
-
--- Without WHERE clause and with projections and limit
-SELECT c1, c2, c3, c5 FROM ns.tbl LIMIT 10;
 
 -- With an indexed column
 SELECT * FROM ns.tbl WHERE c4 = 100;
@@ -646,22 +657,15 @@ SelectStatement statement4 =
         .limit(10)
         .build();
 
-// Without WHERE clause to retrieve all the records of a table
-SelectStatement statement5 = StatementBuilder.select().from("ns", "tbl").build();
-
-// Without WHERE clause and with projections and limit
-SelectStatement statement6 =
-    StatementBuilder.select("c1", "c2", "c3", "c5").from("ns", "tbl").limit(10).build();
-
 // With an indexed column
-SelectStatement statement7 =
+SelectStatement statement5 =
     StatementBuilder.select()
         .from("ns", "tbl")
         .where(Predicate.column("c4").isEqualTo(Value.of(100)))
         .build();
 
 // With projections and an indexed column and limit
-SelectStatement statement8 =
+SelectStatement statement6 =
     StatementBuilder.select("c1", "c2", "c3", "c4")
         .from("ns", "tbl")
         .where(Predicate.column("c4").isEqualTo(Value.of(100)))
@@ -669,7 +673,7 @@ SelectStatement statement8 =
         .build();
 
 // With positional bind markers
-SelectStatement statement9 =
+SelectStatement statement7 =
     StatementBuilder.select()
         .from("ns", "tbl")
         .where(Predicate.column("c1").isEqualTo(BindMarker.positional()))
@@ -680,17 +684,393 @@ SelectStatement statement9 =
         .build();
 ```
 
-### INSERT
+Examples of `SELECT` with `JOIN` are as follows:
 
-`INSERT` command inserts a record into the database.
+```sql
+-- For INNER JOIN and LEFT OUTER JOIN:
+SELECT * FROM tbl1 as t1
+  INNER JOIN tbl2 as t2 on t1.col1=t2.id1 and t1.col2=t2.id2 -- This part must have all primary key columns or a secondary index column of `tbl2`.
+  WHERE t1.pkey=1 -- Only columns of `tbl1` can be specified here.
+  ORDER BY t1.ckey DESC; -- Only columns of `tbl1` can be specified here.
 
-Note that unlike the standard SQL, this command doesn't check duplication of the record.
-So if the record already exists, it doesn't show any error and overwrites the record.
+SELECT * FROM tbl1 as t1
+  INNER JOIN tbl2 as t2 on t1.col1=t2.id -- This part must have all primary key columns or a secondary index column of `tbl2`.
+  LEFT OUTER JOIN tbl3 as t3 on t1.col2=t3.id -- This part must have all primary key columns or a secondary index column of `tbl3`.
+  WHERE t1.pkey=1 -- Only columns of `tbl1` can be specified here.
+  ORDER BY t1.ckey DESC; -- Only columns of `tbl1` can be specified here.
+
+-- For RIGHT OUTER JOIN:
+SELECT * FROM tbl1 as t1
+  RIGHT OUTER JOIN tbl2 as t2 on t1.id=t2.col -- Acceptable as the first join. And this part must have all primary key columns or a secondary index column of `tbl1`. 
+  LEFT OUTER JOIN tbl3 as t3 on t1.col2=t3.id
+  WHERE t2.pkey=1 -- Only columns of `tbl2` can be specified here.
+  ORDER BY t2.ckey DESC; -- Only columns of `tbl2` can be specified here.
+
+SELECT * FROM tbl1 as t1
+  RIGHT OUTER JOIN tbl2 as t2 on t1.id1=t2.col1 and t1.id2=t2.col2 -- This part must have all primary key columns or a secondary index column of `tbl1`.
+  WHERE t2.pkey=1 -- Only columns of `tbl2` can be specified here.
+  ORDER BY t2.ckey DESC; -- Only columns of `tbl2` can be specified here.
+```
+
+Examples of building statement objects for `SELECT` with `JOIN` are as follows:
+
+```java
+// For INNER JOIN and LEFT OUTER JOIN:
+SelectStatement statement1 =
+   StatementBuilder.select()
+        .from("tbl1", "t1")
+        .innerJoin("tbl2", "t2")
+        .on(JoinPredicate.column("t1", "col1").isEqualTo("t2", "id1"))
+        .and(JoinPredicate.column("t1", "col2").isEqualTo("t2", "id2")) // This part must have all primary key columns or a secondary index column of `tbl2`.
+        .where(Predicate.column("t1", "pkey").isEqualTo(Value.of(1))) // Only columns of `tbl1` can be specified here.
+        .orderBy(Ordering.column("t1", "ckey").desc()) // Only columns of `tbl1` can be specified here.
+        .build();
+
+SelectStatement statement2 =
+    StatementBuilder.select()
+        .from("tbl1", "t1")
+        .innerJoin("tbl2", "t2")
+        .on(JoinPredicate.column("t1", "col1").isEqualTo("t2", "id")) // This part must have all primary key columns or a secondary index column of `tbl2`.
+        .leftOuterJoin("tbl3", "t3")
+        .on(JoinPredicate.column("t1", "col2").isEqualTo("t3", "id")) // This part must have all primary key columns or a secondary index column of `tbl3`.
+        .where(Predicate.column("t1", "pkey").isEqualTo(Value.of(1))) // Only columns of `tbl1` can be specified here.
+        .orderBy(Ordering.column("t1", "ckey").desc()) // Only columns of `tbl1` can be specified here.
+        .build();
+
+// For RIGHT OUTER JOIN:
+SelectStatement statement3 =
+    StatementBuilder.select()
+        .from("tbl1", "t1")
+        .rightOuterJoin("tbl2", "t2")
+        .on(JoinPredicate.column("t1", "id").isEqualTo("t2", "col")) // Acceptable as the first join. And this part must have all primary key columns or a secondary index column of `tbl1`.
+        .leftOuterJoin("tbl3", "t3")
+        .on(JoinPredicate.column("t1", "col2").isEqualTo("t3", "id"))
+        .where(Predicate.column("t2", "pkey").isEqualTo(Value.of(1))) // Only columns of `tbl2` can be specified here.
+        .orderBy(Ordering.column("t2", "ckey").desc()) // Only columns of `tbl2` can be specified here.
+        .build();
+
+SelectStatement statement4 =
+    StatementBuilder.select()
+        .from("tbl1", "t1")
+        .rightOuterJoin("tbl2", "t2")
+        .on(JoinPredicate.column("t1", "id1").isEqualTo("t2", "col1"))
+        .and(JoinPredicate.column("t1", "id2").isEqualTo("t2", "col2")) // This part must have all primary key columns or a secondary index column of `tbl1`.
+        .where(Predicate.column("t2", "pkey").isEqualTo(Value.of(1))) // Only columns of `tbl2` can be specified here.
+        .orderBy(Ordering.column("t2", "ckey").desc()) // Only columns of `tbl2` can be specified here.
+        .build();
+```
+
+### SELECT (with cross-partition scan)
+
+By enabling the cross-partition scan option, the `SELECT` command can retrieve all records across partitions without specifying the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.md).
+
+{% capture notice--warning %}
+**Attention**
+
+For non-JDBC databases, we do not recommend enabling cross-partition scan with the `SERIALIAZABLE` isolation level because transactions could be executed at a lower isolation level (that is, `SNAPSHOT`). When using non-JDBC databases, use cross-partition scan at your own risk only if consistency does not matter for your transactions.
+{% endcapture %}
+
+<div class="notice--warning">{{ notice--warning | markdownify }}</div>
 
 #### Grammar
 
 ```sql
-INSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ...)] VALUES (<column value> [, <column value>] ...)]
+SELECT projection [, projection] ...
+  FROM [<namespace name>.]<table name> [AS <alias>] [join_specification [join_specification] ...]
+  [LIMIT <limit>]
+
+projection: * | identifier [AS <alias>]
+identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
+```
+
+##### Note
+
+- You cannot specify `ORDER BY` if you omit the `WHERE` clause.
+- For JDBC databases, by enabling cross-partition scan with filtering and ordering as described in [SELECT (with cross-partition scan filtering and ordering)](#select-with-cross-partition-scan-filtering-and-ordering), you can specify arbitrary conditions and orderings, including the case with `ORDER BY` without the `WHERE` clause.
+
+For details about the join clause and related examples, see [SELECT](#select).
+
+For details about scanning data from a database in ScalarDB, see [Scan operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#scan-operation).
+
+#### Examples
+
+If you have the following table, for example:
+
+```sql
+CREATE TABLE ns.tbl (
+  c1 INT,
+  c2 TEXT,
+  c3 FLOAT,
+  c4 BIGINT,
+  c5 BOOLEAN,
+  PRIMARY KEY (c1, c2, c3)
+) WITH CLUSTERING ORDER BY (c2 DESC, c3 ASC);
+```
+
+Examples of `SELECT` with cross-partition scan are as follows:
+
+```sql
+-- Without the WHERE clause to retrieve all the records of a table
+SELECT * FROM ns.tbl;
+
+-- Without the WHERE clause and with projections and a limit
+SELECT c1, c2, c3, c5 FROM ns.tbl LIMIT 10;
+```
+
+Examples of building statement objects for `SELECT` are as follows:
+
+```java
+// Without the WHERE clause to retrieve all the records of a table
+SelectStatement statement1 = StatementBuilder.select().from("ns", "tbl").build();
+
+// Without the WHERE clause and with projections and a limit
+SelectStatement statement2 =
+    StatementBuilder.select("c1", "c2", "c3", "c5").from("ns", "tbl").limit(10).build();
+```
+
+### SELECT (with cross-partition scan filtering and ordering)
+
+By enabling the cross-partition scan option with filtering and ordering, the `SELECT` command can flexibly retrieve records across partitions with arbitrary conditions and orderings. Currently, the options are valid only for JDBC databases. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.md).
+
+#### Grammar
+
+```sql
+SELECT projection [, projection] ...
+  FROM [<namespace name>.]<table name> [AS <alias>] [join_specification [join_specification] ...]
+  [WHERE andPredicates [OR andPredicates ...] | orPredicates [AND orPredicates ...]]
+  [ORDER BY <clustering key identifier> [order] [, <clustering key identifier> [order]] ...]
+  [LIMIT <limit>]
+
+projection: * | identifier [AS <alias>]
+identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
+andPredicates: predicate | (predicate [AND predicate ...])
+orPredicates: predicate | (predicate [OR predicate ...])
+predicate: <identifier> operator <column value> | <identifier> BETWEEN <column value> AND <column value> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
+operator: = | <> | != | > | >= | < | <=
+order: ASC | DESC
+```
+
+##### Note
+
+`WHERE` clause:
+
+- You can use arbitrary predicates for any columns in the `WHERE` clause.
+- In the `WHERE` clause, predicates must be an OR-wise of `andPredicates` (known as disjunctive normal form) or an AND-wise of `orPredicates` (known as conjunctive normal form).
+- When connecting multiple `andPredicates` or `orPredicates`, which have more than one predicate, you need to put parentheses around `andPredicates` and `orPredicates`.
+- You can specify `<column value>` and `<limit>` to a bind marker (positional `?` and named `:<name>`).
+
+`LIKE` predicate:
+
+- `_` in `<pattern>` matches any single character.
+- `%` in `<pattern>` matches any sequence of zero or more characters.
+- `\` in `<pattern>` works as the escape character by default.
+- The escape character can be disabled by specifying an empty escape character.
+
+`ORDER BY` clause:
+
+- You can specify `order` for any columns in the `ORDER BY` clause.
+- If you omit `order`, the default order `ASC` will be used.
+
+For details about the join clause and related examples, see [SELECT](#select).
+
+For details about scanning data from a database in ScalarDB, see [Scan operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#scan-operation).
+
+#### Examples
+
+If you have the following table, for example:
+
+```sql
+CREATE TABLE ns.user (
+  id INT,
+  name TEXT,
+  age INT,
+  height FLOAT,
+  PRIMARY KEY (id)
+)
+```
+
+Examples of `SELECT` with cross-partition scan filtering and ordering are as follows:
+
+```sql
+-- Without the WHERE clause to retrieve all the records of a table
+SELECT * FROM ns.user;
+
+-- With AND predicates for non-primary key columns
+SELECT * FROM ns.user WHERE age > 10 AND height > 140;
+
+-- With OR predicates for non-primary key columns
+SELECT * FROM ns.user WHERE age > 10 OR height > 140;
+
+-- With OR-wise of AND predicates
+SELECT * FROM ns.user WHERE (age > 10 AND height > 150) OR (age > 15 AND height > 145);
+
+-- With AND-wise of OR predicates
+SELECT * FROM ns.user WHERE (age < 10 OR age > 65) AND (height < 145 OR height > 175);
+
+-- With LIKE predicates
+SELECT * FROM ns.user WHERE name LIKE 'A%' OR name NOT LIKE 'B_b';
+
+-- With LIKE predicates with an escape character
+SELECT * FROM ns.user WHERE name LIKE '+%Alice' ESCAPE '+';
+
+-- With IS NULL predicates
+SELECT * FROM ns.user WHERE name IS NOT NULL AND age IS NULL;
+
+-- With projections
+SELECT name, age, height FROM ns.user WHERE (age < 10 OR age > 65) AND age <> 0;
+
+-- With limit
+SELECT name, age, height FROM ns.user WHERE age < 10 OR age > 65 LIMIT 10;
+
+-- With orderings
+SELECT * FROM ns.user WHERE age < 10 ORDER BY height DESC;
+
+-- With orderings without the WHERE clause
+SELECT * FROM ns.user ORDER BY height;
+
+-- With positional bind markers
+SELECT * FROM ns.user WHERE age < ? ORDER BY age ASC, height DESC LIMIT ?;
+```
+
+Examples of building statement objects for `SELECT` are as follows:
+
+```java
+// Without the WHERE clause to retrieve all the records of a table
+SelectStatement statement1 = StatementBuilder.select().from("ns", "user").build();
+
+// With AND predicates for non-primary key columns
+SelectStatement statement2 =
+    StatementBuilder.select()
+        .from("ns", "user")
+        .where(Predicate.column("age").isGreaterThan(Value.of(10)))
+        .and(Predicate.column("height").isGreaterThan(Value.of(140.0F)))
+        .build();
+
+// With OR predicates for non-primary key columns
+SelectStatement statement3 =
+    StatementBuilder.select()
+        .from("ns", "user")
+        .where(Predicate.column("age").isGreaterThan(Value.of(10)))
+        .or(Predicate.column("height").isGreaterThan(Value.of(140.0F)))
+        .build();
+
+// With OR-wise of AND predicates
+SelectStatement statement4 =
+    StatementBuilder.select()
+        .from("ns", "user")
+        .where(
+            AndPredicateList.predicate(Predicate.column("age").isGreaterThan(Value.of(10)))
+                .and(Predicate.column("height").isGreaterThan(Value.of(140.0F)))
+                .build())
+        .or(
+            AndPredicateList.predicate(Predicate.column("age").isGreaterThan(Value.of(15)))
+                .and(Predicate.column("height").isGreaterThan(Value.of(145.0F)))
+                .build())
+        .build();
+
+// With AND-wise of OR predicates
+SelectStatement statement5 =
+    StatementBuilder.select()
+        .from("ns", "user")
+        .where(
+            OrPredicateList.predicate(Predicate.column("age").isLessThan(Value.of(10)))
+                .or(Predicate.column("age").isGreaterThan(Value.of(65)))
+                .build())
+        .and(
+            OrPredicateList.predicate(Predicate.column("height").isLessThan(Value.of(145.0F)))
+                .or(Predicate.column("height").isGreaterThan(Value.of(175.0F)))
+                .build())
+        .build();
+
+// With LIKE predicates
+SelectStatement statement6 =
+    StatementBuilder.select()
+        .from("ns", "user")
+        .where(Predicate.column("name").isLike(Value.of("A%")))
+        .or(Predicate.column("name").isNotLike(Value.of("B_b")))
+        .build();
+
+// With LIKE predicates with an escape character
+SelectStatement statement7 =
+    StatementBuilder.select()
+        .from("ns", "user")
+        .where(Predicate.column("name").isLike(Value.of("+%Alice"), Value.of("+")))
+        .build();
+
+// With IS NULL predicates
+SelectStatement statement8 =
+    StatementBuilder.select()
+        .from("ns", "user")
+        .where(Predicate.column("name").isNotNull())
+        .and(Predicate.column("age").isNull())
+        .build();
+
+// With projections
+SelectStatement statement9 =
+    StatementBuilder.select("name", "age", "height")
+        .from("ns", "user")
+        .where(
+            OrPredicateList.predicate(Predicate.column("age").isLessThan(Value.of(10)))
+                .or(Predicate.column("age").isGreaterThan(Value.of(65)))
+                .build())
+        .and(Predicate.column("height").isNotEqualTo(Value.of(0)))
+        .build();
+
+// With limit
+SelectStatement statement10 =
+    StatementBuilder.select("name", "age", "height")
+        .from("ns", "user")
+        .where(Predicate.column("age").isLessThan(Value.of(10)))
+        .or(Predicate.column("age").isGreaterThan(Value.of(65)))
+        .limit(10)
+        .build();
+
+// With orderings
+SelectStatement statement11 =
+    StatementBuilder.select()
+        .from("ns", "user")
+        .where(Predicate.column("age").isLessThan(Value.of(10)))
+        .orderBy(Ordering.column("height").desc())
+        .build();
+
+// With orderings without the WHERE clause
+SelectStatement statement12 =
+    StatementBuilder.select()
+        .from("ns", "user")
+        .orderBy(Ordering.column("height").desc())
+        .build();
+
+// With positional bind markers
+SelectStatement statement13 =
+    StatementBuilder.select()
+        .from("ns", "user")
+        .where(Predicate.column("age").isLessThan(BindMarker.positional()))
+        .orderBy(Ordering.column("age").asc(), Ordering.column("height").desc())
+        .limit(BindMarker.positional())
+        .build();
+```
+
+### INSERT
+
+The `INSERT` command inserts new records into the database. If any of the target records already exist, a transaction conflict error will be thrown.
+
+This command returns the following column:
+
+- `updateCount`: `INT` - the number of inserted records
+
+{% capture notice--info %}
+**Note**
+
+If you read the target records by a `SELECT` command before an `INSERT` command in a transaction, and if the target records already exist, the `INSERT` command will update the target records instead of inserting new records.
+{% endcapture %}
+
+<div class="notice--info">{{ notice--info | markdownify }}</div>
+
+#### Grammar
+
+```sql
+INSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ...)]
+  VALUES (<column value> [, <column value>] ...) [, (<column value> [, <column value>] ...)] ...
 ```
 
 Note that you must specify a full primary key in `INSERT`.
@@ -709,47 +1089,136 @@ INSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100);
 
 -- With positional bind markers
 INSERT INTO tbl VALUES (?, ?, ?, ?, ?);
+
+-- Insert multiple records
+INSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100), (20, 'bbb', 4.56, 200);
 ```
 
 Examples of building statement objects for `INSERT` are as follows:
 
 ```java
-// Insert a record
+// Insert a record without specifying column names.
 InsertStatement statement1 = StatementBuilder.insertInto("ns", "tbl")
-    .values(
-        Assignment.column("c1").value(Value.of(10)),
-        Assignment.column("c2").value(Value.of("aaa")),
-        Assignment.column("c3").value(Value.of(1.23F)),
-        Assignment.column("c4").value(Value.of(100L)),
-        Assignment.column("c5").value(Value.of(true))
-    ).build();
+    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
+    .build();
 
+// Insert a record with column names.
+InsertStatement statement2 = StatementBuilder.insertInto("ns", "tbl")
+    .columns("c1", "c2", "c3", "c4", "c5")
+    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
+    .build();
 
 // With positional bind markers
-InsertStatement statement2 = StatementBuilder.insertInto("tbl")
-    .values(
-        Assignment.column("c1").value(BindMarker.positional()),
-        Assignment.column("c2").value(BindMarker.positional()),
-        Assignment.column("c3").value(BindMarker.positional()),
-        Assignment.column("c4").value(BindMarker.positional()),
-        Assignment.column("c5").value(BindMarker.positional())
-    ).build();
+InsertStatement statement3 =
+    StatementBuilder.insertInto("tbl")
+        .columns("c1", "c2", "c3", "c4", "c5")
+        .values(
+            BindMarker.positional(),
+            BindMarker.positional(),
+            BindMarker.positional(),
+            BindMarker.positional(),
+            BindMarker.positional())
+        .build();
+
+// Insert multiple records.
+InsertStatement statement4 = StatementBuilder.insertInto("ns", "tbl")
+    .columns("c1", "c2", "c3", "c4", "c5")
+    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
+    .values(Value.ofInt(20), Value.ofText("bbb"), Value.of(2.46F), Value.of(200L), Value.of(false))
+    .build();
 ```
 
-### UPDATE
+### UPSERT
 
-`UPDATE` command update a record in the database.
+The `UPSERT` command inserts new records into the database if they don't exist or updates the target records if they already exist.
 
-Note that unlike the standard SQL, this command create a record even if the record doesn't exist.
+This command returns the following column:
+
+- `updateCount`: `INT` - the number of inserted or updated records
 
 #### Grammar
 
 ```sql
-UPDATE [<namespace name>.]<table name>
-  SET <column name> = <column value> [, <column name> = <column value>] ...
+UPSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ...)]
+  VALUES (<column value> [, <column value>] ...) [, (<column value> [, <column value>] ...)] ...
+```
+
+{% capture notice--info %}
+**Note**
+
+You must specify a full primary key in `UPSERT`. In addition, you can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
+{% endcapture %}
+
+<div class="notice--info">{{ notice--info | markdownify }}</div>
+
+#### Examples
+
+Examples of `UPSERT` are as follows:
+
+```sql
+-- Upsert a record without specifying column names.
+UPSERT INTO ns.tbl VALUES (10, 'aaa', 1.23, 100, true);
+
+-- Upsert a record with column names.
+UPSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100);
+
+-- With positional bind markers
+UPSERT INTO tbl VALUES (?, ?, ?, ?, ?);
+
+-- Upsert multiple records.
+UPSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100), (20, 'bbb', 4.56, 200);
+```
+
+Examples of building statement objects for `UPSERT` are as follows:
+
+```java
+// Upsert a record without specifying column names.
+UpsertStatement statement1 = StatementBuilder.upsertInto("ns", "tbl")
+    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
+    .build();
+
+// Upsert a record with column names.
+UpsertStatement statement2 = StatementBuilder.upsertInto("ns", "tbl")
+    .columns("c1", "c2", "c3", "c4", "c5")
+    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
+    .build();
+
+// With positional bind markers
+UpsertStatement statement3 =
+    StatementBuilder.upsertInto("tbl")
+        .columns("c1", "c2", "c3", "c4", "c5")
+        .values(
+            BindMarker.positional(),
+            BindMarker.positional(),
+            BindMarker.positional(),
+            BindMarker.positional(),
+            BindMarker.positional())
+        .build();
+
+// Upsert multiple records.
+UpsertStatement statement4 = StatementBuilder.upsertInto("ns", "tbl")
+    .columns("c1", "c2", "c3", "c4", "c5")
+    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
+    .values(Value.ofInt(20), Value.ofText("bbb"), Value.of(2.46F), Value.of(200L), Value.of(false))
+    .build();
+```
+
+### UPDATE
+
+The `UPDATE` command updates existing records in the database. By default, the `UPDATE` command requires the `WHERE` clause to filter records by primary key. If you want to update all records without specifying the `WHERE` clause, see [UPDATE (with cross-partition scan)](#update-with-cross-partition-scan). For JDBC databases only, you can use the `UPDATE` command with arbitrary conditions. For details, see [UPDATE (with cross-partition scan filtering)](#update-with-cross-partition-scan-filtering).
+
+This command returns the following column:
+
+- `updateCount`: `INT` - the number of updated records
+
+#### Grammar
+
+```sql
+UPDATE [<namespace name>.]<table name> [AS <alias>]
+  SET <column identifier> = <column value> [, <column identifier> = <column value>] ...
   WHERE <primary key identifier> = <column value> [AND <primary key identifier> = <column value>] ...]
 
-identifier: [[<namespace name>.]<table name>.]<column name>
+identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
 ```
 
 Note that you must specify a full primary key in `UPDATE`.
@@ -793,16 +1262,243 @@ UpdateStatement statement2 =
         .build();
 ```
 
-### DELETE
+### UPDATE (with cross-partition scan)
 
-`DELETE` command deletes a record in the database.
+By enabling the cross-partition scan option, the `UPDATE` command can update all records across partitions without specifying the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.md).
+
+{% capture notice--warning %}
+**Attention**
+
+For non-JDBC databases, we do not recommend enabling cross-partition scan with the `SERIALIAZABLE` isolation level because transactions could be executed at a lower isolation level (that is, `SNAPSHOT`). When using non-JDBC databases, use cross-partition scan at your own risk only if consistency does not matter for your transactions.
+{% endcapture %}
+
+<div class="notice--warning">{{ notice--warning | markdownify }}</div>
 
 #### Grammar
 
 ```sql
-DELETE FROM [<namespace name>.]<table name> WHERE <primary key identifier> = <column value> [AND <primary key identifier> = <column value>] ...]
+UPDATE [<namespace name>.]<table name> [AS <alias>]
+  SET <column identifier> = <column value> [, <column identifier> = <column value>] ...
 
-identifier: [[<namespace name>.]<table name>.]<column name>
+identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
+```
+
+##### Note
+
+- For JDBC databases, by enabling cross-partition scan with filtering as described in [UPDATE (with cross-partition scan filtering)](#update-with-cross-partition-scan-filtering), you can specify arbitrary conditions, including the case without the `WHERE` clause.
+
+#### Examples
+
+If you have the following table, for example:
+
+```sql
+CREATE TABLE ns.tbl (
+  c1 INT,
+  c2 TEXT,
+  c3 FLOAT,
+  c4 BIGINT,
+  c5 BOOLEAN,
+  PRIMARY KEY (c1, c2, c3)
+) WITH CLUSTERING ORDER BY (c2 DESC, c3 ASC);
+```
+
+Examples of `UPDATE` with cross-partition scan are as follows:
+
+```sql
+-- Without the WHERE clause to update all the records of a table
+UPDATE ns.tbl SET c4 = 200, c5 = false;
+```
+
+Examples of building statement objects for `UPDATE` are as follows:
+
+```java
+// Without the WHERE clause to update all the records of a table
+UpdateStatement statement =
+    StatementBuilder.update("ns", "tbl")
+        .set(
+            Assignment.column("c4").value(Value.of(200L)),
+            Assignment.column("c5").value(Value.of(false)))
+        .build();
+```
+
+### UPDATE (with cross-partition scan filtering)
+
+By enabling the cross-partition scan option with filtering, the `UPDATE` command can flexibly update records across partitions with arbitrary conditions. Currently, the option is valid only for JDBC databases. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.md).
+
+#### Grammar
+
+```sql
+UPDATE [<namespace name>.]<table name> [AS <alias>]
+  SET <column identifier> = <column value> [, <column identifier> = <column value>] ...
+  [WHERE andPredicates [OR andPredicates ...] | orPredicates [AND orPredicates ...]]
+
+identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
+andPredicates: predicate | (predicate [AND predicate ...])
+orPredicates: predicate | (predicate [OR predicate ...])
+predicate: <identifier> operator <column value> | <identifier> BETWEEN <column value> AND <column value> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
+operator: = | <> | != | > | >= | < | <=
+```
+
+##### Note
+
+`WHERE` clause:
+
+- You can use arbitrary predicates for any columns in the `WHERE` clause.
+- In the `WHERE` clause, predicates must be an OR-wise of `andPredicates` (known as disjunctive normal form) or an AND-wise of `orPredicates` (known as conjunctive normal form).
+- When connecting multiple `andPredicates` or `orPredicates`, which have more than one predicate, you need to put parentheses around `andPredicates` and `orPredicates`.
+- You can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
+
+`LIKE` predicate:
+
+- `_` in `<pattern>` matches any single character.
+- `%` in `<pattern>` matches any sequence of zero or more characters.
+- `\` in `<pattern>` works as the escape character by default.
+- The escape character can be disabled by specifying an empty escape character.
+
+#### Examples
+
+If you have the following table, for example:
+
+```sql
+CREATE TABLE ns.user (
+  id INT,
+  name TEXT,
+  age INT,
+  height FLOAT,
+  PRIMARY KEY (id)
+)
+```
+
+Examples of `UPDATE` with cross-partition scan filtering are as follows:
+
+```sql
+-- Without the WHERE clause to update all the records of a table
+UPDATE ns.user SET age = 31;
+
+-- With AND predicates for non-primary key columns
+UPDATE ns.user SET age = 31 WHERE age > 10 AND height > 140;
+
+-- With OR predicates for non-primary key columns
+UPDATE ns.user SET age = 31 WHERE age > 10 OR height > 140;
+
+-- With OR-wise of AND predicates
+UPDATE ns.user SET age = 31 WHERE (age > 10 AND height > 150) OR (age > 15 AND height > 145);
+
+-- With AND-wise of OR predicates
+UPDATE ns.user SET age = 31 WHERE (age < 10 OR age > 65) AND (height < 145 OR height > 175);
+
+-- With LIKE predicates
+UPDATE ns.user SET age = 31 WHERE name LIKE 'A%' OR name NOT LIKE 'B_b';
+
+-- With LIKE predicates with an escape character
+UPDATE ns.user SET age = 31 WHERE name LIKE '+%Alice' ESCAPE '+';
+
+-- With IS NULL predicates
+UPDATE ns.user SET age = 31 WHERE name IS NOT NULL AND age IS NULL;
+
+-- With positional bind markers
+UPDATE ns.user SET age = ? WHERE age < ?;
+```
+
+Examples of building statement objects for `UPDATE` are as follows:
+
+```java
+// Without the WHERE clause to update all the records of a table
+UpdateStatement statement1 =
+    StatementBuilder.update("ns", "user")
+        .set(Assignment.column("age").value(Value.of(30)))
+        .build();
+
+// With AND predicates for non-primary key columns
+UpdateStatement statement2 =
+    StatementBuilder.update("ns", "user")
+        .set(Assignment.column("age").value(Value.of(30)))
+        .where(Predicate.column("age").isGreaterThan(Value.of(10)))
+        .and(Predicate.column("height").isGreaterThan(Value.of(140.0F)))
+        .build();
+
+// With OR predicates for non-primary key columns
+UpdateStatement statement3 =
+    StatementBuilder.update("ns", "user")
+        .set(Assignment.column("age").value(Value.of(30)))
+        .where(Predicate.column("age").isGreaterThan(Value.of(10)))
+        .or(Predicate.column("height").isGreaterThan(Value.of(140.0F)))
+        .build();
+
+// With OR-wise of AND predicates
+UpdateStatement statement4 =
+    StatementBuilder.update("ns", "user")
+        .set(Assignment.column("age").value(Value.of(30)))
+        .where(
+            AndPredicateList.predicate(Predicate.column("age").isGreaterThan(Value.of(10)))
+                .and(Predicate.column("height").isGreaterThan(Value.of(140.0F)))
+                .build())
+        .or(
+            AndPredicateList.predicate(Predicate.column("age").isGreaterThan(Value.of(15)))
+                .and(Predicate.column("height").isGreaterThan(Value.of(145.0F)))
+                .build())
+        .build();
+
+// With AND-wise of OR predicates
+UpdateStatement statement5 =
+    StatementBuilder.update("ns", "user")
+        .set(Assignment.column("age").value(Value.of(30)))
+        .where(
+            OrPredicateList.predicate(Predicate.column("age").isLessThan(Value.of(10)))
+                .or(Predicate.column("age").isGreaterThan(Value.of(65)))
+                .build())
+        .and(
+            OrPredicateList.predicate(Predicate.column("height").isLessThan(Value.of(145.0F)))
+                .or(Predicate.column("height").isGreaterThan(Value.of(175.0F)))
+                .build())
+        .build();
+
+// With LIKE predicates
+UpdateStatement statement6 =
+    StatementBuilder.update("ns", "user")
+        .set(Assignment.column("age").value(Value.of(30)))
+        .where(Predicate.column("name").isLike(Value.of("A%")))
+        .or(Predicate.column("name").isNotLike(Value.of("B_b")))
+        .build();
+
+// With LIKE predicates with an escape character
+UpdateStatement statement7 =
+    StatementBuilder.update("ns", "user")
+        .set(Assignment.column("age").value(Value.of(30)))
+        .where(Predicate.column("name").isLike(Value.of("+%Alice"), Value.of("+")))
+        .build();
+
+// With IS NULL predicates
+UpdateStatement statement8 =
+    StatementBuilder.update("ns", "user")
+        .set(Assignment.column("age").value(Value.of(30)))
+        .where(Predicate.column("name").isNotNull())
+        .and(Predicate.column("age").isNull())
+        .build();
+
+// With positional bind markers
+UpdateStatement statement9 =
+    StatementBuilder.update("ns", "user")
+        .set(Assignment.column("age").value(BindMarker.positional()))
+        .where(Predicate.column("age").isLessThan(BindMarker.positional()))
+        .build();
+```
+
+### DELETE
+
+The `DELETE` command deletes records in the database. By default, the `DELETE` command requires the `WHERE` clause to filter records by primary key. If you want to delete all records without specifying the `WHERE` clause, see [DELETE (with cross-partition scan)](#delete-with-cross-partition-scan). For JDBC databases only, you can use the `DELETE` command with arbitrary conditions. For details, see [DELETE (with cross-partition scan filtering)](#delete-with-cross-partition-scan-filtering).
+
+This command returns the following column:
+
+- `updateCount`: `INT` - the number of deleted records
+
+#### Grammar
+
+```sql
+DELETE FROM [<namespace name>.]<table name> [AS <alias>]
+  WHERE <primary key identifier> = <column value> [AND <primary key identifier> = <column value>] ...]
+
+identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
 ```
 
 Note that you must specify a full primary key in `DELETE`.
@@ -813,7 +1509,7 @@ And you can specify `<column value>` to a bind marker (positional `?` and named 
 Examples of `DELETE` are as follows:
 
 ```sql
--- Update a record
+-- Delete a record
 DELETE FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23;
 
 -- With positional bind markers
@@ -840,11 +1536,457 @@ DeleteStatement statement2 =
         .build();
 ```
 
+### DELETE (with cross-partition scan)
+
+By enabling the cross-partition scan option, the `DELETE` command can delete all records across partitions without specifying the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.md).
+
+{% capture notice--warning %}
+**Attention**
+
+For non-JDBC databases, we do not recommend enabling cross-partition scan with the `SERIALIAZABLE` isolation level because transactions could be executed at a lower isolation level (that is, `SNAPSHOT`). When using non-JDBC databases, use cross-partition scan at your own risk only if consistency does not matter for your transactions.
+{% endcapture %}
+
+<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+
+#### Grammar
+
+```sql
+DELETE FROM [<namespace name>.]<table name> [AS <alias>]
+```
+
+##### Note
+
+- For JDBC databases, by enabling cross-partition scan with filtering as described in [DELETE (with cross-partition scan filtering)](#delete-with-cross-partition-scan-filtering), you can specify arbitrary conditions, including the case without the `WHERE` clause.
+
+#### Examples
+
+If you have the following table, for example:
+
+```sql
+CREATE TABLE ns.tbl (
+  c1 INT,
+  c2 TEXT,
+  c3 FLOAT,
+  c4 BIGINT,
+  c5 BOOLEAN,
+  PRIMARY KEY (c1, c2, c3)
+) WITH CLUSTERING ORDER BY (c2 DESC, c3 ASC);
+```
+
+Examples of `DELETE` with cross-partition scan are as follows:
+
+```sql
+-- Without the WHERE clause to delete all the records of a table
+DELETE FROM ns.tbl;
+```
+
+Examples of building statement objects for `DELETE` are as follows:
+
+```java
+// Without the WHERE clause to delete all the records of a table
+DeleteStatement statement = StatementBuilder.deleteFrom("ns", "tbl").build();
+```
+
+### DELETE (with cross-partition scan filtering)
+
+By enabling the cross-partition scan option with filtering, the `DELETE` command can flexibly delete records across partitions with arbitrary conditions. Currently, the option is valid only for JDBC databases. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.md).
+
+#### Grammar
+
+```sql
+DELETE FROM [<namespace name>.]<table name> [AS <alias>]
+  [WHERE andPredicates [OR andPredicates ...] | orPredicates [AND orPredicates ...]]
+
+identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
+andPredicates: predicate | (predicate [AND predicate ...])
+orPredicates: predicate | (predicate [OR predicate ...])
+predicate: <identifier> operator <column value> | <identifier> BETWEEN <column value> AND <column value> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
+operator: = | <> | != | > | >= | < | <=
+```
+
+##### Note
+
+`WHERE` clause:
+
+- You can use arbitrary predicates for any columns in the `WHERE` clause.
+- In the `WHERE` clause, predicates must be an OR-wise of `andPredicates` (known as disjunctive normal form) or an AND-wise of `orPredicates` (known as conjunctive normal form).
+- When connecting multiple `andPredicates` or `orPredicates`, which have more than one predicate, you need to put parentheses around `andPredicates` and `orPredicates`.
+- You can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
+
+`LIKE` predicate:
+
+- `_` in `<pattern>` matches any single character.
+- `%` in `<pattern>` matches any sequence of zero or more characters.
+- `\` in `<pattern>` works as the escape character by default.
+- The escape character can be disabled by specifying an empty escape character.
+
+#### Examples
+
+If you have the following table, for example:
+
+```sql
+CREATE TABLE ns.user (
+  id INT,
+  name TEXT,
+  age INT,
+  height FLOAT,
+  PRIMARY KEY (id)
+)
+```
+
+Examples of `DELETE` with cross-partition scan filtering are as follows:
+
+```sql
+-- Without the WHERE clause to delete all the records of a table
+DELETE FROM ns.user;
+
+-- With AND predicates for non-primary key columns
+DELETE FROM ns.user WHERE age > 10 AND height > 140;
+
+-- With OR predicates for non-primary key columns
+DELETE FROM ns.user WHERE age > 10 OR height > 140;
+
+-- With OR-wise of AND predicates
+DELETE FROM ns.user WHERE (age > 10 AND height > 150) OR (age > 15 AND height > 145);
+
+-- With AND-wise of OR predicates
+DELETE FROM ns.user WHERE (age < 10 OR age > 65) AND (height < 145 OR height > 175);
+
+-- With LIKE predicates
+DELETE FROM ns.user WHERE name LIKE 'A%' OR name NOT LIKE 'B_b';
+
+-- With LIKE predicates with an escape character
+DELETE FROM ns.user WHERE name LIKE '+%Alice' ESCAPE '+';
+
+-- With IS NULL predicates
+DELETE FROM ns.user WHERE name IS NOT NULL AND age IS NULL;
+
+-- With positional bind markers
+DELETE FROM ns.user WHERE age < ?;
+```
+
+Examples of building statement objects for `DELETE` are as follows:
+
+```java
+// Without the WHERE clause to delete all the records of a table
+DeleteStatement statement1 = StatementBuilder.deleteFrom("ns", "tbl").build();
+
+// With AND predicates for non-primary key columns
+DeleteStatement statement2 =
+    StatementBuilder.deleteFrom("ns", "tbl")
+        .where(Predicate.column("age").isGreaterThan(Value.of(10)))
+        .and(Predicate.column("height").isGreaterThan(Value.of(140.0F)))
+        .build();
+
+// With OR predicates for non-primary key columns
+DeleteStatement statement3 =
+    StatementBuilder.deleteFrom("ns", "tbl")
+        .where(Predicate.column("age").isGreaterThan(Value.of(10)))
+        .or(Predicate.column("height").isGreaterThan(Value.of(140.0F)))
+        .build();
+
+// With OR-wise of AND predicates
+DeleteStatement statement4 =
+    StatementBuilder.deleteFrom("ns", "tbl")
+        .where(
+            AndPredicateList.predicate(Predicate.column("age").isGreaterThan(Value.of(10)))
+                .and(Predicate.column("height").isGreaterThan(Value.of(140.0F)))
+                .build())
+        .or(
+            AndPredicateList.predicate(Predicate.column("age").isGreaterThan(Value.of(15)))
+                .and(Predicate.column("height").isGreaterThan(Value.of(145.0F)))
+                .build())
+        .build();
+
+// With AND-wise of OR predicates
+DeleteStatement statement5 =
+    StatementBuilder.deleteFrom("ns", "tbl")
+        .where(
+            OrPredicateList.predicate(Predicate.column("age").isLessThan(Value.of(10)))
+                .or(Predicate.column("age").isGreaterThan(Value.of(65)))
+                .build())
+        .and(
+            OrPredicateList.predicate(Predicate.column("height").isLessThan(Value.of(145.0F)))
+                .or(Predicate.column("height").isGreaterThan(Value.of(175.0F)))
+                .build())
+        .build();
+
+// With LIKE predicates
+DeleteStatement statement6 =
+    StatementBuilder.deleteFrom("ns", "tbl")
+        .where(Predicate.column("name").isLike(Value.of("A%")))
+        .or(Predicate.column("name").isNotLike(Value.of("B_b")))
+        .build();
+
+// With LIKE predicates with an escape character
+DeleteStatement statement7 =
+    StatementBuilder.deleteFrom("ns", "tbl")
+        .where(Predicate.column("name").isLike(Value.of("+%Alice"), Value.of("+")))
+        .build();
+
+// With IS NULL predicates
+DeleteStatement statement8 =
+    StatementBuilder.deleteFrom("ns", "tbl")
+        .where(Predicate.column("name").isNotNull())
+        .and(Predicate.column("age").isNull())
+        .build();
+
+// With positional bind markers
+DeleteStatement statement9 =
+    StatementBuilder.deleteFrom("ns", "tbl")
+        .where(Predicate.column("age").isLessThan(BindMarker.positional()))
+        .build();
+```
+
+## DCL
+
+### CREATE USER
+
+The `CREATE USER` command creates a new user with the specified username, password, and user attributes.
+
+#### Grammar
+
+```sql
+CREATE USER <username> [WITH] {PASSWORD <password> | SUPERUSER | NO_SUPERUSER} ...
+```
+
+If you don't specify a password for a user, the user is created without password.
+
+If you specify the `SUPERUSER` attribute for a user, the user becomes a superuser. If you specify the `NO_SUPERUSER` attribute for a user, the user becomes a normal user. If you don't specify either `SUPERUSER` or `NO_SUPERUSER` for a user, the user becomes a normal user.
+
+#### Examples
+
+Examples of `CREATE USER` are as follows:
+
+```sql
+-- Create a user with a password as a superuser.
+CREATE USER user1 WITH PASSWORD 'password1' SUPERUSER;
+
+-- Create a user with a password.
+CREATE USER user2 WITH PASSWORD 'password2';
+
+-- Create a user without a password.
+CREATE USER user3;
+```
+
+Examples of building statement objects for `CREATE USER` are as follows:
+
+```java
+// Create a user with a password and the `SUPERUSER` attribute.
+CreateUserStatement statement1 =
+    StatementBuilder.createUser("user1").with("password", UserOption.SUPERUSER).build();
+
+// Create a user with a password.
+CreateUserStatement statement2 = StatementBuilder.createUser("user1").with("password").build();
+
+// Create a user without a password.
+CreateUserStatement statement3 = StatementBuilder.createUser("user1").build();
+```
+
+### ALTER USER
+
+The `ALTER USER` command changes the password and user attributes of the specified user.
+
+#### Grammar
+
+```sql
+ALTER USER <username> [WITH] {PASSWORD <password> | SUPERUSER | NO_SUPERUSER} ...
+```
+
+If you specify the `SUPERUSER` attribute for a user, the user becomes a superuser. If you specify the `NO_SUPERUSER` attribute for a user, the user becomes a normal user.
+
+#### Examples
+
+Examples of `ALTER USER` are as follows:
+
+```sql
+-- Change the password of a user.
+ALTER USER user1 WITH PASSWORD 'password1';
+
+-- Change a user to a superuser.
+ALTER USER user1 WITH SUPERUSER;
+```
+
+Examples of building statement objects for `ALTER USER` are as follows:
+
+```java
+// Change the password of a user.
+AlterUserStatement statement1 = StatementBuilder.alterUser("user1").with("password2").build();
+
+// Change a user to a superuser.
+AlterUserStatement statement2 =
+        StatementBuilder.alterUser("user1").with(UserOption.SUPERUSER).build();
+```
+
+### DROP USER
+
+The `DROP USER` command deletes the specified user.
+
+#### Grammar
+
+```sql
+DROP USER <username>
+```
+
+#### Examples
+
+An example of `DROP USER` is as follows:
+
+```sql
+-- Delete a user.
+DROP USER user1;
+```
+
+An example of building statement objects for `DROP USER` is as follows:
+
+```java
+// Delete a user.
+DropUserStatement statement = StatementBuilder.dropUser("user1").build();
+```
+
+### GRANT
+
+The `GRANT` command grants privileges to the specified user.
+
+#### Grammar
+
+```sql
+GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON [TABLE] <table name> [, <table name>] ... TO <username> [, <username>] ... [WITH GRANT OPTION]
+GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON NAMESPACE <namespace name> [, <namespace name>] ... TO <username> [, <username>] ... [WITH GRANT OPTION]
+
+privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER  
+```
+
+If you specify the `WITH GRANT OPTION` option, the user can grant privileges to other users.
+
+#### Examples
+
+Examples of `GRANT` are as follows:
+
+```sql
+-- Grant the SELECT privilege on a table to a user.
+GRANT SELECT ON ns.tbl TO user1;
+
+-- Grant the SELECT privilege on tables to users.
+GRANT SELECT ON ns.tbl1, ns.tbl2 TO user1, user2;
+
+-- Grant the SELECT privilege on all tables in a namespace to a user.
+GRANT SELECT ON NAMESPACE ns TO user1;
+
+-- Grant all privileges and GRANT OPTION on a table to a user.
+GRANT ALL ON ns.tbl TO user1 WITH GRANT OPTION;
+
+-- Grant all privileges and GRANT OPTION on all tables in a namespace to a user.
+GRANT ALL ON NAMESPACE ns TO user1 WITH GRANT OPTION;
+```
+
+Examples of building statement objects for `GRANT` are as follows:
+
+```java
+// Grant the SELECT privilege on a table to a user.
+GrantStatement statement1 =
+    StatementBuilder.grant(Privilege.SELECT).on("ns", "tbl").to("user1").build();
+
+// Grant the SELECT privilege on tables to users.
+GrantStatement statement2 =
+    StatementBuilder.grant(Privilege.SELECT)
+        .on("ns", "tbl1", "ns", "tbl2")
+        .to("user1", "user2")
+        .build();
+
+// Grant the SELECT privilege on all tables in a namespace to a user.
+GrantStatement statement3 =
+    StatementBuilder.grant(Privilege.SELECT).onNamespace("ns").to("user1").build();
+
+// Grant all privileges and GRANT OPTION on a table to a user.
+GrantStatement statement4 =
+    StatementBuilder.grant(Privilege.values())
+        .on("ns", "tbl")
+        .to("user1")
+        .withGrantOption()
+        .build();
+
+// Grant all privileges and GRANT OPTION on all tables in a namespace to a user.
+GrantStatement statement5 =
+    StatementBuilder.grant(Privilege.values())
+        .onNamespace("ns")
+        .to("user1")
+        .withGrantOption()
+        .build();
+```
+
+### REVOKE
+
+The `REVOKE` command revokes privileges from the specified user.
+
+#### Grammar
+
+```sql
+REVOKE {privilege [, privilege] ... | ALL [PRIVILEGES]} [[,] GRANT OPTION] ON [TABLE] <table name> [, <table name>] ... FROM <username> [, <username>] ...
+REVOKE {privilege [, privilege] ... | ALL [PRIVILEGES]} [[,] GRANT OPTION] ON NAMESPACE <namespace name> [, <namespace name>] ... FROM <username> [, <username>] ...
+
+privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER  
+```
+
+#### Examples
+
+Examples of `REVOKE` are as follows:
+
+```sql
+-- Revoke the SELECT privilege on a table from a user.
+REVOKE SELECT ON ns.tbl FROM user1;
+
+-- Revoke the SELECT privilege on tables from users.
+REVOKE SELECT ON ns.tbl1, ns.tbl2 FROM user1, user2;
+
+-- Revoke the SELECT privilege on all tables in a namespace from a user.
+REVOKE SELECT ON NAMESPACE ns FROM user1;
+
+-- Revoke all privileges and GRANT OPTION on a table from a user.
+REVOKE ALL, GRANT OPTION ON ns.tbl FROM user1;
+
+-- Revoke all privileges and GRANT OPTION on all tables in a namespace from a user.
+REVOKE ALL, GRANT OPTION ON NAMESPACE ns FROM user1;
+```
+
+Examples of building statement objects for `REVOKE` are as follows:
+
+```java
+// Revoke the SELECT privilege on a table from a user.
+RevokeStatement statement1 =
+    StatementBuilder.revoke(Privilege.SELECT).on("ns", "tbl").from("user1").build();
+
+// Revoke the SELECT privilege on tables from users.
+RevokeStatement statement2 =
+    StatementBuilder.revoke(Privilege.SELECT)
+        .on("ns", "tbl1", "ns", "tbl2")
+        .from("user1", "user2")
+        .build();
+
+// Revoke the SELECT privilege on all tables in a namespace from a user.
+RevokeStatement statement3 =
+    StatementBuilder.revoke(Privilege.SELECT).onNamespace("ns").from("user1").build();
+
+// Revoke all privileges and GRANT OPTION on a table from a user.
+RevokeStatement statement4 =
+    StatementBuilder.revoke(Privilege.values())
+        .on("ns", "tbl")
+        .from("user1")
+        .build();
+
+// Revoke all privileges and GRANT OPTION on all tables in a namespace from a user.
+RevokeStatement statement5 =
+    StatementBuilder.revoke(Privilege.values())
+        .onNamespace("ns")
+        .from("user1")
+        .build();
+```
+
 ## Others
 
 ### USE
 
-`USE` command specifies a default namespace.
+The `USE` command specifies a default namespace.
 If a namespace name is omitted in a SQL, the default namespace is used.
 
 #### Grammar
@@ -871,7 +2013,7 @@ UseStatement statement = StatementBuilder.use("ns").build();
 
 ### BEGIN
 
-`BEGIN` command begins a transaction.
+The `BEGIN` command begins a transaction.
 
 This command returns the following column:
 
@@ -892,9 +2034,32 @@ An example of building statement objects for `BEGIN` is as follows:
 BeginStatement statement = StatementBuilder.begin().build();
 ```
 
+### START TRANSACTION
+
+The `START TRANSACTION` command starts a transaction. This command is an alias of `BEGIN`.
+
+This command returns the following column:
+
+- `transactionId`: `TEXT` - the transaction ID associated with the transaction you have started
+
+#### Grammar
+
+```sql
+START TRANSACTION
+```
+
+#### Examples
+
+An example of building statement objects for `START TRANSACTION` is as follows:
+
+```java
+// Start a transaction.
+StartTransactionStatement statement = StatementBuilder.startTransaction().build();
+```
+
 ### JOIN
 
-`JOIN` command joins a transaction associated with the specified transaction ID.
+The `JOIN` command joins a transaction associated with the specified transaction ID.
 
 #### Grammar
 
@@ -920,7 +2085,7 @@ JoinStatement statement = StatementBuilder.join("id").build();
 
 ### PREPARE
 
-`PREPARE` command prepares the current transaction.
+The `PREPARE` command prepares the current transaction.
 
 #### Grammar
 
@@ -939,7 +2104,7 @@ PrepareStatement statement = StatementBuilder.prepare().build();
 
 ### VALIDATE
 
-`VALIDATE` command validates the current transaction.
+The `VALIDATE` command validates the current transaction.
 
 #### Grammar
 
@@ -958,7 +2123,7 @@ ValidateStatement statement = StatementBuilder.validate().build();
 
 ### COMMIT
 
-`COMMIT` command commits the current transaction.
+The `COMMIT` command commits the current transaction.
 
 #### Grammar
 
@@ -977,7 +2142,7 @@ CommitStatement statement = StatementBuilder.commit().build();
 
 ### ROLLBACK
 
-`ROLLBACK` command rolls back the current transaction.
+The `ROLLBACK` command rolls back the current transaction.
 
 #### Grammar
 
@@ -994,9 +2159,28 @@ An example of building statement objects for `ROLLBACK` is as follows:
 RollbackStatement statement = StatementBuilder.rollback().build();
 ```
 
+### ABORT
+
+The `ABORT` command rolls back the current transaction. This command is an alias of `ROLLBACK`.
+
+#### Grammar
+
+```sql
+ABORT
+```
+
+#### Examples
+
+An example of building statement objects for `ABORT` is as follows:
+
+```java
+// Abort the current transaction.
+AbortStatement statement = StatementBuilder.abort().build();
+```
+
 ### SET MODE
 
-`SET MODE` command switches the current transaction mode.
+The `SET MODE` command switches the current transaction mode.
 
 #### Grammar
 
@@ -1025,7 +2209,7 @@ SetModeStatement statement =
 
 ### SHOW TABLES
 
-`SHOW TABLES` command shows table names in a namespace.
+The `SHOW TABLES` command shows table names in a namespace.
 If a namespace name is omitted, the default namespace is used.
 
 This command returns the following column:
@@ -1050,7 +2234,7 @@ SHOW TABLES;
 SHOW TABLES FROM ns;
 ```
 
-Examples of building statement objects for `SET MODE` is as follows:
+Examples of building statement objects for `SHOW TABLES` is as follows:
 
 ```java
 // Show table names in the default namespace
@@ -1062,7 +2246,7 @@ ShowTablesStatement statement2 = StatementBuilder.showTables().from("ns").build(
 
 ### DESCRIBE
 
-`DESCRIBE` command returns column metadata for the specified table.
+The `DESCRIBE` command returns column metadata for the specified table.
 
 This command returns the following columns:
 
@@ -1072,7 +2256,7 @@ This command returns the following columns:
 - `isPartitionKey`: `BOOLEAN` - whether it's a column part of partition key
 - `isClusteringKey`: `BOOLEAN` - whether it's a column part of clustering key
 - `clusteringOrder`: `TEXT` - a clustering order
-- `isIndexed`: `BOOLEAN` - whether it's a indexed column
+- `isIndexed`: `BOOLEAN` - whether it's an indexed column
 
 #### Grammar
 
@@ -1106,7 +2290,7 @@ DescribeStatement statement2 = StatementBuilder.describe("tbl").build();
 
 ### SUSPEND
 
-`SUSPEND` command suspends the ongoing transaction in the current session.
+The `SUSPEND` command suspends the ongoing transaction in the current session.
 
 #### Grammar
 
@@ -1125,7 +2309,7 @@ SuspendStatement statement = StatementBuilder.suspend().build();
 
 ### RESUME
 
-`RESUME` command resumes the transaction associated with the specified transaction ID in the current session.
+The `RESUME` command resumes the transaction associated with the specified transaction ID in the current session.
 
 #### Grammar
 

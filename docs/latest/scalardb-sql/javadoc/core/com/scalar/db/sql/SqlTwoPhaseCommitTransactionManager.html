@@ -17,8 +17,8 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6};
-var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
+var methods = {"i0":6,"i1":6,"i2":6,"i3":6,"i4":6,"i5":6,"i6":18,"i7":18};
+var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"],16:["t5","Default Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
 var tableTab = "tableTab";
@@ -120,7 +120,7 @@ extends <a href="../../../../com/scalar/db/sql/SqlStatementExecutable.html" titl
 </a>
 <h3>Method Summary</h3>
 <table class="memberSummary" border="0" cellpadding="3" cellspacing="0" summary="Method Summary table, listing methods, and an explanation">
-<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
+<caption><span id="t0" class="activeTableTab"><span>All Methods</span><span class="tabEnd">&nbsp;</span></span><span id="t2" class="tableTab"><span><a href="javascript:show(2);">Instance Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t3" class="tableTab"><span><a href="javascript:show(4);">Abstract Methods</a></span><span class="tabEnd">&nbsp;</span></span><span id="t5" class="tableTab"><span><a href="javascript:show(16);">Default Methods</a></span><span class="tabEnd">&nbsp;</span></span></caption>
 <tr>
 <th class="colFirst" scope="col">Modifier and Type</th>
 <th class="colLast" scope="col">Method and Description</th>
@@ -159,6 +159,18 @@ extends <a href="../../../../com/scalar/db/sql/SqlStatementExecutable.html" titl
 <td class="colFirst"><code><a href="../../../../com/scalar/db/sql/SqlTwoPhaseCommitTransaction.html" title="interface in com.scalar.db.sql">SqlTwoPhaseCommitTransaction</a></code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/scalar/db/sql/SqlTwoPhaseCommitTransactionManager.html#resume-java.lang.String-">resume</a></span>(java.lang.String&nbsp;transactionId)</code>
 <div class="block">Resumes an ongoing transaction associated with the specified transaction ID.</div>
+</td>
+</tr>
+<tr id="i6" class="altColor">
+<td class="colFirst"><code>default <a href="../../../../com/scalar/db/sql/SqlTwoPhaseCommitTransaction.html" title="interface in com.scalar.db.sql">SqlTwoPhaseCommitTransaction</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/scalar/db/sql/SqlTwoPhaseCommitTransactionManager.html#start--">start</a></span>()</code>
+<div class="block">Starts a transaction.</div>
+</td>
+</tr>
+<tr id="i7" class="rowColor">
+<td class="colFirst"><code>default <a href="../../../../com/scalar/db/sql/SqlTwoPhaseCommitTransaction.html" title="interface in com.scalar.db.sql">SqlTwoPhaseCommitTransaction</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../com/scalar/db/sql/SqlTwoPhaseCommitTransactionManager.html#start-java.lang.String-">start</a></span>(java.lang.String&nbsp;transactionId)</code>
+<div class="block">Starts a transaction with the specified transaction ID.</div>
 </td>
 </tr>
 </table>
@@ -223,6 +235,48 @@ extends <a href="../../../../com/scalar/db/sql/SqlStatementExecutable.html" titl
      faults. You can retry the transaction.</dd>
 <dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if the transaction fails to begin due to transient or nontransient faults.
      You can try retrying the transaction, but you may not be able to begin the transaction due
+     to nontransient faults</dd>
+</dl>
+</li>
+</ul>
+<a name="start--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>start</h4>
+<pre>default&nbsp;<a href="../../../../com/scalar/db/sql/SqlTwoPhaseCommitTransaction.html" title="interface in com.scalar.db.sql">SqlTwoPhaseCommitTransaction</a>&nbsp;start()</pre>
+<div class="block">Starts a transaction. This method is an alias of <a href="../../../../com/scalar/db/sql/SqlTwoPhaseCommitTransactionManager.html#begin--"><code>begin()</code></a>.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>an instance of <a href="../../../../com/scalar/db/sql/SqlTwoPhaseCommitTransaction.html" title="interface in com.scalar.db.sql"><code>SqlTwoPhaseCommitTransaction</code></a> for the started transaction</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if the transaction fails to start due to retryable
+     faults. You can retry the transaction.</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if the transaction fails to start due to transient or nontransient faults.
+     You can try retrying the transaction, but the transaction may still fail if the cause is
+     nontranient</dd>
+</dl>
+</li>
+</ul>
+<a name="start-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>start</h4>
+<pre>default&nbsp;<a href="../../../../com/scalar/db/sql/SqlTwoPhaseCommitTransaction.html" title="interface in com.scalar.db.sql">SqlTwoPhaseCommitTransaction</a>&nbsp;start(java.lang.String&nbsp;transactionId)</pre>
+<div class="block">Starts a transaction with the specified transaction ID. This method is an alias of <a href="../../../../com/scalar/db/sql/SqlTwoPhaseCommitTransactionManager.html#begin-java.lang.String-"><code>begin(String)</code></a>.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>transactionId</code> - a user-provided unique transaction ID</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>an instance of <a href="../../../../com/scalar/db/sql/SqlTwoPhaseCommitTransaction.html" title="interface in com.scalar.db.sql"><code>SqlTwoPhaseCommitTransaction</code></a> for the started transaction</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/TransactionRetryableException.html" title="class in com.scalar.db.sql.exception">TransactionRetryableException</a></code> - if the transaction fails to start due to retryable
+     faults. You can retry the transaction.</dd>
+<dd><code><a href="../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if the transaction fails to start due to transient or nontransient faults.
+     You can try retrying the transaction, but you may not be able to start the transaction due
      to nontransient faults</dd>
 </dl>
 </li>

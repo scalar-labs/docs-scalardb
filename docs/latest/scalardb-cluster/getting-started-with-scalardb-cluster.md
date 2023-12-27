@@ -140,29 +140,13 @@ $ cd scalardb-samples/scalardb-sample
 
 ### Modify `build.gradle`
 
-To use ScalarDB Cluster, open `build.gradle` in your preferred text editor. Then, add the following repository for ScalarDB Cluster to the `repositories` section:
-
-```gradle
-repositories {
-    ...
-
-    maven {
-        url = uri("https://maven.pkg.github.com/scalar-labs/scalardb-cluster")
-        credentials {
-            username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-            password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
-        }
-    }
-}
-```
-
-Then, delete the existing dependency for `com.scalar-labs:scalardb:3.10.1` from the `dependencies` section, and add the following dependency to the `dependencies` section:
+To use ScalarDB Cluster, open `build.gradle` in your preferred text editor. Then, delete the existing dependency for `com.scalar-labs:scalardb:3.11.0` from the `dependencies` section, and add the following dependency to the `dependencies` section:
 
 ```gradle
 dependencies {
     ...
 
-    implementation 'com.scalar-labs:scalardb-cluster-client:3.10.1'
+    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.11.0'
 }
 ```
 
