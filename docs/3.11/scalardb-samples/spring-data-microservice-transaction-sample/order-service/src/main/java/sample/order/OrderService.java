@@ -48,6 +48,10 @@ import sample.rpc.RollbackRequest;
 import sample.rpc.ValidateRequest;
 
 @Service
+@Retryable(
+    include = TransientDataAccessException.class,
+    maxAttempts = 8,
+    backoff = @Backoff(delay = 1000, maxDelay = 8000, multiplier = 2))
 public class OrderService extends OrderServiceGrpc.OrderServiceImplBase implements Closeable {
 
   private static final Logger logger = LoggerFactory.getLogger(OrderService.class);
@@ -76,7 +80,7 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase implemen
   }
 
   private void loadInitialData() {
-    orderRepository.executeOneshotOperations(() -> {
+    orderRepository.execOneshotOperation(() -> {
       itemRepository.insertIfNotExists(new Item(1, "Apple", 1000));
       itemRepository.insertIfNotExists(new Item(2, "Orange", 2000));
       itemRepository.insertIfNotExists(new Item(3, "Grape", 2500));
@@ -89,10 +93,6 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase implemen
   /**
    * Place an order. It's a transaction that spans OrderService and CustomerService
    */
-  @Retryable(
-      include = TransientDataAccessException.class,
-      maxAttempts = 8,
-      backoff = @Backoff(delay = 1000, maxDelay = 8000, multiplier = 2))
   @Override
   public void placeOrder(
       PlaceOrderRequest request, StreamObserver<PlaceOrderResponse> responseObserver) {
@@ -174,52 +174,42 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase implemen
   /**
    * Get Order information by order ID
    */
-  @Retryable(
-      include = TransientDataAccessException.class,
-      maxAttempts = 8,
-      backoff = @Backoff(delay = 1000, maxDelay = 8000, multiplier = 2))
   @Override
   public void getOrder(GetOrderRequest request, StreamObserver<GetOrderResponse> responseObserver) {
-    execAndReturnResponse(responseObserver, "Getting an order", () ->
-        orderRepository.executeOneshotOperations(() -> {
-          // Retrieve the order info for the specified order ID
-          Optional<Order> orderOpt = orderRepository.findById(request.getOrderId());
-          if (!orderOpt.isPresent()) {
-            String message = "Order not found: " + request.getOrderId();
-            responseObserver.onError(
-                Status.NOT_FOUND.withDescription(message).asRuntimeException());
-            throw new ScalarDbNonTransientException(message);
-          }
-          Order order = orderOpt.get();
+    execNormalOperation(responseObserver, "Getting an order", () -> {
+      // Retrieve the order info for the specified order ID
+      Optional<Order> orderOpt = orderRepository.findById(request.getOrderId());
+      if (!orderOpt.isPresent()) {
+        String message = "Order not found: " + request.getOrderId();
+        responseObserver.onError(
+            Status.NOT_FOUND.withDescription(message).asRuntimeException());
+        throw new ScalarDbNonTransientException(message);
+      }
+      Order order = orderOpt.get();
 
-          // Make an order protobuf to return
-          sample.rpc.Order rpcOrder = getOrderResult(responseObserver, order);
+      // Make an order protobuf to return
+      sample.rpc.Order rpcOrder = getOrderResult(responseObserver, order);
 
-          return GetOrderResponse.newBuilder().setOrder(rpcOrder).build();
-        }));
+      return GetOrderResponse.newBuilder().setOrder(rpcOrder).build();
+    });
   }
 
   /**
    * Get Order information by customer ID
    */
-  @Retryable(
-      include = TransientDataAccessException.class,
-      maxAttempts = 8,
-      backoff = @Backoff(delay = 1000, maxDelay = 8000, multiplier = 2))
   @Override
   public void getOrders(
       GetOrdersRequest request, StreamObserver<GetOrdersResponse> responseObserver) {
-    execAndReturnResponse(responseObserver, "Getting an order", () ->
-        orderRepository.executeOneshotOperations(() -> {
-          // Retrieve the order info for the specified order ID
-          GetOrdersResponse.Builder builder = GetOrdersResponse.newBuilder();
-          for (Order order : orderRepository.findAllByCustomerIdOrderByTimestampDesc(
-              request.getCustomerId())) {
-            builder.addOrder(getOrderResult(responseObserver, order));
-          }
+    execNormalOperation(responseObserver, "Getting an order", () -> {
+      // Retrieve the order info for the specified order ID
+      GetOrdersResponse.Builder builder = GetOrdersResponse.newBuilder();
+      for (Order order : orderRepository.findAllByCustomerIdOrderByTimestampDesc(
+          request.getCustomerId())) {
+        builder.addOrder(getOrderResult(responseObserver, order));
+      }
 
-          return builder.build();
-        }));
+      return builder.build();
+    });
   }
 
   private sample.rpc.Order getOrderResult(StreamObserver<?> responseObserver, Order order) {
@@ -271,6 +261,14 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase implemen
     GetCustomerInfoResponse customerInfo =
         stub.getCustomerInfo(GetCustomerInfoRequest.newBuilder().setCustomerId(customerId).build());
     return customerInfo.getName();
+  }
+
+  private <T> void execNormalOperation(StreamObserver<T> responseObserver, String funcName,
+      Supplier<T> task) {
+    execAndReturnResponse(responseObserver, funcName,
+        // BEGIN is called before the execution of this passed CRUD operations `task`,
+        // and then PREPARE, VALIDATE and COMMIT will be executed after the CRUD operations
+        () -> orderRepository.execOneshotOperation(task));
   }
 
   @Nullable
