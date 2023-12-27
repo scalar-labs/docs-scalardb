@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":10,"i1":10,"i2":10,"i3":10,"i4":10,"i5":10,"i6":10,"i7":10,"i8":10,"i9":10,"i10":10,"i11":10};
+var methods = {"i0":10,"i1":10,"i2":10};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -97,7 +97,7 @@ var activeTableTab = "activeTableTab";
 <li>java.lang.Object</li>
 <li>
 <ul class="inheritance">
-<li>com.scalar.db.common.AbstractDistributedTransaction</li>
+<li>com.scalar.db.common.DecoratedDistributedTransaction</li>
 <li>
 <ul class="inheritance">
 <li>com.scalar.db.sql.server.GateKeptDistributedTransaction</li>
@@ -111,14 +111,13 @@ var activeTableTab = "activeTableTab";
 <li class="blockList">
 <dl>
 <dt>All Implemented Interfaces:</dt>
-<dd>com.scalar.db.api.DistributedTransaction, com.scalar.db.api.TransactionCrudOperable, com.scalar.db.common.DecoratedDistributedTransaction</dd>
+<dd>com.scalar.db.api.DistributedTransaction, com.scalar.db.api.TransactionCrudOperable</dd>
 </dl>
 <hr>
 <br>
 <pre>@ThreadSafe
 public class <span class="typeNameLabel">GateKeptDistributedTransaction</span>
-extends com.scalar.db.common.AbstractDistributedTransaction
-implements com.scalar.db.common.DecoratedDistributedTransaction</pre>
+extends com.scalar.db.common.DecoratedDistributedTransaction</pre>
 </li>
 </ul>
 </div>
@@ -165,51 +164,15 @@ implements com.scalar.db.common.DecoratedDistributedTransaction</pre>
 </tr>
 <tr id="i2" class="altColor">
 <td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/server/GateKeptDistributedTransaction.html#delete-com.scalar.db.api.Delete-">delete</a></span>(com.scalar.db.api.Delete&nbsp;delete)</code>&nbsp;</td>
-</tr>
-<tr id="i3" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/server/GateKeptDistributedTransaction.html#delete-java.util.List-">delete</a></span>(java.util.List&lt;com.scalar.db.api.Delete&gt;&nbsp;deletes)</code>&nbsp;</td>
-</tr>
-<tr id="i4" class="altColor">
-<td class="colFirst"><code>java.util.Optional&lt;com.scalar.db.api.Result&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/server/GateKeptDistributedTransaction.html#get-com.scalar.db.api.Get-">get</a></span>(com.scalar.db.api.Get&nbsp;get)</code>&nbsp;</td>
-</tr>
-<tr id="i5" class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/server/GateKeptDistributedTransaction.html#getId--">getId</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i6" class="altColor">
-<td class="colFirst"><code>com.scalar.db.api.DistributedTransaction</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/server/GateKeptDistributedTransaction.html#getOriginalTransaction--">getOriginalTransaction</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i7" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/server/GateKeptDistributedTransaction.html#mutate-java.util.List-">mutate</a></span>(java.util.List&lt;? extends com.scalar.db.api.Mutation&gt;&nbsp;mutations)</code>&nbsp;</td>
-</tr>
-<tr id="i8" class="altColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/server/GateKeptDistributedTransaction.html#put-java.util.List-">put</a></span>(java.util.List&lt;com.scalar.db.api.Put&gt;&nbsp;puts)</code>&nbsp;</td>
-</tr>
-<tr id="i9" class="rowColor">
-<td class="colFirst"><code>void</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/server/GateKeptDistributedTransaction.html#put-com.scalar.db.api.Put-">put</a></span>(com.scalar.db.api.Put&nbsp;put)</code>&nbsp;</td>
-</tr>
-<tr id="i10" class="altColor">
-<td class="colFirst"><code>void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/server/GateKeptDistributedTransaction.html#rollback--">rollback</a></span>()</code>&nbsp;</td>
-</tr>
-<tr id="i11" class="rowColor">
-<td class="colFirst"><code>java.util.List&lt;com.scalar.db.api.Result&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/server/GateKeptDistributedTransaction.html#scan-com.scalar.db.api.Scan-">scan</a></span>(com.scalar.db.api.Scan&nbsp;scan)</code>&nbsp;</td>
 </tr>
 </table>
 <ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.com.scalar.db.common.AbstractDistributedTransaction">
+<li class="blockList"><a name="methods.inherited.from.class.com.scalar.db.common.DecoratedDistributedTransaction">
 <!--   -->
 </a>
-<h3>Methods inherited from class&nbsp;com.scalar.db.common.AbstractDistributedTransaction</h3>
-<code>copyAndSetTargetToIfNot, copyAndSetTargetToIfNot, copyAndSetTargetToIfNot, copyAndSetTargetToIfNot, copyAndSetTargetToIfNot, getNamespace, getTable, with, withNamespace, withTable</code></li>
+<h3>Methods inherited from class&nbsp;com.scalar.db.common.DecoratedDistributedTransaction</h3>
+<code>delete, delete, get, getId, getNamespace, getOriginalTransaction, getTable, mutate, put, put, scan, with, withNamespace, withTable</code></li>
 </ul>
 <ul class="blockList">
 <li class="blockList"><a name="methods.inherited.from.class.java.lang.Object">
@@ -217,13 +180,6 @@ implements com.scalar.db.common.DecoratedDistributedTransaction</pre>
 </a>
 <h3>Methods inherited from class&nbsp;java.lang.Object</h3>
 <code>clone, equals, finalize, getClass, hashCode, notify, notifyAll, toString, wait, wait, wait</code></li>
-</ul>
-<ul class="blockList">
-<li class="blockList"><a name="methods.inherited.from.class.com.scalar.db.api.DistributedTransaction">
-<!--   -->
-</a>
-<h3>Methods inherited from interface&nbsp;com.scalar.db.api.DistributedTransaction</h3>
-<code>getNamespace, getTable, with, withNamespace, withTable</code></li>
 </ul>
 </li>
 </ul>
@@ -257,131 +213,6 @@ implements com.scalar.db.common.DecoratedDistributedTransaction</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="getId--">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>getId</h4>
-<pre>public&nbsp;java.lang.String&nbsp;getId()</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>getId</code>&nbsp;in interface&nbsp;<code>com.scalar.db.api.DistributedTransaction</code></dd>
-</dl>
-</li>
-</ul>
-<a name="get-com.scalar.db.api.Get-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>get</h4>
-<pre>public&nbsp;java.util.Optional&lt;com.scalar.db.api.Result&gt;&nbsp;get(com.scalar.db.api.Get&nbsp;get)
-                                                 throws com.scalar.db.exception.transaction.CrudException</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>get</code>&nbsp;in interface&nbsp;<code>com.scalar.db.api.TransactionCrudOperable</code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>com.scalar.db.exception.transaction.CrudException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="scan-com.scalar.db.api.Scan-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>scan</h4>
-<pre>public&nbsp;java.util.List&lt;com.scalar.db.api.Result&gt;&nbsp;scan(com.scalar.db.api.Scan&nbsp;scan)
-                                              throws com.scalar.db.exception.transaction.CrudException</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>scan</code>&nbsp;in interface&nbsp;<code>com.scalar.db.api.TransactionCrudOperable</code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>com.scalar.db.exception.transaction.CrudException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="put-com.scalar.db.api.Put-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>put</h4>
-<pre>public&nbsp;void&nbsp;put(com.scalar.db.api.Put&nbsp;put)
-         throws com.scalar.db.exception.transaction.CrudException</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>put</code>&nbsp;in interface&nbsp;<code>com.scalar.db.api.TransactionCrudOperable</code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>com.scalar.db.exception.transaction.CrudException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="put-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>put</h4>
-<pre>public&nbsp;void&nbsp;put(java.util.List&lt;com.scalar.db.api.Put&gt;&nbsp;puts)
-         throws com.scalar.db.exception.transaction.CrudException</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>put</code>&nbsp;in interface&nbsp;<code>com.scalar.db.api.TransactionCrudOperable</code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>com.scalar.db.exception.transaction.CrudException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="delete-com.scalar.db.api.Delete-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>delete</h4>
-<pre>public&nbsp;void&nbsp;delete(com.scalar.db.api.Delete&nbsp;delete)
-            throws com.scalar.db.exception.transaction.CrudException</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>delete</code>&nbsp;in interface&nbsp;<code>com.scalar.db.api.TransactionCrudOperable</code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>com.scalar.db.exception.transaction.CrudException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="delete-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>delete</h4>
-<pre>public&nbsp;void&nbsp;delete(java.util.List&lt;com.scalar.db.api.Delete&gt;&nbsp;deletes)
-            throws com.scalar.db.exception.transaction.CrudException</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>delete</code>&nbsp;in interface&nbsp;<code>com.scalar.db.api.TransactionCrudOperable</code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>com.scalar.db.exception.transaction.CrudException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="mutate-java.util.List-">
-<!--   -->
-</a>
-<ul class="blockList">
-<li class="blockList">
-<h4>mutate</h4>
-<pre>public&nbsp;void&nbsp;mutate(java.util.List&lt;? extends com.scalar.db.api.Mutation&gt;&nbsp;mutations)
-            throws com.scalar.db.exception.transaction.CrudException</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>mutate</code>&nbsp;in interface&nbsp;<code>com.scalar.db.api.TransactionCrudOperable</code></dd>
-<dt><span class="throwsLabel">Throws:</span></dt>
-<dd><code>com.scalar.db.exception.transaction.CrudException</code></dd>
-</dl>
-</li>
-</ul>
 <a name="commit--">
 <!--   -->
 </a>
@@ -394,6 +225,8 @@ implements com.scalar.db.common.DecoratedDistributedTransaction</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>commit</code>&nbsp;in interface&nbsp;<code>com.scalar.db.api.DistributedTransaction</code></dd>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code>commit</code>&nbsp;in class&nbsp;<code>com.scalar.db.common.DecoratedDistributedTransaction</code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>com.scalar.db.exception.transaction.CommitException</code></dd>
 <dd><code>com.scalar.db.exception.transaction.UnknownTransactionStatusException</code></dd>
@@ -411,6 +244,8 @@ implements com.scalar.db.common.DecoratedDistributedTransaction</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>rollback</code>&nbsp;in interface&nbsp;<code>com.scalar.db.api.DistributedTransaction</code></dd>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code>rollback</code>&nbsp;in class&nbsp;<code>com.scalar.db.common.DecoratedDistributedTransaction</code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>com.scalar.db.exception.transaction.RollbackException</code></dd>
 </dl>
@@ -419,7 +254,7 @@ implements com.scalar.db.common.DecoratedDistributedTransaction</pre>
 <a name="abort--">
 <!--   -->
 </a>
-<ul class="blockList">
+<ul class="blockListLast">
 <li class="blockList">
 <h4>abort</h4>
 <pre>public&nbsp;void&nbsp;abort()
@@ -427,21 +262,10 @@ implements com.scalar.db.common.DecoratedDistributedTransaction</pre>
 <dl>
 <dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
 <dd><code>abort</code>&nbsp;in interface&nbsp;<code>com.scalar.db.api.DistributedTransaction</code></dd>
+<dt><span class="overrideSpecifyLabel">Overrides:</span></dt>
+<dd><code>abort</code>&nbsp;in class&nbsp;<code>com.scalar.db.common.DecoratedDistributedTransaction</code></dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code>com.scalar.db.exception.transaction.AbortException</code></dd>
-</dl>
-</li>
-</ul>
-<a name="getOriginalTransaction--">
-<!--   -->
-</a>
-<ul class="blockListLast">
-<li class="blockList">
-<h4>getOriginalTransaction</h4>
-<pre>public&nbsp;com.scalar.db.api.DistributedTransaction&nbsp;getOriginalTransaction()</pre>
-<dl>
-<dt><span class="overrideSpecifyLabel">Specified by:</span></dt>
-<dd><code>getOriginalTransaction</code>&nbsp;in interface&nbsp;<code>com.scalar.db.common.DecoratedDistributedTransaction</code></dd>
 </dl>
 </li>
 </ul>

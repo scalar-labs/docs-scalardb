@@ -13,7 +13,7 @@ If you don't have ScalarDB Cluster set up, please follow the instructions in [Se
 
 In addition, you need access to the [ScalarDB Cluster GitHub repository](https://github.com/scalar-labs/scalardb-cluster), [packages in the ScalarDB Cluster repository](https://github.com/orgs/scalar-labs/packages?repo_name=scalardb-cluster), and [packages in the ScalarDB SQL repository](https://github.com/orgs/scalar-labs/packages?repo_name=scalardb-sql).
 These repositories are available only to users with a commercial license and permission.
-To get a license and permission, please [contact us](https://www.scalar-labs.com/contact/).
+To get a license and permission, please [contact us](https://scalar-labs.com/contact_us/).
 
 You also need to set the `gpr.user` property to your GitHub username and the `gpr.key` property to your personal access token.
 To do so, you must either add these properties in `~/.gradle/gradle.properties` or specify the properties by using the `-P` option when running the `./gradlew` command as follows:
@@ -74,29 +74,13 @@ To use ScalarDB Cluster, you need to modify `build.gradle`:
 $ vim build.gradle
 ```
 
-First, add the following repository for ScalarDB Cluster to the `repositories` section:
-
-```gradle
-repositories {
-    ...
-
-    maven {
-        url = uri("https://maven.pkg.github.com/scalar-labs/scalardb-cluster")
-        credentials {
-            username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-            password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
-        }
-    }
-}
-```
-
-Then, delete the existing dependency for `com.scalar-labs:scalardb-sql-direct-mode:3.10.1` from the `dependencies` section, and add the following dependency to the `dependencies` section:
+Then, delete the existing dependency for `com.scalar-labs:scalardb-sql-direct-mode:3.11.0` from the `dependencies` section, and add the following dependency to the `dependencies` section:
 
 ```gradle
 dependencies {
     ...
 
-    implementation 'com.scalar-labs:scalardb-cluster-client:3.10.1'
+    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.11.0'
 }
 ```
 
@@ -134,11 +118,11 @@ For details about the client modes, see [Developer Guide for ScalarDB Cluster wi
 
 To load a schema via ScalarDB Cluster SQL, you need to use the dedicated SQL CLI for ScalarDB Cluster (SQL CLI for Cluster).
 Using the SQL CLI for Cluster is basically the same as using the [ScalarDB SQL Command Line Interface](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/command-line-interface.md) except the name of the JAR file is different.
-You can download the SQL CLI for Cluster from [Releases](https://github.com/scalar-labs/scalardb-cluster/releases/tag/v3.10.1).
+You can download the SQL CLI for Cluster from [Releases](https://github.com/scalar-labs/scalardb-cluster/releases/tag/v3.11.0).
 After downloading the JAR file, you can use SQL CLI for Cluster by running the following command:
 
 ```shell
-$ java -jar scalardb-cluster-sql-cli-3.10.1-all.jar --config scalardb-sql.properties --file schema.sql
+$ java -jar scalardb-cluster-sql-cli-3.11.0-all.jar --config scalardb-sql.properties --file schema.sql
 ```
 
 ## Step 5. Load the initial data

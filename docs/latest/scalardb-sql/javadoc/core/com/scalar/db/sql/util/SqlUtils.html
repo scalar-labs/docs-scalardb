@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":9,"i1":9,"i2":9,"i3":9};
+var methods = {"i0":9,"i1":9,"i2":9,"i3":9,"i4":9};
 var tabs = {65535:["t0","All Methods"],1:["t1","Static Methods"],8:["t4","Concrete Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -133,16 +133,21 @@ extends java.lang.Object</pre>
 </tr>
 <tr id="i1" class="rowColor">
 <td class="colFirst"><code>static <a href="../../../../../com/scalar/db/sql/metadata/TableMetadata.html" title="interface in com.scalar.db.sql.metadata">TableMetadata</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/util/SqlUtils.html#getTableMetadata-com.scalar.db.sql.metadata.Metadata-java.lang.String-java.lang.String-">getTableMetadata</a></span>(<a href="../../../../../com/scalar/db/sql/metadata/Metadata.html" title="interface in com.scalar.db.sql.metadata">Metadata</a>&nbsp;metadata,
-                java.lang.String&nbsp;namespaceName,
-                java.lang.String&nbsp;tableName)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/util/SqlUtils.html#getTableMetadata-com.scalar.db.sql.metadata.Metadata-com.scalar.db.sql.TableRef-">getTableMetadata</a></span>(<a href="../../../../../com/scalar/db/sql/metadata/Metadata.html" title="interface in com.scalar.db.sql.metadata">Metadata</a>&nbsp;metadata,
+                <a href="../../../../../com/scalar/db/sql/TableRef.html" title="class in com.scalar.db.sql">TableRef</a>&nbsp;table)</code>&nbsp;</td>
 </tr>
 <tr id="i2" class="altColor">
+<td class="colFirst"><code>static <a href="../../../../../com/scalar/db/sql/metadata/TableMetadata.html" title="interface in com.scalar.db.sql.metadata">TableMetadata</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/util/SqlUtils.html#getTableMetadata-com.scalar.db.sql.metadata.Metadata-com.scalar.db.sql.TableRef-java.lang.String-">getTableMetadata</a></span>(<a href="../../../../../com/scalar/db/sql/metadata/Metadata.html" title="interface in com.scalar.db.sql.metadata">Metadata</a>&nbsp;metadata,
+                <a href="../../../../../com/scalar/db/sql/TableRef.html" title="class in com.scalar.db.sql">TableRef</a>&nbsp;table,
+                java.lang.String&nbsp;defaultNamespace)</code>&nbsp;</td>
+</tr>
+<tr id="i3" class="rowColor">
 <td class="colFirst"><code>static &lt;T extends <a href="../../../../../com/scalar/db/sql/statement/Statement.html" title="interface in com.scalar.db.sql.statement">Statement</a>&gt;<br>T</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/util/SqlUtils.html#setNamespaceNameIfOmitted-T-java.lang.String-">setNamespaceNameIfOmitted</a></span>(T&nbsp;statement,
                          java.lang.String&nbsp;defaultNamespaceName)</code>&nbsp;</td>
 </tr>
-<tr id="i3" class="rowColor">
+<tr id="i4" class="altColor">
 <td class="colFirst"><code>static void</code></td>
 <td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/util/SqlUtils.html#validateNamespaceName-com.scalar.db.sql.statement.NamespaceNameOmittable-">validateNamespaceName</a></span>(<a href="../../../../../com/scalar/db/sql/statement/NamespaceNameOmittable.html" title="interface in com.scalar.db.sql.statement">NamespaceNameOmittable</a>&lt;?&gt;&nbsp;namespaceNameOmittable)</code>&nbsp;</td>
 </tr>
@@ -168,15 +173,26 @@ extends java.lang.Object</pre>
 <!--   -->
 </a>
 <h3>Method Detail</h3>
-<a name="getTableMetadata-com.scalar.db.sql.metadata.Metadata-java.lang.String-java.lang.String-">
+<a name="getTableMetadata-com.scalar.db.sql.metadata.Metadata-com.scalar.db.sql.TableRef-">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
 <h4>getTableMetadata</h4>
 <pre>public static&nbsp;<a href="../../../../../com/scalar/db/sql/metadata/TableMetadata.html" title="interface in com.scalar.db.sql.metadata">TableMetadata</a>&nbsp;getTableMetadata(<a href="../../../../../com/scalar/db/sql/metadata/Metadata.html" title="interface in com.scalar.db.sql.metadata">Metadata</a>&nbsp;metadata,
-                                             java.lang.String&nbsp;namespaceName,
-                                             java.lang.String&nbsp;tableName)</pre>
+                                             <a href="../../../../../com/scalar/db/sql/TableRef.html" title="class in com.scalar.db.sql">TableRef</a>&nbsp;table)</pre>
+</li>
+</ul>
+<a name="getTableMetadata-com.scalar.db.sql.metadata.Metadata-com.scalar.db.sql.TableRef-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getTableMetadata</h4>
+<pre>public static&nbsp;<a href="../../../../../com/scalar/db/sql/metadata/TableMetadata.html" title="interface in com.scalar.db.sql.metadata">TableMetadata</a>&nbsp;getTableMetadata(<a href="../../../../../com/scalar/db/sql/metadata/Metadata.html" title="interface in com.scalar.db.sql.metadata">Metadata</a>&nbsp;metadata,
+                                             <a href="../../../../../com/scalar/db/sql/TableRef.html" title="class in com.scalar.db.sql">TableRef</a>&nbsp;table,
+                                             @Nullable
+                                             java.lang.String&nbsp;defaultNamespace)</pre>
 </li>
 </ul>
 <a name="escapeString-java.lang.String-">

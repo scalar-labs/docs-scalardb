@@ -17,7 +17,7 @@
     catch(err) {
     }
 //-->
-var methods = {"i0":6};
+var methods = {"i0":6,"i1":6,"i2":6};
 var tabs = {65535:["t0","All Methods"],2:["t2","Instance Methods"],4:["t3","Abstract Methods"]};
 var altColor = "altColor";
 var rowColor = "rowColor";
@@ -129,6 +129,18 @@ var activeTableTab = "activeTableTab";
 <div class="block">Returns a <a href="../../../../../com/scalar/db/sql/metadata/NamespaceMetadata.html" title="interface in com.scalar.db.sql.metadata"><code>NamespaceMetadata</code></a> object for the specified namespace</div>
 </td>
 </tr>
+<tr id="i1" class="rowColor">
+<td class="colFirst"><code>java.util.Optional&lt;<a href="../../../../../com/scalar/db/sql/metadata/UserMetadata.html" title="interface in com.scalar.db.sql.metadata">UserMetadata</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/metadata/Metadata.html#getUser-java.lang.String-">getUser</a></span>(java.lang.String&nbsp;username)</code>
+<div class="block">Returns a <a href="../../../../../com/scalar/db/sql/metadata/UserMetadata.html" title="interface in com.scalar.db.sql.metadata"><code>UserMetadata</code></a> object for the specified user.</div>
+</td>
+</tr>
+<tr id="i2" class="altColor">
+<td class="colFirst"><code>java.util.Map&lt;java.lang.String,<a href="../../../../../com/scalar/db/sql/metadata/UserMetadata.html" title="interface in com.scalar.db.sql.metadata">UserMetadata</a>&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/metadata/Metadata.html#getUsers--">getUsers</a></span>()</code>
+<div class="block">Returns a map of the usernames and <a href="../../../../../com/scalar/db/sql/metadata/UserMetadata.html" title="interface in com.scalar.db.sql.metadata"><code>UserMetadata</code></a> objects.</div>
+</td>
+</tr>
 </table>
 </li>
 </ul>
@@ -147,7 +159,7 @@ var activeTableTab = "activeTableTab";
 <a name="getNamespace-java.lang.String-">
 <!--   -->
 </a>
-<ul class="blockListLast">
+<ul class="blockList">
 <li class="blockList">
 <h4>getNamespace</h4>
 <pre>java.util.Optional&lt;<a href="../../../../../com/scalar/db/sql/metadata/NamespaceMetadata.html" title="interface in com.scalar.db.sql.metadata">NamespaceMetadata</a>&gt;&nbsp;getNamespace(java.lang.String&nbsp;namespaceName)</pre>
@@ -157,6 +169,40 @@ var activeTableTab = "activeTableTab";
 <dd><code>namespaceName</code> - the name of the target namespace</dd>
 <dt><span class="returnLabel">Returns:</span></dt>
 <dd>a <a href="../../../../../com/scalar/db/sql/metadata/NamespaceMetadata.html" title="interface in com.scalar.db.sql.metadata"><code>NamespaceMetadata</code></a> object</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if an unexpected error happens</dd>
+</dl>
+</li>
+</ul>
+<a name="getUsers--">
+<!--   -->
+</a>
+<ul class="blockList">
+<li class="blockList">
+<h4>getUsers</h4>
+<pre>java.util.Map&lt;java.lang.String,<a href="../../../../../com/scalar/db/sql/metadata/UserMetadata.html" title="interface in com.scalar.db.sql.metadata">UserMetadata</a>&gt;&nbsp;getUsers()</pre>
+<div class="block">Returns a map of the usernames and <a href="../../../../../com/scalar/db/sql/metadata/UserMetadata.html" title="interface in com.scalar.db.sql.metadata"><code>UserMetadata</code></a> objects.</div>
+<dl>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a map of the usernames and <a href="../../../../../com/scalar/db/sql/metadata/UserMetadata.html" title="interface in com.scalar.db.sql.metadata"><code>UserMetadata</code></a> objects</dd>
+<dt><span class="throwsLabel">Throws:</span></dt>
+<dd><code><a href="../../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if an unexpected error happens</dd>
+</dl>
+</li>
+</ul>
+<a name="getUser-java.lang.String-">
+<!--   -->
+</a>
+<ul class="blockListLast">
+<li class="blockList">
+<h4>getUser</h4>
+<pre>java.util.Optional&lt;<a href="../../../../../com/scalar/db/sql/metadata/UserMetadata.html" title="interface in com.scalar.db.sql.metadata">UserMetadata</a>&gt;&nbsp;getUser(java.lang.String&nbsp;username)</pre>
+<div class="block">Returns a <a href="../../../../../com/scalar/db/sql/metadata/UserMetadata.html" title="interface in com.scalar.db.sql.metadata"><code>UserMetadata</code></a> object for the specified user.</div>
+<dl>
+<dt><span class="paramLabel">Parameters:</span></dt>
+<dd><code>username</code> - the name of the target user</dd>
+<dt><span class="returnLabel">Returns:</span></dt>
+<dd>a <a href="../../../../../com/scalar/db/sql/metadata/UserMetadata.html" title="interface in com.scalar.db.sql.metadata"><code>UserMetadata</code></a> object</dd>
 <dt><span class="throwsLabel">Throws:</span></dt>
 <dd><code><a href="../../../../../com/scalar/db/sql/exception/SqlException.html" title="class in com.scalar.db.sql.exception">SqlException</a></code> - if an unexpected error happens</dd>
 </dl>

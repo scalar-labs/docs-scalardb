@@ -47,7 +47,7 @@ var activeTableTab = "activeTableTab";
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../com/scalar/db/sql/statement/DropTableStatement.html" title="class in com.scalar.db.sql.statement"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/scalar/db/sql/statement/GrantStatement.TargetType.html" title="enum in com.scalar.db.sql.statement"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../../com/scalar/db/sql/statement/JoinStatement.html" title="class in com.scalar.db.sql.statement"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
@@ -134,16 +134,16 @@ implements <a href="../../../../../com/scalar/db/sql/statement/DmlStatement.html
 <th class="colLast" scope="col">Field and Description</th>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>com.google.common.collect.ImmutableList&lt;<a href="../../../../../com/scalar/db/sql/Assignment.html" title="class in com.scalar.db.sql">Assignment</a>&gt;</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/statement/InsertStatement.html#assignments">assignments</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>com.google.common.collect.ImmutableList&lt;java.lang.String&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/statement/InsertStatement.html#columnNames">columnNames</a></span></code>&nbsp;</td>
 </tr>
 <tr class="rowColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/statement/InsertStatement.html#namespaceName">namespaceName</a></span></code>&nbsp;</td>
+<td class="colFirst"><code><a href="../../../../../com/scalar/db/sql/TableRef.html" title="class in com.scalar.db.sql">TableRef</a></code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/statement/InsertStatement.html#table">table</a></span></code>&nbsp;</td>
 </tr>
 <tr class="altColor">
-<td class="colFirst"><code>java.lang.String</code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/statement/InsertStatement.html#tableName">tableName</a></span></code>&nbsp;</td>
+<td class="colFirst"><code>com.google.common.collect.ImmutableList&lt;com.google.common.collect.ImmutableList&lt;<a href="../../../../../com/scalar/db/sql/Term.html" title="interface in com.scalar.db.sql">Term</a>&gt;&gt;</code></td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/statement/InsertStatement.html#valuesList">valuesList</a></span></code>&nbsp;</td>
 </tr>
 </table>
 </li>
@@ -180,9 +180,9 @@ implements <a href="../../../../../com/scalar/db/sql/statement/DmlStatement.html
 </tr>
 <tr id="i4" class="altColor">
 <td class="colFirst"><code>static <a href="../../../../../com/scalar/db/sql/statement/InsertStatement.html" title="class in com.scalar.db.sql.statement">InsertStatement</a></code></td>
-<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/statement/InsertStatement.html#create-java.lang.String-java.lang.String-com.google.common.collect.ImmutableList-">create</a></span>(java.lang.String&nbsp;namespaceName,
-      java.lang.String&nbsp;tableName,
-      com.google.common.collect.ImmutableList&lt;<a href="../../../../../com/scalar/db/sql/Assignment.html" title="class in com.scalar.db.sql">Assignment</a>&gt;&nbsp;assignments)</code>&nbsp;</td>
+<td class="colLast"><code><span class="memberNameLink"><a href="../../../../../com/scalar/db/sql/statement/InsertStatement.html#create-com.scalar.db.sql.TableRef-com.google.common.collect.ImmutableList-com.google.common.collect.ImmutableList-">create</a></span>(<a href="../../../../../com/scalar/db/sql/TableRef.html" title="class in com.scalar.db.sql">TableRef</a>&nbsp;table,
+      com.google.common.collect.ImmutableList&lt;java.lang.String&gt;&nbsp;columnNames,
+      com.google.common.collect.ImmutableList&lt;com.google.common.collect.ImmutableList&lt;<a href="../../../../../com/scalar/db/sql/Term.html" title="interface in com.scalar.db.sql">Term</a>&gt;&gt;&nbsp;valuesList)</code>&nbsp;</td>
 </tr>
 <tr id="i5" class="rowColor">
 <td class="colFirst"><code>boolean</code></td>
@@ -230,32 +230,31 @@ implements <a href="../../../../../com/scalar/db/sql/statement/DmlStatement.html
 <!--   -->
 </a>
 <h3>Field Detail</h3>
-<a name="namespaceName">
+<a name="table">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>namespaceName</h4>
-<pre>@Nullable
-public final&nbsp;java.lang.String namespaceName</pre>
+<h4>table</h4>
+<pre>public final&nbsp;<a href="../../../../../com/scalar/db/sql/TableRef.html" title="class in com.scalar.db.sql">TableRef</a> table</pre>
 </li>
 </ul>
-<a name="tableName">
+<a name="columnNames">
 <!--   -->
 </a>
 <ul class="blockList">
 <li class="blockList">
-<h4>tableName</h4>
-<pre>public final&nbsp;java.lang.String tableName</pre>
+<h4>columnNames</h4>
+<pre>public final&nbsp;com.google.common.collect.ImmutableList&lt;java.lang.String&gt; columnNames</pre>
 </li>
 </ul>
-<a name="assignments">
+<a name="valuesList">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
-<h4>assignments</h4>
-<pre>public final&nbsp;com.google.common.collect.ImmutableList&lt;<a href="../../../../../com/scalar/db/sql/Assignment.html" title="class in com.scalar.db.sql">Assignment</a>&gt; assignments</pre>
+<h4>valuesList</h4>
+<pre>public final&nbsp;com.google.common.collect.ImmutableList&lt;com.google.common.collect.ImmutableList&lt;<a href="../../../../../com/scalar/db/sql/Term.html" title="interface in com.scalar.db.sql">Term</a>&gt;&gt; valuesList</pre>
 </li>
 </ul>
 </li>
@@ -402,16 +401,15 @@ public final&nbsp;java.lang.String namespaceName</pre>
 </dl>
 </li>
 </ul>
-<a name="create-java.lang.String-java.lang.String-com.google.common.collect.ImmutableList-">
+<a name="create-com.scalar.db.sql.TableRef-com.google.common.collect.ImmutableList-com.google.common.collect.ImmutableList-">
 <!--   -->
 </a>
 <ul class="blockListLast">
 <li class="blockList">
 <h4>create</h4>
-<pre>public static&nbsp;<a href="../../../../../com/scalar/db/sql/statement/InsertStatement.html" title="class in com.scalar.db.sql.statement">InsertStatement</a>&nbsp;create(@Nullable
-                                     java.lang.String&nbsp;namespaceName,
-                                     java.lang.String&nbsp;tableName,
-                                     com.google.common.collect.ImmutableList&lt;<a href="../../../../../com/scalar/db/sql/Assignment.html" title="class in com.scalar.db.sql">Assignment</a>&gt;&nbsp;assignments)</pre>
+<pre>public static&nbsp;<a href="../../../../../com/scalar/db/sql/statement/InsertStatement.html" title="class in com.scalar.db.sql.statement">InsertStatement</a>&nbsp;create(<a href="../../../../../com/scalar/db/sql/TableRef.html" title="class in com.scalar.db.sql">TableRef</a>&nbsp;table,
+                                     com.google.common.collect.ImmutableList&lt;java.lang.String&gt;&nbsp;columnNames,
+                                     com.google.common.collect.ImmutableList&lt;com.google.common.collect.ImmutableList&lt;<a href="../../../../../com/scalar/db/sql/Term.html" title="interface in com.scalar.db.sql">Term</a>&gt;&gt;&nbsp;valuesList)</pre>
 </li>
 </ul>
 </li>
@@ -441,7 +439,7 @@ public final&nbsp;java.lang.String namespaceName</pre>
 </div>
 <div class="subNav">
 <ul class="navList">
-<li><a href="../../../../../com/scalar/db/sql/statement/DropTableStatement.html" title="class in com.scalar.db.sql.statement"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
+<li><a href="../../../../../com/scalar/db/sql/statement/GrantStatement.TargetType.html" title="enum in com.scalar.db.sql.statement"><span class="typeNameLink">Prev&nbsp;Class</span></a></li>
 <li><a href="../../../../../com/scalar/db/sql/statement/JoinStatement.html" title="class in com.scalar.db.sql.statement"><span class="typeNameLink">Next&nbsp;Class</span></a></li>
 </ul>
 <ul class="navList">
