@@ -1,4 +1,4 @@
-{% include end-of-support.html %}
+{% include scalardb/end-of-support.html %}
 
 # Configure a custom values file for Scalar Helm Charts
 

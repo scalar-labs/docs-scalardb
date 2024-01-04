@@ -1,4 +1,4 @@
-{% include end-of-support.html %}
+{% include scalardb/end-of-support.html %}
 
 # Back up an RDB in a Kubernetes environment
 

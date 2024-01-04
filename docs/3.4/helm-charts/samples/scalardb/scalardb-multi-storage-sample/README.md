@@ -1,4 +1,4 @@
-{% include end-of-support.html %}
+{% include scalardb/end-of-support.html %}
 
 # ScalarDB Deployment Sample on Kubernetes (Multi-Storage Transactions)
 

@@ -1,4 +1,4 @@
-{% include end-of-support.html %}
+{% include scalardb/end-of-support.html %}
 
 # Sample application of Spring Data JDBC for ScalarDB
 
