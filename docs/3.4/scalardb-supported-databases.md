@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Scalar DB Supported Databases
 
 Scalar DB supports the following databases and the databases that are compatible with those databases.

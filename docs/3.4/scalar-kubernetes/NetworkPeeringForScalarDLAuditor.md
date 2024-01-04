@@ -1,4 +1,4 @@
-{% include end-of-support.html %}
+{% include scalardb/end-of-support.html %}
 
 # Configure Network Peering for ScalarDL Auditor Mode
 

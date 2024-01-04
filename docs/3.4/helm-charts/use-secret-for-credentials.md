@@ -1,4 +1,4 @@
-{% include end-of-support.html %}
+{% include scalardb/end-of-support.html %}
 
 # How to use Secret resources to pass credentials as environment variables into the properties file
 

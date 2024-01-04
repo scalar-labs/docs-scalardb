@@ -1,4 +1,4 @@
-{% include end-of-support.html %}
+{% include scalardb/end-of-support.html %}
 
 # Deploy ScalarDB Server on Amazon Elastic Kubernetes Service (EKS)
 

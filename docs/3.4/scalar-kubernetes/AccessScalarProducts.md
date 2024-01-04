@@ -1,4 +1,4 @@
-{% include end-of-support.html %}
+{% include scalardb/end-of-support.html %}
 
 # Make ScalarDB or ScalarDL deployed in a Kubernetes cluster environment available from applications
 

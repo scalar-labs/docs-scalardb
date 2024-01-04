@@ -1,4 +1,4 @@
-{% include end-of-support.html %}
+{% include scalardb/end-of-support.html %}
 
 # Set up a database for ScalarDB/ScalarDL deployment on AWS
 
