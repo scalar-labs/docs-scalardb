@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Release Flow
 
 ## Requirements

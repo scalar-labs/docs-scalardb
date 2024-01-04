@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # ScalarDB GraphQL Server
 
 ScalarDB GraphQL Server is an interface layer that allows client applications to communicate with [ScalarDB](https://github.com/scalar-labs/scalardb) with GraphQL.

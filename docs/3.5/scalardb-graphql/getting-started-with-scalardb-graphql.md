@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Getting Started with ScalarDB GraphQL
 
 ScalarDB GraphQL is an interface layer that allows client applications to communicate with a [ScalarDB](https://github.com/scalar-labs/scalardb) database with GraphQL.
