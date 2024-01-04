@@ -1,4 +1,4 @@
-{% include end-of-support.html %}
+{% include scalardb/end-of-support.html %}
 
 # Collecting logs from Scalar products on a Kubernetes cluster
 

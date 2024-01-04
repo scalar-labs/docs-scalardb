@@ -1,4 +1,4 @@
-{% include end-of-support.html %}
+{% include scalardb/end-of-support.html %}
 
 # Back up and restore ScalarDB or ScalarDL data in a Kubernetes environment
 

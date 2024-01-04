@@ -1,4 +1,4 @@
-{% include end-of-support.html %}
+{% include scalardb/end-of-support.html %}
 
 # Components to Regularly Check When Running in a Kubernetes Environment
 
