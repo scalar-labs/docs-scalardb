@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # [Deprecated] Getting Started with Helm Charts (ScalarDB Server)
 
 {% capture notice--info %}

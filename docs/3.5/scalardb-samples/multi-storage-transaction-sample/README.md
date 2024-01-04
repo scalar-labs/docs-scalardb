@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Create a Sample Application That Supports Multi-Storage Transactions
 
 This tutorial describes how to create a sample application that supports the multi-storage transactions feature in ScalarDB.

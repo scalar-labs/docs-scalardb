@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Add ScalarDB to Your Build
 
 The ScalarDB library is available on the [Maven Central Repository](https://mvnrepository.com/artifact/com.scalar-labs/scalardb). You can add the library as a build dependency to your application by using Gradle or Maven.
