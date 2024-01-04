@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # ScalarDB Configurations
 
 This page describes the available configurations for ScalarDB.
