@@ -1,4 +1,4 @@
-{% include end-of-support.html %}
+{% include scalardb/end-of-support.html %}
 
 # ScalarDB Server Sample
 This is a sample application that uses ScalarDB Server, a gRPC server that implements ScalarDB interface, as a backend.

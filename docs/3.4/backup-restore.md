@@ -1,4 +1,4 @@
-{% include end-of-support.html %}
+{% include scalardb/end-of-support.html %}
 
 # A Guide on How to Back up and Restore Databases Integrated with Scalar DB
 
