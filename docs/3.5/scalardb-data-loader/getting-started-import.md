@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Getting started with Import
 
 This document explains how you can get started with the Scalar DB Data Loader Import function.

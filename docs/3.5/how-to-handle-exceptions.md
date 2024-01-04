@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # A Guide on How to Handle Exceptions
 
 Handling exceptions correctly in Scalar DB is very important.

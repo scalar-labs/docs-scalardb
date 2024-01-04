@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Deploy ScalarDB Cluster on Amazon Elastic Kubernetes Service (EKS)
 
 This guide explains how to deploy ScalarDB Cluster on Amazon Elastic Kubernetes Service (EKS).

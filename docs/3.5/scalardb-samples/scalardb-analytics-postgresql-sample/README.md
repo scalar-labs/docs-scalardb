@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Run Analytical Queries on Sample Data by Using ScalarDB Analytics with PostgreSQL
 
 This tutorial describes how to run analytical queries on sample data by using ScalarDB Analytics with PostgreSQL.
