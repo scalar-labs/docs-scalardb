@@ -1,5 +1,3 @@
-{% include scalardb/end-of-support.html %}
-
 # Create a Sample Application That Supports Microservice Transactions
 
 This tutorial describes how to create a sample application that supports microservice transactions in ScalarDB.
@@ -106,7 +104,7 @@ Cassandra and MySQL are already configured for the sample application, as shown 
 To start Cassandra and MySQL, which are included in the Docker container for the sample application, run the following command:
 
 ```console
-$ docker-compose up -d
+$ docker-compose up -d mysql cassandra
 ```
 
 {% capture notice--info %}
