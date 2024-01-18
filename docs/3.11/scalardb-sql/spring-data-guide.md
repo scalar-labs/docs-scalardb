@@ -13,61 +13,108 @@ You need to add dependencies for Spring Data JDBC for ScalarDB and the connectio
 
 ### Direct mode
 
-To add the dependencies on Spring Data JDBC for ScalarDB with Direct mode using Gradle, use the following:
+{% capture notice--info %}
+**Note**
+
+This mode exists only for development purposes and is not recommended for production use.
+For production use, please refer to [Cluster mode](#cluster-mode).
+{% endcapture %}
+
+<div class="notice--info">{{ notice--info | markdownify }}</div>
+
+To add the dependencies on Spring Data JDBC for ScalarDB with Direct mode by using Gradle, use the following, replacing `<VERSION>` with the versions of Spring Data JDBC for ScalarDB and the related library, respectively, that you are using:
 
 ```gradle
 dependencies {
-    implementation 'com.scalar-labs:scalardb-sql-spring-data:<version>'
-    implementation 'com.scalar-labs:scalardb-sql-direct-mode:<version>'
+    implementation 'com.scalar-labs:scalardb-sql-spring-data:<VERSION>'
+    implementation 'com.scalar-labs:scalardb-sql-direct-mode:<VERSION>'
 }
 ```
 
-To add the dependencies using Maven:
+To add the dependencies by using Maven, use the following, replacing `...` with the version of Spring Data JDBC for ScalarDB that you are using:
 
 ```xml
 <dependencies>
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-sql-spring-data</artifactId>
-        <version>${version}</version>
+        <version>...</version>
     </dependency>
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-sql-direct-mode</artifactId>
-        <version>${version}</version>
+        <version>...</version>
     </dependency>
 </dependencies>
 ```
 
 ### Server mode
 
-To add the dependencies on Spring Data JDBC for ScalarDB with Server mode using Gradle, use the following:
+{% capture notice--info %}
+**Note**
+
+This mode is now deprecated. Please use [Cluster mode](#cluster-mode) instead.
+{% endcapture %}
+
+<div class="notice--info">{{ notice--info | markdownify }}</div>
+
+To add the dependencies on Spring Data JDBC for ScalarDB with Server mode by using Gradle, use the following, replacing `<VERSION>` with the versions of Spring Data JDBC for ScalarDB and the related library, respectively, that you are using:
 
 ```gradle
 dependencies {
-    implementation 'com.scalar-labs:scalardb-sql-spring-data:<version>'
-    implementation 'com.scalar-labs:scalardb-sql-server-mode:<version>'
+    implementation 'com.scalar-labs:scalardb-sql-spring-data:<VERSION>'
+    implementation 'com.scalar-labs:scalardb-sql-server-mode:<VERSION>'
 }
 ```
 
-To add the dependencies using Maven:
+To add the dependencies by using Maven, use the following, replacing `...` with the version of Spring Data JDBC for ScalarDB that you are using:
 
 ```xml
 <dependencies>
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-sql-spring-data</artifactId>
-        <version>${version}</version>
+        <version>...</version>
     </dependency>
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-sql-server-mode</artifactId>
-        <version>${version}</version>
+        <version>...</version>
     </dependency>
 </dependencies>
 ```
 
-Please see [ScalarDB SQL Server](sql-server.md) for the details of the ScalarDB SQL Server.
+For details about ScalarDB SQL Server, see [ScalarDB SQL Server](sql-server.md).
+
+### Cluster mode
+
+To add the dependencies on Spring Data JDBC for ScalarDB with Cluster mode by using Gradle, use the following, replacing `<VERSION>` with the versions of Spring Data JDBC for ScalarDB and the related library, respectively, that you are using:
+
+```gradle
+dependencies {
+    implementation 'com.scalar-labs:scalardb-sql-spring-data:<VERSION>'
+    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:<VERSION>'
+}
+```
+
+To add the dependencies by using Maven, use the following, replacing `...` with the version of Spring Data JDBC for ScalarDB that you are using:
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.scalar-labs</groupId>
+        <artifactId>scalardb-sql-spring-data</artifactId>
+        <version>...</version>
+    </dependency>
+    <dependency>
+        <groupId>com.scalar-labs</groupId>
+        <artifactId>scalardb-cluster-client</artifactId>
+        <version>...</version>
+    </dependency>
+</dependencies>
+```
+
+For details about ScalarDB Cluster SQL, see [Getting Started with ScalarDB Cluster SQL via Spring Data JDBC for ScalarDB](https://scalardb.scalar-labs.com/docs/latest/scalardb-cluster/getting-started-with-scalardb-cluster-sql-spring-data-jdbc/).
 
 ## Configurations
 
@@ -83,7 +130,7 @@ spring.datasource.driver-class-name=com.scalar.db.sql.jdbc.SqlJdbcDriver
 
 ### spring.datasource.url
 
-This value follows ScalarDB JDBC connection URL configuration. See also [ScalarDB JDBC Guide](jdbc-guide.md).
+This value follows the ScalarDB JDBC connection URL configuration. For more information, see [ScalarDB JDBC Guide](jdbc-guide.md) and [ScalarDB SQL Configurations](configurations.md).
 
 ```
 spring.datasource.url=jdbc:scalardb:\
