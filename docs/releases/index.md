@@ -1,3 +1,7 @@
+---
+toc: false
+---
+
 # Release Notes
 
 Select a version to see the release notes:
