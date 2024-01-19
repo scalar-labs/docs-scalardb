@@ -1,3 +1,7 @@
+---
+toc: false
+---
+
 {% include scalardb/end-of-support.html %}
 
 # Configuration Guides for ScalarDB
