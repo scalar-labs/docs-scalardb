@@ -1,3 +1,7 @@
+---
+toc: false
+---
+
 # Developer Guides for ScalarDB
 
 The following is a list of developer guides for ScalarDB:
