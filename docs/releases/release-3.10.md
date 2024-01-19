@@ -2,6 +2,58 @@
 
 This page includes a list of release notes for ScalarDB 3.10.
 
+## v3.10.2
+
+**Release date:** December 26, 2023 
+
+### Summary
+
+This release has several bug fixes, vulnerability fixes, and document improvements.
+
+### Community edition
+
+#### Bug fixes
+
+- Fix to ignore empty condition set when building Scan object ([#1006](https://github.com/scalar-labs/scalardb/pull/1006))
+- Fix to handle version-specific integration tests ([#1037](https://github.com/scalar-labs/scalardb/pull/1037))
+- Fix ScanBuilder bug ([#1045](https://github.com/scalar-labs/scalardb/pull/1045))
+- Fix to handle supported data types properly when importing tables in MySQL and SQL Server ([#1055](https://github.com/scalar-labs/scalardb/pull/1055))
+- Fix flaky relational scan integration tests ([#1069](https://github.com/scalar-labs/scalardb/pull/1069))
+- Upgraded the base image to fix security issues. [CVE-2023-4911](https://github.com/advisories/GHSA-m77w-6vjw-wh2f "CVE-2023-4911") [CVE-2023-29491](https://github.com/advisories/GHSA-vh2x-5rx6-qqhv "CVE-2023-29491") ([#1143](https://github.com/scalar-labs/scalardb/pull/1143) [#1144](https://github.com/scalar-labs/scalardb/pull/1144))
+- Upgraded the jetty library to 9.4.53.v20231009 to fix security issue. [CVE-2023-36478](https://github.com/advisories/GHSA-wgh7-54f2-x98r "CVE-2023-36478") ([#1142](https://github.com/scalar-labs/scalardb/pull/1142))
+- Upgraded grpc-health-probe to fix security issues. [CVE-2023-39325](https://github.com/advisories/GHSA-4374-p667-p6c8 "CVE-2023-39325") [GHSA-m425-mq94-257g](https://github.com/advisories/GHSA-m425-mq94-257g "GHSA-m425-mq94-257g") ([#1297](https://github.com/scalar-labs/scalardb/pull/1297))
+- Upgraded the Cosmos DB client lib to fix security issues. [CVE-2023-34062](https://github.com/advisories/GHSA-xjhv-p3fv-x24r "CVE-2023-34062") ([#1348](https://github.com/scalar-labs/scalardb/pull/1348))
+
+### Enterprise edition
+
+#### Improvements
+
+##### ScalarDB Cluster
+
+- Provide pay-as-you-go containers to AWS Marketplace
+- Provide ScalarDB Cluster (BYOL) in Azure Marketplace. You can use ScalarDB Cluster by subscribing to ScalarDB Cluster in Azure Marketplace.
+- Provide ScalarDB Cluster (BYOL) in AWS Marketplace. You can use ScalarDB Cluster by subscribing to ScalarDB Cluster in AWS Marketplace.
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Should pass all properties to SQL client
+- Upgraded the base image to fix security issues. [CVE-2023-4911](https://github.com/advisories/GHSA-m77w-6vjw-wh2f "CVE-2023-4911") [CVE-2023-29491](https://github.com/advisories/GHSA-vh2x-5rx6-qqhv "CVE-2023-29491")
+- Upgraded the jetty library to 9.4.53.v20231009 to fix security issue. [CVE-2023-36478](https://github.com/advisories/GHSA-wgh7-54f2-x98r "CVE-2023-36478")
+- Upgraded grpc-health-probe to fix security issues. [CVE-2023-39325](https://github.com/advisories/GHSA-4374-p667-p6c8 "CVE-2023-39325") [GHSA-m425-mq94-257g](https://github.com/advisories/GHSA-m425-mq94-257g "GHSA-m425-mq94-257g")
+
+##### ScalarDB GraphQL
+
+- Upgraded the base image to fix security issues. [CVE-2023-4911](https://github.com/advisories/GHSA-m77w-6vjw-wh2f "CVE-2023-4911") [CVE-2023-29491](https://github.com/advisories/GHSA-vh2x-5rx6-qqhv "CVE-2023-29491")
+- Upgraded the jetty library to 9.4.53.v20231009 to fix security issue. [CVE-2023-36478](https://github.com/advisories/GHSA-wgh7-54f2-x98r "CVE-2023-36478")
+
+##### ScalarDB SQL
+
+- Upgraded the base image to fix security issues. [CVE-2023-4911](https://github.com/advisories/GHSA-m77w-6vjw-wh2f "CVE-2023-4911") [CVE-2023-29491](https://github.com/advisories/GHSA-vh2x-5rx6-qqhv "CVE-2023-29491")
+- Upgraded the jetty library to 9.4.53.v20231009 to fix security issue. [CVE-2023-36478](https://github.com/advisories/GHSA-wgh7-54f2-x98r "CVE-2023-36478")
+- Upgraded grpc-health-probe to fix security issues. [CVE-2023-39325](https://github.com/advisories/GHSA-4374-p667-p6c8 "CVE-2023-39325") [GHSA-m425-mq94-257g](https://github.com/advisories/GHSA-m425-mq94-257g "GHSA-m425-mq94-257g")
+
 ## v3.10.1
 
 **Release date:** August 7, 2023 
