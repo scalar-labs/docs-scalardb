@@ -1,3 +1,7 @@
+---
+toc: false
+---
+
 # Getting Started with ScalarDB Cluster
 
 The following are tutorials for getting started with using ScalarDB Cluster:
