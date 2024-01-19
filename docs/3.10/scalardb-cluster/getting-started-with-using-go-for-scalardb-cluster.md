@@ -7,12 +7,11 @@ This document explains how to write gRPC client code for ScalarDB Cluster by usi
 - ScalarDB Cluster 3.9.0 or later
 - Go: any one of the three latest major releases
 
-In this tutorial, we assume that you have a ScalarDB Cluster running on a Kubernetes cluster.
-If you don't have ScalarDB Cluster set up, please follow the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.md).
+In this tutorial, we assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.md).
 
 In addition, you need access to the [ScalarDB Cluster GitHub repository](https://github.com/scalar-labs/scalardb-cluster).
 This repository is available only to users with a commercial license and permission.
-To get a license and permission, please [contact us](https://www.scalar-labs.com/contact/).
+To get a license and permission, please [contact us](https://scalar-labs.com/contact_us/).
 
 ## Sample application
 
@@ -71,7 +70,7 @@ For details about the client modes, see [Developer Guide for ScalarDB Cluster wi
 To load a schema via ScalarDB Cluster, you need to use the dedicated Schema Loader for ScalarDB Cluster (Schema Loader for Cluster). Using the Schema Loader for Cluster is basically the same as using the [Schema Loader for ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader.md) except the name of the JAR file is different. You can download the Schema Loader for Cluster at [Releases](https://github.com/scalar-labs/scalardb-cluster/releases). After downloading the JAR file, you can run the Schema Loader for Cluster with the following command:
 
 ```shell
-$ java -jar scalardb-cluster-schema-loader-3.10.1-all.jar --config database.properties -f schema.json --coordinator
+$ java -jar scalardb-cluster-schema-loader-3.10.2-all.jar --config database.properties -f schema.json --coordinator
 ```
 
 ## Step 4. Set up a Go environment
@@ -92,7 +91,7 @@ First, in a new working directory, create a directory named `scalardb-cluster`, 
 $ mkdir scalardb-cluster
 ```
 
-Then, download the [`scalardb-cluster.proto`](https://github.com/scalar-labs/scalardb-cluster/blob/v3.10.1/rpc/src/main/proto/scalardb-cluster.proto) file and save it in the directory that you created.
+Then, download the [`scalardb-cluster.proto`](https://github.com/scalar-labs/scalardb-cluster/blob/v3.10.2/rpc/src/main/proto/scalardb-cluster.proto) file and save it in the directory that you created.
 
 Generate the gRPC code by running the following command:
 
@@ -110,7 +109,6 @@ After running the command, you should see two files in the `scalardb-cluster` su
 
 The following is the program that uses the gRPC code. Save it as `main.go` in the working directory. This program does the same thing as the `ElectronicMoney.java` program in [Getting Started with ScalarDB](https://scalardb.scalar-labs.com/docs/latest/getting-started-with-scalardb/). Note that you have to update the value of `SERVER_ADDRESS` based on the `EXTERNAL-IP` value of the ScalarDB Cluster `LoadBalancer` service in your environment.
 
-{% raw %}
 ```go
 package main
 
@@ -360,7 +358,6 @@ func printUsageAndExit() {
 	os.Exit(1)
 }
 ```
-{% endraw %}
 
 After creating the `main.go` file, you need to create the `go.mod` file by running the following commands:
 
