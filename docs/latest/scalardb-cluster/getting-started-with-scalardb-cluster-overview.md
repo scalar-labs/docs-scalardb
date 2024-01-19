@@ -1,6 +1,6 @@
 # Getting Started with ScalarDB Cluster
 
-The following is tutorials for getting started with using ScalarDB Cluster:
+The following are tutorials for getting started with using ScalarDB Cluster:
 
 - [Getting Started with ScalarDB Cluster](getting-started-with-scalardb-cluster.md)
 - [Getting Started with ScalarDB Cluster GraphQL](getting-started-with-scalardb-cluster-graphql.md)
