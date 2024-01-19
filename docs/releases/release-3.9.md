@@ -2,6 +2,69 @@
 
 This page includes a list of release notes for ScalarDB 3.9.
 
+## v3.9.3
+
+**Release date:** December 26, 2023
+
+### Summary
+
+This release has several bug fixes, vulnerability fixes, and document improvements.
+
+### Community edition
+
+#### Bug fixes
+
+- Upgraded the base image to fix security issues. [CVE-2023-4911](https://github.com/advisories/GHSA-m77w-6vjw-wh2f "CVE-2023-4911") [CVE-2023-29491](https://github.com/advisories/GHSA-vh2x-5rx6-qqhv "CVE-2023-29491") ([#1143](https://github.com/scalar-labs/scalardb/pull/1143) [#1144](https://github.com/scalar-labs/scalardb/pull/1144))
+- Upgraded the jetty library to 9.4.53.v20231009 to fix security issue. [CVE-2023-36478](https://github.com/advisories/GHSA-wgh7-54f2-x98r "CVE-2023-36478") ([#1142](https://github.com/scalar-labs/scalardb/pull/1142))
+- Upgraded grpc-health-probe to fix security issues. [CVE-2023-39325](https://github.com/advisories/GHSA-4374-p667-p6c8 "CVE-2023-39325") [GHSA-m425-mq94-257g](https://github.com/advisories/GHSA-m425-mq94-257g "GHSA-m425-mq94-257g") ([#1297](https://github.com/scalar-labs/scalardb/pull/1297))
+- Upgraded the Cosmos DB client lib to fix security issues. [CVE-2023-34062](https://github.com/advisories/GHSA-xjhv-p3fv-x24r "CVE-2023-34062") ([#1348](https://github.com/scalar-labs/scalardb/pull/1348))
+
+### Enterprise edition
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Should pass all properties to SQL client
+- Upgraded the base image to fix security issues. [CVE-2023-4911](https://github.com/advisories/GHSA-m77w-6vjw-wh2f "CVE-2023-4911") [CVE-2023-29491](https://github.com/advisories/GHSA-vh2x-5rx6-qqhv "CVE-2023-29491")
+- Upgraded the jetty library to 9.4.53.v20231009 to fix security issue. [CVE-2023-36478](https://github.com/advisories/GHSA-wgh7-54f2-x98r "CVE-2023-36478")
+- Upgraded grpc-health-probe to fix security issues. [CVE-2023-39325](https://github.com/advisories/GHSA-4374-p667-p6c8 "CVE-2023-39325") [GHSA-m425-mq94-257g](https://github.com/advisories/GHSA-m425-mq94-257g "GHSA-m425-mq94-257g")
+
+##### ScalarDB GraphQL
+
+- Upgraded the base image to fix security issues. [CVE-2023-4911](https://github.com/advisories/GHSA-m77w-6vjw-wh2f "CVE-2023-4911") [CVE-2023-29491](https://github.com/advisories/GHSA-vh2x-5rx6-qqhv "CVE-2023-29491")
+- Upgraded the jetty library to 9.4.53.v20231009 to fix security issue. [CVE-2023-36478](https://github.com/advisories/GHSA-wgh7-54f2-x98r "CVE-2023-36478")
+
+##### ScalarDB SQL
+
+- Upgraded the base image to fix security issues. [CVE-2023-4911](https://github.com/advisories/GHSA-m77w-6vjw-wh2f "CVE-2023-4911") [CVE-2023-29491](https://github.com/advisories/GHSA-vh2x-5rx6-qqhv "CVE-2023-29491")
+- Upgraded the jetty library to 9.4.53.v20231009 to fix security issue. [CVE-2023-36478](https://github.com/advisories/GHSA-wgh7-54f2-x98r "CVE-2023-36478")
+- Upgraded grpc-health-probe to fix security issues. [CVE-2023-39325](https://github.com/advisories/GHSA-4374-p667-p6c8 "CVE-2023-39325") [GHSA-m425-mq94-257g](https://github.com/advisories/GHSA-m425-mq94-257g "GHSA-m425-mq94-257g")
+
+## v3.9.2
+
+**Release date:** August 7, 2023
+
+### Summary
+
+This release has several bug fixes, vulnerability fixes, and document improvements.
+
+### Change logs
+
+#### Bug fixes
+
+- Avoid decrementing outstanding requests counter duplicately ([#935](https://github.com/scalar-labs/scalardb/pull/935))
+- Fix [CVE-2023-1428](https://github.com/advisories/GHSA-6628-q6j9-w8vg "CVE-2023-1428") and [CVE-2023-32731](https://github.com/advisories/GHSA-cfgp-2977-2fmm "CVE-2023-32731") ([#943](https://github.com/scalar-labs/scalardb/pull/943))
+- Fix [CVE-2023-2976](https://github.com/advisories/GHSA-7g45-4rm6-3mm3 "CVE-2023-2976") ([#954](https://github.com/scalar-labs/scalardb/pull/954))
+- Fix utility method to check transactional table metadata ([#950](https://github.com/scalar-labs/scalardb/pull/950))
+
+#### Documentation
+
+- Improve documents for Handle Exceptions ([#897](https://github.com/scalar-labs/scalardb/pull/897))
+- Revise document for handling exceptions ([#932](https://github.com/scalar-labs/scalardb/pull/932))
+- Revise document for handling exceptions for Two-phase Commit Transactions ([#934](https://github.com/scalar-labs/scalardb/pull/934))
+- Revise document for Handle exceptions ([#975](https://github.com/scalar-labs/scalardb/pull/975))
+
 ## v3.9.1
 
 **Release date:** July 3, 2023
