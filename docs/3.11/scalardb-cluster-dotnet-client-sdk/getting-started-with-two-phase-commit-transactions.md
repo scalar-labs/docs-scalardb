@@ -1,0 +1,120 @@
+# Getting Started with Distributed Transactions with a Two-Phase Commit Interface in the ScalarDB Cluster .NET Client SDK
+
+The ScalarDB Cluster .NET Client SDK supports transactions with the two-phase commit interface in ScalarDB. The SDK includes transaction and manager abstractions for enhanced communication within a cluster.
+
+{% capture notice--info %}
+**Note**
+
+Although we recommend using asynchronous methods as in the following examples, you can use synchronous methods instead.
+{% endcapture %}
+
+<div class="notice--info">{{ notice--info | markdownify }}</div>
+
+## About transactions with the two-phase commit interface
+
+By using the SDK, you can execute transactions with the two-phase commit interface that span multiple applications. For example, if you have multiple microservices, you can create a transaction manager in each of them and execute a transaction that spans those microservices.
+
+In transactions with the two-phase commit interface, there are two roles—coordinator and a participant—that collaboratively execute a single transaction.
+
+The coordinator process first begins a transaction and sends the ID of the transaction to all the participants, and the participant processes join the transaction. After executing CRUD or SQL operations, the coordinator process and the participant processes commit the transaction by using the two-phase interface.
+
+## Get a transaction manager (for coordinator and participants)
+
+First, you need to get a transaction manager for distributed transactions with the two-phase commit interface. To get the transaction manager, you can use `TransactionFactory` as follows, replacing `<CLUSTER_URL>` with the URL of your cluster:
+
+```c#
+var scalarDbOptions = new ScalarDbOptions
+                      {
+                         Address = "http://<CLUSTER_URL>:60053"
+                         HopLimit = 10
+                      };
+var factory = TransactionFactory.Create(scalarDbOptions);
+
+using var manager = factory.GetTwoPhaseCommitTransactionManager();
+```
+
+Alternatively, you can use SQL instead of CRUD operations for transactions with the two-phase commit interface by specifying the following transaction manager:
+
+```c#
+using var manager = factory.GetSqlTwoPhaseCommitTransactionManager();
+```
+
+## Begin a transaction (for coordinator)
+
+You can begin a transaction with the two-phase commit interface in the coordinator as follows:
+
+```c#
+var transaction = await manager.BeginAsync();
+```
+
+The ID of the started transaction can be obtained with the following code:
+
+```c#
+var transactionId = transaction.Id;
+```
+
+## Join a transaction (for participants)
+
+You can join a transaction with the two-phase commit interface in a participant as follows:
+
+```c#
+var transaction = await manager.JoinAsync(transactionId);
+```
+
+## Resume a transaction (for coordinator and participants)
+
+Usually, a transaction with the two-phase commit interface involves multiple request and response exchanges. In scenarios where you need to work with a transaction that has been begun or joined in the previous request, you can resume such transaction as follows:
+
+```c#
+var transaction = manager.Resume(transactionId);
+```
+
+{% capture notice--info %}
+**Note**
+
+The `Resume` method doesn't have an asynchronous version because it only creates a transaction object. Because of this, resuming a transaction by using the wrong ID is possible.
+{% endcapture %}
+
+<div class="notice--info">{{ notice--info | markdownify }}</div>
+
+## Roll back a transaction
+
+If a transaction fails to commit, you can roll back the transaction as follows:
+
+```c#
+await transaction.RollbackAsync();
+```
+
+## Commit a transaction (for coordinator and participants)
+
+After completing CRUD or SQL operations, you must commit the transaction. However, for transactions with the two-phase commit interface, you must prepare the transaction in the coordinator and all the participants first.
+
+```c#
+await transaction.PrepareAsync();
+```
+
+Next, depending on the concurrency control protocol, you may need to validate the transaction in the coordinator and all the participants as follows:
+
+```c#
+await transaction.ValidateAsync();
+```
+
+Finally, you can commit the transaction in the coordinator and all the participants as follows:
+
+```c#
+await transaction.CommitAsync();
+```
+
+If the coordinator or any of the participants failed to prepare or validate the transaction, you will need to call `RollbackAsync` in the coordinator and all the participants.
+
+In addition, if the coordinator and all the participants failed to commit the transaction, you will need to call `RollbackAsync` in the coordinator and all the participants.
+
+However, if the coordinator or only some of the participants failed to commit the transaction, the transaction will be regarded as committed as long as the coordinator or any one of the participants has succeeded in committing the transaction.
+
+## Execute CRUD operations
+
+The two-phase commit interface of the transaction has the same methods for CRUD operations as ordinary transactions. For details, see [Execute CRUD operations](getting-started-with-distributed-transactions.md#execute-crud-operations).
+
+## Execute SQL statements
+
+The two-phase commit interface of the SQL transaction has the same methods for executing SQL queries as ordinary SQL transactions. For details, see [Execute SQL queries](getting-started-with-distributed-sql-transactions.md#execute-sql-queries).
