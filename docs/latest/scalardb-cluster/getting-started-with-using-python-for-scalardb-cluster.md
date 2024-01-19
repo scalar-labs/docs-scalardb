@@ -7,8 +7,7 @@ This document explains how to write gRPC client code for ScalarDB Cluster by usi
 - ScalarDB Cluster 3.9.0 or later
 - Python 3.7 or later
 
-In this tutorial, we assume that you have a ScalarDB Cluster running on a Kubernetes cluster.
-If you don't have ScalarDB Cluster set up, please follow the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.md).
+In this tutorial, we assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.md).
 
 In addition, you need access to the [ScalarDB Cluster GitHub repository](https://github.com/scalar-labs/scalardb-cluster).
 This repository is available only to users with a commercial license and permission.
