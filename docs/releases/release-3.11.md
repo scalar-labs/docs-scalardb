@@ -8,7 +8,9 @@ This page includes a list of release notes for ScalarDB 3.11.
 
 ### Summary
 
-This release has a lot of enhancements, improvements, and bug fixes. There are many SQL enhancements including `JOIN` support and cross-partition scan support. This release also includes ScalarDB Auth, which is an authentication and authorization mechanism for ScalarDB Cluster.
+This release has a lot of enhancements, improvements, and bug fixes. There are many SQL enhancements including `JOIN` support and cross-partition scan support. This release also includes ScalarDB Auth, which is an authentication and authorization mechanism for ScalarDB Cluster. Please see the following for a list of detailed changes.
+
+ScalarDB provides a Community edition and an Enterprise edition. The Community edition is available as open-source software that you can use under the Apache 2.0 License. The Enterprise edition includes not only the features of the Community edition but also many advanced features. Release notes for the Enterprise edition are available under the “Enterprise edition” section. To use the features in the Enterprise edition, you must have a license agreement with Scalar Inc.
 
 ### Community edition
 
