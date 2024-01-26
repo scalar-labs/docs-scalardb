@@ -75,7 +75,7 @@ The sample application supports the following types of transactions:
   - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) LTS version (8, 11, or 17)
   - [OpenJDK](https://openjdk.org/install/) LTS version (8, 11, or 17)
 - ScalarDB Cluster running on a Kubernetes cluster
-  - If you don't have ScalarDB Cluster set up, please follow the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.md).
+  - We assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.md).
 
 {% capture notice--info %}
 **Note**
@@ -86,39 +86,6 @@ In addition, other JDKs should work with ScalarDB, but we haven't tested them.
 {% endcapture %}
 
 <div class="notice--info">{{ notice--info | markdownify }}</div>
-
-In addition, you need access to the [ScalarDB Cluster GitHub repository](https://github.com/scalar-labs/scalardb-cluster) and the [packages in the ScalarDB Cluster repository](https://github.com/orgs/scalar-labs/packages?repo_name=scalardb-cluster), which are private. The packages and repository are available only those who are using ScalarDB Enterprise. If you need a license for ScalarDB Enterprise, please [contact us](https://scalar-labs.com/contact_us/).
-
-After confirming that you have access to the ScalarDB SQL repository and its packages, you will need to set your GitHub username and your personal access token. To specify these properties, you can do one of the following:
-
-<div id="tabset-1">
-<div class="tab">
-  <button class="tablinks" onclick="openTab(event, 'Gradle_properties_via_command', 'tabset-1')" id="defaultOpen-1">Add to Gradle properties via Terminal</button>
-  <button class="tablinks" onclick="openTab(event, 'Environment_variables', 'tabset-1')">Add as environment variables</button>
-</div>
-
-<div id="Gradle_properties_via_command" class="tabcontent" markdown="1">
-
-Specify the properties with the `-P` option by running the `./gradlew` command as follows, replacing `<YOUR_GITHUB_USERNAME>` with your GitHub username and `<YOUR_PERSONAL_ACCESS_TOKEN>` with your personal access token:
-
-```console
-$ ./gradlew run ... -Pgpr.user=<YOUR_GITHUB_USERNAME> -Pgpr.key=<YOUR_PERSONAL_ACCESS_TOKEN>
-```
-
-</div>
-<div id="Environment_variables" class="tabcontent" markdown="1">
-
-Specify the properties as environment variables by running the following commands, replacing `<YOUR_GITHUB_USERNAME>` with your GitHub username and `<YOUR_PERSONAL_ACCESS_TOKEN>` with your personal access token:
-
-```console
-$ export USERNAME=<YOUR_GITHUB_USERNAME>
-$ export TOKEN=<YOUR_PERSONAL_ACCESS_TOKEN>
-```
-
-</div>
-</div>
-
-For more details, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.md).
 
 ## Set up ScalarDB Cluster
 

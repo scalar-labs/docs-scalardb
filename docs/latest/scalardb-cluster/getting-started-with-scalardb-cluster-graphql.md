@@ -4,11 +4,21 @@ This tutorial describes how to use ScalarDB Cluster GraphQL.
 
 ## Prerequisites
 
-In this tutorial, we assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.md).
+- One of the following Java Development Kits (JDKs):
+  - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) LTS version (8, 11, or 17)
+  - [OpenJDK](https://openjdk.org/install/) LTS version (8, 11, or 17)
+- ScalarDB Cluster running on a Kubernetes cluster
+  - We assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.md).
 
-In addition, you need access to the [ScalarDB Cluster GitHub repository](https://github.com/scalar-labs/scalardb-cluster).
-This repository is available only to users with a commercial license and permission.
-To get a license and permission, please [contact us](https://scalar-labs.com/contact_us/).
+{% capture notice--info %}
+**Note**
+
+We recommend using the LTS versions mentioned above, but other non-LTS versions may work.
+
+In addition, other JDKs should work with ScalarDB, but we haven't tested them.
+{% endcapture %}
+
+<div class="notice--info">{{ notice--info | markdownify }}</div>
 
 ## Sample application
 
