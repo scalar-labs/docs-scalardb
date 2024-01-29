@@ -15,4 +15,3 @@ This repository contains sample applications for [ScalarDB](https://github.com/s
 - [Spring Data JDBC for ScalarDB Sample](spring-data-sample/README.md)
 - [Spring Data JDBC for ScalarDB with Multi-storage Transaction Sample](spring-data-multi-storage-transaction-sample/README.md)
 - [Spring Data JDBC for ScalarDB with Microservice Transaction Sample](spring-data-microservice-transaction-sample/README.md)
-- [ScalarDB Analytics with PostgreSQL](scalardb-analytics-postgresql-sample/README.md)
