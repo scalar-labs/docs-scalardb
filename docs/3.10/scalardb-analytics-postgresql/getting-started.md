@@ -17,23 +17,12 @@ PostgreSQL runs as a service, accepting queries from users to process. FDW exten
 First, you need one or more ScalarDB databases to run analytical queries with ScalarDB Analytics with PostgreSQL. If you have your own ScalarDB database, you can skip this section and use your database instead. If you use the [scalardb-samples/scalardb-analytics-postgresql-sample](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-analytics-postgresql-sample) project, you can set up a sample database by running the following command in the project directory.
 
 ```shell
-$ docker compose run --rm schema-loader \
-  -c /etc/scalardb.properties \
-  --schema-file /etc/schema.json \
-  --coordinator \
-  --no-backup \
-  --no-scaling
+$ docker compose run --rm sql-cli --config /etc/scalardb.properties --file /etc/sample_data.sql
 ```
 
-This command sets up [multiple storage instances](https://scalardb.scalar-labs.com/docs/latest/multi-storage-transactions/) that consist of DynamoDB, PostgreSQL, and Cassandra. Then, the command creates namespaces for `dynamons`, `postgresns`, and `cassandrans` that are mapped to those storages, creates tables for `dynamons.customer`, `postgresns.orders`, and `cassandrans.lineitem` by using [ScalarDB Schema Loader](https://scalardb.scalar-labs.com/docs/latest/schema-loader/).
+This command sets up [multiple storage instances](https://scalardb.scalar-labs.com/docs/latest/multi-storage-transactions/) that consist of DynamoDB, PostgreSQL, and Cassandra. Then, the command creates namespaces for `dynamons`, `postgresns`, and `cassandrans` that are mapped to those storages, creates tables for `dynamons.customer`, `postgresns.orders`, and `cassandrans.lineitem` by using [ScalarDB SQL](https://scalardb.scalar-labs.com/docs/latest/scalardb-sql/getting-started-with-sql/), and loads sample data into the tables.
 
 ![Multi-storage overview](./images/multi-storage-overview.png)
-
-You can load sample data into the created tables by running the following command.
-
-```console
-$ docker compose run --rm sample-data-loader
-```
 
 ## Import the schemas from ScalarDB into PostgreSQL
 
@@ -90,3 +79,7 @@ ScalarDB Analytics with PostgreSQL reads data with the **Read Committed** isolat
 ### Write operations are not supported
 
 ScalarDB Analytics with PostgreSQL only supports read-only queries. `INSERT`, `UPDATE`, and other write operations are not supported.
+
+### Conflicts among FDW extensions
+
+If you have a multi-storage configuration and use JDBC with DynamoDB or CosmosDB, you may encounter an error due to a conflict between the underlying FDW extensions. We plan to fix this issue in the near future. Until we fix this issue, you can avoid the error by reading data in DynamoDB or CosmosDB first, then reading data by using JDBC.
