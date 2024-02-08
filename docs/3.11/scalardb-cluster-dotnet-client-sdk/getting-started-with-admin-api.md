@@ -12,12 +12,12 @@ Although we recommend using asynchronous methods as in the following examples, y
 
 ## Get a transaction manager
 
-First, you need to get an object for interacting with the Administrative API. To get the object, you can use `TransactionFactory` as follows, replacing `<CLUSTER_URL>` with the URL of your cluster:
+First, you need to get an object for interacting with the Administrative API. To get the object, you can use `TransactionFactory` as follows, replacing `<HOSTNAME_OR_IP_ADDRESS>` with the FQDN or the IP address, and `<PORT>` with the port number (`60053` by default) of your cluster:
 
 ```c#
 var scalarDbOptions = new ScalarDbOptions
                       {
-                         Address = "http://<CLUSTER_URL>:60053"
+                         Address = "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
                          HopLimit = 10
                       };
 var factory = TransactionFactory.Create(scalarDbOptions);
