@@ -2,7 +2,7 @@
 
 The ScalarDB Cluster .NET Client SDK supports Dependency Injection in frameworks like ASP.NET Core.
 
-You can register the ScalarDB Cluster transaction managers as services in `IServiceCollection` as follows, replacing `<CLUSTER_URL>` with the URL of your cluster:
+You can register the ScalarDB Cluster transaction managers as services in `IServiceCollection` as follows, replacing `<HOSTNAME_OR_IP_ADDRESS>` with the FQDN or the IP address, and `<PORT>` with the port number (`60053` by default) of your cluster:
 
 ```c#
 using ScalarDB.Net.Client.Extensions;
@@ -15,7 +15,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScalarDbCluster(options =>
 {
-    options.Address = "http:\\<CLUSTER_URL>:60053";
+    options.Address = "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>";
     options.HopLimit = 10;
     options.EnableCrud = true; // true by default
     options.EnableSql = true; // false by default

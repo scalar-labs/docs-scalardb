@@ -266,3 +266,9 @@ For details about the ScalarDB Cluster gRPC API, refer to the following:
 
 * [ScalarDB Cluster gRPC API Guide](scalardb-cluster-grpc-api-guide.md)
 * [ScalarDB Cluster SQL gRPC API Guide](scalardb-cluster-sql-grpc-api-guide.md)
+
+JavaDocs are also available:
+
+* [ScalarDB Cluster Java Client SDK](https://javadoc.io/doc/com.scalar-labs/scalardb-cluster-java-client-sdk/3.11.0/index.html)
+* [ScalarDB Cluster Common](https://javadoc.io/doc/com.scalar-labs/scalardb-cluster-common/3.11.0/index.html)
+* [ScalarDB Cluster RPC](https://javadoc.io/doc/com.scalar-labs/scalardb-cluster-rpc/3.11.0/index.html)
