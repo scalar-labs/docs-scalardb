@@ -1,6 +1,14 @@
 # Getting Started with LINQ in the ScalarDB Cluster .NET Client SDK
 
-The ScalarDB Cluster .NET Client SDK supports querying the cluster with LINQ and some EntityFramework-like functionality. However, this SDK doesn't support EntityFramework.
+The ScalarDB Cluster .NET Client SDK supports querying the cluster with LINQ and some Entity Framework-like functionality.
+
+{% capture notice--info %}
+**Note**
+
+This SDK doesn't support [Entity Framework](https://learn.microsoft.com/en-us/ef/). Instead, this SDK implements functionality that is similar to Entity Framework.
+{% endcapture %}
+
+<div class="notice--info">{{ notice--info | markdownify }}</div>
 
 {% capture notice--info %}
 **Note**
@@ -75,7 +83,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScalarDbContext<MyDbContext>(options =>
 {
-    options.Address = "http:\\<CLUSTER_URL>:60053";
+    options.Address = "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>";
     options.HopLimit = 10;
 });
 ```

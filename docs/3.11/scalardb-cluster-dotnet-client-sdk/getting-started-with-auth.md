@@ -9,7 +9,7 @@ First, you need to get a transaction manager or transaction admin object with cr
 ```c#
 var scalarDbOptions = new ScalarDbOptions
                       {
-                         Address = "http://<CLUSTER_URL>:60053"
+                         Address = "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
                          HopLimit = 10,
                          AuthEnabled = true,
                          Username = "<USERNAME>",
