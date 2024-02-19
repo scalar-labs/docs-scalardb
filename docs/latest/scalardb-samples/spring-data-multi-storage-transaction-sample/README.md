@@ -10,7 +10,7 @@ This tutorial describes how to create a sample Spring Boot application by using 
 
 In addition, you need access to the [ScalarDB SQL GitHub repository](https://github.com/scalar-labs/scalardb-sql) and [Packages in ScalarDB SQL repository](https://github.com/orgs/scalar-labs/packages?repo_name=scalardb-sql).
 These repositories are available only to users with a commercial license and permission.
-To get a license and permission, please [contact us](https://www.scalar-labs.com/contact/).
+To get a license and permission, please [contact us](https://scalar-labs.com/contact_us/).
 
 You also need the `gpr.user` property for your GitHub username and the `gpr.key` property for your personal access token.
 You must either add these properties in `~/.gradle/gradle.properties` or specify the properties by using the `-P` option when running the `./gradlew` command as follows:
@@ -135,20 +135,6 @@ spring.datasource.url=jdbc:scalardb:\
 For details, please see [Configuration - Multi-storage Transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/multi-storage-transactions.md#configuration).
 
 ## Setup
-
-### Clone the ScalarDB samples repository
-
-Open Terminal, then clone the ScalarDB samples repository by running the following command:
-
-```shell
-$ git clone https://github.com/scalar-labs/scalardb-samples
-```
-
-Then, go to the directory with this sample by running the following command:
-
-```shell
-$ cd scalardb-samples/spring-data-multi-storage-transaction-sample
-```
 
 ### Start Cassandra and MySQL
 

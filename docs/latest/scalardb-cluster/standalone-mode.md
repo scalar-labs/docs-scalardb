@@ -69,6 +69,11 @@ The following environment variables are available for the Docker image:
 | `SCALAR_DB_CLUSTER_AUTH_CACHE_EXPIRATION_TIME_MILLIS`             | `scalar.db.cluster.auth.cache_expiration_time_millis`             |
 | `SCALAR_DB_CLUSTER_AUTH_AUTH_TOKEN_EXPIRATION_TIME_MINUTES`       | `scalar.db.cluster.auth.auth_token_expiration_time_minutes`       |
 | `SCALAR_DB_CLUSTER_AUTH_AUTH_TOKEN_GC_THREAD_INTERVAL_MINUTES`    | `scalar.db.cluster.auth.auth_token_gc_thread_interval_minutes`    |
+| `SCALAR_DB_CLUSTER_TLS_ENABLED`                                   | `scalar.db.cluster.tls.enabled`                                   |
+| `SCALAR_DB_CLUSTER_TLS_CA_ROOT_CERT_PATH`                         | `scalar.db.cluster.tls.ca_root_cert_path`                         |
+| `SCALAR_DB_CLUSTER_TLS_OVERRIDE_AUTHORITY`                        | `scalar.db.cluster.tls.override_authority`                        |
+| `SCALAR_DB_CLUSTER_NODE_TLS_CERT_CHAIN_PATH`                      | `scalar.db.cluster.node.tls.cert_chain_path`                      |
+| `SCALAR_DB_CLUSTER_NODE_TLS_PRIVATE_KEY_PATH`                     | `scalar.db.cluster.node.tls.private_key_path`                     |
 
 If you want to specify configurations other than the ones mentioned in the table above, set up your custom properties file by using the configurations described in [ScalarDB Cluster Configurations](scalardb-cluster-configurations.md).
 
