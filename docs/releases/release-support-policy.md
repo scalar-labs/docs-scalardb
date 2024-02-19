@@ -22,10 +22,17 @@ This page describes Scalar's support policy for major and minor version releases
   </thead>
   <tbody>
     <tr>
+      <td><a href="/docs/releases/release-3.12#v3120">3.12</a></td>
+      <td>2024-02-17</td>
+      <td>-</td>
+      <td>-</td>
+      <td><a href="https://www.scalar-labs.com/contact">Contact us</a></td>
+    </tr>
+    <tr>
       <td><a href="/docs/releases/release-3.11#v3110">3.11</a></td>
       <td>2023-12-27</td>
-      <td>-</td>
-      <td>-</td>
+      <td>2025-02-16</td>
+      <td>2025-08-15</td>
       <td><a href="https://www.scalar-labs.com/contact">Contact us</a></td>
     </tr>
     <tr>
