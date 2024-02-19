@@ -6,6 +6,7 @@ toc: false
 
 Select a version to see the release notes:
 
+- [ScalarDB 3.12](release-3.12.md)
 - [ScalarDB 3.11](release-3.11.md)
 - [ScalarDB 3.10](release-3.10.md)
 - [ScalarDB 3.9](release-3.9.md)
