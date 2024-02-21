@@ -94,7 +94,7 @@ $ pip install grpcio grpcio-tools
 
 To communicate with the gRPC server for ScalarDB Cluster, you will need to generate the stub code from the proto file.
 
-First, download the [`scalardb-cluster.proto`](https://github.com/scalar-labs/scalardb-cluster/blob/v3.9.3/rpc/src/main/proto/scalardb-cluster.proto) file, then save it in the working directory.
+First, download the `scalardb-cluster.proto` file, then save it in the working directory. For ScalarDB Cluster users who have a commercial license, please [contact us](https://www.scalar-labs.com/contact) if you need the `scalardb-cluster.proto` file.
 
 You can generate the stub code by running the following command:
 
