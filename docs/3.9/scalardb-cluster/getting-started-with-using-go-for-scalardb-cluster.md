@@ -91,7 +91,7 @@ First, in a new working directory, create a directory named `scalardb-cluster`, 
 $ mkdir scalardb-cluster
 ```
 
-Then, download the [`scalardb-cluster.proto`](https://github.com/scalar-labs/scalardb-cluster/blob/v3.9.3/rpc/src/main/proto/scalardb-cluster.proto) file and save it in the directory that you created.
+Then, download the `scalardb-cluster.proto` file and save it in the directory that you created. For ScalarDB Cluster users who have a commercial license, please [contact us](https://www.scalar-labs.com/contact) if you need the `scalardb-cluster.proto` file.
 
 Generate the gRPC code by running the following command:
 
