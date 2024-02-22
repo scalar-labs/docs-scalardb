@@ -6,16 +6,9 @@ Please see [Getting Started with Scalar DB](https://github.com/scalar-labs/scala
 
 From this point forward, we will assume that **scalardb.properties** that holds the configuration for Scalar DB exists.
 
-First, open a terminal, go to your work directory, and clone the [docs-scalardb](https://github.com/scalar-labs/docs-scalardb) repository.
-
+Let's move to the `getting-started-with-sql` directory so that we can avoid too much copy-and-paste.
 ```shell
-$ git clone https://github.com/scalar-labs/docs-scalardb
-```
-
-Then, let's move to the `getting-started-with-sql` directory in the cloned repository so that we can avoid too much copy-and-paste.
-
-```shell
-$ cd docs-scalardb/3.6/scalardb-sql/getting-started-with-sql
+$ cd docs/getting-started-with-sql
 ```
 
 ## Set up database schema
