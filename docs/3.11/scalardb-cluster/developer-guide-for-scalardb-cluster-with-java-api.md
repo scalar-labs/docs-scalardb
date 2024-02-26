@@ -11,7 +11,7 @@ To add a dependency on the ScalarDB Cluster Java Client SDK by using Gradle, use
 
 ```gradle
 dependencies {
-    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.11.0'
+    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.11.1'
 }
 ```
 
@@ -21,7 +21,7 @@ To add a dependency by using Maven, use the following:
 <dependency>
   <groupId>com.scalar-labs</groupId>
   <artifactId>scalardb-cluster-java-client-sdk</artifactId>
-  <version>3.11.0</version>
+  <version>3.11.1</version>
 </dependency>
 ```
 
@@ -113,11 +113,11 @@ scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
 
 To load a schema via ScalarDB Cluster, you need to use the dedicated Schema Loader for ScalarDB Cluster (Schema Loader for Cluster).
 Using the Schema Loader for Cluster is basically the same as using the [ScalarDB Schema Loader](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader.md) except the name of the JAR file is different.
-You can download the Schema Loader for Cluster at [Releases](https://github.com/scalar-labs/scalardb-cluster/releases/tag/v3.11.0).
+You can download the Schema Loader for Cluster at [Releases](https://github.com/scalar-labs/scalardb-cluster/releases/tag/v3.11.1).
 After downloading the JAR file, you can run Schema Loader for Cluster with the following command:
 
 ```shell
-java -jar scalardb-cluster-schema-loader-3.11.0-all.jar --config <PATH_TO_CONFIG_FILE> -f <PATH_TO_SCHEMA_FILE> --coordinator
+java -jar scalardb-cluster-schema-loader-3.11.1-all.jar --config <PATH_TO_CONFIG_FILE> -f <PATH_TO_SCHEMA_FILE> --coordinator
 ```
 
 ## ScalarDB Cluster SQL
@@ -157,8 +157,8 @@ To add the dependencies on the ScalarDB Cluster JDBC driver by using Gradle, use
 
 ```gradle
 dependencies {
-    implementation 'com.scalar-labs:scalardb-sql-jdbc:3.11.0'
-    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.11.0'
+    implementation 'com.scalar-labs:scalardb-sql-jdbc:3.11.1'
+    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.11.1'
 }
 ```
 
@@ -169,12 +169,12 @@ To add the dependencies by using Maven, use the following:
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-sql-jdbc</artifactId>
-        <version>3.11.0</version>
+        <version>3.11.1</version>
     </dependency>
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-cluster-java-client-sdk</artifactId>
-        <version>3.11.0</version>
+        <version>3.11.1</version>
     </dependency>
 </dependencies>
 ```
@@ -192,8 +192,8 @@ To add the dependencies by using Gradle, use the following:
 
 ```gradle
 dependencies {
-    implementation 'com.scalar-labs:scalardb-sql-spring-data:3.11.0'
-    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.11.0'
+    implementation 'com.scalar-labs:scalardb-sql-spring-data:3.11.1'
+    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.11.1'
 }
 ```
 
@@ -204,12 +204,12 @@ To add the dependencies by using Maven, use the following:
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-sql-spring-data</artifactId>
-        <version>3.11.0</version>
+        <version>3.11.1</version>
     </dependency>
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-cluster-java-client-sdk</artifactId>
-        <version>3.11.0</version>
+        <version>3.11.1</version>
     </dependency>
 </dependencies>
 ```
@@ -252,11 +252,11 @@ For details about how to configure Spring Data JDBC for ScalarDB, see [Configura
 You need to use the dedicated SQL CLI for ScalarDB Cluster (SQL CLI for Cluster).
 
 Using the SQL CLI for Cluster is basically the same as using the [ScalarDB SQL Command Line Interface](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/command-line-interface.md) except the name of the JAR file is different.
-You can download the SQL CLI for Cluster from [Releases](https://github.com/scalar-labs/scalardb-cluster/releases/tag/v3.11.0).
+You can download the SQL CLI for Cluster from [Releases](https://github.com/scalar-labs/scalardb-cluster/releases/tag/v3.11.1).
 After downloading the JAR file, you can run SQL CLI for Cluster with the following command:
 
 ```shell
-java -jar scalardb-cluster-sql-cli-3.11.0-all.jar --config <PATH_TO_CONFIG_FILE>
+java -jar scalardb-cluster-sql-cli-3.11.1-all.jar --config <PATH_TO_CONFIG_FILE>
 ```
 
 ## Further reading
@@ -269,6 +269,6 @@ For details about the ScalarDB Cluster gRPC API, refer to the following:
 
 JavaDocs are also available:
 
-* [ScalarDB Cluster Java Client SDK](https://javadoc.io/doc/com.scalar-labs/scalardb-cluster-java-client-sdk/3.11.0/index.html)
-* [ScalarDB Cluster Common](https://javadoc.io/doc/com.scalar-labs/scalardb-cluster-common/3.11.0/index.html)
-* [ScalarDB Cluster RPC](https://javadoc.io/doc/com.scalar-labs/scalardb-cluster-rpc/3.11.0/index.html)
+* [ScalarDB Cluster Java Client SDK](https://javadoc.io/doc/com.scalar-labs/scalardb-cluster-java-client-sdk/3.11.1/index.html)
+* [ScalarDB Cluster Common](https://javadoc.io/doc/com.scalar-labs/scalardb-cluster-common/3.11.1/index.html)
+* [ScalarDB Cluster RPC](https://javadoc.io/doc/com.scalar-labs/scalardb-cluster-rpc/3.11.1/index.html)

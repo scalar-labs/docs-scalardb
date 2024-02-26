@@ -1,10 +1,10 @@
-# Getting Started with Scalar DB SQL
+# Getting Started with ScalarDB SQL
 
-This document briefly explains how you can get started with Scalar DB SQL with a simple electronic money application.
+This document briefly explains how you can get started with ScalarDB SQL with a simple electronic money application.
 Here we assume Oracle JDK 8 and the underlying storage/database such as Cassandra are properly configured.
-Please see [Getting Started with Scalar DB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.md) for the details of how to configure the underlying storage/database.
+Please see [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.md) for the details of how to configure the underlying storage/database.
 
-From this point forward, we will assume that **scalardb.properties** that holds the configuration for Scalar DB exists.
+From this point forward, we will assume that **scalardb.properties** that holds the configuration for ScalarDB exists.
 
 Let's move to the `getting-started-with-sql` directory so that we can avoid too much copy-and-paste.
 ```shell
@@ -13,9 +13,9 @@ $ cd docs/getting-started-with-sql
 
 ## Set up database schema
 
-First, you need to define how the data will be organized (a.k.a database schema) in the application with Scalar DB database schema.
-You can do that with the command line tool for Scalar DB SQL.
-Download the command line tool that matches with the version you use from [Scalar DB SQL releases](https://github.com/scalar-labs/scalardb-sql/releases), and run the following command to start it:
+First, you need to define how the data will be organized (a.k.a database schema) in the application with ScalarDB database schema.
+You can do that with the command line tool for ScalarDB SQL.
+Download the command line tool that matches with the version you use from [ScalarDB SQL releases](https://github.com/scalar-labs/scalardb-sql/releases), and run the following command to start it:
 
 ```shell
 $ java -jar scalardb-sql-cli-<version>-all.jar --config scalardb.properties
@@ -56,7 +56,7 @@ public class ElectronicMoney {
   }
 
   public void charge(String id, int amount) {
-    try (SqlSession sqlSession = sqlSessionFactory.getSqlSession()) {
+    try (SqlSession sqlSession = sqlSessionFactory.createSqlSession()) {
       // Start a transaction
       sqlSession.begin();
 
@@ -91,7 +91,7 @@ public class ElectronicMoney {
   }
 
   public void pay(String fromId, String toId, int amount) {
-    try (SqlSession sqlSession = sqlSessionFactory.getSqlSession()) {
+    try (SqlSession sqlSession = sqlSessionFactory.createSqlSession()) {
       // Start a transaction
       sqlSession.begin();
 
@@ -136,7 +136,7 @@ public class ElectronicMoney {
   }
 
   public int getBalance(String id) {
-    try (SqlSession sqlSession = sqlSessionFactory.getSqlSession()) {
+    try (SqlSession sqlSession = sqlSessionFactory.createSqlSession()) {
       // Start a transaction
       sqlSession.begin();
 
@@ -208,11 +208,11 @@ $ ./gradlew run --args="-action getBalance -id merchant1"
 
 ## Further reading
 
-These are just simple examples of how Scalar DB SQL is used. For more information, please take a look at the following documents.
+These are just simple examples of how ScalarDB SQL is used. For more information, please take a look at the following documents.
 
-* [Getting Started with Scalar DB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.md)
-* [Scalar DB SQL API Guide](sql-api-guide.md)
-* [Scalar DB SQL Grammar](grammar.md)
-* [Scalar DB SQL Command Line interface](command-line-interface.md)
-* [Scalar DB SQL Server](sql-server.md)
-* [Scalar DB SQL Configurations](configurations.md)
+* [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.md)
+* [ScalarDB SQL API Guide](sql-api-guide.md)
+* [ScalarDB SQL Grammar](grammar.md)
+* [ScalarDB SQL Command Line interface](command-line-interface.md)
+* [ScalarDB SQL Server](sql-server.md)
+* [ScalarDB SQL Configurations](configurations.md)
