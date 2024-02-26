@@ -156,13 +156,13 @@ repositories {
 }
 ```
 
-Then, delete the existing dependency for `com.scalar-labs:scalardb:3.10.1` from the `dependencies` section, and add the following dependency to the `dependencies` section:
+Then, delete the existing dependency for `com.scalar-labs:scalardb:3.10.3` from the `dependencies` section, and add the following dependency to the `dependencies` section:
 
 ```gradle
 dependencies {
     ...
 
-    implementation 'com.scalar-labs:scalardb-cluster-client:3.10.1'
+    implementation 'com.scalar-labs:scalardb-cluster-client:3.10.3'
 }
 ```
 
