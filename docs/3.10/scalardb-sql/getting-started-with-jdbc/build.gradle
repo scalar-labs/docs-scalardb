@@ -1,0 +1,34 @@
+plugins {
+    id 'java'
+    id 'idea'
+    id 'application'
+}
+
+group = 'com.scalar-labs'
+archivesBaseName = 'getting-started-with-scalardb-jdbc'
+version '1.0'
+
+repositories {
+    mavenCentral()
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
+    maven {
+        url = uri("https://maven.pkg.github.com/scalar-labs/scalardb-sql")
+        credentials {
+            username = project.findProperty("gprUsername") ?: System.getenv("GPR_USERNAME")
+            password = project.findProperty("gprPassword") ?: System.getenv("GPR_PASSWORD")
+        }
+    }
+}
+
+dependencies {
+    implementation 'com.scalar-labs:scalardb-sql-jdbc:3.10.3'
+    implementation 'com.scalar-labs:scalardb-sql-direct-mode:3.10.3'
+    implementation 'org.slf4j:slf4j-simple:1.7.36'
+}
+
+mainClassName = "sample.ElectronicMoneyMain"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8

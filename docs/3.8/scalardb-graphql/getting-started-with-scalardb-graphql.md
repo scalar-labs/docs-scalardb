@@ -89,11 +89,18 @@ The following response from the GraphQL server will appear in the right pane.
 {
   "data": {
     "account_put": true
+  },
+  "extensions": {
+    "transaction": {
+      "id": "d6b3ea78-f147-4950-969c-7b989b4168bc"
+    }
   }
 }
 ```
 
 The `"data"` field contains the result of the execution. This response shows the `account_put` field of the mutation was successful. The result type of mutations is `Boolean!`,  which indicates whether the operation succeeded or not.
+
+The `"extensions"` field is used to return a transaction ID in which an operation is executed. We will discuss transaction IDs later in this document.
 
 Next, let's get the record you just inserted. Paste the following query next to the previous mutation in the left pane, and click the `Execute Query` button. Since you don't delete the `mutation PutUser1` above, a pull-down will appear below the button, and you can choose which operation should be executed. Choose `GetUser1`.
 
@@ -119,6 +126,11 @@ You should get the following result in the right pane.
         "balance": 1000
       }
     }
+  },
+  "extensions": {
+    "transaction": {
+      "id": "6917c4f5-54b1-405f-9b93-29dc41e41858"
+    }
   }
 }
 ```
@@ -129,7 +141,7 @@ The automatically generated GraphQL schema defines queries, mutations, and objec
 
 Assuming you have an `account` table in a namespace, the following queries and mutations will be generated.
 
-| ScalarDB API                                           | GraphQL root type | GraphQL field                                                                      |
+| ScalarDB API                                          | GraphQL root type | GraphQL field                                                                      |
 |--------------------------------------------------------|-------------------|------------------------------------------------------------------------------------|
 | `get(Get get)`                                         | `Query`           | `account_get(get: account_GetInput!): account_GetPayload`                          |
 | `scan(Scan scan)`                                      | `Query`           | `account_scan(scan: account_ScanInput!): account_ScanPayload`                      |
@@ -218,18 +230,12 @@ query GetAndCommit @transaction(id: "c88da8a6-a13f-4857-82fe-45f1ab4150f9", comm
 
 Note: If you specify a `commit: true` flag without an `id` argument like `@transaction(commit: true)`, a new transaction is started and committed just for one operation. This is exactly the same as not specifying the `@transaction` directive, as seen in the above examples using GraphiQL. In other words, you can omit the directive itself when it is `@transaction(commit: true)`.
 
-### Abort/Rollback a transaction
+### Abort a transaction
 
-When you need to abort/rollback a transaction explicitly, you can use the `abort` or `rollback` mutation fields interchangeably (both have the same effect and usage). Note that you cannot mix it with any other operations, so you must specify it alone.
+When you need to abort a transaction explicitly, you can use the `abort` mutation field. Note that you cannot mix it with any other operations, so you must specify it alone.
 
 ```graphql
 mutation AbortTx @transaction(id: "c88da8a6-a13f-4857-82fe-45f1ab4150f9") {
   abort
-}
-```
-or
-```graphql
-mutation RollbackTx @transaction(id: "c88da8a6-a13f-4857-82fe-45f1ab4150f9") {
-  rollback
 }
 ```
