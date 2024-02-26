@@ -6,29 +6,29 @@ In this guide, you will create one of the following two environments in your AWS
 
 * **[`direct-kubernetes` client mode](https://github.com/scalar-labs/scalardb-cluster/blob/main/docs/developer-guide-for-scalardb-cluster-with-java-api.md#direct-kubernetes-client-mode).** In this mode, you deploy your application in the same EKS cluster as your ScalarDB Cluster deployment.
 
-  ![image](./images/png/EKS_ScalarDB_Cluster_Direct_Kubernetes_Mode.drawio.png)  
+  ![image](images/png/EKS_ScalarDB_Cluster_Direct_Kubernetes_Mode.drawio.png)  
 
 * **[`indirect` client mode](https://github.com/scalar-labs/scalardb-cluster/blob/main/docs/developer-guide-for-scalardb-cluster-with-java-api.md#indirect-client-mode).** In this mode, you deploy your application in an environment that is different from the EKS cluster that contains your ScalarDB Cluster deployment.
 
-  ![image](./images/png/EKS_ScalarDB_Cluster_Indirect_Mode.drawio.png)
+  ![image](images/png/EKS_ScalarDB_Cluster_Indirect_Mode.drawio.png)
 
 ## Step 1. Subscribe to ScalarDB Cluster in AWS Marketplace
 
-You must get the ScalarDB Cluster container image by visiting AWS Marketplace and subscribing to [ScalarDB Cluster Standard Edition (Pay-As-You-Go)](https://aws.amazon.com/marketplace/pp/prodview-jx6qxatkxuwm4) or [ScalarDB Cluster Premium Edition (Pay-As-You-Go)](https://aws.amazon.com/marketplace/pp/prodview-djqw3zk6dwyk6). For details on how to subscribe to ScalarDB Cluster in AWS Marketplace, see [Subscribe to Scalar products from AWS Marketplace](./AwsMarketplaceGuide.md#subscribe-to-scalar-products-from-aws-marketplace).
+You must get the ScalarDB Cluster container image by visiting AWS Marketplace and subscribing to [ScalarDB Cluster Standard Edition (Pay-As-You-Go)](https://aws.amazon.com/marketplace/pp/prodview-jx6qxatkxuwm4) or [ScalarDB Cluster Premium Edition (Pay-As-You-Go)](https://aws.amazon.com/marketplace/pp/prodview-djqw3zk6dwyk6). For details on how to subscribe to ScalarDB Cluster in AWS Marketplace, see [Subscribe to Scalar products from AWS Marketplace](AwsMarketplaceGuide.md#subscribe-to-scalar-products-from-aws-marketplace).
 
 ## Step 2. Create an EKS cluster
 
-You must create an EKS cluster for the ScalarDB Cluster deployment. For details, see [Guidelines for creating an Amazon EKS cluster for Scalar products](./CreateEKSClusterForScalarProducts.md).
+You must create an EKS cluster for the ScalarDB Cluster deployment. For details, see [Guidelines for creating an Amazon EKS cluster for Scalar products](CreateEKSClusterForScalarProducts.md).
 
 ## Step 3. Set up a database for ScalarDB Cluster
 
 You must prepare a database before deploying ScalarDB Cluster. To see which types of databases ScalarDB supports, refer to [ScalarDB Supported Databases](https://github.com/scalar-labs/scalardb/blob/master/docs/scalardb-supported-databases.md).
 
-For details on setting up a database, see [Set up a database for ScalarDB/ScalarDL deployment on AWS](./SetupDatabaseForAWS.md).
+For details on setting up a database, see [Set up a database for ScalarDB/ScalarDL deployment on AWS](SetupDatabaseForAWS.md).
 
 ## Step 4. Create a bastion server
 
-To execute some tools for deploying and managing ScalarDB Cluster on EKS, you must prepare a bastion server in the same Amazon Virtual Private Cloud (VPC) of the EKS cluster that you created in **Step 2**. For details, see [Create a Bastion Server](./CreateBastionServer.md).
+To execute some tools for deploying and managing ScalarDB Cluster on EKS, you must prepare a bastion server in the same Amazon Virtual Private Cloud (VPC) of the EKS cluster that you created in **Step 2**. For details, see [Create a Bastion Server](CreateBastionServer.md).
 
 ## Step 5. Prepare a custom values file for the Scalar Helm Chart
 
@@ -44,11 +44,11 @@ Deploy ScalarDB Cluster on your EKS cluster by using the Helm Chart for ScalarDB
 
 ## Step 7. Check the status of your ScalarDB Cluster deployment
 
-After deploying ScalarDB Cluster in your EKS cluster, you must check the status of each component. For details, see [Components to Regularly Check When Running in a Kubernetes Environment](./RegularCheck.md).
+After deploying ScalarDB Cluster in your EKS cluster, you must check the status of each component. For details, see [Components to Regularly Check When Running in a Kubernetes Environment](RegularCheck.md).
 
 ## Step 8. Monitor your ScalarDB Cluster deployment
 
-After deploying ScalarDB Cluster in your EKS cluster, we recommend monitoring the deployed components and collecting their logs, especially in production. For details, see [Monitoring Scalar products on a Kubernetes cluster](./K8sMonitorGuide.md) and [Collecting logs from Scalar products on a Kubernetes cluster](./K8sLogCollectionGuide.md).
+After deploying ScalarDB Cluster in your EKS cluster, we recommend monitoring the deployed components and collecting their logs, especially in production. For details, see [Monitoring Scalar products on a Kubernetes cluster](K8sMonitorGuide.md) and [Collecting logs from Scalar products on a Kubernetes cluster](K8sLogCollectionGuide.md).
 
 ## Step 9. Deploy your application
 
