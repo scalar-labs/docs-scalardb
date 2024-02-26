@@ -32,7 +32,7 @@ SCALAR_DB_CLUSTER_MEMBERSHIP_KUBERNETES_ENDPOINT_NAME
    * Example
        * ScalarDB Server
            * ScalarDB Server 3.7 or earlier (Go template syntax)
-
+             
              {% raw %}
              ```yaml
              scalardb:
@@ -66,8 +66,17 @@ SCALAR_DB_CLUSTER_MEMBERSHIP_KUBERNETES_ENDPOINT_NAME
              ...
          ```
 
+       * ScalarDB Analytics with PostgreSQL
+         ```yaml
+         scalardbAnalyticsPostgreSQL:
+           databaseProperties: |
+           ...
+           scalar.db.username=${env:SCALAR_DB_USERNAME}
+           scalar.db.password=${env:SCALAR_DB_PASSWORD}
+           ...
+         ```
        * ScalarDL Ledger (Go template syntax)
-
+         
           {% raw %}
           ```yaml
           ledger:
@@ -77,7 +86,7 @@ SCALAR_DB_CLUSTER_MEMBERSHIP_KUBERNETES_ENDPOINT_NAME
               scalar.db.password={{ default .Env.SCALAR_DB_PASSWORD "" }}
               ...
           ```
-          {% endraw %}
+         {% endraw %}
 
        * ScalarDL Auditor (Go template syntax)
 
@@ -119,6 +128,7 @@ SCALAR_DB_CLUSTER_MEMBERSHIP_KUBERNETES_ENDPOINT_NAME
    * Keys
      * `scalardb.secretName` (ScalarDB Server)
      * `scalardbCluster.secretName` (ScalarDB Cluster)
+     * `scalardbAnalyticsPostgreSQL.secretName` (ScalarDB Analytics with PostgreSQL)
      * `ledger.secretName` (ScalarDL Ledger)
      * `auditor.secretName` (ScalarDL Auditor)
      * `schemaLoading.secretName` (ScalarDL Schema Loader)
@@ -137,6 +147,11 @@ SCALAR_DB_CLUSTER_MEMBERSHIP_KUBERNETES_ENDPOINT_NAME
          secretName: "scalardb-cluster-credentials-secret"
        ```
 
+     * ScalarDB Analytics with PostgreSQL 
+       ```yaml
+       scalardbAnalyticsPostgreSQL:
+         secretName: scalardb-analytics-postgresql-credentials-secret
+       ```
      * ScalarDL Ledger
 
        ```yaml
@@ -177,7 +192,7 @@ SCALAR_DB_CLUSTER_MEMBERSHIP_KUBERNETES_ENDPOINT_NAME
          {% endraw %}
 
        * Properties file in containers
-       
+
          ```properties
          scalar.db.contact_points=jdbc:postgresql://postgresql-scalardb.default.svc.cluster.local:5432/postgres
          scalar.db.username=postgres
