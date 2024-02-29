@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Deploy ScalarDL Ledger and ScalarDL Auditor on Amazon Elastic Kubernetes Service (EKS)
 
 This guide explains how to deploy ScalarDL Ledger and ScalarDL Auditor on Amazon Elastic Kubernetes Service (EKS).
