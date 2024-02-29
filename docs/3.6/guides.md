@@ -2,6 +2,8 @@
 toc: false
 ---
 
+{% include scalardb/end-of-support.html %}
+
 # Developer Guides for ScalarDB
 
 The following is a list of developer guides for ScalarDB:

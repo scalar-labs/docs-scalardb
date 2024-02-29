@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Deployment Guide on AWS
 
 This document explains how to deploy ScalarDB GraphQL servers on the Amazon EKS environment.

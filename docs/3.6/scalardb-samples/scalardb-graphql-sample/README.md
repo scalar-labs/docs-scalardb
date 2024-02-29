@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Create a Sample Application That Uses ScalarDB GraphQL
 
 {% capture notice--info %}

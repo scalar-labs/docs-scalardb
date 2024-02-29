@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 ---
 redirect_from: 
   - /docs/3.6/getting-started/

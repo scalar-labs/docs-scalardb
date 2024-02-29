@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Getting Started with ScalarDB by Using Kotlin
 
 This getting started tutorial explains how to configure your preferred database in ScalarDB and set up a basic electronic money application by using Kotlin. Since Kotlin has Java interoperability, you can use ScalarDB directly from Kotlin.

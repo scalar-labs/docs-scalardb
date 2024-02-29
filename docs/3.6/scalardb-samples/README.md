@@ -2,6 +2,8 @@
 toc: false
 ---
 
+{% include scalardb/end-of-support.html %}
+
 # ScalarDB Samples
 
 This repository contains sample applications for [ScalarDB](https://github.com/scalar-labs/scalardb):

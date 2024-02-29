@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Scalar DB SQL
 
 <!-- commented out for now since it's private

@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Scalar DB SQL Command Line Interface
 
 Like other SQL databases, Scalar DB SQL also provides a command-line interface tool where you can issue SQLs interactively in a command-line shell.

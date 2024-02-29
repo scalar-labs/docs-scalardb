@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # How to run two-phase commit transaction
 
 ScalarDB GraphQL supports two-phase commit style transactions
