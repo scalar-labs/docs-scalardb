@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Create a Sample Application That Uses ScalarDB
 
 This tutorial describes how to create a sample e-commerce application by using ScalarDB.

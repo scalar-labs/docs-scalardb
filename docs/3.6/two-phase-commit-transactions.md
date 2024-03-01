@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Transactions with a Two-Phase Commit Interface
 
 ScalarDB supports executing transactions with a two-phase commit interface. With the two-phase commit interface, you can execute a transaction that spans multiple processes or applications, like in a microservice architecture.
