@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Create a Sample Application That Supports Microservice Transactions
 
 This tutorial describes how to create a sample application that supports microservice transactions in ScalarDB.

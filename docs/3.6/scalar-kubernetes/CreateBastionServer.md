@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Create a bastion server
 
 This document explains how to create a bastion server and install some tools for the deployment of Scalar products.

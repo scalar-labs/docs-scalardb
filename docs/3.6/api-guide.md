@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # ScalarDB Java API Guide
 
 The ScalarDB Java API is mainly composed of the Administrative API and Transactional API. This guide briefly explains what kinds of APIs exist, how to use them, and related topics like how to handle exceptions.

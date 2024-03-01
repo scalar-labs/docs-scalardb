@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Scalar DB Data Loader API
 
 This document describes how to get started with the Scalar DB data loader API.
