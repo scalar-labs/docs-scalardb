@@ -192,7 +192,7 @@ To create namespaces and tables by using a properties file, run the following co
 $ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator]
 ```
 
-If `--coordinator` is specified, a [Coordinator table](api-guide.md#specify-operations-for-the-coordinator-table) will be created.
+If `--coordinator` is specified, a Coordinator table will be created.
 
 {% capture notice--info %}
 **Note**
@@ -373,7 +373,7 @@ The schema has table definitions that include `columns`, `partition-key`, `clust
 - The `secondary-index` field defines which columns are indexed.
 - The `transaction` field indicates whether the table is for transactions or not.
   - If you set the `transaction` field to `true` or don't specify the `transaction` field, this tool creates a table with transaction metadata if needed.
-  - If you set the `transaction` field to `false`, this tool creates a table without any transaction metadata (that is, for a table with [Storage API](storage-abstraction.md)).
+  - If you set the `transaction` field to `false`, this tool creates a table without any transaction metadata (that is, for a table with Storage API).
 
 You can also specify database or storage-specific options in the table definition as follows:
 

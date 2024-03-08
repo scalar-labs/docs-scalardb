@@ -16,7 +16,7 @@ In this guide, we will create the following components.
 
 ## Step 1. Configure an EKS cluster
 
-Please follow steps **1** to **3** in the [Deploy Scalar DL on AWS](https://github.com/scalar-labs/scalar-kubernetes/blob/master/docs/ManualDeploymentGuideScalarDLOnAWS.md) guide to set up a VPC, subnets, a bastion host, a database, an EKS cluster, and a node group.
+Please follow steps **1** to **3** in the [Deploy ScalarDL on AWS](../scalar-kubernetes/ManualDeploymentGuideScalarDLOnEKS.md) guide to set up a VPC, subnets, a bastion host, a database, an EKS cluster, and a node group.
 
 **Note:** That guide instructs to add a label to the node group with a key `agentpool` and a value `scalardlpool`. However, since we will deploy GraphQL servers, not Scalar DL, we should change the label. For example, the node group can be labeled with a key `agentpool` and a value `scalardbgraphqlpool`. The label can be used to select nodes when deploying ScalarDB GraphQL servers.
 
@@ -52,7 +52,7 @@ Here is an example for DynamoDB. For other databases and more detailed instructi
 
 Log in to the bastion host and install the `eksctl` command by following the official documents.
 
-* [Introduction - eksctl](https://eksctl.io/introduction/#installation)
+* [Introduction - eksctl](https://eksctl.io/getting-started/)
 * [Installing eksctl - Amazon EKS](https://docs.aws.amazon.com/eks/latest/userguide/eksctl.html)
 
 We also need to install AWS CLI and configure AWS API credentials.

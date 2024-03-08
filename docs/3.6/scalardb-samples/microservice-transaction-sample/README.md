@@ -101,7 +101,7 @@ $ cd scalardb-samples/microservice-transaction-sample
 
 ### Start Cassandra and MySQL
 
-Cassandra and MySQL are already configured for the sample application, as shown in [`database.properties`](database.properties). For details about configuring the multi-storage transactions feature in ScalarDB, see [How to configure ScalarDB to support multi-storage transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/multi-storage-transactions.md#how-to-configure-scalardb-to-support-multi-storage-transactions).
+Cassandra and MySQL are already configured for the sample application, as shown in [`database-cassandra.properties`](https://github.com/scalar-labs/scalardb-samples/blob/main/microservice-transaction-sample/database-cassandra.properties) and [`database-mysql.properties`](https://github.com/scalar-labs/scalardb-samples/blob/main/microservice-transaction-sample/database-mysql.properties), respectively. For details about configuring the multi-storage transactions feature in ScalarDB, see [How to configure ScalarDB to support multi-storage transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/multi-storage-transactions.md#how-to-configure-scalardb-to-support-multi-storage-transactions).
 
 To start Cassandra and MySQL, which are included in the Docker container for the sample application, run the following command:
 
