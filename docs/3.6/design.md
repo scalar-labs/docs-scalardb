@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # ScalarDB Design Document
 
 For details about the design and implementation of ScalarDB, please see the following documents, which we presented at the VLDB 2023 conference:

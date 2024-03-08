@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Getting Started with Scalar DB SQL
 
 This document briefly explains how you can get started with Scalar DB SQL with a simple electronic money application.

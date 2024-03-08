@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Scalar DB SQL API Guide
 
 This guide describes how to use Scalar DB SQL API.

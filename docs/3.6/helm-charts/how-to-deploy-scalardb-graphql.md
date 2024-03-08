@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # [Deprecated] How to deploy ScalarDB GraphQL
 
 {% capture notice--info %}

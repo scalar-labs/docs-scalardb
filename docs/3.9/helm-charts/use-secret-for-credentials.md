@@ -32,7 +32,7 @@ SCALAR_DB_CLUSTER_MEMBERSHIP_KUBERNETES_ENDPOINT_NAME
    * Example
        * ScalarDB Server
            * ScalarDB Server 3.7 or earlier (Go template syntax)
-
+             
              {% raw %}
              ```yaml
              scalardb:
@@ -75,44 +75,86 @@ SCALAR_DB_CLUSTER_MEMBERSHIP_KUBERNETES_ENDPOINT_NAME
            scalar.db.password=${env:SCALAR_DB_PASSWORD}
            ...
          ```
-       * ScalarDL Ledger (Go template syntax)
+       * ScalarDL Ledger
+           * ScalarDL Ledger 3.7 or earlier (Go template syntax)
 
-          {% raw %}
-          ```yaml
-          ledger:
-            ledgerProperties: |
-              ...
-              scalar.db.username={{ default .Env.SCALAR_DB_USERNAME "" }}
-              scalar.db.password={{ default .Env.SCALAR_DB_PASSWORD "" }}
-              ...
-          ```
-          {% endraw %}
+             {% raw %}
+             ```yaml
+             ledger:
+               ledgerProperties: |
+                 ...
+                 scalar.db.username={{ default .Env.SCALAR_DB_USERNAME "" }}
+                 scalar.db.password={{ default .Env.SCALAR_DB_PASSWORD "" }}
+                 ...
+             ```
+             {% endraw %}
 
-       * ScalarDL Auditor (Go template syntax)
+           * ScalarDL Ledger 3.8 or later (Apache Commons Text syntax)
 
-         {% raw %}
-         ```yaml
-         auditor:
-           auditorProperties: |
-             ...
-             scalar.db.username={{ default .Env.SCALAR_DB_USERNAME "" }}
-             scalar.db.password={{ default .Env.SCALAR_DB_PASSWORD "" }}
-             ...
-         ```
-         {% endraw %}
+             {% raw %}
+             ```yaml
+             ledger:
+               ledgerProperties: |
+                 ...
+                 scalar.db.username=${env:SCALAR_DB_USERNAME}
+                 scalar.db.password=${env:SCALAR_DB_PASSWORD}
+                 ...
+             ```
+             {% endraw %}
 
-       * ScalarDL Schema Loader (Go template syntax)
+       * ScalarDL Auditor
+           * ScalarDL Auditor 3.7 or earlier (Go template syntax)
 
-         {% raw %}
-         ```yaml
-         schemaLoading:
-           databaseProperties: |
-             ...
-             scalar.db.username={{ default .Env.SCALAR_DB_USERNAME "" }}
-             scalar.db.password={{ default .Env.SCALAR_DB_PASSWORD "" }}
-             ...
-         ```
-         {% endraw %}
+             {% raw %}
+             ```yaml
+             auditor:
+               auditorProperties: |
+                 ...
+                 scalar.db.username={{ default .Env.SCALAR_DB_USERNAME "" }}
+                 scalar.db.password={{ default .Env.SCALAR_DB_PASSWORD "" }}
+                 ...
+             ```
+             {% endraw %}
+
+           * ScalarDL Auditor 3.8 or later (Apache Commons Text syntax)
+
+             {% raw %}
+             ```yaml
+             auditor:
+               auditorProperties: |
+                 ...
+                 scalar.db.username=${env:SCALAR_DB_USERNAME}
+                 scalar.db.password=${env:SCALAR_DB_PASSWORD}
+                 ...
+             ```
+             {% endraw %}
+
+       * ScalarDL Schema Loader
+           * ScalarDL Schema Loader 3.7 or earlier (Go template syntax)
+
+             {% raw %}
+             ```yaml
+             schemaLoading:
+               databaseProperties: |
+                 ...
+                 scalar.db.username={{ default .Env.SCALAR_DB_USERNAME "" }}
+                 scalar.db.password={{ default .Env.SCALAR_DB_PASSWORD "" }}
+                 ...
+             ```
+             {% endraw %}
+
+           * ScalarDL Schema Loader 3.8 or later (Apache Commons Text syntax)
+
+             {% raw %}
+             ```yaml
+             schemaLoading:
+               databaseProperties: |
+                 ...
+                 scalar.db.username=${env:SCALAR_DB_USERNAME}
+                 scalar.db.password=${env:SCALAR_DB_PASSWORD}
+                 ...
+             ```
+             {% endraw %}
 
 1. Create a `Secret` resource that includes credentials.  
    You need to specify the environment variable name as keys of the `Secret`.
@@ -192,7 +234,7 @@ SCALAR_DB_CLUSTER_MEMBERSHIP_KUBERNETES_ENDPOINT_NAME
          {% endraw %}
 
        * Properties file in containers
-       
+
          ```properties
          scalar.db.contact_points=jdbc:postgresql://postgresql-scalardb.default.svc.cluster.local:5432/postgres
          scalar.db.username=postgres
