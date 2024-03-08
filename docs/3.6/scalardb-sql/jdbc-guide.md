@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Scalar DB JDBC Guide
 
 The usage of Scalar DB JDBC basically follows [Java JDBC API](https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/).

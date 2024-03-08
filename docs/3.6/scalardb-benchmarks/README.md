@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # ScalarDB Benchmarking Tools
 
 This tutorial describes how to run benchmarking tools for ScalarDB. Database benchmarking is helpful for evaluating how databases perform against a set of standards.

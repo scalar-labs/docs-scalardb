@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # (Deprecated) Guidelines for creating an EKS cluster for ScalarDB Server
 
 {% capture notice--warning %}

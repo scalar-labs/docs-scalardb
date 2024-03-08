@@ -10,7 +10,7 @@ This document provides instructions on how to set up a ScalarDB Cluster by using
 
 In addition, you need access to the [ScalarDB Cluster Node docker image](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-cluster-node).
 This repository is available only to users with a commercial license and permission.
-To get a license and permission, please [contact us](https://www.scalar-labs.com/contact/).
+To get a license and permission, please [contact us](https://scalar-labs.com/contact_us/).
 
 ## What you will create
 

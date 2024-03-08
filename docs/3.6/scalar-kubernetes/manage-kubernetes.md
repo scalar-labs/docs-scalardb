@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Managing ScalarDB on Managed Kubernetes Services
 
 The following documentation is to help you manage a ScalarDB environment on managed Kubernetes services.

@@ -1,3 +1,5 @@
+{% include scalardb/end-of-support.html %}
+
 # Production checklist for ScalarDB Cluster
 
 This checklist provides recommendations when deploying ScalarDB Cluster in a production environment.
