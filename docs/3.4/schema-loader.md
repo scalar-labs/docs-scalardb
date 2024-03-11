@@ -143,7 +143,7 @@ Create/Delete JDBC schemas
 
 ### Create namespaces and tables
 
-For using a config file (Sample config file can be found [here](../conf/database.properties)):
+For using a config file (Sample config file can be found [here](https://github.com/scalar-labs/scalardb/blob/master/conf/database.properties)):
 ```console
 $ java -jar scalardb-schema-loader-<version>.jar --config <PATH_TO_CONFIG_FILE> -f schema.json [--coordinator]
 ```
@@ -180,7 +180,7 @@ $ java -jar scalardb-schema-loader-<version>.jar --jdbc -j <JDBC URL> -u <USER> 
 
 ### Delete tables
 
-For using config file (Sample config file can be found [here](../conf/database.properties)):
+For using config file (Sample config file can be found [here](https://github.com/scalar-labs/scalardb/blob/master/conf/database.properties)):
 ```console
 $ java -jar scalardb-schema-loader-<version>.jar --config <PATH_TO_CONFIG_FILE> -f schema.json [--coordinator] -D 
 ```
