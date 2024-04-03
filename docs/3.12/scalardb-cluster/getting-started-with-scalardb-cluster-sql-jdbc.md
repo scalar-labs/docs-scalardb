@@ -64,13 +64,13 @@ To use ScalarDB Cluster, you need to modify `build.gradle`:
 $ vim build.gradle
 ```
 
-Then, delete the existing dependency for `com.scalar-labs:scalardb-sql-direct-mode:3.12.1` from the `dependencies` section, and add the following dependency to the `dependencies` section:
+Then, delete the existing dependency for `com.scalar-labs:scalardb-sql-direct-mode` from the `dependencies` section, and add the following dependency to the `dependencies` section:
 
 ```gradle
 dependencies {
     ...
 
-    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.12.1'
+    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.12.2'
 }
 ```
 
@@ -112,7 +112,7 @@ You can download the SQL CLI for Cluster from [Releases](https://github.com/scal
 After downloading the JAR file, you can use SQL CLI for Cluster by running the following command:
 
 ```shell
-$ java -jar scalardb-cluster-sql-cli-3.12.1-all.jar --config scalardb-sql.properties --file schema.sql
+$ java -jar scalardb-cluster-sql-cli-3.12.2-all.jar --config scalardb-sql.properties --file schema.sql
 ```
 
 ## Step 5. Load the initial data
