@@ -2,9 +2,59 @@
 
 This page includes a list of release notes for ScalarDB 3.11.
 
+## v3.11.2
+
+**Release date:** April 1, 2024
+
+### Summary
+
+This release includes several improvements and a vulnerability fix.
+
+### Enterprise edition
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Upgraded the Kubernetes Client Java lib to fix security issues: [CVE-2024-25710](https://github.com/advisories/GHSA-4g9r-vxhx-9pgx "CVE-2024-25710") and [CVE-2024-26308](https://github.com/advisories/GHSA-4265-ccf5-phj5 "CVE-2024-26308").
+
+## v3.11.1
+
+**Release date:** February 26, 2024
+
+### Summary
+
+This release has several bug and vulnerability fixes.
+
+### Community edition
+
+#### Bug fixes
+
+- Improved some error handling to avoid potential NPE in JDBC storages. ([#1442](https://github.com/scalar-labs/scalardb/pull/1442))
+- Fixed a bug where lazy recovery is not performed when uncommitted records are read while executing implicit pre-read. ([#1476](https://github.com/scalar-labs/scalardb/pull/1476))
+- Upgraded the base image to fix security issues. [CVE-2023-47038](https://github.com/advisories/GHSA-96fh-9q43-rmjh "CVE-2023-47038") ([#1522](https://github.com/scalar-labs/scalardb/pull/1522) [#1521](https://github.com/scalar-labs/scalardb/pull/1521))
+- Upgraded the PostgresSQL lib to fix security issues. [CVE-2024-1597](https://github.com/advisories/GHSA-24rp-q3w6-vc56 "CVE-2024-1597") ([#1547](https://github.com/scalar-labs/scalardb/pull/1547))
+
+### Enterprise edition
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Fixed a bug where the table or namespace privilege is not handled correctly.
+- Upgraded the base image to fix security issues. [CVE-2023-47038](https://github.com/advisories/GHSA-96fh-9q43-rmjh "CVE-2023-47038")
+
+##### ScalarDB GraphQL
+
+- Upgraded the base image to fix security issues. [CVE-2023-47038](https://github.com/advisories/GHSA-96fh-9q43-rmjh "CVE-2023-47038")
+
+##### ScalarDB SQL
+
+- Upgraded the base image to fix security issues. [CVE-2023-47038](https://github.com/advisories/GHSA-96fh-9q43-rmjh "CVE-2023-47038")
+
 ## v3.11.0
 
-**Release date:** December 27, 2023 
+**Release date:** December 27, 2023
 
 ### Summary
 

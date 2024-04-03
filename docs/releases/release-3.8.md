@@ -2,6 +2,27 @@
 
 This page includes a list of release notes for ScalarDB 3.8.
 
+## v3.8.6
+
+**Release date:** April 1, 2024
+
+### Summary
+
+This release includes several improvements.
+
+## v3.8.5
+
+**Release date:** February 26, 2024
+
+### Summary
+
+This release has several vulnerability fixes.
+
+### Bug fixes
+
+- Upgraded the base image to fix security issues. [CVE-2023-47038](https://github.com/advisories/GHSA-96fh-9q43-rmjh "CVE-2023-47038") ([#1522](https://github.com/scalar-labs/scalardb/pull/1522) [#1521](https://github.com/scalar-labs/scalardb/pull/1521))
+- Upgraded the PostgresSQL lib to fix security issues. [CVE-2024-1597](https://github.com/advisories/GHSA-24rp-q3w6-vc56 "CVE-2024-1597") ([#1547](https://github.com/scalar-labs/scalardb/pull/1547))
+
 ## v3.8.4
 
 **Release date:** December 25, 2023

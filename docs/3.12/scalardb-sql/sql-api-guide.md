@@ -365,4 +365,4 @@ Please see [the Javadoc of `Metadata`](https://scalar-labs.github.io/scalardb-sq
 - [Javadoc of the ScalarDB SQL API](https://scalar-labs.github.io/scalardb-sql/javadoc/core/index.html)
 - [ScalarDB SQL Grammar](grammar.md)
 - [Two-phase Commit Transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.md)
-- [Javadoc for ScalarDB SQL](https://javadoc.io/doc/com.scalar-labs/scalardb-sql/3.12.1/index.html)
+- [Javadoc for ScalarDB SQL](https://javadoc.io/doc/com.scalar-labs/scalardb-sql/3.12.2/index.html)
