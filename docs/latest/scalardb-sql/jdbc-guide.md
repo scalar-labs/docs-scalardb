@@ -214,4 +214,4 @@ Please see also [ScalarDB SQL API Guide](sql-api-guide.md) for more details on e
 
 - [Java JDBC API](https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/)
 - [ScalarDB SQL API Guide](sql-api-guide.md)
-- [Javadoc for ScalarDB JDBC](https://javadoc.io/doc/com.scalar-labs/scalardb-sql-jdbc/3.12.0/index.html)
+- [Javadoc for ScalarDB JDBC](https://javadoc.io/doc/com.scalar-labs/scalardb-sql-jdbc/3.12.2/index.html)

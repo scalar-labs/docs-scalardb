@@ -114,7 +114,7 @@ You can download the Schema Loader for Cluster at [Releases](https://github.com/
 After downloading the JAR file, you can run the Schema Loader for Cluster with the following command:
 
 ```shell
-$ java -jar scalardb-cluster-schema-loader-3.12.1-all.jar --config database.properties -f schema.json --coordinator
+$ java -jar scalardb-cluster-schema-loader-3.12.2-all.jar --config database.properties -f schema.json --coordinator
 ```
 
 ## Step 4. Run operations from GraphiQL
