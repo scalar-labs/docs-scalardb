@@ -15,6 +15,11 @@ The following documentation is to help you set up and deploy a ScalarDB environm
 * [How to install Scalar products through Azure Marketplace](AzureMarketplaceGuide.md)
 * [Create a bastion server](CreateBastionServer.md)
 
+## Container image guides
+
+* [How to get the container images of Scalar products](HowToGetContainerImages.md)
+* [How to use the container images](HowToUseContainerImages.md)
+
 ## Deployment guides
 
 * [Deploy ScalarDB Cluster on Amazon Elastic Kubernetes Service (EKS)](ManualDeploymentGuideScalarDBClusterOnEKS.md)
