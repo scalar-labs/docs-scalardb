@@ -1,6 +1,6 @@
 # Guidelines for creating an EKS cluster for ScalarDB Cluster
 
-This document explains the requirements and recommendations for creating an Amazon Elastic Kubernetes Service (EKS) cluster for ScalarDB Cluster deployment. For details on how to deploy ScalarDB Cluster on an EKS cluster, see [Deploy ScalarDB Cluster on Amazon EKS](./ManualDeploymentGuideScalarDBClusterOnEKS.md).
+This document explains the requirements and recommendations for creating an Amazon Elastic Kubernetes Service (EKS) cluster for ScalarDB Cluster deployment. For details on how to deploy ScalarDB Cluster on an EKS cluster, see [Deploy ScalarDB Cluster on Amazon EKS](ManualDeploymentGuideScalarDBClusterOnEKS.md).
 
 ## Before you begin
 
@@ -19,7 +19,7 @@ The following are some recommendations for deploying ScalarDB Cluster. These rec
 
 ### Create at least three worker nodes and three pods
 
-To ensure that the EKS cluster has high availability, you should use at least three worker nodes and deploy at least three pods spread across the worker nodes. You can see the [sample configurations](../conf/scalardb-cluster-custom-values-indirect-mode.yaml) of `podAntiAffinity` for making three pods spread across the worker nodes.
+To ensure that the EKS cluster has high availability, you should use at least three worker nodes and deploy at least three pods spread across the worker nodes. You can see the [sample configurations](https://github.com/scalar-labs/scalar-kubernetes/blob/master/conf/scalardb-cluster-custom-values-indirect-mode.yaml) of `podAntiAffinity` for making three pods spread across the worker nodes.
 
 {% capture notice--info %}
 **Note**

@@ -3,12 +3,12 @@
 {% capture notice--warning %}
 **Attention**
 
-ScalarDB Server is now deprecated. Please use [ScalarDB Cluster](./ManualDeploymentGuideScalarDBClusterOnEKS.md) instead.
+ScalarDB Server is now deprecated. Please use [ScalarDB Cluster](ManualDeploymentGuideScalarDBClusterOnEKS.md) instead.
 {% endcapture %}
 
 <div class="notice--warning">{{ notice--warning | markdownify }}</div>
 
-This document explains the requirements and recommendations for creating an Amazon Elastic Kubernetes Service (EKS) cluster for ScalarDB Server deployment. For details on how to deploy ScalarDB Server on an EKS cluster, see [Deploy ScalarDB Server on Amazon EKS](./ManualDeploymentGuideScalarDBServerOnEKS.md).
+This document explains the requirements and recommendations for creating an Amazon Elastic Kubernetes Service (EKS) cluster for ScalarDB Server deployment. For details on how to deploy ScalarDB Server on an EKS cluster, see [Deploy ScalarDB Server on Amazon EKS](ManualDeploymentGuideScalarDBServerOnEKS.md).
 
 ## Before you begin
 
@@ -27,7 +27,7 @@ The following are some recommendations for deploying ScalarDB Server. These reco
 
 ### Create at least three worker nodes and three pods
 
-To ensure that the EKS cluster has high availability, you should use at least three worker nodes and deploy at least three pods spread across the worker nodes. You can see the [sample configurations](../conf/scalardb-custom-values.yaml) of `podAntiAffinity` for making three pods spread across the worker nodes.
+To ensure that the EKS cluster has high availability, you should use at least three worker nodes and deploy at least three pods spread across the worker nodes. You can see the [sample configurations](https://github.com/scalar-labs/scalar-kubernetes/blob/master/conf/scalardb-custom-values.yaml) of `podAntiAffinity` for making three pods spread across the worker nodes.
 
 {% capture notice--info %}
 **Note**

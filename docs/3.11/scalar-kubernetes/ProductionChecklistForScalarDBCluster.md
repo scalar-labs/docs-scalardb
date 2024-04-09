@@ -12,7 +12,7 @@ The following is a checklist of recommendations when setting up ScalarDB Cluster
 
 ### Number of pods and Kubernetes worker nodes
 
-To ensure that the Kubernetes cluster has high availability, you should use at least three worker nodes and deploy at least three pods spread across the worker nodes. You can see the [sample configurations](../conf/scalardb-cluster-custom-values-indirect-mode.yaml) of `podAntiAffinity` for making three pods spread across the worker nodes.
+To ensure that the Kubernetes cluster has high availability, you should use at least three worker nodes and deploy at least three pods spread across the worker nodes. You can see the [sample configurations](https://github.com/scalar-labs/scalar-kubernetes/blob/master/conf/scalardb-cluster-custom-values-indirect-mode.yaml) of `podAntiAffinity` for making three pods spread across the worker nodes.
 
 {% capture notice--info %}
 **Note**
@@ -42,7 +42,7 @@ You do not need to deploy an Envoy pod when using `direct-kubernetes` mode.
 
 <div class="notice--info">{{ notice--info | markdownify }}</div>
 
-With this in mind, you should use a worker node that has at least 4vCPU / 8GB memory resources and use at least three worker nodes for availability, as mentioned in [Number of pods and Kubernetes worker nodes](./ProductionChecklistForScalarDBCluster.md#number-of-pods-and-kubernetes-worker-nodes).
+With this in mind, you should use a worker node that has at least 4vCPU / 8GB memory resources and use at least three worker nodes for availability, as mentioned in [Number of pods and Kubernetes worker nodes](ProductionChecklistForScalarDBCluster.md#number-of-pods-and-kubernetes-worker-nodes).
 
 However, three nodes with at least 4vCPU / 8GB memory resources per node is the minimum for a production environment. You should also consider the resources of the Kubernetes cluster (for example, the number of worker nodes, vCPUs per node, memories per node, ScalarDB Cluster pods, and pods for your application), which depend on your system's workload. In addition, if you plan to scale the pods automatically by using some features like [Horizontal Pod Autoscaling (HPA)](https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/), you should consider the maximum number of pods on the worker node to decide on the worker node resources.
 
@@ -52,11 +52,11 @@ You should create the Kubernetes cluster on a private network since ScalarDB Clu
 
 ### Monitoring and logging
 
-You should monitor the deployed components and collect their logs. For details, see [Monitoring Scalar products on a Kubernetes cluster](./K8sMonitorGuide.md) and [Collecting logs from Scalar products on a Kubernetes cluster](./K8sLogCollectionGuide.md).
+You should monitor the deployed components and collect their logs. For details, see [Monitoring Scalar products on a Kubernetes cluster](K8sMonitorGuide.md) and [Collecting logs from Scalar products on a Kubernetes cluster](K8sLogCollectionGuide.md).
 
 ### Backup and restore
 
-You should enable the automatic backup feature and point-in-time recovery (PITR) feature in the backend database. For details, see [Set up a database for ScalarDB/ScalarDL deployment](./SetupDatabase.md).
+You should enable the automatic backup feature and point-in-time recovery (PITR) feature in the backend database. For details, see [Set up a database for ScalarDB/ScalarDL deployment](SetupDatabase.md).
 
 ## Production checklist: Client applications that access ScalarDB Cluster
 
