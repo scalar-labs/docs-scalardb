@@ -1,6 +1,6 @@
 # Guidelines for creating an AKS cluster for ScalarDL Ledger and ScalarDL Auditor
 
-This document explains the requirements and recommendations for creating an Azure Kubernetes Service (AKS) cluster for ScalarDL Ledger and ScalarDL Auditor deployment. For details on how to deploy ScalarDL Ledger and ScalarDL Auditor on an AKS cluster, see [Deploy ScalarDL Ledger and ScalarDL Auditor on AKS](./ManualDeploymentGuideScalarDLAuditorOnAKS.md).
+This document explains the requirements and recommendations for creating an Azure Kubernetes Service (AKS) cluster for ScalarDL Ledger and ScalarDL Auditor deployment. For details on how to deploy ScalarDL Ledger and ScalarDL Auditor on an AKS cluster, see [Deploy ScalarDL Ledger and ScalarDL Auditor on AKS](ManualDeploymentGuideScalarDLAuditorOnAKS.md).
 
 ## Before you begin
 
@@ -21,7 +21,7 @@ When deploying ScalarDL Ledger and ScalarDL Auditor, you must:
 * Configure a virtual network (VNet) as follows.
     * Connect the **VNet of AKS (for Ledger)** and the **VNet of AKS (for Auditor)** by using [virtual network peering](https://learn.microsoft.com/en-us/azure/virtual-network/virtual-network-manage-peering). To do so, you must specify the different IP ranges for the **VNet of AKS (for Ledger)** and the **VNet of AKS (for Auditor)** when you create those VNets.
     * Allow **connections between Ledger and Auditor** to make ScalarDL (Auditor mode) work properly.
-    * For more details about these network requirements, refer to [Configure Network Peering for ScalarDL Auditor Mode](./NetworkPeeringForScalarDLAuditor.md).
+    * For more details about these network requirements, refer to [Configure Network Peering for ScalarDL Auditor Mode](NetworkPeeringForScalarDLAuditor.md).
 
 {% capture notice--warning %}
 **Attention**
@@ -37,7 +37,7 @@ The following are some recommendations for deploying ScalarDL Ledger and ScalarD
 
 ### Create at least three worker nodes and three pods per AKS cluster
 
-To ensure that the AKS cluster has high availability, you should use at least three worker nodes and deploy at least three pods spread across the worker nodes. You can see the [ScalarDL Ledger sample configurations](../conf/scalardl-custom-values.yaml) and [ScalarDL Auditor sample configurations](../conf/scalardl-audit-custom-values.yaml) of `podAntiAffinity` for making three pods spread across the worker nodes.
+To ensure that the AKS cluster has high availability, you should use at least three worker nodes and deploy at least three pods spread across the worker nodes. You can see the [ScalarDL Ledger sample configurations](https://github.com/scalar-labs/scalar-kubernetes/blob/master/conf/scalardl-custom-values.yaml) and [ScalarDL Auditor sample configurations](https://github.com/scalar-labs/scalar-kubernetes/blob/master/conf/scalardl-audit-custom-values.yaml) of `podAntiAffinity` for making three pods spread across the worker nodes.
 
 {% capture notice--info %}
 **Note**

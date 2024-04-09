@@ -1,6 +1,6 @@
 # Guidelines for creating an EKS cluster for ScalarDL Ledger
 
-This document explains the requirements and recommendations for creating an Amazon Elastic Kubernetes Service (EKS) cluster for ScalarDL Ledger deployment. For details on how to deploy ScalarDL Ledger on an EKS cluster, see [Deploy ScalarDL Ledger on Amazon EKS](./ManualDeploymentGuideScalarDLOnEKS.md).
+This document explains the requirements and recommendations for creating an Amazon Elastic Kubernetes Service (EKS) cluster for ScalarDL Ledger deployment. For details on how to deploy ScalarDL Ledger on an EKS cluster, see [Deploy ScalarDL Ledger on Amazon EKS](ManualDeploymentGuideScalarDLOnEKS.md).
 
 ## Before you begin
 
@@ -27,7 +27,7 @@ The following are some recommendations for deploying ScalarDL Ledger. These reco
 
 ### Create at least three worker nodes and three pods
 
-To ensure that the EKS cluster has high availability, you should use at least three worker nodes and deploy at least three pods spread across the worker nodes. You can see the [sample configurations](../conf/scalardl-custom-values.yaml) of `podAntiAffinity` for making three pods spread across the worker nodes.
+To ensure that the EKS cluster has high availability, you should use at least three worker nodes and deploy at least three pods spread across the worker nodes. You can see the [sample configurations](https://github.com/scalar-labs/scalar-kubernetes/blob/master/conf/scalardl-custom-values.yaml) of `podAntiAffinity` for making three pods spread across the worker nodes.
 
 {% capture notice--info %}
 **Note**
