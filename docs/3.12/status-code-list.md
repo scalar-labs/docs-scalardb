@@ -1,6 +1,6 @@
-# List of Error Codes for ScalarDB
+# List of Error Codes in ScalarDB
 
-The following pages contain error codes and messages in ScalarDB:
+The following pages contain error codes and their related messages in ScalarDB:
 
 - [ScalarDB Error Codes](scalardb-core-status-codes.md)
 - [ScalarDB Cluster Error Codes](scalardb-cluster/scalardb-cluster-status-codes.md)
