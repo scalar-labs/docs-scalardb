@@ -63,22 +63,22 @@ This page describes Scalar's support policy for major and minor version releases
       <td>2024-07-15</td>
       <td><a href="https://www.scalar-labs.com/contact">Contact us</a></td>
     </tr>
-    <tr class="version-out-of-support">
-      <td><a href="/docs/releases/release-3.6#v360">3.6</a>*</td>
+    <tr>
+      <td><a href="/docs/releases/release-3.6#v360">3.6</a></td>
       <td>2022-07-08</td>
       <td>2023-09-03</td>
       <td>2024-03-01</td>
       <td><a href="https://www.scalar-labs.com/contact">Contact us</a></td>
     </tr>
-    <tr class="version-out-of-support">
-      <td><a href="/docs/releases/release-3.5#v350">3.5</a>*</td>
+    <tr>
+      <td><a href="/docs/releases/release-3.5#v350">3.5</a></td>
       <td>2022-02-16</td>
       <td>2023-07-08</td>
       <td>2024-01-04</td>
       <td><a href="https://www.scalar-labs.com/contact">Contact us</a></td>
     </tr>
-    <tr class="version-out-of-support">
-      <td><a href="/docs/releases/release-3.4#v340">3.4</a>*</td>
+    <tr>
+      <td><a href="/docs/releases/release-3.4#v340">3.4</a></td>
       <td>2021-12-02</td>
       <td>2023-02-16</td>
       <td>2023-08-15</td>
@@ -86,5 +86,3 @@ This page describes Scalar's support policy for major and minor version releases
     </tr>
   </tbody>
 </table>
-
-&#42; This product version is no longer supported under Maintenance Support or Assistance Support.
