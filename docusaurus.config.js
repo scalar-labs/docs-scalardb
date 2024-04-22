@@ -76,14 +76,14 @@ const config = {
                 path: 'latest', // Change this to the version number when a new version is released.
                 banner: 'none',
               },
-              3.11: { // Change this to the version number when a new version is released.
+              3.11: {
                 label: '3.11',
-                path: '3.11', // Change this to the version number when a new version is released.
+                path: '3.11',
                 banner: 'none',
               },
-              3.10: { // Change this to the version number when a new version is released.
+              3.10: {
                 label: '3.10',
-                path: '3.10', // Change this to the version number when a new version is released.
+                path: '3.10',
                 banner: 'none',
               },
               3.9: {
@@ -91,9 +91,9 @@ const config = {
                 path: '3.9',
                 banner: 'none',
               },
-              3.8: { // Change this to the version number when a new version is released.
+              3.8: {
                 label: '3.8',
-                path: '3.8', // Change this to the version number when a new version is released.
+                path: '3.8',
                 banner: 'none',
               },
               3.7: {
