@@ -174,6 +174,10 @@ const config = {
     //   },
     // ],
   ],
+  markdown: {
+    mermaid: true,
+  },
+  themes: ['@docusaurus/theme-mermaid'],
 
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
@@ -309,6 +313,22 @@ const config = {
           },
         ],
         copyright: `Copyright © ${new Date().getFullYear()} Scalar, Inc.`,
+      },
+      mermaid: {
+        theme: {
+          light: 'base',
+          dark: 'base',
+        },
+        options: {
+          themeVariables: {
+            primaryColor: '#D5EAFF',
+            primaryTextColor: '#3D4144',
+            primaryBorderColor: '#2673BB',
+            lineColor: '#3D4144',
+            secondaryColor: '#D5EAFF',
+            tertiaryColor: '#D5EAFF',
+          },
+        },
       },
       prism: {
         theme: prismThemes.github,
