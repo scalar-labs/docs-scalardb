@@ -1,0 +1,32 @@
+# Release Support Policy
+
+This page describes Scalar's support policy for major and minor version releases of ScalarDB.
+
+## Terms and definitions
+
+- **Maintenance Support:** Scalar will provide product updates, including code fixes and documentation, and technical support through its [support portal](https://support.scalar-labs.com/) to customers with a commercial license, until the date specified.
+- **Assistance Support:** Scalar will provide limited technical support for non-code-related questions in the form of FAQs and inquiries through its [support portal](https://support.scalar-labs.com/) to customers with a commercial license until the date specified.
+- **Extended Support:** Extended Support is available as an add-on for customers with a commercial license who want support for a version that is no longer under Maintenance Support or Assistance Support.
+
+## Release support timelines
+
+<table>
+  <thead>
+    <tr>
+      <th>Version</th>
+      <th>Release Date</th>
+      <th>Maintenance Support Ends</th>
+      <th>Assistance Support Ends</th>
+      <th>Extended Support</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><a href="https://scalardb.scalar-labs.com/docs/3.4/releases/release-notes#v340">3.4</a></td>
+      <td>2021-12-02</td>
+      <td>2023-02-16</td>
+      <td>2023-08-15</td>
+      <td><a href="https://www.scalar-labs.com/contact">Contact us</a></td>
+    </tr>
+  </tbody>
+</table>
