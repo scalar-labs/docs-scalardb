@@ -2,13 +2,11 @@
 
 The ScalarDB Cluster .NET Client SDK supports the Administrative API of ScalarDB Cluster. By using this API, you can manage ScalarDB Cluster from .NET applications.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Although we recommend using asynchronous methods as in the following examples, you can use synchronous methods instead.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ## Get a transaction manager
 

@@ -50,14 +50,12 @@ You can also set the following configurations:
 | `scalar.db.cluster.auth.auth_token_gc_thread_interval_minutes` | Auth token garbage collection (GC) thread interval in minutes.                                            | `360` (6 hours)    |
 | `scalar.db.cluster.auth.pepper`                                | A secret value added to a password before hashing. If not specified, A password is hashed without pepper. |                    |
 
-{% capture notice--info %}
-**Note**
+:::note
 
 If you enable ScalarDB Auth, you will also need to set `scalar.db.cross_partition_scan.enabled` to `true` for the system namespace (`scalardb` by default) because ScalarDB Auth performs cross-partition scans internally.
 
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### ScalarDB Cluster Java client SDK configurations
 
@@ -78,14 +76,12 @@ In addition to the configuration in the [ScalarDB Cluster SQL client configurati
 
 When you enable ScalarDB Auth, the initial user `admin` is created and the initial password of that user is `admin`. This user is a superuser and has all privileges. You can log in with this user and create other users if necessary.
 
-{% capture notice--warning %}
-**ATTENTION**
+:::warning
 
 For security purposes, be sure to change the password of the initial user, especially before deploying to a production environment.
 
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 ## Which privileges are required for each type of operation
 

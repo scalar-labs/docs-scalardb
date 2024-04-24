@@ -13,14 +13,12 @@ You need to add dependencies for Spring Data JDBC for ScalarDB and the connectio
 
 ### Direct mode
 
-{% capture notice--info %}
-**Note**
+:::note
 
 This mode exists only for development purposes and is not recommended for production use.
 For production use, please refer to [Cluster mode](#cluster-mode).
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 To add the dependencies on Spring Data JDBC for ScalarDB with Direct mode by using Gradle, use the following, replacing `<VERSION>` with the versions of Spring Data JDBC for ScalarDB and the related library, respectively, that you are using:
 
@@ -50,13 +48,11 @@ To add the dependencies by using Maven, use the following, replacing `...` with 
 
 ### Server mode
 
-{% capture notice--info %}
-**Note**
+:::note
 
 This mode is now deprecated. Please use [Cluster mode](#cluster-mode) instead.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 To add the dependencies on Spring Data JDBC for ScalarDB with Server mode by using Gradle, use the following, replacing `<VERSION>` with the versions of Spring Data JDBC for ScalarDB and the related library, respectively, that you are using:
 

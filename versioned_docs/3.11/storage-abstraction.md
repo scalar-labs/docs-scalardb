@@ -11,27 +11,23 @@ The benefits of using the Storage API include the following:
 - As with the Transactional API, you can write your application code without worrying too much about the underlying storage implementation.
 - If you don't need transactions for some of the data in your application, you can use the Storage API to partially avoid transactions, which results in faster execution.
 
-{% capture notice--warning %}
-**Attention**
+:::warning
 
 Directly using the Storage API or mixing the Transactional API and the Storage API could cause unexpected behavior. For example, since the Storage API cannot provide transaction capability, the API could cause anomalies or data inconsistency if failures occur when executing operations.
 
 Therefore, you should be *very* careful about using the Storage API and use it only if you know exactly what you are doing.
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 ## Storage API Example
 
 This section explains how the Storage API can be used in a basic electronic money application.
 
-{% capture notice--warning %}
-**Attention**
+:::warning
 
 The electronic money application is simplified for this example and isn’t suitable for a production environment.
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 ### ScalarDB configuration
 
@@ -45,13 +41,11 @@ You need to define the database schema (the method in which the data will be org
 
 For this example, create a file named `emoney-storage.json` in the `scalardb/docs/getting-started` directory. Then, add the following JSON code to define the schema.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 In the following JSON, the `transaction` field is set to `false`, which indicates that you should use this table with the Storage API.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ```json
 {
@@ -81,13 +75,11 @@ $ java -jar scalardb-schema-loader-<VERSION>.jar --config scalardb.properties -f
 
 The following is example source code for the electronic money application that uses the Storage API.
 
-{% capture notice--warning %}
-**Attention**
+:::warning
 
 As previously mentioned, since the Storage API cannot provide transaction capability, the API could cause anomalies or data inconsistency if failures occur when executing operations. Therefore, you should be *very* careful about using the Storage API and use it only if you know exactly what you are doing.
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 ```java
 public class ElectronicMoney {
@@ -208,13 +200,11 @@ The Storage API is composed of the Administrative API and CRUD API.
 
 You can execute administrative operations programmatically as described in this section.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Another method that you could use to execute administrative operations is by using [Schema Loader](schema-loader.md).
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 #### Get a `DistributedStorageAdmin` instance
 
@@ -319,17 +309,15 @@ You can add a new, non-partition key column to a table as follows:
 admin.addNewColumnToTable("ns", "tbl", "c6", DataType.INT)
 ```
 
-{% capture notice--warning %}
-**Attention**
+:::warning
 
 You should carefully consider adding a new column to a table because the execution time may vary greatly depending on the underlying storage. Please plan accordingly and consider the following, especially if the database runs in production:
 
 - **For Cosmos DB for NoSQL and DynamoDB:** Adding a column is almost instantaneous as the table schema is not modified. Only the table metadata stored in a separate table is updated.
 - **For Cassandra:** Adding a column will only update the schema metadata and will not modify the existing schema records. The cluster topology is the main factor for the execution time. Changes to the schema metadata are shared to each cluster node via a gossip protocol. Because of this, the larger the cluster, the longer it will take for all nodes to be updated.
 - **For relational databases (MySQL, Oracle, etc.):** Adding a column shouldn't take a long time to execute.
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 #### Truncate a table
 
@@ -496,13 +484,11 @@ Get get =
 Optional<Result> result = storage.get(get);
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 If the result has more than one record, `storage.get()` will throw an exception.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 #### `Scan` operation
 
@@ -597,13 +583,11 @@ Scan scan =
 Scanner scanner = storage.scan(scan);
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 You can't specify clustering-key boundaries and orderings in `Scan` by using a secondary index.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ##### Execute `Scan` without specifying a partition key to retrieve all the records of a table
 
@@ -630,13 +614,11 @@ Scan scan =
 Scanner scanner = storage.scan(scan);
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 You can't specify clustering-key boundaries and orderings in `Scan` without specifying a partition key.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 #### `Put` operation
 
@@ -677,14 +659,12 @@ Put put =
         .build();
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 If you specify `enableImplicitPreRead()`, `disableImplicitPreRead()`, or `implicitPreReadEnabled()` in the `Put` operation builder, they will be ignored.
 
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 #### `Delete` operation
 
@@ -816,15 +796,13 @@ Delete delete =
 storage.mutate(Arrays.asList(put, delete));
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 A Mutate operation only accepts mutations for a single partition; otherwise, an exception will be thrown.
 
 In addition, if you specify multiple conditions in a Mutate operation, the operation will be executed only when all the conditions match.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 #### Default namespace for CRUD operations
 

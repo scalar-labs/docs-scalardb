@@ -24,13 +24,11 @@ This tutorial describes how to run benchmarking tools for ScalarDB. Database ben
 - A target database
   - For a list of databases that ScalarDB supports, see [Supported Databases](https://github.com/scalar-labs/scalardb/blob/master/docs/scalardb-supported-databases.md).
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Currently, only JDK 8 can be used when running the benchmarking tools.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ## Set up the benchmarking tools
 
@@ -105,13 +103,11 @@ To run a benchmark, you must first prepare a benchmarking configuration file. Th
 
 The following is an example configuration for running the TPC-C benchmark. The ScalarDB properties file specified for `config_file` should be the properties file for the [benchmarking environment that you previously set up](#set-up-your-environment).
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Alternatively, instead of using the ScalarDB properties file, you can specify each database configuration item in the `.toml` file. If `config_file` is specified, all other configurations under `[database_config]` will be ignored even if they are uncommented.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ```toml
 [modules]

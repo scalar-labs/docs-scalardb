@@ -8,13 +8,11 @@ The ScalarDB Java API is mainly composed of the Administrative API and Transacti
 
 This section explains how to execute administrative operations programmatically by using the Administrative API in ScalarDB.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Another method for executing administrative operations is to use [Schema Loader](schema-loader.md).
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Get a `DistributedTransactionAdmin` instance
 
@@ -317,15 +315,13 @@ DistributedTransaction transaction = manager.start();
 
 The following sections describe key construction and CRUD operations.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Although all the builders of the CRUD operations can specify consistency by using the `consistency()` methods, those methods are ignored. Instead, the `LINEARIZABLE` consistency level is always used in transactions.
 
 In addition, although the builders of the mutation operations (`Put` and `Delete` operations) can specify a condition by using the `condition()` methods, those methods are also ignored. Instead, if you want to implement conditional mutation, please program such conditions for transactions.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 #### Key construction
 
@@ -460,14 +456,12 @@ Get get =
 Optional<Result> result = transaction.get(get);
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 If the result has more than one record, `transaction.get()` will throw an exception. If you want to handle multiple results, see [Execute `Scan` by using a secondary index](#execute-scan-by-using-a-secondary-index).
 
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 #### `Scan` operation
 
@@ -524,13 +518,11 @@ Scan scan =
 List<Result> results = transaction.scan(scan);
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 You can't specify clustering-key boundaries and orderings in `Scan` by using a secondary index.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ##### Execute `Scan` without specifying a partition key to retrieve all the records of a table
 
@@ -553,25 +545,21 @@ Scan scan =
 List<Result> results = transaction.scan(scan);
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 You can't specify clustering-key boundaries and orderings in `Scan` without specifying a partition key.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 #### `Put` operation
 
 `Put` is an operation to put a record specified by a primary key. The operation behaves as an upsert operation for a record, in which the operation updates the record if the record exists or inserts the record if the record does not exist.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 When you update an existing record, you need to read the record by using `Get` or `Scan` before using a `Put` operation.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 You need to create a `Put` object first, and then you can execute the object by using the `transaction.put()` method as follows:
 
@@ -612,13 +600,11 @@ Put put =
 
 `Delete` is an operation to delete a record specified by a primary key.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 When you delete a record, you need to read the record by using `Get` or `Scan` before using a `Delete` operation.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 You need to create a `Delete` object first, and then you can execute the object by using the `transaction.delete()` method as follows:
 
@@ -703,13 +689,11 @@ For details about how to handle exceptions in ScalarDB, see [How to handle excep
 
 When executing a transaction, you will also need to handle exceptions properly.
 
-{% capture notice--warning %}
-**Attention**
+:::warning
 
 If you don't handle exceptions properly, you may face anomalies or data inconsistency.
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 The following sample code shows how to handle exceptions:
 

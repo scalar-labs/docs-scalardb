@@ -2,13 +2,11 @@
 
 The ScalarDB Cluster .NET Client SDK helps you write code to access a cluster by abstracting ScalarDB tables as C# objects. After defining a class that represents a table in the cluster, you can ensure that a column name or its type won't be mixed up when querying the cluster. In addition, if a table's structure changes, you can apply the changes to the code by using the refactoring feature in your IDE.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Although we recommend using asynchronous methods, as in the following examples, you can use synchronous methods instead.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ## Create classes for all ScalarDB tables
 
@@ -131,13 +129,11 @@ await client.MutateAsync(objectsToPut: new[] { statement },
                          objectsToDelete: new[] { statement2 });
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 To modify objects by using the `UpdateAsync`, `DeleteAsync`, `PutAsync`, or `MutateAsync` method, the objects must be retrieved first by using the `GetAsync` or `ScanAsync` method.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ## Use the Administrative API
 

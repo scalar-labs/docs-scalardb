@@ -20,13 +20,11 @@ A notable feature of ScalarDB Cluster is the distribution of transaction request
 
 Membership management plays a critical role in ScalarDB Cluster. When a cluster node either joins or leaves the cluster, the configuration of the cluster is automatically adjusted to reflect this change. ScalarDB Cluster currently retrieves membership information by using the Kubernetes API.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Currently, ScalarDB Cluster supports running on Kubernetes only.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ![ScalarDB Cluster architecture](images/scalardb-cluster-architecture.png)
 

@@ -84,13 +84,11 @@ cd docs/standalone-mode/
 
 Then, start Docker Compose by running the following command:
 
-{% capture notice--info %}
-**Note**
+:::note
 
 To change the configuration of ScalarDB Cluster, update the `docs/standalone-mode/scalardb-cluster-node.properties` file before running the command below.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ```console
 docker compose up -d

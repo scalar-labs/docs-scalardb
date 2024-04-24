@@ -2,13 +2,11 @@
 
 The ScalarDB Cluster .NET Client SDK supports the distributed SQL transaction functionality of ScalarDB Cluster. The SDK includes transaction and manager abstractions for easier communication within a cluster.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Although we recommend using asynchronous methods, as in the following examples, you can use synchronous methods instead.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 For details about distributed non-SQL transactions, see [Getting Started with Distributed Transactions in the ScalarDB Cluster .NET Client SDK](getting-started-with-distributed-transactions.md).
 
@@ -89,13 +87,11 @@ You can also resume a transaction that has already been started as follows:
 var transaction = manager.Resume(transactionIdString);
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 The `Resume` method doesn't have an asynchronous version because it only creates a transaction object. Because of this, resuming a transaction by using the wrong ID is possible.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 The transaction has the same `ExecuteAsync` method as the transaction manager. That method can be used to execute SQL statements.
 

@@ -4,26 +4,22 @@ You might want to use ScalarDB (e.g., for database-spanning transactions) with y
 
 ## Before you begin
 
-{% capture notice--warning %}
-**Attention**
+:::warning
 
 You should carefully plan to import a table to ScalarDB in production because it will add transaction metadata columns to your database tables and the ScalarDB metadata tables. In this case, there would also be several differences between your database and ScalarDB, as well as some limitations.
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 ### What will be added to your databases
 
 - **ScalarDB metadata tables:** ScalarDB manages namespace names and table metadata in a namespace (schema or database in underlying databases) called 'scalardb'.
 - **Transaction metadata columns:** The Consensus Commit transaction manager requires metadata (for example, transaction ID, record version, and transaction status) stored along with the actual records to handle transactions properly. Thus, this tool adds the metadata columns if you use the Consensus Commit transaction manager.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 This tool only changes database metadata. Thus, the processing time does not increase in proportion to the database size and usually takes only several seconds.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Requirements
 
@@ -258,8 +254,7 @@ Data types not listed in the above are not supported. The following are some com
 
 </div>
 
-{% capture notice--warning %}
-**Attention**
+:::warning
 
 1. The value range of `BIGINT` in ScalarDB is from -2^53 to 2^53, regardless of the size of `bigint` in the underlying database. Thus, if the data out of this range exists in the imported table, ScalarDB cannot read it.
 2. For certain data types noted above, ScalarDB may map a data type larger than that of the underlying database. In that case, You will see errors when putting a value with a size larger than the size specified in the underlying database.

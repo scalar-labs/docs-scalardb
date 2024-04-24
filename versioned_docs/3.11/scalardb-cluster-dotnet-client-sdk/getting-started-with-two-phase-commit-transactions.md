@@ -2,13 +2,11 @@
 
 The ScalarDB Cluster .NET Client SDK supports transactions with the two-phase commit interface in ScalarDB. The SDK includes transaction and manager abstractions for enhanced communication within a cluster.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Although we recommend using asynchronous methods as in the following examples, you can use synchronous methods instead.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ## About transactions with the two-phase commit interface
 
@@ -69,13 +67,11 @@ Usually, a transaction with the two-phase commit interface involves multiple req
 var transaction = manager.Resume(transactionId);
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 The `Resume` method doesn't have an asynchronous version because it only creates a transaction object. Because of this, resuming a transaction by using the wrong ID is possible.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ## Roll back a transaction
 

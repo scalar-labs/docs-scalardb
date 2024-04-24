@@ -77,15 +77,13 @@ The sample application supports the following types of transactions:
 - ScalarDB Cluster running on a Kubernetes cluster
   - If you don't have ScalarDB Cluster set up, please follow the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.md).
 
-{% capture notice--info %}
-**Note**
+:::note
 
 We recommend using the LTS versions mentioned above, but other non-LTS versions may work.
 
 In addition, other JDKs should work with ScalarDB, but we haven't tested them.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 In addition, you need access to the [ScalarDB Cluster GitHub repository](https://github.com/scalar-labs/scalardb-cluster) and the [packages in the ScalarDB Cluster repository](https://github.com/orgs/scalar-labs/packages?repo_name=scalardb-cluster), which are private. The packages and repository are available only those who are using ScalarDB Enterprise. If you need a license for ScalarDB Enterprise, please [contact us](https://scalar-labs.com/contact_us/).
 
@@ -198,13 +196,11 @@ scalar.db.transaction_manager=cluster
 scalar.db.contact_points=indirect:localhost
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 For details about the client modes, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.md).
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Load the schema
 
@@ -285,13 +281,11 @@ You should see the following output:
 
 Then, have customer ID `1` place an order for three apples and two oranges by running the following command:
 
-{% capture notice--info %}
-**Note**
+:::note
 
 The order format in this command is `./gradlew run --args="PlaceOrder <CUSTOMER_ID> <ITEM_ID>:<COUNT>,<ITEM_ID>:<COUNT>,..."`.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ```console
 $ ./gradlew run --args="PlaceOrder 1 1:3,2:2"

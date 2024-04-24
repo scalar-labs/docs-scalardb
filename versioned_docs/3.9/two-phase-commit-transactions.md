@@ -67,17 +67,15 @@ For participants, you can join a transaction by specifying the transaction ID as
 TwoPhaseCommitTransaction tx = transactionManager.join("<TRANSACTION_ID>")
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 To get the transaction ID with `getId()`, you can specify the following:
 
 ```java
 tx.getId();
 ```
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### CRUD operations for the transaction
 
@@ -184,13 +182,11 @@ tx.commit();
 
 Similar to `prepare()`, if any of the Coordinator or participant processes fail to validate the transaction, you will need to call `rollback()` (or `abort()`) in all the Coordinator and participant processes. In addition, you can call `validate()` in the Coordinator and participant processes in parallel for better performance.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 When using the [Consensus Commit](configurations.md#use-consensus-commit-directly) transaction manager with `EXTRA_READ` set as the value for `scalar.db.consensus_commit.serializable_strategy` and `SERIALIZABLE` set as the value for `scalar.db.consensus_commit.isolation_level`, you need to call `validate()`. However, if you are not using Consensus Commit, specifying `validate()` will not have any effect.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Execute a transaction by using multiple transaction manager instances
 
@@ -289,17 +285,15 @@ TwoPhaseCommitTransaction tx = transactionManager.join("<TRANSACTION_ID>");
 TwoPhaseCommitTransaction tx1 = transactionManager.resume("<TRANSACTION_ID>")
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 To get the transaction ID with `getId()`, you can specify the following:
 
 ```java
 tx.getId();
 ```
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 The following is an example of two services that have multiple endpoints:
 
@@ -428,13 +422,11 @@ As shown above, by resuming the transaction, you can share the same transaction 
 
 When executing a transaction by using multiple transaction manager instances, you will also need to handle exceptions properly.
 
-{% capture notice--warning %}
-**Attention**
+:::warning
 
 If you don't handle exceptions properly, you may face anomalies or data inconsistency.
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 For instance, in the example code in [Execute a transaction by using multiple transaction manager instances](#execute-a-transaction-by-using-multiple-transaction-manager-instances), multiple transaction managers (`transactionManager1` and `transactionManager2`) are used in a single process for ease of explanation. However, that example code doesn't include a way to handle exceptions.
 
@@ -667,15 +659,13 @@ Although not illustrated in the example code, the `resume()` API could also thro
 
 In the sample code, for `UnknownTransactionStatusException`, the transaction is not retried because the application must check if the transaction was successful to avoid potential duplicate operations. For other exceptions, the transaction is retried because the cause of the exception is transient or non-transient. If the cause of the exception is transient, the transaction may succeed if you retry it. However, if the cause of the exception is non-transient, the transaction will still fail even if you retry it. In such a case, you will exhaust the number of retries.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 If you begin a transaction by specifying a transaction ID, you must use a different ID when you retry the transaction.
 
 In addition, in the sample code, the transaction is retried three times maximum and sleeps for 100 milliseconds before it is retried. But you can choose a retry policy, such as exponential backoff, according to your application requirements.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ## Request routing in transactions with a two-phase commit interface
 

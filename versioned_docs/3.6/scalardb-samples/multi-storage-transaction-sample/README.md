@@ -12,13 +12,11 @@ In this tutorial, you will build an application that uses both Cassandra and MyS
 
 ![Overview](images/overview.png)
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Since the focus of the sample application is to demonstrate using ScalarDB, application-specific error handling, authentication processing, and similar functions are not included in the sample application. For details about exception handling in ScalarDB, see [How to handle exceptions](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#how-to-handle-exceptions).
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### What you can do in this sample application
 
@@ -40,15 +38,13 @@ The sample application supports the following types of transactions:
   - [OpenJDK](https://openjdk.org/install/) LTS version (8, 11, or 17)
 - [Docker](https://www.docker.com/get-started/) 20.10 or later with [Docker Compose](https://docs.docker.com/compose/install/) V2 or later
 
-{% capture notice--info %}
-**Note**
+:::note
 
 We recommend using the LTS versions mentioned above, but other non-LTS versions may work.
 
 In addition, other JDKs should work with ScalarDB, but we haven't tested them.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ## Set up ScalarDB
 
@@ -78,13 +74,11 @@ To start Cassandra and MySQL, which are included in the Docker container for the
 $ docker-compose up -d
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Starting the Docker container may take more than one minute depending on your development environment.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Load the schema
 
@@ -165,13 +159,11 @@ You should see the following output:
 
 Then, have customer ID `1` place an order for three apples and two oranges by running the following command:
 
-{% capture notice--info %}
-**Note**
+:::note
 
 The order format in this command is `./gradlew run --args="PlaceOrder <CUSTOMER_ID> <ITEM_ID>:<COUNT>,<ITEM_ID>:<COUNT>,..."`.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ```console
 $ ./gradlew run --args="PlaceOrder 1 1:3,2:2"

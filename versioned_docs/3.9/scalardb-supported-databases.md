@@ -15,13 +15,11 @@ ScalarDB supports the following databases and their versions.
 
 ## Apache Cassandra
 
-{% capture notice--info %}
-**Note**
+:::note
 
 For requirements when using Cassandra or Cassandra-compatible databases, see [How to configure databases to achieve the general requirements](requirements.md#how-to-configure-databases-to-achieve-the-general-requirements).
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 | Version           | Cassandra 4.1  | Cassandra 4.0  | Cassandra 3.11  | Cassandra 3.0  |
 |:------------------|:---------------|:---------------|:----------------|:---------------|
@@ -45,13 +43,11 @@ For requirements when using Cassandra or Cassandra-compatible databases, see [Ho
 
 ## JDBC databases
 
-{% capture notice--info %}
-**Note**
+:::note
 
 For recommendations when using JDBC databases, see [Recommendations](requirements.md#recommendations).
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Amazon Aurora MySQL
 

@@ -13,15 +13,13 @@ This sample tutorial shows how you can run the following types of queries:
 - Read data and calculate summaries.
 - Join tables that span multiple storages.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 You can run any arbitrary query that PostgreSQL supports on the imported tables in this sample tutorial. Since ScalarDB Analytics with PostgreSQL supports all queries that PostgreSQL supports, you can use not only join, aggregation, filtering, and ordering as shown in the example, but also the window function, lateral join, or various analytical operations.
 
 To see which types of queries PostgreSQL supports, see the [PostgreSQL documentation](https://www.postgresql.org/docs/current/index.html).
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ## Prerequisites
 
@@ -182,13 +180,11 @@ After entering your password, you should see the following output:
 
 The column definitions in this view are the same as the original table in the ScalarDB database. This view is created based on the foreign table explained above to expose only the valid data with the Read Committed isolation level by interpreting the transaction metadata columns.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Normally, you don't need to access the foreign tables directly. Instead, you can equate the views with the tables in the ScalarDB database.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 For details about type mapping between ScalarDB and PostgreSQL, see [Data-type mapping between ScalarDB and other databases](https://scalardb.scalar-labs.com/docs/latest/schema-loader/#data-type-mapping-between-scalardb-and-other-databases).
 

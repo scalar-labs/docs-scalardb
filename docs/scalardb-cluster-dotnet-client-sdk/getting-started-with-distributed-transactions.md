@@ -2,13 +2,11 @@
 
 The ScalarDB Cluster .NET Client SDK supports the distributed transaction functionality of ScalarDB Cluster. The SDK includes transaction and manager abstractions for easier communication within a cluster.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Although we recommend using asynchronous methods as in the following examples, you can use synchronous versions instead.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 For details about distributed SQL transactions, see [Getting Started with Distributed SQL Transactions in the ScalarDB Cluster .NET Client SDK](getting-started-with-distributed-sql-transactions.md).
 
@@ -41,13 +39,11 @@ You can also resume a transaction that is already being executed as follows:
 var transaction = manager.Resume(transactionIdString);
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 The `Resume` method doesn't have an asynchronous version because it only creates a transaction object. Because of this, resuming a transaction by using the wrong ID is possible.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 When a transaction is ready to be committed, you can call the `CommitAsync` method of the transaction as follows:
 
@@ -71,13 +67,11 @@ To use these builders add the following namespace to the `using` section:
 using ScalarDB.Net.Client.Builders;
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 The cluster does not support parallel execution of commands inside one transaction, so make sure to use `await` for asynchronous methods.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### `GetAsync` method example
 
@@ -172,10 +166,8 @@ var mutate = new Mutation { Put = put };
 await client.MutateAsync(new[] { mutate });
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 To modify data by using the `PutAsync`, `DeleteAsync`, or `MutateAsync` method, the data must be retrieved first by using the `GetAsync` or `ScanAsync` method.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::

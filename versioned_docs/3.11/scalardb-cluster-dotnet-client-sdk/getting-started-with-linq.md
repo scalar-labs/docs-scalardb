@@ -2,21 +2,17 @@
 
 The ScalarDB Cluster .NET Client SDK supports querying the cluster with LINQ and some Entity Framework-like functionality.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 This SDK doesn't support [Entity Framework](https://learn.microsoft.com/en-us/ef/). Instead, this SDK implements functionality that is similar to Entity Framework.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
-{% capture notice--info %}
-**Note**
+:::note
 
 SQL support must be enabled on the cluster to use LINQ.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ## Set up classes
 
@@ -168,13 +164,11 @@ _myDbContext.Statements
             .Where(stat => stat.ItemId < 5); // Will be executed locally.
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 If `Skip` is specified before `Take` or `First`/`FirstOrDefault`, the number that is passed to `Skip` will be added to the `LIMIT` number in the SQL query. By itself, `Skip` won't change the resulting SQL query.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ## Limitations when using LINQ against `ScalarDbSet{T}` objects
 
@@ -321,13 +315,11 @@ await _myDbContext.ResumeTransaction(transactionId);
 await _myDbContext.ResumeTransaction(transactionId, TransactionType.TwoPhaseCommit);
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 The `ResumeTransaction` method doesn't have an asynchronous version because it only initializes the transaction data in the `ScalarDbContext` inheriting object without querying the cluster. Because of this, resuming a transaction by using the wrong ID is possible.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Commit a transaction (ordinary or two-phase commit)
 

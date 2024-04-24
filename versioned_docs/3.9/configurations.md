@@ -14,13 +14,11 @@ Consensus Commit is the default transaction manager type in ScalarDB. To use the
 scalar.db.transaction_manager=consensus-commit
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 If you don't specify the `scalar.db.transaction_manager` property, `consensus-commit` will be the default value.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 #### Basic configurations
 
@@ -127,8 +125,7 @@ The following configurations are available for JDBC databases:
 | `scalar.db.jdbc.admin.connection_pool.max_idle`           | Maximum number of connections that can remain idle in the connection pool for admin.                                                                                         | `10`                         |
 | `scalar.db.jdbc.admin.connection_pool.max_total`          | Maximum total number of idle and borrowed connections that can be active at the same time for the connection pool for admin. Use a negative value for no limit.              | `25`                         |
 
-{% capture notice--info %}
-**Note**
+:::note
 
 If you use SQLite3 as a JDBC database, you must set `scalar.db.contact_points` as follows.
 
@@ -138,9 +135,8 @@ scalar.db.contact_points=jdbc:sqlite:<YOUR_DB>.sqlite3?busy_timeout=10000
 
 Unlike other JDBC databases, [SQLite3 does not fully support concurrent access](https://www.sqlite.org/lang_transaction.html).
 To avoid frequent errors caused internally by [`SQLITE_BUSY`](https://www.sqlite.org/rescode.html#busy), we recommend setting a [`busy_timeout`](https://www.sqlite.org/c3ref/busy_timeout.html) parameter.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 </div>
 </div>
@@ -195,13 +191,11 @@ flowchart LR
 
 In this example configuration, the app (ScalarDB library with Consensus Commit) connects to an underlying storage or database (in this case, Cassandra) directly.
 
-{% capture notice--warning %}
-**Attention**
+:::warning
 
 This configuration exists only for development purposes and isn’t suitable for a production environment. This is because the app needs to implement the [Scalar Admin](https://github.com/scalar-labs/scalar-admin) interface to take transactionally consistent backups for ScalarDB, which requires additional configurations.
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 The following is an example of the configuration for connecting the app to the underlying database through ScalarDB:
 
@@ -232,14 +226,12 @@ flowchart LR
 
 In this example configuration, the app (ScalarDB library with gRPC) connects to an underlying storage or database (in this case, Cassandra) through ScalarDB Cluster, which is a component that is available only in the ScalarDB Enterprise edition.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 This configuration is acceptable for production use because ScalarDB Cluster implements the [Scalar Admin](https://github.com/scalar-labs/scalar-admin) interface, which enables you to take transactionally consistent backups for ScalarDB by pausing ScalarDB Cluster.
 
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 The following is an example of the configuration for connecting the app to the underlying database through ScalarDB Cluster:
 

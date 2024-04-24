@@ -36,10 +36,8 @@ For example, if you have asynchronous read replicas in your setup and perform re
 
 With this in mind, you must perform all operations or transactions against a single master instance so that you can achieve linearizability and avoid worrying about consistency issues in your application. In other words, ScalarDB does not support read replicas. 
 
-{% capture notice--info %}
-**Note**
+:::note
 
 You can still use a read replica as a backup and standby even when following this guideline.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::

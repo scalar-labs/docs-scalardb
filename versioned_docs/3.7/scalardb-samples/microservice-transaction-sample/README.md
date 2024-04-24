@@ -21,15 +21,13 @@ As shown in the diagram, both services access a small Coordinator database used 
 
 In the sample application, for ease of setup and explanation, we co-locate the Coordinator database in the same Cassandra instance of the Order Service. Alternatively, you can manage the Coordinator database as a separate database.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Since the focus of the sample application is to demonstrate using ScalarDB, application-specific error handling, authentication processing, and similar functions are not included in the sample application. For details about exception handling in ScalarDB, see [How to handle exceptions](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#how-to-handle-exceptions).
 
 Additionally, for the purpose of the sample application, each service has one container so that you can avoid using request routing between the services. However, for production use, because each service typically has multiple servers or hosts for scalability and availability, you should consider request routing between the services in transactions with a two-phase commit interface. For details about request routing, see [Request routing in transactions with a two-phase commit interface](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.md#request-routing-in-transactions-with-a-two-phase-commit-interface).
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Service endpoints
 
@@ -69,15 +67,13 @@ The sample application supports the following types of transactions:
   - [OpenJDK](https://openjdk.org/install/) LTS version (8, 11, or 17)
 - [Docker](https://www.docker.com/get-started/) 20.10 or later with [Docker Compose](https://docs.docker.com/compose/install/) V2 or later
 
-{% capture notice--info %}
-**Note**
+:::note
 
 We recommend using the LTS versions mentioned above, but other non-LTS versions may work.
 
 In addition, other JDKs should work with ScalarDB, but we haven't tested them.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ## Set up ScalarDB
 
@@ -107,13 +103,11 @@ To start Cassandra and MySQL, which are included in the Docker container for the
 $ docker-compose up -d mysql cassandra
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Starting the Docker container may take more than one minute depending on your development environment.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Load the schema
 
@@ -213,13 +207,11 @@ At this time, `credit_total` isn't shown, which means the current value of `cred
 
 Then, have customer ID `1` place an order for three apples and two oranges by running the following command:
 
-{% capture notice--info %}
-**Note**
+:::note
 
 The order format in this command is `./gradlew run --args="PlaceOrder <CUSTOMER_ID> <ITEM_ID>:<COUNT>,<ITEM_ID>:<COUNT>,..."`.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ```console
 $ ./gradlew :client:run --args="PlaceOrder 1 1:3,2:2"

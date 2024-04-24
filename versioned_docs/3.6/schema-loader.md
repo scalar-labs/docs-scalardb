@@ -11,13 +11,11 @@ You have two options to specify general CLI options in Schema Loader:
 - Pass the ScalarDB properties file and database-specific or storage-specific options.
 - Pass database-specific or storage-specific options without the ScalarDB properties file. (Deprecated)
 
-{% capture notice--info %}
-**Note**
+:::note
 
 This tool supports only basic options to create, delete, or repair a table. If you want to use the advanced features of a database, you must alter your tables with a database-specific tool after creating the tables with this tool.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ## Set up Schema Loader
 
@@ -41,13 +39,11 @@ You can pull the Docker image from the [Scalar container registry](https://githu
 $ docker run --rm -v <PATH_TO_YOUR_LOCAL_SCHEMA_FILE>:<PATH_TO_SCHEMA_FILE_DOCKER> [-v <PATH_TO_LOCAL_SCALARDB_PROPERTIES_FILE>:<PATH_TO_SCALARDB_PROPERTIES_FILE_IN_DOCKER>] ghcr.io/scalar-labs/scalardb-schema-loader:<VERSION> <COMMAND_ARGUMENTS>
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 You can specify the same command arguments even if you use the fat JAR or the container. In the [Available commands](#available-commands) section, the JAR is used, but you can run the commands by using the container in the same way by replacing `java -jar scalardb-schema-loader-<VERSION>.jar` with `docker run --rm -v <PATH_TO_YOUR_LOCAL_SCHEMA_FILE>:<PATH_TO_SCHEMA_FILE_DOCKER> [-v <PATH_TO_LOCAL_SCALARDB_PROPERTIES_FILE>:<PATH_TO_SCALARDB_PROPERTIES_FILE_IN_DOCKER>] ghcr.io/scalar-labs/scalardb-schema-loader:<VERSION>`.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 </div>
 </div>
 
@@ -93,8 +89,7 @@ Create/Delete schemas in the storage defined in the config file
 
 For a sample properties file, see [`database.properties`](https://github.com/scalar-labs/scalardb/blob/master/conf/database.properties).
 
-{% capture notice--info %}
-**Note**
+:::note
 
 The following database-specific methods have been deprecated. Please use the [commands for configuring the properties file](#available-commands) instead.
 
@@ -193,9 +188,8 @@ Create/Delete JDBC schemas
 ```
 </div>
 </div>
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Create namespaces and tables
 
@@ -207,8 +201,7 @@ $ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROP
 
 If `--coordinator` is specified, a [Coordinator table](api-guide.md#specify-operations-for-the-coordinator-table) will be created.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 The following database-specific CLI arguments have been deprecated. Please use the CLI arguments for configuring the properties file instead.
 
@@ -256,9 +249,8 @@ $ java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> 
 ```
 </div>
 </div>
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Delete tables
 
@@ -270,8 +262,7 @@ $ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROP
 
 If `--coordinator` is specified, the Coordinator table will be deleted as well.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 The following database-specific CLI arguments have been deprecated. Please use the CLI arguments for configuring the properties file instead.
 
@@ -308,9 +299,8 @@ $ java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> 
 ```
 </div>
 </div>
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Repair tables
 
@@ -322,8 +312,7 @@ $ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROP
 
 If `--coordinator` is specified, the Coordinator table will be repaired as well. In addition, if you're using Cosmos DB for NoSQL, running this command will also repair stored procedures attached to each table.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 The following database-specific CLI arguments have been deprecated. Please use the CLI arguments for configuring the properties file instead.
 
@@ -360,9 +349,8 @@ $ java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> 
 ```
 </div>
 </div>
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Sample schema file
 
@@ -497,26 +485,22 @@ You can scale the throughput of Cosmos DB for NoSQL and DynamoDB by specifying t
 
 If the `--ru` option is not set, the default values will be `400` for Cosmos DB for NoSQL and `10` for DynamoDB.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 - Schema Loader abstracts [Request Units](https://docs.microsoft.com/azure/cosmos-db/request-units) for Cosmos DB for NoSQL and [Capacity Units](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadWriteCapacityMode.html#HowItWorks.ProvisionedThroughput.Manual) for DynamoDB with `RU`. Therefore, be sure to set an appropriate value depending on the database implementation.
 - Be aware that Schema Loader sets the same value to both read capacity unit and write capacity unit for DynamoDB.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Auto-scaling
 
 By default, Schema Loader enables auto-scaling of RUs for all tables: RUs scale between 10 percent and 100 percent of a specified RU depending on the workload. For example, if you specify `-r 10000`, the RUs of each table auto-scales between `1000` and `10000`.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Auto-scaling for Cosmos DB for NoSQL is enabled only when this option is set to `4000` or more.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ## Data-type mapping between ScalarDB and other databases
 

@@ -21,25 +21,21 @@ flowchart TD
 
 If you're using ScalarDB with a single database with support for transactions, you can create a backup of the database even while ScalarDB continues to accept transactions.
 
-{% capture notice--warning %}
-**Attention**
+:::warning
 
 Before creating a backup, you should consider the safest way to create a transactionally consistent backup of your databases and understand any risks that are associated with the backup process.
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 One requirement for creating a backup in ScalarDB is that backups for all the ScalarDB-managed tables (including the Coordinator table) need to be transactionally consistent or automatically recoverable to a transactionally consistent state. That means that you need to create a consistent backup by dumping all tables in a single transaction.
 
 How you create a transactionally consistent backup depends on the type of database that you're using. Select a database to see how to create a transactionally consistent backup for ScalarDB.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 The backup methods by database listed below are just examples of some of the databases that ScalarDB supports.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 <div id="tabset-1">
 <div class="tab">
@@ -76,15 +72,13 @@ Another way to create a transactionally consistent backup is to create a backup 
 - If the underlying database has a point-in-time snapshot or backup feature, you can create a backup during the period when no outstanding transactions exist.
 - If the underlying database has a point-in-time restore or recovery (PITR) feature, you can set a restore point to a time (preferably the mid-time) in the pause duration period when no outstanding transactions exist.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 When using a PITR feature, you should minimize the clock drifts between clients and servers by using clock synchronization, such as NTP. Otherwise, the time you get as the paused duration might be too different from the time in which the pause was actually conducted, which could restore the backup to a point where ongoing transactions exist.
 
 In addition, you should pause for a sufficient amount of time (for example, five seconds) and use the mid-time of the paused duration as a restore point since clock synchronization cannot perfectly synchronize clocks between nodes.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 To make ScalarDB drain outstanding requests and stop accepting new requests so that a pause duration can be created, you should implement the [Scalar Admin](https://github.com/scalar-labs/scalar-admin) interface properly in your application that uses ScalarDB or use [ScalarDB Server](scalardb-server.md), which implements the Scalar Admin interface.
 
@@ -96,9 +90,8 @@ How you create a transactionally consistent backup depends on the type of databa
 **Note**
 
 The backup methods by database listed below are just examples of some of the databases that ScalarDB supports.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 <div id="tabset-2">
 <div class="tab">
@@ -137,9 +130,8 @@ How you restore a transactionally consistent backup depends on the type of datab
 **Note**
 
 The restore methods by database listed below are just examples of some of the databases that ScalarDB supports.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 <div id="tabset-3">
 <div class="tab">
@@ -183,14 +175,12 @@ To do this procedure:
   1. Remove table A.
   2. Create a table named A by using backup B.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 * You must do the steps mentioned above for each table because tables can only be restored one at a time.
 * Configurations such as PITR and auto-scaling policies are reset to the default values for restored tables, so you must manually configure the required settings. For details, see the official AWS documentation for [How to restore DynamoDB tables with DynamoDB](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/CreateBackup.html#CreateBackup_HowItWorks-restore).
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 </div>
 <div id="MySQL3" class="tabcontent" markdown="1">

@@ -11,15 +11,13 @@ You'll be using the same sample application as found in the [ScalarDB SQL (JDBC)
 - ScalarDB Cluster running on a Kubernetes cluster
   - We assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.md).
 
-{% capture notice--info %}
-**Note**
+:::note
 
 We recommend using the LTS versions mentioned above, but other non-LTS versions may work.
 
 In addition, other JDKs should work with ScalarDB, but we haven't tested them.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ## Sample application
 

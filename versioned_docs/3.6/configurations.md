@@ -16,13 +16,11 @@ Consensus Commit is the default transaction manager type in ScalarDB. To use the
 scalar.db.transaction_manager=consensus-commit
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 If you don't specify the `scalar.db.transaction_manager` property, `consensus-commit` will be the default value.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 #### Basic configurations
 
@@ -195,13 +193,11 @@ flowchart LR
 
 In this example configuration, the app (ScalarDB library with Consensus Commit) connects to an underlying storage or database (in this case, Cassandra) directly.
 
-{% capture notice--warning %}
-**Attention**
+:::warning
 
 This configuration exists only for development purposes and isn’t suitable for a production environment. This is because the app needs to implement the [Scalar Admin](https://github.com/scalar-labs/scalar-admin) interface to take transactionally consistent backups for ScalarDB, which requires additional configurations.
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 The following is an example of the configuration for connecting the app to the underlying database through ScalarDB:
 
@@ -232,14 +228,12 @@ flowchart LR
 
 In this example configuration, the app (ScalarDB library with gRPC) connects to an underlying storage or database (in this case, Cassandra) through ScalarDB Server.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 This configuration is acceptable for production use because ScalarDB Server implements the [Scalar Admin](https://github.com/scalar-labs/scalar-admin) interface, which enables you to take transactionally consistent backups for ScalarDB by pausing ScalarDB Server.
 
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 The following is an example of the configuration for connecting the app to the underlying database through ScalarDB Server:
 

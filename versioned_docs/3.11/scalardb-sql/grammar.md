@@ -764,13 +764,11 @@ SelectStatement statement4 =
 
 By enabling the cross-partition scan option, the `SELECT` command can retrieve all records across partitions without specifying the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.md).
 
-{% capture notice--warning %}
-**Attention**
+:::warning
 
 For non-JDBC databases, we do not recommend enabling cross-partition scan with the `SERIALIAZABLE` isolation level because transactions could be executed at a lower isolation level (that is, `SNAPSHOT`). When using non-JDBC databases, use cross-partition scan at your own risk only if consistency does not matter for your transactions.
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 #### Grammar
 
@@ -1058,13 +1056,11 @@ This command returns the following column:
 
 - `updateCount`: `INT` - the number of inserted records
 
-{% capture notice--info %}
-**Note**
+:::note
 
 If you read the target records by a `SELECT` command before an `INSERT` command in a transaction, and if the target records already exist, the `INSERT` command will update the target records instead of inserting new records.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 #### Grammar
 
@@ -1143,13 +1139,11 @@ UPSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ..
   VALUES (<column value> [, <column value>] ...) [, (<column value> [, <column value>] ...)] ...
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 You must specify a full primary key in `UPSERT`. In addition, you can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 #### Examples
 
@@ -1266,13 +1260,11 @@ UpdateStatement statement2 =
 
 By enabling the cross-partition scan option, the `UPDATE` command can update all records across partitions without specifying the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.md).
 
-{% capture notice--warning %}
-**Attention**
+:::warning
 
 For non-JDBC databases, we do not recommend enabling cross-partition scan with the `SERIALIAZABLE` isolation level because transactions could be executed at a lower isolation level (that is, `SNAPSHOT`). When using non-JDBC databases, use cross-partition scan at your own risk only if consistency does not matter for your transactions.
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 #### Grammar
 
@@ -1540,13 +1532,11 @@ DeleteStatement statement2 =
 
 By enabling the cross-partition scan option, the `DELETE` command can delete all records across partitions without specifying the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.md).
 
-{% capture notice--warning %}
-**Attention**
+:::warning
 
 For non-JDBC databases, we do not recommend enabling cross-partition scan with the `SERIALIAZABLE` isolation level because transactions could be executed at a lower isolation level (that is, `SNAPSHOT`). When using non-JDBC databases, use cross-partition scan at your own risk only if consistency does not matter for your transactions.
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 #### Grammar
 

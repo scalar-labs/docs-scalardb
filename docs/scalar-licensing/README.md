@@ -2,13 +2,11 @@
 
 To run Scalar products, you must create a `.properties` file and add your product license key and a certificate to the file. In your `.properties` file, copy one of the following configurations, based on the product you're using, and paste the contents in the `.properties` file, replacing `<YOUR_LICENSE_KEY>` with your license key.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 If you don't have a license key, please [contact us](https://www.scalar-labs.com/contact).
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 * ScalarDB Enterprise Edition (Standard)
 

@@ -6,13 +6,11 @@ The ScalarDB Java API is mainly composed of the Administrative API and Transacti
 
 This section explains how to execute administrative operations programmatically by using the Administrative API in ScalarDB.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Another method for executing administrative operations is to use [Schema Loader](schema-loader.md).
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Get a `DistributedTransactionAdmin` instance
 
@@ -164,17 +162,15 @@ You can add a new, non-partition key column to a table as follows:
 admin.addNewColumnToTable("ns", "tbl", "c6", DataType.INT)
 ```
 
-{% capture notice--warning %}
-**Attention**
+:::warning
 
 You should carefully consider adding a new column to a table because the execution time may vary greatly depending on the underlying storage. Please plan accordingly and consider the following, especially if the database runs in production:
 
 - **For Cosmos DB for NoSQL and DynamoDB:** Adding a column is almost instantaneous as the table schema is not modified. Only the table metadata stored in a separate table is updated.
 - **For Cassandra:** Adding a column will only update the schema metadata and will not modify the existing schema records. The cluster topology is the main factor for the execution time. Changes to the schema metadata are shared to each cluster node via a gossip protocol. Because of this, the larger the cluster, the longer it will take for all nodes to be updated.
 - **For relational databases (MySQL, Oracle, etc.):** Adding a column shouldn't take a long time to execute.
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 ### Truncate a table
 
@@ -353,15 +349,13 @@ Or, you can use the `start` method for a transaction by specifying a transaction
 DistributedTransaction transaction = transactionManager.start("<TRANSACTION_ID>");
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Specifying a transaction ID is useful when you want to link external systems to ScalarDB. Otherwise, you should use the `begin()` method or the `start()` method.
 
 When you specify a transaction ID, make sure you specify a unique ID (for example, UUID v4) throughout the system since ScalarDB depends on the uniqueness of transaction IDs for correctness.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Join a transaction
 
@@ -374,17 +368,15 @@ You can join an ongoing transaction that has already begun by specifying the tra
 DistributedTransaction transaction = transactionManager.join("<TRANSACTION_ID>");
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 To get the transaction ID with `getId()`, you can specify the following:
 
 ```java
 tx.getId();
 ```
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Resume a transaction
 
@@ -397,31 +389,27 @@ You can resume an ongoing transaction that you have already begun by specifying 
 DistributedTransaction transaction = transactionManager.resume("<TRANSACTION_ID>");
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 To get the transaction ID with `getId()`, you can specify the following:
 
 ```java
 tx.getId();
 ```
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Implement CRUD operations
 
 The following sections describe key construction and CRUD operations.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Although all the builders of the CRUD operations can specify consistency by using the `consistency()` methods, those methods are ignored. Instead, the `LINEARIZABLE` consistency level is always used in transactions.
 
 In addition, although the builders of the mutation operations (`Put` and `Delete` operations) can specify a condition by using the `condition()` methods, those methods are also ignored. Instead, if you want to implement conditional mutation, please program such conditions for transactions.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 #### Key construction
 
@@ -556,14 +544,12 @@ Get get =
 Optional<Result> result = transaction.get(get);
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 If the result has more than one record, `transaction.get()` will throw an exception. If you want to handle multiple results, see [Execute `Scan` by using a secondary index](#execute-scan-by-using-a-secondary-index).
 
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 #### `Scan` operation
 
@@ -620,13 +606,11 @@ Scan scan =
 List<Result> results = transaction.scan(scan);
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 You can't specify clustering-key boundaries and orderings in `Scan` by using a secondary index.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ##### Execute `Scan` without specifying a partition key to retrieve all the records of a table
 
@@ -649,25 +633,21 @@ Scan scan =
 List<Result> results = transaction.scan(scan);
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 You can't specify clustering-key boundaries and orderings in `Scan` without specifying a partition key.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 #### `Put` operation
 
 `Put` is an operation to put a record specified by a primary key. The operation behaves as an upsert operation for a record, in which the operation updates the record if the record exists or inserts the record if the record does not exist.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 When you update an existing record, you need to read the record by using `Get` or `Scan` before using a `Put` operation.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 You need to create a `Put` object first, and then you can execute the object by using the `transaction.put()` method as follows:
 
@@ -708,13 +688,11 @@ Put put =
 
 `Delete` is an operation to delete a record specified by a primary key.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 When you delete a record, you need to read the record by using `Get` or `Scan` before using a `Delete` operation.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 You need to create a `Delete` object first, and then you can execute the object by using the `transaction.delete()` method as follows:
 
@@ -905,13 +883,11 @@ For details about how to handle exceptions in ScalarDB, see [How to handle excep
 
 When executing a transaction, you will also need to handle exceptions properly.
 
-{% capture notice--warning %}
-**Attention**
+:::warning
 
 If you don't handle exceptions properly, you may face anomalies or data inconsistency.
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 The following sample code shows how to handle exceptions:
 
@@ -1031,13 +1007,11 @@ Although not illustrated in the sample code, the `resume()` API could also throw
 
 In the sample code, for `UnknownTransactionStatusException`, the transaction is not retried because the application must check if the transaction was successful to avoid potential duplicate operations. For other exceptions, the transaction is retried because the cause of the exception is transient or non-transient. If the cause of the exception is transient, the transaction may succeed if you retry it. However, if the cause of the exception is non-transient, the transaction will still fail even if you retry it. In such a case, you will exhaust the number of retries.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 In the sample code, the transaction is retried three times maximum and sleeps for 100 milliseconds before it is retried. But you can choose a retry policy, such as exponential backoff, according to your application requirements.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ## Investigating Consensus Commit transaction manager errors
 

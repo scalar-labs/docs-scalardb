@@ -22,13 +22,11 @@ ScalarDB requires each underlying database to provide the following capability t
 
 - Ability to return only committed records.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 You need to have database accounts that have enough privileges to access the databases through ScalarDB since ScalarDB runs on the underlying databases not only for CRUD operations but also for performing operations like creating or altering schemas, tables, or indexes. ScalarDB basically requires a fully privileged account to access the underlying databases.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### How to configure databases to achieve the general requirements
 
@@ -99,8 +97,7 @@ Select your database for details on how to configure it to achieve the general r
 
 Properly configuring each underlying database of ScalarDB for high performance and high availability is recommended. The following recommendations include some knobs and configurations to update.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 ScalarDB can be seen as an application of underlying databases, so you may want to try updating other knobs and configurations that are commonly used to improve efficiency.
 {% endcapture %}
@@ -123,8 +120,7 @@ ScalarDB can be seen as an application of underlying databases, so you may want 
 - Increase the number of read capacity units (RCUs) and write capacity units (WCUs) for high throughput.
 - Enable point-in-time recovery (PITR).
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Since DynamoDB stores data in multiple availability zones by default, you don’t need to adjust any configurations to improve availability.
 {% endcapture %}

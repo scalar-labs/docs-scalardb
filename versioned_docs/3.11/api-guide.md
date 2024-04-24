@@ -6,13 +6,11 @@ The ScalarDB Java API is mainly composed of the Administrative API and Transacti
 
 This section explains how to execute administrative operations programmatically by using the Administrative API in ScalarDB.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Another method for executing administrative operations is to use [Schema Loader](schema-loader.md).
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Get a `DistributedTransactionAdmin` instance
 
@@ -164,17 +162,15 @@ You can add a new, non-partition key column to a table as follows:
 admin.addNewColumnToTable("ns", "tbl", "c6", DataType.INT)
 ```
 
-{% capture notice--warning %}
-**Attention**
+:::warning
 
 You should carefully consider adding a new column to a table because the execution time may vary greatly depending on the underlying storage. Please plan accordingly and consider the following, especially if the database runs in production:
 
 - **For Cosmos DB for NoSQL and DynamoDB:** Adding a column is almost instantaneous as the table schema is not modified. Only the table metadata stored in a separate table is updated.
 - **For Cassandra:** Adding a column will only update the schema metadata and will not modify the existing schema records. The cluster topology is the main factor for the execution time. Changes to the schema metadata are shared to each cluster node via a gossip protocol. Because of this, the larger the cluster, the longer it will take for all nodes to be updated.
 - **For relational databases (MySQL, Oracle, etc.):** Adding a column shouldn't take a long time to execute.
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 ### Truncate a table
 
@@ -310,14 +306,12 @@ You can import an existing table to ScalarDB as follows:
 admin.importTable("ns", "tbl", options);
 ```
 
-{% capture notice--warning %}
-**Attention**
+:::warning
 
 You should carefully plan to import a table to ScalarDB in production because it will add transaction metadata columns to your database tables and the ScalarDB metadata tables. In this case, there would also be several differences between your database and ScalarDB, as well as some limitations. For details, see [Importing Existing Tables to ScalarDB by Using ScalarDB Schema Loader](./schema-loader-import.md).
 
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 ## Transactional API
 
@@ -372,15 +366,13 @@ Or, you can use the `start` method for a transaction by specifying a transaction
 DistributedTransaction transaction = transactionManager.start("<TRANSACTION_ID>");
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Specifying a transaction ID is useful when you want to link external systems to ScalarDB. Otherwise, you should use the `begin()` method or the `start()` method.
 
 When you specify a transaction ID, make sure you specify a unique ID (for example, UUID v4) throughout the system since ScalarDB depends on the uniqueness of transaction IDs for correctness.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Join a transaction
 
@@ -393,17 +385,15 @@ You can join an ongoing transaction that has already begun by specifying the tra
 DistributedTransaction transaction = transactionManager.join("<TRANSACTION_ID>");
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 To get the transaction ID with `getId()`, you can specify the following:
 
 ```java
 tx.getId();
 ```
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Resume a transaction
 
@@ -416,29 +406,25 @@ You can resume an ongoing transaction that you have already begun by specifying 
 DistributedTransaction transaction = transactionManager.resume("<TRANSACTION_ID>");
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 To get the transaction ID with `getId()`, you can specify the following:
 
 ```java
 tx.getId();
 ```
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Implement CRUD operations
 
 The following sections describe key construction and CRUD operations.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Although all the builders of the CRUD operations can specify consistency by using the `consistency()` methods, those methods are ignored. Instead, the `LINEARIZABLE` consistency level is always used in transactions.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 #### Key construction
 
@@ -573,14 +559,12 @@ Get get =
 Optional<Result> result = transaction.get(get);
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 If the result has more than one record, `transaction.get()` will throw an exception. If you want to handle multiple results, see [Execute `Scan` by using a secondary index](#execute-scan-by-using-a-secondary-index).
 
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 #### `Scan` operation
 
@@ -637,13 +621,11 @@ Scan scan =
 List<Result> results = transaction.scan(scan);
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 You can't specify clustering-key boundaries and orderings in `Scan` by using a secondary index.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ##### Execute cross-partition `Scan` without specifying a partition key to retrieve all the records of a table
 
@@ -653,13 +635,11 @@ You can execute a `Scan` operation across all partitions, which we call *cross-p
 scalar.db.cross_partition_scan.enabled=true
 ```
 
-{% capture notice--warning %}
-**Attention**
+:::warning
 
 For non-JDBC databases, we do not recommend enabling cross-partition scan with the `SERIALIAZABLE` isolation level because transactions could be executed at a lower isolation level (that is, `SNAPSHOT`). When using non-JDBC databases, use cross-partition scan at your own risk only if consistency does not matter for your transactions.
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 Instead of calling the `partitionKey()` method in the builder, you can call the `all()` method to scan a table without specifying a partition key as follows:
 
@@ -678,13 +658,11 @@ Scan scan =
 List<Result> results = transaction.scan(scan);
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 You can't specify any filtering conditions and orderings in cross-partition `Scan` except for when using JDBC databases. For details on how to use cross-partition `Scan` with filtering or ordering for JDBC databases, see [Execute cross-partition `Scan` with filtering and ordering](#execute-cross-partition-scan-with-filtering-and-ordering).
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ##### Execute cross-partition `Scan` with filtering and ordering
 
@@ -736,13 +714,11 @@ Scan scan =
         .build();
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 In the `where()` condition method chain, the conditions must be an and-wise junction of `ConditionalExpression` or `OrConditionSet` (known as conjunctive normal form) like the above example or an or-wise junction of `ConditionalExpression` or `AndConditionSet` (known as disjunctive normal form).
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 For more details about available conditions and condition sets, see the `ConditionBuilder` and `ConditionSetBuilder` page in the [Javadoc](https://javadoc.io/doc/com.scalar-labs/scalardb/latest/index.html) of the version of ScalarDB that you're using.
 
@@ -750,13 +726,11 @@ For more details about available conditions and condition sets, see the `Conditi
 
 `Put` is an operation to put a record specified by a primary key. The operation behaves as an upsert operation for a record, in which the operation updates the record if the record exists or inserts the record if the record does not exist.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 When you update an existing record, you need to read the record by using `Get` or `Scan` before using a `Put` operation. Otherwise, the operation will fail due to a conflict. This occurs because of the specification of ScalarDB to manage transactions properly. Instead of reading the record explicitly, you can enable implicit pre-read. For details, see [Enable implicit pre-read for `Put` operations](#enable-implicit-pre-read-for-put-operations).
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 You need to create a `Put` object first, and then you can execute the object by using the `transaction.put()` method as follows:
 
@@ -812,25 +786,21 @@ Put put =
         .build();
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 If you are certain that a record you are trying to mutate does not exist, you should not enable implicit pre-read for the `Put` operation for better performance. For example, if you load initial data, you should not enable implicit pre-read. A `Put` operation without implicit pre-read is faster than `Put` operation with implicit pre-read because the operation skips an unnecessary read.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 #### `Delete` operation
 
 `Delete` is an operation to delete a record specified by a primary key.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 When you delete a record, you don't have to read the record beforehand because implicit pre-read is always enabled for `Delete` operations.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 You need to create a `Delete` object first, and then you can execute the object by using the `transaction.delete()` method as follows:
 
@@ -857,13 +827,11 @@ You can write arbitrary conditions (for example, a bank account balance must be 
 
 When a `Put` or `Delete` operation includes a condition, the operation is executed only if the specified condition is met. If the condition is not met when the operation is executed, an exception called `UnsatisfiedConditionException` will be thrown.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 When you specify a condition in a `Put` operation, you need to read the record beforehand or enable implicit pre-read.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 
 ##### Conditions for `Put`
@@ -1030,13 +998,11 @@ For details about how to handle exceptions in ScalarDB, see [How to handle excep
 
 When executing a transaction, you will also need to handle exceptions properly.
 
-{% capture notice--warning %}
-**Attention**
+:::warning
 
 If you don't handle exceptions properly, you may face anomalies or data inconsistency.
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 The following sample code shows how to handle exceptions:
 
@@ -1156,13 +1122,11 @@ Although not illustrated in the sample code, the `resume()` API could also throw
 
 In the sample code, for `UnknownTransactionStatusException`, the transaction is not retried because the application must check if the transaction was successful to avoid potential duplicate operations. For other exceptions, the transaction is retried because the cause of the exception is transient or non-transient. If the cause of the exception is transient, the transaction may succeed if you retry it. However, if the cause of the exception is non-transient, the transaction will still fail even if you retry it. In such a case, you will exhaust the number of retries.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 In the sample code, the transaction is retried three times maximum and sleeps for 100 milliseconds before it is retried. But you can choose a retry policy, such as exponential backoff, according to your application requirements.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ## Investigating Consensus Commit transaction manager errors
 

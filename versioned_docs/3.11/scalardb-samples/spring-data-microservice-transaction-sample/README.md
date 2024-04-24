@@ -143,14 +143,12 @@ The sample application supports the following types of transactions:
 - Make a payment through the `repayment` endpoint of the Customer Service.
   - Reduces the amount the customer has spent.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 The `getCustomerInfo` endpoint works as a participant service endpoint when receiving a transaction ID from the coordinator.
 
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ## Configuration
 

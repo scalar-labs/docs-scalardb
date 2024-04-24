@@ -67,17 +67,15 @@ For participants, you can join a transaction by specifying the transaction ID as
 TwoPhaseCommitTransaction tx = manager.join("<TRANSACTION_ID>")
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 To get the transaction ID with `getId()`, you can specify the following:
 
 ```java
 tx.getId();
 ```
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### CRUD operations for the transaction
 
@@ -182,13 +180,11 @@ tx.commit();
 
 Similar to `prepare()`, if any of the Coordinator or participant processes fail to validate the transaction, you will need to call `rollback()` (or `abort()`) in all the Coordinator and participant processes. In addition, you can call `validate()` in the Coordinator and participant processes in parallel for better performance.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 When using the [Consensus Commit](configurations.md#use-consensus-commit-directly) transaction manager with `EXTRA_READ` set as the value for `scalar.db.consensus_commit.serializable_strategy` and `SERIALIZABLE` set as the value for `scalar.db.consensus_commit.isolation_level`, you need to call `validate()`. However, if you are not using Consensus Commit, specifying `validate()` will not have any effect.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Suspend and resume a transaction
 
@@ -211,17 +207,15 @@ manager.suspend(tx);
 TwoPhaseCommitTransaction tx1 = manager.resume("<TRANSACTION_ID>")
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 To get the transaction ID with `getId()`, you can specify the following:
 
 ```java
 tx.getId();
 ```
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 The following is an example of two services that have multiple endpoints:
 

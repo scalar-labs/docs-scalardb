@@ -6,9 +6,8 @@ This getting started tutorial explains how to configure your preferred database 
 **Warning**
 
 The electronic money application is simplified for this tutorial and isn't suitable for a production environment.
-{% endcapture %}
 
-<div class="notice--warning">{{ notice--warning | markdownify }}</div>
+:::
 
 ## Install a JDK
 
@@ -17,15 +16,13 @@ Because ScalarDB is written in Java, you must have one of the following Java Dev
 - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) LTS version (8, 11, or 17)
 - [OpenJDK](https://openjdk.org/install/) LTS version (8, 11, or 17)
 
-{% capture notice--info %}
-**Note**
+:::note
 
 We recommend using the LTS versions mentioned above, but other non-LTS versions may work.
 
 In addition, other JDKs should work with ScalarDB, but we haven't tested them.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ## Clone the `scalardb` repository
  
@@ -113,8 +110,7 @@ scalar.db.contact_points=<COSMOS_DB_FOR_NOSQL_URI>
 scalar.db.password=<COSMOS_DB_FOR_NOSQL_KEY>
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 You can use a primary key or a secondary key as the value for `scalar.db.password`.
 {% endcapture %}
@@ -154,13 +150,11 @@ The following instructions assume that you have properly installed and configure
 
 The **scalardb.properties** file in the `docs/getting-started-kotlin` directory holds database configurations for ScalarDB. The following is a basic configuration for JDBC databases. 
 
-{% capture notice--info %}
-**Note**
+:::note
 
 Be sure to uncomment the `scalar.db.contact_points` variable and change the value of the JDBC database you are using, and change the values for `scalar.db.username` and `scalar.db.password` as described.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ```properties
 # The JDBC database storage implementation is used for Consensus Commit.
@@ -210,13 +204,11 @@ Then, run the following command, replacing `<VERSION>` with the version of the S
 $ java -jar scalardb-schema-loader-<VERSION>.jar --config scalardb.properties --schema-file emoney.json --coordinator
 ```
 
-{% capture notice--info %}
-**Note**
+:::note
 
 The `--coordinator` option is specified because a table with `transaction` set to `true` exists in the schema. For details about configuring and loading a schema, see [ScalarDB Schema Loader](schema-loader.md).
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ## Execute transactions and retrieve data in the basic electronic money application
 
@@ -229,13 +221,11 @@ The application supports the following types of transactions:
 - Send funds between two accounts.
 - Get an account balance.
 
-{% capture notice--info %}
-**Note**
+:::note
 
 When you first execute a Gradle command, Gradle will automatically install the necessary libraries.
-{% endcapture %}
 
-<div class="notice--info">{{ notice--info | markdownify }}</div>
+:::
 
 ### Create an account with a balance
 
