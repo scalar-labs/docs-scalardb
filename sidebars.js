@@ -25,15 +25,15 @@ const sidebars = {
       id: 'index',
     },
     {
-      'type': 'category',
-      'label': 'About ScalarDB',
-      'collapsible': true,
-      'items': [
+      type: 'category',
+      label: 'About ScalarDB',
+      collapsible: true,
+      items: [
         'overview',
         'design',
         'scalardb-supported-databases',
         'requirements',
-        'scalardb-cluster',
+        'scalardb-cluster/index',
       ],
     },
     {
@@ -45,7 +45,7 @@ const sidebars = {
         'getting-started-with-scalardb-by-using-kotlin',
         'scalardb-analytics-postgresql/getting-started',
         'scalardb-cluster/getting-started-with-scalardb-cluster-overview',
-        'scalardb-cluster-dotnet-client-sdk',
+        'scalardb-cluster-dotnet-client-sdk/index',
       ],
     },
     {
@@ -171,7 +171,7 @@ const sidebars = {
           collapsible: true,
           items: [
             'helm-charts/getting-started-scalar-helm-charts',
-            'getting-started-scalardb-cluster-auditor-tls',
+            'helm-charts/getting-started-scalardb-cluster-tls',
             'helm-charts/getting-started-scalardb-analytics-postgresql',
             'helm-charts/configure-custom-values-file',
             'helm-charts/how-to-deploy-scalar-products',
@@ -205,7 +205,6 @@ const sidebars = {
                 'scalar-kubernetes/K8sLogCollectionGuide',
               ],
             },
-            'scalar-kubernetes/manage-kubernetes',
             {
               type: 'category',
               label: 'Backup and Restore Guides',
