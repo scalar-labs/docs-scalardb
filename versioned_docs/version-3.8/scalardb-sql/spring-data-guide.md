@@ -234,12 +234,12 @@ public interface GroupRepository
 
 As you see in the above example, Spring Data JDBC's @Id annotation doesn't support multiple columns. So, if a table has a primary key consisting of multiple columns, users can't use the following APIs and may need to write Scalar SQL DB query in @Query annotation
 
-- findById()
-- existsById()
-- update(T entity)
-- delete(T entity)
-- deleteById(ID id)
-- deleteAllById(Iterable<? extends ID> ids)
+- `findById()`
+- `existsById()`
+- `update(T entity)`
+- `delete(T entity)`
+- `deleteById(ID id)`
+- `deleteAllById(Iterable<? extends ID> ids)`
 
 ## Advanced features
 
