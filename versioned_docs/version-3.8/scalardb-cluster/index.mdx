@@ -331,19 +331,3 @@ The configurations for Client are as follows:
 |-------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
 | scalar.db.transaction_manager | Specify `cluster`.                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | -       |
 | scalar.db.contact_points      | The contact point of the cluster. If you use the `indirect` client mode, specify the IP address of the load balancer in front of your cluster nodes using the format `indirect:<the load balancer IP address>`. If you use the `direct-kubernetes` client mode, specify the namespace name (optional) and the name of the endpoint to get the membership information using the format `direct-kubernetes:<namespace name>/<endpoint name>` or just `direct-kubernetes:<endpoint name>`.  |         |
-
-<!-- commented out for now since it's private
-## Development
-
-### Pre-commit hook
-
-This project uses [pre-commit](https://pre-commit.com/) to automate code format and so on as much as possible. Please [install pre-commit](https://pre-commit.com/#installation) and the git hook script as follows.
-
-```
-$ ls -a .pre-commit-config.yaml
-.pre-commit-config.yaml
-$ pre-commit install
-```
-
-The code formatter is automatically executed when committing files. A commit will fail and be formatted by the formatter when any invalid code format is detected. Try to commit the change again.
--->
