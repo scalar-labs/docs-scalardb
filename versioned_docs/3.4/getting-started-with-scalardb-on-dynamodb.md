@@ -32,4 +32,4 @@ scalar.db.password=<AWS_ACCESS_SECRET_KEY>
 scalar.db.storage=dynamo
 ```
 
-Please follow [Getting Started with Scalar DB](getting-started-with-scalardb.md) to run the application.
+Please follow [Getting Started with Scalar DB](getting-started-with-scalardb.mdx) to run the application.

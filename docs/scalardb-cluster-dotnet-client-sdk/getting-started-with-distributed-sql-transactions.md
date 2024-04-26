@@ -8,7 +8,7 @@ Although we recommend using asynchronous methods, as in the following examples, 
 
 :::
 
-For details about distributed non-SQL transactions, see [Getting Started with Distributed Transactions in the ScalarDB Cluster .NET Client SDK](getting-started-with-distributed-transactions.md).
+For details about distributed non-SQL transactions, see [Getting Started with Distributed Transactions in the ScalarDB Cluster .NET Client SDK](getting-started-with-distributed-transactions.mdx).
 
 ## Get a transaction manager
 

@@ -138,15 +138,15 @@ The code formatter is automatically executed when commiting files. A commit will
 
 ## Docs
 
-- [Getting Started with ScalarDB SQL](getting-started-with-sql.md)
-- [Getting Started with ScalarDB JDBC](getting-started-with-jdbc.md)
-- [ScalarDB SQL API Guide](sql-api-guide.md)
-- [ScalarDB JDBC Guide](jdbc-guide.md)
-- [ScalarDB SQL Grammar](grammar.md)
-- [ScalarDB SQL Command Line interface](command-line-interface.md)
-- [ScalarDB SQL Server](sql-server.md)
-- [ScalarDB SQL Configurations](configurations.md)
-- [Guide of Spring Data JDBC for ScalarDB](spring-data-guide.md)
+- [Getting Started with ScalarDB SQL](getting-started-with-sql.mdx)
+- [Getting Started with ScalarDB JDBC](getting-started-with-jdbc.mdx)
+- [ScalarDB SQL API Guide](sql-api-guide.mdx)
+- [ScalarDB JDBC Guide](jdbc-guide.mdx)
+- [ScalarDB SQL Grammar](grammar.mdx)
+- [ScalarDB SQL Command Line interface](command-line-interface.mdx)
+- [ScalarDB SQL Server](sql-server.mdx)
+- [ScalarDB SQL Configurations](configurations.mdx)
+- [Guide of Spring Data JDBC for ScalarDB](spring-data-guide.mdx)
 - Javadoc
   - [scalardb-sql](https://scalar-labs.github.io/scalardb-sql/javadoc/core/index.html) - ScalarDB SQL: A SQL layer for ScalarDB
   - [scalardb-direct-mode](https://scalar-labs.github.io/scalardb-sql/javadoc/direct-mode/index.html) - ScalarDB SQL Direct mode

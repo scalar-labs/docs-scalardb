@@ -16,7 +16,7 @@ The easiest way to take a transactionally-consistent backup for Scalar DB on Cas
 
 To minimize mistakes when doing backup and restore operations, it is recommended to use [Cassy](https://github.com/scalar-labs/cassy).
 Cassy is also integrated with `scalar-admin` so it can issue a pause request to the application of a Cassandra cluster.
-Please see [the doc](https://github.com/scalar-labs/cassy/blob/master/docs/getting-started.md#take-cluster-wide-consistent-backups) for more details.
+Please see [the doc](https://github.com/scalar-labs/cassy/blob/master/docs/getting-started.mdx#take-cluster-wide-consistent-backups) for more details.
 
 ## JDBC databases
 

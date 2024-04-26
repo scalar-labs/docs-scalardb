@@ -144,9 +144,9 @@ try {
 }
 ```
 
-Please see also [Scalar DB SQL API Guide](sql-api-guide.md) for more details on exception handling.
+Please see also [Scalar DB SQL API Guide](sql-api-guide.mdx) for more details on exception handling.
 
 ## References
 
 - [Java JDBC API](https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/)
-- [Scalar DB SQL API Guide](sql-api-guide.md)
+- [Scalar DB SQL API Guide](sql-api-guide.mdx)

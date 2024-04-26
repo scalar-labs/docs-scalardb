@@ -27,7 +27,7 @@ $ docker run --rm -it -v <your local configuration file>:/database.properties gh
 ```
 
 You can use the same configuration of Scalar DB SQL.
-Please refer to [Scalar DB SQL Configurations](configurations.md) for more details on the configurations of this tool.
+Please refer to [Scalar DB SQL Configurations](configurations.mdx) for more details on the configurations of this tool.
 
 ### From executable jar
 

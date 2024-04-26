@@ -8,7 +8,7 @@ This section explains how to execute administrative operations programmatically 
 
 :::note
 
-Another method for executing administrative operations is to use [Schema Loader](schema-loader.md).
+Another method for executing administrative operations is to use [Schema Loader](schema-loader.mdx).
 
 :::
 
@@ -23,7 +23,7 @@ TransactionFactory transactionFactory = TransactionFactory.create("<CONFIGURATIO
 DistributedTransactionAdmin admin = transactionFactory.getTransactionAdmin();
 ```
 
-For details about configurations, see [ScalarDB Configurations](configurations.md).
+For details about configurations, see [ScalarDB Configurations](configurations.mdx).
 
 After you have executed all administrative operations, you should close the `DistributedTransactionAdmin` instance as follows:
 
@@ -119,7 +119,7 @@ TableMetadata tableMetadata =
         .build();
 ```
 
-For details about the data model of ScalarDB, see [Data Model](design.md#data-model).
+For details about the data model of ScalarDB, see [Data Model](design.mdx#data-model).
 
 Then, create a table as follows:
 
@@ -1015,7 +1015,7 @@ In the sample code, the transaction is retried three times maximum and sleeps fo
 
 To investigate errors when using the Consensus Commit transaction manager, you can enable a configuration that will return table metadata augmented with transaction metadata columns, which can be helpful when investigating transaction-related issues. This configuration, which is only available when troubleshooting the Consensus Commit transaction manager, enables you to see transaction metadata column details for a given table by using the `DistributedTransactionAdmin.getTableMetadata()` method.
 
-By adding the following configuration, `Get` and `Scan` operations results will contain [transaction metadata](schema-loader.md#internal-metadata-for-consensus-commit):
+By adding the following configuration, `Get` and `Scan` operations results will contain [transaction metadata](schema-loader.mdx#internal-metadata-for-consensus-commit):
 
 ```properties
 # By default, this configuration is set to `false`.

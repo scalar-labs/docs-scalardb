@@ -146,7 +146,7 @@ To avoid frequent errors caused internally by [`SQLITE_BUSY`](https://www.sqlite
 
 ScalarDB supports using multiple storage implementations simultaneously. You can use multiple storages by specifying `multi-storage` as the value for the `scalar.db.storage` property.
 
-For details about using multiple storages, see [Multi-Storage Transactions](multi-storage-transactions.md).
+For details about using multiple storages, see [Multi-Storage Transactions](multi-storage-transactions.mdx).
 
 ### Use Consensus Commit through ScalarDB Cluster
 
@@ -158,7 +158,7 @@ For details about client configurations, see the ScalarDB Cluster [client config
 
 By enabling the cross-partition scan option below, the `Scan` operation can retrieve all records across partitions. In addition, you can specify arbitrary conditions and orderings in the cross-partition `Scan` operation by enabling `cross_partition_scan.filtering` and `cross_partition_scan.ordering`, respectively. Currently, the cross-partition scan with filtering and ordering is available only for JDBC databases. To enable filtering and ordering, `scalar.db.cross_partition_scan.enabled` must be set to `true`.
 
-For details on how to use cross-partition scan, see [Scan operation](./api-guide.md#scan-operation).
+For details on how to use cross-partition scan, see [Scan operation](./api-guide.mdx#scan-operation).
 
 :::warning
 

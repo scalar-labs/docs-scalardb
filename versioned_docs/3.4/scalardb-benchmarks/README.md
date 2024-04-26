@@ -22,7 +22,7 @@ The benchmark uses Kelpie, which is a simple yet general framework for performin
 
 This benchmark requires the followings:
 - A client to execute this benchmark
-- A target database (See [here](https://github.com/scalar-labs/scalardb/blob/master/docs/scalardb-supported-databases.md) for supported databases)
+- A target database (See [here](https://github.com/scalar-labs/scalardb/blob/master/docs/scalardb-supported-databases.mdx) for supported databases)
 
 ### Build
 
@@ -32,7 +32,7 @@ This benchmark requires the followings:
 
 ### Create tables
 
-Before loading initial data, the tables must be defined using [ScalarDB Schema Loader](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader.md). Get the latest schema loader [here](https://github.com/scalar-labs/scalardb/releases) and execute it with the workload-specific schema file. For setting ScalarDB properties, see also the related documents [here](https://github.com/scalar-labs/scalardb#docs).
+Before loading initial data, the tables must be defined using [ScalarDB Schema Loader](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader.mdx). Get the latest schema loader [here](https://github.com/scalar-labs/scalardb/releases) and execute it with the workload-specific schema file. For setting ScalarDB properties, see also the related documents [here](https://github.com/scalar-labs/scalardb#docs).
 
 For example, execute the following command with `tpcc-schema.json` to create tables for TPC-C benchmark.
 

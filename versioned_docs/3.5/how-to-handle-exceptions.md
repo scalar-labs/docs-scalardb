@@ -91,7 +91,7 @@ You may want to create a transaction status table and update it transactionally 
 
 ## For Two-phase Commit Transactions
 
-You need to handle more exceptions when you use [Two-phase Commit Transactions](two-phase-commit-transactions.md) because you additionally need to call the `prepare()` API (and the `validate()` API when required).
+You need to handle more exceptions when you use [Two-phase Commit Transactions](two-phase-commit-transactions.mdx) because you additionally need to call the `prepare()` API (and the `validate()` API when required).
 
 The `prepare()` API could throw `PreparationException` and `PreparationConflictException`.
 If you catch `PreparationException`, like the `CrudException` case, you should cancel the transaction or retry the transaction after the failure/error is fixed.
@@ -103,6 +103,6 @@ If you catch `ValidationConflictException`, like the `CrudConflictException` cas
 
 ## References
 
-- [Getting Started with Scalar DB](getting-started.md)
-- [Two-phase Commit Transactions](two-phase-commit-transactions.md)
+- [Getting Started with Scalar DB](getting-started.mdx)
+- [Two-phase Commit Transactions](two-phase-commit-transactions.mdx)
 - [Microservice Transaction Sample](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transaction-sample)

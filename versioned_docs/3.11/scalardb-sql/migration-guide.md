@@ -37,11 +37,11 @@ BM===>AM
    - Follow the administration guide of your database.
 4. Set up a ScalarDB environment.
    - Prepare a configuration file so that ScalarDB can access target databases.
-   - For details about ScalarDB configurations, see [ScalarDB Configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md).
+   - For details about ScalarDB configurations, see [ScalarDB Configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.mdx).
 5. Import your database to ScalarDB.
    - Prepare an import schema file that defines target schemas and tables. The schemas and tables will be mapped to ScalarDB namespaces and tables, respectively. Note that "schema" is a synonym for "database" in some database systems.
    - Run the ScalarDB Schema Loader with the import option, the ScalarDB configuration file that you created, and the schema file that you prepared.
-   - For details on how to use Schema Loader, see [Run Schema Loader for importing existing tables](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader-import.md#run-schema-loader-for-importing-existing-tables).
+   - For details on how to use Schema Loader, see [Run Schema Loader for importing existing tables](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader-import.mdx#run-schema-loader-for-importing-existing-tables).
 6. Switch your application and check the behavior.
    - Now, you can switch your application to the ScalarDB-based application.
 
@@ -49,11 +49,11 @@ BM===>AM
 
 Before starting the migration, check the following questions. If the answer to any of these questions is "No", you must address them before proceeding with the migration.
 
-- Are your target database and version one of the [supported relational databases (called JDBC databases in ScalarDB) and versions](https://github.com/scalar-labs/scalardb/blob/master/docs/scalardb-supported-databases.md#jdbc-databases)?
-- Do you have a fully privileged account that can manage the target database? For details, see [Privileges to access the underlying databases](https://github.com/scalar-labs/scalardb/blob/master/docs/requirements.md#privileges-to-access-the-underlying-databases).
+- Are your target database and version one of the [supported relational databases (called JDBC databases in ScalarDB) and versions](https://github.com/scalar-labs/scalardb/blob/master/docs/scalardb-supported-databases.mdx#jdbc-databases)?
+- Do you have a fully privileged account that can manage the target database? For details, see [Privileges to access the underlying databases](https://github.com/scalar-labs/scalardb/blob/master/docs/requirements.mdx#privileges-to-access-the-underlying-databases).
 - Do all target tables have primary keys?
-- Is the data type of each column supported in ScalarDB? For supported data types and how they are mapped to ScalarDB data types, see [Data-type mapping from JDBC databases to ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader-import.md#data-type-mapping-from-jdbc-databases-to-scalardb).
-- Do the functionality and grammar of the queries in your application comply with the [ScalarDB SQL specifications](./grammar.md)? Or, for non-compliant queries, can you re-write them for ScalarDB? For examples of re-writes, see [How to migrate your application](#how-to-migrate-your-application).
+- Is the data type of each column supported in ScalarDB? For supported data types and how they are mapped to ScalarDB data types, see [Data-type mapping from JDBC databases to ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader-import.mdx#data-type-mapping-from-jdbc-databases-to-scalardb).
+- Do the functionality and grammar of the queries in your application comply with the [ScalarDB SQL specifications](./grammar.mdx)? Or, for non-compliant queries, can you re-write them for ScalarDB? For examples of re-writes, see [How to migrate your application](#how-to-migrate-your-application).
 - After migrating your applications and databases into ScalarDB applications and ScalarDB-managed databases, respectively, can you stop accessing the databases directly? In other words, is it acceptable for you to always access the databases through ScalarDB?
 
 ## How to migrate your application
@@ -66,13 +66,13 @@ Depending on your application environment, you may need to migrate your applicat
 
 ### Change connection settings
 
-If your application is based on Java, you can use the ScalarDB JDBC driver when migrating. For details on how to add dependencies for the ScalarDB JDBC driver and rewrite the connection URL, see the [ScalarDB JDBC Guide](./jdbc-guide.md).
+If your application is based on Java, you can use the ScalarDB JDBC driver when migrating. For details on how to add dependencies for the ScalarDB JDBC driver and rewrite the connection URL, see the [ScalarDB JDBC Guide](./jdbc-guide.mdx).
 
-If your application is not based on Java, you can connect ScalarDB and issue SQL via gRPC. For details, see [ScalarDB Cluster SQL gRPC API Guide](https://github.com/scalar-labs/scalardb-cluster/blob/main/docs/scalardb-cluster-sql-grpc-api-guide.md).
+If your application is not based on Java, you can connect ScalarDB and issue SQL via gRPC. For details, see [ScalarDB Cluster SQL gRPC API Guide](https://github.com/scalar-labs/scalardb-cluster/blob/main/docs/scalardb-cluster-sql-grpc-api-guide.mdx).
 
 ### Modify SQL statements
 
-You may need to change the SQL statements in your application due to the differences in SQL grammar. Typical examples are as follows. For more details, see [ScalarDB SQL Grammar](./grammar.md).
+You may need to change the SQL statements in your application due to the differences in SQL grammar. Typical examples are as follows. For more details, see [ScalarDB SQL Grammar](./grammar.mdx).
 
 - `JOIN` queries
   - ScalarDB supports only `JOIN` queries in the style of writing the table to be joined and the condition in the `FROM` clause.
@@ -98,12 +98,12 @@ Although ScalarDB SQL does not provide some functionalities, such as aggregate q
 
 ## Limitations
 
-Due to the difference in data types, ScalarDB will throw an error when writing data larger than the maximum size of the column in the underlying database, even if the size is acceptable for the ScalarDB data type. Conversely, in a few types, the data in the underlying database may be larger than the maximum size in ScalarDB. For details, see [Data-type mapping from JDBC databases to ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader-import.md#data-type-mapping-from-jdbc-databases-to-scalardb).
+Due to the difference in data types, ScalarDB will throw an error when writing data larger than the maximum size of the column in the underlying database, even if the size is acceptable for the ScalarDB data type. Conversely, in a few types, the data in the underlying database may be larger than the maximum size in ScalarDB. For details, see [Data-type mapping from JDBC databases to ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader-import.mdx#data-type-mapping-from-jdbc-databases-to-scalardb).
 
 ## References
 
-- [Supported Databases](https://github.com/scalar-labs/scalardb/blob/master/docs/scalardb-supported-databases.md)
-- [ScalarDB SQL API Guide](./sql-api-guide.md)
-- [ScalarDB JDBC Guide](./jdbc-guide.md)
-- [ScalarDB SQL Grammar](./grammar.md)
-- [Importing Existing Tables to ScalarDB by Using ScalarDB Schema Loader](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader-import.md)
+- [Supported Databases](https://github.com/scalar-labs/scalardb/blob/master/docs/scalardb-supported-databases.mdx)
+- [ScalarDB SQL API Guide](./sql-api-guide.mdx)
+- [ScalarDB JDBC Guide](./jdbc-guide.mdx)
+- [ScalarDB SQL Grammar](./grammar.mdx)
+- [Importing Existing Tables to ScalarDB by Using ScalarDB Schema Loader](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader-import.mdx)

@@ -205,7 +205,7 @@ helm uninstall scalardb-cluster postgresql-scalardb-cluster
 
 To get familiar with other use cases for ScalarDB Cluster, try the following tutorials:
 
-* [Getting Started with ScalarDB Cluster](getting-started-with-scalardb-cluster.md)
-* [Getting Started with ScalarDB Cluster GraphQL](getting-started-with-scalardb-cluster-graphql.md)
-* [Getting Started with ScalarDB Cluster SQL via JDBC](getting-started-with-scalardb-cluster-sql-jdbc.md)
-* [Getting Started with ScalarDB Cluster SQL via Spring Data JDBC for ScalarDB](getting-started-with-scalardb-cluster-sql-spring-data-jdbc.md)
+* [Getting Started with ScalarDB Cluster](getting-started-with-scalardb-cluster.mdx)
+* [Getting Started with ScalarDB Cluster GraphQL](getting-started-with-scalardb-cluster-graphql.mdx)
+* [Getting Started with ScalarDB Cluster SQL via JDBC](getting-started-with-scalardb-cluster-sql-jdbc.mdx)
+* [Getting Started with ScalarDB Cluster SQL via Spring Data JDBC for ScalarDB](getting-started-with-scalardb-cluster-sql-spring-data-jdbc.mdx)

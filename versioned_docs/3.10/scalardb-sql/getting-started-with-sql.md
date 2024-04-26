@@ -2,7 +2,7 @@
 
 This document briefly explains how you can get started with ScalarDB SQL with a simple electronic money application.
 Here we assume Oracle JDK 8 and the underlying storage/database such as Cassandra are properly configured.
-Please see [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.md) for the details of how to configure the underlying storage/database.
+Please see [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.mdx) for the details of how to configure the underlying storage/database.
 
 From this point forward, we will assume that **scalardb.properties** that holds the configuration for ScalarDB exists.
 
@@ -210,9 +210,9 @@ $ ./gradlew run --args="-action getBalance -id merchant1"
 
 These are just simple examples of how ScalarDB SQL is used. For more information, please take a look at the following documents.
 
-* [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.md)
-* [ScalarDB SQL API Guide](sql-api-guide.md)
-* [ScalarDB SQL Grammar](grammar.md)
-* [ScalarDB SQL Command Line interface](command-line-interface.md)
-* [ScalarDB SQL Server](sql-server.md)
-* [ScalarDB SQL Configurations](configurations.md)
+* [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.mdx)
+* [ScalarDB SQL API Guide](sql-api-guide.mdx)
+* [ScalarDB SQL Grammar](grammar.mdx)
+* [ScalarDB SQL Command Line interface](command-line-interface.mdx)
+* [ScalarDB SQL Server](sql-server.mdx)
+* [ScalarDB SQL Configurations](configurations.mdx)

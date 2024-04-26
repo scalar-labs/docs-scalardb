@@ -2,7 +2,7 @@
 
 Schema Importer is a CLI tool for automatically configuring PostgreSQL. By using this tool, your PostgreSQL database can have identical database objects, such as namespaces and tables, as your ScalarDB instance.
 
-Schema Importer reads the ScalarDB configuration file, retrieves the schemas of the tables defined in ScalarDB, and creates the corresponding foreign data wrapper external tables and views in that order. For more information, refer to [Getting Started with ScalarDB Analytics with PostgreSQL](getting-started.md).
+Schema Importer reads the ScalarDB configuration file, retrieves the schemas of the tables defined in ScalarDB, and creates the corresponding foreign data wrapper external tables and views in that order. For more information, refer to [Getting Started with ScalarDB Analytics with PostgreSQL](getting-started.mdx).
 
 ## Build Schema Importer
 

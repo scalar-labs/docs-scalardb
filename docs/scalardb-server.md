@@ -81,7 +81,7 @@ scalar.db.consensus_commit.isolation_level=SNAPSHOT
 scalar.db.consensus_commit.serializable_strategy=
 ```
 
-For details about transaction manager configurations, see [ScalarDB Configurations](configurations.md).
+For details about transaction manager configurations, see [ScalarDB Configurations](configurations.mdx).
 
 ## Start ScalarDB Server
 
@@ -161,5 +161,5 @@ Please see the following sample to learn ScalarDB Server further:
 
 Please also see the following documents to learn how to deploy ScalarDB Server:
 
-- [Deploy ScalarDB Server on AWS](https://github.com/scalar-labs/scalar-kubernetes/blob/master/docs/ManualDeploymentGuideScalarDBServerOnEKS.md)
-- [Deploy ScalarDB Server on Azure](https://github.com/scalar-labs/scalar-kubernetes/blob/master/docs/ManualDeploymentGuideScalarDBServerOnAKS.md)
+- [Deploy ScalarDB Server on AWS](https://github.com/scalar-labs/scalar-kubernetes/blob/master/docs/ManualDeploymentGuideScalarDBServerOnEKS.mdx)
+- [Deploy ScalarDB Server on Azure](https://github.com/scalar-labs/scalar-kubernetes/blob/master/docs/ManualDeploymentGuideScalarDBServerOnAKS.mdx)

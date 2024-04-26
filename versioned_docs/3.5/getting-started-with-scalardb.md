@@ -44,7 +44,7 @@ $ cd scalardb/docs/getting-started
 
 Select your database, and follow the instructions to configure it for ScalarDB.
 
-For a list of databases that ScalarDB supports, see [Supported Databases](scalardb-supported-databases.md).
+For a list of databases that ScalarDB supports, see [Supported Databases](scalardb-supported-databases.mdx).
 
 <div id="tabset-1">
 <div class="tab">
@@ -143,7 +143,7 @@ scalar.db.password=<SECRET_ACCESS_KEY>
 </div>
 <div id="JDBC_databases" class="tabcontent" markdown="1">
 
-Confirm that you have a JDBC database installed. For a list of supported JDBC databases, see [Supported Databases](scalardb-supported-databases.md).
+Confirm that you have a JDBC database installed. For a list of supported JDBC databases, see [Supported Databases](scalardb-supported-databases.mdx).
 
 ### Configure ScalarDB
 {:.no_toc}
@@ -178,7 +178,7 @@ scalar.db.password=<PASSWORD>
 
 ## Create and load the database schema
 
-You need to define the database schema (the method in which the data will be organized) in the application. For details about the supported data types, see [Data type mapping between ScalarDB and other databases](schema-loader.md#data-type-mapping-between-scalardb-and-the-other-databases).
+You need to define the database schema (the method in which the data will be organized) in the application. For details about the supported data types, see [Data type mapping between ScalarDB and other databases](schema-loader.mdx#data-type-mapping-between-scalardb-and-the-other-databases).
 
 For this tutorial, create a file named **emoney.json** in the `scalardb/docs/getting-started` directory. Then, add the following JSON code to define the schema.
 
@@ -208,7 +208,7 @@ $ java -jar scalardb-schema-loader-<VERSION>.jar --config scalardb.properties --
 
 :::note
 
-The `--coordinator` option is specified because a table with `transaction` set to `true` exists in the schema. For details about configuring and loading a schema, see [ScalarDB Schema Loader](schema-loader.md).
+The `--coordinator` option is specified because a table with `transaction` set to `true` exists in the schema. For details about configuring and loading a schema, see [ScalarDB Schema Loader](schema-loader.mdx).
 
 :::
 

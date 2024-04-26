@@ -146,7 +146,7 @@ scalar.db.sql.default_transaction_mode=TRANSACTION
 
 ## References
 
-* [Getting Started with ScalarDB SQL](getting-started-with-sql.md)
-* [Getting Started with ScalarDB JDBC](getting-started-with-jdbc.md)
-* [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.md)
-* [ScalarDB SQL Configurations](configurations.md)
+* [Getting Started with ScalarDB SQL](getting-started-with-sql.mdx)
+* [Getting Started with ScalarDB JDBC](getting-started-with-jdbc.mdx)
+* [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.mdx)
+* [ScalarDB SQL Configurations](configurations.mdx)

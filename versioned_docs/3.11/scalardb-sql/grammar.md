@@ -55,7 +55,7 @@ CREATE NAMESPACE [IF NOT EXISTS] <namespace name> [WITH creation_options]
 creation_options: <option name>=<option value> [AND <option name>=<option value>] ...
 ```
 
-For details about `creation_options`, see [Creation options](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#creation-options).
+For details about `creation_options`, see [Creation options](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.mdx#creation-options).
 
 #### Examples
 
@@ -95,7 +95,7 @@ CreateNamespaceStatement statement3 =
 
 The `CREATE TABLE` command creates a table.
 
-For details about the ScalarDB data model, see [ScalarDB Design Document](https://github.com/scalar-labs/scalardb/blob/master/docs/design.md).
+For details about the ScalarDB data model, see [ScalarDB Design Document](https://github.com/scalar-labs/scalardb/blob/master/docs/design.mdx).
 
 #### Grammar
 
@@ -569,7 +569,7 @@ order: ASC | DESC
   - The `join_predicate`s must contain all primary key columns or a secondary index column from the left table.
   - The `WHERE` predicates and the `ORDER BY` clause can only specify columns from the table specified in the `RIGHT OUTER JOIN` clause.
 
-For details about retrieving data from a database in ScalarDB, see [Get operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#get-operation) and [Scan operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#scan-operation).
+For details about retrieving data from a database in ScalarDB, see [Get operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.mdx#get-operation) and [Scan operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.mdx#scan-operation).
 
 #### Examples
 
@@ -762,7 +762,7 @@ SelectStatement statement4 =
 
 ### SELECT (with cross-partition scan)
 
-By enabling the cross-partition scan option, the `SELECT` command can retrieve all records across partitions without specifying the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.md).
+By enabling the cross-partition scan option, the `SELECT` command can retrieve all records across partitions without specifying the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.mdx#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.mdx).
 
 :::warning
 
@@ -788,7 +788,7 @@ identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column na
 
 For details about the join clause and related examples, see [SELECT](#select).
 
-For details about scanning data from a database in ScalarDB, see [Scan operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#scan-operation).
+For details about scanning data from a database in ScalarDB, see [Scan operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.mdx#scan-operation).
 
 #### Examples
 
@@ -828,7 +828,7 @@ SelectStatement statement2 =
 
 ### SELECT (with cross-partition scan filtering and ordering)
 
-By enabling the cross-partition scan option with filtering and ordering, the `SELECT` command can flexibly retrieve records across partitions with arbitrary conditions and orderings. Currently, the options are valid only for JDBC databases. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.md).
+By enabling the cross-partition scan option with filtering and ordering, the `SELECT` command can flexibly retrieve records across partitions with arbitrary conditions and orderings. Currently, the options are valid only for JDBC databases. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.mdx#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.mdx).
 
 #### Grammar
 
@@ -871,7 +871,7 @@ order: ASC | DESC
 
 For details about the join clause and related examples, see [SELECT](#select).
 
-For details about scanning data from a database in ScalarDB, see [Scan operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#scan-operation).
+For details about scanning data from a database in ScalarDB, see [Scan operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.mdx#scan-operation).
 
 #### Examples
 
@@ -1258,7 +1258,7 @@ UpdateStatement statement2 =
 
 ### UPDATE (with cross-partition scan)
 
-By enabling the cross-partition scan option, the `UPDATE` command can update all records across partitions without specifying the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.md).
+By enabling the cross-partition scan option, the `UPDATE` command can update all records across partitions without specifying the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.mdx#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.mdx).
 
 :::warning
 
@@ -1315,7 +1315,7 @@ UpdateStatement statement =
 
 ### UPDATE (with cross-partition scan filtering)
 
-By enabling the cross-partition scan option with filtering, the `UPDATE` command can flexibly update records across partitions with arbitrary conditions. Currently, the option is valid only for JDBC databases. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.md).
+By enabling the cross-partition scan option with filtering, the `UPDATE` command can flexibly update records across partitions with arbitrary conditions. Currently, the option is valid only for JDBC databases. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.mdx#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.mdx).
 
 #### Grammar
 
@@ -1530,7 +1530,7 @@ DeleteStatement statement2 =
 
 ### DELETE (with cross-partition scan)
 
-By enabling the cross-partition scan option, the `DELETE` command can delete all records across partitions without specifying the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.md).
+By enabling the cross-partition scan option, the `DELETE` command can delete all records across partitions without specifying the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.mdx#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.mdx).
 
 :::warning
 
@@ -1579,7 +1579,7 @@ DeleteStatement statement = StatementBuilder.deleteFrom("ns", "tbl").build();
 
 ### DELETE (with cross-partition scan filtering)
 
-By enabling the cross-partition scan option with filtering, the `DELETE` command can flexibly delete records across partitions with arbitrary conditions. Currently, the option is valid only for JDBC databases. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.md).
+By enabling the cross-partition scan option with filtering, the `DELETE` command can flexibly delete records across partitions with arbitrary conditions. Currently, the option is valid only for JDBC databases. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.mdx#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.mdx).
 
 #### Grammar
 

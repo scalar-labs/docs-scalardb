@@ -9,7 +9,7 @@ You'll be using the same sample application as found in the [Sample application 
   - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) LTS version (8, 11, or 17)
   - [OpenJDK](https://openjdk.org/install/) LTS version (8, 11, or 17)
 - ScalarDB Cluster running on a Kubernetes cluster
-  - We assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.md).
+  - We assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.mdx).
 
 :::note
 
@@ -100,12 +100,12 @@ scalar.db.sql.cluster_mode.contact_points=indirect:localhost
 
 To connect to ScalarDB Cluster, you need to specify `cluster` for the `scalar.db.sql.connection_mode` property.
 In addition, you will use the `indirect` client mode and connect to the service resource of Envoy in this tutorial.
-For details about the client modes, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.md).
+For details about the client modes, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.mdx).
 
 ## Step 4. Load a schema
 
 To load a schema via ScalarDB Cluster SQL, you need to use the dedicated SQL CLI for ScalarDB Cluster (SQL CLI for Cluster).
-Using the SQL CLI for Cluster is basically the same as using the [ScalarDB SQL Command Line Interface](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/command-line-interface.md) except the name of the JAR file is different.
+Using the SQL CLI for Cluster is basically the same as using the [ScalarDB SQL Command Line Interface](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/command-line-interface.mdx) except the name of the JAR file is different.
 You can download the SQL CLI for Cluster from [Releases](https://github.com/scalar-labs/scalardb-cluster/releases/tag/v3.11.1).
 After downloading the JAR file, you can run SQL CLI for Cluster with the following command:
 
@@ -273,15 +273,15 @@ To learn more about Spring Data JDBC for ScalarDB, you can check the [source cod
 
 If you have not tried the other ScalarDB Cluster tutorials, we encourage you to read the following:
 
-* [Getting Started with ScalarDB Cluster](getting-started-with-scalardb-cluster.md)
-* [Getting Started with ScalarDB Cluster GraphQL](getting-started-with-scalardb-cluster-graphql.md)
-* [Getting Started with ScalarDB Cluster SQL via JDBC](getting-started-with-scalardb-cluster-sql-jdbc.md)
+* [Getting Started with ScalarDB Cluster](getting-started-with-scalardb-cluster.mdx)
+* [Getting Started with ScalarDB Cluster GraphQL](getting-started-with-scalardb-cluster-graphql.mdx)
+* [Getting Started with ScalarDB Cluster SQL via JDBC](getting-started-with-scalardb-cluster-sql-jdbc.mdx)
 
 For details about developing applications that use ScalarDB Cluster with the Java API, refer to the following:
 
-* [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.md)
+* [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.mdx)
 
 For details about the ScalarDB Cluster gRPC API, refer to the following:
 
-* [ScalarDB Cluster gRPC API Guide](scalardb-cluster-grpc-api-guide.md)
-* [ScalarDB Cluster SQL gRPC API Guide](scalardb-cluster-sql-grpc-api-guide.md)
+* [ScalarDB Cluster gRPC API Guide](scalardb-cluster-grpc-api-guide.mdx)
+* [ScalarDB Cluster SQL gRPC API Guide](scalardb-cluster-sql-grpc-api-guide.mdx)

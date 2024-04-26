@@ -18,7 +18,7 @@ This tutorial describes how to create a sample application for the same use case
 In this tutorial, you will build an application that uses both Cassandra and MySQL.
 Using the Multi-storage Transaction feature of ScalarDB, you can execute a transaction that spans both Cassandra and MySQL.
 Please note that application-specific error handling, authentication processing, and similar functions are not included in the sample application, as the focus is on demonstrating the use of ScalarDB.
-For detailed information on exception handling in ScalarDB, see [Handle SQLException](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#handle-exceptions).
+For detailed information on exception handling in ScalarDB, see [Handle SQLException](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.mdx#handle-exceptions).
 
 ![Overview](images/overview.png)
 
@@ -134,7 +134,7 @@ scalar.db.multi_storage.default_storage=cassandra
 - `scalar.db.multi_storage.namespace_mapping`: This configuration maps the namespaces to the storage. In this sample application, operations for `customer` namespace tables are mapped to the `mysql` storage and operations for `order` namespace tables are mapped to the `cassandra` storage. You can also define which storage is mapped for the `coordinator` namespace that is used in Consensus Commit transactions.
 - `scalar.db.multi_storage.default_storage`: This configuration sets the default storage that is used for operations on unmapped namespace tables.
 
-For details, please see [Configuration - Multi-storage Transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/multi-storage-transactions.md#configuration).
+For details, please see [Configuration - Multi-storage Transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/multi-storage-transactions.mdx#configuration).
 
 ## Setup
 

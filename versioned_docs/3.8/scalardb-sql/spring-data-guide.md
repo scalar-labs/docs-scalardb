@@ -17,7 +17,7 @@ spring.datasource.driver-class-name=com.scalar.db.sql.jdbc.SqlJdbcDriver
 
 ### spring.datasource.url
 
-This value follows ScalarDB JDBC connection URL configuration. See also [ScalarDB JDBC Guide](jdbc-guide.md).
+This value follows ScalarDB JDBC connection URL configuration. See also [ScalarDB JDBC Guide](jdbc-guide.mdx).
 
 ```
 spring.datasource.url=jdbc:scalardb:?scalar.db.contact_points=jdbc:mysql://localhost:3306/my_app_ns&scalar.db.username=root&scalar.db.password=mysql&scalar.db.storage=jdbc&scalar.db.consensus_commit.isolation_level=SERIALIZABLE&scalar.db.consensus_commit.async_commit.enabled=false
@@ -245,7 +245,7 @@ As you see in the above example, Spring Data JDBC's @Id annotation doesn't suppo
 
 ### Multi-storage transaction
 
-ScalarDB supports [Multi-storage Transaction](https://github.com/scalar-labs/scalardb/blob/master/docs/multi-storage-transactions.md), and users can use the feature via this Spring Data integration. The following needs to be configured to use the feature.
+ScalarDB supports [Multi-storage Transaction](https://github.com/scalar-labs/scalardb/blob/master/docs/multi-storage-transactions.mdx), and users can use the feature via this Spring Data integration. The following needs to be configured to use the feature.
 
 #### spring.datasource.url
 Here is a sample datasource URL assuming there are two namespaces "north" and "south" that manage data with MySQL and PostgreSQL respectively.
@@ -356,4 +356,4 @@ In order to use Spring Data integration with ScalarDB, the following features ar
 ## References
 
 - [Spring Data JDBC - Reference Documentation](https://docs.spring.io/spring-data/jdbc/docs/3.0.x/reference/html/)
-- [ScalarDB JDBC Guide](jdbc-guide.md)
+- [ScalarDB JDBC Guide](jdbc-guide.mdx)

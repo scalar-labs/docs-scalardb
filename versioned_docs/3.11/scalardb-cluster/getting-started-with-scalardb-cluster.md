@@ -1,10 +1,10 @@
 # Getting Started with ScalarDB Cluster
 
-This tutorial describes how to create a sample application that uses [ScalarDB Cluster](index.md) through the Java API.
+This tutorial describes how to create a sample application that uses [ScalarDB Cluster](index.mdx) through the Java API.
 
 ## Overview
 
-The sample e-commerce application shows how users can order and pay for items by using a line of credit. The use case described in this tutorial is the same as the basic [ScalarDB sample](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-sample/README.md) but takes advantage of ScalarDB Cluster.
+The sample e-commerce application shows how users can order and pay for items by using a line of credit. The use case described in this tutorial is the same as the basic [ScalarDB sample](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-sample/README.mdx) but takes advantage of ScalarDB Cluster.
 
 The following diagram shows the system architecture of the sample application:
 
@@ -75,7 +75,7 @@ The sample application supports the following types of transactions:
   - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) LTS version (8, 11, or 17)
   - [OpenJDK](https://openjdk.org/install/) LTS version (8, 11, or 17)
 - ScalarDB Cluster running on a Kubernetes cluster
-  - We assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.md).
+  - We assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.mdx).
 
 :::note
 
@@ -149,7 +149,7 @@ scalar.db.contact_points=indirect:localhost
 
 :::note
 
-For details about the client modes, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.md).
+For details about the client modes, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.mdx).
 
 :::
 
@@ -378,12 +378,12 @@ You should see a similar output as below, with a different UUID for `order_id`, 
 
 ## Reference
 
-For details about developing applications that use ScalarDB Cluster with the Java API, refer to [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.md).
+For details about developing applications that use ScalarDB Cluster with the Java API, refer to [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.mdx).
 
 ## Next steps
 
 For other ScalarDB Cluster tutorials, see the following:
 
-* [Getting Started with ScalarDB Cluster GraphQL](getting-started-with-scalardb-cluster-graphql.md)
-* [Getting Started with ScalarDB Cluster SQL via JDBC](getting-started-with-scalardb-cluster-sql-jdbc.md)
-* [Getting Started with ScalarDB Cluster SQL via Spring Data JDBC for ScalarDB](getting-started-with-scalardb-cluster-sql-spring-data-jdbc.md)
+* [Getting Started with ScalarDB Cluster GraphQL](getting-started-with-scalardb-cluster-graphql.mdx)
+* [Getting Started with ScalarDB Cluster SQL via JDBC](getting-started-with-scalardb-cluster-sql-jdbc.mdx)
+* [Getting Started with ScalarDB Cluster SQL via Spring Data JDBC for ScalarDB](getting-started-with-scalardb-cluster-sql-spring-data-jdbc.mdx)

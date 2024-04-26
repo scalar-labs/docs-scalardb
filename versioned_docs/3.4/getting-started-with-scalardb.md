@@ -3,7 +3,7 @@
 # Getting Started with Scalar DB
 
 Here we assume Oracle JDK 8 and the underlying storage/database such as Cassandra are properly configured.
-If you haven't done it, please configure them first by following [this](getting-started.md).
+If you haven't done it, please configure them first by following [this](getting-started.mdx).
 
 ## Build
 
@@ -31,7 +31,7 @@ $ cd docs/getting-started
 ## Set up database schema
 
 First of all, you need to define how the data will be organized (a.k.a database schema) in the application with Scalar DB database schema.
-Here is a database schema for the sample application. For the supported data types, please see [this doc](schema.md) for more details.
+Here is a database schema for the sample application. For the supported data types, please see [this doc](schema.mdx) for more details.
 You can create a JSON file `emoney-storage.json` with the JSON below.
 
 ```json
@@ -261,15 +261,15 @@ So you can use the same schema file as **emoney-storage.json**.
 
 These are just simple examples of how Scalar DB is used. For more information, please take a look at the following documents.
 
-* [Design Document](design.md)
+* [Design Document](design.mdx)
 * Javadoc
     * [scalardb](https://javadoc.io/doc/com.scalar-labs/scalardb/latest/index.html) - A library that makes non-ACID distributed databases/storages ACID-compliant
     * [scalardb-rpc](https://javadoc.io/doc/com.scalar-labs/scalardb-rpc/latest/index.html) - Scalar DB RPC libraries
     * [scalardb-server](https://javadoc.io/doc/com.scalar-labs/scalardb-server/latest/index.html) - Scalar DB Server that is the gRPC interfarce of Scalar DB
-* [Requirements in the underlining databases](requirements.md)
-* [Database schema in Scalar DB](schema.md)
-* [Schema Loader](schema-loader.md)
-* [How to Back up and Restore](backup-restore.md)
-* [Multi-storage Transactions](multi-storage-transactions.md)
-* [Two-phase Commit Transactions](two-phase-commit-transactions.md)
-* [Scalar DB server](scalardb-server.md)
+* [Requirements in the underlining databases](requirements.mdx)
+* [Database schema in Scalar DB](schema.mdx)
+* [Schema Loader](schema-loader.mdx)
+* [How to Back up and Restore](backup-restore.mdx)
+* [Multi-storage Transactions](multi-storage-transactions.mdx)
+* [Two-phase Commit Transactions](two-phase-commit-transactions.mdx)
+* [Scalar DB server](scalardb-server.mdx)

@@ -27,12 +27,12 @@ scalar.db.password=cassandra
 scalar.db.storage=cassandra
 ```
 
-Please see [Getting Started](getting-started.md) for configurations of other databases/storages.
+Please see [Getting Started](getting-started.mdx) for configurations of other databases/storages.
 
 ### Scalar DB server
 
 You can also execute Two-phase Commit Transactions through the Scalar DB server.
-You don't need a special configuration for Two-phase Commit Transactions, so you can follow [the Scalar DB server document](scalardb-server.md) to use it.
+You don't need a special configuration for Two-phase Commit Transactions, so you can follow [the Scalar DB server document](scalardb-server.mdx) to use it.
 
 ## How to execute Two-phase Commit Transactions
 

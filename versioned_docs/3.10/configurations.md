@@ -145,7 +145,7 @@ To avoid frequent errors caused internally by [`SQLITE_BUSY`](https://www.sqlite
 
 ScalarDB supports using multiple storage implementations simultaneously. You can use multiple storages by specifying `multi-storage` as the value for the `scalar.db.storage` property.
 
-For details about using multiple storages, see [Multi-Storage Transactions](multi-storage-transactions.md).
+For details about using multiple storages, see [Multi-Storage Transactions](multi-storage-transactions.mdx).
 
 ### Use Consensus Commit through ScalarDB Cluster
 

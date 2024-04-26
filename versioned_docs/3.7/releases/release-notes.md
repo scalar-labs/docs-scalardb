@@ -148,8 +148,8 @@ This release has several enhancements, improvements, bug fixes, vulnerability fi
 
 Highlights of this release are as follows:
 
-- Add namespace prefix support for Dynamo (The configuration name is `scalar.db.dynamo.namespace.prefix`. Please see [this document](https://github.com/scalar-labs/scalardb/blob/v3.7.0/docs/getting-started-with-scalardb-on-dynamodb.md) for the details
-- Add alter table command to Schema Loader tool (Please see [this document](https://github.com/scalar-labs/scalardb/blob/v3.7.0/schema-loader/README.md#alter-tables) for the details)
+- Add namespace prefix support for Dynamo (The configuration name is `scalar.db.dynamo.namespace.prefix`. Please see [this document](https://github.com/scalar-labs/scalardb/blob/v3.7.0/docs/getting-started-with-scalardb-on-dynamodb.mdx) for the details
+- Add alter table command to Schema Loader tool (Please see [this document](https://github.com/scalar-labs/scalardb/blob/v3.7.0/schema-loader/README.mdx#alter-tables) for the details)
 
 ### Change logs
 

@@ -6,7 +6,7 @@ This document explains how to write gRPC client code for ScalarDB Cluster by usi
 
 - [Python](https://www.python.org/downloads) 3.7 or later
 - ScalarDB Cluster running on a Kubernetes cluster
-  - We assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.md).
+  - We assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.mdx).
 
 ## Sample application
 
@@ -58,11 +58,11 @@ scalar.db.contact_points=indirect:localhost
 
 To connect to ScalarDB Cluster, you need to specify `cluster` for the `scalar.db.transaction_manager` property.
 In addition, you will use the `indirect` client mode and connect to the service resource of Envoy in this tutorial.
-For details about the client modes, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.md).
+For details about the client modes, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.mdx).
 
 ## Step 3. Load a schema
 
-To load a schema via ScalarDB Cluster, you need to use the dedicated Schema Loader for ScalarDB Cluster (Schema Loader for Cluster). Using the Schema Loader for Cluster is basically the same as using the [Schema Loader for ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader.md) except the name of the JAR file is different. You can download the Schema Loader for Cluster at [Releases](https://github.com/scalar-labs/scalardb-cluster/releases). After downloading the JAR file, you can run the Schema Loader for Cluster with the following command:
+To load a schema via ScalarDB Cluster, you need to use the dedicated Schema Loader for ScalarDB Cluster (Schema Loader for Cluster). Using the Schema Loader for Cluster is basically the same as using the [Schema Loader for ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader.mdx) except the name of the JAR file is different. You can download the Schema Loader for Cluster at [Releases](https://github.com/scalar-labs/scalardb-cluster/releases). After downloading the JAR file, you can run the Schema Loader for Cluster with the following command:
 
 ```shell
 $ java -jar scalardb-cluster-schema-loader-3.12.2-all.jar --config database.properties -f schema.json --coordinator
@@ -458,6 +458,6 @@ You can then run the program as follows:
 
 ## References
 
-- [Getting Started with ScalarDB Cluster](getting-started-with-scalardb-cluster.md)
-- [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.md)
-- [ScalarDB Cluster gRPC API Guide](scalardb-cluster-grpc-api-guide.md)
+- [Getting Started with ScalarDB Cluster](getting-started-with-scalardb-cluster.mdx)
+- [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.mdx)
+- [ScalarDB Cluster gRPC API Guide](scalardb-cluster-grpc-api-guide.mdx)

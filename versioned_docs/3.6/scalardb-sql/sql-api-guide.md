@@ -42,7 +42,7 @@ SqlSessionFactory sqlSessionFactory = SqlSessionFactory.builder()
     .build();
 ```
 
-Please see [Scalar DB SQL Configurations](configurations.md) for the details of the configurations.
+Please see [Scalar DB SQL Configurations](configurations.mdx) for the details of the configurations.
 
 #### Build with the helper methods for Direct connection mode
 
@@ -77,7 +77,7 @@ SqlSessionFactory sqlSessionFactory = SqlSessionFactory.builder()
     .build();
 ```
 
-Please see [Scalar DB SQL Configurations](configurations.md) for the details of the Scalar DB SQL configurations.
+Please see [Scalar DB SQL Configurations](configurations.mdx) for the details of the Scalar DB SQL configurations.
 
 #### Build with the helper methods for Server connection mode
 
@@ -144,7 +144,7 @@ ResultSet resultSet = sqlSession.execute(statement);
 ```
 
 `Statement` objects can be built by `StatementBuilder` that has factory methods for corresponding SQLs.
-Please see [the Javadoc of `StatementBuilder`](https://scalar-labs.github.io/scalardb-sql/javadoc/core/com/scalar/db/sql/builder/StatementBuilder.html) and [Scalar DB SQL Grammar](grammar.md) for more details.
+Please see [the Javadoc of `StatementBuilder`](https://scalar-labs.github.io/scalardb-sql/javadoc/core/com/scalar/db/sql/builder/StatementBuilder.html) and [Scalar DB SQL Grammar](grammar.mdx) for more details.
 
 ### Handle ResultSet objects
 
@@ -327,7 +327,7 @@ If you catch an exception other than the above, it indicates that an unexpected 
 
 ### Two-phase Commit Transaction Mode
 
-Before reading this, please read [this document](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.md) to learn the concept of Two-phase commit transactions.
+Before reading this, please read [this document](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.mdx) to learn the concept of Two-phase commit transactions.
 
 To begin a transaction for a coordinator, you can do as follows:
 
@@ -394,5 +394,5 @@ Please see [the Javadoc of `Metadata`](https://scalar-labs.github.io/scalardb-sq
 ## References
 
 - [Javadoc of the Scalar DB SQL API](https://scalar-labs.github.io/scalardb-sql/javadoc/core/index.html)
-- [Scalar DB SQL Grammar](grammar.md)
-- [Two-phase Commit Transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.md)
+- [Scalar DB SQL Grammar](grammar.mdx)
+- [Two-phase Commit Transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.mdx)

@@ -13,7 +13,7 @@ Before explaining `SqlSessionFactory`, we start with the explanation for Connect
 
 ScalarDB SQL offers two connection modes: *Direct* and *Server* modes.
 With Direct mode, ScalarDB SQL client-side library directly uses ScalarDB API.
-On the other hand, with Server mode, ScalarDB SQL client-side library uses ScalarDB API indirectly through [ScalarDB SQL Server](sql-server.md).
+On the other hand, with Server mode, ScalarDB SQL client-side library uses ScalarDB API indirectly through [ScalarDB SQL Server](sql-server.mdx).
 
 You need to add a dependency on ScalarDB SQL client-side library for the connection mode you want to use.
 
@@ -70,7 +70,7 @@ SqlSessionFactory sqlSessionFactory = SqlSessionFactory.builder()
     .build();
 ```
 
-Please see [ScalarDB SQL Configurations](configurations.md) for the details of the configurations.
+Please see [ScalarDB SQL Configurations](configurations.mdx) for the details of the configurations.
 
 ### Get a SqlSession instance
 
@@ -118,7 +118,7 @@ ResultSet resultSet = sqlSession.execute(statement);
 ```
 
 `Statement` objects can be built by `StatementBuilder` that has factory methods for corresponding SQLs.
-Please see [the Javadoc of `StatementBuilder`](https://scalar-labs.github.io/scalardb-sql/javadoc/core/com/scalar/db/sql/builder/StatementBuilder.html) and [ScalarDB SQL Grammar](grammar.md) for more details.
+Please see [the Javadoc of `StatementBuilder`](https://scalar-labs.github.io/scalardb-sql/javadoc/core/com/scalar/db/sql/builder/StatementBuilder.html) and [ScalarDB SQL Grammar](grammar.mdx) for more details.
 
 ### Handle ResultSet objects
 
@@ -299,7 +299,7 @@ For such a case, you need to limit the number of retries and give up retrying.
 
 ### Two-phase Commit Transaction Mode
 
-Before reading this, please read [this document](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.md) to learn the concept of Two-phase commit transactions.
+Before reading this, please read [this document](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.mdx) to learn the concept of Two-phase commit transactions.
 
 To begin a transaction for a coordinator, you can do as follows:
 
@@ -363,5 +363,5 @@ Please see [the Javadoc of `Metadata`](https://scalar-labs.github.io/scalardb-sq
 ## References
 
 - [Javadoc of the ScalarDB SQL API](https://scalar-labs.github.io/scalardb-sql/javadoc/core/index.html)
-- [ScalarDB SQL Grammar](grammar.md)
-- [Two-phase Commit Transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.md)
+- [ScalarDB SQL Grammar](grammar.mdx)
+- [Two-phase Commit Transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.mdx)

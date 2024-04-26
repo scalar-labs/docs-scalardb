@@ -109,8 +109,8 @@ However, if the coordinator or only some of the participants failed to commit th
 
 ## Execute CRUD operations
 
-The two-phase commit interface of the transaction has the same methods for CRUD operations as ordinary transactions. For details, see [Execute CRUD operations](getting-started-with-distributed-transactions.md#execute-crud-operations).
+The two-phase commit interface of the transaction has the same methods for CRUD operations as ordinary transactions. For details, see [Execute CRUD operations](getting-started-with-distributed-transactions.mdx#execute-crud-operations).
 
 ## Execute SQL statements
 
-The two-phase commit interface of the SQL transaction has the same methods for executing SQL queries as ordinary SQL transactions. For details, see [Execute SQL queries](getting-started-with-distributed-sql-transactions.md#execute-sql-queries).
+The two-phase commit interface of the SQL transaction has the same methods for executing SQL queries as ordinary SQL transactions. For details, see [Execute SQL queries](getting-started-with-distributed-sql-transactions.mdx#execute-sql-queries).

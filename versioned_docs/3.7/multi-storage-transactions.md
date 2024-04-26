@@ -53,7 +53,7 @@ scalar.db.multi_storage.namespace_mapping=user:cassandra,coordinator:mysql
 scalar.db.multi_storage.default_storage=cassandra
 ```
 
-For additional configurations, see [ScalarDB Configurations](configurations.md).
+For additional configurations, see [ScalarDB Configurations](configurations.mdx).
 
 ## Hands-on tutorial
 

@@ -165,5 +165,5 @@ Please see the following sample to learn Scalar DB Server further:
 
 Please also see the following documents to learn how to deploy Scalar DB Server:
 
-- [Deploy Scalar DB Server on AWS](https://github.com/scalar-labs/scalar-kubernetes/blob/master/docs/ManualDeploymentGuideScalarDBServerOnEKS.md)
-- [Deploy Scalar DB Server on Azure](https://github.com/scalar-labs/scalar-kubernetes/blob/master/docs/ManualDeploymentGuideScalarDBServerOnAKS.md)
+- [Deploy Scalar DB Server on AWS](https://github.com/scalar-labs/scalar-kubernetes/blob/master/docs/ManualDeploymentGuideScalarDBServerOnEKS.mdx)
+- [Deploy Scalar DB Server on Azure](https://github.com/scalar-labs/scalar-kubernetes/blob/master/docs/ManualDeploymentGuideScalarDBServerOnAKS.mdx)

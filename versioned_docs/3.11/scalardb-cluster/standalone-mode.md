@@ -70,7 +70,7 @@ The following environment variables are available for the Docker image:
 | `SCALAR_DB_CLUSTER_AUTH_AUTH_TOKEN_EXPIRATION_TIME_MINUTES`       | `scalar.db.cluster.auth.auth_token_expiration_time_minutes`       |
 | `SCALAR_DB_CLUSTER_AUTH_AUTH_TOKEN_GC_THREAD_INTERVAL_MINUTES`    | `scalar.db.cluster.auth.auth_token_gc_thread_interval_minutes`    |
 
-If you want to specify configurations other than the ones mentioned in the table above, set up your custom properties file by using the configurations described in [ScalarDB Cluster Configurations](scalardb-cluster-configurations.md).
+If you want to specify configurations other than the ones mentioned in the table above, set up your custom properties file by using the configurations described in [ScalarDB Cluster Configurations](scalardb-cluster-configurations.mdx).
 
 ## Usage with Docker Compose
 
@@ -96,4 +96,4 @@ docker compose up -d
 
 ## Client configurations for the ScalarDB Cluster Java API
 
-You can use the `indirect` client mode to connect to ScalarDB Cluster in standalone mode. For details about client configurations for the ScalarDB Cluster Java API, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.md).
+You can use the `indirect` client mode to connect to ScalarDB Cluster in standalone mode. For details about client configurations for the ScalarDB Cluster Java API, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.mdx).

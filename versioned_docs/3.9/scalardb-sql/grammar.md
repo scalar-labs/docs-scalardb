@@ -46,7 +46,7 @@ CREATE NAMESPACE [IF NOT EXISTS] <namespace name> [WITH creation_options]
 creation_options: <option name>=<option value> [AND <option name>=<option value>] ...
 ```
 
-Please see [ScalarDB Java API Guide - Creation Options](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#creation-options) for the details of Creation Options.
+Please see [ScalarDB Java API Guide - Creation Options](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.mdx#creation-options) for the details of Creation Options.
 
 #### Examples
 
@@ -86,7 +86,7 @@ CreateNamespaceStatement statement3 =
 
 `CREATE TABLE` command creates a table.
 
-Please see [ScalarDB design document - Data Model](https://github.com/scalar-labs/scalardb/blob/master/docs/design.md#data-model) for the details of the ScalarDB Data Model.
+Please see [ScalarDB design document - Data Model](https://github.com/scalar-labs/scalardb/blob/master/docs/design.mdx#data-model) for the details of the ScalarDB Data Model.
 
 #### Grammar
 
@@ -552,7 +552,7 @@ order: ASC | DESC
 - You can specify `<column value>` and `<limit>` to a bind marker (positional `?` and named `:<name>`)
 - If you omit `order`, the default order `ASC` is used
 
-Please see also [Java API Guide - Get operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#get-operation) and [Scan operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#scan-operation) for more details of retrieving data from the database in ScalarDB
+Please see also [Java API Guide - Get operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.mdx#get-operation) and [Scan operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.mdx#scan-operation) for more details of retrieving data from the database in ScalarDB
 
 #### Examples
 

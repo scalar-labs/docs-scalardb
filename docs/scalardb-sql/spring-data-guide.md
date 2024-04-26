@@ -80,7 +80,7 @@ To add the dependencies by using Maven, use the following, replacing `...` with 
 </dependencies>
 ```
 
-For details about ScalarDB SQL Server, see [ScalarDB SQL Server](sql-server.md).
+For details about ScalarDB SQL Server, see [ScalarDB SQL Server](sql-server.mdx).
 
 ### Cluster mode
 
@@ -126,7 +126,7 @@ spring.datasource.driver-class-name=com.scalar.db.sql.jdbc.SqlJdbcDriver
 
 ### spring.datasource.url
 
-This value follows the ScalarDB JDBC connection URL configuration. For more information, see [ScalarDB JDBC Guide](jdbc-guide.md) and [ScalarDB SQL Configurations](configurations.md).
+This value follows the ScalarDB JDBC connection URL configuration. For more information, see [ScalarDB JDBC Guide](jdbc-guide.mdx) and [ScalarDB SQL Configurations](configurations.mdx).
 
 ```
 spring.datasource.url=jdbc:scalardb:\
@@ -397,7 +397,7 @@ bankRepository.update(new Bank(bank.bankId, bank.name + " 2", bank.accounts));
 
 ### Multi-storage transaction
 
-ScalarDB supports [Multi-storage Transaction](https://github.com/scalar-labs/scalardb/blob/master/docs/multi-storage-transactions.md), and users can use the feature via Spring Data JDBC for ScalarDB. The following needs to be configured to use the feature.
+ScalarDB supports [Multi-storage Transaction](https://github.com/scalar-labs/scalardb/blob/master/docs/multi-storage-transactions.mdx), and users can use the feature via Spring Data JDBC for ScalarDB. The following needs to be configured to use the feature.
 
 #### spring.datasource.url
 Here is a sample datasource URL assuming there are two namespaces "north" and "south" that manage data with MySQL and PostgreSQL respectively.
@@ -493,7 +493,7 @@ There are other options available for retrying transactions, such as Spring Retr
 
 ### Two-phase commit transaction
 
-ScalarDB supports [Two-phase commit transaction](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.md), and users can use the feature via Spring Data JDBC for ScalarDB. The following configurations are needed.
+ScalarDB supports [Two-phase commit transaction](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.mdx), and users can use the feature via Spring Data JDBC for ScalarDB. The following configurations are needed.
 
 #### spring.datasource.url
 
@@ -535,7 +535,7 @@ Spring Data JDBC for ScalarDB supports 2 types of APIs for 2PC transaction. One 
 
 All in-flight operations are rolled back when any exception is thrown from Spring Data repository method.
 
-See [How to execute Two-phase Commit Transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.md#how-to-execute-two-phase-commit-transactions) for details.
+See [How to execute Two-phase Commit Transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.mdx#how-to-execute-two-phase-commit-transactions) for details.
 
 ```java
 @Transactional(transactionManager = "scalarDbSuspendableTransactionManager")
@@ -870,5 +870,5 @@ In order to use Spring Data JDBC for ScalarDB, the following features are implem
 ## References
 
 - [Spring Data JDBC - Reference Documentation](https://docs.spring.io/spring-data/jdbc/docs/3.0.x/reference/html/)
-- [ScalarDB JDBC Guide](jdbc-guide.md)
+- [ScalarDB JDBC Guide](jdbc-guide.mdx)
 - [Javadoc for Spring Data JDBC for ScalarDB](https://javadoc.io/doc/com.scalar-labs/scalardb-sql-spring-data/3.12.2/index.html)

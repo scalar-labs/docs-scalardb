@@ -81,9 +81,9 @@ scalar.db.consensus_commit.isolation_level=SNAPSHOT
 scalar.db.consensus_commit.serializable_strategy=
 ```
 
-For more details about the configurations for the transaction manager, see [Transaction manager configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#transaction-manager-configurations).
+For more details about the configurations for the transaction manager, see [Transaction manager configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.mdx#transaction-manager-configurations).
 
-In addition, for more details about the configurations for ScalarDB SQL Server, see [ScalarDB SQL Configurations](configurations.md).
+In addition, for more details about the configurations for ScalarDB SQL Server, see [ScalarDB SQL Configurations](configurations.mdx).
 
 ## Start ScalarDB SQL Server
 
@@ -147,11 +147,11 @@ scalar.db.sql.server_mode.host=<hostname of ScalarDB SQL Server>
 scalar.db.sql.server_mode.port=60052
 ```
 
-Please see [ScalarDB SQL Configurations](configurations.md) for more details of the configurations of Server mode.
+Please see [ScalarDB SQL Configurations](configurations.mdx) for more details of the configurations of Server mode.
 
 ## References
 
-* [Getting Started with ScalarDB SQL](getting-started-with-sql.md)
-* [Getting Started with ScalarDB JDBC](getting-started-with-jdbc.md)
-* [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.md)
-* [ScalarDB SQL Configurations](configurations.md)
+* [Getting Started with ScalarDB SQL](getting-started-with-sql.mdx)
+* [Getting Started with ScalarDB JDBC](getting-started-with-jdbc.mdx)
+* [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.mdx)
+* [ScalarDB SQL Configurations](configurations.mdx)

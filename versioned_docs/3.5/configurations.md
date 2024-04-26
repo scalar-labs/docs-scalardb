@@ -132,11 +132,11 @@ The following configurations are available for JDBC databases:
 
 ScalarDB supports using multiple storage implementations simultaneously. You can use multiple storages by specifying `multi-storage` as the value for the `scalar.db.storage` property.
 
-For details about using multiple storages, see [Multi-Storage Transactions](multi-storage-transactions.md).
+For details about using multiple storages, see [Multi-Storage Transactions](multi-storage-transactions.mdx).
 
 ### Use Consensus Commit through ScalarDB Server
 
-[ScalarDB Server](scalardb-server.md) is a standalone server that provides a gRPC interface to ScalarDB. To interact with ScalarDB Server, you must add the following to the ScalarDB properties file:
+[ScalarDB Server](scalardb-server.mdx) is a standalone server that provides a gRPC interface to ScalarDB. To interact with ScalarDB Server, you must add the following to the ScalarDB properties file:
 
 ```properties
 scalar.db.transaction_manager=grpc
@@ -151,11 +151,11 @@ The following configurations are available for the gRPC transaction manager for 
 | `scalar.db.contact_port`                   | Port number for ScalarDB Server.                            | `60051`                 |
 | `scalar.db.grpc.deadline_duration_millis`  | The deadline duration for gRPC connections in milliseconds. | `60000` (60 seconds)    |
 
-For details about ScalarDB Server, see [ScalarDB Server](scalardb-server.md).
+For details about ScalarDB Server, see [ScalarDB Server](scalardb-server.mdx).
 
 ## ScalarDB Server configurations
 
-[ScalarDB Server](scalardb-server.md) is a standalone server that provides a gRPC interface to ScalarDB. This section explains ScalarDB Server configurations.
+[ScalarDB Server](scalardb-server.mdx) is a standalone server that provides a gRPC interface to ScalarDB. This section explains ScalarDB Server configurations.
 
 In addition to the [configurations when using Consensus Commit directly](#use-consensus-commit-directly) and [other ScalarDB configurations](#other-scalardb-configurations), the following configurations are available for ScalarDB Server:
 
@@ -164,7 +164,7 @@ In addition to the [configurations when using Consensus Commit directly](#use-co
 | `scalar.db.server.port`                           | Port number for ScalarDB Server.                                                                 | `60051`                 |
 | `scalar.db.server.prometheus_exporter_port`       | Prometheus exporter port. Prometheus exporter will not be started if a negative number is given. | `8080`                  |
 
-For details about ScalarDB Server, see [ScalarDB Server](scalardb-server.md).
+For details about ScalarDB Server, see [ScalarDB Server](scalardb-server.mdx).
 
 ## Other ScalarDB configurations
 

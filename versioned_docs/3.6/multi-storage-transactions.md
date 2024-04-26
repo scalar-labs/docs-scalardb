@@ -55,7 +55,7 @@ scalar.db.multi_storage.table_mapping=user.ORDER:cassandra,user.CUSTOMER:mysql,c
 scalar.db.multi_storage.default_storage=cassandra
 ```
 
-For additional configurations, see [ScalarDB Configurations](configurations.md).
+For additional configurations, see [ScalarDB Configurations](configurations.mdx).
 
 ## Hands-on tutorial
 

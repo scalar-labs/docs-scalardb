@@ -75,7 +75,7 @@ The following environment variables are available for the Docker image:
 | `SCALAR_DB_CLUSTER_NODE_TLS_CERT_CHAIN_PATH`                      | `scalar.db.cluster.node.tls.cert_chain_path`                      |
 | `SCALAR_DB_CLUSTER_NODE_TLS_PRIVATE_KEY_PATH`                     | `scalar.db.cluster.node.tls.private_key_path`                     |
 
-If you want to specify configurations other than the ones mentioned in the table above, set up your custom properties file by using the configurations described in [ScalarDB Cluster Configurations](scalardb-cluster-configurations.md).
+If you want to specify configurations other than the ones mentioned in the table above, set up your custom properties file by using the configurations described in [ScalarDB Cluster Configurations](scalardb-cluster-configurations.mdx).
 
 ## Usage with Docker Compose
 
@@ -101,4 +101,4 @@ docker compose up -d
 
 ## Client configurations for the ScalarDB Cluster Java API
 
-You can use the `indirect` client mode to connect to ScalarDB Cluster in standalone mode. For details about client configurations for the ScalarDB Cluster Java API, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.md).
+You can use the `indirect` client mode to connect to ScalarDB Cluster in standalone mode. For details about client configurations for the ScalarDB Cluster Java API, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.mdx).

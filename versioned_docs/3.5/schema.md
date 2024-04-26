@@ -36,4 +36,4 @@ Thus, along with any required values by the application, additional values for t
 ## Schema creation
 
 It is a little hard for application developers to care for the schema mapping and metadata for transactions,
-so we offer a tool called [Schema Loader](schema-loader.md) for creating schema without much knowledge about those.
+so we offer a tool called [Schema Loader](schema-loader.mdx) for creating schema without much knowledge about those.

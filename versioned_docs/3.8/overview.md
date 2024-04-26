@@ -11,7 +11,7 @@ As a versatile solution, ScalarDB supports a range of databases, including:
 - Relational databases that support JDBC, such as MariaDB, Microsoft SQL Server, MySQL, Oracle Database, PostgreSQL, SQLite, and their compatible databases, like Amazon Aurora, Google AlloyDB, TiDB, and YugabyteDB.
 - NoSQL databases like Amazon DynamoDB, Apache Cassandra, and Azure Cosmos DB.
 
-For details on which databases ScalarDB supports, refer to [Supported Databases](scalardb-supported-databases.md).
+For details on which databases ScalarDB supports, refer to [Supported Databases](scalardb-supported-databases.mdx).
 
 ## ScalarDB use cases
 

@@ -128,14 +128,14 @@ To add a dependency using Maven:
 
 ## Docs
 
-- [Getting Started with Scalar DB SQL](getting-started-with-sql.md)
-- [Getting Started with Scalar DB JDBC](getting-started-with-jdbc.md)
-- [Scalar DB SQL API Guide](sql-api-guide.md)
-- [Scalar DB JDBC Guide](jdbc-guide.md)
-- [Scalar DB SQL Grammar](grammar.md)
-- [Scalar DB SQL Command Line interface](command-line-interface.md)
-- [Scalar DB SQL Server](sql-server.md)
-- [Scalar DB SQL Configurations](configurations.md)
+- [Getting Started with Scalar DB SQL](getting-started-with-sql.mdx)
+- [Getting Started with Scalar DB JDBC](getting-started-with-jdbc.mdx)
+- [Scalar DB SQL API Guide](sql-api-guide.mdx)
+- [Scalar DB JDBC Guide](jdbc-guide.mdx)
+- [Scalar DB SQL Grammar](grammar.mdx)
+- [Scalar DB SQL Command Line interface](command-line-interface.mdx)
+- [Scalar DB SQL Server](sql-server.mdx)
+- [Scalar DB SQL Configurations](configurations.mdx)
 - Javadoc
   - [scalardb-sql](https://scalar-labs.github.io/scalardb-sql/javadoc/core/index.html) - Scalar DB SQL: A SQL layer for Scalar DB
   - [scalardb-sql-rpc](https://scalar-labs.github.io/scalardb-sql/javadoc/rpc/index.html) - Scalar DB SQL RPC libraries

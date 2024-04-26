@@ -6,7 +6,7 @@ This document describes how to use ScalarDB Auth with ScalarDB SQL.
 
 ## ScalarDB Auth Overview
 
-By using ScalarDB Auth, you can create users and grant or revoke their privileges. You can create a user by using the `CREATE USER` command, and you can grant or revoke one's privileges on a table or a namespace by using the `GRANT` or `REVOKE` command, respectively. For details about such data control language (DCL) commands, see [DCL](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/grammar.md#dcl).
+By using ScalarDB Auth, you can create users and grant or revoke their privileges. You can create a user by using the `CREATE USER` command, and you can grant or revoke one's privileges on a table or a namespace by using the `GRANT` or `REVOKE` command, respectively. For details about such data control language (DCL) commands, see [DCL](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/grammar.mdx#dcl).
 
 Users can log in to ScalarDB Cluster with a username and a password and execute SQL statements if they have the required privileges.
 
@@ -65,7 +65,7 @@ To enable ScalarDB Auth on the client side, you need to set `scalar.db.cluster.a
 |----------------------------------|-----------------------------------|---------|
 | `scalar.db.cluster.auth.enabled` | Whether ScalarDB Auth is enabled. | `false` |
 
-In addition to the configuration in the [ScalarDB Cluster SQL client configurations](developer-guide-for-scalardb-cluster-with-java-api.md#scalardb-cluster-sql-client-configurations) section, you also need to set `scalar.db.sql.cluster_mode.username` and `scalar.db.sql.cluster_mode.password` to specify the username and password of the client.
+In addition to the configuration in the [ScalarDB Cluster SQL client configurations](developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-client-configurations) section, you also need to set `scalar.db.sql.cluster_mode.username` and `scalar.db.sql.cluster_mode.password` to specify the username and password of the client.
 
 | Name                                  | Description                 | Default |
 |---------------------------------------|-----------------------------|---------|
@@ -132,7 +132,7 @@ This wire encryption feature encrypts:
 * The communications between the ScalarDB Cluster node and clients.
 * The communications between all ScalarDB Cluster nodes (the cluster's internal communications).
 
-This feature uses gRPC's TLS support. For details, see the official gRPC [Security Policy](https://github.com/grpc/grpc-java/blob/master/SECURITY.md).
+This feature uses gRPC's TLS support. For details, see the official gRPC [Security Policy](https://github.com/grpc/grpc-java/blob/master/SECURITY.mdx).
 
 ### Configurations
 

@@ -2,8 +2,8 @@
 
 # ScalarDB Server Sample
 This is a sample application that uses ScalarDB Server, a gRPC server that implements ScalarDB interface, as a backend.
-For using the native ScalarDB library, please refer to [Getting Started](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started.md).
-More information about ScalarDB Server can be found [here](https://github.com/scalar-labs/scalardb/tree/master/docs/scalardb-server.md).
+For using the native ScalarDB library, please refer to [Getting Started](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started.mdx).
+More information about ScalarDB Server can be found [here](https://github.com/scalar-labs/scalardb/tree/master/docs/scalardb-server.mdx).
 
 ## Sample application
 The sample application is a simple electronic money application that has the following features:
@@ -56,7 +56,7 @@ Please note that we should wait around a bit more than one minute because Scalar
 ```shell
 $ docker-compose -f docker-compose-cassandra.yml up -d
 ```
-*For using other databases as the backend for ScalarDB Server, we can change the configuration of [database.properties](database.properties) according to [Getting Started](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started.md). After that we can start ScalarDB Server using [docker-compose.yml](docker-compose.yml) instead.*
+*For using other databases as the backend for ScalarDB Server, we can change the configuration of [database.properties](database.properties) according to [Getting Started](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started.mdx). After that we can start ScalarDB Server using [docker-compose.yml](docker-compose.yml) instead.*
 
 ### ScalarDB client
 The sample application uses a client that implements ScalarDB interface.
@@ -129,7 +129,7 @@ $ ./gradlew run --args="-action getBalance -id merchant1"
 ```
 
 ## Storage abstraction
-ScalarDB Server also supports [Storage API](https://github.com/scalar-labs/scalardb/blob/master/docs/storage-abstraction.md).
+ScalarDB Server also supports [Storage API](https://github.com/scalar-labs/scalardb/blob/master/docs/storage-abstraction.mdx).
 The following describes a sample of Storage API.
 
 ### Set up database schema

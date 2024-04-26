@@ -8,5 +8,5 @@ toc: false
 
 The following is a list of configuration guides for ScalarDB:
 
-- [Configure Multi-Storage Transactions](multi-storage-transactions.md)
-- [Configure Two-Phase Commit Transactions](two-phase-commit-transactions.md)
+- [Configure Multi-Storage Transactions](multi-storage-transactions.mdx)
+- [Configure Two-Phase Commit Transactions](two-phase-commit-transactions.mdx)

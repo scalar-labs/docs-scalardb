@@ -34,7 +34,7 @@ For more details, see [Install - ScalarDB SQL](https://github.com/scalar-labs/sc
 
 This tutorial describes how to create a sample Spring Boot application for the same use case as [ScalarDB Sample](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-sample) but by using Spring Data JDBC for ScalarDB with Multi-storage Transaction.
 Please note that application-specific error handling, authentication processing, etc. are omitted in the sample application since this tutorial focuses on explaining how to use Spring Data JDBC for ScalarDB with Multi-storage Transaction.
-For details, please see [Guide of Spring Data JDBC for ScalarDB](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/spring-data-guide.md).
+For details, please see [Guide of Spring Data JDBC for ScalarDB](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/spring-data-guide.mdx).
 
 ![Overview](images/overview.png)
 
@@ -132,7 +132,7 @@ spring.datasource.url=jdbc:scalardb:\
 - `scalar.db.multi_storage.namespace_mapping`: This configuration maps the namespaces to the storage. In this sample application, operations for `customer` namespace tables are mapped to the `mysql` storage and operations for `order` namespace tables are mapped to the `cassandra` storage. You can also define which storage is mapped for the `coordinator` namespace that is used in Consensus Commit transactions.
 - `scalar.db.multi_storage.default_storage`: This configuration sets the default storage that is used for operations on unmapped namespace tables.
 
-For details, please see [Configuration - Multi-storage Transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/multi-storage-transactions.md#configuration).
+For details, please see [Configuration - Multi-storage Transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/multi-storage-transactions.mdx#configuration).
 
 ## Setup
 

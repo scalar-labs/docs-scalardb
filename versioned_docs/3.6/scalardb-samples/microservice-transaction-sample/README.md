@@ -6,7 +6,7 @@ This tutorial describes how to create a sample application that supports microse
 
 ## Overview
 
-The sample e-commerce application shows how users can order and pay for items by using a line of credit. The use case described in this tutorial is the same as the basic [ScalarDB sample](../scalardb-sample/README.md) but takes advantage of [transactions with a two-phase commit interface](https://github.com/scalar-labs/scalardb/tree/master/docs/two-phase-commit-transactions.md) when using ScalarDB.
+The sample e-commerce application shows how users can order and pay for items by using a line of credit. The use case described in this tutorial is the same as the basic [ScalarDB sample](../scalardb-sample/README.mdx) but takes advantage of [transactions with a two-phase commit interface](https://github.com/scalar-labs/scalardb/tree/master/docs/two-phase-commit-transactions.mdx) when using ScalarDB.
 
 The sample application has two microservices called the *Customer Service* and the *Order Service* based on the [database-per-service pattern](https://microservices.io/patterns/data/database-per-service.html):
 
@@ -25,9 +25,9 @@ In the sample application, for ease of setup and explanation, we co-locate the C
 
 :::note
 
-Since the focus of the sample application is to demonstrate using ScalarDB, application-specific error handling, authentication processing, and similar functions are not included in the sample application. For details about exception handling in ScalarDB, see [How to handle exceptions](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#how-to-handle-exceptions).
+Since the focus of the sample application is to demonstrate using ScalarDB, application-specific error handling, authentication processing, and similar functions are not included in the sample application. For details about exception handling in ScalarDB, see [How to handle exceptions](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.mdx#how-to-handle-exceptions).
 
-Additionally, for the purpose of the sample application, each service has one container so that you can avoid using request routing between the services. However, for production use, because each service typically has multiple servers or hosts for scalability and availability, you should consider request routing between the services in transactions with a two-phase commit interface. For details about request routing, see [Request routing in transactions with a two-phase commit interface](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.md#request-routing-in-transactions-with-a-two-phase-commit-interface).
+Additionally, for the purpose of the sample application, each service has one container so that you can avoid using request routing between the services. However, for production use, because each service typically has multiple servers or hosts for scalability and availability, you should consider request routing between the services in transactions with a two-phase commit interface. For details about request routing, see [Request routing in transactions with a two-phase commit interface](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.mdx#request-routing-in-transactions-with-a-two-phase-commit-interface).
 
 :::
 
@@ -97,7 +97,7 @@ $ cd scalardb-samples/microservice-transaction-sample
 
 ### Start Cassandra and MySQL
 
-Cassandra and MySQL are already configured for the sample application, as shown in [`database-cassandra.properties`](https://github.com/scalar-labs/scalardb-samples/blob/main/microservice-transaction-sample/database-cassandra.properties) and [`database-mysql.properties`](https://github.com/scalar-labs/scalardb-samples/blob/main/microservice-transaction-sample/database-mysql.properties), respectively. For details about configuring the multi-storage transactions feature in ScalarDB, see [How to configure ScalarDB to support multi-storage transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/multi-storage-transactions.md#how-to-configure-scalardb-to-support-multi-storage-transactions).
+Cassandra and MySQL are already configured for the sample application, as shown in [`database-cassandra.properties`](https://github.com/scalar-labs/scalardb-samples/blob/main/microservice-transaction-sample/database-cassandra.properties) and [`database-mysql.properties`](https://github.com/scalar-labs/scalardb-samples/blob/main/microservice-transaction-sample/database-mysql.properties), respectively. For details about configuring the multi-storage transactions feature in ScalarDB, see [How to configure ScalarDB to support multi-storage transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/multi-storage-transactions.mdx#how-to-configure-scalardb-to-support-multi-storage-transactions).
 
 To start Cassandra and MySQL, which are included in the Docker container for the sample application, run the following command:
 
@@ -468,7 +468,7 @@ transaction = twoPhaseCommitTransactionManager.resume(request.getTransactionId()
 transaction.prepare();
 ```
 
-Similarly, the Order Service and the Customer Service call `validate()` from their transaction objects. For reference, see [`OrderService.java`](order-service/src/main/java/sample/order/OrderService.java) and [`CustomerService.java`](customer-service/src/main/java/sample/customer/CustomerService.java). For details about `validate()`, see [Validate the transaction](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.md#validate-the-transaction).
+Similarly, the Order Service and the Customer Service call `validate()` from their transaction objects. For reference, see [`OrderService.java`](order-service/src/main/java/sample/order/OrderService.java) and [`CustomerService.java`](customer-service/src/main/java/sample/customer/CustomerService.java). For details about `validate()`, see [Validate the transaction](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.mdx#validate-the-transaction).
 
 After preparing and validating the transaction succeeds in both the Order Service and the Customer Service, the transaction can be committed. In this case, the Order Service calls `commit()` from its transaction object and then calls the `commit` gRPC endpoint of the Customer Service. For reference, see [`OrderService.java`](order-service/src/main/java/sample/order/OrderService.java).
 
@@ -507,4 +507,4 @@ TwoPhaseCommitTransaction transaction =
 transaction.rollback();
 ```
 
-For details about how to handle exceptions in ScalarDB, see [How to handle exceptions](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#how-to-handle-exceptions).
+For details about how to handle exceptions in ScalarDB, see [How to handle exceptions](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.mdx#how-to-handle-exceptions).

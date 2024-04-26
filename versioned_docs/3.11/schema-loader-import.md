@@ -23,13 +23,13 @@ This tool only changes database metadata. Thus, the processing time does not inc
 
 ### Requirements
 
-- [JDBC databases](./scalardb-supported-databases.md#jdbc-databases), except for SQLite, can be imported.
+- [JDBC databases](./scalardb-supported-databases.mdx#jdbc-databases), except for SQLite, can be imported.
 - Each table must have primary key columns. (Composite primary keys can be available.)
 - Target tables must only have columns with supported data types. For details, see [Data-type mapping from JDBC databases to ScalarDB](#data-type-mapping-from-jdbc-databases-to-scalardb)).
 
 ### Set up Schema Loader
 
-To set up Schema Loader for importing existing tables, see [Set up Schema Loader](./schema-loader.md#set-up-schema-loader). 
+To set up Schema Loader for importing existing tables, see [Set up Schema Loader](./schema-loader.mdx#set-up-schema-loader). 
 
 ## Run Schema Loader for importing existing tables
 
@@ -67,7 +67,7 @@ The following is a sample schema for importing tables. For the sample schema fil
 }
 ```
 
-The import table schema consists of a namespace name, a table name, and a `transaction` field. The `transaction` field indicates whether the table will be imported for transactions or not. If you set the `transaction` field to `true` or don't specify the `transaction` field, this tool creates a table with transaction metadata if needed. If you set the `transaction` field to `false`, this tool imports a table without adding transaction metadata (that is, for a table using the [Storage API](storage-abstraction.md)).
+The import table schema consists of a namespace name, a table name, and a `transaction` field. The `transaction` field indicates whether the table will be imported for transactions or not. If you set the `transaction` field to `true` or don't specify the `transaction` field, this tool creates a table with transaction metadata if needed. If you set the `transaction` field to `false`, this tool imports a table without adding transaction metadata (that is, for a table using the [Storage API](storage-abstraction.mdx)).
 
 ## Data-type mapping from JDBC databases to ScalarDB
 
@@ -270,5 +270,5 @@ Data types not listed in the above are not supported. The following are some com
 
 You can use the import function in your application by using the following interfaces:
 
-- [ScalarDB Admin API](./api-guide.md#import-a-table)
-- [ScalarDB Schema Loader API](./schema-loader.md#use-schema-loader-in-your-application)
+- [ScalarDB Admin API](./api-guide.mdx#import-a-table)
+- [ScalarDB Schema Loader API](./schema-loader.mdx#use-schema-loader-in-your-application)

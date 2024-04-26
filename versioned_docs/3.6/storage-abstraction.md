@@ -4,9 +4,9 @@
 
 This page explains how to use the Storage API for users who are experts in ScalarDB.
 
-One of the keys to achieving storage-agnostic or database-agnostic ACID transactions on top of existing storage and database systems is the storage abstraction capabilities that ScalarDB provides. Storage abstraction defines a [data model](design.md#data-model) and the APIs (Storage API) that issue operations on the basis of the data model.
+One of the keys to achieving storage-agnostic or database-agnostic ACID transactions on top of existing storage and database systems is the storage abstraction capabilities that ScalarDB provides. Storage abstraction defines a [data model](design.mdx#data-model) and the APIs (Storage API) that issue operations on the basis of the data model.
 
-Although you will likely use the [Transactional API](api-guide.md#transactional-api) in most cases, another option is to use the Storage API.
+Although you will likely use the [Transactional API](api-guide.mdx#transactional-api) in most cases, another option is to use the Storage API.
 
 The benefits of using the Storage API include the following:
 
@@ -33,7 +33,7 @@ The electronic money application is simplified for this example and isn’t suit
 
 ### ScalarDB configuration
 
-Before you begin, you should configure ScalarDB in the same way mentioned in [Getting Started with ScalarDB](getting-started-with-scalardb.md).
+Before you begin, you should configure ScalarDB in the same way mentioned in [Getting Started with ScalarDB](getting-started-with-scalardb.mdx).
 
 With that in mind, this Storage API example assumes that the configuration file `scalardb.properties` exists.
 
@@ -204,7 +204,7 @@ You can execute administrative operations programmatically as described in this 
 
 :::note
 
-Another method that you could use to execute administrative operations is by using [Schema Loader](schema-loader.md).
+Another method that you could use to execute administrative operations is by using [Schema Loader](schema-loader.mdx).
 
 :::
 
@@ -217,7 +217,7 @@ StorageFactory storageFactory = StorageFactory.create("<CONFIGURATION_FILE_PATH>
 DistributedStorageAdmin admin = storageFactory.getStorageAdmin();
 ```
 
-For details about configurations, see [ScalarDB Configurations](configurations.md).
+For details about configurations, see [ScalarDB Configurations](configurations.mdx).
 
 After you have executed all administrative operations, you should close the `DistributedStorageAdmin` instance as follows:
 
@@ -244,7 +244,7 @@ Map<String, String> options = ...;
 admin.createNamespace("ns", options);
 ```
 
-For details about creation options, see [Creation options](api-guide.md#creation-options).
+For details about creation options, see [Creation options](api-guide.mdx#creation-options).
 
 #### Create a table
 
@@ -268,7 +268,7 @@ TableMetadata tableMetadata =
         .build();
 ```
 
-For details about the data model of ScalarDB, see [Data Model](design.md#data-model).
+For details about the data model of ScalarDB, see [Data Model](design.mdx#data-model).
 
 Then, create a table as follows:
 
@@ -420,7 +420,7 @@ Optional<Result> result = storage.get(get);
 
 You can also specify projections to choose which columns are returned.
 
-For details about how to construct `Key` objects, see [Key construction](api-guide.md#key-construction). And, for details about how to handle `Result` objects, see [Handle Result objects](api-guide.md#handle-result-objects).
+For details about how to construct `Key` objects, see [Key construction](api-guide.mdx#key-construction). And, for details about how to handle `Result` objects, see [Handle Result objects](api-guide.mdx#handle-result-objects).
 
 ##### Specify a consistency level
 

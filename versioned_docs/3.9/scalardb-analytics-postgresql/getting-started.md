@@ -1,6 +1,6 @@
 # Getting Started with ScalarDB Analytics with PostgreSQL
 
-This document explains how to get started with ScalarDB Analytics with PostgreSQL. We assume that you have already installed ScalarDB Analytics with PostgreSQL and that all required services are running. If you don't have such an environment, please follow the instructions in [How to Install ScalarDB Analytics with PostgreSQL in Your Local Environment by Using Docker](./installation.md). Because ScalarDB Analytics with PostgreSQL executes queries via PostgreSQL, we also assume that you already have a `psql` client or another PostgreSQL client to send queries to PostgreSQL.
+This document explains how to get started with ScalarDB Analytics with PostgreSQL. We assume that you have already installed ScalarDB Analytics with PostgreSQL and that all required services are running. If you don't have such an environment, please follow the instructions in [How to Install ScalarDB Analytics with PostgreSQL in Your Local Environment by Using Docker](./installation.mdx). Because ScalarDB Analytics with PostgreSQL executes queries via PostgreSQL, we also assume that you already have a `psql` client or another PostgreSQL client to send queries to PostgreSQL.
 
 ## What is ScalarDB Analytics with PostgreSQL?
 

@@ -53,4 +53,4 @@ scalar.db.storage=cosmos
 ```
 Note that you can use a primary key or a secondary key for `<COSMOS_DB_KEY>`.
 
-Please follow [Getting Started with Scalar DB](getting-started-with-scalardb.md) to run the application.
+Please follow [Getting Started with Scalar DB](getting-started-with-scalardb.mdx) to run the application.

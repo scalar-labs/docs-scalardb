@@ -6,7 +6,7 @@ This document explains the configurations of ScalarDB SQL.
 
 The ScalarDB SQL client-side library offers two connection modes: *Direct* and *Server*.
 With Direct mode, the library directly uses the ScalarDB API.
-On the other hand, with Server mode, the library uses the ScalarDB API indirectly through [ScalarDB SQL Server](sql-server.md).
+On the other hand, with Server mode, the library uses the ScalarDB API indirectly through [ScalarDB SQL Server](sql-server.mdx).
 
 ScalarDB SQL has Direct mode–specific configurations and Server mode–specific configurations.
 The following sections explain the common configurations for the two connection modes, the Direct mode–specific configurations, and the Server mode–specific configurations.
@@ -33,9 +33,9 @@ The configurations for Direct mode are as follows:
 | `scalar.db.sql.statement_cache.size`    | Maximum number of cached statements. | `100`   |
 
 Note that in Direct mode, you need to configure the transaction manager, as well.
-For details about configurations for the transaction manager, see [Transaction manager configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#transaction-manager-configurations).
+For details about configurations for the transaction manager, see [Transaction manager configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.mdx#transaction-manager-configurations).
 
-In addition, for details about ScalarDB SQL Server, see [ScalarDB SQL Server](sql-server.md).
+In addition, for details about ScalarDB SQL Server, see [ScalarDB SQL Server](sql-server.mdx).
 
 ### Configurations for Server mode
 
@@ -54,7 +54,7 @@ The configurations for Server mode are as follows:
 ScalarDB SQL Server is a gRPC server that implements the ScalarDB SQL interface.
 This section explains the ScalarDB SQL Server configurations.
 
-In addition to the configurations described in [Transaction manager configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#transaction-manager-configurations) and [Other configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#other-configurations), the following configurations are available for ScalarDB SQL Server:
+In addition to the configurations described in [Transaction manager configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.mdx#transaction-manager-configurations) and [Other configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.mdx#other-configurations), the following configurations are available for ScalarDB SQL Server:
 
 | Name                                             | Description                                      | Default                |
 |--------------------------------------------------|--------------------------------------------------|------------------------|
@@ -63,7 +63,7 @@ In addition to the configurations described in [Transaction manager configuratio
 | `scalar.db.sql.server.max_inbound_message_size`  | Maximum message size allowed to be received.     | The gRPC default value |
 | `scalar.db.sql.server.max_inbound_metadata_size` | Maximum size of metadata allowed to be received. | The gRPC default value |
 
-For details about ScalarDB SQL Server, see [ScalarDB SQL Server](sql-server.md). 
+For details about ScalarDB SQL Server, see [ScalarDB SQL Server](sql-server.mdx). 
 
 ## Configuration examples
 

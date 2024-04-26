@@ -27,19 +27,19 @@ To add a dependency using Maven:
 ```
 
 ## Docs
-* [Getting started](getting-started-with-scalardb.md)
-* [Java API Guide](api-guide.md)
+* [Getting started](getting-started-with-scalardb.mdx)
+* [Java API Guide](api-guide.mdx)
 * [ScalarDB Samples](https://github.com/scalar-labs/scalardb-samples)
-* [ScalarDB Server](scalardb-server.md)
-* [Multi-storage Transactions](multi-storage-transactions.md)
-* [Two-phase Commit Transactions](two-phase-commit-transactions.md)
-* [Design document](design.md)
-* [Schema Loader](schema-loader.md)
-* [Requirements and Recommendations for the Underlying Databases of ScalarDB](requirements.md)
-* [How to Back up and Restore](backup-restore.md)
-* [ScalarDB supported databases](scalardb-supported-databases.md)
-* [Configurations](configurations.md)
-* [Storage abstraction](storage-abstraction.md)
+* [ScalarDB Server](scalardb-server.mdx)
+* [Multi-storage Transactions](multi-storage-transactions.mdx)
+* [Two-phase Commit Transactions](two-phase-commit-transactions.mdx)
+* [Design document](design.mdx)
+* [Schema Loader](schema-loader.mdx)
+* [Requirements and Recommendations for the Underlying Databases of ScalarDB](requirements.mdx)
+* [How to Back up and Restore](backup-restore.mdx)
+* [ScalarDB supported databases](scalardb-supported-databases.mdx)
+* [Configurations](configurations.mdx)
+* [Storage abstraction](storage-abstraction.mdx)
 * Slides
     * [Making Cassandra more capable, faster, and more reliable](https://speakerdeck.com/scalar/making-cassandra-more-capable-faster-and-more-reliable-at-apachecon-at-home-2020) at ApacheCon@Home 2020
     * [Scalar DB: A library that makes non-ACID databases ACID-compliant](https://speakerdeck.com/scalar/scalar-db-a-library-that-makes-non-acid-databases-acid-compliant) at Database Lounge Tokyo #6 2020

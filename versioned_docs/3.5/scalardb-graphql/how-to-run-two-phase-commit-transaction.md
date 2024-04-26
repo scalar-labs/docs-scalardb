@@ -3,7 +3,7 @@
 # How to run two-phase commit transaction
 
 ScalarDB GraphQL supports two-phase commit style transactions
-called [Two-phase Commit Transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.md).
+called [Two-phase Commit Transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.mdx).
 With Two-phase Commit Transactions, you can execute a transaction that spans multiple
 processes/applications (e.g., Microservices).
 We name the application that starts a transaction "coordinator" while the applications that
@@ -150,4 +150,4 @@ mutation RollbackTx @twoPhaseCommit(id: "the_transaction_id") {
 
 If an exception is thrown by a `@twoPhaseCommit` operation, ScalarDB GraphQL triggers a rollback procedure that recovers the transaction.
 For more details about the exception handling in two-phase commit transaction, please refer to
-the [exception handling guide for ScalarDB two-phase commit transaction](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.md#handle-exceptions).
+the [exception handling guide for ScalarDB two-phase commit transaction](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.mdx#handle-exceptions).

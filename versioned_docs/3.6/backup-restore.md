@@ -82,7 +82,7 @@ In addition, you should pause for a sufficient amount of time (for example, five
 
 :::
 
-To make ScalarDB drain outstanding requests and stop accepting new requests so that a pause duration can be created, you should implement the [Scalar Admin](https://github.com/scalar-labs/scalar-admin) interface properly in your application that uses ScalarDB or use [ScalarDB Server](scalardb-server.md), which implements the Scalar Admin interface.
+To make ScalarDB drain outstanding requests and stop accepting new requests so that a pause duration can be created, you should implement the [Scalar Admin](https://github.com/scalar-labs/scalar-admin) interface properly in your application that uses ScalarDB or use [ScalarDB Server](scalardb-server.mdx), which implements the Scalar Admin interface.
 
 By using the [Scalar Admin client tool](https://github.com/scalar-labs/scalar-admin/tree/main/java#scalar-admin-client-tool), you can pause nodes, servers, or applications that implement the Scalar Admin interface without losing ongoing transactions.
 
@@ -108,7 +108,7 @@ Cassandra has a built-in replication feature, so you do not always have to creat
 
 However, if the quorum of cluster nodes loses their data, you will need a transactionally consistent backup (snapshot) to restore the cluster to a certain transactionally consistent point.
 
-To create a transactionally consistent cluster-wide backup (snapshot), pause the application that is using ScalarDB or [ScalarDB Server](scalardb-server.md) and create backups (snapshots) of the nodes as described in [Back up with explicit pausing](#back-up-with-explicit-pausing) or stop the Cassandra cluster, take copies of all the data in the nodes, and start the cluster.
+To create a transactionally consistent cluster-wide backup (snapshot), pause the application that is using ScalarDB or [ScalarDB Server](scalardb-server.mdx) and create backups (snapshots) of the nodes as described in [Back up with explicit pausing](#back-up-with-explicit-pausing) or stop the Cassandra cluster, take copies of all the data in the nodes, and start the cluster.
 </div>
 <div id="Cosmos_DB_for_NoSQL2" class="tabcontent" markdown="1">
 
@@ -118,7 +118,7 @@ To specify a transactionally consistent restore point, pause your application th
 </div>
 <div id="DynamoDB2" class="tabcontent" markdown="1">
 
-You must enable the PITR feature for DynamoDB tables. If you're using [ScalarDB Schema Loader](schema-loader.md) to create schemas, the tool enables the PITR feature for tables by default.
+You must enable the PITR feature for DynamoDB tables. If you're using [ScalarDB Schema Loader](schema-loader.mdx) to create schemas, the tool enables the PITR feature for tables by default.
 
 To specify a transactionally consistent restore point, pause your application that is using ScalarDB with DynamoDB as described in [Back up with explicit pausing](#back-up-with-explicit-pausing).
 </div>
@@ -160,7 +160,7 @@ After placing the backups (snapshots) in each node, start all the nodes of the C
 
 Follow the official Azure documentation for [restore an account by using Azure portal](https://docs.microsoft.com/en-us/azure/cosmos-db/restore-account-continuous-backup#restore-account-portal). After restoring a backup, [configure the default consistency level](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-manage-consistency#configure-the-default-consistency-level) of the restored databases to `STRONG`. In addition, you should use the mid-time of the paused duration as the restore point as previously explained.
 
-ScalarDB implements the Cosmos DB adapter by using its stored procedures, which are installed when creating schemas by using ScalarDB Schema Loader. However, the PITR feature of Cosmos DB doesn't restore stored procedures. Because of this, you need to re-install the required stored procedures for all tables after restoration. You can do this by using ScalarDB Schema Loader with the `--repair-all` option. For details, see [Repair tables](schema-loader.md#repair-tables).
+ScalarDB implements the Cosmos DB adapter by using its stored procedures, which are installed when creating schemas by using ScalarDB Schema Loader. However, the PITR feature of Cosmos DB doesn't restore stored procedures. Because of this, you need to re-install the required stored procedures for all tables after restoration. You can do this by using ScalarDB Schema Loader with the `--repair-all` option. For details, see [Repair tables](schema-loader.mdx#repair-tables).
 </div>
 <div id="DynamoDB3" class="tabcontent" markdown="1">
 

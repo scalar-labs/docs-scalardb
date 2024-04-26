@@ -4,7 +4,7 @@ This document describes the ScalarDB Cluster SQL gRPC API.
 
 ScalarDB Cluster SQL provides a Java API that uses the gRPC API internally.
 If you use Java or a JVM language, you can use the Java API instead of the ScalarDB Cluster SQL gRPC API directly.
-For details about the Java API, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.md).
+For details about the Java API, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.mdx).
 
 For details about the services and messages for the ScalarDB Cluster SQL gRPC API, see the definitions in the `scalardb-cluster-sql.proto` file. For ScalarDB Cluster users who have a commercial license, please [contact us](https://www.scalar-labs.com/contact) if you need the `scalardb-cluster-sql.proto` file.
 
@@ -51,7 +51,7 @@ By calling `Begin`, you receive a transaction ID in the response, which you can 
 Also, you can call `Execute` without a transaction ID to execute a one-shot transaction.
 In this case, the transaction is automatically committed after it is executed.
 You can use this method to execute DDL statements as well.
-For details on the supported SQL statements, refer to [ScalarDB SQL Grammar](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/grammar.md).
+For details on the supported SQL statements, refer to [ScalarDB SQL Grammar](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/grammar.mdx).
 Please note, however, that `Execute` supports only DML and DDL statements.
 
 When you call `Begin`, you can optionally specify a transaction ID.
@@ -126,7 +126,7 @@ By calling `Begin` or `Join`, you receive a transaction ID in the response, whic
 
 In addition, you can call `Execute` without a transaction ID to execute a one-shot transaction.
 In this case, the transaction is automatically committed after it is executed.
-You can use this method to execute DDL statements as well. For details on the supported SQL statements, refer to [ScalarDB SQL Grammar](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/grammar.md).
+You can use this method to execute DDL statements as well. For details on the supported SQL statements, refer to [ScalarDB SQL Grammar](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/grammar.mdx).
 Please note, however, that `Execute` supports only DML and DDL statements.
 
 When you call `Begin`, you can optionally specify a transaction ID.

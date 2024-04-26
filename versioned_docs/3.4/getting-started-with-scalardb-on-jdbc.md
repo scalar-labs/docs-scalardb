@@ -46,4 +46,4 @@ scalar.db.storage=jdbc
 #scalar.db.jdbc.prepared_statements_pool.max_open=-1
 ```
 
-Please follow [Getting Started with Scalar DB](getting-started-with-scalardb.md) to run the application.
+Please follow [Getting Started with Scalar DB](getting-started-with-scalardb.mdx) to run the application.

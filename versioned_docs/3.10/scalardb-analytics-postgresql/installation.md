@@ -51,7 +51,7 @@ $ docker-compose up analytics
 
 ### Step 4. Run your analytical queries
 
-Now, you should have all the required services running. To run analytical queries, see [Getting Started with ScalarDB Analytics with PostgreSQL](./getting-started.md).
+Now, you should have all the required services running. To run analytical queries, see [Getting Started with ScalarDB Analytics with PostgreSQL](./getting-started.mdx).
 
 ### Step 5. Shut down the ScalarDB Analytics with PostgreSQL services
 

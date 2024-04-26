@@ -6,7 +6,7 @@ In this Getting Started guide, you will run a GraphQL server on your local machi
 
 ## Prerequisites
 
-We assume you have already installed Docker and have access to a ScalarDB-supported database such as Cassandra. Please configure them first by following [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started.md) if you have not set them up yet.
+We assume you have already installed Docker and have access to a ScalarDB-supported database such as Cassandra. Please configure them first by following [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started.mdx) if you have not set them up yet.
 
 You need a Personal Access Token (PAT) to access the Docker image of ScalarDB GraphQL in GitHub Container registry since the image is private. Ask a person in charge to get your account ready. Please read [the official document](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) for more detail.
 

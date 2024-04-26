@@ -14,7 +14,7 @@ To build and install the ScalarDB GraphQL Server, use `./gradlew installDist`, w
 
 ## Run
 
-In addition to the configurations described in [Transaction manager configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#transaction-manager-configurations) and [Other configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#other-configurations), the GraphQL server reads the following:
+In addition to the configurations described in [Transaction manager configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.mdx#transaction-manager-configurations) and [Other configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.mdx#other-configurations), the GraphQL server reads the following:
 
 * `scalar.db.graphql.port` ... Port number for GraphQL server. The default is `8080`.
 * `scalar.db.graphql.path` ... Path component of the URL of the GraphQL endpoint. The default is `/graphql`.
@@ -114,7 +114,7 @@ The code formatter is automatically executed when commiting files. A commit will
 
 ## Docs
 
-* [Getting Started with ScalarDB GraphQL](getting-started-with-scalardb-graphql.md)
+* [Getting Started with ScalarDB GraphQL](getting-started-with-scalardb-graphql.mdx)
 * [ScalarDB GraphQL Sample](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-graphql-sample)
-* [How to run two-phase commit transaction](how-to-run-two-phase-commit-transaction.md)
-* [Deployment Guide on AWS](aws-deployment-guide.md)
+* [How to run two-phase commit transaction](how-to-run-two-phase-commit-transaction.mdx)
+* [Deployment Guide on AWS](aws-deployment-guide.mdx)

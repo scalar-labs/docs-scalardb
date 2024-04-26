@@ -29,9 +29,9 @@ The configurations for Direct mode are as follows:
 | scalar.db.sql.statement_cache.size | The maximum number of cached statement. | 100 |
 
 Note that in the Direct mode, you need to configure underlining storage/database, as well.
-Please see [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.md) for the details of the underlining storage/database configurations.
+Please see [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.mdx) for the details of the underlining storage/database configurations.
 
-Please see also [ScalarDB SQL Server](sql-server.md) for the details of ScalarDB SQL Server.
+Please see also [ScalarDB SQL Server](sql-server.mdx) for the details of ScalarDB SQL Server.
 
 ## Configurations for Server mode
 
@@ -52,7 +52,7 @@ The configurations for ScalarDB SQL Server are as follows:
 | scalar.db.sql.server.port | Port number for grpc server. | 60052 |
 | scalar.db.sql.server.prometheus_exporter_port | Port number for Prometheus exporter. | 8080 |
 
-Please see also [ScalarDB SQL Server](sql-server.md) for the details of ScalarDB SQL Server. 
+Please see also [ScalarDB SQL Server](sql-server.mdx) for the details of ScalarDB SQL Server. 
 
 ## Configuration examples
 
@@ -104,7 +104,7 @@ This setting is recommended for production use.
 This is because ScalarDB Server implements [scalar-admin](https://github.com/scalar-labs/scalar-admin) interface, which enables you to take transactionally-consistent backups for ScalarDB by pausing the ScalarDB Server.
 
 Let's assume ScalarDB Server is already set up.
-Please see [ScalarDB server](https://github.com/scalar-labs/scalardb/blob/master/docs/scalardb-server.md) for the details of configurations of ScalarDB Server.
+Please see [ScalarDB server](https://github.com/scalar-labs/scalardb/blob/master/docs/scalardb-server.mdx) for the details of configurations of ScalarDB Server.
 
 In this case, an example of configurations for App is as follows:
 ```properties

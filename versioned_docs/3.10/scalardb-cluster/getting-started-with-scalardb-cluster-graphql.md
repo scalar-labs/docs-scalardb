@@ -4,7 +4,7 @@ This tutorial describes how to use ScalarDB Cluster GraphQL.
 
 ## Prerequisites
 
-In this tutorial, we assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.md).
+In this tutorial, we assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.mdx).
 
 In addition, you need access to the [ScalarDB Cluster GitHub repository](https://github.com/scalar-labs/scalardb-cluster).
 This repository is available only to users with a commercial license and permission.
@@ -94,12 +94,12 @@ scalar.db.contact_points=indirect:localhost
 
 To connect to ScalarDB Cluster, you need to specify `cluster` for the `scalar.db.transaction_manager` property.
 In addition, you will use the `indirect` client mode and connect to the service resource of Envoy in this tutorial.
-For details about the client modes, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.md).
+For details about the client modes, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.mdx).
 
 ## Step 3. Load a schema
 
 To load a schema via ScalarDB Cluster, you need to use the dedicated Schema Loader for ScalarDB Cluster (Schema Loader for Cluster).
-Using the Schema Loader for Cluster is basically the same as using the [Schema Loader for ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader.md) except the name of the JAR file is different.
+Using the Schema Loader for Cluster is basically the same as using the [Schema Loader for ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader.mdx) except the name of the JAR file is different.
 You can download the Schema Loader for Cluster at [Releases](https://github.com/scalar-labs/scalardb-cluster/releases/tag/v3.10.3).
 After downloading the JAR file, you can run the Schema Loader for Cluster with the following command:
 
@@ -312,15 +312,15 @@ mutation RollbackTx @transaction(id: "c88da8a6-a13f-4857-82fe-45f1ab4150f9") {
 
 If you have not tried the other ScalarDB Cluster tutorials, we encourage you to read the following:
 
-* [Getting Started with ScalarDB Cluster](getting-started-with-scalardb-cluster.md)
-* [Getting Started with ScalarDB Cluster SQL via JDBC](getting-started-with-scalardb-cluster-sql-jdbc.md)
-* [Getting Started with ScalarDB Cluster SQL via Spring Data JDBC for ScalarDB](getting-started-with-scalardb-cluster-sql-spring-data-jdbc.md)
+* [Getting Started with ScalarDB Cluster](getting-started-with-scalardb-cluster.mdx)
+* [Getting Started with ScalarDB Cluster SQL via JDBC](getting-started-with-scalardb-cluster-sql-jdbc.mdx)
+* [Getting Started with ScalarDB Cluster SQL via Spring Data JDBC for ScalarDB](getting-started-with-scalardb-cluster-sql-spring-data-jdbc.mdx)
 
 For details about developing applications that use ScalarDB Cluster with the Java API, refer to the following:
 
-* [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.md)
+* [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.mdx)
 
 For details about ScalarDB Cluster gRPC API, refer to the following:
 
-* [ScalarDB Cluster gRPC API Guide](scalardb-cluster-grpc-api-guide.md)
-* [ScalarDB Cluster SQL gRPC API Guide](scalardb-cluster-sql-grpc-api-guide.md)
+* [ScalarDB Cluster gRPC API Guide](scalardb-cluster-grpc-api-guide.mdx)
+* [ScalarDB Cluster SQL gRPC API Guide](scalardb-cluster-sql-grpc-api-guide.mdx)
