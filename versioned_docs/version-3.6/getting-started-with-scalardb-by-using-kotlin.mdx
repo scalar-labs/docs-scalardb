@@ -1,5 +1,8 @@
 # Getting Started with ScalarDB by Using Kotlin
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 This getting started tutorial explains how to configure your preferred database in ScalarDB and set up a basic electronic money application by using Kotlin. Since Kotlin has Java interoperability, you can use ScalarDB directly from Kotlin.
 
 :::warning
@@ -43,111 +46,94 @@ Select your database, and follow the instructions to configure it for ScalarDB.
 
 For a list of databases that ScalarDB supports, see [Supported Databases](scalardb-supported-databases.mdx).
 
-<div id="tabset-1">
-<div class="tab">
-  <button class="tablinks" onclick="openTab(event, 'Cassandra', 'tabset-1')" id="defaultOpen-1">Cassandra</button>
-  <button class="tablinks" onclick="openTab(event, 'Cosmos_DB_for_NoSQL', 'tabset-1')">Cosmos DB for NoSQL</button>
-  <button class="tablinks" onclick="openTab(event, 'DynamoDB', 'tabset-1')">DynamoDB</button>
-  <button class="tablinks" onclick="openTab(event, 'JDBC_databases', 'tabset-1')">JDBC databases</button>
-</div>
+<Tabs groupId="databases" queryString>
+  <TabItem value="Cassandra" label="Cassandra" default>
+    Confirm that you have Cassandra installed. If Cassandra isn't installed, visit [Downloading Cassandra](https://cassandra.apache.org/_/download.html).
 
-<div id="Cassandra" class="tabcontent" markdown="1">
+    ### Configure Cassandra
 
-Confirm that you have Cassandra installed. If Cassandra isn't installed, visit [Downloading Cassandra](https://cassandra.apache.org/_/download.html).
+    Open **cassandra.yaml** in your preferred IDE. Then, change `commitlog_sync` from `periodic` to `batch` so that you don't lose data if a quorum of replica nodes goes down.
 
-### Configure Cassandra
-{:.no_toc}
+    ### Configure ScalarDB
 
-Open **cassandra.yaml** in your preferred IDE. Then, change `commitlog_sync` from `periodic` to `batch` so that you don't lose data if a quorum of replica nodes goes down.
+    The following instructions assume that you have properly installed and configured the JDK and Cassandra in your local environment, and Cassandra is running on your localhost.
 
-### Configure ScalarDB
-{:.no_toc}
+    The **scalardb.properties** file in the `docs/getting-started-kotlin` directory holds database configurations for ScalarDB. The following is a basic configuration for Cassandra. Be sure to change the values for `scalar.db.username` and `scalar.db.password` as described.
 
-The following instructions assume that you have properly installed and configured the JDK and Cassandra in your local environment, and Cassandra is running on your localhost.
+    ```properties
+    # The Cassandra storage implementation is used for Consensus Commit.
+    scalar.db.storage=cassandra
 
-The **scalardb.properties** file in the `docs/getting-started-kotlin` directory holds database configurations for ScalarDB. The following is a basic configuration for Cassandra. Be sure to change the values for `scalar.db.username` and `scalar.db.password` as described.
+    # Comma-separated contact points.
+    scalar.db.contact_points=localhost
 
-```properties
-# The Cassandra storage implementation is used for Consensus Commit.
-scalar.db.storage=cassandra
+    # The port number for all the contact points.
+    scalar.db.contact_port=9042
 
-# Comma-separated contact points.
-scalar.db.contact_points=localhost
+    # The username and password to access the database.
+    scalar.db.username=<USER_NAME>
+    scalar.db.password=<USER_PASSWORD>
+    ```
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    To use Azure Cosmos DB for NoSQL, you must have an Azure account. If you don't have an Azure account, visit [Create an Azure Cosmos DB account](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-portal#create-account).
 
-# The port number for all the contact points.
-scalar.db.contact_port=9042
+    ### Configure Cosmos DB for NoSQL
 
-# The username and password to access the database.
-scalar.db.username=<USER_NAME>
-scalar.db.password=<USER_PASSWORD>
-```
-</div>
-<div id="Cosmos_DB_for_NoSQL" class="tabcontent" markdown="1">
+    Set the **default consistency level** to **Strong** according to the official document at [Configure the default consistency level](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-manage-consistency#configure-the-default-consistency-level).
 
-To use Azure Cosmos DB for NoSQL, you must have an Azure account. If you don't have an Azure account, visit [Create an Azure Cosmos DB account](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-portal#create-account).
+    ### Configure ScalarDB
 
-### Configure Cosmos DB for NoSQL
-{:.no_toc}
+    The following instructions assume that you have properly installed and configured the JDK in your local environment and properly configured your Cosmos DB for NoSQL account in Azure.
 
-Set the **default consistency level** to **Strong** according to the official document at [Configure the default consistency level](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-manage-consistency#configure-the-default-consistency-level).
+    The **scalardb.properties** file in the `docs/getting-started-kotlin` directory holds database configurations for ScalarDB. Be sure to change the values for `scalar.db.contact_points` and `scalar.db.password` as described.
 
-### Configure ScalarDB
-{:.no_toc}
+    ```properties
+    # The Cosmos DB for NoSQL storage implementation is used for Consensus Commit.
+    scalar.db.storage=cosmos
 
-The following instructions assume that you have properly installed and configured the JDK in your local environment and properly configured your Cosmos DB for NoSQL account in Azure. 
+    # The Cosmos DB for NoSQL URI.
+    scalar.db.contact_points=<COSMOS_DB_FOR_NOSQL_URI>
 
-The **scalardb.properties** file in the `docs/getting-started-kotlin` directory holds database configurations for ScalarDB. Be sure to change the values for `scalar.db.contact_points` and `scalar.db.password` as described.
-    
-```properties
-# The Cosmos DB for NoSQL storage implementation is used for Consensus Commit.
-scalar.db.storage=cosmos
-
-# The Cosmos DB for NoSQL URI.
-scalar.db.contact_points=<COSMOS_DB_FOR_NOSQL_URI>
-
-# The Cosmos DB for NoSQL key to access the database.
-scalar.db.password=<COSMOS_DB_FOR_NOSQL_KEY>
-```
+    # The Cosmos DB for NoSQL key to access the database.
+    scalar.db.password=<COSMOS_DB_FOR_NOSQL_KEY>
+    ```
 
 :::note
 
 You can use a primary key or a secondary key as the value for `scalar.db.password`.
-{% endcapture %}
-<div class="notice--info">{{ notice--info | markdownify }}</div>
-</div>
-<div id="DynamoDB" class="tabcontent" markdown="1">
 
-To use Amazon DynamoDB, you must have an AWS account. If you don't have an AWS account, visit [Getting started: Are you a first-time AWS user?](https://docs.aws.amazon.com/accounts/latest/reference/welcome-first-time-user.html).
+:::
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    To use Amazon DynamoDB, you must have an AWS account. If you don't have an AWS account, visit [Getting started: Are you a first-time AWS user?](https://docs.aws.amazon.com/accounts/latest/reference/welcome-first-time-user.html).
 
-### Configure ScalarDB
-{:.no_toc}
+    ### Configure ScalarDB
 
-The following instructions assume that you have properly installed and configured the JDK in your local environment.
+    The following instructions assume that you have properly installed and configured the JDK in your local environment.
 
-The **scalardb.properties** file in the `docs/getting-started-kotlin` directory holds database configurations for ScalarDB. Be sure to change the values for `scalar.db.contact_points`, `scalar.db.username`, and  `scalar.db.password` as described.
+    The **scalardb.properties** file in the `docs/getting-started-kotlin` directory holds database configurations for ScalarDB. Be sure to change the values for `scalar.db.contact_points`, `scalar.db.username`, and  `scalar.db.password` as described.
 
-```properties
-# The DynamoDB storage implementation is used for Consensus Commit.
-scalar.db.storage=dynamo
+    ```properties
+    # The DynamoDB storage implementation is used for Consensus Commit.
+    scalar.db.storage=dynamo
 
-# The AWS region.
-scalar.db.contact_points=<REGION>
+    # The AWS region.
+    scalar.db.contact_points=<REGION>
 
-# The AWS access key ID and secret access key to access the database.
-scalar.db.username=<ACCESS_KEY_ID>
-scalar.db.password=<SECRET_ACCESS_KEY>
-```
-</div>
-<div id="JDBC_databases" class="tabcontent" markdown="1">
+    # The AWS access key ID and secret access key to access the database.
+    scalar.db.username=<ACCESS_KEY_ID>
+    scalar.db.password=<SECRET_ACCESS_KEY>
+    ```
+  </TabItem>
+  <TabItem value="JDBC_databases" label="JDBC databases">
+    Confirm that you have a JDBC database installed. For a list of supported JDBC databases, see [Supported Databases](scalardb-supported-databases.mdx).
 
-Confirm that you have a JDBC database installed. For a list of supported JDBC databases, see [Supported Databases](scalardb-supported-databases.mdx).
+    ### Configure ScalarDB
 
-### Configure ScalarDB
-{:.no_toc}
+    The following instructions assume that you have properly installed and configured the JDK and JDBC database in your local environment, and the JDBC database is running on your localhost.
 
-The following instructions assume that you have properly installed and configured the JDK and JDBC database in your local environment, and the JDBC database is running on your localhost.
-
-The **scalardb.properties** file in the `docs/getting-started-kotlin` directory holds database configurations for ScalarDB. The following is a basic configuration for JDBC databases. 
+    The **scalardb.properties** file in the `docs/getting-started-kotlin` directory holds database configurations for ScalarDB. The following is a basic configuration for JDBC databases.
 
 :::note
 
@@ -155,23 +141,23 @@ Be sure to uncomment the `scalar.db.contact_points` variable and change the valu
 
 :::
 
-```properties
-# The JDBC database storage implementation is used for Consensus Commit.
-scalar.db.storage=jdbc
+    ```properties
+    # The JDBC database storage implementation is used for Consensus Commit.
+    scalar.db.storage=jdbc
 
-# The JDBC database URL for the type of database you are using.
-# scalar.db.contact_points=jdbc:mysql://localhost:3306/
-# scalar.db.contact_points=jdbc:oracle:thin:@//localhost:1521/
-# scalar.db.contact_points=jdbc:postgresql://localhost:5432/
-# scalar.db.contact_points=jdbc:sqlserver://localhost:1433;
-# scalar.db.contact_points=jdbc:sqlite://localhost:3306.sqlite3?busy_timeout=10000
+    # The JDBC database URL for the type of database you are using.
+    # scalar.db.contact_points=jdbc:mysql://localhost:3306/
+    # scalar.db.contact_points=jdbc:oracle:thin:@//localhost:1521/
+    # scalar.db.contact_points=jdbc:postgresql://localhost:5432/
+    # scalar.db.contact_points=jdbc:sqlserver://localhost:1433;
+    # scalar.db.contact_points=jdbc:sqlite://localhost:3306.sqlite3?busy_timeout=10000
 
-# The username and password for connecting to the database.
-scalar.db.username=<USER_NAME>
-scalar.db.password=<PASSWORD>
-```
-</div>
-</div>
+    # The username and password for connecting to the database.
+    scalar.db.username=<USER_NAME>
+    scalar.db.password=<PASSWORD>
+    ```
+  </TabItem>
+</Tabs>
 
 ## Create and load the database schema
 

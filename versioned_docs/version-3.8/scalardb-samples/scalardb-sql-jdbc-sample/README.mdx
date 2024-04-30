@@ -1,5 +1,8 @@
 # Create a Sample Application That Uses ScalarDB SQL (JDBC)
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 :::note
 
 This sample code is now deprecated. To use ScalarDB SQL, you need to use ScalarDB Cluster, which is available only in the Enterprise edition. For more information, see [ScalarDB Cluster](https://scalardb.scalar-labs.com/docs/latest/scalardb-cluster/).
@@ -52,32 +55,23 @@ In addition, you need access to the [ScalarDB SQL repository on GitHub](https://
 
 After confirming that you have access to the ScalarDB SQL repository and its packages, you will need to set your GitHub username and your personal access token. To specify these properties, you can do one of the following:
 
-<div id="tabset-1">
-<div class="tab">
-  <button class="tablinks" onclick="openTab(event, 'Gradle_properties_via_command', 'tabset-1')" id="defaultOpen-1">Add to Gradle properties via Terminal</button>
-  <button class="tablinks" onclick="openTab(event, 'Environment_variables', 'tabset-1')">Add as environment variables</button>
-</div>
+<Tabs groupId="specify_properties" queryString>
+  <TabItem value="Gradle_properties_via_command" label="Add to Gradle properties via Terminal" default>
+    Specify the properties with the `-P` option by running the `./gradlew` command as follows, replacing `<YOUR_GITHUB_USERNAME>` with your GitHub username and `<YOUR_PERSONAL_ACCESS_TOKEN>` with your personal access token:
 
-<div id="Gradle_properties_via_command" class="tabcontent" markdown="1">
+    ```console
+    $ ./gradlew run <OPTIONS> -Pgpr.user=<YOUR_GITHUB_USERNAME> -Pgpr.key=<YOUR_PERSONAL_ACCESS_TOKEN>
+    ```
+  </TabItem>
+  <TabItem value="environment_variables" label="Add as environment variables">
+    Specify the properties as environment variables by running the following commands, replacing `<YOUR_GITHUB_USERNAME>` with your GitHub username and `<YOUR_PERSONAL_ACCESS_TOKEN>` with your personal access token:
 
-Specify the properties with the `-P` option by running the `./gradlew` command as follows, replacing `<YOUR_GITHUB_USERNAME>` with your GitHub username and `<YOUR_PERSONAL_ACCESS_TOKEN>` with your personal access token:
-
-```console
-$ ./gradlew run <OPTIONS> -Pgpr.user=<YOUR_GITHUB_USERNAME> -Pgpr.key=<YOUR_PERSONAL_ACCESS_TOKEN>
-```
-
-</div>
-<div id="Environment_variables" class="tabcontent" markdown="1">
-
-Specify the properties as environment variables by running the following commands, replacing `<YOUR_GITHUB_USERNAME>` with your GitHub username and `<YOUR_PERSONAL_ACCESS_TOKEN>` with your personal access token:
-
-```console
-$ export USERNAME=<YOUR_GITHUB_USERNAME>
-$ export TOKEN=<YOUR_PERSONAL_ACCESS_TOKEN>
-```
-
-</div>
-</div>
+    ```console
+    $ export USERNAME=<YOUR_GITHUB_USERNAME>
+    $ export TOKEN=<YOUR_PERSONAL_ACCESS_TOKEN>
+    ```
+  </TabItem>
+</Tabs>
 
 For more details, see [how to install ScalarDB SQL](https://github.com/scalar-labs/scalardb-sql#install).
 

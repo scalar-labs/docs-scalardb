@@ -1,5 +1,8 @@
 # ScalarDB Schema Loader
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 ScalarDB has its own data model and schema that maps to the implementation-specific data model and schema. In addition, ScalarDB stores internal metadata, such as transaction IDs, record versions, and transaction statuses, to manage transaction logs and statuses when you use the Consensus Commit transaction manager.
 
 Since managing the schema mapping and metadata for transactions can be difficult, you can use ScalarDB Schema Loader, which is a tool to create schemas that doesn't require you to need in-depth knowledge about schema mapping or metadata.
@@ -19,31 +22,24 @@ This tool supports only basic options to create, delete, or repair a table. If y
 
 Select your preferred method to set up Schema Loader, and follow the instructions.
 
-<div id="tabset-1">
-<div class="tab">
-  <button class="tablinks" onclick="openTab(event, 'Fat_JAR', 'tabset-1')" id="defaultOpen-1">Fat JAR</button>
-  <button class="tablinks" onclick="openTab(event, 'Docker_container', 'tabset-1')">Docker container</button>
-</div>
+<Tabs groupId="setup_method" queryString>
+  <TabItem value="fat_JAR" label="Fat JAR" default>
+    You can download the release versions of Schema Loader from the [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) page.
+  </TabItem>
+  <TabItem value="Docker_container" label="Docker container">
+    You can pull the Docker image from the [Scalar container registry](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-schema-loader) by running the following command, replacing the contents in the angle brackets as described:
 
-<div id="Fat_JAR" class="tabcontent" markdown="1">
-
-You can download the release versions of Schema Loader from the [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) page.
-</div>
-<div id="Docker_container" class="tabcontent" markdown="1">
-
-You can pull the Docker image from the [Scalar container registry](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-schema-loader) by running the following command, replacing the contents in the angle brackets as described:
-
-```console
-$ docker run --rm -v <PATH_TO_YOUR_LOCAL_SCHEMA_FILE>:<PATH_TO_SCHEMA_FILE_DOCKER> [-v <PATH_TO_LOCAL_SCALARDB_PROPERTIES_FILE>:<PATH_TO_SCALARDB_PROPERTIES_FILE_IN_DOCKER>] ghcr.io/scalar-labs/scalardb-schema-loader:<VERSION> <COMMAND_ARGUMENTS>
-```
+    ```console
+    $ docker run --rm -v <PATH_TO_YOUR_LOCAL_SCHEMA_FILE>:<PATH_TO_SCHEMA_FILE_DOCKER> [-v <PATH_TO_LOCAL_SCALARDB_PROPERTIES_FILE>:<PATH_TO_SCALARDB_PROPERTIES_FILE_IN_DOCKER>] ghcr.io/scalar-labs/scalardb-schema-loader:<VERSION> <COMMAND_ARGUMENTS>
+    ```
 
 :::note
 
 You can specify the same command arguments even if you use the fat JAR or the container. In the [Available commands](#available-commands) section, the JAR is used, but you can run the commands by using the container in the same way by replacing `java -jar scalardb-schema-loader-<VERSION>.jar` with `docker run --rm -v <PATH_TO_YOUR_LOCAL_SCHEMA_FILE>:<PATH_TO_SCHEMA_FILE_DOCKER> [-v <PATH_TO_LOCAL_SCALARDB_PROPERTIES_FILE>:<PATH_TO_SCALARDB_PROPERTIES_FILE_IN_DOCKER>] ghcr.io/scalar-labs/scalardb-schema-loader:<VERSION>`.
 
 :::
-</div>
-</div>
+  </TabItem>
+</Tabs>
 
 ## Run Schema Loader
 
@@ -87,92 +83,81 @@ For a sample properties file, see [`database.properties`](https://github.com/sca
 
 The following database-specific methods have been deprecated. Please use the [commands for configuring the properties file](#available-commands) instead.
 
-<div id="tabset-2">
-<div class="tab">
-  <button class="tablinks" onclick="openTab(event, 'Cassandra-2', 'tabset-2')" id="defaultOpen-2">Cassandra</button>
-  <button class="tablinks" onclick="openTab(event, 'Cosmos_DB_for_NoSQL-2', 'tabset-2')">Cosmos DB for NoSQL</button>
-  <button class="tablinks" onclick="openTab(event, 'DynamoDB-2', 'tabset-2')">DynamoDB</button>
-  <button class="tablinks" onclick="openTab(event, 'JDBC_databases-2', 'tabset-2')">JDBC databases</button>
-</div>
-
-<div id="Cassandra-2" class="tabcontent" markdown="1">
-
-```console
-Usage: java -jar scalardb-schema-loader-<version>.jar --cassandra [-D]
-       [-c=<compactionStrategy>] -f=<schemaFile> -h=<hostIp>
-       [-n=<replicationStrategy>] [-p=<password>] [-P=<port>]
-       [-R=<replicationFactor>] [-u=<user>]
-Create/Delete Cassandra schemas
-  -c, --compaction-strategy=<compactionStrategy>
-                        Cassandra compaction strategy, must be LCS, STCS or TWCS
-  -D, --delete-all      Delete tables
-  -f, --schema-file=<schemaFile>
-                        Path to the schema json file
-  -h, --host=<hostIp>   Cassandra host IP
-  -n, --network-strategy=<replicationStrategy>
-                        Cassandra network strategy, must be SimpleStrategy or
-                          NetworkTopologyStrategy
-  -p, --password=<password>
-                        Cassandra password
-  -P, --port=<port>     Cassandra Port
-  -R, --replication-factor=<replicationFactor>
-                        Cassandra replication factor
-  -u, --user=<user>     Cassandra user
-```
-</div>
-<div id="Cosmos_DB_for_NoSQL-2" class="tabcontent" markdown="1">
-
-```console
-Usage: java -jar scalardb-schema-loader-<version>.jar --cosmos [-D]
-       [--no-scaling] -f=<schemaFile> -h=<uri> -p=<key> [-r=<ru>]
-Create/Delete Cosmos DB schemas
-  -D, --delete-all       Delete tables
-  -f, --schema-file=<schemaFile>
-                         Path to the schema json file
-  -h, --host=<uri>       Cosmos DB account URI
-      --no-scaling       Disable auto-scaling for Cosmos DB
-  -p, --password=<key>   Cosmos DB key
-  -r, --ru=<ru>          Base resource unit
-```
-</div>
-<div id="DynamoDB-2" class="tabcontent" markdown="1">
-
-```console
-Usage: java -jar scalardb-schema-loader-<version>.jar --dynamo [-D]
-       [--no-backup] [--no-scaling] [--endpoint-override=<endpointOverride>]
-       -f=<schemaFile> -p=<awsSecKey> [-r=<ru>] --region=<awsRegion>
-       -u=<awsKeyId>
-Create/Delete DynamoDB schemas
-  -D, --delete-all           Delete tables
-      --endpoint-override=<endpointOverride>
-                             Endpoint with which the DynamoDB SDK should
-                               communicate
-  -f, --schema-file=<schemaFile>
-                             Path to the schema json file
-      --no-backup            Disable continuous backup for DynamoDB
-      --no-scaling           Disable auto-scaling for DynamoDB
-  -p, --password=<awsSecKey> AWS access secret key
-  -r, --ru=<ru>              Base resource unit
-      --region=<awsRegion>   AWS region
-  -u, --user=<awsKeyId>      AWS access key ID
-```
-</div>
-<div id="JDBC_databases-2" class="tabcontent" markdown="1">
-
-```console
-Usage: java -jar scalardb-schema-loader-<version>.jar --jdbc [-D]
-       -f=<schemaFile> -j=<url> -p=<password> -u=<user>
-Create/Delete JDBC schemas
-  -D, --delete-all       Delete tables
-  -f, --schema-file=<schemaFile>
-                         Path to the schema json file
-  -j, --jdbc-url=<url>   JDBC URL
-  -p, --password=<password>
-                         JDBC password
-  -u, --user=<user>      JDBC user
-```
-</div>
-</div>
+<Tabs groupId="databases" queryString>
+  <TabItem value="Cassandra" label="Cassandra" default>
+    ```console
+    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --cassandra [-D]
+          [-c=<compactionStrategy>] -f=<schemaFile> -h=<hostIp>
+          [-n=<replicationStrategy>] [-p=<password>] [-P=<port>]
+          [-R=<replicationFactor>] [-u=<user>]
+    Create/Delete Cassandra schemas
+      -c, --compaction-strategy=<compactionStrategy>
+                            Cassandra compaction strategy, must be LCS, STCS or TWCS
+      -D, --delete-all      Delete tables
+      -f, --schema-file=<schemaFile>
+                            Path to the schema json file
+      -h, --host=<hostIp>   Cassandra host IP
+      -n, --network-strategy=<replicationStrategy>
+                            Cassandra network strategy, must be SimpleStrategy or
+                              NetworkTopologyStrategy
+      -p, --password=<password>
+                            Cassandra password
+      -P, --port=<port>     Cassandra Port
+      -R, --replication-factor=<replicationFactor>
+                            Cassandra replication factor
+      -u, --user=<user>     Cassandra user
+    ```
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    ```console
+    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --cosmos [-D]
+          [--no-scaling] -f=<schemaFile> -h=<uri> -p=<key> [-r=<ru>]
+    Create/Delete Cosmos DB schemas
+      -D, --delete-all       Delete tables
+      -f, --schema-file=<schemaFile>
+                            Path to the schema json file
+      -h, --host=<uri>       Cosmos DB account URI
+          --no-scaling       Disable auto-scaling for Cosmos DB
+      -p, --password=<key>   Cosmos DB key
+      -r, --ru=<ru>          Base resource unit
+    ```
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    ```console
+    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --dynamo [-D]
+          [--no-backup] [--no-scaling] [--endpoint-override=<endpointOverride>]
+          -f=<schemaFile> -p=<awsSecKey> [-r=<ru>] --region=<awsRegion>
+          -u=<awsKeyId>
+    Create/Delete DynamoDB schemas
+      -D, --delete-all           Delete tables
+          --endpoint-override=<endpointOverride>
+                                Endpoint with which the DynamoDB SDK should
+                                  communicate
+      -f, --schema-file=<schemaFile>
+                                Path to the schema json file
+          --no-backup            Disable continuous backup for DynamoDB
+          --no-scaling           Disable auto-scaling for DynamoDB
+      -p, --password=<awsSecKey> AWS access secret key
+      -r, --ru=<ru>              Base resource unit
+          --region=<awsRegion>   AWS region
+      -u, --user=<awsKeyId>      AWS access key ID
+    ```
+  </TabItem>
+  <TabItem value="JDBC_databases" label="JDBC databases">
+    ```console
+    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --jdbc [-D]
+          -f=<schemaFile> -j=<url> -p=<password> -u=<user>
+    Create/Delete JDBC schemas
+      -D, --delete-all       Delete tables
+      -f, --schema-file=<schemaFile>
+                            Path to the schema json file
+      -j, --jdbc-url=<url>   JDBC URL
+      -p, --password=<password>
+                            JDBC password
+      -u, --user=<user>      JDBC user
+    ```
+  </TabItem>
+</Tabs>
 
 :::
 
@@ -190,50 +175,39 @@ If `--coordinator` is specified, a Coordinator table will be created.
 
 The following database-specific CLI arguments have been deprecated. Please use the CLI arguments for configuring the properties file instead.
 
-<div id="tabset-3">
-<div class="tab">
-  <button class="tablinks" onclick="openTab(event, 'Cassandra-3', 'tabset-3')" id="defaultOpen-3">Cassandra</button>
-  <button class="tablinks" onclick="openTab(event, 'Cosmos_DB_for_NoSQL-3', 'tabset-3')">Cosmos DB for NoSQL</button>
-  <button class="tablinks" onclick="openTab(event, 'DynamoDB-3', 'tabset-3')">DynamoDB</button>
-  <button class="tablinks" onclick="openTab(event, 'JDBC_databases-3', 'tabset-3')">JDBC databases</button>
-</div>
+<Tabs groupId="databases" queryString>
+  <TabItem value="Cassandra" label="Cassandra" default>
+    ```console
+    $ java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> [-n <NETWORK_STRATEGY>] [-R <REPLICATION_FACTOR>]
+    ```
 
-<div id="Cassandra-3" class="tabcontent" markdown="1">
+    - If `-P <CASSANDRA_PORT>` is not supplied, it defaults to `9042`.
+    - If `-u <CASSANDRA_USER>` is not supplied, it defaults to `cassandra`.
+    - If `-p <CASSANDRA_PASSWORD>` is not supplied, it defaults to `cassandra`.
+    - `<NETWORK_STRATEGY>` should be `SimpleStrategy` or `NetworkTopologyStrategy`
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    ```console
+    $ java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> [-r BASE_RESOURCE_UNIT]
+    ```
 
-```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> [-n <NETWORK_STRATEGY>] [-R <REPLICATION_FACTOR>]
-```
+    - `<COSMOS_DB_FOR_NOSQL_KEY>` you can use a primary key or a secondary key.
+    - `-r BASE_RESOURCE_UNIT` is an option. You can specify the RU of each database. The maximum RU in tables in the database will be set. If you don't specify RU of tables, the database RU will be set with this option. By default, it's 400.
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    ```console
+    $ java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> [-r BASE_RESOURCE_UNIT]
+    ```
 
-- If `-P <CASSANDRA_PORT>` is not supplied, it defaults to `9042`.
-- If `-u <CASSANDRA_USER>` is not supplied, it defaults to `cassandra`.
-- If `-p <CASSANDRA_PASSWORD>` is not supplied, it defaults to `cassandra`.
-- `<NETWORK_STRATEGY>` should be `SimpleStrategy` or `NetworkTopologyStrategy`
-</div>
-<div id="Cosmos_DB_for_NoSQL-3" class="tabcontent" markdown="1">
-
-```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> [-r BASE_RESOURCE_UNIT]
-```
-
-- `<COSMOS_DB_FOR_NOSQL_KEY>` you can use a primary key or a secondary key.
-- `-r BASE_RESOURCE_UNIT` is an option. You can specify the RU of each database. The maximum RU in tables in the database will be set. If you don't specify RU of tables, the database RU will be set with this option. By default, it's 400.
-</div>
-<div id="DynamoDB-3" class="tabcontent" markdown="1">
-
-```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> [-r BASE_RESOURCE_UNIT]
-```
-
-- `<REGION>` should be a string to specify an AWS region like `ap-northeast-1`.
-- `-r` option is almost the same as Cosmos DB for NoSQL option. However, the unit means DynamoDB capacity unit. The read and write capacity units are set the same value.
-</div>
-<div id="JDBC_databases-3" class="tabcontent" markdown="1">
-
-```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE>
-```
-</div>
-</div>
+    - `<REGION>` should be a string to specify an AWS region like `ap-northeast-1`.
+    - `-r` option is almost the same as Cosmos DB for NoSQL option. However, the unit means DynamoDB capacity unit. The read and write capacity units are set the same value.
+  </TabItem>
+  <TabItem value="JDBC_databases" label="JDBC databases">
+    ```console
+    $ java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE>
+    ```
+  </TabItem>
+</Tabs>
 
 :::
 
@@ -251,39 +225,28 @@ If `--coordinator` is specified, the Coordinator table will be deleted as well.
 
 The following database-specific CLI arguments have been deprecated. Please use the CLI arguments for configuring the properties file instead.
 
-<div id="tabset-5">
-<div class="tab">
-  <button class="tablinks" onclick="openTab(event, 'Cassandra-5', 'tabset-5')" id="defaultOpen-5">Cassandra</button>
-  <button class="tablinks" onclick="openTab(event, 'Cosmos_DB_for_NoSQL-5', 'tabset-5')">Cosmos DB for NoSQL</button>
-  <button class="tablinks" onclick="openTab(event, 'DynamoDB-5', 'tabset-5')">DynamoDB</button>
-  <button class="tablinks" onclick="openTab(event, 'JDBC_databases-5', 'tabset-4')">JDBC databases</button>
-</div>
-
-<div id="Cassandra-5" class="tabcontent" markdown="1">
-
-```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> -D
-```
-</div>
-<div id="Cosmos_DB_for_NoSQL-5" class="tabcontent" markdown="1">
-
-```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> -D
-```
-</div>
-<div id="DynamoDB-5" class="tabcontent" markdown="1">
-
-```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> -D
-```
-</div>
-<div id="JDBC_databases-5" class="tabcontent" markdown="1">
-
-```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> -D
-```
-</div>
-</div>
+<Tabs groupId="databases" queryString>
+  <TabItem value="Cassandra" label="Cassandra" default>
+    ```console
+    $ java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> -D
+    ```
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    ```console
+    $ java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> -D
+    ```
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    ```console
+    $ java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> -D
+    ```
+  </TabItem>
+  <TabItem value="JDBC_databases" label="JDBC databases">
+    ```console
+    $ java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> -D
+    ```
+  </TabItem>
+</Tabs>
 
 :::
 
@@ -384,31 +347,20 @@ You can also specify database or storage-specific options in the table definitio
 
 The database or storage-specific options you can specify are as follows:
 
-<div id="tabset-7">
-<div class="tab">
-  <button class="tablinks" onclick="openTab(event, 'Cassandra-7', 'tabset-7')" id="defaultOpen-7">Cassandra</button>
-  <button class="tablinks" onclick="openTab(event, 'Cosmos_DB_for_NoSQL-7', 'tabset-7')">Cosmos DB for NoSQL</button>
-  <button class="tablinks" onclick="openTab(event, 'DynamoDB-7', 'tabset-7')">DynamoDB</button>
-  <button class="tablinks" onclick="openTab(event, 'JDBC_databases-7', 'tabset-7')">JDBC databases</button>
-</div>
-
-<div id="Cassandra-7" class="tabcontent" markdown="1">
-
-The `compaction-strategy` option is the compaction strategy used. This option should be `STCS` (SizeTieredCompaction), `LCS` (LeveledCompactionStrategy), or `TWCS` (TimeWindowCompactionStrategy).
-</div>
-<div id="Cosmos_DB_for_NoSQL-7" class="tabcontent" markdown="1">
-
-The `ru` option stands for Request Units. For details, see [RUs](#rus).
-</div>
-<div id="DynamoDB-7" class="tabcontent" markdown="1">
-
-The `ru` option stands for Request Units. For details, see [RUs](#rus).
-</div>
-<div id="JDBC_databases-7" class="tabcontent" markdown="1">
-
-No options are available for JDBC databases.
-</div>
-</div>
+<Tabs groupId="databases" queryString>
+  <TabItem value="Cassandra" label="Cassandra" default>
+    The `compaction-strategy` option is the compaction strategy used. This option should be `STCS` (SizeTieredCompaction), `LCS` (LeveledCompactionStrategy), or `TWCS` (TimeWindowCompactionStrategy).
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    The `ru` option stands for Request Units. For details, see [RUs](#rus).
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    The `ru` option stands for Request Units. For details, see [RUs](#rus).
+  </TabItem>
+  <TabItem value="JDBC_databases" label="JDBC databases">
+    No options are available for JDBC databases.
+  </TabItem>
+</Tabs>
 
 ## Scale for performance when using Cosmos DB for NoSQL or DynamoDB
 

@@ -1,5 +1,8 @@
 # ScalarDB Java API Guide
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 The ScalarDB Java API is mainly composed of the Administrative API and Transactional API. This guide briefly explains what kinds of APIs exist, how to use them, and related topics like how to handle exceptions.
 
 ## Administrative API
@@ -56,46 +59,31 @@ In the creation operations, like creating a namespace and creating a table, you 
 
 Select your database to see the options available:
 
-<div id="tabset-1">
-<div class="tab">
-  <button class="tablinks" onclick="openTab(event, 'Cassandra', 'tabset-1')" id="defaultOpen-1">Cassandra</button>
-  <button class="tablinks" onclick="openTab(event, 'Cosmos_DB_for_NoSQL', 'tabset-1')">Cosmos DB for NoSQL</button>
-  <button class="tablinks" onclick="openTab(event, 'DynamoDB', 'tabset-1')">DynamoDB</button>
-  <button class="tablinks" onclick="openTab(event, 'JDBC_databases', 'tabset-1')">JDBC databases</button>
-</div>
-
-<div id="Cassandra" class="tabcontent" markdown="1">
-
-| Name                 | Description                                                                            | Default          |
-|----------------------|----------------------------------------------------------------------------------------|------------------|
-| replication-strategy | Cassandra replication strategy. Must be `SimpleStrategy` or `NetworkTopologyStrategy`. | `SimpleStrategy` |
-| compaction-strategy  | Cassandra compaction strategy, Must be `LCS`, `STCS` or `TWCS`.                        | `STCS`           |
-| replication-factor   | Cassandra replication factor.                                                          | 1                |
-
-</div>
-<div id="Cosmos_DB_for_NoSQL" class="tabcontent" markdown="1">
-
-| Name       | Description                                         | Default |
-|------------|-----------------------------------------------------|---------|
-| ru         | Base resource unit.                                 | 400     |
-| no-scaling | Disable auto-scaling for Cosmos DB for NoSQL.       | false   |
-
-</div>
-<div id="DynamoDB" class="tabcontent" markdown="1">
-
-| Name       | Description                             | Default |
-|------------|-----------------------------------------|---------|
-| no-scaling | Disable auto-scaling for DynamoDB.      | false   |
-| no-backup  | Disable continuous backup for DynamoDB. | false   |
-| ru         | Base resource unit.                     | 10      |
-
-</div>
-<div id="JDBC_databases" class="tabcontent" markdown="1">
-
-No options are available for JDBC databases.
-
-</div>
-</div>
+<Tabs groupId="databases" queryString>
+  <TabItem value="Cassandra" label="Cassandra" default>
+    | Name                 | Description                                                                            | Default          |
+    |----------------------|----------------------------------------------------------------------------------------|------------------|
+    | replication-strategy | Cassandra replication strategy. Must be `SimpleStrategy` or `NetworkTopologyStrategy`. | `SimpleStrategy` |
+    | compaction-strategy  | Cassandra compaction strategy, Must be `LCS`, `STCS` or `TWCS`.                        | `STCS`           |
+    | replication-factor   | Cassandra replication factor.                                                          | 1                |
+      </TabItem>
+      <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    | Name       | Description                                         | Default |
+    |------------|-----------------------------------------------------|---------|
+    | ru         | Base resource unit.                                 | 400     |
+    | no-scaling | Disable auto-scaling for Cosmos DB for NoSQL.       | false   |
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    | Name       | Description                             | Default |
+    |------------|-----------------------------------------|---------|
+    | no-scaling | Disable auto-scaling for DynamoDB.      | false   |
+    | no-backup  | Disable continuous backup for DynamoDB. | false   |
+    | ru         | Base resource unit.                     | 10      |
+  </TabItem>
+  <TabItem value="JDBC_databases" label="JDBC_databases">
+    No options are available for JDBC databases.
+  </TabItem>
+</Tabs>
 
 ### Create a table
 
@@ -309,7 +297,6 @@ admin.importTable("ns", "tbl", options);
 :::warning
 
 You should carefully plan to import a table to ScalarDB in production because it will add transaction metadata columns to your database tables and the ScalarDB metadata tables. In this case, there would also be several differences between your database and ScalarDB, as well as some limitations. For details, see [Importing Existing Tables to ScalarDB by Using ScalarDB Schema Loader](./schema-loader-import.mdx).
-
 
 :::
 
@@ -562,7 +549,6 @@ Optional<Result> result = transaction.get(get);
 :::note
 
 If the result has more than one record, `transaction.get()` will throw an exception. If you want to handle multiple results, see [Execute `Scan` by using a secondary index](#execute-scan-by-using-a-secondary-index).
-
 
 :::
 
