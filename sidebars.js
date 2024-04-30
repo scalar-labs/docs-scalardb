@@ -91,6 +91,8 @@ const sidebars = {
             'configurations',
             'multi-storage-transactions',
             'two-phase-commit-transactions',
+            'scalardb-cluster/scalardb-cluster-configurations',
+            'scalardb-sql/configurations',
           ],
         },
         'add-scalardb-to-your-build',
