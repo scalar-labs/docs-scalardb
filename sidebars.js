@@ -278,8 +278,19 @@ const sidebars = {
       items: [
         'scalardb-benchmarks/README',
         'storage-abstraction',
-        'status-code-list',
         'scalardb-sql/grammar',
+        {
+          type: 'category',
+          label: 'Status Codes',
+          collapsible: true,
+          items: [
+            'scalardb-core-status-codes',
+            'scalardb-cluster/scalardb-cluster-status-codes',
+            'scalardb-cluster/scalardb-auth-status-codes',
+            'scalardb-graphql/scalardb-graphql-status-codes',
+            'scalardb-sql/scalardb-sql-status-codes',
+          ],
+        },
       ],
     },
     {
