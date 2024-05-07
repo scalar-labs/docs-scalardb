@@ -60,7 +60,7 @@ const CardsGettingStarted = [
     },
     description: (
       <Translate id="home.gettingStarted.description">
-        Getting started with ScalarDB
+        Getting started with ScalarDB Cluster
       </Translate>
     ),
   },
@@ -102,7 +102,7 @@ const CardsDevelop = [
     },
     description: (
       <Translate id="home.develop.description">
-        Add ScalarDB to Your Build
+        Add ScalarDB to your build
       </Translate>
     ),
   },
@@ -195,7 +195,7 @@ const CardsReference = [
     },
     description: (
       <Translate id="home.reference.description">
-        Storage Abstraction and API Guide
+        Storage abstraction and API guide
       </Translate>
     ),
   },
