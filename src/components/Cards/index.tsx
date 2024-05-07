@@ -60,7 +60,7 @@ const CardsGettingStarted = [
     },
     description: (
       <Translate id="home.gettingStarted.description">
-        Getting started with ScalarDB
+        Getting started with ScalarDB Cluster
       </Translate>
     ),
   },
@@ -95,19 +95,19 @@ const CardsSamples = [
 
 const CardsDevelop = [
   {
-    // name: 'For database engineers',
+    // name: '',
     // image: '<LINK_TO>.png',
     url: {
       page: 'add-scalardb-to-your-build/',
     },
     description: (
       <Translate id="home.develop.description">
-        Add ScalarDB to Your Build
+        Add ScalarDB to your build
       </Translate>
     ),
   },
   {
-    // name: 'For infrastructure engineers',
+    // name: '',
     // image: '<LINK_TO>.png',
     url: {
       page: 'schema-loader/',
@@ -195,7 +195,7 @@ const CardsReference = [
     },
     description: (
       <Translate id="home.reference.description">
-        Storage Abstraction and API Guide
+        Storage abstraction and API guide
       </Translate>
     ),
   },
