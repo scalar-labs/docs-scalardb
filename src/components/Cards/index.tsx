@@ -95,7 +95,7 @@ const CardsSamples = [
 
 const CardsDevelop = [
   {
-    // name: 'For database engineers',
+    // name: '',
     // image: '<LINK_TO>.png',
     url: {
       page: 'add-scalardb-to-your-build/',
@@ -107,7 +107,7 @@ const CardsDevelop = [
     ),
   },
   {
-    // name: 'For infrastructure engineers',
+    // name: '',
     // image: '<LINK_TO>.png',
     url: {
       page: 'schema-loader/',
