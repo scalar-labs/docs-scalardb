@@ -21,7 +21,7 @@ const sidebars = {
   docs: [
     {
       type: 'doc',
-      label: 'Home',
+      label: 'ScalarDB Docs Home',
       id: 'index',
     },
     {
@@ -41,11 +41,45 @@ const sidebars = {
       label: 'Getting Started',
       collapsible: true,
       items: [
-        'getting-started-with-scalardb',
-        'getting-started-with-scalardb-by-using-kotlin',
-        'scalardb-analytics-postgresql/getting-started',
-        'scalardb-cluster/getting-started-with-scalardb-cluster-overview',
-        'scalardb-cluster-dotnet-client-sdk/index',
+        {
+          type: 'category',
+          label: 'ScalarDB',
+          collapsible: true,
+          items: [
+            'getting-started-with-scalardb',
+            'getting-started-with-scalardb-by-using-kotlin',
+            'scalardb-analytics-postgresql/getting-started',
+          ],
+        },
+        {
+          type: 'category',
+          label: 'ScalarDB Cluster',
+          collapsible: true,
+          items: [
+            'scalardb-cluster/getting-started-with-scalardb-cluster',
+            'scalardb-cluster/getting-started-with-scalardb-cluster-graphql',
+            'scalardb-cluster/getting-started-with-scalardb-cluster-sql-jdbc',
+            'scalardb-cluster/getting-started-with-scalardb-cluster-sql-spring-data-jdbc',
+            'scalardb-cluster/getting-started-with-using-python-for-scalardb-cluster',
+            'scalardb-cluster/getting-started-with-using-go-for-scalardb-cluster',
+            {
+              type: 'category',
+              label: '.NET Client SDK',
+              collapsible: true,
+              items: [
+                'scalardb-cluster-dotnet-client-sdk/index',
+                'scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-transactions',
+                'scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-sql-transactions',
+                'scalardb-cluster-dotnet-client-sdk/getting-started-with-admin-api',
+                'scalardb-cluster-dotnet-client-sdk/getting-started-with-scalardb-tables-as-csharp-classes',
+                'scalardb-cluster-dotnet-client-sdk/getting-started-with-aspnet-and-di',
+                'scalardb-cluster-dotnet-client-sdk/getting-started-with-linq',
+                'scalardb-cluster-dotnet-client-sdk/getting-started-with-two-phase-commit-transactions',
+                'scalardb-cluster-dotnet-client-sdk/getting-started-with-auth',
+              ],
+            },
+          ],
+        },
       ],
     },
     {
