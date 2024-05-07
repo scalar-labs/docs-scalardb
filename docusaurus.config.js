@@ -180,7 +180,7 @@ const config = {
         logo: {
           alt: 'ScalarDB logo',
           src: 'img/scalardb-logo.png',
-          href: 'https://scalardb.scalar-labs.com/docs/',
+          href: '/docs/latest/',
           target: '_self',
         },
         items: [
@@ -189,8 +189,19 @@ const config = {
             position: 'left',
             dropdownActiveClassDisabled: true,
           },
+          {
+            href: 'https://developers.scalar-labs.com/docs/',
+            position: 'right',
+            label: 'Scalar Docs Home',
+          },
+          {
+            href: 'https://github.com/scalar-labs/scalardb',
+            position: 'right',
+            className: 'header-github-link',
+            'aria-label': 'GitHub repository',
+          },
           /*
-          The "localeDropdown" configuration should be uncommented (enabled) after we create Japanese versions of docs. 
+          The "localeDropdown" configuration should be uncommented (enabled) after we create Japanese versions of docs.
           */
           // {
           //   type: 'localeDropdown',
