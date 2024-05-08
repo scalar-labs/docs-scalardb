@@ -206,9 +206,19 @@ const sidebars = {
           label: 'Scalar Helm Charts',
           collapsible: true,
           items: [
-            'helm-charts/getting-started-scalar-helm-charts',
-            'helm-charts/getting-started-scalardb-cluster-tls',
-            'helm-charts/getting-started-scalardb-analytics-postgresql',
+            {
+              type: 'category',
+              label: 'Getting Started',
+              collapsible: true,
+              items: [
+                'helm-charts/getting-started-scalar-helm-charts',
+                'helm-charts/getting-started-scalardb-cluster-tls',
+                'helm-charts/getting-started-scalardb-analytics-postgresql',
+                'helm-charts/getting-started-monitoring',
+                'helm-charts/getting-started-logging',
+                'helm-charts/getting-started-scalar-manager',
+              ]
+            },
             {
               type: 'category',
               label: 'Configure custom values',
@@ -224,6 +234,10 @@ const sidebars = {
               ],
             },
             'helm-charts/how-to-deploy-scalar-products',
+            'helm-charts/how-to-deploy-scalardb-cluster',
+            'helm-charts/how-to-deploy-scalardb-analytics-postgresql',
+            'helm-charts/how-to-deploy-scalar-manager',
+            'helm-charts/how-to-deploy-scalar-admin-for-kubernetes',
             'helm-charts/mount-files-or-volumes-on-scalar-pods',
             'helm-charts/use-secret-for-credentials',
           ],
