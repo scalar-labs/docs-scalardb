@@ -91,8 +91,6 @@ const sidebars = {
         'scalardb-samples/multi-storage-transaction-sample/README',
         'scalardb-samples/microservice-transaction-sample/README',
         'scalardb-samples/scalardb-analytics-postgresql-sample/README',
-        'scalardb-samples/scalardb-graphql-sample/README',
-        'scalardb-samples/scalardb-sql-jdbc-sample/README',
         'scalardb-samples/spring-data-sample/README',
         'scalardb-samples/spring-data-multi-storage-transaction-sample/README',
         'scalardb-samples/spring-data-microservice-transaction-sample/README',
