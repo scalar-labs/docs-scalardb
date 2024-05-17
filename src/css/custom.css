@@ -91,3 +91,40 @@ html[data-theme="dark"] .header-github-link::before {
 html[data-theme="dark"] .navbar-sidebar .header-github-link {
   filter: invert(0%);
 }
+
+/* Make tags appear above doc title (tags are natively at the bottom of docs in Docusaurus) */
+
+.badge {
+  font-size: 85%;
+  line-height: 2;
+  margin: 0.25rem 0 1rem 0;
+  padding-top: 0.5rem;
+  width: -webkit-fill-available;
+}
+
+.theme-doc-footer-tags-row {
+  display: inline-flex;
+  float: inline-end;
+}
+
+.margin-top--sm, .margin-vert--sm {
+  margin-top: 0 !important;
+}
+
+a[class^='tag_'] {
+  background-color: #2673BB;
+  color: white;
+  font-weight: normal;
+}
+
+html[data-theme="dark"] .badge {
+  background-color: #252526;
+  border: none;
+  color: white;
+}
+
+html[data-theme="dark"] a[class^='tag_'] {
+  background-color: #2673BB;
+  color: white;
+  font-weight: normal;
+}
