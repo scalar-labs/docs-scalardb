@@ -111,7 +111,7 @@ To add a dependency on ScalarDB Cluster Client by using Gradle, use the followin
 
 ```gradle
 dependencies {
-    implementation 'com.scalar-labs:scalardb-cluster-client:3.9.4'
+    implementation 'com.scalar-labs:scalardb-cluster-client:3.9.5'
 }
 ```
 
@@ -121,7 +121,7 @@ To add a dependency by using Maven, use the following:
 <dependency>
   <groupId>com.scalar-labs</groupId>
   <artifactId>scalardb-cluster-client</artifactId>
-  <version>3.9.4</version>
+  <version>3.9.5</version>
 </dependency>
 ```
 
@@ -193,6 +193,7 @@ The following table shows the client configurations for the ScalarDB Cluster Jav
 |----------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------|
 | `scalar.db.transaction_manager`                    | `cluster` should be specified.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | -                      |
 | `scalar.db.contact_points`                         | Contact point of the cluster. If you use the `indirect` client mode, specify the IP address of the load balancer in front of your cluster nodes by using the format `indirect:<the load balancer IP address>`. If you use the `direct-kubernetes` client mode, specify the namespace name (optional) and the name of the [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) to get the membership information by using the format `direct-kubernetes:<namespace name>/<endpoint name>` or just `direct-kubernetes:<endpoint name>`. If you don't specify the namespace name, the client will use the `default` namespace. |                        |
+| `scalar.db.contact_port`                           | Port number for the contact point.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | `60053`                |
 | `scalar.db.cluster.grpc.deadline_duration_millis`  | Deadline duration for gRPC in millis.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | `60000` (60 seconds)   |
 | `scalar.db.cluster.grpc.max_inbound_message_size`  | Maximum message size allowed for a single gRPC frame.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | The gRPC default value |
 | `scalar.db.cluster.grpc.max_inbound_metadata_size` | Maximum size of metadata allowed to be received.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | The gRPC default value |
@@ -219,7 +220,7 @@ You can download the Schema Loader for Cluster at [Releases](https://github.com/
 After downloading the JAR file, you can run Schema Loader for Cluster with the following command:
 
 ```shell
-java -jar scalardb-cluster-schema-loader-3.9.4-all.jar --config <PATH_TO_CONFIG_FILE> -f <PATH_TO_SCHEMA_FILE> --coordinator
+java -jar scalardb-cluster-schema-loader-3.9.5-all.jar --config <PATH_TO_CONFIG_FILE> -f <PATH_TO_SCHEMA_FILE> --coordinator
 ```
 
 ## ScalarDB Cluster SQL
@@ -259,8 +260,8 @@ To add the dependencies on the ScalarDB Cluster JDBC driver by using Gradle, use
 
 ```gradle
 dependencies {
-    implementation 'com.scalar-labs:scalardb-sql-jdbc:3.9.4'
-    implementation 'com.scalar-labs:scalardb-cluster-client:3.9.4'
+    implementation 'com.scalar-labs:scalardb-sql-jdbc:3.9.5'
+    implementation 'com.scalar-labs:scalardb-cluster-client:3.9.5'
 }
 ```
 
@@ -271,12 +272,12 @@ To add the dependencies by using Maven, use the following:
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-sql-jdbc</artifactId>
-        <version>3.9.4</version>
+        <version>3.9.5</version>
     </dependency>
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-cluster-client</artifactId>
-        <version>3.9.4</version>
+        <version>3.9.5</version>
     </dependency>
 </dependencies>
 ```
@@ -294,8 +295,8 @@ To add the dependencies by using Gradle, use the following:
 
 ```gradle
 dependencies {
-    implementation 'com.scalar-labs:scalardb-sql-spring-data:3.9.4'
-    implementation 'com.scalar-labs:scalardb-cluster-client:3.9.4'
+    implementation 'com.scalar-labs:scalardb-sql-spring-data:3.9.5'
+    implementation 'com.scalar-labs:scalardb-cluster-client:3.9.5'
 }
 ```
 
@@ -306,12 +307,12 @@ To add the dependencies by using Maven, use the following:
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-sql-spring-data</artifactId>
-        <version>3.9.4</version>
+        <version>3.9.5</version>
     </dependency>
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-cluster-client</artifactId>
-        <version>3.9.4</version>
+        <version>3.9.5</version>
     </dependency>
 </dependencies>
 ```
@@ -327,6 +328,7 @@ The following table shows the configurations for ScalarDB Cluster SQL Client.
 |----------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------|
 | `scalar.db.sql.connection_mode`                    | `cluster` should be specified.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | -                      |
 | `scalar.db.sql.cluster_mode.contact_points`        | Contact point of the cluster. If you use the `indirect` client mode, specify the IP address of the load balancer in front of your cluster nodes by using the format `indirect:<the load balancer IP address>`. If you use the `direct-kubernetes` client mode, specify the namespace name (optional) and the name of the [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) to get the membership information by using the format `direct-kubernetes:<namespace name>/<endpoint name>` or just `direct-kubernetes:<endpoint name>`. If you don't specify the namespace name, the client will use the `default` namespace. |                        |
+| `scalar.db.sql.cluster_mode.contact_port`          | Port number for the contact point.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | `60053`                |
 | `scalar.db.cluster.grpc.deadline_duration_millis`  | Deadline duration for gRPC in millis.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | `60000` (60 seconds)   |
 | `scalar.db.cluster.grpc.max_inbound_message_size`  | Maximum message size allowed for a single gRPC frame.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | The gRPC default value |
 | `scalar.db.cluster.grpc.max_inbound_metadata_size` | Maximum size of metadata allowed to be received.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | The gRPC default value |
@@ -359,7 +361,7 @@ You can download the SQL CLI for Cluster from [Releases](https://github.com/scal
 After downloading the JAR file, you can run SQL CLI for Cluster with the following command:
 
 ```shell
-java -jar scalardb-cluster-sql-cli-3.9.4-all.jar --config <PATH_TO_CONFIG_FILE>
+java -jar scalardb-cluster-sql-cli-3.9.5-all.jar --config <PATH_TO_CONFIG_FILE>
 ```
 
 ## Further reading
