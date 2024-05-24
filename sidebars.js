@@ -34,6 +34,7 @@ const sidebars = {
         'scalardb-supported-databases',
         'requirements',
         'scalardb-cluster/index',
+        'scalardb-analytics-spark/README',
       ],
     },
     {
@@ -49,6 +50,7 @@ const sidebars = {
             'getting-started-with-scalardb',
             'getting-started-with-scalardb-by-using-kotlin',
             'scalardb-analytics-postgresql/getting-started',
+            'scalardb-analytics-spark/getting-started',
           ],
         },
         {
@@ -91,6 +93,7 @@ const sidebars = {
         'scalardb-samples/multi-storage-transaction-sample/README',
         'scalardb-samples/microservice-transaction-sample/README',
         'scalardb-samples/scalardb-analytics-postgresql-sample/README',
+        'scalardb-samples/scalardb-analytics-spark-sample/README',
         'scalardb-samples/spring-data-sample/README',
         'scalardb-samples/spring-data-multi-storage-transaction-sample/README',
         'scalardb-samples/spring-data-microservice-transaction-sample/README',
@@ -125,6 +128,7 @@ const sidebars = {
             'two-phase-commit-transactions',
             'scalardb-cluster/scalardb-cluster-configurations',
             'scalardb-sql/configurations',
+            'scalardb-analytics-spark/configuration',
           ],
         },
         'add-scalardb-to-your-build',
@@ -291,6 +295,7 @@ const sidebars = {
         'scalardb-benchmarks/README',
         'storage-abstraction',
         'scalardb-sql/grammar',
+        'scalardb-analytics-spark/version-compatibility',
         {
           type: 'category',
           label: 'Status Codes',
