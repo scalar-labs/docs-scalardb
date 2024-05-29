@@ -14,6 +14,14 @@ SQL support must be enabled on the cluster to use LINQ.
 
 :::
 
+## Install the SDK
+
+Install the same major and minor version of the [SDK](https://www.nuget.org/packages/ScalarDB.Net.Client) as ScalarDB Cluster into the .NET project. You can do this by using the built-in NuGet package manager, replacing `<MAJOR>.<MINOR>` with the version that you're using:
+
+```shell
+dotnet add package ScalarDB.Net.Client --version '<MAJOR>.<MINOR>.*'
+```
+
 ## Set up classes
 
 After confirming that SQL support is enabled, create a C# class for each ScalarDB table that you want to use. For example:

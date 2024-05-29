@@ -2,6 +2,14 @@
 
 The ScalarDB Cluster .NET Client SDK supports [ScalarDB Auth](https://github.com/scalar-labs/scalardb-cluster/blob/main/docs/scalardb-auth-with-sql.md), which allows you to authenticate and authorize your requests to ScalarDB Cluster.
 
+## Install the SDK
+
+Install the same major and minor version of the [SDK](https://www.nuget.org/packages/ScalarDB.Net.Client) as ScalarDB Cluster into the .NET project. You can do this by using the built-in NuGet package manager, replacing `<MAJOR>.<MINOR>` with the version that you're using:
+
+```shell
+dotnet add package ScalarDB.Net.Client --version '<MAJOR>.<MINOR>.*'
+```
+
 ## Set credentials in `ScalarDbOptions`
 
 First, you need to get a transaction manager or transaction admin object with credentials by using `TransactionFactory` as follows, replacing the contents in the angle brackets as described. Also, be sure to replace `<GET_TRANSACTION_MANAGER>` with `GetTransactionManager()`, `GetTwoPhaseCommitTransactionManager()`, `GetSqlTransactionManager()`, or `GetSqlTwoPhaseCommitTransactionManager()`.  
