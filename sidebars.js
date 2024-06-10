@@ -215,6 +215,7 @@ const sidebars = {
               items: [
                 'helm-charts/getting-started-scalar-helm-charts',
                 'helm-charts/getting-started-scalardb-cluster-tls',
+                'helm-charts/getting-started-scalardb-cluster-tls-cert-manager',
                 'helm-charts/getting-started-scalardb-analytics-postgresql',
                 'helm-charts/getting-started-monitoring',
                 'helm-charts/getting-started-logging',
