@@ -12,6 +12,14 @@ import {ThemeClassNames} from '@docusaurus/theme-common';
 import {useDocsVersion, useDoc} from '@docusaurus/theme-common/internal';
 import type {Props} from '@theme/DocVersionBadge';
 import TagsListInline from '@theme/TagsListInline';
+// Import the original mapper
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import the FontAwesomeIcon component.
+import { library } from '@fortawesome/fontawesome-svg-core'; // Import the library component.
+import { fab } from '@fortawesome/free-brands-svg-icons'; // Import all brands icons.
+import { far, faCircleQuestion } from '@fortawesome/free-regular-svg-icons'; // Import all solid icons.
+import { fas } from '@fortawesome/free-solid-svg-icons'; // Import all solid icons.
+
+library.add(fab, fas, far, faCircleQuestion); // Add all icons to the library so you can use them without importing them individually.
 
 export default function DocVersionBadge({
   className,
@@ -41,6 +49,7 @@ export default function DocVersionBadge({
           )}>
           <div className="col">
             <TagsListInline tags={tags} />
+            <a href="https://scalar-labs.com/pricing/" target="_blank" className="fa-solid fa-circle-question"><FontAwesomeIcon icon={faCircleQuestion} size="lg" /></a>
           </div>
         </div>
       </span>
