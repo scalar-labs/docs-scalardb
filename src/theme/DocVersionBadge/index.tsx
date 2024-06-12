@@ -49,7 +49,7 @@ export default function DocVersionBadge({
           )}>
           <div className="col">
             <TagsListInline tags={tags} />
-            <a href="https://scalar-labs.com/pricing/" target="_blank" className="fa-solid fa-circle-question"><FontAwesomeIcon icon={faCircleQuestion} size="lg" /></a>
+            <a href="https://scalar-labs.com/pricing/" target="_blank" className="fa-solid fa-circle-question tooltip"><FontAwesomeIcon icon={faCircleQuestion} size="lg" /><span className="tooltiptext">Features and pricing</span></a>
           </div>
         </div>
       </span>
