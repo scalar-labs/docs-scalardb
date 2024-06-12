@@ -190,6 +190,11 @@ const config = {
             dropdownActiveClassDisabled: true,
           },
           {
+            type: 'html',
+            position: 'right',
+            value: '<div id="google_translate_element"></div>',
+          },
+          {
             href: 'https://developers.scalar-labs.com/docs/',
             position: 'right',
             label: 'Scalar Docs Home',
