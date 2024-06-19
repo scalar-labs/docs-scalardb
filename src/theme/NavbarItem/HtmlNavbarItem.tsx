@@ -20,7 +20,7 @@ function loadGoogleTranslateScript() {
       // Function to initialize the Google Translate widget
       const initGoogleTranslate = () => {
         new google.translate.TranslateElement(
-          { pageLanguage: 'en', includedLanguages : 'ja' },
+          { pageLanguage: 'en', includedLanguages: 'ja' },
           'google_translate_element'
         );
       };
