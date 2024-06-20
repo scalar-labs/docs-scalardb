@@ -131,6 +131,7 @@ const sidebars = {
             'scalardb-analytics-spark/configuration',
           ],
         },
+        'data-modeling',
         'add-scalardb-to-your-build',
         'scalardb-sql/add-scalardb-sql-to-your-build',
         'schema-loader',
