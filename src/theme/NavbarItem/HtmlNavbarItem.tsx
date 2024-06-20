@@ -57,7 +57,7 @@ export default function HtmlNavbarItem({
 }: Props): JSX.Element {
   const Comp = isDropdownItem ? 'li' : 'div';
   useEffect(() => {
-    if(process.env.NODE_ENV !== 'production') {
+    if(process.env.NODE_ENV !== 'development') {
     loadGoogleTranslateScript();
     } else {
       console.log('Google Translate Not loaded in Dev');
