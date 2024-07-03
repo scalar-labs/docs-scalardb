@@ -52,7 +52,7 @@ Select how you would like to configure Schema Loader for your database. The pref
 The following commands are available when using the properties file:
 
 ```console
-Usage: java -jar scalardb-schema-loader-<version>.jar [-D] [--coordinator]
+Usage: java -jar scalardb-schema-loader-<VERSION>.jar [-D] [--coordinator]
        [--no-backup] [--no-scaling] -c=<configPath>
        [--compaction-strategy=<compactionStrategy>] [-f=<schemaFile>]
        [--replication-factor=<replicaFactor>]
@@ -86,7 +86,7 @@ The following database-specific methods have been deprecated. Please use the [co
 <Tabs groupId="databases" queryString>
   <TabItem value="Cassandra" label="Cassandra" default>
     ```console
-    Usage: java -jar scalardb-schema-loader-<version>.jar --cassandra [-D]
+    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --cassandra [-D]
           [-c=<compactionStrategy>] -f=<schemaFile> -h=<hostIp>
           [-n=<replicationStrategy>] [-p=<password>] [-P=<port>]
           [-R=<replicationFactor>] [-u=<user>]
@@ -110,7 +110,7 @@ The following database-specific methods have been deprecated. Please use the [co
   </TabItem>
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     ```console
-    Usage: java -jar scalardb-schema-loader-<version>.jar --cosmos [-D]
+    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --cosmos [-D]
           [--no-scaling] -f=<schemaFile> -h=<uri> -p=<key> [-r=<ru>]
     Create/Delete Cosmos DB schemas
       -D, --delete-all       Delete tables
@@ -124,7 +124,7 @@ The following database-specific methods have been deprecated. Please use the [co
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     ```console
-    Usage: java -jar scalardb-schema-loader-<version>.jar --dynamo [-D]
+    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --dynamo [-D]
           [--no-backup] [--no-scaling] [--endpoint-override=<endpointOverride>]
           -f=<schemaFile> -p=<awsSecKey> [-r=<ru>] --region=<awsRegion>
           -u=<awsKeyId>
@@ -145,7 +145,7 @@ The following database-specific methods have been deprecated. Please use the [co
   </TabItem>
   <TabItem value="JDBC_databases" label="JDBC databases">
     ```console
-    Usage: java -jar scalardb-schema-loader-<version>.jar --jdbc [-D]
+    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --jdbc [-D]
           -f=<schemaFile> -j=<url> -p=<password> -u=<user>
     Create/Delete JDBC schemas
       -D, --delete-all       Delete tables
