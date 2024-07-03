@@ -1,0 +1,354 @@
+# Getting Started with LINQ in the ScalarDB Cluster .NET Client SDK
+
+The ScalarDB Cluster .NET Client SDK supports querying the cluster with LINQ and some Entity Framework-like functionality.
+
+:::note
+
+This SDK doesn't support [Entity Framework](https://learn.microsoft.com/en-us/ef/). Instead, this SDK implements functionality that is similar to Entity Framework.
+
+:::
+
+:::note
+
+SQL support must be enabled on the cluster to use LINQ.
+
+:::
+
+## Install the SDK
+
+Install the same major and minor version of the [SDK](https://www.nuget.org/packages/ScalarDB.Net.Client) as ScalarDB Cluster into the .NET project. You can do this by using the built-in NuGet package manager, replacing `<MAJOR>.<MINOR>` with the version that you're using:
+
+```shell
+dotnet add package ScalarDB.Net.Client --version '<MAJOR>.<MINOR>.*'
+```
+
+## Set up classes
+
+After confirming that SQL support is enabled, create a C# class for each ScalarDB table that you want to use. For example:
+
+```c#
+using System.ComponentModel.DataAnnotations.Schema;
+using ScalarDB.Net.Client.DataAnnotations;
+
+// ...
+
+[Table("ns.statements")]
+public class Statement
+{
+    [Column("statement_id", Order = 0), PartitionKey]
+    public int Id { get; set; }
+    
+    [Column("order_id", Order = 1), SecondaryIndex]
+    public string OrderId { get; set; } = String.Empty;
+
+    [Column("item_id", Order = 2), SecondaryIndex]
+    public int ItemId { get; set; }
+
+    [Column("count", Order = 3)]
+    public int Count { get; set; }
+}
+
+[Table("order_service.items")]
+public class Item
+{
+    [Column("item_id", Order = 0), PartitionKey]
+    public int Id { get; set; }
+
+    [Column("name", Order = 1)]
+    public string Name { get; set; } = String.Empty;
+
+    [Column("price", Order = 2)]
+    public int Price { get; set; }
+}
+```
+
+If a partition key, clustering key, or secondary index consists of more than one column, the `Order` property of `ColumnAttribute` will decide the order inside the key or index.
+
+Create a context class that has properties for all the tables you want to use. For example:
+
+```c#
+    public class MyDbContext: ScalarDbContext
+    {
+        public ScalarDbSet<Statement> Statements { get; set; }
+        public ScalarDbSet<Item> Items { get; set; }
+    }
+```
+
+After all the classes are created, you need to add the created context to the Dependency Injection. For example:
+
+```c#
+using ScalarDB.Net.Client.Extensions;
+
+//...
+
+var builder = WebApplication.CreateBuilder(args);
+
+//...
+
+builder.Services.AddScalarDbContext<MyDbContext>(options =>
+{
+    options.Address = "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>";
+    options.HopLimit = 10;
+});
+```
+
+The context can be injected into the controller's constructor as follows:
+
+```c#
+[ApiController]
+public class OrderController: ControllerBase
+{
+    private readonly MyDbContext _myDbContext;
+
+    public OrderController(MyDbContext myDbContext)
+    {
+        _myDbContext = myDbContext;
+    }
+}
+```
+
+## Use LINQ to query properties
+
+After receiving `MyDbContext` in your controller, you can query its properties by using LINQ. For example:
+
+### Use query syntax
+
+```c#
+from stat in _myDbContext.Statements
+join item in _myDbContext.Items on stat.ItemId equals item.Id
+where stat.Count > 2 && item.Name.Contains("apple")
+orderby stat.Count descending, stat.ItemId
+select new { item.Name, stat.Count };
+```
+
+### Use method syntax
+
+```c#
+_myDbContext.Statements
+            .Where(stat => stat.OrderId == "1")
+            .Skip(1)
+            .Take(2);
+```
+
+### Use the `First` method to get one `Statement` by its partition key
+
+```c#
+_myDbContext.Statements.First(stat => stat.OrderId == "1");
+```
+
+### Use the `DefaultIfEmpty` method to perform left outer join
+
+```c#
+from stat in _myDbContext.Statements
+join item in _myDbContext.Items on stat.ItemId equals item.Id into items
+from i in items.DefaultIfEmpty()
+select new { ItemName = i != null ? i.Name : "" }
+```
+
+The following methods are supported:
+
+- `Select`
+- `Where`
+- `Join`
+- `GroupJoin`
+- `First`/`FirstOrDefault`
+- `Skip`
+- `Take`
+- `OrderBy`/`OrderByDescending`
+- `ThenBy`/`ThenByDescending`
+
+The following `String` methods are supported inside the predicates of `Where` and `First`/`FirstOrDefault` methods:
+
+- `Contains`
+- `StartsWith`
+- `EndsWith`
+
+Unsupported LINQ methods can be used after the supported methods. For example:
+
+```c#
+_myDbContext.Statements
+            .Where(stat => stat.OrderId == "1") // Will be executed remotely on the cluster.
+            .Distinct() // Will be executed locally in the app.
+            .Where(stat => stat.ItemId < 5); // Will be executed locally.
+```
+
+:::note
+
+If `Skip` is specified before `Take` or `First`/`FirstOrDefault`, the number that is passed to `Skip` will be added to the `LIMIT` number in the SQL query. By itself, `Skip` won't change the resulting SQL query.
+
+:::
+
+## Limitations when using LINQ against `ScalarDbSet{T}` objects
+
+- All method calls are supported inside `Select`. For example:
+
+```c#
+.Select(stat => convertToSomething(stat.ItemId))
+//...
+.Select(stat => stat.ItemId * getSomeNumber())
+```
+
+- Method calls, except for calls against the querying object, are also supported inside `Where` and `First`/`FirstOrDefault`. For example:
+
+```c#
+.Where(stat => stat.ItemId == getItemId()) // is OK
+//...
+.Where(stat => stat.ItemId.ToString() == "1") // is not supported
+```
+
+- All method calls are supported inside the result-selecting lambda of `Join` and `GroupJoin`. For example:
+
+```c#
+.Join(_myDbContext.Items,
+      stat => stat.ItemId,
+      item => item.Id,
+      (stat, item) => new { ItemName = convertToSomething(item.Name),
+                            ItemCount = stat.Count.ToString() })
+```
+
+- Method calls are not supported inside the key-selecting lambdas of `Join` and `GroupJoin`.
+- Custom equality comparers are not supported. The `comparer` argument in `Join` and `GroupJoin` methods will be ignored if the argument has been passed.
+- More than one `from` directly in one query is not supported, except when the `DefaultIfEmpty` method is used to perform left outer join. Each subsequent `from` is considered to be a separate query.
+
+```c#
+var firstQuery = from stat in _myDbContext.Statements
+                 where stat.Count > 2
+                 select new { stat.Count };
+
+var secondQuery = from item in _myDbContext.Items
+                  where item.Price > 6
+                  select new { item.Name };
+
+var finalQuery = from first in firstQuery
+                 from second in secondQuery
+                 select new { first.Count, second.Name };
+
+// 1. firstQuery will be executed against the cluster.
+// 2. secondQuery will be executed against the cluster for each object (row) from 1.
+// 3. finalQuery will be executed locally with the results from 1 and 2.
+var result = finalQuery.ToArray();
+```
+
+- Method calls are not supported inside `OrderBy`/`OrderByDescending` or `ThenBy`/`ThenByDescending`.
+- Only overloads of `Contains`, `StartsWith`, and `EndsWith` methods that have a single string argument are supported inside `Where` and `First`/`FirstOrDefault`.
+
+## Modify data in a cluster by using `ScalarDbContext`
+
+The properties of the class inherited from `ScalarDbContext` can be used to modify data.
+
+### Add a new object by using the `AddAsync` method
+
+```c#
+var statement = new Statement
+                {
+                    OrderId = "2",
+                    ItemId = 4,
+                    Count = 8
+                };
+await _myDbContext.Statements.AddAsync(statement);
+```
+
+### Update an object by using the `UpdateAsync` method
+
+```c#
+var statement = _myDbContext.Statements.First(stat => stat.Id == 1);
+
+// ...
+
+statement.Count = 10;        
+await _myDbContext.Statements.UpdateAsync(statement);
+```
+
+### Remove an object by using the `RemoveAsync` method
+
+```c#
+var statement = _myDbContext.Statements.First(stat => stat.Id == 1);
+
+// ...
+    
+await _myDbContext.Statements.RemoveAsync(statement);
+```
+
+## Manage transactions
+
+LINQ queries and `AddAsync`, `UpdateAsync`, and `RemoveAsync` methods can be executed without an explicitly started transaction. However, to execute multiple queries and methods as part of a single transaction, the transaction must be explicitly started and committed. `ScalarDbContext` supports both ordinary transactions and transactions with the two-phase commit interface in ScalarDB.
+
+### Begin a new transaction
+
+```c#
+await _myDbContext.BeginTransactionAsync();
+```
+
+### Begin a new transaction with the two-phase commit interface
+
+```c#
+using ScalarDB.Net.Client.Core;
+
+// ...
+
+await _myDbContext.BeginTransactionAsync(TransactionType.TwoPhaseCommit);
+```
+
+### Get the ID of a currently active transaction
+
+```c#
+var transactionId = _myDbContext.CurrentTransactionId;
+```
+
+### Get the type of a currently active transaction
+
+```c#
+var transactionType = _myDbContext.CurrentTransactionType;
+```
+
+### Join an existing transaction with the two-phase commit interface
+
+```c#
+using ScalarDB.Net.Client.Core;
+
+// ...
+
+await _myDbContext.JoinTransactionAsync(transactionId, TransactionType.TwoPhaseCommit);
+```
+
+### Resume an existing transaction
+
+```c#
+await _myDbContext.ResumeTransaction(transactionId);
+```
+
+### Resume an existing transaction with the two-phase commit interface
+
+```c#
+await _myDbContext.ResumeTransaction(transactionId, TransactionType.TwoPhaseCommit);
+```
+
+:::note
+
+The `ResumeTransaction` method doesn't have an asynchronous version because it only initializes the transaction data in the `ScalarDbContext` inheriting object without querying the cluster. Because of this, resuming a transaction by using the wrong ID is possible.
+
+:::
+
+### Commit a transaction (ordinary or two-phase commit)
+
+```c#
+await _myDbContext.CommitTransactionAsync();
+```
+
+### Roll back a transaction (ordinary or two-phase commit)
+
+```c#
+await _myDbContext.RollbackTransactionAsync();
+```
+
+### Prepare a transaction with the two-phase commit interface for the commit
+
+```c#
+await _myDbContext.PrepareTransactionAsync();
+```
+
+### Validate a transaction with the two-phase commit interface before the commit
+
+```c#
+await _myDbContext.ValidateTransactionAsync();
+```

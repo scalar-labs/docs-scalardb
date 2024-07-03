@@ -1,0 +1,120 @@
+# Configuration of ScalarDB Analytics with Spark
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+There are two ways to configure ScalarDB Analytics with Spark:
+
+- By configuring the properties in `spark.conf`
+- By using the helper method that ScalarDB Analytics with Spark provides
+
+Both ways are conceptually equivalent processes, so you can choose either one based on your preference.
+
+## Configure ScalarDB Analytics with Spark by using `spark.conf`
+
+Since ScalarDB Analytics with Spark is provided as a Spark custom catalog plugin, you can enable ScalarDB Analytics with Spark via `spark.conf`.
+
+```properties
+spark.sql.catalog.scalardb_catalog = com.scalar.db.analytics.spark.datasource.ScalarDbCatalog
+spark.sql.catalog.scalardb_catalog.config = /<PATH_TO_YOUR_SCALARDB_PROPERTIES>/config.properties
+spark.sql.catalog.scalardb_catalog.namespaces = <YOUR_NAMESPACE_NAME_2>,<YOUR_NAMESPACE_NAME_2>
+spark.sql.catalog.scalardb_catalog.license.key = {"your":"license", "key":"in", "json":"format"}
+spark.sql.catalog.scalardb_catalog.license.cert_path = /<PATH_TO_YOUR_LICENSE>/cert.pem
+```
+
+:::note
+
+The `scalardb_catalog` part is a configurable catalog name. You may choose any name you prefer.
+
+:::
+
+### Available properties
+
+The following is a list of available properties for ScalarDB Analytics with Spark:
+
+| Property name                                        | Required                                       | Description                                                             |
+|------------------------------------------------------|------------------------------------------------|-------------------------------------------------------------------------|
+| `spark.sql.catalog.{catalog_name}`                   | Yes                                            | Must be `com.scalar.db.analytics.spark.datasource.ScalarDbCatalog`      |
+| `spark.sql.catalog.{catalog_name}.config`            | Yes                                            | Path to the ScalarDB configuration file                                 |
+| `spark.sql.catalog.{catalog_name}.namespaces`        | Yes                                            | Comma-separated list of ScalarDB namespaces to import to the Spark side |
+| `spark.sql.catalog.{catalog_name}.license.key`       | Yes                                            | Your license key in the JSON format                                     |
+| `spark.sql.catalog.{catalog_name}.license.cert_path` | Either this or `license.cert_pem` is required  | Path to your license certificate file                                   |
+| `spark.sql.catalog.{catalog_name}.license.cert_pem`  | Either this or `license.cert_path` is required | Your license certificate in the PEM format                              |
+
+### Importing schemas
+
+After properly setting `spark.conf`, you should have a catalog in your Spark environment, which contains tables connected to the underlying databases of ScalarDB. However, the catalog provides access to raw tables that contain transaction metadata, which is managed by ScalarDB. Instead, you may only be interested in the application-managed data without transaction metadata.
+
+For this purpose, ScalarDB Analytics with Spark provides the `SchemaImporter` class, which creates views that interpret the transaction metadata and show only application-managed data. Those views have an equivalent schema to the ScalarDB tables, and users can use the views as if they were ScalarDB tables. The following is an example of how to run `SchemaImporter` with the properly set catalog.
+
+```java
+import com.scalar.db.analytics.spark.view.SchemaImporter
+
+class YourApp {
+  public static void main(String[] args) {
+    SparkSession spark = SparkSession.builder().appName("<YOUR_APPLICATION_NAME>").getOrCreate()
+    new SchemaImporter(spark, "scalardb_catalog").run() // Import ScalarDB table schemas from the catalog named "scalardb_catalog"
+    spark.sql("select * from <YOUR_NAMESPACE_NAME_1>.<YOUR_TABLE_NAME>").show()
+    spark.stop()
+  }
+}
+```
+
+## Configure ScalarDB Analytics with Spark by using the helper method
+
+You can use a helper method that ScalarDB Analytics with Spark provides to get everything set up to run analytical queries, including configuring the catalog and importing the schemas. In addition, you can use the helper method to set up ScalarDB Analytics with Spark in application code. This would be useful for doing a quick test without prior configuration.
+
+The helper method is provided through Java and Scala. In Java, you can use `ScalarDbAnalyticsInitializer` to specify the options, which are equivalent to the properties in `spark.conf`, as follows:
+
+```java
+import com.scalar.db.analytics.spark.ScalarDbAnalyticsInitializer
+
+class YourApp {
+  public static void main(String[] args) {
+    // Initialize SparkSession as usual
+    SparkSession spark = SparkSession.builder().appName("<YOUR_APPLICATION_NAME>").getOrCreate()
+    // Setup ScalarDB Analytics with Spark via helper class
+    ScalarDbAnalyticsInitializer
+      .builder()
+      .spark(spark)
+      .configPath("/<PATH_TO_YOUR_SCALARDB_PROPERTIES>/config.properties")
+      .namespace("<YOUR_NAMESPACE_NAME_1>")
+      .namespace("<YOUR_NAMESPACE_NAME_2>")
+      .licenseKey("{\"your\":\"license\", \"key\":\"in\", \"json\":\"format\"}")
+      .licenseCertPath("/<PATH_TO_YOUR_LICENSE>/cert.pem")
+      .build()
+      .run()
+    // Run arbitrary queries
+    spark.sql("select * from <YOUR_NAMESPACE_NAME_1>.<YOUR_TABLE_NAME>").show()
+    // Stop SparkSession
+    spark.stop()
+  }
+}
+```
+
+In Scala, the `setupScalarDbAnalytics` method is available as an extension of `SparkSession`:
+
+```scala
+import com.scalar.db.analytics.spark.implicits._
+
+object YourApp {
+  def main(args: Array[String]): Unit = {
+    // Initialize SparkSession as usual
+    val spark = SparkSession.builder.appName("<YOUR_APPLICATION_NAME>").getOrCreate()
+    // Setup ScalarDB Analytics with Spark via helper method
+    spark.setupScalarDbAnalytics(
+      // ScalarDB config file
+      configPath = "/<PATH_TO_YOUR_SCALARDB_PROPERTIES>/config.properties", 
+      // Namespaces in ScalarDB to import
+      namespaces = Set("<YOUR_NAMESPACE_NAME_1>", "<YOUR_NAMESPACE_NAME_2>"),
+      // License information
+      license = License.certPath("""{"your":"license", "key":"in", "json":"format"}""", "/<PATH_TO_YOUR_LICENSE>/cert.pem")
+    )
+    // Run arbitrary queries
+    spark.sql("select * from <YOUR_NAMESPACE_NAME_1>.<YOUR_TABLE_NAME>").show()
+    // Stop SparkSession
+    spark.stop()
+  }
+}
+```
+
