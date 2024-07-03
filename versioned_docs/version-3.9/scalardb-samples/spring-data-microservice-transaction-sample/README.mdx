@@ -2,7 +2,7 @@
 
 This tutorial describes how to create a sample Spring Boot application for microservice transactions by using Spring Data JDBC for ScalarDB.
 
-For details about these features, see [Two-phase Commit Transactions](https://github.com/scalar-labs/scalardb/tree/master/docs/two-phase-commit-transactions.md) and [Guide of Spring Data JDBC for ScalarDB](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/spring-data-guide.md).
+For details about these features, see [Two-phase Commit Transactions](../../two-phase-commit-transactions.mdx) and [Guide of Spring Data JDBC for ScalarDB](../../scalardb-sql/spring-data-guide.mdx).
 
 ## Prerequisites
 
@@ -34,7 +34,7 @@ For more details, see [Install - ScalarDB SQL](https://github.com/scalar-labs/sc
 
 ### Overview
 
-This tutorial describes how to create a Spring Boot sample application for microservice transactions for the same use case as [ScalarDB Sample](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-sample) but by using Two-phase Commit Transactions in ScalarDB.
+This tutorial describes how to create a Spring Boot sample application for microservice transactions for the same use case as [ScalarDB Sample](../scalardb-sample/README.mdx) but by using Two-phase Commit Transactions in ScalarDB.
 
 There are two microservices called the *Customer Service* and the *Order Service* based on the [*Database-per-service* pattern](https://microservices.io/patterns/data/database-per-service.html) in this sample application.
 
@@ -52,11 +52,11 @@ The coordinator database is service-independent and exists for managing transact
 In this sample application, for ease of setup and explanation, we co-locate the coordinator database in the same Cassandra instance of the Order Service, but of course, the coordinator database can be managed as a separate database.
 
 Also, note that application-specific error handling, authentication processing, etc., are omitted in the sample application since it focuses on explaining how to use ScalarDB.
-Please see [this document](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.md#handle-exceptions) for the details of how to handle exceptions in ScalarDB.
+Please see [this document](../../two-phase-commit-transactions.mdx#handle-exceptions) for the details of how to handle exceptions in ScalarDB.
 
 Additionally, you assume each service has one container in this sample application to avoid considering request routing between the services.
 However, for production, because each service typically has multiple servers (or hosts) for scalability and availability, please consider to use ScalarDB Cluster which easily addresses request routing between the services in Two-phase Commit Transactions.
-Please see [this document](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.md#request-routing-in-two-phase-commit-transactions) for the details of Request Routing in Two-phase Commit Transactions.
+Please see [this document](../../two-phase-commit-transactions.mdx#request-routing-in-two-phase-commit-transactions) for the details of Request Routing in Two-phase Commit Transactions.
 
 ### Schema
 
@@ -151,7 +151,7 @@ The `getCustomerInfo` endpoint works as a participant service endpoint when rece
 
 ## Configuration
 
-[The configuration for the Customer Service](customer-service/src/main/resources/application.properties) is as follows:
+[The configuration for the Customer Service](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/customer-service/src/main/resources/application.properties) is as follows:
 
 ```application.properties
 spring.datasource.driver-class-name=com.scalar.db.sql.jdbc.SqlJdbcDriver
@@ -183,9 +183,9 @@ spring.datasource.url=jdbc:scalardb:\
 - `scalar.db.sql.default_transaction_mode`: Specifying `two_phase_commit_transaction` is necessary to use Two-Phase Commit Transactions mode in ScalarDB.
 - `scalar.db.consensus_commit.isolation_level`: This configuration decides the isolation level used for ConsensusCommit.
 
-For details, please see [Configuration - Multi-storage Transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/multi-storage-transactions.md#configuration).
+For details, please see [Configuration - Multi-storage Transactions](../../multi-storage-transactions.mdx#configuration).
 
-[The configuration for the Order Service](order-service/src/main/resources/application.properties) is as follows:
+[The configuration for the Order Service](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/order-service/src/main/resources/application.properties) is as follows:
 
 ```application.properties
 spring.datasource.driver-class-name=com.scalar.db.sql.jdbc.SqlJdbcDriver
@@ -381,7 +381,7 @@ The following sequence diagram shows the transaction for placing an order:
 
 When a client sends a request to place an order to the Order Service, `OrderService.placeOrder()` is called, and the microservice transaction starts.
 
-At first, the Order Service starts a transaction with a two-phase commit interface with `ScalarDbTwoPcRepository.executeTwoPcTransaction()` as follows. For reference, see [`OrderService.java`](order-service/src/main/java/sample/order/OrderService.java).
+At first, the Order Service starts a transaction with a two-phase commit interface with `ScalarDbTwoPcRepository.executeTwoPcTransaction()` as follows. For reference, see [`OrderService.java`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/order-service/src/main/java/sample/order/OrderService.java).
 
 ```java
 // Start a two-phase commit interface transaction
@@ -394,7 +394,7 @@ The actions in [CRUD operations are executed](#2-crud-operations-are-executed), 
 
 ### 2. CRUD operations are executed
 
-After the transaction with a two-phase commit interface starts, CRUD operations are executed by `ScalarDbTwoPcRepository.executeTwoPcTransaction()`. The Order Service puts the order information in the `order_service.orders` table and the detailed information in the `order_service.statements` table as follows. For reference, see [`OrderService.java`](order-service/src/main/java/sample/order/OrderService.java).
+After the transaction with a two-phase commit interface starts, CRUD operations are executed by `ScalarDbTwoPcRepository.executeTwoPcTransaction()`. The Order Service puts the order information in the `order_service.orders` table and the detailed information in the `order_service.statements` table as follows. For reference, see [`OrderService.java`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/order-service/src/main/java/sample/order/OrderService.java).
 
 ```java
 // Put the order info into the `orders` table
@@ -422,7 +422,7 @@ for (ItemOrder itemOrder : request.getItemOrderList()) {
 }
 ```
 
-Then, the Order Service calls the `payment` gRPC endpoint of the Customer Service along with the transaction ID. For reference, see [`OrderService.java`](order-service/src/main/java/sample/order/OrderService.java).
+Then, the Order Service calls the `payment` gRPC endpoint of the Customer Service along with the transaction ID. For reference, see [`OrderService.java`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/order-service/src/main/java/sample/order/OrderService.java).
 
 ```java
 customerServiceStub.payment(
@@ -433,13 +433,13 @@ customerServiceStub.payment(
     .build());
 ```
 
-The `payment` endpoint of the Customer Service first joins the transaction with `ScalarDbTwoPcRepository.joinTransactionOnParticipant()` as follows. For reference, see [`CustomerService.java`](customer-service/src/main/java/sample/customer/CustomerService.java).
+The `payment` endpoint of the Customer Service first joins the transaction with `ScalarDbTwoPcRepository.joinTransactionOnParticipant()` as follows. For reference, see [`CustomerService.java`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/customer-service/src/main/java/sample/customer/CustomerService.java).
 
 ```java
 customerRepository.joinTransactionOnParticipant(request.getTransactionId(), ...);
 ```
 
-The endpoint then gets the customer information and checks if the customer's credit total exceeds the credit limit after the payment. If the credit total does not exceed the credit limit, the endpoint updates the customer's credit total. For reference, see [`CustomerService.java`](customer-service/src/main/java/sample/customer/CustomerService.java).
+The endpoint then gets the customer information and checks if the customer's credit total exceeds the credit limit after the payment. If the credit total does not exceed the credit limit, the endpoint updates the customer's credit total. For reference, see [`CustomerService.java`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/customer-service/src/main/java/sample/customer/CustomerService.java).
 
 ```java
 Customer customer = getCustomer(responseObserver, request.getCustomerId());
@@ -462,7 +462,7 @@ customerRepository.update(customer.withCreditTotal(updatedCreditTotal));
 
 After the Order Service receives the update that the payment succeeded, the Order Service tries to commit the transaction.
 
-The `ScalarDbTwoPcRepository.executeTwoPcTransaction()` API, which called on the Order Service, automatically performs preparations, validations, and commits of both the local Order Service and the remote Customer Service. These steps are executed sequentially after the above CRUD operations successfully finish. The implementations to invoke `prepare`, `validate`, and `commit` gRPC endpoints of the Customer Service need to be passed as parameters to the API. For reference, see [`OrderService.java`](order-service/src/main/java/sample/order/OrderService.java).
+The `ScalarDbTwoPcRepository.executeTwoPcTransaction()` API, which called on the Order Service, automatically performs preparations, validations, and commits of both the local Order Service and the remote Customer Service. These steps are executed sequentially after the above CRUD operations successfully finish. The implementations to invoke `prepare`, `validate`, and `commit` gRPC endpoints of the Customer Service need to be passed as parameters to the API. For reference, see [`OrderService.java`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/order-service/src/main/java/sample/order/OrderService.java).
 
 ```java
 TwoPcResult<PlaceOrderResponse> result = orderRepository.executeTwoPcTransaction(txId ->{
@@ -482,19 +482,19 @@ TwoPcResult<PlaceOrderResponse> result = orderRepository.executeTwoPcTransaction
 
 ![Sequence Diagram of High Level 2PC API](images/seq-diagram-high-level-2pc-api.png)
 
-In the `prepare` endpoint of the Customer Service, the endpoint resumes and prepares the transaction by using `ScalarDbTwoPcRepository.prepareTransactionOnParticipant()`. For reference, see [`CustomerService.java`](customer-service/src/main/java/sample/customer/CustomerService.java).
+In the `prepare` endpoint of the Customer Service, the endpoint resumes and prepares the transaction by using `ScalarDbTwoPcRepository.prepareTransactionOnParticipant()`. For reference, see [`CustomerService.java`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/customer-service/src/main/java/sample/customer/CustomerService.java).
 
 ```java
 customerRepository.prepareTransactionOnParticipant(request.getTransactionId());
 ```
 
-In the `validate` endpoint of the Customer Service, the endpoint resumes and validates the transaction by using `ScalarDbTwoPcRepository.validateTransactionOnParticipant()`. For reference, see [`CustomerService.java`](customer-service/src/main/java/sample/customer/CustomerService.java).
+In the `validate` endpoint of the Customer Service, the endpoint resumes and validates the transaction by using `ScalarDbTwoPcRepository.validateTransactionOnParticipant()`. For reference, see [`CustomerService.java`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/customer-service/src/main/java/sample/customer/CustomerService.java).
 
 ```java
 customerRepository.validateTransactionOnParticipant(request.getTransactionId());
 ```
 
-In the `commit` endpoint of the Customer Service, the endpoint resumes and commits the transaction by using `ScalarDbTwoPcRepository.commitTransactionOnParticipant()`. For reference, see [`CustomerService.java`](customer-service/src/main/java/sample/customer/CustomerService.java).
+In the `commit` endpoint of the Customer Service, the endpoint resumes and commits the transaction by using `ScalarDbTwoPcRepository.commitTransactionOnParticipant()`. For reference, see [`CustomerService.java`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/customer-service/src/main/java/sample/customer/CustomerService.java).
 
 ```java
 customerRepository.commitTransactionOnParticipant(request.getTransactionId());
@@ -502,7 +502,7 @@ customerRepository.commitTransactionOnParticipant(request.getTransactionId());
 
 ### Error handling
 
-If an error happens while executing a transaction, `ScalarDbTwoPcRepository.executeTwoPcTransaction()` will automatically roll back the transaction in both the local Order Service and the remote Customer Service. The implementation to invoke the `rollback` gRPC endpoint of the Customer Service also needs to be passed as a parameter to the API with other ones. For reference, see [`OrderService.java`](order-service/src/main/java/sample/order/OrderService.java).
+If an error happens while executing a transaction, `ScalarDbTwoPcRepository.executeTwoPcTransaction()` will automatically roll back the transaction in both the local Order Service and the remote Customer Service. The implementation to invoke the `rollback` gRPC endpoint of the Customer Service also needs to be passed as a parameter to the API with other ones. For reference, see [`OrderService.java`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/order-service/src/main/java/sample/order/OrderService.java).
 
 ```java
 TwoPcResult<PlaceOrderResponse> result = orderRepository.executeTwoPcTransaction(txId ->{
@@ -520,10 +520,10 @@ TwoPcResult<PlaceOrderResponse> result = orderRepository.executeTwoPcTransaction
 );
 ```
 
-In the `rollback` endpoint of the Customer Service, the endpoint resumes and rolls back the transaction. For reference, see [`CustomerService.java`](customer-service/src/main/java/sample/customer/CustomerService.java).
+In the `rollback` endpoint of the Customer Service, the endpoint resumes and rolls back the transaction. For reference, see [`CustomerService.java`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/customer-service/src/main/java/sample/customer/CustomerService.java).
 
 ```java
 customerRepository.rollbackTransactionOnParticipant(request.getTransactionId());
 ```
 
-For details about how to handle exceptions in ScalarDB, see [Handle exceptions](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.md#handle-exceptions).
+For details about how to handle exceptions in ScalarDB, see [Handle exceptions](../../two-phase-commit-transactions.mdx#handle-exceptions).
