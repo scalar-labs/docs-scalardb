@@ -47,89 +47,10 @@ Select your database, and follow the instructions to configure it for ScalarDB.
 For a list of databases that ScalarDB supports, see [Supported Databases](scalardb-supported-databases.mdx).
 
 <Tabs groupId="databases" queryString>
-  <TabItem value="Cassandra" label="Cassandra" default>
-    Confirm that you have Cassandra installed. If Cassandra isn't installed, visit [Downloading Cassandra](https://cassandra.apache.org/_/download.html).
-
-    ### Configure Cassandra
-
-    Open **cassandra.yaml** in your preferred IDE. Then, change `commitlog_sync` from `periodic` to `batch` so that you don't lose data if a quorum of replica nodes goes down.
-
-    ### Configure ScalarDB
-
-    The following instructions assume that you have properly installed and configured the JDK and Cassandra in your local environment, and Cassandra is running on your localhost.
-
-    The **scalardb.properties** file in the `docs/getting-started` directory holds database configurations for ScalarDB. The following is a basic configuration for Cassandra. Be sure to change the values for `scalar.db.username` and `scalar.db.password` as described.
-
-    ```properties
-    # The Cassandra storage implementation is used for Consensus Commit.
-    scalar.db.storage=cassandra
-
-    # Comma-separated contact points.
-    scalar.db.contact_points=localhost
-
-    # The port number for all the contact points.
-    scalar.db.contact_port=9042
-
-    # The username and password to access the database.
-    scalar.db.username=<USER_NAME>
-    scalar.db.password=<USER_PASSWORD>
-    ```
-  </TabItem>
-  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
-    To use Azure Cosmos DB for NoSQL, you must have an Azure account. If you don't have an Azure account, visit [Create an Azure Cosmos DB account](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-portal#create-account).
-
-    ### Configure Cosmos DB for NoSQL
-
-    Set the **default consistency level** to **Strong** according to the official document at [Configure the default consistency level](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-manage-consistency#configure-the-default-consistency-level).
-
-    ### Configure ScalarDB
-
-    The following instructions assume that you have properly installed and configured the JDK in your local environment and properly configured your Cosmos DB for NoSQL account in Azure.
-
-    The **scalardb.properties** file in the `docs/getting-started` directory holds database configurations for ScalarDB. Be sure to change the values for `scalar.db.contact_points` and `scalar.db.password` as described.
-
-    ```properties
-    # The Cosmos DB for NoSQL storage implementation is used for Consensus Commit.
-    scalar.db.storage=cosmos
-
-    # The Cosmos DB for NoSQL URI.
-    scalar.db.contact_points=<COSMOS_DB_FOR_NOSQL_URI>
-
-    # The Cosmos DB for NoSQL key to access the database.
-    scalar.db.password=<COSMOS_DB_FOR_NOSQL_KEY>
-    ```
-
-:::note
-
-You can use a primary key or a secondary key as the value for `scalar.db.password`.
-
-:::
-  </TabItem>
-  <TabItem value="DynamoDB" label="DynamoDB">
-    To use Amazon DynamoDB, you must have an AWS account. If you don't have an AWS account, visit [Getting started: Are you a first-time AWS user?](https://docs.aws.amazon.com/accounts/latest/reference/welcome-first-time-user.html).
-
-    ### Configure ScalarDB
-
-    The following instructions assume that you have properly installed and configured the JDK in your local environment.
-
-    The **scalardb.properties** file in the `docs/getting-started` directory holds database configurations for ScalarDB. Be sure to change the values for `scalar.db.contact_points`, `scalar.db.username`, and  `scalar.db.password` as described.
-
-    ```properties
-    # The DynamoDB storage implementation is used for Consensus Commit.
-    scalar.db.storage=dynamo
-
-    # The AWS region.
-    scalar.db.contact_points=<REGION>
-
-    # The AWS access key ID and secret access key to access the database.
-    scalar.db.username=<ACCESS_KEY_ID>
-    scalar.db.password=<SECRET_ACCESS_KEY>
-    ```
-  </TabItem>
-  <TabItem value="JDBC_databases" label="JDBC databases">
+  <TabItem value="JDBC_databases" label="JDBC databases" default>
     Confirm that you have a JDBC database installed. For a list of supported JDBC databases, see [Supported Databases](scalardb-supported-databases.mdx).
 
-    ### Configure ScalarDB
+    <h3>Configure ScalarDB</h3>
 
     The following instructions assume that you have properly installed and configured the JDK and JDBC database in your local environment, and the JDBC database is running on your localhost.
 
@@ -155,6 +76,85 @@ Be sure to uncomment the `scalar.db.contact_points` variable and change the valu
     # The username and password for connecting to the database.
     scalar.db.username=<USER_NAME>
     scalar.db.password=<PASSWORD>
+    ```
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    To use Amazon DynamoDB, you must have an AWS account. If you don't have an AWS account, visit [Getting started: Are you a first-time AWS user?](https://docs.aws.amazon.com/accounts/latest/reference/welcome-first-time-user.html).
+
+    <h3>Configure ScalarDB</h3>
+
+    The following instructions assume that you have properly installed and configured the JDK in your local environment.
+
+    The **scalardb.properties** file in the `docs/getting-started` directory holds database configurations for ScalarDB. Be sure to change the values for `scalar.db.contact_points`, `scalar.db.username`, and  `scalar.db.password` as described.
+
+    ```properties
+    # The DynamoDB storage implementation is used for Consensus Commit.
+    scalar.db.storage=dynamo
+
+    # The AWS region.
+    scalar.db.contact_points=<REGION>
+
+    # The AWS access key ID and secret access key to access the database.
+    scalar.db.username=<ACCESS_KEY_ID>
+    scalar.db.password=<SECRET_ACCESS_KEY>
+    ```
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    To use Azure Cosmos DB for NoSQL, you must have an Azure account. If you don't have an Azure account, visit [Create an Azure Cosmos DB account](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-portal#create-account).
+
+    <h3>Configure Cosmos DB for NoSQL</h3>
+
+    Set the **default consistency level** to **Strong** according to the official document at [Configure the default consistency level](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-manage-consistency#configure-the-default-consistency-level).
+
+    <h3>Configure ScalarDB</h3>
+
+    The following instructions assume that you have properly installed and configured the JDK in your local environment and properly configured your Cosmos DB for NoSQL account in Azure. 
+
+    The **scalardb.properties** file in the `docs/getting-started` directory holds database configurations for ScalarDB. Be sure to change the values for `scalar.db.contact_points` and `scalar.db.password` as described.
+        
+    ```properties
+    # The Cosmos DB for NoSQL storage implementation is used for Consensus Commit.
+    scalar.db.storage=cosmos
+
+    # The Cosmos DB for NoSQL URI.
+    scalar.db.contact_points=<COSMOS_DB_FOR_NOSQL_URI>
+
+    # The Cosmos DB for NoSQL key to access the database.
+    scalar.db.password=<COSMOS_DB_FOR_NOSQL_KEY>
+    ```
+
+:::note
+
+You can use a primary key or a secondary key as the value for `scalar.db.password`.
+
+:::
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    Confirm that you have Cassandra installed. If Cassandra isn't installed, visit [Downloading Cassandra](https://cassandra.apache.org/_/download.html).
+
+    <h3>Configure Cassandra</h3>
+
+    Open **cassandra.yaml** in your preferred IDE. Then, change `commitlog_sync` from `periodic` to `batch` so that you don't lose data if a quorum of replica nodes goes down.
+
+    <h3>Configure ScalarDB</h3>
+
+    The following instructions assume that you have properly installed and configured the JDK and Cassandra in your local environment, and Cassandra is running on your localhost.
+
+    The **scalardb.properties** file in the `docs/getting-started` directory holds database configurations for ScalarDB. The following is a basic configuration for Cassandra. Be sure to change the values for `scalar.db.username` and `scalar.db.password` as described.
+
+    ```properties
+    # The Cassandra storage implementation is used for Consensus Commit.
+    scalar.db.storage=cassandra
+
+    # Comma-separated contact points.
+    scalar.db.contact_points=localhost
+
+    # The port number for all the contact points.
+    scalar.db.contact_port=9042
+
+    # The username and password to access the database.
+    scalar.db.username=<USER_NAME>
+    scalar.db.password=<USER_PASSWORD>
     ```
   </TabItem>
 </Tabs>
