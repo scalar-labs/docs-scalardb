@@ -1,11 +1,11 @@
-# Scalar DB JDBC Guide
+# ScalarDB JDBC Guide
 
-The usage of Scalar DB JDBC basically follows [Java JDBC API](https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/).
-This guide describes several important topics that are specific to Scalar DB JDBC.
+The usage of ScalarDB JDBC basically follows [Java JDBC API](https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/).
+This guide describes several important topics that are specific to ScalarDB JDBC.
 
 ## JDBC connection URL
 
-The JDBC connection URL format of Scalar DB JDBC is as follows:
+The JDBC connection URL format of ScalarDB JDBC is as follows:
 
 ```shell
 jdbc:scalardb:<configuration file path>?<property name>=<property value>&<property name>=<property value>&...
@@ -31,13 +31,13 @@ Specify configuration file path and properties:
 jdbc:scalardb:/path/to/database.properties?scalar.db.metadata.cache_expiration_time_secs=0
 ```
 
-## Data type mapping between Scalar DB and JDBC
+## Data type mapping between ScalarDB and JDBC
 
-Since Scalar DB doesn't support all the data types defined in JDBC, the following explains the data type mapping between Scalar DB and JDBC.
+Since ScalarDB doesn't support all the data types defined in JDBC, the following explains the data type mapping between ScalarDB and JDBC.
 
-The data type mapping between Scalar DB and JDBC is as follows:
+The data type mapping between ScalarDB and JDBC is as follows:
 
-| Scalar DB Type | JDBC (Java) Type   |
+| ScalarDB Type | JDBC (Java) Type   |
 | -------------- | ------------------ |
 | Boolean        | boolean or Boolean |
 | Int            | int or Integer     |
@@ -107,7 +107,7 @@ try (PreparedStatement preparedStatement = ...) {
 
 ## Handle SQLException
 
-The exception handling is basically the same as Scalar DB SQL API as follows:
+The exception handling is basically the same as ScalarDB SQL API as follows:
 
 ```java
 // If you execute multiple statements in a transaction, you need to set auto-commit to false.
@@ -144,9 +144,9 @@ try {
 }
 ```
 
-Please see also [Scalar DB SQL API Guide](sql-api-guide.mdx) for more details on exception handling.
+Please see also [ScalarDB SQL API Guide](sql-api-guide.mdx) for more details on exception handling.
 
 ## References
 
 - [Java JDBC API](https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/)
-- [Scalar DB SQL API Guide](sql-api-guide.mdx)
+- [ScalarDB SQL API Guide](sql-api-guide.mdx)

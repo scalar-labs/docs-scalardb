@@ -1,6 +1,6 @@
 # ScalarDB Cluster
 
-ScalarDB Cluster is a clustering solution for [ScalarDB](https://github.com/scalar-labs/scalardb) that consists of a set of cluster nodes, each of which provides ScalarDB functionality. Each cluster node has a routing mechanism that directs transaction requests to the appropriate cluster node within the cluster.
+ScalarDB Cluster is a clustering solution for [ScalarDB](../overview.mdx) that consists of a set of cluster nodes, each of which provides ScalarDB functionality. Each cluster node has a routing mechanism that directs transaction requests to the appropriate cluster node within the cluster.
 
 ## Why ScalarDB Cluster?
 
@@ -8,7 +8,7 @@ When executing a transaction that spans multiple client requests, such as in mic
 
 To address this challenge, a routing mechanism such as session affinity (also known as sticky sessions) needs to be configured. This strategy ensures that requests within a transaction are consistently routed to the same server. Alternatively, you can leverage a bidirectional-streaming RPC by using gRPC. However, it's important to note that implementing these configurations typically requires significant time and effort. In addition, specific configuration adjustments may be required depending on the load balancer product you are using.
 
-For more details on this topic, see [Request routing in transactions with a two-phase commit interface](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.md#request-routing-in-transactions-with-a-two-phase-commit-interface).
+For more details on this topic, see [Request routing in transactions with a two-phase commit interface](../two-phase-commit-transactions.mdx#request-routing-in-transactions-with-a-two-phase-commit-interface).
 
 ScalarDB Cluster addresses this issue by providing a routing mechanism capable of directing requests to the appropriate cluster node within the cluster. Thus, when a cluster node receives a request, the node can route that request to the correct cluster node in the cluster.
 
@@ -44,8 +44,8 @@ For tutorials on getting started with ScalarDB Cluster, see the following:
 For details about the ScalarDB Cluster Helm Chart, refer to the following:
 
 * [ScalarDB Cluster Helm Chart](https://github.com/scalar-labs/helm-charts/tree/main/charts/scalardb-cluster)
-* [Deploy Scalar products using Scalar Helm Charts](https://github.com/scalar-labs/helm-charts/blob/main/docs/how-to-deploy-scalar-products.mdx)
-* [How to deploy ScalarDB Cluster](https://github.com/scalar-labs/helm-charts/blob/main/docs/how-to-deploy-scalardb-cluster.mdx)
+* [Deploy Scalar products using Scalar Helm Charts](../helm-charts/how-to-deploy-scalar-products.mdx)
+* [How to deploy ScalarDB Cluster](../helm-charts/how-to-deploy-scalardb-cluster.mdx)
 
 For details about the configurations for ScalarDB Cluster, refer to the following:
 

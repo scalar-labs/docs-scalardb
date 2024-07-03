@@ -37,42 +37,42 @@ Select your database for details on how to configure it to achieve the general r
 
 <Tabs groupId="databases" queryString>
   <TabItem value="JDBC_databases" label="JDBC databases" default>
-    #### Transactions
+    <h4>Transactions</h4>
 
     - Use a single primary server or synchronized multi-primary servers for all operations (no read operations on read replicas that are asynchronously replicated from a primary database).
     - Use read-committed or stricter isolation levels.
 
-    #### Analytics
+    <h4>Analytics</h4>
 
     - Use read-committed or stricter isolation levels.
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
-    #### Transactions
+    <h4>Transactions</h4>
 
     - Use a single primary region for all operations. (No read and write operations on global tables in non-primary regions.)
       - There is no concept for primary regions in DynamoDB, so you must designate a primary region by yourself.
 
-    #### Analytics
+    <h4>Analytics</h4>
 
     - Not applicable. DynamoDB always returns committed records, so there are no DynamoDB-specific requirements.
   </TabItem>
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
-    #### Transactions
+    <h4>Transactions</h4>
 
     - Use a single primary region for all operations with `Strong` or `Bounded Staleness` consistency.
 
-    #### Analytics
+    <h4>Analytics</h4>
 
     - Not applicable. Cosmos DB always returns committed records, so there are no Cosmos DB–specific requirements.
   </TabItem>
   <TabItem value="Cassandra" label="Cassandra">
-    #### Transactions
+    <h4>Transactions</h4>
 
     - Use a single primary cluster for all operations (no read or write operations in non-primary clusters).
     - Use `batch` or `group` for `commitlog_sync`.
     - If you're using Cassandra-compatible databases, those databases must properly support lightweight transactions (LWT).
 
-    #### Analytics
+    <h4>Analytics</h4>
 
     - Not applicable. Cassandra always returns committed records, so there are no Cassandra-specific requirements.
   </TabItem>
@@ -103,7 +103,7 @@ Since DynamoDB stores data in multiple availability zones by default, you don’
 
 :::
   </TabItem>
-  <TabItem value="Cosmos_DB" label="Cosmos DB">
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     - Increase the number of Request Units (RUs) for high throughput.
     - Enable point-in-time restore (PITR).
     - Enable availability zones.

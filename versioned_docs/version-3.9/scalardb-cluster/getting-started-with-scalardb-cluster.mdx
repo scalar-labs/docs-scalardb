@@ -1,13 +1,10 @@
 # Getting Started with ScalarDB Cluster
 
-import Tabs from '@theme/Tabs';
-import TabItem from '@theme/TabItem';
-
 This tutorial describes how to create a sample application that uses [ScalarDB Cluster](index.mdx) through the Java API.
 
 ## Overview
 
-The sample e-commerce application shows how users can order and pay for items by using a line of credit. The use case described in this tutorial is the same as the basic [ScalarDB sample](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-sample/README.md) but takes advantage of ScalarDB Cluster.
+The sample e-commerce application shows how users can order and pay for items by using a line of credit. The use case described in this tutorial is the same as the basic [ScalarDB sample](../scalardb-samples/scalardb-sample/README.mdx) but takes advantage of ScalarDB Cluster.
 
 The following diagram shows the system architecture of the sample application:
 
@@ -92,23 +89,32 @@ In addition, you need access to the [ScalarDB Cluster GitHub repository](https:/
 
 After confirming that you have access to the ScalarDB SQL repository and its packages, you will need to set your GitHub username and your personal access token. To specify these properties, you can do one of the following:
 
-<Tabs groupId="specify_properties" queryString>
-  <TabItem value="Gradle_properties_via_command" label="Add to Gradle properties via Terminal" default>
-    Specify the properties with the `-P` option by running the `./gradlew` command as follows, replacing `<YOUR_GITHUB_USERNAME>` with your GitHub username and `<YOUR_PERSONAL_ACCESS_TOKEN>` with your personal access token:
+<div id="tabset-1">
+<div class="tab">
+  <button class="tablinks" onclick="openTab(event, 'Gradle_properties_via_command', 'tabset-1')" id="defaultOpen-1">Add to Gradle properties via Terminal</button>
+  <button class="tablinks" onclick="openTab(event, 'Environment_variables', 'tabset-1')">Add as environment variables</button>
+</div>
 
-    ```console
-    $ ./gradlew run ... -Pgpr.user=<YOUR_GITHUB_USERNAME> -Pgpr.key=<YOUR_PERSONAL_ACCESS_TOKEN>
-    ```
-  </TabItem>
-  <TabItem value="environment_variables" label="Add as environment variables">
-    Specify the properties as environment variables by running the following commands, replacing `<YOUR_GITHUB_USERNAME>` with your GitHub username and `<YOUR_PERSONAL_ACCESS_TOKEN>` with your personal access token:
+<div id="Gradle_properties_via_command" class="tabcontent" markdown="1">
 
-    ```console
-    $ export USERNAME=<YOUR_GITHUB_USERNAME>
-    $ export TOKEN=<YOUR_PERSONAL_ACCESS_TOKEN>
-    ```
-  </TabItem>
-</Tabs>
+Specify the properties with the `-P` option by running the `./gradlew` command as follows, replacing `<YOUR_GITHUB_USERNAME>` with your GitHub username and `<YOUR_PERSONAL_ACCESS_TOKEN>` with your personal access token:
+
+```console
+$ ./gradlew run ... -Pgpr.user=<YOUR_GITHUB_USERNAME> -Pgpr.key=<YOUR_PERSONAL_ACCESS_TOKEN>
+```
+
+</div>
+<div id="Environment_variables" class="tabcontent" markdown="1">
+
+Specify the properties as environment variables by running the following commands, replacing `<YOUR_GITHUB_USERNAME>` with your GitHub username and `<YOUR_PERSONAL_ACCESS_TOKEN>` with your personal access token:
+
+```console
+$ export USERNAME=<YOUR_GITHUB_USERNAME>
+$ export TOKEN=<YOUR_PERSONAL_ACCESS_TOKEN>
+```
+
+</div>
+</div>
 
 For more details, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.mdx).
 
@@ -148,13 +154,13 @@ repositories {
 }
 ```
 
-Then, delete the existing dependency for `com.scalar-labs:scalardb:3.10.1` from the `dependencies` section, and add the following dependency to the `dependencies` section:
+Then, delete the existing dependency for `com.scalar-labs:scalardb` from the `dependencies` section, and add the following dependency to the `dependencies` section:
 
 ```gradle
 dependencies {
     ...
 
-    implementation 'com.scalar-labs:scalardb-cluster-client:3.10.1'
+    implementation 'com.scalar-labs:scalardb-cluster-client:3.9.5'
 }
 ```
 
@@ -200,12 +206,12 @@ For details about the client modes, see [Developer Guide for ScalarDB Cluster wi
 
 The database schema (the method in which the data will be organized) for the sample application has already been defined in [`schema.json`](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-sample/schema.json).
 
-To apply the schema, go to the [ScalarDB Cluster Releases](https://github.com/scalar-labs/scalardb-cluster/releases) page and download the ScalarDB Cluster Schema Loader that matches the version of ScalarDB Cluster that you want to use to the `scalardb-samples/scalardb-sample` folder.
+To apply the schema, go to [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases/tag/v3.9.5) and download the ScalarDB Cluster Schema Loader to the `scalardb-samples/scalardb-sample` folder.
 
-Then, run the following command, replacing `<VERSION>` with the version of the ScalarDB Cluster Schema Loader that you downloaded:
+Then, run the following command:
 
 ```console
-$ java -jar scalardb-cluster-schema-loader-<VERSION>-all.jar --config database.properties -f schema.json --coordinator
+$ java -jar scalardb-cluster-schema-loader-3.9.5-all.jar --config database.properties -f schema.json --coordinator
 ```
 
 #### Schema details

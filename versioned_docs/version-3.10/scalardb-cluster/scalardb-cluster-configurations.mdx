@@ -3,7 +3,7 @@
 This document describes the configurations for ScalarDB Cluster.
 ScalarDB Cluster consists of multiple cluster nodes, and you need to configure each cluster node.
 
-In addition to the configurations described in [Transaction manager configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#transaction-manager-configurations) and [Other configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#other-configurations), you can configure the following configurations for each cluster node.
+In addition to the configurations described in [Transaction manager configurations](../configurations.mdx#transaction-manager-configurations) and [Other configurations](../configurations.mdx#other-configurations), you can configure the following configurations for each cluster node.
 
 ## Basic configurations
 
@@ -20,7 +20,6 @@ The basic configurations for a cluster node are as follows:
 | `scalar.db.cluster.node.port`                                     | Port number of the ScalarDB Cluster node.                                                                                                                                                                      | `60053`                |
 | `scalar.db.cluster.node.prometheus_exporter_port`                 | Port number of the Prometheus exporter.                                                                                                                                                                        | `9080`                 |
 | `scalar.db.cluster.grpc.deadline_duration_millis`                 | Deadline duration for gRPC in milliseconds.                                                                                                                                                                    | `60000` (60 seconds)   |
-| `scalar.db.cluster.node.standalone_mode.enabled`                  | Whether standalone mode is enabled. Note that if standalone mode is enabled, the membership configurations (`scalar.db.cluster.membership.*`) will be ignored.                                                 | `false`                |
 | `scalar.db.active_transaction_management.expiration_time_millis`  | ScalarDB Cluster nodes maintain ongoing transactions, which can be resumed by using a transaction ID. This configuration specifies the expiration time of this transaction management feature in milliseconds. | `60000` (60 seconds)   |
 
 ## ScalarDB Cluster GraphQL Configurations
