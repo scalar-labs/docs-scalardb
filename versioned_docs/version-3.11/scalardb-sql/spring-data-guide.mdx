@@ -397,7 +397,7 @@ bankRepository.update(new Bank(bank.bankId, bank.name + " 2", bank.accounts));
 
 ### Multi-storage transaction
 
-ScalarDB supports [Multi-storage Transaction](https://github.com/scalar-labs/scalardb/blob/master/docs/multi-storage-transactions.md), and users can use the feature via Spring Data JDBC for ScalarDB. The following needs to be configured to use the feature.
+ScalarDB supports [Multi-storage Transaction](../multi-storage-transactions.mdx), and users can use the feature via Spring Data JDBC for ScalarDB. The following needs to be configured to use the feature.
 
 #### spring.datasource.url
 Here is a sample datasource URL assuming there are two namespaces "north" and "south" that manage data with MySQL and PostgreSQL respectively.
@@ -493,7 +493,7 @@ There are other options available for retrying transactions, such as Spring Retr
 
 ### Two-phase commit transaction
 
-ScalarDB supports [Two-phase commit transaction](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.md), and users can use the feature via Spring Data JDBC for ScalarDB. The following configurations are needed.
+ScalarDB supports [Two-phase commit transaction](../two-phase-commit-transactions.mdx), and users can use the feature via Spring Data JDBC for ScalarDB. The following configurations are needed.
 
 #### spring.datasource.url
 
@@ -535,7 +535,7 @@ Spring Data JDBC for ScalarDB supports 2 types of APIs for 2PC transaction. One 
 
 All in-flight operations are rolled back when any exception is thrown from Spring Data repository method.
 
-See [How to execute Two-phase Commit Transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.md#how-to-execute-two-phase-commit-transactions) for details.
+See [How to execute Two-phase Commit Transactions](../two-phase-commit-transactions.mdx#how-to-execute-two-phase-commit-transactions) for details.
 
 ```java
 @Transactional(transactionManager = "scalarDbSuspendableTransactionManager")
@@ -844,9 +844,9 @@ public class SampleService {
 
 You can see the following sample applications that use Spring Data JDBC for ScalarDB. It only serves as a reference and does not necessarily meet production code standards.
 
-- [Sample application of Spring Data JDBC for ScalarDB](https://github.com/scalar-labs/scalardb-samples/tree/main/spring-data-sample)
-- [Sample application of Spring Data JDBC for ScalarDB with Multi-storage Transactions](https://github.com/scalar-labs/scalardb-samples/tree/main/spring-data-multi-storage-transaction-sample)
-- [Sample application of Spring Data JDBC for ScalarDB with Microservice Transactions](https://github.com/scalar-labs/scalardb-samples/tree/main/spring-data-microservice-transaction-sample)
+- [Sample application of Spring Data JDBC for ScalarDB](../scalardb-samples/spring-data-sample/README.mdx)
+- [Sample application of Spring Data JDBC for ScalarDB with Multi-storage Transactions](../scalardb-samples/spring-data-multi-storage-transaction-sample/README.mdx)
+- [Sample application of Spring Data JDBC for ScalarDB with Microservice Transactions](../scalardb-samples/spring-data-microservice-transaction-sample/README.mdx)
 
 ## How it works
 
