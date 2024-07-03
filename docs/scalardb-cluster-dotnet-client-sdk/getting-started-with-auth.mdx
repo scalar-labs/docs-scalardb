@@ -1,6 +1,6 @@
 # Getting Started with ScalarDB Auth by Using ScalarDB Cluster .NET Client SDK
 
-The ScalarDB Cluster .NET Client SDK supports [ScalarDB Auth](https://github.com/scalar-labs/scalardb-cluster/blob/main/docs/scalardb-auth-with-sql.md), which allows you to authenticate and authorize your requests to ScalarDB Cluster.
+The ScalarDB Cluster .NET Client SDK supports [ScalarDB Auth](../scalardb-cluster/scalardb-auth-with-sql.mdx), which allows you to authenticate and authorize your requests to ScalarDB Cluster.
 
 ## Install the SDK
 
@@ -12,7 +12,7 @@ dotnet add package ScalarDB.Net.Client --version '<MAJOR>.<MINOR>.*'
 
 ## Set credentials in `ScalarDbOptions`
 
-First, you need to get a transaction manager or transaction admin object with credentials by using `TransactionFactory` as follows, replacing the contents in the angle brackets as described. Also, be sure to replace `<GET_TRANSACTION_MANAGER>` with `GetTransactionManager()`, `GetTwoPhaseCommitTransactionManager()`, `GetSqlTransactionManager()`, or `GetSqlTwoPhaseCommitTransactionManager()`.  
+First, you need to get a transaction manager or transaction admin object with credentials by using `TransactionFactory` as follows, replacing the contents in the angle brackets as described. Also, be sure to replace `<GET_TRANSACTION_MANAGER>` with `GetTransactionManager()`, `GetTwoPhaseCommitTransactionManager()`, `GetSqlTransactionManager()`, or `GetSqlTwoPhaseCommitTransactionManager()`.
 
 ```c#
 var scalarDbOptions = new ScalarDbOptions
@@ -33,3 +33,21 @@ using var admin = factory.GetTransactionAdmin();
 ```
 
 A transaction manager or transaction admin object created from `TransactionFactory` with the provided credentials will automatically log in to ScalarDB Cluster and can communicate with it.
+
+## Wire encryption
+
+[Wire encryption](../scalardb-cluster/scalardb-auth-with-sql.md#wire-encryption) is also supported. It can be turned on by setting `Address` property of `ScalarDbOptions` to the url started with `https`, like follows:
+
+```c#
+builder.Services.AddScalarDbContext<TestDbContext>(options =>
+{
+    options.Address = "https://<HOSTNAME_OR_IP_ADDRESS>:<PORT>";
+    //...
+});
+```
+
+### Wire encryption options
+
+- **TlsRootCertPem:** The custom CA root certificate (PEM data) for TLS communication.
+- **TlsRootCertPath:** The custom CA root certificate (file path) for TLS communication. If both `TlsRootCertPem` and `TlsRootCertPath` are set, `TlsRootCertPem` will be used.
+- **TlsOverrideAuthority:** The custom authority for TLS communication. This doesn't change what host is actually connected. This is mainly intended for testing. For example, you can specify the hostname presented in the cluster's certificate (`scalar.db.cluster.node.tls.cert_chain_path` parameter of the cluster). If there's more than one hostname in the cluster's certificate only the first one will be checked.
