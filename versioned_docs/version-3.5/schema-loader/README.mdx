@@ -22,8 +22,8 @@ This tool supports only basic options to create, delete, or repair a table. If y
 
 Select your preferred method to set up Schema Loader, and follow the instructions.
 
-<Tabs groupId="setup_method" queryString>
-  <TabItem value="fat_JAR" label="Fat JAR" default>
+<Tabs groupId="schema_loader_setup" queryString>
+  <TabItem value="Fat_JAR" label="Fat JAR" default>
     You can download the release versions of Schema Loader from the [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) page.
   </TabItem>
   <TabItem value="Docker_container" label="Docker container">
@@ -52,14 +52,14 @@ Select how you would like to configure Schema Loader for your database. The pref
 The following commands are available when using the properties file:
 
 ```console
-Usage: java -jar scalardb-schema-loader-<version>.jar [-D] [--coordinator]
+Usage: java -jar scalardb-schema-loader-<VERSION>.jar [-D] [--coordinator]
        [--no-backup] [--no-scaling] -c=<configPath>
        [--compaction-strategy=<compactionStrategy>] [-f=<schemaFile>]
        [--replication-factor=<replicaFactor>]
        [--replication-strategy=<replicationStrategy>] [--ru=<ru>]
 Create/Delete schemas in the storage defined in the config file
   -c, --config=<configPath>
-                      Path to the config file of Scalar DB
+                      Path to the config file of ScalarDB
       --compaction-strategy=<compactionStrategy>
                       The compaction strategy, must be LCS, STCS or TWCS
                         (supported in Cassandra)
@@ -169,7 +169,7 @@ To create namespaces and tables by using a properties file, run the following co
 $ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator]
 ```
 
-If `--coordinator` is specified, a Coordinator table will be created.
+If `--coordinator` is specified, a [Coordinator table](api-guide.mdx#specify-operations-for-the-coordinator-table) will be created.
 
 :::note
 
@@ -324,7 +324,7 @@ The schema has table definitions that include `columns`, `partition-key`, `clust
 - The `secondary-index` field defines which columns are indexed.
 - The `transaction` field indicates whether the table is for transactions or not.
   - If you set the `transaction` field to `true` or don't specify the `transaction` field, this tool creates a table with transaction metadata if needed.
-  - If you set the `transaction` field to `false`, this tool creates a table without any transaction metadata (that is, for a table with Storage API).
+  - If you set the `transaction` field to `false`, this tool creates a table without any transaction metadata (that is, for a table with [Storage API](storage-abstraction.mdx)).
 
 You can also specify database or storage-specific options in the table definition as follows:
 
