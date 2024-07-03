@@ -50,11 +50,11 @@ For a list of databases that ScalarDB supports, see [Supported Databases](scalar
   <TabItem value="Cassandra" label="Cassandra" default>
     Confirm that you have Cassandra installed. If Cassandra isn't installed, visit [Downloading Cassandra](https://cassandra.apache.org/_/download.html).
 
-    ### Configure Cassandra
+    **Configure Cassandra**
 
     Open **cassandra.yaml** in your preferred IDE. Then, change `commitlog_sync` from `periodic` to `batch` so that you don't lose data if a quorum of replica nodes goes down.
 
-    ### Configure ScalarDB
+    **Configure ScalarDB**
 
     The following instructions assume that you have properly installed and configured the JDK and Cassandra in your local environment, and Cassandra is running on your localhost.
 
@@ -78,16 +78,16 @@ For a list of databases that ScalarDB supports, see [Supported Databases](scalar
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     To use Azure Cosmos DB for NoSQL, you must have an Azure account. If you don't have an Azure account, visit [Create an Azure Cosmos DB account](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-portal#create-account).
 
-    ### Configure Cosmos DB for NoSQL
+    **Configure Cosmos DB for NoSQL**
 
     Set the **default consistency level** to **Strong** according to the official document at [Configure the default consistency level](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-manage-consistency#configure-the-default-consistency-level).
 
-    ### Configure ScalarDB
+    **Configure ScalarDB**
 
-    The following instructions assume that you have properly installed and configured the JDK in your local environment and properly configured your Cosmos DB for NoSQL account in Azure.
+    The following instructions assume that you have properly installed and configured the JDK in your local environment and properly configured your Cosmos DB for NoSQL account in Azure. 
 
     The **scalardb.properties** file in the `docs/getting-started-kotlin` directory holds database configurations for ScalarDB. Be sure to change the values for `scalar.db.contact_points` and `scalar.db.password` as described.
-
+        
     ```properties
     # The Cosmos DB for NoSQL storage implementation is used for Consensus Commit.
     scalar.db.storage=cosmos
@@ -108,7 +108,7 @@ You can use a primary key or a secondary key as the value for `scalar.db.passwor
   <TabItem value="DynamoDB" label="DynamoDB">
     To use Amazon DynamoDB, you must have an AWS account. If you don't have an AWS account, visit [Getting started: Are you a first-time AWS user?](https://docs.aws.amazon.com/accounts/latest/reference/welcome-first-time-user.html).
 
-    ### Configure ScalarDB
+    **Configure ScalarDB**
 
     The following instructions assume that you have properly installed and configured the JDK in your local environment.
 
@@ -129,11 +129,11 @@ You can use a primary key or a secondary key as the value for `scalar.db.passwor
   <TabItem value="JDBC_databases" label="JDBC databases">
     Confirm that you have a JDBC database installed. For a list of supported JDBC databases, see [Supported Databases](scalardb-supported-databases.mdx).
 
-    ### Configure ScalarDB
+    **Configure ScalarDB**
 
     The following instructions assume that you have properly installed and configured the JDK and JDBC database in your local environment, and the JDBC database is running on your localhost.
 
-    The **scalardb.properties** file in the `docs/getting-started-kotlin` directory holds database configurations for ScalarDB. The following is a basic configuration for JDBC databases.
+    The **scalardb.properties** file in the `docs/getting-started-kotlin` directory holds database configurations for ScalarDB. The following is a basic configuration for JDBC databases. 
 
 :::note
 
