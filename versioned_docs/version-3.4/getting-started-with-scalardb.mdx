@@ -1,11 +1,11 @@
-# Getting Started with Scalar DB
+# Getting Started with ScalarDB
 
 Here we assume Oracle JDK 8 and the underlying storage/database such as Cassandra are properly configured.
 If you haven't done it, please configure them first by following [this](getting-started.mdx).
 
 ## Build
 
-For building Scalar DB, what you will need to do is as follows.
+For building ScalarDB, what you will need to do is as follows.
 ```
 $ SCALARDB_HOME=/path/to/scalardb
 $ cd $SCALARDB_HOME
@@ -28,7 +28,7 @@ $ cd docs/getting-started
 
 ## Set up database schema
 
-First of all, you need to define how the data will be organized (a.k.a database schema) in the application with Scalar DB database schema.
+First of all, you need to define how the data will be organized (a.k.a database schema) in the application with ScalarDB database schema.
 Here is a database schema for the sample application. For the supported data types, please see [this doc](schema.mdx) for more details.
 You can create a JSON file `emoney-storage.json` with the JSON below.
 
@@ -127,7 +127,7 @@ $ ../../gradlew run --args="-mode storage -action pay -amount 100 -to merchant1 
 
 ## Set up database schema for transaction
 
-To use transaction, we can just add a key `transaction` and value as `true` in the Scalar DB schema we used.
+To use transaction, we can just add a key `transaction` and value as `true` in the ScalarDB schema we used.
 You can create a JSON file `emoney-transaction.json` with the JSON bellow.
 
 ```json
@@ -159,7 +159,7 @@ $ java -jar scalardb-schema-loader-<version>.jar --config /path/to/database.prop
 The previous application seems fine under ideal conditions, but it is problematic when some failure happens during its operation or when multiple operations occur at the same time because it is not transactional.
 For example, money transfer (pay) from `A's balance` to `B's balance` is not done atomically in the application, and there might be a case where only `A's balance` is decreased (and `B's balance` is not increased) if a failure happens right after the first `put` and some money will be lost.
 
-With the transaction capability of Scalar DB, we can make such operations to be executed with ACID properties.
+With the transaction capability of ScalarDB, we can make such operations to be executed with ACID properties.
 
 Now we can update the code as follows to make it transactional.
 ```java
@@ -252,22 +252,22 @@ To use the native transaction manager, you need to set `jdbc` to a transaction m
 scalar.db.transaction_manager=jdbc
 ```
 
-You don't need to set a key `transaction` to `true` in Scalar DB schema for the native transaction manager.
+You don't need to set a key `transaction` to `true` in ScalarDB schema for the native transaction manager.
 So you can use the same schema file as **emoney-storage.json**.
 
 ## Further documentation
 
-These are just simple examples of how Scalar DB is used. For more information, please take a look at the following documents.
+These are just simple examples of how ScalarDB is used. For more information, please take a look at the following documents.
 
 * [Design Document](design.mdx)
 * Javadoc
     * [scalardb](https://javadoc.io/doc/com.scalar-labs/scalardb/latest/index.html) - A library that makes non-ACID distributed databases/storages ACID-compliant
-    * [scalardb-rpc](https://javadoc.io/doc/com.scalar-labs/scalardb-rpc/latest/index.html) - Scalar DB RPC libraries
-    * [scalardb-server](https://javadoc.io/doc/com.scalar-labs/scalardb-server/latest/index.html) - Scalar DB Server that is the gRPC interfarce of Scalar DB
-* [Requirements in the underlining databases](requirements.mdx)
-* [Database schema in Scalar DB](schema.mdx)
-* [Schema Loader](schema-loader.mdx)
-* [How to Back up and Restore](backup-restore.mdx)
-* [Multi-storage Transactions](multi-storage-transactions.mdx)
-* [Two-phase Commit Transactions](two-phase-commit-transactions.mdx)
-* [Scalar DB server](scalardb-server.mdx)
+    * [scalardb-rpc](https://javadoc.io/doc/com.scalar-labs/scalardb-rpc/latest/index.html) - ScalarDB RPC libraries
+    * [scalardb-server](https://javadoc.io/doc/com.scalar-labs/scalardb-server/latest/index.html) - ScalarDB Server that is the gRPC interface of ScalarDB
+* [Requirements in the Underlying Databases](requirements.mdx)
+* [Database Schema in ScalarDB](schema.mdx)
+* [Schema Loader](schema-loader/README.mdx)
+* [How to Back Up and Restore](backup-restore.mdx)
+* [Multi-Storage Transactions](multi-storage-transactions.mdx)
+* [Two-Phase Commit Transactions](two-phase-commit-transactions.mdx)
+* [ScalarDB Server](scalardb-server.mdx)
