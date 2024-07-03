@@ -2,15 +2,15 @@
 
 ScalarDB GraphQL is an interface layer that allows client applications to communicate with a [ScalarDB](https://github.com/scalar-labs/scalardb) database with GraphQL.
 
-In this Getting Started guide, you will run a GraphQL server on your local machine.
+In this Getting Started guide, you will be running a GraphQL server on your local machine.
 
 ## Prerequisites
 
-We assume you have already installed Docker and have access to a ScalarDB-supported database such as Cassandra. Please configure them first by following [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.md) if you have not set them up yet.
+Here we assume that you have already installed Docker and have access to a ScalarDB-supported database such as Cassandra. Please configure them first by following [Getting Started with ScalarDB](../getting-started.mdx) if you have not set them up yet.
 
 You need a Personal Access Token (PAT) to access the Docker image of ScalarDB GraphQL in GitHub Container registry since the image is private. Ask a person in charge to get your account ready. Please read [the official document](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) for more detail.
 
-## Set up a database schema
+## Set up database schema
 
 We use the following simple example schema.
 
@@ -61,7 +61,7 @@ scalar.db.graphql.graphiql=true
 
 ## Start up the GraphQL Server
 
-The following command starts up the ScalarDB GraphQL server. The first time you run the command, it will download the Docker image from GitHub Container Registry.
+The following command starts up the ScalarDB GraphQL server. At the first time you run the command, it will download the Docker image from GitHub Container Registry.
 
 ```console
 $ docker run -v /path/to/database.properties:/scalardb-graphql/database.properties.tmpl -p 8080:8080 ghcr.io/scalar-labs/scalardb-graphql:<version>
@@ -81,7 +81,7 @@ mutation PutUser1 {
 }
 ```
 
-ScalarDB GraphQL always runs queries with transactions. The above query starts a new transaction, executes a ScalarDB Put command, and commits the transaction at the end of the execution.
+ScalarDB GraphQL always run queries with transactions. The above query starts a new transaction, executes a ScalarDB Put command, and commits the transaction at the end of the execution.
 
 The following response from the GraphQL server will appear in the right pane.
 
@@ -89,11 +89,18 @@ The following response from the GraphQL server will appear in the right pane.
 {
   "data": {
     "account_put": true
+  },
+  "extensions": {
+    "transaction": {
+      "id": "d6b3ea78-f147-4950-969c-7b989b4168bc"
+    }
   }
 }
 ```
 
 The `"data"` field contains the result of the execution. This response shows the `account_put` field of the mutation was successful. The result type of mutations is `Boolean!`,  which indicates whether the operation succeeded or not.
+
+The `"extensions"` field is used to return a transaction ID in which an operation is executed. We will discuss transaction IDs later in this document.
 
 Next, let's get the record you just inserted. Paste the following query next to the previous mutation in the left pane, and click the `Execute Query` button. Since you don't delete the `mutation PutUser1` above, a pull-down will appear below the button, and you can choose which operation should be executed. Choose `GetUser1`.
 
@@ -119,6 +126,11 @@ You should get the following result in the right pane.
         "balance": 1000
       }
     }
+  },
+  "extensions": {
+    "transaction": {
+      "id": "6917c4f5-54b1-405f-9b93-29dc41e41858"
+    }
   }
 }
 ```
@@ -129,7 +141,7 @@ The automatically generated GraphQL schema defines queries, mutations, and objec
 
 Assuming you have an `account` table in a namespace, the following queries and mutations will be generated.
 
-| ScalarDB API                                           | GraphQL root type | GraphQL field                                                                      |
+| ScalarDB API                                          | GraphQL root type | GraphQL field                                                                      |
 |--------------------------------------------------------|-------------------|------------------------------------------------------------------------------------|
 | `get(Get get)`                                         | `Query`           | `account_get(get: account_GetInput!): account_GetPayload`                          |
 | `scan(Scan scan)`                                      | `Query`           | `account_scan(scan: account_ScanInput!): account_ScanPayload`                      |
@@ -147,7 +159,7 @@ You can see all generated GraphQL types in GraphiQL's Documentation Explorer (th
 
 This section describes how to run a transaction that spans multiple GraphQL requests.
 
-The generated schema provides the `@transaction` directive that allows you to identify transactions. This directive can be used with both queries and mutations.
+The generated schema provides the `@trasaction` directive that allows you to identify transactions. This directive can be used with both queries and mutations.
 
 ### Start a transaction before running an operation
 
@@ -190,7 +202,7 @@ You will get a result with a transaction ID in the `extensions` field. The `id` 
 
 ### Run an operation in a continued transaction
 
-To run the next queries or mutations in the transaction you started, specify the transaction ID as the `id` argument of the `@transaction`. The following example will update two accounts you got in the previous example in the same transaction. This represents a transfer of balance from user1's account to user2's account.
+To run the next queries or mutations in the transaction you started, specify the transaction ID as the `id` argument of the `@transaction`. The following example will update two accounts that you got in the previous example in the same transaction. This represents a transfer of balance from user1's account to user2's account.
 
 ```graphql
 mutation Transfer @transaction(id: "c88da8a6-a13f-4857-82fe-45f1ab4150f9") {
@@ -218,18 +230,12 @@ query GetAndCommit @transaction(id: "c88da8a6-a13f-4857-82fe-45f1ab4150f9", comm
 
 Note: If you specify a `commit: true` flag without an `id` argument like `@transaction(commit: true)`, a new transaction is started and committed just for one operation. This is exactly the same as not specifying the `@transaction` directive, as seen in the above examples using GraphiQL. In other words, you can omit the directive itself when it is `@transaction(commit: true)`.
 
-### Abort/Rollback a transaction
+### Abort a transaction
 
-When you need to abort/rollback a transaction explicitly, you can use the `abort` or `rollback` mutation fields interchangeably (both have the same effect and usage). Note that you cannot mix it with any other operations, so you must specify it alone.
+When you need to abort a transaction explicitly, you can use the `abort` mutation field. Note that you cannot mix it with any other operations, so you must specify it alone.
 
 ```graphql
 mutation AbortTx @transaction(id: "c88da8a6-a13f-4857-82fe-45f1ab4150f9") {
   abort
-}
-```
-or
-```graphql
-mutation RollbackTx @transaction(id: "c88da8a6-a13f-4857-82fe-45f1ab4150f9") {
-  rollback
 }
 ```

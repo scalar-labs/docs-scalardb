@@ -5,7 +5,7 @@ import TabItem from '@theme/TabItem';
 
 :::note
 
-This sample code is now deprecated. To use ScalarDB SQL, you need to use ScalarDB Cluster, which is available only in the Enterprise edition. For more information, see [ScalarDB Cluster](https://scalardb.scalar-labs.com/docs/latest/scalardb-cluster/).
+This sample code is now deprecated. To use ScalarDB SQL, you need to use ScalarDB Cluster, which is available only in the Enterprise edition. For more information, see [ScalarDB Cluster](/docs/latest/scalardb-cluster/index.mdx).
 
 :::
 
@@ -19,7 +19,7 @@ The database that you will be using in the sample application is Cassandra. Alth
 
 :::note
 
-Since the focus of the sample application is to demonstrate using ScalarDB SQL (JDBC), application-specific error handling, authentication processing, and similar functions are not included in the sample application. For details about exception handling in ScalarDB SQL (JDBC), see [Handle SQLException](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/jdbc-guide.md#handle-sqlexception).
+Since the focus of the sample application is to demonstrate using ScalarDB SQL (JDBC), application-specific error handling, authentication processing, and similar functions are not included in the sample application. For details about exception handling in ScalarDB SQL (JDBC), see [Handle SQLException](../../scalardb-sql/jdbc-guide.mdx#handle-sqlexception).
 
 :::
 
@@ -95,7 +95,7 @@ $ cd scalardb-samples/scalardb-sql-jdbc-sample
 
 ### Start Cassandra
 
-Cassandra is already configured for the sample application, as shown in [`scalardb-sql.properties`](scalardb-sql.properties).
+Cassandra is already configured for the sample application, as shown in [`scalardb-sql.properties`](https://github.com/scalar-labs/scalardb-samples/blob/main/scalardb-graphql-sample/scalardb-sql.properties).
 
 To start Cassandra, which is included in the Docker container for the sample application, make sure Docker is running and then run the following command:
 
@@ -111,7 +111,7 @@ Starting the Docker container may take more than one minute depending on your de
 
 ### Load the schema
 
-The database schema (the method in which the data will be organized) for the sample application has already been defined in [`schema.sql`](schema.sql).
+The database schema (the method in which the data will be organized) for the sample application has already been defined in [`schema.sql`](https://github.com/scalar-labs/scalardb-samples/blob/main/scalardb-graphql-sample/schema.sql).
 
 To apply the schema, go to the [ScalarDB SQL Releases](https://github.com/scalar-labs/scalardb-sql/releases) page and download the CLI tool (`scalardb-sql-cli-<VERSION>-all.jar`) for the version of ScalarDB SQL that you want to use to the `scalardb-samples/scalardb-sql-jdbc-sample` folder.
 
@@ -123,7 +123,7 @@ $ java -jar scalardb-sql-cli-<VERSION>-all.jar --config scalardb-sql.properties 
 
 #### Schema details
 
-As shown in [`schema.sql`](schema.sql) for the sample application, all the tables are created in the `sample` namespace.
+As shown in [`schema.sql`](https://github.com/scalar-labs/scalardb-samples/blob/main/scalardb-graphql-sample/schema.sql) for the sample application, all the tables are created in the `sample` namespace.
 
 - `sample.customers`: a table that manages customers' information
   - `credit_limit`: the maximum amount of money a lender will allow each customer to spend when using a line of credit
