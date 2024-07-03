@@ -1,7 +1,7 @@
 # Getting Started with ScalarDB Cluster SQL via JDBC
 
 This tutorial describes how to create a sample application by using ScalarDB Cluster SQL via JDBC.
-You'll be using the same sample application as found in the [ScalarDB SQL (JDBC) Sample](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-sql-jdbc-sample).
+You'll be using the same sample application as found in the [ScalarDB SQL (JDBC) Sample](../scalardb-samples/scalardb-sql-jdbc-sample/README.mdx).
 
 ## Prerequisites
 
@@ -22,7 +22,7 @@ In addition, other JDKs should work with ScalarDB, but we haven't tested them.
 ## Sample application
 
 This tutorial illustrates the process of creating a sample e-commerce application, where items can be ordered and paid for with a credit card by using ScalarDB.
-For details about the sample application, see the [sample application for ScalarDB SQL (JDBC)](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-sql-jdbc-sample#sample-application).
+For details about the sample application, see the [sample application for ScalarDB SQL (JDBC)](../scalardb-samples/scalardb-sql-jdbc-sample/README.mdx#sample-application).
 
 The following diagram shows the system architecture of the sample application:
 
@@ -62,13 +62,13 @@ To use ScalarDB Cluster, you need to modify `build.gradle`:
 $ vim build.gradle
 ```
 
-Then, delete the existing dependency for `com.scalar-labs:scalardb-sql-direct-mode:3.11.1` from the `dependencies` section, and add the following dependency to the `dependencies` section:
+Then, delete the existing dependency for `com.scalar-labs:scalardb-sql-direct-mode` from the `dependencies` section, and add the following dependency to the `dependencies` section:
 
 ```gradle
 dependencies {
     ...
 
-    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.11.1'
+    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.11.2'
 }
 ```
 
@@ -105,12 +105,12 @@ For details about the client modes, see [Developer Guide for ScalarDB Cluster wi
 ## Step 4. Load a schema
 
 To load a schema via ScalarDB Cluster SQL, you need to use the dedicated SQL CLI for ScalarDB Cluster (SQL CLI for Cluster).
-Using the SQL CLI for Cluster is basically the same as using the [ScalarDB SQL Command Line Interface](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/command-line-interface.md) except the name of the JAR file is different.
-You can download the SQL CLI for Cluster from [Releases](https://github.com/scalar-labs/scalardb-cluster/releases/tag/v3.11.1).
+Using the SQL CLI for Cluster is basically the same as using the [ScalarDB SQL Command Line Interface](../scalardb-sql/command-line-interface.mdx) except the name of the JAR file is different.
+You can download the SQL CLI for Cluster from [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases/tag/v3.11.2).
 After downloading the JAR file, you can use SQL CLI for Cluster by running the following command:
 
 ```shell
-$ java -jar scalardb-cluster-sql-cli-3.11.1-all.jar --config scalardb-sql.properties --file schema.sql
+$ java -jar scalardb-cluster-sql-cli-3.11.2-all.jar --config scalardb-sql.properties --file schema.sql
 ```
 
 ## Step 5. Load the initial data
