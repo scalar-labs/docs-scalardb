@@ -1,11 +1,11 @@
-# Scalar DB Schema Loader
+# ScalarDB Schema Loader
 
-Scalar DB Schema Loader creates and deletes Scalar DB schemas (namespaces and tables) on the basis of a provided schema file.
-Also, it automatically adds the Scalar DB transaction metadata (used in the Consensus Commit protocol) to the tables when you set the `transaction` parameter to `true` in the schema file.
+ScalarDB Schema Loader creates and deletes ScalarDB schemas (namespaces and tables) on the basis of a provided schema file.
+Also, it automatically adds the ScalarDB transaction metadata (used in the Consensus Commit protocol) to the tables when you set the `transaction` parameter to `true` in the schema file.
 
 There are two ways to specify general CLI options in Schema Loader:
-  - Pass a Scalar DB configuration file and database/storage-specific options additionally.
-  - Pass the options without a Scalar DB configuration (Deprecated).
+  - Pass a ScalarDB configuration file and database/storage-specific options additionally.
+  - Pass the options without a ScalarDB configuration (Deprecated).
 
 Note that this tool supports only basic options to create/delete a table.
 If you want to use advanced features of the database, please alter your tables after creating them with this tool.
@@ -14,7 +14,7 @@ If you want to use advanced features of the database, please alter your tables a
 
 ## Install
 
-The release versions of `schema-loader` can be downloaded from [releases](https://github.com/scalar-labs/scalardb/releases) page of Scalar DB.
+The release versions of `schema-loader` can be downloaded from [releases](https://github.com/scalar-labs/scalardb/releases) page of ScalarDB.
 
 ## Build
 
@@ -50,7 +50,7 @@ Usage: java -jar scalardb-schema-loader-<version>.jar [-D] [--coordinator]
        [--replication-strategy=<replicationStrategy>] [--ru=<ru>]
 Create/Delete schemas in the storage defined in the config file
   -c, --config=<configPath>
-                      Path to the config file of Scalar DB
+                      Path to the config file of ScalarDB
       --compaction-strategy=<compactionStrategy>
                       The compaction strategy, must be LCS, STCS or TWCS
                         (supported in Cassandra)
@@ -143,7 +143,7 @@ Create/Delete JDBC schemas
 
 ### Create namespaces and tables
 
-For using a config file (Sample config file can be found [here](https://github.com/scalar-labs/scalardb/blob/master/conf/database.properties)):
+For using a config file (Sample config file can be found [here](https://github.com/scalar-labs/scalardb/blob/3.4/conf/database.properties)):
 ```console
 $ java -jar scalardb-schema-loader-<version>.jar --config <PATH_TO_CONFIG_FILE> -f schema.json [--coordinator]
 ```
@@ -155,7 +155,7 @@ For using CLI arguments fully for configuration (Deprecated. Please use the comm
 $ java -jar scalardb-schema-loader-<version>.jar --cosmos -h <COSMOS_DB_ACCOUNT_URI> -p <COSMOS_DB_KEY> -f schema.json [-r BASE_RESOURCE_UNIT]
 ```
   - `<COSMOS_DB_KEY>` you can use a primary key or a secondary key.
-  - `-r BASE_RESOURCE_UNIT` is an option. You can specify the RU of each database. The maximum RU in tables in the database will be set. If you don't specify RU of tables, the database RU will be set with this option. When you use transaction function, the RU of the coordinator table of Scalar DB is specified by this option. By default, it's 400.
+  - `-r BASE_RESOURCE_UNIT` is an option. You can specify the RU of each database. The maximum RU in tables in the database will be set. If you don't specify RU of tables, the database RU will be set with this option. When you use transaction function, the RU of the coordinator table of ScalarDB is specified by this option. By default, it's 400.
 
 ```console
 # For DynamoDB
@@ -180,7 +180,7 @@ $ java -jar scalardb-schema-loader-<version>.jar --jdbc -j <JDBC URL> -u <USER> 
 
 ### Delete tables
 
-For using config file (Sample config file can be found [here](https://github.com/scalar-labs/scalardb/blob/master/conf/database.properties)):
+For using config file (Sample config file can be found [here](https://github.com/scalar-labs/scalardb/blob/3.4/conf/database.properties)):
 ```console
 $ java -jar scalardb-schema-loader-<version>.jar --config <PATH_TO_CONFIG_FILE> -f schema.json [--coordinator] -D 
 ```
@@ -311,7 +311,7 @@ By default, the schema loader enables auto-scaling of RU for all tables: RU is s
 
 ## Data type mapping for JDBC databases
 
-When creating tables for a JDBC database with this tool, Scalar DB data types are converted to RDB-specific data types as shown below.
+When creating tables for a JDBC database with this tool, ScalarDB data types are converted to RDB-specific data types as shown below.
 
 | ScalarDB | MySQL | PostgreSQL | Oracle | SQL Server |
 | ---- | ---- |  ---- |  ---- |  ---- | 
@@ -342,7 +342,7 @@ dependencies {
 ```
 
 ### Create and delete tables
-You can create and delete tables that are defined in the schema using SchemaLoader by simply passing Scalar DB configuration file, schema, and additional options if needed as shown below.
+You can create and delete tables that are defined in the schema using SchemaLoader by simply passing ScalarDB configuration file, schema, and additional options if needed as shown below.
 
 ```java
 public class SchemaLoaderSample {
@@ -383,7 +383,7 @@ SchemaLoader.load(configFilePath, serializedSchemaJson, options, createCoordinat
 SchemaLoader.unload(configFilePath, serializedSchemaJson, deleteCoordinatorTable);
 ```
 
-For Scalar DB configuration, a `Properties` object can be used as well.
+For ScalarDB configuration, a `Properties` object can be used as well.
 ```java
 // Create tables
 SchemaLoader.load(properties, serializedSchemaJson, options, createCoordinatorTable);
