@@ -287,6 +287,7 @@ const sidebars = {
           ],
         },
         'backup-restore',
+        'scalar-manager/overview',
       ],
     },
     {
