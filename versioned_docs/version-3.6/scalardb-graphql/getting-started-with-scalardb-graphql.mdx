@@ -2,15 +2,15 @@
 
 ScalarDB GraphQL is an interface layer that allows client applications to communicate with a [ScalarDB](https://github.com/scalar-labs/scalardb) database with GraphQL.
 
-In this Getting Started guide, you will be running a GraphQL server on your local machine.
+In this Getting Started guide, you will run a GraphQL server on your local machine.
 
 ## Prerequisites
 
-Here we assume that you have already installed Docker and have access to a ScalarDB-supported database such as Cassandra. Please configure them first by following [Getting Started with ScalarDB](../getting-started.mdx) if you have not set them up yet.
+We assume that you have already installed Docker and have access to a ScalarDB-supported database such as Cassandra. Please configure them first by following [Getting Started with ScalarDB](../getting-started.mdx) if you have not set them up yet.
 
 You need a Personal Access Token (PAT) to access the Docker image of ScalarDB GraphQL in GitHub Container registry since the image is private. Ask a person in charge to get your account ready. Please read [the official document](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) for more detail.
 
-## Set up database schema
+## Set up a database schema
 
 We use the following simple example schema.
 
@@ -61,7 +61,7 @@ scalar.db.graphql.graphiql=true
 
 ## Start up the GraphQL Server
 
-The following command starts up the ScalarDB GraphQL server. At the first time you run the command, it will download the Docker image from GitHub Container Registry.
+The following command starts up the ScalarDB GraphQL server. The first time you run the command, it will download the Docker image from GitHub Container Registry.
 
 ```console
 $ docker run -v /path/to/database.properties:/scalardb-graphql/database.properties.tmpl -p 8080:8080 ghcr.io/scalar-labs/scalardb-graphql:<version>
@@ -81,7 +81,7 @@ mutation PutUser1 {
 }
 ```
 
-ScalarDB GraphQL always run queries with transactions. The above query starts a new transaction, executes a ScalarDB Put command, and commits the transaction at the end of the execution.
+ScalarDB GraphQL always runs queries with transactions. The above query starts a new transaction, executes a ScalarDB Put command, and commits the transaction at the end of the execution.
 
 The following response from the GraphQL server will appear in the right pane.
 
@@ -159,7 +159,7 @@ You can see all generated GraphQL types in GraphiQL's Documentation Explorer (th
 
 This section describes how to run a transaction that spans multiple GraphQL requests.
 
-The generated schema provides the `@trasaction` directive that allows you to identify transactions. This directive can be used with both queries and mutations.
+The generated schema provides the `@transaction` directive that allows you to identify transactions. This directive can be used with both queries and mutations.
 
 ### Start a transaction before running an operation
 
