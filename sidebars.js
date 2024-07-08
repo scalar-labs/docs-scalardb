@@ -33,6 +33,7 @@ const sidebars = {
         'design',
         'scalardb-supported-databases',
         'requirements',
+        'roadmap',
         'scalardb-cluster/index',
         'scalardb-analytics-spark/README',
       ],
