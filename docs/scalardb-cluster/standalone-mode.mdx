@@ -79,19 +79,36 @@ If you want to specify configurations other than the ones mentioned in the table
 
 ## Usage with Docker Compose
 
-You can start ScalarDB Cluster in standalone mode on Docker Compose by using the `docs/standalone-mode/docker-compose.yaml` file. This file includes PostgreSQL as the backend database for ScalarDB Cluster.
+You can start ScalarDB Cluster in standalone mode on Docker Compose.
 
-To start ScalarDB Cluster in standalone mode on Docker Compose, first go to the folder that contains the `docker-compose.yaml` file by running the following command:
+
+:::note
+
+You need to have a license key (trial license or commercial license) for ScalarDB Cluster. If you don't have a license key, please [contact us](https://www.scalar-labs.com/contact).
+
+:::
+
+First, clone the ScalarDB samples repository by running the following command:
 
 ```console
-cd docs/standalone-mode/
+git clone https://github.com/scalar-labs/scalardb-samples.git
 ```
+
+To start ScalarDB Cluster in standalone mode on Docker Compose, go to the folder that contains the `docker-compose.yaml` file by running the following command:
+
+```console
+cd scalardb-samples/scalardb-cluster-standalone-mode/
+```
+
+The `docker-compose.yaml` file specifies a PostgreSQL container image, which will be used as the backend database for ScalarDB Cluster.
 
 Then, start Docker Compose by running the following command:
 
 :::note
 
-To change the configuration of ScalarDB Cluster, update the `docs/standalone-mode/scalardb-cluster-node.properties` file before running the command below.
+You need to add your license key to the `scalardb-cluster-node.properties` file before running the command below. For details, see [How to Configure a Product License Key](../scalar-licensing/index.mdx).
+
+Also, if you want to change other configurations for ScalarDB Cluster, update the `scalardb-cluster-node.properties` file before running the command below.
 
 :::
 
