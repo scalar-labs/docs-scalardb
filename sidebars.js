@@ -228,6 +228,7 @@ const sidebars = {
               label: 'Configure custom values',
               collapsible: true,
               items: [
+                'helm-charts/configure-custom-values-scalardb-cluster',
                 'helm-charts/configure-custom-values-scalardb-analytics-postgresql',
                 'helm-charts/configure-custom-values-scalar-admin-for-kubernetes',
                 'helm-charts/configure-custom-values-scalar-manager',
