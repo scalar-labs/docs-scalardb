@@ -1,0 +1,217 @@
+# ScalarDB JDBC Guide
+
+The usage of ScalarDB JDBC basically follows [Java JDBC API](https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/).
+This guide describes several important topics that are specific to ScalarDB JDBC.
+
+## Add ScalarDB JDBC driver to your project
+
+You need to add dependencies for ScalarDB JDBC driver and the connection mode you want to use to your project to use ScalarDB JDBC.
+
+### Direct mode
+
+To add the dependencies on ScalarDB JDBC driver with Direct mode using Gradle, use the following:
+```gradle
+dependencies {
+    implementation 'com.scalar-labs:scalardb-sql-jdbc:<version>'
+    implementation 'com.scalar-labs:scalardb-sql-direct-mode:<version>'
+}
+```
+
+To add the dependencies using Maven:
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.scalar-labs</groupId>
+        <artifactId>scalardb-sql-jdbc</artifactId>
+        <version>${version}</version>
+    </dependency>
+    <dependency>
+        <groupId>com.scalar-labs</groupId>
+        <artifactId>scalardb-sql-direct-mode</artifactId>
+        <version>${version}</version>
+    </dependency>
+</dependencies>
+```
+
+### Server mode
+
+To add the dependencies on ScalarDB JDBC driver with Server mode using Gradle, use the following:
+```gradle
+dependencies {
+    implementation 'com.scalar-labs:scalardb-sql-jdbc:<version>'
+    implementation 'com.scalar-labs:scalardb-sql-server-mode:<version>'
+}
+```
+
+To add the dependencies using Maven:
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.scalar-labs</groupId>
+        <artifactId>scalardb-sql-jdbc</artifactId>
+        <version>${version}</version>
+    </dependency>
+    <dependency>
+        <groupId>com.scalar-labs</groupId>
+        <artifactId>scalardb-sql-server-mode</artifactId>
+        <version>${version}</version>
+    </dependency>
+</dependencies>
+```
+
+Please see [ScalarDB SQL Server](sql-server.mdx) for the details of the ScalarDB SQL Server.
+
+## JDBC connection URL
+
+The JDBC connection URL format of ScalarDB JDBC is as follows:
+
+```shell
+jdbc:scalardb:<configuration file path>?<property name>=<property value>&<property name>=<property value>&...
+```
+
+For example:
+
+Only specify configuration file path:
+
+```shell
+jdbc:scalardb:/path/to/database.properties
+```
+
+Only specify properties:
+
+```shell
+jdbc:scalardb:?scalar.db.contact_points=localhost&scalar.db.username=cassandra&scalar.db.password=cassandra&scalar.db.storage=cassandra
+```
+
+Specify configuration file path and properties:
+
+```shell
+jdbc:scalardb:/path/to/database.properties?scalar.db.metadata.cache_expiration_time_secs=0
+```
+
+## Configurations for ScalarDB JDBC
+
+The configurations for ScalarDB JDBC are as follows:
+
+| name                                                                | description                                                                  | default |
+|---------------------------------------------------------------------|------------------------------------------------------------------------------|---------|
+| scalar.db.sql.jdbc.default_auto_commit                              | The default connection's auto-commit mode.                                   | true    |
+| scalar.db.sql.jdbc.sql_session_factory_cache.expiration_time_millis | The expiration time in milliseconds for the cache of SQL session factories.  | 10000   |
+
+## Data type mapping between ScalarDB and JDBC
+
+Since ScalarDB doesn't support all the data types defined in JDBC, the following explains the data type mapping between ScalarDB and JDBC.
+
+The data type mapping between ScalarDB and JDBC is as follows:
+
+| ScalarDB Type | JDBC (Java) Type   |
+|---------------|--------------------|
+| Boolean       | boolean or Boolean |
+| Int           | int or Integer     |
+| BigInt        | long or Long       |
+| Float         | float or Float     |
+| Double        | double or Double   |
+| Text          | String             |
+| Blob          | byte[]             |
+
+How to get the data from a `java.sql.ResultSet` object for each data type is as follows:
+
+```java
+try (ResultSet resultSet = ...) {
+  resultSet.next();
+
+  // Get a Boolean value of a column
+  boolean booleanValue = resultSet.getBoolean("<column name>");
+
+  // Get an Int value of a column
+  int intValue = resultSet.getInt("<column name>");
+
+  // Get a BigInt value of a column
+  long bigIntValue = resultSet.getLong("<column name>");
+
+  // Get a Float value of a column
+  float floatValue = resultSet.getFloat("<column name>");
+
+  // Get a Double value of a column
+  double doubleValue = resultSet.getDouble("<column name>");
+
+  // Get a Text value of a column
+  String textValue = resultSet.getString("<column name>");
+
+  // Get a Blob value of a column
+  byte[] blobValue = resultSet.getBytes("<column name>");
+}
+```
+
+How to set the data as a parameter for each data type for a `java.sql.PreparedStatement` object is as follows:
+
+```java
+try (PreparedStatement preparedStatement = ...) {
+  // Set a Boolean value as parameter
+  preparedStatement.setBoolean(1, <Boolean value>);
+
+  // Set an Int value as parameter
+  preparedStatement.setInt(2, <Int value>);
+
+  // Set a BigInt value as parameter
+  preparedStatement.setLong(3, <BigInt value>);
+
+  // Set a Float value as parameter
+  preparedStatement.setFloat(4, <Float value>);
+
+  // Set a Double value as parameter
+  preparedStatement.setDouble(5, <Double value>);
+
+  // Set a Text value as parameter
+  preparedStatement.setString(7, "<Text value>");
+
+  // Set a Blob value as parameter
+  preparedStatement.setBytes(8, <Blob value>);
+
+  preparedStatement.execute();
+}
+```
+
+## Handle SQLException
+
+The exception handling is basically the same as ScalarDB SQL API as follows:
+
+```java
+// If you execute multiple statements in a transaction, you need to set auto-commit to false.
+connection.setAutoCommit(false);
+
+try {
+  // Execute statements (SELECT/INSERT/UPDATE/DELETE) in the transaction
+  ...
+
+  // Commit the transaction
+  connection.commit();
+} catch (SQLException e) {
+  if (e.getErrorCode() == 301) {
+    // The error code 301 indicates that you catch `UnknownTransactionStatusException`.
+    // If you catch `UnknownTransactionStatusException`, it indicates that the status of the 
+    // transaction, whether it has succeeded or not, is unknown. In such a case, you need to check
+    // if the transaction is committed successfully or not and retry it if it failed. How to 
+    // identify a transaction status is delegated to users
+  } else {
+    // For other cases, you can try retrying the transaction
+
+    // Rollback the transaction
+    connection.rollback();
+
+    // The cause of the exception can be `TransactionRetryableException` or the other
+    // exceptions. For `TransactionRetryableException`, you can basically retry the transaction.
+    // However, for the other exceptions, the transaction may still fail if the cause of the
+    // exception is nontransient. For such a case, you need to limit the number of retries and
+    // give up retrying
+  }
+}
+```
+
+Please see also [ScalarDB SQL API Guide](sql-api-guide.mdx) for more details on exception handling.
+
+## References
+
+- [Java JDBC API](https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/)
+- [ScalarDB SQL API Guide](sql-api-guide.mdx)
+- [Javadoc for ScalarDB JDBC](https://javadoc.io/doc/com.scalar-labs/scalardb-sql-jdbc/3.12.3/index.html)
