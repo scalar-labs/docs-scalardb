@@ -12,23 +12,34 @@ For details about distributed SQL transactions, see [Getting Started with Distri
 
 ## Install the SDK
 
-Install the same major and minor version of the [SDK](https://www.nuget.org/packages/ScalarDB.Net.Client) as ScalarDB Cluster into the .NET project. You can do this by using the built-in NuGet package manager, replacing `<MAJOR>.<MINOR>` with the version that you're using:
+Install the same major and minor version of the [SDK](https://www.nuget.org/packages/ScalarDB.Client) as ScalarDB Cluster into the .NET project. You can do this by using the built-in NuGet package manager, replacing `<MAJOR>.<MINOR>` with the version that you're using:
 
 ```shell
-dotnet add package ScalarDB.Net.Client --version '<MAJOR>.<MINOR>.*'
+dotnet add package ScalarDB.Client --version '<MAJOR>.<MINOR>.*'
 ```
+
+## Create a settings file
+
+Create a `scalardb-options.json` file and add the following, replacing `<HOSTNAME_OR_IP_ADDRESS>` with the FQDN or the IP address, and `<PORT>` with the port number (`60053` by default) of your cluster:
+
+```json
+{
+  "ScalarDbOptions": {
+    "Address": "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
+    "HopLimit": 10
+  }
+}
+```
+
+For details about settings files and other ways to configure the client, see [Client configuration](common-reference.mdx#client-configuration).
 
 ## Get a transaction manager
 
-First, you need to get a transaction manager for distributed transactions. To get the transaction manager, you can use `TransactionFactory` as follows, replacing `<HOSTNAME_OR_IP_ADDRESS>` with the FQDN or the IP address, and `<PORT>` with the port number (`60053` by default) of your cluster:
+You need to get a transaction manager for distributed transactions. To get the transaction manager, you can use `TransactionFactory` as follows:
 
 ```c#
-var scalarDbOptions = new ScalarDbOptions
-                      {
-                         Address = "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
-                         HopLimit = 10
-                      };
-var factory = TransactionFactory.Create(scalarDbOptions);
+// Pass the path to the settings file created in the previous step.
+var factory = TransactionFactory.Create("scalardb-options.json");
 
 using var manager = factory.GetTransactionManager();
 ```
@@ -72,7 +83,7 @@ A transaction has `GetAsync`, `ScanAsync`, `PutAsync`, `DeleteAsync`, and `Mutat
 To use these builders add the following namespace to the `using` section:
 
 ```c#
-using ScalarDB.Net.Client.Builders;
+using ScalarDB.Client.Builders;
 ```
 
 :::note
@@ -101,6 +112,31 @@ var get =
 var getResult = await transaction.GetAsync(get);
 ```
 
+#### Handle `Result` objects
+
+The `GetAsync` and `ScanAsync` methods return `Result` objects. The SDK has `GetValue`, `TryGetValue`, and `IsNull` extension methods to simplify using them:
+
+```c#
+using ScalarDB.Client.Extensions;
+
+// ...
+
+// Getting an integer value from the "item_id" column.
+// If it fails, an exception will be thrown.
+var itemId = result.GetValue<int>("item_id");
+        
+// Trying to get a string value from the "order_id" column.
+// If it fails, no exception will be thrown.
+if (result.TryGetValue<string>("order_id", out var orderId))
+    Console.WriteLine($"order_id: {orderId}");
+        
+// Checking if the "count" column is null.
+if (result.IsNull("count"))
+    Console.WriteLine("'count' is null");
+```
+
+For details about which type should be used in `GetValue<T>` and `TryGetValue<T>`, see [How ScalarDB Column Types Are Converted to and from .NET Types](common-reference.mdx#how-scalardb-column-types-are-converted-to-and-from-net-types).
+
 ### `ScanAsync` method example
 
 ```c#
@@ -121,7 +157,7 @@ var scan =
         .SetProjections("item_id", "count")
         .Build();
 
-var scanResult = await transaction.ScanAsync(get);
+var scanResult = await transaction.ScanAsync(scan);
 ```
 
 ### `PutAsync` method example

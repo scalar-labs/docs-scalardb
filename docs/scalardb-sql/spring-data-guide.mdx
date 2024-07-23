@@ -840,6 +840,20 @@ public class SampleService {
 }
 ```
 
+## Troubleshooting
+
+This section describes methods to troubleshoot errors that may occur when using Spring Data JDBC.
+
+### `A constructor parameter name must not be null to be used with Spring Data JDBC` runtime error
+
+The runtime error `A constructor parameter name must not be null to be used with Spring Data JDBC` may occur when using Spring Boot 3. To work around this issue, you can pass the `-parameters` option to `javac` as follows:
+
+```gradle
+  compileJava {
+    options.compilerArgs << '-parameters'
+  }
+```
+
 ## Sample application
 
 You can see the following sample applications that use Spring Data JDBC for ScalarDB. It only serves as a reference and does not necessarily meet production code standards.
@@ -871,4 +885,4 @@ In order to use Spring Data JDBC for ScalarDB, the following features are implem
 
 - [Spring Data JDBC - Reference Documentation](https://docs.spring.io/spring-data/jdbc/docs/3.0.x/reference/html/)
 - [ScalarDB JDBC Guide](jdbc-guide.mdx)
-- [Javadoc for Spring Data JDBC for ScalarDB](https://javadoc.io/doc/com.scalar-labs/scalardb-sql-spring-data/3.12.3/index.html)
+- [Javadoc for Spring Data JDBC for ScalarDB](https://javadoc.io/doc/com.scalar-labs/scalardb-sql-spring-data/3.13.0/index.html)
