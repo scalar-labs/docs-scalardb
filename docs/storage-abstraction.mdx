@@ -367,6 +367,20 @@ boolean ifExists = true;
 admin.dropNamespace("ns", ifExists);
 ```
 
+#### Get existing namespaces
+
+You can get the existing namespaces as follows:
+
+```java
+Set<String> namespaces = admin.getNamespaceNames();
+```
+
+:::note
+
+This method extracts the namespace names of user tables dynamically. As a result, only namespaces that contain tables are returned. Starting from ScalarDB 4.0, we plan to improve the design to remove this limitation.
+
+:::
+
 #### Get the tables of a namespace
 
 You can get the tables of a namespace as follows:

@@ -12,23 +12,34 @@ For details about distributed non-SQL transactions, see [Getting Started with Di
 
 ## Install the SDK
 
-Install the same major and minor version of the [SDK](https://www.nuget.org/packages/ScalarDB.Net.Client) as ScalarDB Cluster into the .NET project. You can do this by using the built-in NuGet package manager, replacing `<MAJOR>.<MINOR>` with the version that you're using:
+Install the same major and minor version of the [SDK](https://www.nuget.org/packages/ScalarDB.Client) as ScalarDB Cluster into the .NET project. You can do this by using the built-in NuGet package manager, replacing `<MAJOR>.<MINOR>` with the version that you're using:
 
 ```shell
-dotnet add package ScalarDB.Net.Client --version '<MAJOR>.<MINOR>.*'
+dotnet add package ScalarDB.Client --version '<MAJOR>.<MINOR>.*'
 ```
+
+## Create a settings file
+
+Create a `scalardb-options.json` file and add the following, replacing `<HOSTNAME_OR_IP_ADDRESS>` with the FQDN or the IP address, and `<PORT>` with the port number (`60053` by default) of your cluster:
+
+```json
+{
+  "ScalarDbOptions": {
+    "Address": "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
+    "HopLimit": 10
+  }
+}
+```
+
+For details about settings files and other ways to configure the client, see [Client configuration](common-reference.mdx#client-configuration).
 
 ## Get a transaction manager
 
-First, you need to get a transaction manager object for distributed SQL transactions. To get the transaction manager object, you can use `TransactionFactory` as follows, replacing `<HOSTNAME_OR_IP_ADDRESS>` with the FQDN or the IP address, and `<PORT>` with the port number (`60053` by default) of your cluster:
+You need to get a transaction manager object for distributed SQL transactions. To get the transaction manager object, you can use `TransactionFactory` as follows:
 
 ```c#
-var scalarDbOptions = new ScalarDbOptions
-                      {
-                         Address = "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
-                         HopLimit = 10
-                      };
-var factory = TransactionFactory.Create(scalarDbOptions);
+// Pass the path to the settings file created in the previous step.
+var factory = TransactionFactory.Create("scalardb-options.json");
 
 using var manager = factory.GetSqlTransactionManager();
 ```
@@ -38,7 +49,7 @@ using var manager = factory.GetSqlTransactionManager();
 To execute a SQL statement, you need a `SqlStatement` object, which can be created by using a builder as follows:
 
 ```c#
-using ScalarDB.Net.Client.Builders;
+using ScalarDB.Client.Builders;
 
 // ...
 
@@ -58,7 +69,7 @@ var resultSet = await manager.ExecuteAsync(sqlStatement);
 The result from the `ExecuteAsync` method will contain records received from the cluster. The SDK has `GetValue`, `TryGetValue`, and `IsNull` extension methods to simplify using the records:
 
 ```c#
-using ScalarDB.Net.Client.Extensions;
+using ScalarDB.Client.Extensions;
 
 // ...
 
@@ -78,6 +89,8 @@ foreach (var record in resultSet.Records)
         Console.WriteLine("'count' is null");
 }
 ```
+
+For details about which type should be used in `GetValue<T>` and `TryGetValue<T>`, see [How ScalarDB Column Types Are Converted to and from .NET Types](common-reference.mdx#how-scalardb-column-types-are-converted-to-and-from-net-types).
 
 ## Execute SQL queries in a transaction
 
@@ -113,4 +126,58 @@ To roll back the transaction, you can use the `RollbackAsync` method:
 
 ```c#
 await transaction.RollbackAsync();
+```
+
+## Get Metadata
+
+You can retrieve ScalarDB's metadata with the Metadata property as follows:
+
+```c#
+// namespaces, tables metadata
+var namespaces = (await manager.Metadata.GetNamespacesAsync()).ToList();
+
+foreach (var ns in namespaces)
+{
+    Console.WriteLine($"Namespace: {ns.Name}");
+    
+    foreach (var tbl in await ns.GetTablesAsync())
+    {
+        Console.WriteLine($"  Table: {tbl.Name}");
+
+        Console.WriteLine($"  Columns:");
+        foreach (var col in tbl.Columns)
+            Console.WriteLine($"    {col.Name} [{col.DataType}]");
+
+        Console.WriteLine($"  PartitionKey:");
+        foreach (var col in tbl.PartitionKey)
+            Console.WriteLine($"    {col.Name}");
+
+        Console.WriteLine($"  ClusteringKey:");
+        foreach (var col in tbl.ClusteringKey)
+            Console.WriteLine($"    {col.Name} [{col.ClusteringOrder}]");
+
+        Console.WriteLine($"  Indexes:");
+        foreach (var index in tbl.Indexes)
+            Console.WriteLine($"    {index.ColumnName}");
+
+        Console.WriteLine();
+    }
+}
+
+// users metadata
+foreach (var user in await manager.Metadata.GetUsersAsync())
+{
+    Console.WriteLine($"User: {user.Name} [IsSuperuser: {user.IsSuperuser}]");
+
+    foreach (var ns in namespaces)
+    {
+        Console.WriteLine($"  Namespace: {ns.Name}");
+
+        Console.WriteLine($"  Privileges:");
+        foreach (var privilege in await user.GetPrivilegesAsync(ns.Name))
+            Console.WriteLine($"    {privilege}");
+    }
+
+    Console.WriteLine();
+}
 ```
