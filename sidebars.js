@@ -79,6 +79,8 @@ const sidebars = {
                 'scalardb-cluster-dotnet-client-sdk/getting-started-with-linq',
                 'scalardb-cluster-dotnet-client-sdk/getting-started-with-two-phase-commit-transactions',
                 'scalardb-cluster-dotnet-client-sdk/getting-started-with-auth',
+                'scalardb-cluster-dotnet-client-sdk/exception-handling',
+                'scalardb-cluster-dotnet-client-sdk/common-reference',
               ],
             },
           ],
