@@ -1,0 +1,108 @@
+# ScalarDB 3.13 Release Notes
+
+This page includes a list of release notes for ScalarDB 3.12.
+
+## v3.13.0
+
+### Summary
+
+This release includes a lot of enhancements, improvements, bug fixes, and vulnerability fixes.
+
+### Community edition
+
+#### Enhancements
+
+- Added dynamic arbitrary filtering for non-JDBC databases. ([#1682](https://github.com/scalar-labs/scalardb/pull/1682))
+- Added the Insert, Upsert, and Update operations to the transactional API. ([#1697](https://github.com/scalar-labs/scalardb/pull/1697))
+- Added YugabyteDB adapter as one of JDBC storages ([#1710](https://github.com/scalar-labs/scalardb/pull/1710))
+- Added Group Commit feature for Coordinator Table ([#1728](https://github.com/scalar-labs/scalardb/pull/1728))
+- Allowed directly executing CRUD operations with transaction managers. ([#1755](https://github.com/scalar-labs/scalardb/pull/1755))
+- Added support for arbitrary filtering for partition scan and index scan. ([#1763](https://github.com/scalar-labs/scalardb/pull/1763))
+- Added a single CRUD operation transaction manager. This transaction manager implementation does not allow beginning a transaction by calling `begin()`/`start()`. It only allows directly executing CRUD operations from the transaction manager. ([#1793](https://github.com/scalar-labs/scalardb/pull/1793))
+- Added support for arbitrary filtering for get operations. ([#1834](https://github.com/scalar-labs/scalardb/pull/1834))
+- In MySQL, ScalarDB `FLOAT` type is changed from `DOUBLE` to `REAL` (single-precision floating-point value) ([#2000](https://github.com/scalar-labs/scalardb/pull/2000))
+- Added a new Admin API `admin.getNamespacesNames()` to list the user namespaces. Though, this API won't return a namespace that does not contain a table. From ScalarDB 4.0, we plan to improve the design to suppress this limitation. ([#2002](https://github.com/scalar-labs/scalardb/pull/2002))
+
+#### Improvements
+
+- Removed the hard-coded collation for MySQL and SQL Server in the JDBC adapter. As a result, the collation configured in the underlying database will be used when creating tables. ([#1518](https://github.com/scalar-labs/scalardb/pull/1518))
+- Added error codes to the error messages of Schema Loader. ([#1564](https://github.com/scalar-labs/scalardb/pull/1564))
+- Performance improvement of the group commit by using priority queue in the background worker. ([#1641](https://github.com/scalar-labs/scalardb/pull/1641))
+- Refactored scan with filtering. ([#1715](https://github.com/scalar-labs/scalardb/pull/1715))
+- Avoided creating an internal unique index as much as possible to reduce resource consumption and improve performance. ([#1723](https://github.com/scalar-labs/scalardb/pull/1723))
+- Changed the hard-coded password for the Oracle user to a more secure one in the JDBC adapter. ([#1765](https://github.com/scalar-labs/scalardb/pull/1765))
+- Update base image of container image. This update fixes an OOM issue on a Kubernetes with cgroup v2 environment. In the previous versions, if you use a Kubernetes cluster with cgroup v2, you might face an OOM-killed issue. ([#1826](https://github.com/scalar-labs/scalardb/pull/1826))
+- Added capability to specify global properties for all storages in multi-storage. ([#1486](https://github.com/scalar-labs/scalardb/pull/1486))
+
+#### Bug fixes
+
+- Upgraded the base image to fix security issues. [CVE-2023-47038](https://github.com/advisories/GHSA-96fh-9q43-rmjh "CVE-2023-47038") ([#1522](https://github.com/scalar-labs/scalardb/pull/1522) [#1521](https://github.com/scalar-labs/scalardb/pull/1521))
+- Upgraded the PostgresSQL lib to fix security issues. [CVE-2024-1597](https://github.com/advisories/GHSA-24rp-q3w6-vc56 "CVE-2024-1597") ([#1547](https://github.com/scalar-labs/scalardb/pull/1547))
+- Fixed a bug where `NullPointerException` occurs during the `EXTRA_READ` validation when scanning records in a transaction, but some of them are deleted by other transactions. ([#1624](https://github.com/scalar-labs/scalardb/pull/1624))
+- Fixed a bug where lazy recovery was not executed for the implicit pre-read of put and delete operations. ([#1681](https://github.com/scalar-labs/scalardb/pull/1681))
+- Fixed a bug where users could see inconsistent results when scanning records by an index key after putting the related records in Consensus Commit transactions. ([#1727](https://github.com/scalar-labs/scalardb/pull/1727))
+- Upgraded `grpc_health_probe` to fix security issues. [CVE-2024-24790](https://github.com/advisories/GHSA-49gw-vxvf-fc2g "CVE-2024-24790"), [CVE-2023-45283](https://github.com/advisories/GHSA-vvjp-q62m-2vph "CVE-2023-45283"), and [CVE-2023-45288](https://github.com/advisories/GHSA-4v7x-pqxf-cx7m "CVE-2023-45288") ([#1980](https://github.com/scalar-labs/scalardb/pull/1980))
+- Fixed snapshot management issues. ([#1976](https://github.com/scalar-labs/scalardb/pull/1976))
+- Fix a bug of the import-table feature that it could access tables in other namespace that have the same table name when using MySQL storage. ([#2001](https://github.com/scalar-labs/scalardb/pull/2001))
+
+### Enterprise edition
+
+#### Enhancements
+
+##### ScalarDB Cluster
+
+- Added support for the insert mode of the Put operation introduced [#1679](https://github.com/scalar-labs/scalardb/pull/1679) in ScalarDB Cluster.
+- Added support for insert, upsert, and update APIs introduced in [#1697](https://github.com/scalar-labs/scalardb/pull/1697) in ScalarDB Cluster.
+- Added support executing a CRUD operations in a one-shot transaction.
+- Added support for arbitrary filtering for partition scan and index scan introduced in [#1763](https://github.com/scalar-labs/scalardb/pull/1763) to ScalarDB Cluster.
+- Added support for transaction managers other than Consensus Commit to ScalarDB Cluster.
+- Added support for the single CRUD operation transaction manager introduced in [#1793](https://github.com/scalar-labs/scalardb/pull/1793) in ScalarDB Cluster.
+- Added support for arbitrary filtering for get operations introduced in [#1834](https://github.com/scalar-labs/scalardb/pull/1834) to ScalarDB Cluster.
+- Added support for `DistributedTransactionAdmin.getNamespaceNames()`
+
+##### ScalarDB SQL
+
+- Added support for the single CRUD operation transaction manager introduced in [#1793](https://github.com/scalar-labs/scalardb/pull/1793) to ScalarDB SQL.
+- With this update, users now have several ways to access ScalarDB-managed namespaces in ScalarDB SQL.
+
+#### Improvements
+
+##### ScalarDB Cluster
+
+- Added error codes to the error messages of the Auth module.
+- Added error codes to the error messages.
+- Added TLS support for the Prometheus exporter. With this change, when enabling TLS (setting `scalar.db.cluster.tls.enabled` to `true`) in ScalarDB cluster nodes, the Prometheus exporter also starts with TLS (HTTPS).
+- Update base image of container image. This update fixes an OOM issue on a Kubernetes with cgroup v2 environment. In the previous versions, if you use a Kubernetes cluster with cgroup v2, you might face an OOM-killed issue.
+
+##### ScalarDB GraphQL
+
+- Added error codes to the error messages.
+- Update base image of container image. This update fixes an OOM issue on a Kubernetes with cgroup v2 environment. In the previous versions, if you use a Kubernetes cluster with cgroup v2, you might face an OOM-killed issue.
+
+##### ScalarDB SQL
+
+- Added error codes to the error messages.
+- Changed the packages for `ConditionSetBuilder` and `AndConditionSet`.
+- Allowed using the `EXISTS` keyword for the `CREATE/DROP COORDINATOR TABLES` statements.
+- Update base image of container image. This update fixes an OOM issue on a Kubernetes with cgroup v2 environment. In the previous versions, if you use a Kubernetes cluster with cgroup v2, you might face an OOM-killed issue.
+- Improved performance of selection queries with filtering by exploiting partition and index scans.
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Upgraded the base image to fix security issues. [CVE-2023-47038](https://github.com/advisories/GHSA-96fh-9q43-rmjh "CVE-2023-47038")
+- Upgraded the Kubernetes Client Java lib to fix security issues: [CVE-2024-25710](https://github.com/advisories/GHSA-4g9r-vxhx-9pgx "CVE-2024-25710") and [CVE-2024-26308](https://github.com/advisories/GHSA-4265-ccf5-phj5 "CVE-2024-26308").
+- Upgraded `grpc_health_probe` to fix security issues. [CVE-2024-24790](https://github.com/advisories/GHSA-49gw-vxvf-fc2g "CVE-2024-24790"), [CVE-2023-45283](https://github.com/advisories/GHSA-vvjp-q62m-2vph "CVE-2023-45283"), and [CVE-2023-45288](https://github.com/advisories/GHSA-4v7x-pqxf-cx7m "CVE-2023-45288")
+- Fixed a bug where incorrect results are returned when executing SELECT queries with the same column names.
+
+##### ScalarDB GraphQL
+
+- Upgraded the base image to fix security issues. [CVE-2023-47038](https://github.com/advisories/GHSA-96fh-9q43-rmjh "CVE-2023-47038")
+
+##### ScalarDB SQL
+
+- Upgraded the base image to fix security issues. [CVE-2023-47038](https://github.com/advisories/GHSA-96fh-9q43-rmjh "CVE-2023-47038")
+- Fixes a bug that Spring Data JDBC for ScalarDB doesn't work with Spring Boot 3
+- Fixed a bug where incorrect results are returned when executing SELECT queries with the same column names.
+- Upgraded `grpc_health_probe` to fix security issues. [CVE-2024-24790](https://github.com/advisories/GHSA-49gw-vxvf-fc2g "CVE-2024-24790"), [CVE-2023-45283](https://github.com/advisories/GHSA-vvjp-q62m-2vph "CVE-2023-45283"), and [CVE-2023-45288](https://github.com/advisories/GHSA-4v7x-pqxf-cx7m "CVE-2023-45288")
