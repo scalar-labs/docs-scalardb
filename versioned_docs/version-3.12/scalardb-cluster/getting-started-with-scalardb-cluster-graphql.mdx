@@ -1,0 +1,334 @@
+# Getting Started with ScalarDB Cluster GraphQL
+
+This tutorial describes how to use ScalarDB Cluster GraphQL.
+
+## Prerequisites
+
+- One of the following Java Development Kits (JDKs):
+  - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) LTS version (8, 11, or 17)
+  - [OpenJDK](https://openjdk.org/install/) LTS version (8, 11, or 17)
+- ScalarDB Cluster running on a Kubernetes cluster
+  - We assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.mdx).
+
+:::note
+
+We recommend using the LTS versions mentioned above, but other non-LTS versions may work.
+
+In addition, other JDKs should work with ScalarDB, but we haven't tested them.
+
+:::
+
+## Sample application
+
+This tutorial illustrates the process of creating an electronic money application, where money can be transferred between accounts.
+
+The following diagram shows the system architecture of the sample application:
+
+```
+                              +----------------------------------------------------------------------------------------------------------------------------------------+
+                              | [Kubernetes Cluster]                                                                                                                   |
+                              |                                                                                                                                        |
+                              |                          [Pod]                                                                [Pod]                         [Pod]      |
+                              |                                                                                                                                        |
+                              |                        +-------+                                                                                                       |
+                              |                  +---> | Envoy | ---+                                                                                                  |
+                              |                  |     +-------+    |                                                                                                  |
+                              |                  |                  |                                                                                                  |
+ +------------------------+   |   +---------+    |     +-------+    |           +--------------------+                                                                 |
+ |     Schema Loader      | --+-> | Service | ---+---> | Envoy | ---+---------> |      Service       | ---+                                                            |
+ | (indirect client mode) |   |   | (Envoy) |    |     +-------+    |           | (ScalarDB Cluster) |    |                                                            |
+ +------------------------+   |   +---------+    |                  |           +--------------------+    |         +-----------------------+                          |
+                              |                  |     +-------+    |                                     |   +---> | ScalarDB Cluster Node | ---+                     |
+                              |                  +---> | Envoy | ---+                                     |   |     +-----------------------+    |                     |
+                              |                        +-------+                                          |   |                                  |                     |
+                              |                                                                           |   |     +-----------------------+    |     +------------+  |
+                              |                                                                           +---+---> | ScalarDB Cluster Node | ---+---> | PostgreSQL |  |
+                              |                                                                           |   |     +-----------------------+    |     +------------+  |
+                              |                                                                           |   |                                  |                     |
+                              |                                                                           |   |     +-----------------------+    |                     |
+                              |                                                                           |   +---> | ScalarDB Cluster Node | ---+                     |
+                              |                                                                           |         +-----------------------+                          |
+         +------------+       |                                         +----------------------------+    |                                                            |
+         |  Browser   | ------+---------------------------------------> |          Service           | ---+                                                            |
+         | (GraphiQL) |       |                                         | (ScalarDB Cluster GraphQL) |                                                                 |
+         +------------+       |                                         +----------------------------+                                                                 |
+                              |                                                                                                                                        |
+                              +----------------------------------------------------------------------------------------------------------------------------------------+
+```
+
+## Step 1. Create `schema.json`
+
+The following is a simple example schema.
+
+Create `schema.json`, and add the following to the file:
+
+```json
+{
+  "emoney.account": {
+    "transaction": true,
+    "partition-key": [
+      "id"
+    ],
+    "clustering-key": [],
+    "columns": {
+      "id": "TEXT",
+      "balance": "INT"
+    }
+  }
+}
+```
+
+## Step 2. Create `database.properties`
+
+You need to create `database.properties` for the Schema Loader for ScalarDB Cluster.
+But first, you need to get the `EXTERNAL-IP` address of the service resource of Envoy (`scalardb-cluster-envoy`).
+
+To see the `EXTERNAL-IP` address, run the following command:
+
+```shell
+$ kubectl get svc scalardb-cluster-envoy
+NAME                     TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)           AGE
+scalardb-cluster-envoy   LoadBalancer   10.105.121.51   localhost     60053:30641/TCP   16h
+```
+
+In this case, the `EXTERNAL-IP` address is `localhost`.
+
+Then, create `database.properties`, and add the following to the file:
+
+```properties
+scalar.db.transaction_manager=cluster
+scalar.db.contact_points=indirect:localhost
+```
+
+To connect to ScalarDB Cluster, you need to specify `cluster` for the `scalar.db.transaction_manager` property.
+In addition, you will use the `indirect` client mode and connect to the service resource of Envoy in this tutorial.
+For details about the client modes, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.mdx).
+
+## Step 3. Load a schema
+
+To load a schema via ScalarDB Cluster, you need to use the dedicated Schema Loader for ScalarDB Cluster (Schema Loader for Cluster).
+Using the Schema Loader for Cluster is basically the same as using the [Schema Loader for ScalarDB](../schema-loader.mdx) except the name of the JAR file is different.
+You can download the Schema Loader for Cluster from [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases/tag/v3.12.3).
+After downloading the JAR file, you can run the Schema Loader for Cluster with the following command:
+
+```shell
+$ java -jar scalardb-cluster-schema-loader-3.12.3-all.jar --config database.properties -f schema.json --coordinator
+```
+
+## Step 4. Run operations from GraphiQL
+
+In ScalarDB Cluster, if the `scalar.db.graphql.graphiql` property is set to `true` (`true` is the default value), the GraphiQL IDE will be available.
+
+To get the `EXTERNAL-IP` address of the service resource of ScalarDB Cluster GraphQL (`scalardb-cluster-graphql`), run the following command:
+
+```shell
+$ kubectl get svc scalardb-cluster-graphql
+NAME                       TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+scalardb-cluster-graphql   LoadBalancer   10.105.74.214   localhost     8080:30514/TCP   16h
+```
+
+In this case, the `EXTERNAL-IP` address is `localhost`, and the endpoint URL of GraphiQL IDE is `http://localhost:8080/graphql`.
+Opening that URL with your web browser will take you to the GraphiQL screen.
+
+Let's insert the first record.
+In the left pane, paste the following mutation, then push the triangle-shaped `Execute Query` button at the top of the window.
+
+```graphql
+mutation PutUser1 {
+  account_put(put: {key: {id: "user1"}, values: {balance: 1000}})
+}
+```
+
+ScalarDB GraphQL always runs queries with transactions.
+The above query starts a new transaction, executes a ScalarDB Put command, and commits the transaction at the end of the execution.
+
+The following response from the GraphQL server will appear in the right pane:
+
+```json
+{
+  "data": {
+    "account_put": true
+  }
+}
+```
+
+The `"data"` field contains the result of the execution.
+This response shows the `account_put` field of the mutation was successful.
+The result type of mutations is `Boolean!`, which indicates whether the operation succeeded or not.
+
+Next, let's get the record you just inserted.
+Paste the following query next to the previous mutation in the left pane, and click the `Execute Query` button.
+Since you don't delete the `mutation PutUser1` above, a pull-down menu will appear below the button, and you can choose which operation should be executed. Choose `GetUser1`, as shown below:
+
+```graphql
+query GetUser1 {
+  account_get(get: {key: {id: "user1"}}) {
+    account {
+      id
+      balance
+    }
+  }
+}
+```
+
+You should get the following result in the right pane:
+
+```json
+{
+  "data": {
+    "account_get": {
+      "account": {
+        "id": "user1",
+        "balance": 1000
+      }
+    }
+  }
+}
+```
+
+### Mappings between GraphQL API and ScalarDB Java API
+
+The automatically generated GraphQL schema defines queries, mutations, and object types for input/output to allow you to run CRUD operations for all the tables in the specified namespaces.
+These operations are designed to match the ScalarDB APIs defined in the [`DistributedTransaction`](https://javadoc.io/doc/com.scalar-labs/scalardb/latest/com/scalar/db/api/DistributedTransaction.html) interface.
+
+Assuming you have an `account` table in a namespace, the following queries and mutations will be generated:
+
+| ScalarDB API                                           | GraphQL root type | GraphQL field                                                                      |
+|--------------------------------------------------------|-------------------|------------------------------------------------------------------------------------|
+| `get(Get get)`                                         | `Query`           | `account_get(get: account_GetInput!): account_GetPayload`                          |
+| `scan(Scan scan)`                                      | `Query`           | `account_scan(scan: account_ScanInput!): account_ScanPayload`                      |
+| `put(Put put)`                                         | `Mutation`        | `account_put(put: account_PutInput!): Boolean!`                                    |
+| `put(java.util.List<Put> puts)`                        | `Mutation`        | `account_bulkPut(put: [account_PutInput!]!): Boolean!`                             |
+| `delete(Delete delete)`                                | `Mutation`        | `account_delete(delete: account_DeleteInput!): Boolean!`                           |
+| `delete(java.util.List<Delete> deletes)`               | `Mutation`        | `account_bulkDelete(delete: [account_DeleteInput!]!): Boolean!`                    |
+| `mutate(java.util.List<? extends Mutation> mutations)` | `Mutation`        | `account_mutate(put: [account_PutInput!]delete: [account_DeleteInput!]): Boolean!` |
+
+Note that the `scan` field is not generated for a table with no clustering key.
+This is the reason why the `account_scan` field is not available in this electronic money sample application.
+
+You can see all generated GraphQL types in GraphiQL's Documentation Explorer (the `< Docs` link at the top-left corner).
+
+## Step 5. Run a transaction across multiple requests from GraphiQL
+
+Let's run a transaction that spans multiple GraphQL requests.
+
+The generated schema provides the `@transaction` directive that allows you to identify transactions.
+You can use this directive with both queries and mutations.
+
+Before starting a transaction, you need to insert the necessary record with the following mutation:
+
+```graphql
+mutation PutUser2 {
+  account_put(put: {key: {id: "user2"}, values: {balance: 1000}})
+}
+```
+
+### Start a transaction before running an operation
+
+Running the following to add a `@transaction` directive with no arguments to a query or mutation directs the execution to start a new transaction:
+
+```graphql
+query GetAccounts @transaction {
+  user1: account_get(get: {key: {id: "user1"}}) {
+    account { balance }
+  }
+  user2: account_get(get: {key: {id: "user2"}}) {
+    account { balance }
+  }
+}
+```
+
+After running the above command, you will get a result with a transaction ID in the `extensions` field.
+The `id` value in the extensions is the transaction ID in which the operation in the request was run.
+In this case, the following is the new ID of the transaction just started by the request:
+
+```json
+{
+  "data": {
+    "user1": {
+      "account": {
+        "balance": 1000
+      }
+    },
+    "user2": {
+      "account": {
+        "balance": 1000
+      }
+    }
+  },
+  "extensions": {
+    "transaction": {
+      "id": "c88da8a6-a13f-4857-82fe-45f1ab4150f9"
+    }
+  }
+}
+```
+
+### Run an operation in a continued transaction
+
+To run the next queries or mutations in the transaction you started, specify the transaction ID as the `id` argument of the `@transaction`.
+The following example updates two accounts you retrieved in the previous example by transferring a balance from user1's account to user2's account in the same transaction:
+
+```graphql
+mutation Transfer @transaction(id: "c88da8a6-a13f-4857-82fe-45f1ab4150f9") {
+  user1: account_put(put: {key: {id: "user1"}, values: {balance: 750}})
+  user2: account_put(put: {key: {id: "user2"}, values: {balance: 1250}})
+}
+```
+
+Note that a transaction started with GraphQL has a timeout of 1 minute (by default) and will be aborted automatically if it exceeds the timeout.
+
+### Commit a transaction
+
+To commit the continued transaction, specify both the `id` and the `commit: true` flag as arguments of the `@transaction` directive:
+
+```graphql
+query GetAndCommit @transaction(id: "c88da8a6-a13f-4857-82fe-45f1ab4150f9", commit: true) {
+  user1: account_get(get: {key: {id: "user1"}}) {
+    account { balance }
+  }
+  user2: account_get(get: {key: {id: "user2"}}) {
+    account { balance }
+  }
+}
+```
+
+**Note:** If you specify a `commit: true` flag without an `id` argument like `@transaction(commit: true)`, a new transaction will start and be committed just for one operation.
+This behavior is exactly the same as not specifying the `@transaction` directive, as seen in the above examples using GraphiQL.
+In other words, you can omit the directive itself when `@transaction(commit: true)` is specified.
+
+### Abort or roll back a transaction
+
+If you need to abort or roll back a transaction explicitly, you can use the `abort` or `rollback` mutation fields interchangeably (both have the same effect and usage).
+Note that you cannot mix these fields with any other operations, so you must specify only the `abort` or `rollback` mutation field as follows:
+
+```graphql
+mutation AbortTx @transaction(id: "c88da8a6-a13f-4857-82fe-45f1ab4150f9") {
+  abort
+}
+```
+
+Or:
+
+```graphql
+mutation RollbackTx @transaction(id: "c88da8a6-a13f-4857-82fe-45f1ab4150f9") {
+  rollback
+}
+```
+
+## Next steps
+
+If you have not tried the other ScalarDB Cluster tutorials, we encourage you to read the following:
+
+* [Getting Started with ScalarDB Cluster](getting-started-with-scalardb-cluster.mdx)
+* [Getting Started with ScalarDB Cluster SQL via JDBC](getting-started-with-scalardb-cluster-sql-jdbc.mdx)
+* [Getting Started with ScalarDB Cluster SQL via Spring Data JDBC for ScalarDB](getting-started-with-scalardb-cluster-sql-spring-data-jdbc.mdx)
+
+For details about developing applications that use ScalarDB Cluster with the Java API, refer to the following:
+
+* [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.mdx)
+
+For details about ScalarDB Cluster gRPC API, refer to the following:
+
+* [ScalarDB Cluster gRPC API Guide](scalardb-cluster-grpc-api-guide.mdx)
+* [ScalarDB Cluster SQL gRPC API Guide](scalardb-cluster-sql-grpc-api-guide.mdx)
