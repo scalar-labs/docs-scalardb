@@ -70,7 +70,7 @@ const sidebars = {
               label: '.NET Client SDK',
               collapsible: true,
               items: [
-                'scalardb-cluster-dotnet-client-sdk/index',
+                'scalardb-cluster-dotnet-client-sdk/overview',
                 'scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-transactions',
                 'scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-sql-transactions',
                 'scalardb-cluster-dotnet-client-sdk/getting-started-with-admin-api',
@@ -141,7 +141,6 @@ const sidebars = {
         'scalardb-analytics-postgresql/schema-importer',
         'scalardb-cluster/scalardb-auth-with-sql',
         'scalardb-graphql/how-to-run-two-phase-commit-transaction',
-        'scalardb-sql/command-line-interface',
       ],
     },
     {
