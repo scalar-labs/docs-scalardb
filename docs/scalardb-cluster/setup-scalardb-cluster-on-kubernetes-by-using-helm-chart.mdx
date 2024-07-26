@@ -8,9 +8,7 @@ This document provides instructions on how to set up a ScalarDB Cluster by using
 * kubectl
 * Helm
 
-In addition, you need access to the [ScalarDB Cluster Node docker image](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-cluster-node).
-This repository is available only to users with a commercial license and permission.
-To get a license and permission, please [contact us](https://scalar-labs.com/contact_us/).
+Also, you need to have a license key (trial license or commercial license) for ScalarDB Cluster. If you don't have a license key, please [contact us](https://www.scalar-labs.com/contact).
 
 ## What you will create
 
@@ -90,13 +88,11 @@ You can deploy PostgreSQL on the Kubernetes cluster as follows:
    helm repo add scalar-labs https://scalar-labs.github.io/helm-charts
    ```
 
-2. Create a secret resource to pull the ScalarDB Cluster container images from GitHub packages:
+2. Set your license key and certificate as environment variables. If you don't have a license key, please [contact us](https://www.scalar-labs.com/contact). For details about the value for `<CERT_PEM_FOR_YOUR_LICENSE_KEY>`, see [How to Configure a Product License Key](../scalar-licensing/index.mdx).
 
    ```console
-   kubectl create secret docker-registry reg-docker-secrets \
-     --docker-server=ghcr.io \
-     --docker-username=<YOUR_GITHUB_USERNAME> \
-     --docker-password=<YOUR_PERSONAL_ACCESS_TOKEN>
+   SCALAR_DB_CLUSTER_LICENSE_KEY='<YOUR_LICENSE_KEY>'
+   SCALAR_DB_CLUSTER_LICENSE_CHECK_CERT_PEM='<CERT_PEM_FOR_YOUR_LICENSE_KEY>'
    ```
 
 3. Create a custom values file for ScalarDB Cluster (`scalardb-cluster-custom-values.yaml`):
@@ -109,6 +105,10 @@ You can deploy PostgreSQL on the Kubernetes cluster as follows:
        type: "LoadBalancer"
 
    scalardbCluster:
+
+     image:
+       repository: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium"
+
      scalardbClusterNodeProperties: |
        # ScalarDB Cluster configurations
        scalar.db.cluster.membership.type=KUBERNETES
@@ -118,8 +118,8 @@ You can deploy PostgreSQL on the Kubernetes cluster as follows:
        # Storage configurations
        scalar.db.storage=jdbc
        scalar.db.contact_points=jdbc:postgresql://postgresql-scalardb-cluster.default.svc.cluster.local:5432/postgres
-       scalar.db.username=postgres
-       scalar.db.password=postgres
+       scalar.db.username=${env:SCALAR_DB_CLUSTER_POSTGRES_USERNAME}
+       scalar.db.password=${env:SCALAR_DB_CLUSTER_POSTGRES_PASSWORD}
 
        # For ScalarDB Cluster GraphQL tutorial.
        scalar.db.graphql.enabled=true
@@ -127,22 +127,47 @@ You can deploy PostgreSQL on the Kubernetes cluster as follows:
 
        # For ScalarDB Cluster SQL tutorial.
        scalar.db.sql.enabled=true
+
+       ### License key configurations
+       scalar.db.cluster.node.licensing.license_key=${env:SCALAR_DB_CLUSTER_LICENSE_KEY}
+       scalar.db.cluster.node.licensing.license_check_cert_pem=${env:SCALAR_DB_CLUSTER_LICENSE_CHECK_CERT_PEM}
      graphql:
        enabled: true
        service:
          type: "LoadBalancer"
+
+     secretName: "scalardb-credentials-secret"
    EOF
    ```
    
    For the tutorials, the service type for ScalarDB Cluster GraphQL and Envoy is set to `LoadBalancer`.
 
-4. Deploy ScalarDB Cluster:
+4. Create a secret resource named `scalardb-credentials-secret` that includes credentials and license keys.
 
    ```console
-   helm install scalardb-cluster scalar-labs/scalardb-cluster -f ./scalardb-cluster-custom-values.yaml
+   kubectl create secret generic scalardb-credentials-secret \
+   --from-literal=SCALAR_DB_CLUSTER_POSTGRES_USERNAME=postgres \
+   --from-literal=SCALAR_DB_CLUSTER_POSTGRES_PASSWORD=postgres \
+   --from-literal=SCALAR_DB_CLUSTER_LICENSE_KEY="${SCALAR_DB_CLUSTER_LICENSE_KEY}" \
+   --from-file=SCALAR_DB_CLUSTER_LICENSE_CHECK_CERT_PEM=<(echo ${SCALAR_DB_CLUSTER_LICENSE_CHECK_CERT_PEM} | sed 's/\\n/\
+   /g') \
+   -n default
    ```
 
-5. Check if the ScalarDB Cluster pods are deployed:
+5. Set the chart version of ScalarDB Cluster.
+
+   ```console
+   SCALAR_DB_CLUSTER_VERSION=3.13.0
+   SCALAR_DB_CLUSTER_CHART_VERSION=$(helm search repo scalar-labs/scalardb-cluster -l | grep -F "${SCALAR_DB_CLUSTER_VERSION}" | awk '{print $2}' | sort --version-sort -r | head -n 1)
+   ```
+
+6. Deploy ScalarDB Cluster.
+
+   ```console
+   helm install scalardb-cluster scalar-labs/scalardb-cluster -f scalardb-cluster-custom-values.yaml --version ${SCALAR_DB_CLUSTER_CHART_VERSION} -n default
+   ```
+
+7. Check if the ScalarDB Cluster pods are deployed:
 
    ```console
    kubectl get pod
@@ -163,7 +188,7 @@ You can deploy PostgreSQL on the Kubernetes cluster as follows:
    
    If the ScalarDB Cluster Node Pods and the Envoy Pods are deployed properly, the `STATUS` for each pod will be `Running`.
 
-6. Check if the service resources of the ScalarDB Cluster are deployed:
+8. Check if the service resources of the ScalarDB Cluster are deployed:
 
    ```console
    kubectl get svc
