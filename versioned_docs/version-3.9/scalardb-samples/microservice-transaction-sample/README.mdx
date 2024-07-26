@@ -4,7 +4,7 @@ This tutorial describes how to create a sample application that supports microse
 
 ## Overview
 
-The sample e-commerce application shows how users can order and pay for items by using a line of credit. The use case described in this tutorial is the same as the basic [ScalarDB sample](../scalardb-sample/README.mdx) but takes advantage of [transactions with a two-phase commit interface](../../two-phase-commit-transactions.mdx) when using ScalarDB.
+This tutorial illustrates the process of creating a sample e-commerce application, where items can be ordered and paid for with a line of credit through [transactions with a two-phase commit interface](../../two-phase-commit-transactions.mdx) in ScalarDB.
 
 The sample application has two microservices called the *Customer Service* and the *Order Service* based on the [database-per-service pattern](https://microservices.io/patterns/data/database-per-service.html):
 
@@ -139,13 +139,13 @@ $ java -jar scalardb-schema-loader-<VERSION>.jar --config database-cassandra.pro
 
 #### Schema details
 
-As shown in [`customer-service-schema.json`](https://github.com/scalar-labs/scalardb-samples/blob/main/microservice-transaction-sample/customer-service-schema.json) for the sample application, all the tables for the Customer Service are created in the `customer_service` namespace.
+As shown in [`customer-service-schema.json`](https://github.com/scalar-labs/scalardb-samples/blob/main/microservice-transaction-sample/customer-service-schema.json), all the tables for the Customer Service are created in the `customer_service` namespace.
 
 - `customer_service.customers`: a table that manages customers' information
   - `credit_limit`: the maximum amount of money a lender will allow each customer to spend when using a line of credit
   - `credit_total`: the amount of money that each customer has already spent by using their line of credit
 
-As shown in [`order-service-schema.json`](https://github.com/scalar-labs/scalardb-samples/blob/main/microservice-transaction-sample/order-service-schema.json) for the sample application, all the tables for the Order Service are created in the `order_service` namespace.
+As shown in [`order-service-schema.json`](https://github.com/scalar-labs/scalardb-samples/blob/main/microservice-transaction-sample/order-service-schema.json), all the tables for the Order Service are created in the `order_service` namespace.
 
 - `order_service.orders`: a table that manages order information
 - `order_service.statements`: a table that manages order statement information
