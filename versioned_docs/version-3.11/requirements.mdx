@@ -1,114 +1,213 @@
-# Requirements and Recommendations for the Underlying Databases of ScalarDB
+# Requirements
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-This document explains the requirements and recommendations in the underlying databases of ScalarDB to make ScalarDB applications work correctly and efficiently.
+This page describes the required tools and their versions to use ScalarDB correctly.
 
-## Requirements
+## Client SDK
 
-ScalarDB requires each underlying database to provide certain capabilities to run transactions and analytics on the databases. This document explains the general requirements and how to configure each database to achieve the requirements.
+Because ScalarDB is written in Java, the easiest way to interact with ScalarDB is to use the [Java client SDK](https://scalardb.scalar-labs.com/docs/latest/scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api/#add-scalardb-cluster-java-client-sdk-to-your-build).
+The following Java Development Kits (JDKs) are verified and supported.
 
-### General requirements
+### Java
 
-#### Transactions
+The following Java Development Kits (JDKs) are verified and supported.
 
-ScalarDB requires each underlying database to provide at least the following capabilities to run transactions on the databases:
+- **[Oracle JDK](https://www.oracle.com/java/):** 8, 11, 17 or 21 (LTS versions)
+- **[OpenJDK](https://openjdk.org/) ([Eclipse Temurin](https://adoptium.net/temurin/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/)):** 8, 11, 17, or 21 (LTS versions)
 
-- Linearizable read and conditional mutations (write and delete) on a single database record.
-- Durability of written database records.
-- Ability to store arbitrary data besides application data in each database record.
+### .NET
 
-#### Analytics
+ScalarDB is provided as a gRPC server called ScalarDB Cluster, which also has a [.NET client SDK](https://scalardb.scalar-labs.com/docs/latest/scalardb-cluster-dotnet-client-sdk/overview/) that wraps the .NET client generated from the proto file. The SDK is a .NET Standard 2.0 library, so it should work with every implementation and its version that is supported by .NET Standard 2.0. However, the detailed supported implementations and their versions are to be decided.
 
-ScalarDB requires each underlying database to provide the following capability to run analytics on the databases:
+### Other languages
 
-- Ability to return only committed records.
+ScalarDB Cluster uses gRPC version 1.65.0, so you can create your own client by using the generated clients of your preferred languages.
 
-:::note
+## Databases
 
-You need to have database accounts that have enough privileges to access the databases through ScalarDB since ScalarDB runs on the underlying databases not only for CRUD operations but also for performing operations like creating or altering schemas, tables, or indexes. ScalarDB basically requires a fully privileged account to access the underlying databases.
+ScalarDB is middleware that runs on top of the following databases and their versions.
 
-:::
+### Relational databases
 
-### How to configure databases to achieve the general requirements
+<Tabs groupId="RDBs" queryString>
+<TabItem value="Oracle_Database" label="Oracle Database" default>
 
-Select your database for details on how to configure it to achieve the general requirements.
+| Version           | Oracle Database 23ai  | Oracle Database 21c  | Oracle Database 19c  |
+|:------------------|:--------------------|:------------------|:------------------|
+| **ScalarDB 3.13** | ✅                  | ✅                | ✅                |
+| **ScalarDB 3.12** | ✅                  | ✅                | ✅                |
+| **ScalarDB 3.11** | ✅                  | ✅                | ✅                |
+| **ScalarDB 3.10** | ✅                  | ✅                | ✅                |
+| **ScalarDB 3.9**  | ✅                  | ✅                | ✅                |
+| **ScalarDB 3.8**  | ✅                  | ✅                | ✅                |
+| **ScalarDB 3.7**  | ✅                  | ✅                | ✅                |
 
-<Tabs groupId="databases" queryString>
-  <TabItem value="JDBC_databases" label="JDBC databases" default>
-    <h4>Transactions</h4>
+</TabItem>
+<TabItem value="MySQL" label="MySQL">
 
-    - Use a single primary server or synchronized multi-primary servers for all operations (no read operations on read replicas that are asynchronously replicated from a primary database).
-    - Use read-committed or stricter isolation levels.
+| Version           | MySQL 8.1  | MySQL 8.0  | MySQL 5.7  |
+|:------------------|:-----------|:-----------|:-----------|
+| **ScalarDB 3.13** | ✅         | ✅         | ✅         |
+| **ScalarDB 3.12** | ✅         | ✅         | ✅         |
+| **ScalarDB 3.11** | ✅         | ✅         | ✅         |
+| **ScalarDB 3.10** | ✅         | ✅         | ✅         |
+| **ScalarDB 3.9**  | ✅         | ✅         | ✅         |
+| **ScalarDB 3.8**  | ✅         | ✅         | ✅         |
+| **ScalarDB 3.7**  | ✅         | ✅         | ✅         |
 
-    <h4>Analytics</h4>
+</TabItem>
+<TabItem value="PostgreSQL" label="PostgreSQL">
 
-    - Use read-committed or stricter isolation levels.
-  </TabItem>
-  <TabItem value="DynamoDB" label="DynamoDB">
-    <h4>Transactions</h4>
+| Version           | PostgreSQL 15  | PostgreSQL 14  | PostgreSQL 13  | PostgreSQL 12  |
+|:------------------|:---------------|:---------------|:---------------|:---------------|
+| **ScalarDB 3.13** | ✅             | ✅             | ✅             | ✅             |
+| **ScalarDB 3.12** | ✅             | ✅             | ✅             | ✅             |
+| **ScalarDB 3.11** | ✅             | ✅             | ✅             | ✅             |
+| **ScalarDB 3.10** | ✅             | ✅             | ✅             | ✅             |
+| **ScalarDB 3.9**  | ✅             | ✅             | ✅             | ✅             |
+| **ScalarDB 3.8**  | ✅             | ✅             | ✅             | ✅             |
+| **ScalarDB 3.7**  | ✅             | ✅             | ✅             | ✅             |
 
-    - Use a single primary region for all operations. (No read and write operations on global tables in non-primary regions.)
-      - There is no concept for primary regions in DynamoDB, so you must designate a primary region by yourself.
+</TabItem>
+<TabItem value="Amazon_Aurora_MySQL" label="Amazon Aurora MySQL">
 
-    <h4>Analytics</h4>
+| Version           | Aurora MySQL 3  | Aurora MySQL 2  |
+|:------------------|:----------------|:----------------|
+| **ScalarDB 3.13** | ✅              | ✅              |
+| **ScalarDB 3.12** | ✅              | ✅              |
+| **ScalarDB 3.11** | ✅              | ✅              |
+| **ScalarDB 3.10** | ✅              | ✅              |
+| **ScalarDB 3.9**  | ✅              | ✅              |
+| **ScalarDB 3.8**  | ✅              | ✅              |
+| **ScalarDB 3.7**  | ✅              | ✅              |
 
-    - Not applicable. DynamoDB always returns committed records, so there are no DynamoDB-specific requirements.
-  </TabItem>
-  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
-    <h4>Transactions</h4>
+</TabItem>
+<TabItem value="Amazon_Aurora_PostgreSQL" label="Amazon Aurora PostgreSQL">
 
-    - Use a single primary region for all operations with `Strong` or `Bounded Staleness` consistency.
+| Version           | Aurora PostgreSQL 15  | Aurora PostgreSQL 14  | Aurora PostgreSQL 13  | Aurora PostgreSQL 12  |
+|:------------------|:----------------------|:----------------------|:----------------------|:----------------------|
+| **ScalarDB 3.13** | ✅                    | ✅                    | ✅                    | ✅                    |
+| **ScalarDB 3.12** | ✅                    | ✅                    | ✅                    | ✅                    |
+| **ScalarDB 3.11** | ✅                    | ✅                    | ✅                    | ✅                    |
+| **ScalarDB 3.10** | ✅                    | ✅                    | ✅                    | ✅                    |
+| **ScalarDB 3.9**  | ✅                    | ✅                    | ✅                    | ✅                    |
+| **ScalarDB 3.8**  | ✅                    | ✅                    | ✅                    | ✅                    |
+| **ScalarDB 3.7**  | ✅                    | ✅                    | ✅                    | ✅                    |
 
-    <h4>Analytics</h4>
+</TabItem>
+<TabItem value="MariaDB" label="MariaDB">
 
-    - Not applicable. Cosmos DB always returns committed records, so there are no Cosmos DB–specific requirements.
-  </TabItem>
-  <TabItem value="Cassandra" label="Cassandra" >
-    <h4>Transactions</h4>
+| Version           | MariaDB 11.4  | MariaDB 10.11 |
+|:------------------|:--------------|:--------------|
+| **ScalarDB 3.13** | ✅            | ✅            |
+| **ScalarDB 3.12** | ✅            | ✅            |
+| **ScalarDB 3.11** | ✅            | ✅            |
+| **ScalarDB 3.10** | ✅            | ✅            |
+| **ScalarDB 3.9**  | ✅            | ✅            |
+| **ScalarDB 3.8**  | ✅            | ✅            |
+| **ScalarDB 3.7**  | ✅            | ✅            |
 
-    - Use a single primary cluster for all operations (no read or write operations in non-primary clusters).
-    - Use `batch` or `group` for `commitlog_sync`.
-    - If you're using Cassandra-compatible databases, those databases must properly support lightweight transactions (LWT).
+</TabItem>
+<TabItem value="SQL_Server" label="SQL Server">
 
-    <h4>Analytics</h4>
+| Version           | SQL Server 2022  | SQL Server 2019  | SQL Server 2017  |
+|:------------------|:-----------------|:-----------------|:-----------------|
+| **ScalarDB 3.13** | ✅               | ✅               | ✅               |
+| **ScalarDB 3.12** | ✅               | ✅               | ✅               |
+| **ScalarDB 3.11** | ✅               | ✅               | ✅               |
+| **ScalarDB 3.10** | ✅               | ✅               | ✅               |
+| **ScalarDB 3.9**  | ✅               | ✅               | ✅               |
+| **ScalarDB 3.8**  | ✅               | ✅               | ✅               |
+| **ScalarDB 3.7**  | ✅               | ✅               | ✅               |
 
-    - Not applicable. Cassandra always returns committed records, so there are no Cassandra-specific requirements.
-  </TabItem>
+</TabItem>
+<TabItem value="SQLite" label="SQLite">
+
+| Version           | SQLite 3  |
+|:------------------|:----------|
+| **ScalarDB 3.13** | ✅        |
+| **ScalarDB 3.12** | ✅        |
+| **ScalarDB 3.11** | ✅        |
+| **ScalarDB 3.10** | ✅        |
+| **ScalarDB 3.9**  | ✅        |
+| **ScalarDB 3.8**  | ❌        |
+| **ScalarDB 3.7**  | ❌        |
+
+</TabItem>
+<TabItem value="YugabyteDB" label="YugabyteDB">
+
+| Version           | YugabyteDB 2 |
+|:------------------|:-------------|
+| **ScalarDB 3.13** | ✅           |
+| **ScalarDB 3.12** | ❌           |
+| **ScalarDB 3.11** | ❌           |
+| **ScalarDB 3.10** | ❌           |
+| **ScalarDB 3.9**  | ❌           |
+| **ScalarDB 3.8**  | ❌           |
+| **ScalarDB 3.7**  | ❌           |
+
+</TabItem>
 </Tabs>
 
-## Recommendations
+### NoSQL databases
 
-Properly configuring each underlying database of ScalarDB for high performance and high availability is recommended. The following recommendations include some knobs and configurations to update.
+<Tabs groupId="NoSQL" queryString>
+<TabItem value="Amazon_DynamoDB" label="Amazon DynamoDB" default>
 
-:::note
+| Version           | DynamoDB  |
+|:------------------|:----------|
+| **ScalarDB 3.13** | ✅        |
+| **ScalarDB 3.12** | ✅        |
+| **ScalarDB 3.11** | ✅        |
+| **ScalarDB 3.10** | ✅        |
+| **ScalarDB 3.9**  | ✅        |
+| **ScalarDB 3.8**  | ✅        |
+| **ScalarDB 3.7**  | ✅        |
 
-ScalarDB can be seen as an application of underlying databases, so you may want to try updating other knobs and configurations that are commonly used to improve efficiency.
+</TabItem>
+<TabItem value="Apache_Cassandra" label="Apache Cassandra">
 
-:::
+| Version           | Cassandra 4.1  | Cassandra 4.0  | Cassandra 3.11  | Cassandra 3.0  |
+|:------------------|:---------------|:---------------|:----------------|:---------------|
+| **ScalarDB 3.13** | ❌             | ❌             | ✅              | ✅             |
+| **ScalarDB 3.12** | ❌             | ❌             | ✅              | ✅             |
+| **ScalarDB 3.11** | ❌             | ❌             | ✅              | ✅             |
+| **ScalarDB 3.10** | ❌             | ❌             | ✅              | ✅             |
+| **ScalarDB 3.9**  | ❌             | ❌             | ✅              | ✅             |
+| **ScalarDB 3.8**  | ❌             | ❌             | ✅              | ✅             |
+| **ScalarDB 3.7**  | ❌             | ❌             | ✅              | ✅             |
 
-<Tabs groupId="databases" queryString>
-  <TabItem value="JDBC_databases" label="JDBC databases" default>
-    - Use read-committed isolation for better performance.
-    - Follow the performance optimization best practices for each database. For example, increasing the buffer size (for example, `shared_buffers` in PostgreSQL) and increasing the number of connections (for example, `max_connections` in PostgreSQL) are usually recommended for better performance.
-  </TabItem>
-  <TabItem value="DynamoDB" label="DynamoDB">
-    - Increase the number of read capacity units (RCUs) and write capacity units (WCUs) for high throughput.
-    - Enable point-in-time recovery (PITR).
+</TabItem>
+<TabItem value="Azure_Cosmos_DB_for_NoSQL" label="Azure Cosmos DB for NoSQL">
 
-:::note
+| Version           | Cosmos DB for NoSQL  |
+|:------------------|:---------------------|
+| **ScalarDB 3.13** | ✅                   |
+| **ScalarDB 3.12** | ✅                   |
+| **ScalarDB 3.11** | ✅                   |
+| **ScalarDB 3.10** | ✅                   |
+| **ScalarDB 3.9**  | ✅                   |
+| **ScalarDB 3.8**  | ✅                   |
+| **ScalarDB 3.7**  | ✅                   |
 
-Since DynamoDB stores data in multiple availability zones by default, you don’t need to adjust any configurations to improve availability.
-
-:::
-  </TabItem>
-  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
-    - Increase the number of Request Units (RUs) for high throughput.
-    - Enable point-in-time restore (PITR).
-    - Enable availability zones.
-  </TabItem>
-  <TabItem value="Cassandra" label="Cassandra">
-    - Increase `concurrent_reads` and `concurrent_writes` for high throughput. For details, see the official Cassandra documentation about [`concurrent_writes`](https://cassandra.apache.org/doc/stable/cassandra/configuration/cass_yaml_file.html#concurrent_writes).
-  </TabItem>
+</TabItem>
 </Tabs>
+
+:::note
+
+For details on how to configure each database, see [Configurations for the Underlying Databases of ScalarDB](./database-configurations.mdx).
+
+:::
+
+## Kubernetes
+
+ScalarDB is provided as a Pod on the Kubernetes platform in production environments. ScalarDB supports the following platforms and tools.
+
+### Platform
+- **[Kubernetes](https://kubernetes.io/):** 1.26 - 1.30
+- **[Red Hat OpenShift](https://www.redhat.com/en/technologies/cloud-computing/openshift):** TBD
+
+### Package manager
+- **[Helm](https://helm.sh/):** 3.5+
