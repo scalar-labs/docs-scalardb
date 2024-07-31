@@ -2,53 +2,40 @@
 
 This guide describes how to use ScalarDB SQL API.
 
+## Add ScalarDB SQL API to your project
+
+To add the dependencies on ScalarDB SQL API by using Gradle, use the following, replacing `<VERSION>` with the versions of ScalarDB SQL API and the related library, respectively, that you are using:
+
+```gradle
+dependencies {
+    implementation 'com.scalar-labs:scalardb-sql:<VERSION>'
+    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:<VERSION>'
+}
+```
+
+To add the dependencies by using Maven, use the following, replacing `...` with the version of ScalarDB SQL API that you are using:
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.scalar-labs</groupId>
+        <artifactId>scalardb-sql</artifactId>
+        <version>...</version>
+    </dependency>
+    <dependency>
+        <groupId>com.scalar-labs</groupId>
+        <artifactId>scalardb-cluster-java-client-sdk</artifactId>
+        <version>...</version>
+    </dependency>
+</dependencies>
+```
+
 ## SqlSessionFactory
 
 In ScalarDB SQL API, you execute all operations through a `SqlSession` instance, which is instantiated with `SqlSessionFactory`.
 This section explains how to use them.
 
 Before explaining `SqlSessionFactory`, we start with the explanation for Connection mode and Transaction mode.
-
-### Connection mode
-
-ScalarDB SQL offers two connection modes: *Direct* and *Server* modes.
-With Direct mode, ScalarDB SQL client-side library directly uses ScalarDB API.
-On the other hand, with Server mode, ScalarDB SQL client-side library uses ScalarDB API indirectly through [ScalarDB SQL Server](sql-server.mdx).
-
-You need to add a dependency on ScalarDB SQL client-side library for the connection mode you want to use.
-
-To add a dependency on ScalarDB SQL using Gradle, use the following:
-```gradle
-dependencies {
-    // For Direct mode
-    implementation 'com.scalar-labs:scalardb-sql-direct-mode:<version>'
-
-    // For Server mode
-    implementation 'com.scalar-labs:scalardb-sql-server-mode:<version>'
-}
-```
-
-To add a dependency using Maven:
-```xml
-<dependencies>
-  <!-- For Direct mode -->
-  <dependency>
-    <groupId>com.scalar-labs</groupId>
-    <artifactId>scalardb-sql-direct-mode</artifactId>
-    <version>${version}</version>
-  </dependency>
-
-  <!-- For Server mode -->
-  <dependency>
-    <groupId>com.scalar-labs</groupId>
-    <artifactId>scalardb-sql-server-mode</artifactId>
-    <version>${version}</version>
-  </dependency>
-</dependencies>
-```
-
-You also need to specify a connection mode in your configuration file or when you build `SqlSessionFactory`.
-And if you don't specify it and if you have only one dependency on the connection mode, the connection mode will be automatically detected.
 
 ### Transaction mode
 
@@ -70,7 +57,7 @@ SqlSessionFactory sqlSessionFactory = SqlSessionFactory.builder()
     .build();
 ```
 
-Please see [ScalarDB SQL Configurations](configurations.mdx) for the details of the configurations.
+Please see [ScalarDB Cluster SQL client configurations](../scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-client-configurations) for the details of the configurations.
 
 ### Get a SqlSession instance
 
@@ -118,7 +105,7 @@ ResultSet resultSet = sqlSession.execute(statement);
 ```
 
 `Statement` objects can be built by `StatementBuilder` that has factory methods for corresponding SQLs.
-Please see [the Javadoc of `StatementBuilder`](https://scalar-labs.github.io/scalardb-sql/javadoc/core/com/scalar/db/sql/builder/StatementBuilder.html) and [ScalarDB SQL Grammar](grammar.mdx) for more details.
+Please see [the Javadoc of `StatementBuilder`](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.13.0/com/scalar/db/sql/statement/builder/StatementBuilder.html) and [ScalarDB SQL Grammar](grammar.mdx) for more details.
 
 ### Handle ResultSet objects
 
@@ -149,7 +136,7 @@ If you want to get the metadata of the `ResultSet` object, you can use the `getC
 ColumnDefinitions columnDefinitions = resultSet.getColumnDefinitions();
 ```
 
-Please see [the Javadoc of `ColumnDefinitions`](https://scalar-labs.github.io/scalardb-sql/javadoc/core/com/scalar/db/sql/ColumnDefinition.html) for more details.
+Please see [the Javadoc of `ColumnDefinitions`](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.13.0/com/scalar/db/sql/ColumnDefinition.html) for more details.
 
 ### Handle Record objects
 
@@ -199,7 +186,7 @@ boolean isNullGottenByName = record.isNull("<column name>");
 boolean isNullGottenByIndex = record.isNull(<column index>);
 ```
 
-Please see also [the Javadoc of `Record`](https://scalar-labs.github.io/scalardb-sql/javadoc/core/com/scalar/db/sql/Record.html) for more details.
+Please see also [the Javadoc of `Record`](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.13.0/com/scalar/db/sql/Record.html) for more details.
 
 ### Prepared Statements
 
@@ -244,7 +231,7 @@ preparedStatement2
     .execute();
 ```
 
-Please see also [the Javadoc of `PreparedStatement`](https://scalar-labs.github.io/scalardb-sql/javadoc/core/com/scalar/db/sql/PreparedStatement.html) for more details.
+Please see also [the Javadoc of `PreparedStatement`](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.13.0/com/scalar/db/sql/PreparedStatement.html) for more details.
 
 ## Execute transactions
 
@@ -358,11 +345,10 @@ You can get metadata with the `SqlSession.getMetadata()` method as follows:
 Metadata metadata = sqlSession.getMetadata();
 ```
 
-Please see [the Javadoc of `Metadata`](https://scalar-labs.github.io/scalardb-sql/javadoc/core/com/scalar/db/sql/metadata/Metadata.html) for the details.
+Please see [the Javadoc of `Metadata`](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.13.0/com/scalar/db/sql/metadata/Metadata.html) for the details.
 
 ## References
 
-- [Javadoc of the ScalarDB SQL API](https://scalar-labs.github.io/scalardb-sql/javadoc/core/index.html)
 - [ScalarDB SQL Grammar](grammar.mdx)
 - [Two-phase Commit Transactions](../two-phase-commit-transactions.mdx)
 - [Javadoc for ScalarDB SQL](https://javadoc.io/doc/com.scalar-labs/scalardb-sql/3.12.3/index.html)
