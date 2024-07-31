@@ -24,77 +24,143 @@ This sample application only works with Java 8. However, ScalarDB itself works w
 
 :::
 
-## Clone the `scalardb` repository
- 
-Open a terminal window, and go to your working directory. Then, clone the [scalardb](https://github.com/scalar-labs/scalardb) repository by running the following command:
+In addition, since you'll be using Docker Compose to run the databases, you must have [Docker](https://www.docker.com/get-started/) 20.10 or later with [Docker Compose](https://docs.docker.com/compose/install/) V2 or later installed.
 
-```shell
-$ git clone https://github.com/scalar-labs/scalardb
+## Clone the ScalarDB samples repository
+
+Open **Terminal**, then clone the ScalarDB samples repository by running the following command:
+
+```console
+git clone https://github.com/scalar-labs/scalardb-samples
 ```
 
-Then, go to the `scalardb/docs/getting-started-kotlin` directory in the cloned repository by running the following command: 
+Then, go to the directory that contains the sample application by running the following command:
 
-```shell
-$ cd scalardb/docs/getting-started-kotlin
+```console
+cd scalardb-samples/scalardb-kotlin-sample
 ```
 
 ## Set up your database for ScalarDB
 
 Select your database, and follow the instructions to configure it for ScalarDB.
 
-For a list of databases that ScalarDB supports, see [Supported Databases](scalardb-supported-databases.mdx).
+For a list of databases that ScalarDB supports, see [Databases](requirements.mdx#databases).
 
 <Tabs groupId="databases" queryString>
-  <TabItem value="JDBC_databases" label="JDBC databases" default>
-    Confirm that you have a JDBC database installed. For a list of supported JDBC databases, see [Supported Databases](scalardb-supported-databases.mdx).
+  <TabItem value="MySQL" label="MySQL" default>
+    <h3>Run MySQL locally</h3>
+
+    You can run MySQL in Docker Compose by using the `docker-compose.yml` file in the `scalardb-samples/scalardb-kotlin-sample` directory.
+
+    To start MySQL, run the following command:
+
+    ```console
+    docker compose up -d mysql
+    ```
 
     <h3>Configure ScalarDB</h3>
 
-    The following instructions assume that you have properly installed and configured the JDK and JDBC database in your local environment, and the JDBC database is running on your localhost.
-
-    The **scalardb.properties** file in the `docs/getting-started-kotlin` directory holds database configurations for ScalarDB. The following is a basic configuration for JDBC databases.
-
-:::note
-
-Be sure to uncomment the `scalar.db.contact_points` variable and change the value of the JDBC database you are using, and change the values for `scalar.db.username` and `scalar.db.password` as described.
-
-:::
+    The **database.properties** file in the `scalardb-samples/scalardb-kotlin-sample` directory contains database configurations for ScalarDB. Please uncomment the properties for MySQL in the **database.properties** file so that the configuration looks as follows:
 
     ```properties
-    # The JDBC database storage implementation is used for Consensus Commit.
+    # For MySQL
     scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:mysql://localhost:3306/
+    scalar.db.username=root
+    scalar.db.password=mysql
+    ```
+  </TabItem>
+  <TabItem value="PostgreSQL" label="PostgreSQL" default>
+    <h3>Run PostgreSQL locally</h3>
 
-    # The JDBC database URL for the type of database you are using.
-    # scalar.db.contact_points=jdbc:mysql://localhost:3306/
-    # scalar.db.contact_points=jdbc:oracle:thin:@//localhost:1521/
-    # scalar.db.contact_points=jdbc:postgresql://localhost:5432/
-    # scalar.db.contact_points=jdbc:sqlserver://localhost:1433;
-    # scalar.db.contact_points=jdbc:sqlite://localhost:3306.sqlite3?busy_timeout=10000
+    You can run PostgreSQL in Docker Compose by using the `docker-compose.yml` file in the `scalardb-samples/scalardb-kotlin-sample` directory.
 
-    # The username and password for connecting to the database.
-    scalar.db.username=<USER_NAME>
-    scalar.db.password=<PASSWORD>
+    To start PostgreSQL, run the following command:
+
+    ```console
+    docker compose up -d postgres
+    ```
+
+    <h3>Configure ScalarDB</h3>
+
+    The **database.properties** file in the `scalardb-samples/scalardb-kotlin-sample` directory contains database configurations for ScalarDB. Please uncomment the properties for PostgreSQL in the **database.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For PostgreSQL
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:postgresql://localhost:5432/
+    scalar.db.username=postgres
+    scalar.db.password=postgres
+    ```
+  </TabItem>
+  <TabItem value="Oracle Database" label="Oracle Database" default>
+    <h3>Run Oracle Database locally</h3>
+
+    You can run Oracle Database in Docker Compose by using the `docker-compose.yml` file in the `scalardb-samples/scalardb-kotlin-sample` directory.
+
+    To start Oracle Database, run the following command:
+
+    ```console
+    docker compose up -d oracle
+    ```
+
+    <h3>Configure ScalarDB</h3>
+
+    The **database.properties** file in the `scalardb-samples/scalardb-kotlin-sample` directory contains database configurations for ScalarDB. Please uncomment the properties for Oracle Database in the **database.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For Oracle
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:oracle:thin:@//localhost:1521/FREEPDB1
+    scalar.db.username=SYSTEM
+    scalar.db.password=Oracle
+    ```
+  </TabItem>
+  <TabItem value="SQL Server" label="SQL Server" default>
+    <h3>Run Oracle Database locally</h3>
+
+    You can run SQL Server in Docker Compose by using the `docker-compose.yml` file in the `scalardb-samples/scalardb-kotlin-sample` directory.
+
+    To start SQL Server, run the following command:
+
+    ```console
+    docker compose up -d sqlserver
+    ```
+
+    <h3>Configure ScalarDB</h3>
+
+    The **database.properties** file in the `scalardb-samples/scalardb-kotlin-sample` directory contains database configurations for ScalarDB. Please uncomment the properties for SQL Server in the **database.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For SQL Server
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:sqlserver://localhost:1433;encrypt=true;trustServerCertificate=true
+    scalar.db.username=sa
+    scalar.db.password=SqlServer22
     ```
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
-    To use Amazon DynamoDB, you must have an AWS account. If you don't have an AWS account, visit [Getting started: Are you a first-time AWS user?](https://docs.aws.amazon.com/accounts/latest/reference/welcome-first-time-user.html).
+    <h3>Run Amazon DynamoDB Local</h3>
+
+    You can run Amazon DynamoDB Local in Docker Compose by using the `docker-compose.yml` file in the `scalardb-samples/scalardb-kotlin-sample` directory.
+
+    To start Amazon DynamoDB Local, run the following command:
+
+    ```console
+    docker compose up -d dynamodb
+    ```
 
     <h3>Configure ScalarDB</h3>
 
-    The following instructions assume that you have properly installed and configured the JDK in your local environment.
-
-    The **scalardb.properties** file in the `docs/getting-started-kotlin` directory holds database configurations for ScalarDB. Be sure to change the values for `scalar.db.contact_points`, `scalar.db.username`, and  `scalar.db.password` as described.
+    The **database.properties** file in the `scalardb-samples/scalardb-kotlin-sample` directory contains database configurations for ScalarDB. Please uncomment the properties for Amazon DynamoDB Local in the **database.properties** file so that the configuration looks as follows:
 
     ```properties
-    # The DynamoDB storage implementation is used for Consensus Commit.
+    # For DynamoDB Local
     scalar.db.storage=dynamo
-
-    # The AWS region.
-    scalar.db.contact_points=<REGION>
-
-    # The AWS access key ID and secret access key to access the database.
-    scalar.db.username=<ACCESS_KEY_ID>
-    scalar.db.password=<SECRET_ACCESS_KEY>
+    scalar.db.contact_points=sample
+    scalar.db.username=sample
+    scalar.db.password=sample
+    scalar.db.dynamo.endpoint_override=http://localhost:8000
     ```
   </TabItem>
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
@@ -106,18 +172,14 @@ Be sure to uncomment the `scalar.db.contact_points` variable and change the valu
 
     <h3>Configure ScalarDB</h3>
 
-    The following instructions assume that you have properly installed and configured the JDK in your local environment and properly configured your Cosmos DB for NoSQL account in Azure. 
+    The following instructions assume that you have properly installed and configured the JDK in your local environment and properly configured your Cosmos DB for NoSQL account in Azure.
 
-    The **scalardb.properties** file in the `docs/getting-started-kotlin` directory holds database configurations for ScalarDB. Be sure to change the values for `scalar.db.contact_points` and `scalar.db.password` as described.
-        
+    The **database.properties** file in the `scalardb-samples/scalardb-kotlin-sample` directory contains database configurations for ScalarDB. Be sure to change the values for `scalar.db.contact_points` and `scalar.db.password` as described.
+
     ```properties
-    # The Cosmos DB for NoSQL storage implementation is used for Consensus Commit.
+    # For Cosmos DB
     scalar.db.storage=cosmos
-
-    # The Cosmos DB for NoSQL URI.
     scalar.db.contact_points=<COSMOS_DB_FOR_NOSQL_URI>
-
-    # The Cosmos DB for NoSQL key to access the database.
     scalar.db.password=<COSMOS_DB_FOR_NOSQL_KEY>
     ```
 
@@ -128,70 +190,120 @@ You can use a primary key or a secondary key as the value for `scalar.db.passwor
 :::
   </TabItem>
   <TabItem value="Cassandra" label="Cassandra">
-    Confirm that you have Cassandra installed. If Cassandra isn't installed, visit [Downloading Cassandra](https://cassandra.apache.org/_/download.html).
+    <h3>Run Cassandra locally</h3>
 
-    <h3>Configure Cassandra</h3>
+    You can run Apache Cassandra in Docker Compose by using the `docker-compose.yml` file in the `scalardb-samples/scalardb-kotlin-sample` directory.
 
-    Open **cassandra.yaml** in your preferred IDE. Then, change `commitlog_sync` from `periodic` to `batch` so that you don't lose data if a quorum of replica nodes goes down.
+    To start Apache Cassandra, run the following command:
+    ```console
+    docker compose up -d cassandra
+    ```
 
     <h3>Configure ScalarDB</h3>
 
-    The following instructions assume that you have properly installed and configured the JDK and Cassandra in your local environment, and Cassandra is running on your localhost.
-
-    The **scalardb.properties** file in the `docs/getting-started-kotlin` directory holds database configurations for ScalarDB. The following is a basic configuration for Cassandra. Be sure to change the values for `scalar.db.username` and `scalar.db.password` as described.
+    The **database.properties** file in the `scalardb-samples/scalardb-kotlin-sample` directory contains database configurations for ScalarDB. Please uncomment the properties for Cassandra in the **database.properties** file so that the configuration looks as follows:
 
     ```properties
-    # The Cassandra storage implementation is used for Consensus Commit.
+    # For Cassandra
     scalar.db.storage=cassandra
-
-    # Comma-separated contact points.
     scalar.db.contact_points=localhost
-
-    # The port number for all the contact points.
-    scalar.db.contact_port=9042
-
-    # The username and password to access the database.
-    scalar.db.username=<USER_NAME>
-    scalar.db.password=<USER_PASSWORD>
+    scalar.db.username=cassandra
+    scalar.db.password=cassandra
     ```
   </TabItem>
 </Tabs>
 
-## Create and load the database schema
+## Load the database schema
 
-You need to define the database schema (the method in which the data will be organized) in the application. For details about the supported data types, see [Data type mapping between ScalarDB and other databases](schema-loader.mdx#data-type-mapping-between-scalardb-and-the-other-databases).
+You need to define the database schema (the method in which the data will be organized) in the application. For details about the supported data types, see [Data type mapping between ScalarDB and other databases](schema-loader.mdx#data-type-mapping-between-scalardb-and-other-databases).
 
-For this tutorial, create a file named **emoney.json** in the `scalardb/docs/getting-started-kotlin` directory. Then, add the following JSON code to define the schema.
+For this tutorial, a file named **schema.json** already exists in the `scalardb-samples/scalardb-kotlin-sample` directory. To apply the schema, go to the [`scalardb` Releases](https://github.com/scalar-labs/scalardb/releases) page and download the ScalarDB Schema Loader that matches the version of ScalarDB that you are using to the `scalardb-samples/scalardb-kotlin-sample` directory.
 
-```json
-{
-  "emoney.account": {
-    "transaction": true,
-    "partition-key": [
-      "id"
-    ],
-    "clustering-key": [],
-    "columns": {
-      "id": "TEXT",
-      "balance": "INT"
-    }
-  }
-}
-```
+Then, based on your database, run the following command, replacing `<VERSION>` with the version of the ScalarDB Schema Loader that you downloaded:
 
-To apply the schema, go to the [`scalardb` Releases](https://github.com/scalar-labs/scalardb/releases) page and download the ScalarDB Schema Loader that matches the version of ScalarDB that you are using to the `getting-started` folder. 
-
-Then, run the following command, replacing `<VERSION>` with the version of the ScalarDB Schema Loader that you downloaded:
-
-```shell
-$ java -jar scalardb-schema-loader-<VERSION>.jar --config scalardb.properties --schema-file emoney.json --coordinator
-```
+<Tabs groupId="databases" queryString>
+  <TabItem value="MySQL" label="MySQL" default>
+    ```shell
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```
 
 :::note
 
 The `--coordinator` option is specified because a table with `transaction` set to `true` exists in the schema. For details about configuring and loading a schema, see [ScalarDB Schema Loader](schema-loader.mdx).
 
 :::
+  </TabItem>
+  <TabItem value="PostgreSQL" label="PostgreSQL" default>
+    ```shell
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```
+
+:::note
+
+The `--coordinator` option is specified because a table with `transaction` set to `true` exists in the schema. For details about configuring and loading a schema, see [ScalarDB Schema Loader](schema-loader.mdx).
+
+:::
+  </TabItem>
+  <TabItem value="Oracle Database" label="Oracle Database" default>
+    ```shell
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```
+
+:::note
+
+The `--coordinator` option is specified because a table with `transaction` set to `true` exists in the schema. For details about configuring and loading a schema, see [ScalarDB Schema Loader](schema-loader.mdx).
+
+:::
+  </TabItem>
+  <TabItem value="SQL Server" label="SQL Server" default>
+    ```shell
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```
+
+:::note
+
+The `--coordinator` option is specified because a table with `transaction` set to `true` exists in the schema. For details about configuring and loading a schema, see [ScalarDB Schema Loader](schema-loader.mdx).
+
+:::
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    ```shell
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator --no-backup --no-scaling
+    ```
+
+:::note
+
+The `--coordinator` option is specified because a table with `transaction` set to `true` exists in the schema. For details about configuring and loading a schema, see [ScalarDB Schema Loader](schema-loader.mdx).
+
+Also, `--no-backup` and `--no-scaling` options are specified because Amazon DynamoDB Local does not support continuous backup and auto-scaling.
+
+:::
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    ```shell
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```
+
+:::note
+
+The `--coordinator` option is specified because a table with `transaction` set to `true` exists in the schema. For details about configuring and loading a schema, see [ScalarDB Schema Loader](schema-loader.mdx).
+
+:::
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    ```shell
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator --replication-factor=1
+    ```
+
+:::note
+
+The `--coordinator` option is specified because a table with `transaction` set to `true` exists in the schema. For details about configuring and loading a schema, see [ScalarDB Schema Loader](schema-loader.mdx).
+
+In addition, the `--replication-factor=1` option has an effect only when using Cassandra. The default replication factor is `3`, but to facilitate the setup in this tutorial, `1` is used so that you only need to prepare a cluster with one node instead of three nodes. However, keep in mind that a replication factor of `1` is not suited for production.
+
+:::
+  </TabItem>
+</Tabs>
 
 ## Execute transactions and retrieve data in the basic electronic money application
 
@@ -216,8 +328,8 @@ You need an account with a balance so that you can send funds between accounts.
 
 To create an account for **customer1** that has a balance of **500**, run the following command:
 
-```shell
-$ ./gradlew run --args="-action charge -amount 500 -to customer1"
+```console
+./gradlew run --args="-action charge -amount 500 -to customer1"
 ```
 
 ### Create an account without a balance
@@ -226,8 +338,8 @@ After setting up an account that has a balance, you need another account for sen
 
 To create an account for **merchant1** that has a balance of **0**, run the following command:
 
-```shell
-$ ./gradlew run --args="-action charge -amount 0 -to merchant1"
+```console
+./gradlew run --args="-action charge -amount 0 -to merchant1"
 ```
 
 ### Add funds to an account
@@ -236,8 +348,8 @@ You can add funds to an account in the same way that you created and added funds
 
 To add **500** to the account for **customer1**, run the following command:
 
-```shell
-$ ./gradlew run --args="-action charge -amount 500 -to customer1"
+```console
+./gradlew run --args="-action charge -amount 500 -to customer1"
 ```
 
 The account for **customer1** will now have a balance of **1000**.
@@ -248,8 +360,8 @@ Now that you have created two accounts, with at least one of those accounts havi
 
 To have **customer1** pay **100** to **merchant1**, run the following command:
 
-```shell
-$ ./gradlew run --args="-action pay -amount 100 -from customer1 -to merchant1"
+```console
+./gradlew run --args="-action pay -amount 100 -from customer1 -to merchant1"
 ```
 
 ### Get an account balance
@@ -258,13 +370,13 @@ After sending funds from one account to the other, you can check the balance of 
 
 To get the balance of **customer1**, run the following command:
 
-```shell
-$ ./gradlew run --args="-action getBalance -id customer1"
+```console
+./gradlew run --args="-action getBalance -id customer1"
 ```
 
 You should see the following output:
 
-```shell
+```console
 ...
 The balance for customer1 is 900
 ...
@@ -272,8 +384,8 @@ The balance for customer1 is 900
 
 To get the balance of **merchant1**, run the following command:
 
-```shell
-$ ./gradlew run --args="-action getBalance -id merchant1"
+```console
+./gradlew run --args="-action getBalance -id merchant1"
 ```
 
 You should see the following output:
@@ -284,6 +396,14 @@ The balance for merchant1 is 100
 ...
 ```
 
+## Stop the database
+
+To stop the database, stop the Docker container by running the following command:
+
+```console
+docker compose down
+```
+
 ## Reference
 
-To see the source code for the electronic money application used in this tutorial, see [`ElectronicMoney.kt`](./getting-started-kotlin/src/main/kotlin/sample/ElectronicMoney.kt).
+To see the source code for the electronic money application used in this tutorial, see [`ElectronicMoney.kt`](https://github.com/scalar-labs/scalardb-samples/blob/main/getting-started-kotlin/src/main/kotlin/sample/ElectronicMoney.kt).
