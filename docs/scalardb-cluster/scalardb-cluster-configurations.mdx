@@ -202,12 +202,34 @@ The configurations for ScalarDB Cluster GraphQL are as follows:
 | `scalar.db.graphql.graphiql`                        | Whether the GraphQL server serves [GraphiQL](https://github.com/graphql/graphiql) IDE.                                                      | `true`               |
 | `scalar.db.graphql.schema_checking_interval_millis` | Interval in milliseconds at which GraphQL server will rebuild the GraphQL schema if any change is detected in the ScalarDB schema.          | `30000` (30 seconds) |
 
+### Creating or modifying the ScalarDB schema when the server is running
+
+Since the GraphQL schema is statically built at server startup, if the ScalarDB schema is modified (for example, if a table is added, altered, or deleted), then the corresponding GraphQL schema won't reflect the changes unless it is rebuilt. To address this, the GraphQL server provides two mechanisms: a periodic check and an on-demand check.
+
+#### Run periodic checks
+
+The server periodically checks if changes in the ScalarDB schema occur and rebuilds the corresponding GraphQL schema if necessary. By default, the check occurs every 30 seconds, but the interval can be configured by using the `scalar.db.graphql.schema_checking_interval_millis` property. 
+
+If you don't need to run periodic checks, you can disable it by setting the property value to `-1`.
+
+#### Run on-demand checks
+
+You can also request the server to check changes in the ScalarDB schema and rebuild the corresponding GraphQL schema if necessary by performing a POST request to the `/update-graphql-schema` endpoint of the HTTP API.
+
+For example, if the HTTP API is running on `localhost:8080` and the `scalar.db.graphql.path` property is set to `/graphql`, this endpoint can be called by running the following command:
+
+```console
+curl -X POST http://localhost:8080/graphql/update-graphql-schema
+```
+
 ## ScalarDB Cluster SQL Configurations
 
 The configurations for ScalarDB Cluster SQL are as follows:
 
-| Name                                    | Description                              | Default |
-|-----------------------------------------|------------------------------------------|---------|
-| `scalar.db.sql.enabled`                 | Whether ScalarDB Cluster SQL is enabled. | `false` |
-| `scalar.db.sql.statement_cache.enabled` | Enable the statement cache.              | `false` |
-| `scalar.db.sql.statement_cache.size`    | Maximum number of cached statements.     | `100`   |
+| Name                                     | Description                                                                                              | Default       |
+|------------------------------------------|----------------------------------------------------------------------------------------------------------|---------------|
+| `scalar.db.sql.enabled`                  | Whether ScalarDB Cluster SQL is enabled.                                                                 | `false`       |
+| `scalar.db.sql.statement_cache.enabled`  | Enable the statement cache.                                                                              | `false`       |
+| `scalar.db.sql.statement_cache.size`     | Maximum number of cached statements.                                                                     | `100`         |
+| `scalar.db.sql.default_transaction_mode` | Default transaction mode. `TRANSACTION` or `TWO_PHASE_COMMIT_TRANSACTION` can be set.                    | `TRANSACTION` |
+| `scalar.db.sql.default_namespace_name`   | Default namespace name. If you don't specify a namespace name in your SQL statement, this value is used. |               |
