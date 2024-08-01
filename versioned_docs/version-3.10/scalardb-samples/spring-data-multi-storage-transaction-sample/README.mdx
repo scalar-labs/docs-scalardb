@@ -2,41 +2,38 @@
 
 This tutorial describes how to create a sample Spring Boot application by using Spring Data JDBC for ScalarDB with Multi-storage Transactions.
 
-## Prerequisites
+## Prerequisites for this sample application
 
-- Java (OpenJDK 8 or higher)
-- Gradle
-- Docker, Docker Compose
+- One of the following Java Development Kits (JDKs):
+  - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) 8
+  - OpenJDK 8 from [Eclipse Temurin](https://adoptium.net/temurin/releases/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft](https://learn.microsoft.com/en-us/java/openjdk/download)
+- [Docker](https://www.docker.com/get-started/) 20.10 or later with [Docker Compose](https://docs.docker.com/compose/install/) V2 or later
 
-In addition, you need access to the [ScalarDB SQL GitHub repository](https://github.com/scalar-labs/scalardb-sql) and [Packages in ScalarDB SQL repository](https://github.com/orgs/scalar-labs/packages?repo_name=scalardb-sql).
-These repositories are available only to users with a commercial license and permission.
-To get a license and permission, please [contact us](https://www.scalar-labs.com/contact/).
+:::note
 
-You also need the `gpr.user` property for your GitHub username and the `gpr.key` property for your personal access token.
-You must either add these properties in `~/.gradle/gradle.properties` or specify the properties by using the `-P` option when running the `./gradlew` command as follows:
+This sample application only works with Java 8. However, ScalarDB itself works with Java LTS versions, which means that you can use Java LTS versions for your application that uses ScalarDB. For details on the requirements of ScalarDB, such as which Java versions can be used, see [Requirements](../../requirements.mdx).
 
-```shell
-$ ./gradlew run ... -Pgpr.user=<YOUR_GITHUB_USERNAME> -Pgpr.key=<YOUR_PERSONAL_ACCESS_TOKEN>
-```
+:::
 
-Or you can also use environment variables, `USERNAME` for your GitHub username and `TOKEN` for your personal access token.
-
-```shell
-$ export USERNAME=<YOUR_GITHUB_USERNAME>
-$ export TOKEN=<YOUR_PERSONAL_ACCESS_TOKEN>
-```
-
-For more details, see [Install - ScalarDB SQL](https://github.com/scalar-labs/scalardb-sql#install).
+Also, you need to have a license key (trial license or commercial license) for ScalarDB Cluster. If you don't have a license key, please [contact us](https://www.scalar-labs.com/contact).
 
 ## Sample application
 
 ### Overview
 
-This tutorial describes how to create a sample Spring Boot application for the same use case as [ScalarDB Sample](../scalardb-sample/README.mdx) but by using Spring Data JDBC for ScalarDB with Multi-storage Transaction.
-Please note that application-specific error handling, authentication processing, etc. are omitted in the sample application since this tutorial focuses on explaining how to use Spring Data JDBC for ScalarDB with Multi-storage Transaction.
-For details, please see [Guide of Spring Data JDBC for ScalarDB](../../scalardb-sql/spring-data-guide.mdx).
+This tutorial illustrates the process of creating a sample e-commerce application, where items can be ordered and paid for with a line of credit by using the [multi-storage transactions](../../multi-storage-transactions.mdx) feature in ScalarDB.
+
+:::note
+
+Application-specific error handling, authentication processing, etc. are omitted in the sample application since this tutorial focuses on explaining how to use Spring Data JDBC for ScalarDB with multi-storage transactions.
+
+For details, see [Guide of Spring Data JDBC for ScalarDB](../../scalardb-sql/spring-data-guide.mdx).
+
+:::
 
 ![Overview](images/overview.png)
+
+The application accesses the databases through ScalarDB Cluster.
 
 ### Schema
 
@@ -102,27 +99,30 @@ The following five transactions are implemented in this sample application:
 4. Getting order information by customer ID
 5. Repayment (reduces the amount in the `credit_total`)
 
-## Configuration
+## Configuration for ScalarDB Cluster
 
-Configurations for the sample Spring Boot application are as follows:
+[The configuration for ScalarDB Cluster](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-multi-storage-transaction-sample/scalardb-cluster-node.properties) are as follows:
 
-```application.properties
-spring.datasource.driver-class-name=com.scalar.db.sql.jdbc.SqlJdbcDriver
-spring.datasource.url=jdbc:scalardb:\
-?scalar.db.sql.connection_mode=direct\
-&scalar.db.storage=multi-storage\
-&scalar.db.multi_storage.storages=cassandra,mysql\
-&scalar.db.multi_storage.storages.cassandra.storage=cassandra\
-&scalar.db.multi_storage.storages.cassandra.contact_points=localhost\
-&scalar.db.multi_storage.storages.cassandra.username=cassandra\
-&scalar.db.multi_storage.storages.cassandra.password=cassandra\
-&scalar.db.multi_storage.storages.mysql.storage=jdbc\
-&scalar.db.multi_storage.storages.mysql.contact_points=jdbc:mysql://localhost:3306/\
-&scalar.db.multi_storage.storages.mysql.username=root\
-&scalar.db.multi_storage.storages.mysql.password=mysql\
-&scalar.db.multi_storage.namespace_mapping=customer:mysql,order:cassandra,coordinator:cassandra\
-&scalar.db.multi_storage.default_storage=cassandra\
-&scalar.db.consensus_commit.isolation_level=SERIALIZABLE
+```properties
+scalar.db.storage=multi-storage
+scalar.db.multi_storage.storages=cassandra,mysql
+scalar.db.multi_storage.storages.cassandra.storage=cassandra
+scalar.db.multi_storage.storages.cassandra.contact_points=cassandra-1
+scalar.db.multi_storage.storages.cassandra.username=cassandra
+scalar.db.multi_storage.storages.cassandra.password=cassandra
+scalar.db.multi_storage.storages.mysql.storage=jdbc
+scalar.db.multi_storage.storages.mysql.contact_points=jdbc:mysql://mysql-1:3306/
+scalar.db.multi_storage.storages.mysql.username=root
+scalar.db.multi_storage.storages.mysql.password=mysql
+scalar.db.multi_storage.namespace_mapping=customer:mysql,order:cassandra,coordinator:cassandra
+scalar.db.multi_storage.default_storage=cassandra
+
+scalar.db.cluster.node.standalone_mode.enabled=true
+scalar.db.sql.enabled=true
+
+# License key configurations
+scalar.db.cluster.node.licensing.license_key=
+scalar.db.cluster.node.licensing.license_check_cert_pem=
 ```
 
 - `scalar.db.storage`: Specifying `multi-storage` is necessary to use Multi-storage Transactions in ScalarDB.
@@ -132,7 +132,20 @@ spring.datasource.url=jdbc:scalardb:\
 - `scalar.db.multi_storage.namespace_mapping`: This configuration maps the namespaces to the storage. In this sample application, operations for `customer` namespace tables are mapped to the `mysql` storage and operations for `order` namespace tables are mapped to the `cassandra` storage. You can also define which storage is mapped for the `coordinator` namespace that is used in Consensus Commit transactions.
 - `scalar.db.multi_storage.default_storage`: This configuration sets the default storage that is used for operations on unmapped namespace tables.
 
-For details, please see [Configuration - Multi-storage Transactions](../../multi-storage-transactions.mdx#configuration).
+For details, see [Multi-Storage Transactions](../../multi-storage-transactions.mdx).
+
+In this sample application, ScalarDB Cluster is running in standalone mode (`scalar.db.cluster.node.standalone_mode.enabled=true`).
+
+Also, you need to set the license key (trial license or commercial license) for ScalarDB Cluster in the configuration file. For details, see [How to Configure a Product License Key](../../scalar-licensing/README.mdx).
+
+## Client Configuration
+
+[The client configuration](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-multi-storage-transaction-sample/scalardb-sql.properties) is as follows:
+
+```properties
+scalar.db.sql.connection_mode=cluster
+scalar.db.sql.cluster_mode.contact_points=indirect:localhost
+```
 
 ## Setup
 
@@ -150,9 +163,13 @@ Then, go to the directory with this sample by running the following command:
 $ cd scalardb-samples/spring-data-multi-storage-transaction-sample
 ```
 
-### Start Cassandra and MySQL
+### Set the license key
 
-To start Cassandra and MySQL, you need to run the following `docker-compose` command:
+Set the license key (trial license or commercial license) for the ScalarDB Clusters in the configuration file [`scalardb-cluster-node.properties`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-multi-storage-transaction-sample/scalardb-cluster-node.properties). For details, see [How to Configure a Product License Key](../../scalar-licensing/README.mdx).
+
+### Start Cassandra, MySQL, and ScalarDB Cluster
+
+To start Cassandra, MySQL, and ScalarDB Cluster, you need to run the following `docker-compose` command:
 
 ```shell
 $ docker-compose up -d
@@ -163,10 +180,10 @@ Please note that starting the containers may take more than one minute.
 ### Load schema
 
 You then need to apply the schema with the following command.
-To download the CLI tool, `scalardb-sql-cli-<VERSION>-all.jar`, see the [Releases](https://github.com/scalar-labs/scalardb-sql/releases) of ScalarDB SQL and download the version that you want to use.
+To download the SQL CLI tool, `scalardb-cluster-sql-cli-<VERSION>-all.jar`, see the [Releases](https://github.com/scalar-labs/scalardb/releases) of ScalarDB and download the version that you want to use.
 
 ```shell
-$ java -jar scalardb-sql-cli-<VERSION>-all.jar --config scalardb-sql.properties --file schema.sql
+$ java -jar scalardb-cluster-sql-cli-<VERSION>-all.jar --config scalardb-sql.properties --file schema.sql
 ```
 
 ### Load initial data
@@ -303,7 +320,7 @@ $ ./gradlew run --args="PlaceOrder 1 3:1,4:1"
 
 ## Cleanup
 
-To stop Cassandra and MySQL, run the following command:
+To stop Cassandra, MySQL, and ScalarDB Cluster, run the following command:
 
 ```shell
 $ docker-compose down

@@ -9,82 +9,7 @@ This guide describes several important topics to use Spring Data JDBC for Scalar
 
 ## Add Spring Data JDBC for ScalarDB to your project
 
-You need to add dependencies for Spring Data JDBC for ScalarDB and the connection mode you want to use to your project to use the integration.
-
-### Direct mode
-
-:::note
-
-This mode exists only for development purposes and is not recommended for production use.
-For production use, please refer to [Cluster mode](#cluster-mode).
-
-:::
-
-To add the dependencies on Spring Data JDBC for ScalarDB with Direct mode by using Gradle, use the following, replacing `<VERSION>` with the versions of Spring Data JDBC for ScalarDB and the related library, respectively, that you are using:
-
-```gradle
-dependencies {
-    implementation 'com.scalar-labs:scalardb-sql-spring-data:<VERSION>'
-    implementation 'com.scalar-labs:scalardb-sql-direct-mode:<VERSION>'
-}
-```
-
-To add the dependencies by using Maven, use the following, replacing `...` with the version of Spring Data JDBC for ScalarDB that you are using:
-
-```xml
-<dependencies>
-    <dependency>
-        <groupId>com.scalar-labs</groupId>
-        <artifactId>scalardb-sql-spring-data</artifactId>
-        <version>...</version>
-    </dependency>
-    <dependency>
-        <groupId>com.scalar-labs</groupId>
-        <artifactId>scalardb-sql-direct-mode</artifactId>
-        <version>...</version>
-    </dependency>
-</dependencies>
-```
-
-### Server mode
-
-:::note
-
-This mode is now deprecated. Please use [Cluster mode](#cluster-mode) instead.
-
-:::
-
-To add the dependencies on Spring Data JDBC for ScalarDB with Server mode by using Gradle, use the following, replacing `<VERSION>` with the versions of Spring Data JDBC for ScalarDB and the related library, respectively, that you are using:
-
-```gradle
-dependencies {
-    implementation 'com.scalar-labs:scalardb-sql-spring-data:<VERSION>'
-    implementation 'com.scalar-labs:scalardb-sql-server-mode:<VERSION>'
-}
-```
-
-To add the dependencies by using Maven, use the following, replacing `...` with the version of Spring Data JDBC for ScalarDB that you are using:
-
-```xml
-<dependencies>
-    <dependency>
-        <groupId>com.scalar-labs</groupId>
-        <artifactId>scalardb-sql-spring-data</artifactId>
-        <version>...</version>
-    </dependency>
-    <dependency>
-        <groupId>com.scalar-labs</groupId>
-        <artifactId>scalardb-sql-server-mode</artifactId>
-        <version>...</version>
-    </dependency>
-</dependencies>
-```
-
-For details about ScalarDB SQL Server, see [ScalarDB SQL Server](sql-server.mdx).
-
-### Cluster mode
-
-To add the dependencies on Spring Data JDBC for ScalarDB with Cluster mode by using Gradle, use the following, replacing `<VERSION>` with the versions of Spring Data JDBC for ScalarDB and the related library, respectively, that you are using:
+To add the dependencies on Spring Data JDBC for ScalarDB by using Gradle, use the following, replacing `<VERSION>` with the versions of Spring Data JDBC for ScalarDB and the related library, respectively, that you are using:
 
 ```gradle
 dependencies {
@@ -104,13 +29,11 @@ To add the dependencies by using Maven, use the following, replacing `...` with 
     </dependency>
     <dependency>
         <groupId>com.scalar-labs</groupId>
-        <artifactId>scalardb-cluster-client</artifactId>
+        <artifactId>scalardb-cluster-java-client-sdk</artifactId>
         <version>...</version>
     </dependency>
 </dependencies>
 ```
-
-For details about ScalarDB Cluster SQL, see [Getting Started with ScalarDB Cluster SQL via Spring Data JDBC for ScalarDB](https://scalardb.scalar-labs.com/docs/latest/scalardb-cluster/getting-started-with-scalardb-cluster-sql-spring-data-jdbc/).
 
 ## Configurations
 
@@ -126,7 +49,7 @@ spring.datasource.driver-class-name=com.scalar.db.sql.jdbc.SqlJdbcDriver
 
 ### spring.datasource.url
 
-This value follows the ScalarDB JDBC connection URL configuration. For more information, see [ScalarDB JDBC Guide](jdbc-guide.mdx) and [ScalarDB SQL Configurations](configurations.mdx).
+This value follows the ScalarDB JDBC connection URL configuration. For more information, see [ScalarDB JDBC Guide](jdbc-guide.mdx) and [ScalarDB Cluster SQL client configurations](../scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-client-configurations).
 
 ```
 spring.datasource.url=jdbc:scalardb:\
@@ -858,7 +781,7 @@ The runtime error `A constructor parameter name must not be null to be used with
 
 You can see the following sample applications that use Spring Data JDBC for ScalarDB. It only serves as a reference and does not necessarily meet production code standards.
 
-- [Sample application of Spring Data JDBC for ScalarDB](../scalardb-samples/spring-data-sample/README.mdx)
+- [Getting Started with ScalarDB Cluster SQL via Spring Data JDBC for ScalarDB](../scalardb-cluster/getting-started-with-scalardb-cluster-sql-spring-data-jdbc.mdx)
 - [Sample application of Spring Data JDBC for ScalarDB with Multi-storage Transactions](../scalardb-samples/spring-data-multi-storage-transaction-sample/README.mdx)
 - [Sample application of Spring Data JDBC for ScalarDB with Microservice Transactions](../scalardb-samples/spring-data-microservice-transaction-sample/README.mdx)
 

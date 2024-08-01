@@ -4,7 +4,13 @@ This tutorial describes how to create a sample application that uses [ScalarDB C
 
 ## Overview
 
-The sample e-commerce application shows how users can order and pay for items by using a line of credit. The use case described in this tutorial is the same as the basic [ScalarDB sample](../scalardb-samples/scalardb-sample/README.mdx) but takes advantage of ScalarDB Cluster.
+This tutorial illustrates the process of creating a sample e-commerce application, where items can be ordered and paid for with a line of credit by using ScalarDB.
+
+:::note
+
+Since the focus of the sample application is to demonstrate using ScalarDB, application-specific error handling, authentication processing, and similar functions are not included in the sample application. For details about exception handling in ScalarDB, see [Handle exceptions](../api-guide.mdx#how-to-handle-exceptions).
+
+:::
 
 The following diagram shows the system architecture of the sample application:
 
@@ -69,19 +75,17 @@ The sample application supports the following types of transactions:
 - Make a payment.
   - Reduces the amount the customer has spent.
 
-## Prerequisites
+## Prerequisites for this sample application
 
 - One of the following Java Development Kits (JDKs):
-  - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) LTS version (8, 11, or 17)
-  - [OpenJDK](https://openjdk.org/install/) LTS version (8, 11, or 17)
+  - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) 8
+  - OpenJDK 8 from [Eclipse Temurin](https://adoptium.net/temurin/releases/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft](https://learn.microsoft.com/en-us/java/openjdk/download)
 - ScalarDB Cluster running on a Kubernetes cluster
   - We assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.mdx).
 
 :::note
 
-We recommend using the LTS versions mentioned above, but other non-LTS versions may work.
-
-In addition, other JDKs should work with ScalarDB, but we haven't tested them.
+This sample application only works with Java 8. However, ScalarDB itself works with Java LTS versions, which means that you can use Java LTS versions for your application that uses ScalarDB. For details on the requirements of ScalarDB, such as which Java versions can be used, see [Requirements](../requirements.mdx).
 
 :::
 
@@ -178,7 +182,7 @@ As shown in [`schema.json`](https://github.com/scalar-labs/scalardb-samples/tree
 
 The Entity Relationship Diagram for the schema is as follows:
 
-![ERD](../scalardb-samples/scalardb-sample/images/ERD.png)
+![ERD](images/getting-started-ERD.png)
 
 ### Load the initial data
 

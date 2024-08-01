@@ -1,12 +1,20 @@
 # Getting Started with ScalarDB Cluster SQL via JDBC
 
 This tutorial describes how to create a sample application by using ScalarDB Cluster SQL via JDBC.
-You'll be using the same sample application as found in the [ScalarDB SQL (JDBC) Sample](../scalardb-samples/scalardb-sql-jdbc-sample/README.mdx).
 
-## Prerequisites
+## Prerequisites for this sample application
 
-- Java (OpenJDK 8 or higher)
-- Gradle
+- One of the following Java Development Kits (JDKs):
+  - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) 8
+  - OpenJDK 8 from [Eclipse Temurin](https://adoptium.net/temurin/releases/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft](https://learn.microsoft.com/en-us/java/openjdk/download)
+- ScalarDB Cluster running on a Kubernetes cluster
+  - We assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.mdx).
+
+:::note
+
+This sample application only works with Java 8. However, ScalarDB itself works with Java LTS versions, which means that you can use Java LTS versions for your application that uses ScalarDB. For details on the requirements of ScalarDB, such as which Java versions can be used, see [Requirements](../requirements.mdx).
+
+:::
 
 In this tutorial, we assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.mdx).
 
@@ -32,8 +40,7 @@ For more details, see [Developer Guide for ScalarDB Cluster with the Java API](d
 
 ## Sample application
 
-This tutorial illustrates the process of creating a sample e-commerce application, where items can be ordered and paid for with a credit card by using ScalarDB.
-For details about the sample application, see the [sample application for ScalarDB SQL (JDBC)](../scalardb-samples/scalardb-sql-jdbc-sample/README.mdx#sample-application).
+This tutorial illustrates the process of creating a sample e-commerce application, where items can be ordered and paid for with a line of credit by using ScalarDB JDBC.
 
 The following diagram shows the system architecture of the sample application:
 
@@ -65,41 +72,7 @@ $ git clone https://github.com/scalar-labs/scalardb-samples.git
 $ cd scalardb-samples/scalardb-sql-jdbc-sample
 ```
 
-## Step 2. Modify `build.gradle`
-
-To use ScalarDB Cluster, you need to modify `build.gradle`:
-
-```shell
-$ vim build.gradle
-```
-
-First, add the following repository for ScalarDB Cluster to the `repositories` section:
-
-```gradle
-repositories {
-    ...
-
-    maven {
-        url = uri("https://maven.pkg.github.com/scalar-labs/scalardb-cluster")
-        credentials {
-            username = project.findProperty("gpr.user") ?: System.getenv("USERNAME")
-            password = project.findProperty("gpr.key") ?: System.getenv("TOKEN")
-        }
-    }
-}
-```
-
-Then, delete the existing dependency for `com.scalar-labs:scalardb-sql-direct-mode` from the `dependencies` section, and add the following dependency to the `dependencies` section:
-
-```gradle
-dependencies {
-    ...
-
-    implementation 'com.scalar-labs:scalardb-cluster-client:3.9.6'
-}
-```
-
-## Step 3. Modify `scalardb-sql.properties`
+## Step 2. Modify `scalardb-sql.properties`
 
 You need to modify `scalardb-sql.properties` to connect to ScalarDB Cluster as well.
 But before doing so, you need to get the `EXTERNAL-IP` address of the service resource of Envoy (`scalardb-cluster-envoy`) as follows:
@@ -129,7 +102,7 @@ To connect to ScalarDB Cluster, you need to specify `cluster` for the `scalar.db
 In addition, you will use the `indirect` client mode and connect to the service resource of Envoy in this tutorial.
 For details about the client modes, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.mdx).
 
-## Step 4. Load a schema
+## Step 3. Load a schema
 
 To load a schema, you need to use [the SQL CLI](developer-guide-for-scalardb-cluster-with-java-api.mdx#sql-cli). You can download the SQL CLI from [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases/tag/v3.9.6). After downloading the JAR file, you can use SQL CLI for Cluster by running the following command:
 
@@ -137,7 +110,7 @@ To load a schema, you need to use [the SQL CLI](developer-guide-for-scalardb-clu
 $ java -jar scalardb-cluster-sql-cli-3.9.6-all.jar --config scalardb-sql.properties --file schema.sql
 ```
 
-## Step 5. Load the initial data
+## Step 4. Load the initial data
 
 Before running the sample application, you need to load the initial data by running the following command:
 
@@ -165,7 +138,7 @@ After the initial data has loaded, the following records should be stored in the
 | 4       | Mango  | 5000  |
 | 5       | Melon  | 3000  |
 
-## Step 6. Run the sample application
+## Step 5. Run the sample application
 
 Let's start with getting information about the customer whose ID is `1`:
 

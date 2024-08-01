@@ -4,37 +4,26 @@ This tutorial describes how to create a sample Spring Boot application for micro
 
 For details about these features, see [Two-phase Commit Transactions](../../two-phase-commit-transactions.mdx) and [Guide of Spring Data JDBC for ScalarDB](../../scalardb-sql/spring-data-guide.mdx).
 
-## Prerequisites
+## Prerequisites for this sample application
 
-- Java (OpenJDK 8 or higher)
-- Gradle
-- Docker, Docker Compose
+- One of the following Java Development Kits (JDKs):
+  - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) 8
+  - OpenJDK 8 from [Eclipse Temurin](https://adoptium.net/temurin/releases/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft](https://learn.microsoft.com/en-us/java/openjdk/download)
+- [Docker](https://www.docker.com/get-started/) 20.10 or later with [Docker Compose](https://docs.docker.com/compose/install/) V2 or later
 
-In addition, you need access to the [ScalarDB SQL GitHub repository](https://github.com/scalar-labs/scalardb-sql) and [Packages in ScalarDB SQL repository](https://github.com/orgs/scalar-labs/packages?repo_name=scalardb-sql).
-These repositories are available only to users with a commercial license and permission.
-To get a license and permission, please [contact us](https://scalar-labs.com/contact_us/).
+:::note
 
-You also need the `gpr.user` property for your GitHub username and the `gpr.key` property for your personal access token.
-You must either add these properties in `~/.gradle/gradle.properties` or specify the properties by using the `-P` option when running the `./gradlew` command as follows:
+This sample application only works with Java 8. However, ScalarDB itself works with Java LTS versions, which means that you can use Java LTS versions for your application that uses ScalarDB. For details on the requirements of ScalarDB, such as which Java versions can be used, see [Requirements](../../requirements.mdx).
 
-```shell
-$ ./gradlew run ... -Pgpr.user=<YOUR_GITHUB_USERNAME> -Pgpr.key=<YOUR_PERSONAL_ACCESS_TOKEN>
-````
+:::
 
-Or you can also use environment variables, `USERNAME` for your GitHub username and `TOKEN` for your personal access token.
-
-```shell
-$ export USERNAME=<YOUR_GITHUB_USERNAME>
-$ export TOKEN=<YOUR_PERSONAL_ACCESS_TOKEN>
-```
-
-For more details, see [Install - ScalarDB SQL](https://github.com/scalar-labs/scalardb-sql#install).
+Also, you need to have a license key (trial license or commercial license) for ScalarDB Cluster. If you don't have a license key, please [contact us](https://www.scalar-labs.com/contact).
 
 ## Sample application
 
 ### Overview
 
-This tutorial describes how to create a Spring Boot sample application for microservice transactions for the same use case as [ScalarDB Sample](../scalardb-sample/README.mdx) but by using Two-phase Commit Transactions in ScalarDB.
+This tutorial illustrates the process of creating a sample e-commerce application, where items can be ordered and paid for with a line of credit through [transactions with a two-phase commit interface](../../two-phase-commit-transactions.mdx) in ScalarDB.
 
 There are two microservices called the *Customer Service* and the *Order Service* based on the [*Database-per-service* pattern](https://microservices.io/patterns/data/database-per-service.html) in this sample application.
 
@@ -45,72 +34,15 @@ The Customer Service and the Order Service use MySQL and Cassandra through Scala
 
 ![Overview](images/overview.png)
 
-Note that both services access a small coordinator database used for the Consensus Commit protocol.
-The coordinator database is service-independent and exists for managing transaction metadata for Consensus Commit in a highly available manner. We believe the architecture does not spoil the benefits of the database-per-service pattern.
-*NOTE: We also plan to create a microservice container for the coordinator database to truly achieve the database-per-service pattern.*
+Each service accesses the databases through its own dedicated ScalarDB Cluster.
 
-In this sample application, for ease of setup and explanation, we co-locate the coordinator database in the same Cassandra instance of the Order Service, but of course, the coordinator database can be managed as a separate database.
+:::note
+Both ScalarDB Clusters access a small coordinator database used for the Consensus Commit protocol. In this sample application, for ease of setup and explanation, the coordinator database is co-located in the same Cassandra instance of the Order Service, but of course, the coordinator database can be managed as a separate database. 
 
-Also, note that application-specific error handling, authentication processing, etc., are omitted in the sample application since it focuses on explaining how to use ScalarDB.
-Please see [this document](../../two-phase-commit-transactions.mdx#handle-exceptions) for the details of how to handle exceptions in ScalarDB.
+Also, application-specific error handling, authentication processing, etc. are omitted in the sample application since it focuses on explaining how to use ScalarDB.
+For details about handling exceptions in ScalarDB, see [How to handle exceptions](../../two-phase-commit-transactions.mdx#how-to-handle-exceptions).
 
-Additionally, you assume each service has one container in this sample application to avoid considering request routing between the services.
-However, for production, because each service typically has multiple servers (or hosts) for scalability and availability, please consider to use ScalarDB Cluster which easily addresses request routing between the services in Two-phase Commit Transactions.
-Please see [this document](../../two-phase-commit-transactions.mdx#request-routing-in-two-phase-commit-transactions) for the details of Request Routing in Two-phase Commit Transactions.
-
-### Schema
-
-[The schema](schema.sql) is as follows:
-
-```sql
-CREATE COORDINATOR TABLES IF NOT EXIST;
-
-CREATE NAMESPACE IF NOT EXISTS customer_service;
-
-CREATE TABLE IF NOT EXISTS customer_service.customers (
-  customer_id INT PRIMARY KEY,
-  name TEXT,
-  credit_limit INT,
-  credit_total INT
-);
-
-CREATE NAMESPACE IF NOT EXISTS order_service;
-
-CREATE TABLE IF NOT EXISTS order_service.orders (
-  customer_id INT,
-  timestamp BIGINT,
-  order_id TEXT,
-  PRIMARY KEY (customer_id, timestamp)
-);
-
-CREATE INDEX IF NOT EXISTS ON order_service.orders (order_id);
-
-CREATE TABLE IF NOT EXISTS order_service.statements (
-  order_id TEXT,
-  item_id INT,
-  count INT,
-  PRIMARY KEY (order_id, item_id)
-);
-
-CREATE TABLE IF NOT EXISTS order_service.items (
-  item_id INT PRIMARY KEY,
-  name TEXT,
-  price INT
-);
-```
-
-All the tables are created in the `customer_service` and `order_service` namespaces.
-
-- `customer_service.customers`: a table that manages customers' information
-  - `credit_limit`: the maximum amount of money a lender will allow each customer to spend when using a credit card
-  - `credit_total`: the amount of money that each customer has already spent by using the credit card
-- `order_service.orders`: a table that manages order information
-- `order_service.statements`: a table that manages order statement information
-- `order_service.items`: a table that manages information of items to be ordered
-
-The Entity Relationship Diagram for the schema is as follows:
-
-![ERD](images/ERD.png)
+:::
 
 ### Service endpoints
 
@@ -149,28 +81,31 @@ The `getCustomerInfo` endpoint works as a participant service endpoint when rece
 
 :::
 
-## Configuration
+## Configuration for ScalarDB Cluster
 
-[The configuration for the Customer Service](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/customer-service/src/main/resources/application.properties) is as follows:
+[The configuration for ScalarDB Cluster for the Customer Service](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/scalardb-cluster-node-for-customer-service.properties) is as follows:
 
-```application.properties
-spring.datasource.driver-class-name=com.scalar.db.sql.jdbc.SqlJdbcDriver
-spring.datasource.url=jdbc:scalardb:\
-?scalar.db.sql.connection_mode=direct\
-&scalar.db.storage=multi-storage\
-&scalar.db.multi_storage.storages=cassandra,mysql\
-&scalar.db.multi_storage.storages.cassandra.storage=cassandra\
-&scalar.db.multi_storage.storages.cassandra.contact_points=cassandra\
-&scalar.db.multi_storage.storages.cassandra.username=cassandra\
-&scalar.db.multi_storage.storages.cassandra.password=cassandra\
-&scalar.db.multi_storage.storages.mysql.storage=jdbc\
-&scalar.db.multi_storage.storages.mysql.contact_points=jdbc:mysql://mysql:3306/\
-&scalar.db.multi_storage.storages.mysql.username=root\
-&scalar.db.multi_storage.storages.mysql.password=mysql\
-&scalar.db.multi_storage.namespace_mapping=customer_service:mysql,order_service:cassandra,coordinator:cassandra\
-&scalar.db.multi_storage.default_storage=mysql\
-&scalar.db.sql.default_transaction_mode=two_phase_commit_transaction\
-&scalar.db.consensus_commit.isolation_level=SERIALIZABLE
+```properties
+scalar.db.storage=multi-storage
+scalar.db.multi_storage.storages=cassandra,mysql
+scalar.db.multi_storage.storages.cassandra.storage=cassandra
+scalar.db.multi_storage.storages.cassandra.contact_points=cassandra-1
+scalar.db.multi_storage.storages.cassandra.username=cassandra
+scalar.db.multi_storage.storages.cassandra.password=cassandra
+scalar.db.multi_storage.storages.mysql.storage=jdbc
+scalar.db.multi_storage.storages.mysql.contact_points=jdbc:mysql://mysql-1:3306/
+scalar.db.multi_storage.storages.mysql.username=root
+scalar.db.multi_storage.storages.mysql.password=mysql
+scalar.db.multi_storage.namespace_mapping=customer_service:mysql,coordinator:cassandra
+scalar.db.multi_storage.default_storage=mysql
+scalar.db.consensus_commit.isolation_level=SERIALIZABLE
+
+scalar.db.cluster.node.standalone_mode.enabled=true
+scalar.db.sql.enabled=true
+
+# License key configurations
+scalar.db.cluster.node.licensing.license_key=
+scalar.db.cluster.node.licensing.license_check_cert_pem=
 ```
 
 - `scalar.db.sql.connection_mode`: This configuration decides how to connect to ScalarDB.
@@ -183,21 +118,23 @@ spring.datasource.url=jdbc:scalardb:\
 - `scalar.db.sql.default_transaction_mode`: Specifying `two_phase_commit_transaction` is necessary to use Two-Phase Commit Transactions mode in ScalarDB.
 - `scalar.db.consensus_commit.isolation_level`: This configuration decides the isolation level used for ConsensusCommit.
 
-For details, please see [Configuration - Multi-storage Transactions](../../multi-storage-transactions.mdx#configuration).
+For details, see [Multi-Storage Transactions](../../multi-storage-transactions.mdx).
 
-[The configuration for the Order Service](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/order-service/src/main/resources/application.properties) is as follows:
+[The configuration for ScalarDB Cluster for the Order Service](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/scalardb-cluster-node-for-order-service.properties) is as follows:
 
-```application.properties
-spring.datasource.driver-class-name=com.scalar.db.sql.jdbc.SqlJdbcDriver
-spring.datasource.url=jdbc:scalardb:\
-?scalar.db.sql.connection_mode=direct\
-&scalar.db.storage=cassandra\
-&scalar.db.contact_points=cassandra\
-&scalar.db.username=cassandra\
-&scalar.db.password=cassandra\
-&scalar.db.sql.default_namespace_name=order_service\
-&scalar.db.sql.default_transaction_mode=two_phase_commit_transaction\
-&scalar.db.consensus_commit.isolation_level=SERIALIZABLE
+```properties
+scalar.db.storage=cassandra
+scalar.db.contact_points=cassandra-1
+scalar.db.username=cassandra
+scalar.db.password=cassandra
+scalar.db.consensus_commit.isolation_level=SERIALIZABLE
+
+scalar.db.cluster.node.standalone_mode.enabled=true
+scalar.db.sql.enabled=true
+
+# License key configurations
+scalar.db.cluster.node.licensing.license_key=
+scalar.db.cluster.node.licensing.license_check_cert_pem=
 ```
 
 - `scalar.db.storage`: `cassandra` is specified since this servcise uses only Cassandra as an underlying database.
@@ -208,26 +145,83 @@ spring.datasource.url=jdbc:scalardb:\
 - `scalar.db.sql.default_transaction_mode`: Specifying `two_phase_commit_transaction` is necessary to use Two-Phase Commit Transactions mode in ScalarDB.
 - `scalar.db.consensus_commit.isolation_level`: This configuration decides the isolation level used for ConsensusCommit.
 
+In this sample application, the ScalarDB Clusters are running in standalone mode (`scalar.db.cluster.node.standalone_mode.enabled=true`).
+
+Also, you need to set the license key (trial license or commercial license) for the ScalarDB Clusters in the configuration file. For details, see [How to Configure a Product License Key](../../scalar-licensing/README.mdx).
+
 ## Setup
 
-### Start Cassandra and MySQL
+### Clone the ScalarDB samples repository
 
-To start Cassandra and MySQL, you need to run the following `docker-compose` command:
+Open Terminal, then clone the ScalarDB samples repository by running the following command:
 
 ```shell
-$ docker-compose up -d cassandra mysql
+$ git clone https://github.com/scalar-labs/scalardb-samples
 ```
 
-Please note that you need to wait around more than one minute for the containers to be fully started.
+Then, go to the directory with this sample by running the following command:
+
+```shell
+$ cd scalardb-samples/spring-data-microservice-transaction-sample
+```
+
+### Set the license key
+
+Set the license key (trial license or commercial license) for the ScalarDB Clusters in the configuration files [`scalardb-cluster-node-for-customer-service.properties`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/scalardb-cluster-node-for-customer-service.properties) and [`scalardb-cluster-node-for-order-service.properties`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/scalardb-cluster-node-for-order-service.properties). For details, see [How to Configure a Product License Key](../../scalar-licensing/README.mdx).
+
+### Start Cassandra, MySQL, and ScalarDB Clusters
+
+To start Cassandra, MySQL, and ScalarDB Clusters, you need to run the following `docker-compose` command:
+
+```shell
+$ docker-compose up -d cassandra mysql scalardb-cluster-node-for-customer-service scalardb-cluster-node-for-order-service
+```
+
+:::note
+
+You will need to wait more than one minute for the containers to be fully started.
+
+:::
 
 ### Load schema
 
-You then need to apply the schema with the following command.
-To download the CLI tool, `scalardb-sql-cli-<VERSION>-all.jar`, see the [Releases](https://github.com/scalar-labs/scalardb-sql/releases) of ScalarDB SQL and download the version that you want to use.
+The database schema (the method in which the data will be organized) for the sample application has already been defined in [`schema-for-customer-service.sql`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/schema-for-customer-service.sql) for the Customer Service and [`schema-for-order-service.sql`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/schema-for-order-service.sql) for the Order Service.
 
-```shell
-$ java -jar scalardb-sql-cli-<VERSION>-all.jar --config scalardb-sql.properties --file schema.sql
+To apply the schema, go to the [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) page and download the SQL CLI tool that matches the version of ScalarDB that you want to use.
+
+#### MySQL
+
+To load the schema for [`schema-for-customer-service.sql`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/schema-for-customer-service.sql) into MySQL, run the following command, replacing `<VERSION>` with the version of the ScalarDB Schema Loader that you downloaded:
+
+```console
+$ java -jar scalardb-cluster-sql-cli-<VERSION>-all.jar --config scalardb-cluster-node-for-customer-service-client.properties --file schema-for-customer-service.sql
 ```
+
+#### Cassandra
+
+To load the schema for [`schema-for-order-service.sql`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/schema-for-order-service.sql) into Cassandra, run the following command, replacing `<VERSION>` with the version of the ScalarDB Schema Loader that you downloaded:
+
+```console
+$ java -jar scalardb-cluster-sql-cli-<VERSION>-all.jar --config scalardb-cluster-node-for-order-service-client.properties --file schema-for-order-service.sql
+```
+
+#### Schema details
+
+As shown in [`schema-for-customer-service.sql`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/schema-for-customer-service.sql), all the tables for the Customer Service are created in the `customer_service` namespace.
+
+- `customer_service.customers`: a table that manages customers' information
+  - `credit_limit`: the maximum amount of money a lender will allow each customer to spend when using a line of credit
+  - `credit_total`: the amount of money that each customer has already spent by using their line of credit
+
+As shown in [`schema-for-order-service.sql`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/schema-for-order-service.sql), all the tables for the Order Service are created in the `order_service` namespace.
+
+- `order_service.orders`: a table that manages order information
+- `order_service.statements`: a table that manages order statement information
+- `order_service.items`: a table that manages information of items to be ordered
+
+The Entity Relationship Diagram for the schema is as follows:
+
+![ERD](images/ERD.png)
 
 ### Start Microservices
 
@@ -526,4 +520,4 @@ In the `rollback` endpoint of the Customer Service, the endpoint resumes and rol
 customerRepository.rollbackTransactionOnParticipant(request.getTransactionId());
 ```
 
-For details about how to handle exceptions in ScalarDB, see [Handle exceptions](../../two-phase-commit-transactions.mdx#handle-exceptions).
+For details about how to handle exceptions in ScalarDB, see [How to handle exceptions](../../two-phase-commit-transactions.mdx#how-to-handle-exceptions).

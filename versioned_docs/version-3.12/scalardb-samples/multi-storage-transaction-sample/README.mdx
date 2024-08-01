@@ -4,7 +4,7 @@ This tutorial describes how to create a sample application that supports the mul
 
 ## Overview
 
-The sample e-commerce application shows how users can order and pay for items by using a line of credit. The use case described in this tutorial is the same as the basic [ScalarDB sample](../scalardb-sample/README.mdx) but takes advantage of the [multi-storage transactions](../../multi-storage-transactions.mdx) feature in ScalarDB.
+This tutorial illustrates the process of creating a sample e-commerce application, where items can be ordered and paid for with a line of credit by using the [multi-storage transactions](../../multi-storage-transactions.mdx) feature in ScalarDB.
 
 In this tutorial, you will build an application that uses both Cassandra and MySQL. By using the multi-storage transactions feature in ScalarDB, you can execute a transaction that spans both Cassandra and MySQL.
 
@@ -29,18 +29,16 @@ The sample application supports the following types of transactions:
 - Make a payment.
   - Reduces the amount the customer has spent.
 
-## Prerequisites
+## Prerequisites for this sample application
 
 - One of the following Java Development Kits (JDKs):
-  - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) LTS version (8, 11, 17 or 21)
-  - OpenJDK LTS version (8, 11, 17, or 21) from [Eclipse Temurin](https://adoptium.net/temurin/releases/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft](https://learn.microsoft.com/en-us/java/openjdk/download)
+  - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) 8
+  - OpenJDK 8 from [Eclipse Temurin](https://adoptium.net/temurin/releases/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft](https://learn.microsoft.com/en-us/java/openjdk/download)
 - [Docker](https://www.docker.com/get-started/) 20.10 or later with [Docker Compose](https://docs.docker.com/compose/install/) V2 or later
 
 :::note
 
-We recommend using the LTS versions mentioned above, but other non-LTS versions may work.
-
-In addition, other JDKs should work with ScalarDB, but we haven't tested them.
+This sample application only works with Java 8. However, ScalarDB itself works with Java LTS versions, which means that you can use Java LTS versions for your application that uses ScalarDB. For details on the requirements of ScalarDB, such as which Java versions can be used, see [Requirements](../../requirements.mdx).
 
 :::
 
@@ -80,7 +78,7 @@ Starting the Docker container may take more than one minute depending on your de
 
 ### Load the schema
 
-The database schema (the method in which the data will be organized) for the sample application has already been defined in [`schema.json`](schema.json).
+The database schema (the method in which the data will be organized) for the sample application has already been defined in [`schema.json`](https://github.com/scalar-labs/scalardb-samples/tree/master/multi-storage-transaction-sample/schema.json).
 
 To apply the schema, go to the [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) page and download the ScalarDB Schema Loader that matches the version of ScalarDB that you want to use to the `scalardb-samples/multi-storage-transaction-sample` folder.
 
