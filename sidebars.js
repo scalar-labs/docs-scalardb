@@ -730,7 +730,7 @@ const sidebars = {
             },
             // { To be created
             //   type: 'doc',
-            //   id: 'monitor-scalardb-with-scalar-manager',
+            //   id: 'monitor-by-using-scalar-manager',
             //   label: 'Use Scalar Manager',
             // },
           ],
@@ -742,8 +742,8 @@ const sidebars = {
           items: [
             // { To be created
             //   type: 'doc',
-            //   id: 'backup-restore-overview',
-            //   label: 'Overview',
+            //   id: 'manage-backup-and-restore',
+            //   label: 'Back Up and Restore Databases',
             // },
             {
               type: 'doc',
@@ -758,29 +758,43 @@ const sidebars = {
           collapsible: true,
           items: [
             {
-              type: 'doc',
-              id: 'scalar-kubernetes/K8sMonitorGuide',
-              label: 'Kubernetes Monitoring Guide',
+              type: 'category',
+              label: 'Monitor',
+              collapsible: true,
+              items: [
+                {
+                  type: 'doc',
+                  id: 'scalar-kubernetes/K8sMonitorGuide',
+                  label: 'Kubernetes Monitoring Guide',
+                },
+                {
+                  type: 'doc',
+                  id: 'helm-charts/how-to-deploy-scalar-manager',
+                  label: 'Deploy Scalar Manager',
+                },
+                {
+                  type: 'doc',
+                  id: 'helm-charts/how-to-deploy-scalar-admin-for-kubernetes',
+                  label: 'Deploy Scalar Admin for Kubernetes',
+                },
+              ]
             },
             {
-              type: 'doc',
-              id: 'helm-charts/how-to-deploy-scalar-manager',
-              label: 'Deploy Scalar Manager',
-            },
-            {
-              type: 'doc',
-              id: 'helm-charts/how-to-deploy-scalar-admin-for-kubernetes',
-              label: 'Deploy Scalar Admin for Kubernetes',
-            },
-            {
-              type: 'doc',
-              id: 'backup-restore',
-              label: 'Back Up and Restore Databases',
-            },
-            {
-              type: 'doc',
-              id: 'scalar-kubernetes/RestoreDatabase',
-              label: 'Restore Databases in Kubernetes',
+              type: 'category',
+              label: 'Back Up and Restore',
+              collapsible: true,
+              items: [
+                {
+                  type: 'doc',
+                  id: 'backup-restore',
+                  label: 'Back Up and Restore Databases',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalar-kubernetes/RestoreDatabase',
+                  label: 'Restore Databases in Kubernetes',
+                },
+              ]
             },
           ],
         },
