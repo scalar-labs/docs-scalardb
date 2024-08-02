@@ -723,43 +723,14 @@ const sidebars = {
           label: 'Monitor',
           collapsible: true,
           items: [
-            { // THIS LINK IS ONLY FOR RENDERING THE SIDEBAR. REMOVE THIS ITEM WHEN THE COMMENTED OUT DOC HAS BEEN CREATED.
-              type: 'doc',
-              id: 'overview',
-              label: 'PLACEHOLDER',
-            },
             // { To be created
             //   type: 'doc',
             //   id: 'monitor-by-using-scalar-manager',
             //   label: 'Use Scalar Manager',
             // },
-          ],
-        },
-        {
-          type: 'category',
-          label: 'Back Up and Restore',
-          collapsible: true,
-          items: [
-            // { To be created
-            //   type: 'doc',
-            //   id: 'manage-backup-and-restore',
-            //   label: 'Back Up and Restore Databases',
-            // },
-            {
-              type: 'doc',
-              id: 'scalar-kubernetes/BackupNoSQL',
-              label: 'Back Up a NoSQL Database in Kubernetes',
-            },
-          ],
-        },
-        {
-          type: 'category',
-          label: 'Reference',
-          collapsible: true,
-          items: [
             {
               type: 'category',
-              label: 'Monitor',
+              label: 'Reference',
               collapsible: true,
               items: [
                 {
@@ -779,9 +750,26 @@ const sidebars = {
                 },
               ]
             },
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Back Up and Restore',
+          collapsible: true,
+          items: [
+            // { To be created
+            //   type: 'doc',
+            //   id: 'manage-backup-and-restore',
+            //   label: 'Back Up and Restore Databases',
+            // },
+            {
+              type: 'doc',
+              id: 'scalar-kubernetes/BackupNoSQL',
+              label: 'Back Up a NoSQL Database in Kubernetes',
+            },
             {
               type: 'category',
-              label: 'Back Up and Restore',
+              label: 'Reference',
               collapsible: true,
               items: [
                 {
