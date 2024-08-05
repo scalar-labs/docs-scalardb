@@ -22,13 +22,13 @@ You also need a packaged release of Apache Spark. If you already have Spark inst
 If you need Spark, you can download it from the [Spark website](https://spark.apache.org/downloads.html). After downloading the compressed Spark file, you'll need to uncompress the file by running the following command, replacing `X.X.X` with the version of Spark that you downloaded:
 
 ```console
-$ tar xf spark-X.X.X-bin-hadoop3.tgz
+tar xf spark-X.X.X-bin-hadoop3.tgz
 ```
 
 Then, enter the directory by running the following command, again replacing `X.X.X` with the version of Spark that you downloaded:
 
 ```console
-$ cd spark-X.X.X-bin-hadoop3
+cd spark-X.X.X-bin-hadoop3
 ```
 
 ## Configure the Spark shell
@@ -38,7 +38,7 @@ The following explains how to perform interactive analysis by using the Spark sh
 Since ScalarDB Analytics with Spark is available on the Maven Central Repository, you can use it to enable ScalarDB Analytics with Spark in the Spark shell by using the `--packages` option, replacing `<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_WITH_SPARK_VERSION>` with the versions that you're using.
 
 ```console
-$ ./bin/spark-shell --packages com.scalar-labs:scalardb-analytics-spark-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_WITH_SPARK_VERSION>
+./bin/spark-shell --packages com.scalar-labs:scalardb-analytics-spark-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_WITH_SPARK_VERSION>
 ```
 
 :::warning
@@ -165,7 +165,7 @@ Then, you need to build a .jar file by using your preferred build tool, like `sb
 After building the .jar file, you can submit that .jar file to your Spark cluster by using `spark-submit`, using the `--packages` option to enable the ScalarDB Analytics libraries on your cluster by running the following command, replacing `<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_WITH_SPARK_VERSION>` with the versions that you're using:
 
 ```console
-$ ./bin/spark-submit \
+./bin/spark-submit \
       --class "YourApp" \
       --packages com.scalar-labs:scalardb-analytics-spark-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_WITH_SPARK_VERSION> \
       <YOUR_APP_NAME>.jar
