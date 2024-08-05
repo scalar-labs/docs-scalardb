@@ -47,7 +47,7 @@ But first, you need to get the `EXTERNAL-IP` address of the service resource of 
 To see the `EXTERNAL-IP` address, run the following command:
 
 ```console
-$ kubectl get svc scalardb-cluster-envoy
+kubectl get svc scalardb-cluster-envoy
 NAME                     TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)           AGE
 scalardb-cluster-envoy   LoadBalancer   10.105.121.51   localhost     60053:30641/TCP   16h
 ```
@@ -69,8 +69,8 @@ For details about the client modes, see [Developer Guide for ScalarDB Cluster wi
 
 To load a schema via ScalarDB Cluster, you need to use the dedicated Schema Loader for ScalarDB Cluster (Schema Loader for Cluster). Using the Schema Loader for Cluster is basically the same as using the [Schema Loader for ScalarDB](../schema-loader.mdx) except the name of the JAR file is different. You can download the Schema Loader for Cluster from [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases/tag/v3.10.5). After downloading the JAR file, you can run the Schema Loader for Cluster with the following command:
 
-```shell
-$ java -jar scalardb-cluster-schema-loader-3.10.5-all.jar --config database.properties -f schema.json --coordinator
+```console
+java -jar scalardb-cluster-schema-loader-3.10.5-all.jar --config database.properties -f schema.json --coordinator
 ```
 
 ## Step 4. Set up a Python environment
@@ -80,14 +80,14 @@ You can choose any way you like to manage your Python environment. For the purpo
 Create a working directory anywhere, and go there. Then, run the following command to activate `venv` by running the following command:
 
 ```console
-$ python3 -m venv venv
-$ source venv/bin/activate
+python3 -m venv venv
+source venv/bin/activate
 ```
 
 Let's install the gRPC packages with the `pip` command:
 
 ```console
-$ pip install grpcio grpcio-tools
+pip install grpcio grpcio-tools
 ```
 
 ## Step 5. Generate the stub code for ScalarDB Cluster gRPC
@@ -99,7 +99,7 @@ First, download the `scalardb-cluster.proto` file, then save it in the working d
 You can generate the stub code by running the following command:
 
 ```console
-$ python -m grpc_tools.protoc -I . --python_out=. --pyi_out=. --grpc_python_out=. scalardb-cluster.proto
+python -m grpc_tools.protoc -I . --python_out=. --pyi_out=. --grpc_python_out=. scalardb-cluster.proto
 ```
 
 The following files will be generated:
@@ -434,31 +434,31 @@ You can then run the program as follows:
 - Charge `1000` to `user1`:
 
     ```console
-    $ python electronic_money.py charge -amount 1000 -to user1
+    python electronic_money.py charge -amount 1000 -to user1
     ```
 
 - Charge `0` to `merchant1` (Just create an account for `merchant1`):
 
    ```console
-   $ python electronic_money.py charge -amount 0 -to merchant1
+   python electronic_money.py charge -amount 0 -to merchant1
    ```
 
 - Pay `100` from `user1` to `merchant1`:
 
    ```console
-   $ python electronic_money.py pay -amount 100 -from user1 -to merchant1
+   python electronic_money.py pay -amount 100 -from user1 -to merchant1
    ```
 
 - Get the balance of `user1`:
 
    ```console
-   $ python electronic_money.py get-balance -id user1
+   python electronic_money.py get-balance -id user1
    ```
 
 - Get the balance of `merchant1`:
 
    ```console
-   $ python electronic_money.py get-balance -id merchant1
+   python electronic_money.py get-balance -id merchant1
    ```
 
 ## References
