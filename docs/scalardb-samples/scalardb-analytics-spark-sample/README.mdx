@@ -26,13 +26,13 @@ This sample tutorial shows how you can run interactive analysis in the Spark she
 Open **Terminal**, then clone the ScalarDB samples repository by running the following command:
 
 ```console
-$ git clone https://github.com/scalar-labs/scalardb-samples
+git clone https://github.com/scalar-labs/scalardb-samples
 ```
 
 Then, go to the directory that contains the sample application by running the following command:
 
 ```console
-$ cd scalardb-samples/scalardb-analytics-spark-sample
+cd scalardb-samples/scalardb-analytics-spark-sample
 ```
 
 ### Add your license certificate to the sample directory
@@ -40,7 +40,7 @@ $ cd scalardb-samples/scalardb-analytics-spark-sample
 Copy your license certificate (`cert.pem`) to the sample directory by running the following command, replacing `<PATH_TO_YOUR_LICENSE>` with the path to your license:
 
 ```console
-$ cp /<PATH_TO_YOUR_LICENSE>/cert.pem cert.pem
+cp /<PATH_TO_YOUR_LICENSE>/cert.pem cert.pem
 ```
 :::warning
 
@@ -53,7 +53,7 @@ If you need a commercial license, please [contact us](https://scalar-labs.com/co
 To set up the sample underlying databases for ScalarDB, run the following command:
 
 ```console
-$ docker compose up -d --wait
+docker compose up -d --wait
 ```
 
 This command starts three services locally for PostgreSQL, Cassandra, and DynamoDB.
@@ -61,7 +61,7 @@ This command starts three services locally for PostgreSQL, Cassandra, and Dynamo
 Then, set up the sample databases on those services by running the following command:
 
 ```console
-$ docker compose run --rm sample-data-loader
+docker compose run --rm sample-data-loader
 ```
 
 This command creates `postgresns`, `cassandrans`, and `dynamons` namespaces, which are mapped to the local PostgreSQL, Cassandra, and DyanmoDB services respectively, creates `postgresns.orders`, `cassandrans.lineitem`, and `dynamons.customer` tables, and loads the sample data into those tables. For details about the table schema, see [Schema details](#schema-details).
@@ -71,7 +71,7 @@ This command creates `postgresns`, `cassandrans`, and `dynamons` namespaces, whi
 To launch the Spark shell, run the following command:
 
 ```console
-$ docker compose run --rm spark-shell
+docker compose run --rm spark-shell
 ```
 
 As you can see in `docker-compose.yml`, this command executes the `spark-shell` command with the `--packages com.scalar-labs:scalardb-analytics-spark-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_WITH_SPARK_VERSION>` option. With this option, `spark-shell` automatically downloads ScalarDB Analytics with Spark from the Maven Central Repository and add it to the classpath of `spark-shell`.
@@ -223,7 +223,7 @@ To see which types of queries Spark SQL supports, see the [Spark SQL documentati
 To stop the sample application, stop the Docker container by running the following command:
 
 ```console
-$ docker compose down
+docker compose down
 ```
 
 ## Reference - Schema details
