@@ -83,8 +83,8 @@ But first, you need to get the `EXTERNAL-IP` address of the service resource of 
 
 To see the `EXTERNAL-IP` address, run the following command:
 
-```shell
-$ kubectl get svc scalardb-cluster-envoy
+```console
+kubectl get svc scalardb-cluster-envoy
 NAME                     TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)           AGE
 scalardb-cluster-envoy   LoadBalancer   10.105.121.51   localhost     60053:30641/TCP   16h
 ```
@@ -109,8 +109,8 @@ Using the Schema Loader for Cluster is basically the same as using the [Schema L
 You can download the Schema Loader for Cluster from [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases/tag/v3.11.3).
 After downloading the JAR file, you can run the Schema Loader for Cluster with the following command:
 
-```shell
-$ java -jar scalardb-cluster-schema-loader-3.11.3-all.jar --config database.properties -f schema.json --coordinator
+```console
+java -jar scalardb-cluster-schema-loader-3.11.3-all.jar --config database.properties -f schema.json --coordinator
 ```
 
 ## Step 4. Run operations from GraphiQL
@@ -119,8 +119,8 @@ In ScalarDB Cluster, if the `scalar.db.graphql.graphiql` property is set to `tru
 
 To get the `EXTERNAL-IP` address of the service resource of ScalarDB Cluster GraphQL (`scalardb-cluster-graphql`), run the following command:
 
-```shell
-$ kubectl get svc scalardb-cluster-graphql
+```console
+kubectl get svc scalardb-cluster-graphql
 NAME                       TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
 scalardb-cluster-graphql   LoadBalancer   10.105.74.214   localhost     8080:30514/TCP   16h
 ```

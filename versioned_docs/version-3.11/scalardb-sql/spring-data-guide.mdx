@@ -43,7 +43,7 @@ Spring Data JDBC for ScalarDB is supposed to be used as a part of Spring applica
 
 This needs to be set to fixed value `com.scalar.db.sql.jdbc.SqlJdbcDriver`.
 
-```
+```console
 spring.datasource.driver-class-name=com.scalar.db.sql.jdbc.SqlJdbcDriver
 ```
 
@@ -51,7 +51,7 @@ spring.datasource.driver-class-name=com.scalar.db.sql.jdbc.SqlJdbcDriver
 
 This value follows the ScalarDB JDBC connection URL configuration. For more information, see [ScalarDB JDBC Guide](jdbc-guide.mdx) and [ScalarDB Cluster SQL client configurations](../scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-client-configurations).
 
-```
+```console
 spring.datasource.url=jdbc:scalardb:\
 ?scalar.db.sql.connection_mode=direct\
 &scalar.db.contact_points=jdbc:mysql://localhost:3306/my_app_ns\
@@ -422,7 +422,7 @@ ScalarDB supports [Two-phase commit transaction](../two-phase-commit-transaction
 
 - `scalar.db.sql.default_transaction_mode` property: `two_phase_commit_transaction`
 
-```
+```console
 spring.datasource.url=jdbc:scalardb:\
 ?scalar.db.sql.connection_mode=direct\
 &scalar.db.contact_points=jdbc:mysql://localhost:3306/my_app_ns\
