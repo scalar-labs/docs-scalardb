@@ -30,7 +30,7 @@ Select your preferred method to set up Schema Loader, and follow the instruction
     You can pull the Docker image from the [Scalar container registry](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-schema-loader) by running the following command, replacing the contents in the angle brackets as described:
 
     ```console
-    $ docker run --rm -v <PATH_TO_YOUR_LOCAL_SCHEMA_FILE>:<PATH_TO_SCHEMA_FILE_DOCKER> [-v <PATH_TO_LOCAL_SCALARDB_PROPERTIES_FILE>:<PATH_TO_SCALARDB_PROPERTIES_FILE_IN_DOCKER>] ghcr.io/scalar-labs/scalardb-schema-loader:<VERSION> <COMMAND_ARGUMENTS>
+    docker run --rm -v <PATH_TO_YOUR_LOCAL_SCHEMA_FILE>:<PATH_TO_SCHEMA_FILE_DOCKER> [-v <PATH_TO_LOCAL_SCALARDB_PROPERTIES_FILE>:<PATH_TO_SCALARDB_PROPERTIES_FILE_IN_DOCKER>] ghcr.io/scalar-labs/scalardb-schema-loader:<VERSION> <COMMAND_ARGUMENTS>
     ```
 
 :::note
@@ -204,7 +204,7 @@ The following database-specific methods have been deprecated. Please use the [co
 To create namespaces and tables by using a properties file, run the following command, replacing the contents in the angle brackets as described:
 
 ```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator]
+java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator]
 ```
 
 If `--coordinator` is specified, a [Coordinator table](api-guide.mdx#specify-operations-for-the-coordinator-table) will be created.
@@ -216,12 +216,12 @@ The following database-specific CLI arguments have been deprecated. Please use t
 <Tabs groupId="databases" queryString>
   <TabItem value="JDBC_databases" label="JDBC databases" default>
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE>
+    java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE>
     ```
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> [-r BASE_RESOURCE_UNIT]
+    java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> [-r BASE_RESOURCE_UNIT]
     ```
 
     - `<REGION>` should be a string to specify an AWS region like `ap-northeast-1`.
@@ -229,7 +229,7 @@ The following database-specific CLI arguments have been deprecated. Please use t
   </TabItem>
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> [-r BASE_RESOURCE_UNIT]
+    java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> [-r BASE_RESOURCE_UNIT]
     ```
 
     - `<COSMOS_DB_FOR_NOSQL_KEY>` you can use a primary key or a secondary key.
@@ -237,7 +237,7 @@ The following database-specific CLI arguments have been deprecated. Please use t
   </TabItem>
   <TabItem value="Cassandra" label="Cassandra">
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> [-n <NETWORK_STRATEGY>] [-R <REPLICATION_FACTOR>]
+    java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> [-n <NETWORK_STRATEGY>] [-R <REPLICATION_FACTOR>]
     ```
 
     - If `-P <CASSANDRA_PORT>` is not supplied, it defaults to `9042`.
@@ -256,7 +256,7 @@ You can use a command to add new columns to and create or delete a secondary ind
 To add new columns to and create or delete a secondary index for existing tables, run the following command, replacing the contents in the angle brackets as described:
 
 ```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> --alter
+java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> --alter
 ```
 
 :::note
@@ -266,22 +266,22 @@ The following database-specific CLI arguments have been deprecated. Please use t
 <Tabs groupId="databases" queryString>
   <TabItem value="JDBC_databases" label="JDBC databases" default>
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> --alter
+    java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> --alter
     ```
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> --alter
+    java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> --alter
     ```
   </TabItem>
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> --alter
+    java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> --alter
     ```
   </TabItem>
   <TabItem value="Cassandra" label="Cassandra">
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> --alter
+    java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> --alter
     ```
   </TabItem>
 </Tabs>
@@ -293,7 +293,7 @@ The following database-specific CLI arguments have been deprecated. Please use t
 You can delete tables by using the properties file. To delete tables, run the following command, replacing the contents in the angle brackets as described:
 
 ```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator] -D 
+java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator] -D 
 ```
 
 If `--coordinator` is specified, the Coordinator table will be deleted as well.
@@ -305,22 +305,22 @@ The following database-specific CLI arguments have been deprecated. Please use t
 <Tabs groupId="databases" queryString>
   <TabItem value="JDBC_databases" label="JDBC databases" default>
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> -D
+    java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> -D
     ```
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> -D
+    java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> -D
     ```
   </TabItem>
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> -D
+    java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> -D
     ```
   </TabItem>
   <TabItem value="Cassandra" label="Cassandra">
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> -D
+    java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> -D
     ```
   </TabItem>
 </Tabs>
@@ -332,7 +332,7 @@ The following database-specific CLI arguments have been deprecated. Please use t
 You can repair the table metadata of existing tables by using the properties file. To repair table metadata of existing tables, run the following command, replacing the contents in the angle brackets as described:
 
 ```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator] --repair-all
+java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator] --repair-all
 ```
 
 :::warning
@@ -350,22 +350,22 @@ The following database-specific CLI arguments have been deprecated. Please use t
 <Tabs groupId="databases" queryString>
   <TabItem value="JDBC_databases" label="JDBC databases" default>
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> --repair-all
+    java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> --repair-all
     ```
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> [--no-backup] -f <PATH_TO_SCHEMA_FILE> --repair-all
+    java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> [--no-backup] -f <PATH_TO_SCHEMA_FILE> --repair-all
     ```
   </TabItem>
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> --repair-all
+    java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> --repair-all
     ```
   </TabItem>
   <TabItem value="Cassandra" label="Cassandra">
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> --repair-all
+    java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> --repair-all
     ```
   </TabItem>
 </Tabs>

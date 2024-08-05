@@ -121,7 +121,7 @@ We need to set up IAM permissions before installing the AWS Load Balancer Contro
     To check if the IAM service account has been created, run:
 
     ```console
-    $ eksctl get iamserviceaccount --cluster=<your-cluster-name>
+    eksctl get iamserviceaccount --cluster=<your-cluster-name>
     NAMESPACE       NAME                            ROLE ARN
     kube-system     aws-load-balancer-controller    arn:aws:iam::***:role/******
     ```
@@ -161,7 +161,7 @@ Now we can install the AWS Load Balancer Controller with Helm.
 3. Verify that the controller is installed
 
     ```console
-    $ kubectl get deployment -n kube-system aws-load-balancer-controller
+    kubectl get deployment -n kube-system aws-load-balancer-controller
     NAME                           READY   UP-TO-DATE   AVAILABLE   AGE
     aws-load-balancer-controller   2/2     2            2           11s
     ```
@@ -216,7 +216,7 @@ Now we can install the AWS Load Balancer Controller with Helm.
 5. Verify that an internal ALB has been created
 
     ```console
-    $ kubectl get ingress
+    kubectl get ingress
     NAME                          CLASS   HOSTS   ADDRESS                                                                           PORTS   AGE
     my-release-scalardb-graphql   alb     *       internal-k8s-default-myreleas-551ab46922-2136573255.us-west-1.elb.amazonaws.com   80      9m36s
     ```
@@ -228,7 +228,7 @@ Now we can install the AWS Load Balancer Controller with Helm.
     The following `curl` command sends a simple GraphQL request to the ALB. The ALB should return a `200` response.
 
     ```console
-    $ curl 'http://<ALB DNS name>/graphql -v -H 'Content-Type: application/graphql' --data '{__typename}'
+    curl 'http://<ALB DNS name>/graphql -v -H 'Content-Type: application/graphql' --data '{__typename}'
     ...
     > POST /graphql HTTP/1.1
     ...
