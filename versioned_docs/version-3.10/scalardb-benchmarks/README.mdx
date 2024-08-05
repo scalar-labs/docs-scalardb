@@ -40,13 +40,13 @@ The following sections describe how to set up the benchmarking tools.
 Open **Terminal**, then clone the ScalarDB benchmarks repository by running the following command:
 
 ```console
-$ git clone https://github.com/scalar-labs/scalardb-benchmarks
+git clone https://github.com/scalar-labs/scalardb-benchmarks
 ```
 
 Then, go to the directory that contains the benchmarking files by running the following command:
 
 ```console
-$ cd scalardb-benchmarks
+cd scalardb-benchmarks
 ```
 
 ### Build the tools
@@ -54,7 +54,7 @@ $ cd scalardb-benchmarks
 To build the benchmarking tools, run the following command:
 
 ```console
-$ ./gradlew shadowJar
+./gradlew shadowJar
 ```
 
 ### Load the schema
@@ -70,21 +70,21 @@ After applying the schema and configuring the properties file, select a benchmar
     To create tables for TPC-C benchmarking ([`tpcc-schema.json`](https://github.com/scalar-labs/scalardb-benchmarks/blob/master/tpcc-schema.json)), run the following command, replacing the contents in the angle brackets as described:
 
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f tpcc-schema.json --coordinator
+    java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f tpcc-schema.json --coordinator
     ```
   </TabItem>
   <TabItem value="YCSB" label="YCSB">
     To create tables for YCSB benchmarking ([`ycsb-schema.json`](https://github.com/scalar-labs/scalardb-benchmarks/blob/master/ycsb-schema.json)), run the following command, replacing the contents in the angle brackets as described:
 
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f ycsb-schema.json --coordinator
+    java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f ycsb-schema.json --coordinator
     ```
   </TabItem>
   <TabItem value="multi-storage_YCSB" label="Multi-storage YCSB">
     To create tables for multi-storage YCSB benchmarking ([`ycsb-multi-storage-schema.json`](https://github.com/scalar-labs/scalardb-benchmarks/blob/master/ycsb-multi-storage-schema.json)), run the following command, replacing the contents in the angle brackets as described:
 
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f ycsb-multi-storage-schema.json --coordinator
+    java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f ycsb-multi-storage-schema.json --coordinator
     ```
   </TabItem>
 </Tabs>
@@ -137,21 +137,21 @@ Select a benchmark, and follow the instructions to run the benchmark.
     To run the TPC-C benchmark, run the following command, replacing `<PATH_TO_KELPIE>` with the path to the Kelpie directory:
 
     ```console
-    $ /<PATH_TO_KELPIE>/bin/kelpie --config tpcc-benchmark-config.toml
+    /<PATH_TO_KELPIE>/bin/kelpie --config tpcc-benchmark-config.toml
     ```
   </TabItem>
   <TabItem value="YCSB" label="YCSB">
     To run the YCSB benchmark, run the following command, replacing `<PATH_TO_KELPIE>` with the path to the Kelpie directory:
 
     ```console
-    $ /<PATH_TO_KELPIE>/bin/kelpie --config ycsb-benchmark-config.toml
+    /<PATH_TO_KELPIE>/bin/kelpie --config ycsb-benchmark-config.toml
     ```
   </TabItem>
   <TabItem value="Multi-storage_YCSB" label="Multi-storage YCSB">
     To run the multi-storage YCSB benchmark, run the following command, replacing `<PATH_TO_KELPIE>` with the path to the Kelpie directory:
 
     ```console
-    $ /<PATH_TO_KELPIE>/bin/kelpie --config ycsb-multi-storage-benchmark-config.toml
+    /<PATH_TO_KELPIE>/bin/kelpie --config ycsb-multi-storage-benchmark-config.toml
     ```
   </TabItem>
 </Tabs>
