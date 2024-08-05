@@ -153,14 +153,14 @@ scalar.db.sql.cluster_mode.contact_points=indirect:localhost
 
 Open Terminal, then clone the ScalarDB samples repository by running the following command:
 
-```shell
-$ git clone https://github.com/scalar-labs/scalardb-samples
+```console
+git clone https://github.com/scalar-labs/scalardb-samples
 ```
 
 Then, go to the directory with this sample by running the following command:
 
-```shell
-$ cd scalardb-samples/spring-data-multi-storage-transaction-sample
+```console
+cd scalardb-samples/spring-data-multi-storage-transaction-sample
 ```
 
 ### Set the license key
@@ -171,8 +171,8 @@ Set the license key (trial license or commercial license) for the ScalarDB Clust
 
 To start Cassandra, MySQL, and ScalarDB Cluster, you need to run the following `docker-compose` command:
 
-```shell
-$ docker-compose up -d
+```console
+docker-compose up -d
 ```
 
 Please note that starting the containers may take more than one minute.
@@ -182,16 +182,16 @@ Please note that starting the containers may take more than one minute.
 You then need to apply the schema with the following command.
 To download the SQL CLI tool, `scalardb-cluster-sql-cli-<VERSION>-all.jar`, see the [Releases](https://github.com/scalar-labs/scalardb/releases) of ScalarDB and download the version that you want to use.
 
-```shell
-$ java -jar scalardb-cluster-sql-cli-<VERSION>-all.jar --config scalardb-sql.properties --file schema.sql
+```console
+java -jar scalardb-cluster-sql-cli-<VERSION>-all.jar --config scalardb-sql.properties --file schema.sql
 ```
 
 ### Load initial data
 
 After the containers have started, you need to load the initial data by running the following command:
 
-```shell
-$ ./gradlew run --args="LoadInitialData"
+```console
+./gradlew run --args="LoadInitialData"
 ```
 
 After the initial data has loaded, the following records should be stored in the tables:
@@ -218,8 +218,8 @@ After the initial data has loaded, the following records should be stored in the
 
 Let's start with getting information about the customer whose ID is `1`:
 
-```shell
-$ ./gradlew run --args="GetCustomerInfo 1"
+```console
+./gradlew run --args="GetCustomerInfo 1"
 ...
 {"customer_id":1,"name":"Yamada Taro","credit_limit":10000,"credit_total":0}
 ...
@@ -227,8 +227,8 @@ $ ./gradlew run --args="GetCustomerInfo 1"
 
 Then, place an order for three apples and two oranges by using customer ID `1`. Note that the order format is `<Item ID>:<Count>,<Item ID>:<Count>,...`:
 
-```shell
-$ ./gradlew run --args="PlaceOrder 1 1:3,2:2"
+```console
+./gradlew run --args="PlaceOrder 1 1:3,2:2"
 ...
 {"order_id":"5d49eb62-fcb9-4dd2-9ae5-e714d989937f","customer_id":1,"timestamp":1677564659810}
 ...
@@ -238,8 +238,8 @@ You can see that running this command shows the order ID.
 
 Let's check the details of the order by using the order ID:
 
-```shell
-$ ./gradlew run --args="GetOrder 5d49eb62-fcb9-4dd2-9ae5-e714d989937f"
+```console
+./gradlew run --args="GetOrder 5d49eb62-fcb9-4dd2-9ae5-e714d989937f"
 ...
 {"order_id":"5d49eb62-fcb9-4dd2-9ae5-e714d989937f","timestamp":1677564659810,"customer_id":1,"customer_name":"Yamada Taro","statements":[{"item_id":1,"item_name":"Apple","price":1000,"count":3,"total":3000},{"item_id":2,"item_name":"Orange","price":2000,"count":2,"total":4000}],"total":7000}
 ...
@@ -247,12 +247,12 @@ $ ./gradlew run --args="GetOrder 5d49eb62-fcb9-4dd2-9ae5-e714d989937f"
 
 Then, let's place another order and get the order history of customer ID `1`:
 
-```shell
-$ ./gradlew run --args="PlaceOrder 1 5:1"
+```console
+./gradlew run --args="PlaceOrder 1 5:1"
 ...
 {"order_id":"ccd97d75-ee57-4393-a0bb-5230c4a8c68a","customer_id":1,"timestamp":1677564776069}
 ...
-$ ./gradlew run --args="GetOrders 1"
+./gradlew run --args="GetOrders 1"
 ...
 [{"order_id":"ccd97d75-ee57-4393-a0bb-5230c4a8c68a","timestamp":1677564776069,"customer_id":1,"customer_name":"Yamada Taro","statements":[{"item_id":5,"item_name":"Melon","price":3000,"count":1,"total":3000}],"total":3000},{"order_id":"5d49eb62-fcb9-4dd2-9ae5-e714d989937f","timestamp":1677564659810,"customer_id":1,"customer_name":"Yamada Taro","statements":[{"item_id":1,"item_name":"Apple","price":1000,"count":3,"total":3000},{"item_id":2,"item_name":"Orange","price":2000,"count":2,"total":4000}],"total":7000}]
 ...
@@ -262,12 +262,12 @@ This order history is shown in descending order by timestamp.
 
 The customer's current `credit_total` is `10000`. Since the customer has now reached their `credit_limit`, which was shown when retrieving their information, they cannot place anymore orders.
 
-```shell
-$ ./gradlew run --args="GetCustomerInfo 1"
+```console
+./gradlew run --args="GetCustomerInfo 1"
 ...
 {"customer_id":1,"name":"Yamada Taro","credit_limit":10000,"credit_total":10000}
 ...
-$ ./gradlew run --args="PlaceOrder 1 3:1,4:1"
+./gradlew run --args="PlaceOrder 1 3:1,4:1"
 ...
 java.lang.RuntimeException: Credit limit exceeded. limit:10000, total:17500
         at sample.SampleService.placeOrder(SampleService.java:102)
@@ -305,14 +305,14 @@ java.lang.RuntimeException: Credit limit exceeded. limit:10000, total:17500
 
 After making a payment, the customer will be able to place orders again.
 
-```shell
-$ ./gradlew run --args="Repayment 1 8000"
+```console
+./gradlew run --args="Repayment 1 8000"
 ...
-$ ./gradlew run --args="GetCustomerInfo 1"
+./gradlew run --args="GetCustomerInfo 1"
 ...
 {"customer_id":1,"name":"Yamada Taro","credit_limit":10000,"credit_total":2000}
 ...
-$ ./gradlew run --args="PlaceOrder 1 3:1,4:1"
+./gradlew run --args="PlaceOrder 1 3:1,4:1"
 ...
 {"order_id":"3ac4a1bf-a724-4f26-b948-9f03281a971e","customer_id":1,"timestamp":1677565028204}
 ...
@@ -322,6 +322,6 @@ $ ./gradlew run --args="PlaceOrder 1 3:1,4:1"
 
 To stop Cassandra, MySQL, and ScalarDB Cluster, run the following command:
 
-```shell
-$ docker-compose down
+```console
+docker-compose down
 ```
