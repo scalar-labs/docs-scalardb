@@ -16,8 +16,8 @@ PostgreSQL runs as a service, accepting queries from users to process. FDW exten
 
 First, you need one or more ScalarDB databases to run analytical queries with ScalarDB Analytics with PostgreSQL. If you have your own ScalarDB database, you can skip this section and use your database instead. If you use the [scalardb-samples/scalardb-analytics-postgresql-sample](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-analytics-postgresql-sample) project, you can set up a sample database by running the following command in the project directory.
 
-```shell
-$ docker compose run --rm schema-loader \
+```console
+docker compose run --rm schema-loader \
   -c /etc/scalardb.properties \
   --schema-file /etc/schema.json \
   --coordinator \
@@ -32,15 +32,15 @@ This command sets up [multiple storage instances](../multi-storage-transactions.
 You can load sample data into the created tables by running the following command.
 
 ```console
-$ docker compose run --rm sample-data-loader
+docker compose run --rm sample-data-loader
 ```
 
 ## Import the schemas from ScalarDB into PostgreSQL
 
 Next, let's import the schemas of the ScalarDB databases into PostgreSQL that processes analytical queries. ScalarDB Analytics with PostgreSQL provides a tool, Schema Importer, for this purpose. It'll get everything in place to run analytical queries for you.
 
-```shell
-$ docker compose run --rm schema-importer \
+```console
+docker compose run --rm schema-importer \
   import \
   --config /etc/scalardb.properties \
   --host analytics \
@@ -64,8 +64,8 @@ This creates tables (in precise, views) with the same names as the tables in the
 
 Now, you have all tables to read the same data in the ScalarDB databases and can run any arbitrary analytical queries supported by PostgreSQL. To run queries, please connect to PostgreSQL with `psql` or other client.
 
-```shell
-$ psql -U postgres -h localhost test
+```console
+psql -U postgres -h localhost test
 Password for user postgres:
 
 > select c_mktsegment, count(*) from dynamons.customer group by c_mktsegment;

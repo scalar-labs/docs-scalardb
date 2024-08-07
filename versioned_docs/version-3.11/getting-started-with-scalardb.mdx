@@ -31,13 +31,13 @@ In addition, since you'll be using Docker Compose to run the databases, you must
 Open **Terminal**, then clone the ScalarDB samples repository by running the following command:
 
 ```console
-$ git clone https://github.com/scalar-labs/scalardb-samples
+git clone https://github.com/scalar-labs/scalardb-samples
 ```
 
 Then, go to the directory that contains the sample application by running the following command:
 
 ```console
-$ cd scalardb-samples/scalardb-sample
+cd scalardb-samples/scalardb-sample
 ```
 
 ## Set up your database for ScalarDB
@@ -55,7 +55,7 @@ For a list of databases that ScalarDB supports, see [Databases](requirements.mdx
     To start MySQL, run the following command:
 
     ```console
-    $ docker compose up -d mysql
+    docker compose up -d mysql
     ```
 
     <h3>Configure ScalarDB</h3>
@@ -78,7 +78,7 @@ For a list of databases that ScalarDB supports, see [Databases](requirements.mdx
     To start PostgreSQL, run the following command:
 
     ```console
-    $ docker compose up -d postgres
+    docker compose up -d postgres
     ```
 
     <h3>Configure ScalarDB</h3>
@@ -101,7 +101,7 @@ For a list of databases that ScalarDB supports, see [Databases](requirements.mdx
     To start Oracle Database, run the following command:
 
     ```console
-    $ docker compose up -d oracle
+    docker compose up -d oracle
     ```
 
     <h3>Configure ScalarDB</h3>
@@ -117,14 +117,14 @@ For a list of databases that ScalarDB supports, see [Databases](requirements.mdx
     ```
   </TabItem>
   <TabItem value="SQL Server" label="SQL Server" default>
-    <h3>Run Oracle Database locally</h3>
+    <h3>Run SQL Server locally</h3>
 
     You can run SQL Server in Docker Compose by using the `docker-compose.yml` file in the `scalardb-samples/scalardb-sample` directory.
 
     To start SQL Server, run the following command:
 
     ```console
-    $ docker compose up -d sqlserver
+    docker compose up -d sqlserver
     ```
 
     <h3>Configure ScalarDB</h3>
@@ -147,7 +147,7 @@ For a list of databases that ScalarDB supports, see [Databases](requirements.mdx
     To start Amazon DynamoDB Local, run the following command:
 
     ```console
-    $ docker compose up -d dynamodb
+    docker compose up -d dynamodb
     ```
 
     <h3>Configure ScalarDB</h3>
@@ -196,7 +196,7 @@ You can use a primary key or a secondary key as the value for `scalar.db.passwor
 
     To start Apache Cassandra, run the following command:
     ```console
-    $ docker compose up -d cassandra
+    docker compose up -d cassandra
     ```
 
     <h3>Configure ScalarDB</h3>
@@ -223,8 +223,8 @@ Then, run the following command, replacing `<VERSION>` with the version of the S
 
 <Tabs groupId="databases" queryString>
   <TabItem value="MySQL" label="MySQL" default>
-    ```shell
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
     ```
 
 :::note
@@ -234,8 +234,8 @@ The `--coordinator` option is specified because a table with `transaction` set t
 :::
   </TabItem>
   <TabItem value="PostgreSQL" label="PostgreSQL" default>
-    ```shell
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
     ```
 
 :::note
@@ -245,8 +245,8 @@ The `--coordinator` option is specified because a table with `transaction` set t
 :::
   </TabItem>
   <TabItem value="Oracle Database" label="Oracle Database" default>
-    ```shell
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
     ```
 
 :::note
@@ -256,8 +256,8 @@ The `--coordinator` option is specified because a table with `transaction` set t
 :::
   </TabItem>
   <TabItem value="SQL Server" label="SQL Server" default>
-    ```shell
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
     ```
 
 :::note
@@ -267,8 +267,8 @@ The `--coordinator` option is specified because a table with `transaction` set t
 :::
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
-    ```shell
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator --no-backup --no-scaling
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator --no-backup --no-scaling
     ```
 
 :::note
@@ -280,8 +280,8 @@ Also, `--no-backup` and `--no-scaling` options are specified because Amazon Dyna
 :::
   </TabItem>
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
-    ```shell
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
     ```
 
 :::note
@@ -291,8 +291,8 @@ The `--coordinator` option is specified because a table with `transaction` set t
 :::
   </TabItem>
   <TabItem value="Cassandra" label="Cassandra">
-    ```shell
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator --replication-factor=1
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator --replication-factor=1
     ```
 
 :::note
@@ -325,7 +325,7 @@ The Entity Relationship Diagram for the schema is as follows:
 Before running the sample application, you need to load the initial data by running the following command:
 
 ```console
-$ ./gradlew run --args="LoadInitialData"
+./gradlew run --args="LoadInitialData"
 ```
 
 After the initial data has loaded, the following records should be stored in the tables.
@@ -357,7 +357,7 @@ The following sections describe how to execute transactions and retrieve data in
 Start with getting information about the customer whose ID is `1` by running the following command:
 
 ```console
-$ ./gradlew run --args="GetCustomerInfo 1"
+./gradlew run --args="GetCustomerInfo 1"
 ```
 
 You should see the following output:
@@ -379,7 +379,7 @@ The order format in this command is `./gradlew run --args="PlaceOrder <CUSTOMER_
 :::
 
 ```console
-$ ./gradlew run --args="PlaceOrder 1 1:3,2:2"
+./gradlew run --args="PlaceOrder 1 1:3,2:2"
 ```
 
 You should see a similar output as below, with a different UUID for `order_id`, which confirms that the order was successful:
@@ -395,7 +395,7 @@ You should see a similar output as below, with a different UUID for `order_id`, 
 Check details about the order by running the following command, replacing `<ORDER_ID_UUID>` with the UUID for the `order_id` that was shown after running the previous command:
 
 ```console
-$ ./gradlew run --args="GetOrder <ORDER_ID_UUID>"
+./gradlew run --args="GetOrder <ORDER_ID_UUID>"
 ```
 
 You should see a similar output as below, with different UUIDs for `order_id` and `timestamp`:
@@ -411,7 +411,7 @@ You should see a similar output as below, with different UUIDs for `order_id` an
 Place an order for one melon that uses the remaining amount in `credit_total` for customer ID `1` by running the following command:
 
 ```console
-$ ./gradlew run --args="PlaceOrder 1 5:1"
+./gradlew run --args="PlaceOrder 1 5:1"
 ```
 
 You should see a similar output as below, with a different UUID for `order_id`, which confirms that the order was successful:
@@ -427,7 +427,7 @@ You should see a similar output as below, with a different UUID for `order_id`, 
 Get the history of all orders for customer ID `1` by running the following command:
 
 ```console
-$ ./gradlew run --args="GetOrders 1"
+./gradlew run --args="GetOrders 1"
 ```
 
 You should see a similar output as below, with different UUIDs for `order_id` and `timestamp`, which shows the history of all orders for customer ID `1` in descending order by timestamp:
@@ -443,7 +443,7 @@ You should see a similar output as below, with different UUIDs for `order_id` an
 Get the credit total for customer ID `1` by running the following command:
 
 ```console
-$ ./gradlew run --args="GetCustomerInfo 1"
+./gradlew run --args="GetCustomerInfo 1"
 ```
 
 You should see the following output, which shows that customer ID `1` has reached their `credit_limit` in `credit_total` and cannot place anymore orders:
@@ -457,7 +457,7 @@ You should see the following output, which shows that customer ID `1` has reache
 Try to place an order for one grape and one mango by running the following command:
 
 ```console
-$ ./gradlew run --args="PlaceOrder 1 3:1,4:1"
+./gradlew run --args="PlaceOrder 1 3:1,4:1"
 ```
 
 You should see the following output, which shows that the order failed because the `credit_total` amount would exceed the `credit_limit` amount.
@@ -485,13 +485,13 @@ To continue making orders, customer ID `1` must make a payment to reduce the `cr
 Make a payment by running the following command:
 
 ```console
-$ ./gradlew run --args="Repayment 1 8000"
+./gradlew run --args="Repayment 1 8000"
 ```
 
 Then, check the `credit_total` amount for customer ID `1` by running the following command:
 
 ```console
-$ ./gradlew run --args="GetCustomerInfo 1"
+./gradlew run --args="GetCustomerInfo 1"
 ```
 
 You should see the following output, which shows that a payment was applied to customer ID `1`, reducing the `credit_total` amount:
@@ -505,12 +505,12 @@ You should see the following output, which shows that a payment was applied to c
 Now that customer ID `1` has made a payment, place an order for one grape and one melon by running the following command:
 
 ```console
-$ ./gradlew run --args="PlaceOrder 1 3:1,4:1"
+./gradlew run --args="PlaceOrder 1 3:1,4:1"
 ```
 
 You should see a similar output as below, with a different UUID for `order_id`, which confirms that the order was successful:
 
-```
+```console
 ...
 {"order_id": "8911cab3-1c2b-4322-9386-adb1c024e078"}
 ...
@@ -521,7 +521,7 @@ You should see a similar output as below, with a different UUID for `order_id`, 
 To stop the database, stop the Docker container by running the following command:
 
 ```console
-$ docker compose down
+docker compose down
 ```
 
 ## Reference
