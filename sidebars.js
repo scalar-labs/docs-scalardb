@@ -78,7 +78,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: 'Try ScalarDB Core Transactions',
+          label: 'Try Running Transactions Through the ScalarDB Core Library',
           collapsible: true,
           items: [
             {
@@ -95,7 +95,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: 'Try ScalarDB Transactions Through ScalarDB Cluster',
+          label: 'Try Running Transactions Through ScalarDB Cluster',
           collapsible: true,
           items: [
             {
@@ -142,7 +142,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: 'Try ScalarDB Analytics',
+          label: 'Try Running Analytical Queries Through ScalarDB Analytics',
           collapsible: true,
           items: [
             {
@@ -196,28 +196,23 @@ const sidebars = {
               label: 'Run Through the CRUD Interface',
               collapsible: true,
               items: [
-                { // THIS LINK IS ONLY FOR RENDERING THE SIDEBAR. REMOVE THIS ITEM WHEN THE COMMENTED OUT DOC HAS BEEN CREATED.
+                { // To be created
                   type: 'doc',
-                  id: 'overview',
-                  label: 'PLACEHOLDER',
+                  id: 'index',
+                  label: 'Use the ScalarDB Core Library (PLACEHOLDER)',
                 },
-                // { To be created
-                //   type: 'doc',
-                //   id: 'run-transactions-through-scalardb-library',
-                //   label: 'Use the Library',
-                // },
-                // { To be created
-                //   type: 'doc',
-                //   id: 'scalardb-cluster/run-transactions-through-scalardb-cluster',
-                //   label: 'Use ScalarDB Cluster',
-                // },
+                { // To be created
+                  type: 'doc',
+                  id: 'index',
+                  label: 'Use ScalarDB Cluster (PLACEHOLDER)',
+                },
               ],
             },
-            // { To be created
-            //   type: 'doc',
-            //   id: 'scalardb-cluster/run-transactions-scalardb-cluster-sql',
-            //   label: 'Use the SQL Interface',
-            // },
+            { // To be created
+              type: 'doc',
+              id: 'index',
+              label: 'Use the SQL Interface (PLACEHOLDER)',
+            },
             {
               type: 'category',
               label: 'Advanced Configurations and Operations',
@@ -264,32 +259,27 @@ const sidebars = {
               label: 'Run Through the CRUD Interface',
               collapsible: true,
               items: [
-                { // THIS LINK IS ONLY FOR RENDERING THE SIDEBAR. REMOVE THIS ITEM WHEN THE COMMENTED OUT DOC HAS BEEN CREATED.
+                { // To be created
                   type: 'doc',
-                  id: 'overview',
-                  label: 'PLACEHOLDER',
+                  id: 'index',
+                  label: 'Use the ScalarDB Core Library (PLACEHOLDER)',
                 },
-                // { To be created
-                //   type: 'doc',
-                //   id: 'run-non-transactional-operations-through-scalardb-library',
-                //   label: 'Use the Library',
-                // },
-                // { To be created
-                //   type: 'doc',
-                //   id: 'run-non-transactional-operations-through-scalardb-cluster',
-                //   label: 'Use ScalarDB Cluster',
-                // },
+                { // To be created
+                  type: 'doc',
+                  id: 'index',
+                  label: 'Use ScalarDB Cluster (PLACEHOLDER)',
+                },
               ],
             },
-            // { To be created
-            //   type: 'doc',
-            //   id: 'run-non-transactional-operations-through-sql-interface',
-            //   label: 'Use the SQL Interface',
-            // },
-            {
+            { // To be created
               type: 'doc',
-              id: 'storage-abstraction',
-              label: 'Run Through the Primitive CRUD Interface',
+              id: 'index',
+              label: 'Use the SQL Interface (PLACEHOLDER)',
+            },
+            { // To be created
+              type: 'doc',
+              id: 'index',
+              label: 'Run Through the Primitive CRUD Interface (PLACEHOLDER)',
             },
           ],
         },
@@ -407,11 +397,6 @@ const sidebars = {
               label: 'GraphQL Interface',
               collapsible: true,
               items: [
-                // { To be created
-                //   type: 'doc',
-                //   id: 'java-one-phase-commit-interface',
-                //   label: 'TITLE',
-                // },
                 {
                   type: 'doc',
                   id: 'scalardb-graphql/how-to-run-two-phase-commit-transaction',
@@ -505,12 +490,12 @@ const sidebars = {
         {
           type: 'doc',
           id: 'scalardb-cluster/setup-scalardb-cluster-on-kubernetes-by-using-helm-chart',
-          label: 'Deploy ScalarDB Cluster in Your Local Environment',
+          label: 'Deploy ScalarDB Cluster Locally',
         },
         {
           type: 'doc',
           id: 'scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS',
-          label: 'Deploy ScaslarDB Cluster on Amazon EKS',
+          label: 'Deploy ScalarDB Cluster on Amazon EKS',
         },
         {
           type: 'category',
@@ -540,7 +525,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'helm-charts/getting-started-scalardb-cluster-tls',
-                  label: 'ScalarDB Cluster with TLS by Using a Helm Chart', //sidebar label
+                  label: 'ScalarDB Cluster with TLS by Using a Helm Chart',
                 },
                 {
                   type: 'doc',
@@ -696,11 +681,6 @@ const sidebars = {
       label: 'Migrate',
       collapsible: true,
       items: [
-        // { To be created
-        //   type: 'doc',
-        //   id: 'migrate-overview',
-        //   label: 'Overview',
-        // },
         {
           type: 'doc',
           id: 'schema-loader-import',
@@ -713,21 +693,16 @@ const sidebars = {
       label: 'Manage',
       collapsible: true,
       items: [
-        // { To be created
-        //   type: 'doc',
-        //   id: 'manage-overview',
-        //   label: 'Overview',
-        // },
         {
           type: 'category',
           label: 'Monitor',
           collapsible: true,
           items: [
-            // { To be created
-            //   type: 'doc',
-            //   id: 'monitor-by-using-scalar-manager',
-            //   label: 'Use Scalar Manager',
-            // },
+            {
+              type: 'doc',
+              id: 'monitor-by-using-scalar-manager',
+              label: 'Use Scalar Manager',
+            },
             {
               type: 'category',
               label: 'Reference',
@@ -775,7 +750,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'backup-restore',
-                  label: 'Back Up and Restore Databases',
+                  label: 'Back Up and Restore Databases Used Through ScalarDB',
                 },
                 {
                   type: 'doc',
@@ -801,7 +776,7 @@ const sidebars = {
             {
               type: 'doc',
               id: 'scalardb-core-status-codes',
-              label: 'ScalarDB',
+              label: 'ScalarDB Core',
             },
             {
               type: 'doc',
