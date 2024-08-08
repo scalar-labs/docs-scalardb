@@ -17,11 +17,11 @@ const CardsAbout = [
     // name: '',
     // image: '<LINK_TO>.png',
     url: {
-      page: 'overview/',
+      page: 'design',
     },
     description: (
       <Translate id="home.about.description">
-        Overview
+        Design
       </Translate>
     ),
   },
@@ -29,7 +29,7 @@ const CardsAbout = [
     // name: '',
     // image: '<LINK_TO>.png',
     url: {
-      page: 'scalardb-supported-databases/',
+      page: 'scalardb-supported-databases',
     },
     description: (
       <Translate id="home.about.description">
@@ -44,7 +44,7 @@ const CardsGettingStarted = [
     // name: '',
     // image: '<LINK_TO>.png',
     url: {
-      page: 'getting-started-with-scalardb/',
+      page: 'getting-started-with-scalardb',
     },
     description: (
       <Translate id="home.gettingStarted.description">
@@ -56,11 +56,11 @@ const CardsGettingStarted = [
     // name: '',
     // image: '<LINK_TO>.png',
     url: {
-      page: 'scalardb-cluster/getting-started-with-scalardb-cluster/',
+      page: 'getting-started-with-scalardb-by-using-kotlin',
     },
     description: (
       <Translate id="home.gettingStarted.description">
-        Getting started with ScalarDB Cluster
+        Getting started with ScalarDB by using Kotlin
       </Translate>
     ),
   },
@@ -71,11 +71,11 @@ const CardsSamples = [
     // name: '',
     // image: '<LINK_TO>.png',
     url: {
-      page: 'scalardb-samples/scalardb-sample/',
+      page: 'scalardb-samples/multi-storage-transaction-sample',
     },
     description: (
       <Translate id="home.samples.description">
-        Create a basic e-commerce sample application that uses ScalarDB
+        Create a sample application with multi-storage transaction support
       </Translate>
     ),
   },
@@ -83,11 +83,11 @@ const CardsSamples = [
     // name: '',
     // image: '<LINK_TO>.png',
     url: {
-      page: 'scalardb-samples/multi-storage-transaction-sample/',
+      page: 'scalardb-samples/microservice-transaction-sample',
     },
     description: (
       <Translate id="home.samples.description">
-        Create a sample application with multi-storage transaction support
+        Create a sample application that supports microservice transactions
       </Translate>
     ),
   },
@@ -98,7 +98,7 @@ const CardsDevelop = [
     // name: '',
     // image: '<LINK_TO>.png',
     url: {
-      page: 'add-scalardb-to-your-build/',
+      page: 'add-scalardb-to-your-build',
     },
     description: (
       <Translate id="home.develop.description">
@@ -110,7 +110,7 @@ const CardsDevelop = [
     // name: '',
     // image: '<LINK_TO>.png',
     url: {
-      page: 'schema-loader/',
+      page: 'schema-loader',
     },
     description: (
       <Translate id="home.develop.description">
@@ -125,7 +125,7 @@ const CardsDeploy = [
     // name: '',
     // image: '<LINK_TO>.png',
     url: {
-      page: 'scalar-kubernetes/SetupDatabaseForAWS/',
+      page: 'scalar-kubernetes/SetupDatabaseForAWS',
     },
     description: (
       <Translate id="home.deploy.description">
@@ -137,11 +137,11 @@ const CardsDeploy = [
     // name: '',
     // image: '<LINK_TO>.png',
     url: {
-      page: 'scalar-kubernetes/ProductionChecklistForScalarDBCluster/',
+      page: 'scalar-kubernetes/AccessScalarProducts',
     },
     description: (
       <Translate id="home.deploy.description">
-        See the ScalarDB Cluster production checklist
+        Make ScalarDB in a Kubernetes cluster environment available from applications
       </Translate>
     ),
   },
@@ -152,7 +152,7 @@ const CardsManage = [
     // name: '',
     // image: '<LINK_TO>.png',
     url: {
-      page: 'scalar-kubernetes/K8sMonitorGuide/',
+      page: 'scalar-kubernetes/K8sMonitorGuide',
     },
     description: (
       <Translate id="home.manage.description">
@@ -164,7 +164,7 @@ const CardsManage = [
     // name: '',
     // image: '<LINK_TO>.png',
     url: {
-      page: 'scalar-kubernetes/BackupRestoreGuide/',
+      page: 'scalar-kubernetes/BackupRestoreGuide',
     },
     description: (
       <Translate id="home.manage.description">
@@ -179,7 +179,7 @@ const CardsReference = [
     // name: '',
     // image: '<LINK_TO>.png',
     url: {
-      page: 'scalardb-benchmarks/',
+      page: 'scalardb-benchmarks',
     },
     description: (
       <Translate id="home.reference.description">
@@ -191,11 +191,11 @@ const CardsReference = [
     // name: '',
     // image: '<LINK_TO>.png',
     url: {
-      page: 'storage-abstraction/',
+      page: 'releases/release-notes',
     },
     description: (
       <Translate id="home.reference.description">
-        Storage abstraction and API guide
+        ScalarDB 3.5 Release Notes
       </Translate>
     ),
   },
