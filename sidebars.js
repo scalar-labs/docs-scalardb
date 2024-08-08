@@ -189,7 +189,7 @@ const sidebars = {
             {
               type: 'doc',
               id: 'data-modeling',
-              label: 'Data Modeling',
+              label: 'Model Your Data',
             },
             {
               type: 'category',
