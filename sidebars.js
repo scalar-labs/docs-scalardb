@@ -118,26 +118,6 @@ const sidebars = {
               id: 'scalardb-cluster/getting-started-with-scalardb-cluster-graphql',
               label: 'Use GraphQL',
             },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-transactions',
-              label: 'Use the .NET Client SDK',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-linq',
-              label: 'Use LINQ for the .NET Client SDK',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/getting-started-with-using-go-for-scalardb-cluster',
-              label: 'Use Go for ScalarDB Cluster',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/getting-started-with-using-python-for-scalardb-cluster',
-              label: 'Use Python for ScalarDB Cluster',
-            },
           ],
         },
         {
@@ -162,6 +142,41 @@ const sidebars = {
           label: 'Reference',
           collapsible: true,
           items: [
+            {
+              type: 'doc',
+              id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-transactions',
+              label: 'Use the .NET Client SDK',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-linq',
+              label: 'Use LINQ for the .NET Client SDK',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/getting-started-with-using-go-for-scalardb-cluster',
+              label: 'Use Go for ScalarDB Cluster',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/getting-started-with-using-python-for-scalardb-cluster',
+              label: 'Use Python for ScalarDB Cluster',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api',
+              label: 'ScalarDB Cluster Java API',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/scalardb-cluster-configurations',
+              label: 'ScalarDB Cluster Configurations',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/scalardb-cluster-grpc-api-guide',
+              label: 'ScalarDB Cluster gRPC API Guide',
+            },
             {
               type: 'doc',
               id: 'scalardb-analytics-postgresql/installation',
@@ -344,21 +359,6 @@ const sidebars = {
               type: 'doc',
               id: 'schema-loader',
               label: 'Schema Loader',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api',
-              label: 'ScalarDB Cluster Java API',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/scalardb-cluster-configurations',
-              label: 'ScalarDB Cluster Configurations',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/scalardb-cluster-grpc-api-guide',
-              label: 'ScalarDB Cluster gRPC API Guide',
             },
             {
               type: 'category',
