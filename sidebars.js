@@ -226,7 +226,7 @@ const sidebars = {
             { // To be created
               type: 'doc',
               id: 'scalardb-cluster/run-transactions-through-scalardb-cluster-sql',
-              label: 'Use the SQL Interface',
+              label: 'Run Through the SQL Interface',
             },
             {
               type: 'category',
@@ -255,12 +255,12 @@ const sidebars = {
             {
               type: 'doc',
               id: 'scalardb-samples/scalardb-analytics-postgresql-sample/README',
-              label: 'Use ScalarDB Analytics with PostgreSQL',
+              label: 'Run ScalarDB Analytics with PostgreSQL',
             },
             {
               type: 'doc',
               id: 'scalardb-analytics-spark/getting-started',
-              label: 'Use ScalarDB Analytics with Spark',
+              label: 'Run ScalarDB Analytics with Spark',
             },
           ],
         },
@@ -289,7 +289,7 @@ const sidebars = {
             { // To be created
               type: 'doc',
               id: 'scalardb-cluster/run-non-transactional-storage-operations-through-sql-interface',
-              label: 'Use the SQL Interface',
+              label: 'Run Through the SQL Interface',
             },
             { // To be created
               type: 'doc',
@@ -738,11 +738,6 @@ const sidebars = {
               label: 'Back Up and Restore Databases',
             },
             {
-              type: 'doc',
-              id: 'scalar-kubernetes/BackupNoSQL',
-              label: 'Back Up a NoSQL Database in Kubernetes',
-            },
-            {
               type: 'category',
               label: 'Reference',
               collapsible: true,
@@ -751,6 +746,11 @@ const sidebars = {
                   type: 'doc',
                   id: 'backup-restore',
                   label: 'Back Up and Restore Databases Used Through ScalarDB',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalar-kubernetes/BackupNoSQL',
+                  label: 'Back Up a NoSQL Database in Kubernetes',
                 },
                 {
                   type: 'doc',
