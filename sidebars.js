@@ -198,20 +198,20 @@ const sidebars = {
               items: [
                 { // To be created
                   type: 'doc',
-                  id: 'index',
-                  label: 'Use the ScalarDB Core Library (PLACEHOLDER)',
+                  id: 'run-transactions-through-scalardb-core-library',
+                  label: 'Use the ScalarDB Core Library',
                 },
                 { // To be created
                   type: 'doc',
-                  id: 'index',
-                  label: 'Use ScalarDB Cluster (PLACEHOLDER)',
+                  id: 'scalardb-cluster/run-transactions-through-scalardb-cluster',
+                  label: 'Use ScalarDB Cluster',
                 },
               ],
             },
             { // To be created
               type: 'doc',
-              id: 'index',
-              label: 'Use the SQL Interface (PLACEHOLDER)',
+              id: 'scalardb-cluster/run-transactions-through-scalardb-cluster-sql',
+              label: 'Use the SQL Interface',
             },
             {
               type: 'category',
@@ -261,25 +261,25 @@ const sidebars = {
               items: [
                 { // To be created
                   type: 'doc',
-                  id: 'index',
-                  label: 'Use the ScalarDB Core Library (PLACEHOLDER)',
+                  id: 'run-non-transactional-storage-operations-through-library',
+                  label: 'Use the ScalarDB Core Library',
                 },
                 { // To be created
                   type: 'doc',
-                  id: 'index',
-                  label: 'Use ScalarDB Cluster (PLACEHOLDER)',
+                  id: 'scalardb-cluster/run-non-transactional-storage-operations-through-scalardb-cluster',
+                  label: 'Use ScalarDB Cluster',
                 },
               ],
             },
             { // To be created
               type: 'doc',
-              id: 'index',
-              label: 'Use the SQL Interface (PLACEHOLDER)',
+              id: 'scalardb-cluster/run-non-transactional-storage-operations-through-sql-interface',
+              label: 'Use the SQL Interface',
             },
             { // To be created
               type: 'doc',
-              id: 'index',
-              label: 'Run Through the Primitive CRUD Interface (PLACEHOLDER)',
+              id: 'run-non-transactional-storage-operations-through-primitive-crud-interface',
+              label: 'Run Through the Primitive CRUD Interface',
             },
           ],
         },
