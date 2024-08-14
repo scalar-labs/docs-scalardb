@@ -4,7 +4,13 @@ This tutorial describes how to create a sample application that uses [ScalarDB C
 
 ## Overview
 
-The sample e-commerce application shows how users can order and pay for items by using a line of credit. The use case described in this tutorial is the same as the basic [ScalarDB sample](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-sample/README.md) but takes advantage of ScalarDB Cluster.
+This tutorial illustrates the process of creating a sample e-commerce application, where items can be ordered and paid for with a line of credit by using ScalarDB.
+
+:::note
+
+Since the focus of the sample application is to demonstrate using ScalarDB, application-specific error handling, authentication processing, and similar functions are not included in the sample application. For details about exception handling in ScalarDB, see [Handle exceptions](../api-guide.mdx#how-to-handle-exceptions).
+
+:::
 
 The following diagram shows the system architecture of the sample application:
 
@@ -69,19 +75,17 @@ The sample application supports the following types of transactions:
 - Make a payment.
   - Reduces the amount the customer has spent.
 
-## Prerequisites
+## Prerequisites for this sample application
 
 - One of the following Java Development Kits (JDKs):
-  - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) LTS version (8, 11, or 17)
-  - [OpenJDK](https://openjdk.org/install/) LTS version (8, 11, or 17)
+  - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) 8
+  - OpenJDK 8 from [Eclipse Temurin](https://adoptium.net/temurin/releases/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft](https://learn.microsoft.com/en-us/java/openjdk/download)
 - ScalarDB Cluster running on a Kubernetes cluster
   - We assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.mdx).
 
 :::note
 
-We recommend using the LTS versions mentioned above, but other non-LTS versions may work.
-
-In addition, other JDKs should work with ScalarDB, but we haven't tested them.
+This sample application only works with Java 8. However, ScalarDB itself works with Java LTS versions, which means that you can use Java LTS versions for your application that uses ScalarDB. For details on the requirements of ScalarDB, such as which Java versions can be used, see [Requirements](../requirements.mdx).
 
 :::
 
@@ -94,24 +98,24 @@ The following sections describe how to set up the sample e-commerce application.
 Open **Terminal**, then clone the ScalarDB samples repository by running the following command:
 
 ```console
-$ git clone https://github.com/scalar-labs/scalardb-samples
+git clone https://github.com/scalar-labs/scalardb-samples
 ```
 
 Then, go to the directory that contains the sample application by running the following command:
 
 ```console
-$ cd scalardb-samples/scalardb-sample
+cd scalardb-samples/scalardb-sample
 ```
 
 ### Modify `build.gradle`
 
-To use ScalarDB Cluster, open `build.gradle` in your preferred text editor. Then, delete the existing dependency for `com.scalar-labs:scalardb:3.11.1` from the `dependencies` section, and add the following dependency to the `dependencies` section:
+To use ScalarDB Cluster, open `build.gradle` in your preferred text editor. Then, delete the existing dependency for `com.scalar-labs:scalardb` from the `dependencies` section, and add the following dependency to the `dependencies` section:
 
 ```gradle
 dependencies {
     ...
 
-    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.11.1'
+    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.11.3'
 }
 ```
 
@@ -120,7 +124,7 @@ dependencies {
 You need to modify `database.properties` to connect to ScalarDB Cluster as well. But before doing so, you need to get the `EXTERNAL-IP` address of the Envoy service resource (`scalardb-cluster-envoy`). To get the service resource, run the following command:
 
 ```console
-$ kubectl get svc scalardb-cluster-envoy
+kubectl get svc scalardb-cluster-envoy
 ```
 
 You should see a similar output as below, with different values for `CLUSTER-IP`, `PORT(S)`, and `AGE`:
@@ -137,7 +141,7 @@ In `database.properties`, you need to specify `cluster` for the `scalar.db.trans
 Open `database.properties` by running the following command:
 
 ```console
-$ vim database.properties
+vim database.properties
 ```
 
 Then, modify `database.properties` as follows:
@@ -157,12 +161,12 @@ For details about the client modes, see [Developer Guide for ScalarDB Cluster wi
 
 The database schema (the method in which the data will be organized) for the sample application has already been defined in [`schema.json`](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-sample/schema.json).
 
-To apply the schema, go to the [ScalarDB Cluster Releases](https://github.com/scalar-labs/scalardb-cluster/releases) page and download the ScalarDB Cluster Schema Loader that matches the version of ScalarDB Cluster that you want to use to the `scalardb-samples/scalardb-sample` folder.
+To apply the schema, go to [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases/tag/v3.11.3) and download the ScalarDB Cluster Schema Loader to the `scalardb-samples/scalardb-sample` folder.
 
-Then, run the following command, replacing `<VERSION>` with the version of the ScalarDB Cluster Schema Loader that you downloaded:
+Then, run the following command:
 
 ```console
-$ java -jar scalardb-cluster-schema-loader-<VERSION>-all.jar --config database.properties -f schema.json --coordinator
+java -jar scalardb-cluster-schema-loader-3.11.3-all.jar --config database.properties -f schema.json --coordinator
 ```
 
 #### Schema details
@@ -178,14 +182,14 @@ As shown in [`schema.json`](https://github.com/scalar-labs/scalardb-samples/tree
 
 The Entity Relationship Diagram for the schema is as follows:
 
-![ERD](https://scalardb.scalar-labs.com/docs/latest/scalardb-samples/scalardb-sample/images/ERD.png)
+![ERD](images/getting-started-ERD.png)
 
 ### Load the initial data
 
 Before running the sample application, you need to load the initial data by running the following command:
 
 ```console
-$ ./gradlew run --args="LoadInitialData"
+./gradlew run --args="LoadInitialData"
 ```
 
 After the initial data has loaded, the following records should be stored in the tables.
@@ -217,7 +221,7 @@ The following sections describe how to execute transactions and retrieve data in
 Start with getting information about the customer whose ID is `1` by running the following command:
 
 ```console
-$ ./gradlew run --args="GetCustomerInfo 1"
+./gradlew run --args="GetCustomerInfo 1"
 ```
 
 You should see the following output:
@@ -239,7 +243,7 @@ The order format in this command is `./gradlew run --args="PlaceOrder <CUSTOMER_
 :::
 
 ```console
-$ ./gradlew run --args="PlaceOrder 1 1:3,2:2"
+./gradlew run --args="PlaceOrder 1 1:3,2:2"
 ```
 
 You should see a similar output as below, with a different UUID for `order_id`, which confirms that the order was successful:
@@ -255,7 +259,7 @@ You should see a similar output as below, with a different UUID for `order_id`, 
 Check details about the order by running the following command, replacing `<ORDER_ID_UUID>` with the UUID for the `order_id` that was shown after running the previous command:
 
 ```console
-$ ./gradlew run --args="GetOrder <ORDER_ID_UUID>"
+./gradlew run --args="GetOrder <ORDER_ID_UUID>"
 ```
 
 You should see a similar output as below, with different UUIDs for `order_id` and `timestamp`:
@@ -271,7 +275,7 @@ You should see a similar output as below, with different UUIDs for `order_id` an
 Place an order for one melon that uses the remaining amount in `credit_total` for customer ID `1` by running the following command:
 
 ```console
-$ ./gradlew run --args="PlaceOrder 1 5:1"
+./gradlew run --args="PlaceOrder 1 5:1"
 ```
 
 You should see a similar output as below, with a different UUID for `order_id`, which confirms that the order was successful:
@@ -287,7 +291,7 @@ You should see a similar output as below, with a different UUID for `order_id`, 
 Get the history of all orders for customer ID `1` by running the following command:
 
 ```console
-$ ./gradlew run --args="GetOrders 1"
+./gradlew run --args="GetOrders 1"
 ```
 
 You should see a similar output as below, with different UUIDs for `order_id` and `timestamp`, which shows the history of all orders for customer ID `1` in descending order by timestamp:
@@ -303,7 +307,7 @@ You should see a similar output as below, with different UUIDs for `order_id` an
 Get the credit total for customer ID `1` by running the following command:
 
 ```console
-$ ./gradlew run --args="GetCustomerInfo 1"
+./gradlew run --args="GetCustomerInfo 1"
 ```
 
 You should see the following output, which shows that customer ID `1` has reached their `credit_limit` in `credit_total` and cannot place anymore orders:
@@ -317,7 +321,7 @@ You should see the following output, which shows that customer ID `1` has reache
 Try to place an order for one grape and one mango by running the following command:
 
 ```console
-$ ./gradlew run --args="PlaceOrder 1 3:1,4:1"
+./gradlew run --args="PlaceOrder 1 3:1,4:1"
 ```
 
 You should see the following output, which shows that the order failed because the `credit_total` amount would exceed the `credit_limit` amount.
@@ -345,13 +349,13 @@ To continue making orders, customer ID `1` must make a payment to reduce the `cr
 Make a payment by running the following command:
 
 ```console
-$ ./gradlew run --args="Repayment 1 8000"
+./gradlew run --args="Repayment 1 8000"
 ```
 
 Then, check the `credit_total` amount for customer ID `1` by running the following command:
 
 ```console
-$ ./gradlew run --args="GetCustomerInfo 1"
+./gradlew run --args="GetCustomerInfo 1"
 ```
 
 You should see the following output, which shows that a payment was applied to customer ID `1`, reducing the `credit_total` amount:
@@ -365,12 +369,12 @@ You should see the following output, which shows that a payment was applied to c
 Now that customer ID `1` has made a payment, place an order for one grape and one melon by running the following command:
 
 ```console
-$ ./gradlew run --args="PlaceOrder 1 3:1,4:1"
+./gradlew run --args="PlaceOrder 1 3:1,4:1"
 ```
 
 You should see a similar output as below, with a different UUID for `order_id`, which confirms that the order was successful:
 
-```
+```console
 ...
 {"order_id": "8911cab3-1c2b-4322-9386-adb1c024e078"}
 ...

@@ -46,15 +46,15 @@ repositories {
 In this case, you need to set the `gpr.user` property to your GitHub username and the `gpr.key` property to your personal access token.
 To do so, you must either set the properties in `~/.gradle/gradle.properties` or specify the properties with the `-P` option when running the `./gradlew` command as follows:
 
-```shell
-$ ./gradlew build -Pgpr.user=<YOUR_GITHUB_USERNAME> -Pgpr.key=<YOUR_PERSONAL_ACCESS_TOKEN>
+```console
+./gradlew build -Pgpr.user=<YOUR_GITHUB_USERNAME> -Pgpr.key=<YOUR_PERSONAL_ACCESS_TOKEN>
 ```
 
 Or you can use environment variables, such as `USERNAME` for your GitHub username and `TOKEN` for your personal access token.
 
-```shell
-$ export USERNAME=<YOUR_GITHUB_USERNAME>
-$ export TOKEN=<YOUR_PERSONAL_ACCESS_TOKEN>
+```console
+export USERNAME=<YOUR_GITHUB_USERNAME>
+export TOKEN=<YOUR_PERSONAL_ACCESS_TOKEN>
 ```
 
 To add the Maven repository by using Maven, edit your `~/.m2/settings.xml` file as follows:
@@ -111,7 +111,7 @@ To add a dependency on ScalarDB Cluster Client by using Gradle, use the followin
 
 ```gradle
 dependencies {
-    implementation 'com.scalar-labs:scalardb-cluster-client:3.9.5'
+    implementation 'com.scalar-labs:scalardb-cluster-client:3.9.6'
 }
 ```
 
@@ -121,7 +121,7 @@ To add a dependency by using Maven, use the following:
 <dependency>
   <groupId>com.scalar-labs</groupId>
   <artifactId>scalardb-cluster-client</artifactId>
-  <version>3.9.5</version>
+  <version>3.9.6</version>
 </dependency>
 ```
 
@@ -155,7 +155,7 @@ The disadvantage of this mode is that we need to make the client fat because the
 Since this connection mode needs to access the Kubernetes API and each cluster node, you can use this connection mode only if your application is running on the same Kubernetes cluster as your ScalarDB Cluster nodes.
 If your application is running on a different Kubernetes cluster, use the `indirect` client mode.
 
-For details about how to deploy your application on Kubernetes with `direct-kubernetes` client mode, see [Deploy your client application on Kubernetes with `direct-kubernetes` mode](https://github.com/scalar-labs/helm-charts/blob/main/docs/how-to-deploy-scalardb-cluster.mdx#deploy-your-client-application-on-kubernetes-with-direct-kubernetes-mode).
+For details about how to deploy your application on Kubernetes with `direct-kubernetes` client mode, see [Deploy your client application on Kubernetes with `direct-kubernetes` mode](../helm-charts/how-to-deploy-scalardb-cluster.mdx#deploy-your-client-application-on-kubernetes-with-direct-kubernetes-mode).
 
 ## ScalarDB Cluster Java API
 
@@ -181,7 +181,7 @@ The following diagram shows the architecture of the ScalarDB Cluster Java API.
 ```
 
 Using the ScalarDB Cluster Java API is almost the same as using the ScalarDB Java API except the client configurations and Schema Loader are different.
-For details, see [ScalarDB Java API Guide](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md).
+For details, see [ScalarDB Java API Guide](../api-guide.mdx).
 
 The following section describes the client configurations for the ScalarDB Cluster Java API and Schema Loader for Cluster.
 
@@ -215,12 +215,12 @@ scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
 ### Schema Loader for Cluster
 
 To load a schema via ScalarDB Cluster, you need to use the dedicated Schema Loader for ScalarDB Cluster (Schema Loader for Cluster).
-Using the Schema Loader for Cluster is basically the same as using the [ScalarDB Schema Loader](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader.md) except the name of the JAR file is different.
-You can download the Schema Loader for Cluster at [Releases](https://github.com/scalar-labs/scalardb-cluster/releases/tag/v3.9.4).
+Using the Schema Loader for Cluster is basically the same as using the [ScalarDB Schema Loader](../schema-loader.mdx) except the name of the JAR file is different.
+You can download the Schema Loader for Cluster from [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases/tag/v3.9.6).
 After downloading the JAR file, you can run Schema Loader for Cluster with the following command:
 
-```shell
-java -jar scalardb-cluster-schema-loader-3.9.5-all.jar --config <PATH_TO_CONFIG_FILE> -f <PATH_TO_SCHEMA_FILE> --coordinator
+```console
+java -jar scalardb-cluster-schema-loader-3.9.6-all.jar --config <PATH_TO_CONFIG_FILE> -f <PATH_TO_SCHEMA_FILE> --coordinator
 ```
 
 ## ScalarDB Cluster SQL
@@ -252,7 +252,7 @@ This section describes how to use ScalarDB Cluster SQL though JDBC and Spring Da
 
 ### ScalarDB Cluster SQL via JDBC
 
-Using ScalarDB Cluster SQL via JDBC is almost the same using [ScalarDB JDBC](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/jdbc-guide.md) except for how to add the JDBC driver to your project.
+Using ScalarDB Cluster SQL via JDBC is almost the same using [ScalarDB JDBC](../scalardb-sql/jdbc-guide.mdx) except for how to add the JDBC driver to your project.
 
 In addition to adding ScalarDB Cluster Client as described in [Add ScalarDB Cluster Client to your build](#add-scalardb-cluster-client-to-your-build), you need to add the following dependencies to your project:
 
@@ -260,8 +260,8 @@ To add the dependencies on the ScalarDB Cluster JDBC driver by using Gradle, use
 
 ```gradle
 dependencies {
-    implementation 'com.scalar-labs:scalardb-sql-jdbc:3.9.5'
-    implementation 'com.scalar-labs:scalardb-cluster-client:3.9.5'
+    implementation 'com.scalar-labs:scalardb-sql-jdbc:3.9.6'
+    implementation 'com.scalar-labs:scalardb-cluster-client:3.9.6'
 }
 ```
 
@@ -272,22 +272,22 @@ To add the dependencies by using Maven, use the following:
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-sql-jdbc</artifactId>
-        <version>3.9.5</version>
+        <version>3.9.6</version>
     </dependency>
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-cluster-client</artifactId>
-        <version>3.9.5</version>
+        <version>3.9.6</version>
     </dependency>
 </dependencies>
 ```
 
 Other than that, using ScalarDB Cluster SQL via JDBC is the same as using ScalarDB JDBC.
-For details about ScalarDB JDBC, see [ScalarDB JDBC Guide](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/jdbc-guide.md).
+For details about ScalarDB JDBC, see [ScalarDB JDBC Guide](../scalardb-sql/jdbc-guide.mdx).
 
 ### ScalarDB Cluster SQL via Spring Data JDBC for ScalarDB
 
-Similar to ScalarDB Cluster SQL via JDBC, using ScalarDB Cluster SQL via Spring Data JDBC for ScalarDB is almost the same as using [Spring Data JDBC for ScalarDB](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/spring-data-guide.md) except for how to add it to your project.
+Similar to ScalarDB Cluster SQL via JDBC, using ScalarDB Cluster SQL via Spring Data JDBC for ScalarDB is almost the same as using [Spring Data JDBC for ScalarDB](../scalardb-sql/spring-data-guide.mdx) except for how to add it to your project.
 
 In addition to adding ScalarDB Cluster Client as described in [Add ScalarDB Cluster Client to your build](#add-scalardb-cluster-client-to-your-build), you need to add the following dependencies to your project:
 
@@ -295,8 +295,8 @@ To add the dependencies by using Gradle, use the following:
 
 ```gradle
 dependencies {
-    implementation 'com.scalar-labs:scalardb-sql-spring-data:3.9.5'
-    implementation 'com.scalar-labs:scalardb-cluster-client:3.9.5'
+    implementation 'com.scalar-labs:scalardb-sql-spring-data:3.9.6'
+    implementation 'com.scalar-labs:scalardb-cluster-client:3.9.6'
 }
 ```
 
@@ -307,18 +307,18 @@ To add the dependencies by using Maven, use the following:
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-sql-spring-data</artifactId>
-        <version>3.9.5</version>
+        <version>3.9.6</version>
     </dependency>
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-cluster-client</artifactId>
-        <version>3.9.5</version>
+        <version>3.9.6</version>
     </dependency>
 </dependencies>
 ```
 
 Other than that, using ScalarDB Cluster SQL via Spring Data JDBC for ScalarDB is the same as using Spring Data JDBC for ScalarDB.
-For details about Spring Data JDBC for ScalarDB, see [Guide of Spring Data JDBC for ScalarDB](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/spring-data-guide.md).
+For details about Spring Data JDBC for ScalarDB, see [Guide of Spring Data JDBC for ScalarDB](../scalardb-sql/spring-data-guide.mdx).
 
 ### Client configurations
 
@@ -329,6 +329,8 @@ The following table shows the configurations for ScalarDB Cluster SQL Client.
 | `scalar.db.sql.connection_mode`                    | `cluster` should be specified.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | -                      |
 | `scalar.db.sql.cluster_mode.contact_points`        | Contact point of the cluster. If you use the `indirect` client mode, specify the IP address of the load balancer in front of your cluster nodes by using the format `indirect:<the load balancer IP address>`. If you use the `direct-kubernetes` client mode, specify the namespace name (optional) and the name of the [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) to get the membership information by using the format `direct-kubernetes:<namespace name>/<endpoint name>` or just `direct-kubernetes:<endpoint name>`. If you don't specify the namespace name, the client will use the `default` namespace. |                        |
 | `scalar.db.sql.cluster_mode.contact_port`          | Port number for the contact point.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | `60053`                |
+| `scalar.db.sql.default_transaction_mode`           | Default transaction mode. `TRANSACTION` or `TWO_PHASE_COMMIT_TRANSACTION` can be set.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | `TRANSACTION`          |
+| `scalar.db.sql.default_namespace_name`             | Default namespace name. If you don't specify a namespace name in your SQL statement, this value is used.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |                        |
 | `scalar.db.cluster.grpc.deadline_duration_millis`  | Deadline duration for gRPC in millis.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | `60000` (60 seconds)   |
 | `scalar.db.cluster.grpc.max_inbound_message_size`  | Maximum message size allowed for a single gRPC frame.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | The gRPC default value |
 | `scalar.db.cluster.grpc.max_inbound_metadata_size` | Maximum size of metadata allowed to be received.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | The gRPC default value |
@@ -347,21 +349,40 @@ scalar.db.sql.connection_mode=cluster
 scalar.db.sql.cluster_mode.contact_points=direct-kubernetes:ns/scalardb-cluster
 ```
 
-For details about how to configure ScalarDB JDBC, see [JDBC connection URL](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/jdbc-guide.md#jdbc-connection-url).
+For details about how to configure ScalarDB JDBC, see [JDBC connection URL](../scalardb-sql/jdbc-guide.mdx#jdbc-connection-url).
 
-For details about how to configure Spring Data JDBC for ScalarDB, see [Configurations](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/spring-data-guide.md#configurations).
+For details about how to configure Spring Data JDBC for ScalarDB, see [Configurations](../scalardb-sql/spring-data-guide.mdx#configurations).
 
+### SQL CLI
 
-### SQL CLI for Cluster
+Like other SQL databases, ScalarDB SQL also provides a CLI tool where you can issue SQL statements interactively in a command-line shell.
 
-You need to use the dedicated SQL CLI for ScalarDB Cluster (SQL CLI for Cluster).
+You can download the SQL CLI for Cluster from [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases/tag/v3.9.6). After downloading the JAR file, you can run the SQL CLI with the following command:
 
-Using the SQL CLI for Cluster is basically the same as using the [ScalarDB SQL Command Line Interface](https://github.com/scalar-labs/scalardb-sql/blob/main/docs/command-line-interface.md) except the name of the JAR file is different.
-You can download the SQL CLI for Cluster from [Releases](https://github.com/scalar-labs/scalardb-cluster/releases/tag/v3.9.4).
-After downloading the JAR file, you can run SQL CLI for Cluster with the following command:
+```console
+java -jar scalardb-cluster-sql-cli-3.9.6-all.jar --config <PATH_TO_CONFIG_FILE>
+```
 
-```shell
-java -jar scalardb-cluster-sql-cli-3.9.5-all.jar --config <PATH_TO_CONFIG_FILE>
+#### Usage
+
+You can see the CLI usage with the `-h` option as follows:
+
+```console
+java -jar scalardb-cluster-sql-cli-3.9.6-all.jar -h
+Usage: scalardb-sql-cli [-hs] -c=PROPERTIES_FILE [-e=COMMAND] [-f=FILE]
+                        [-l=LOG_FILE] [-o=<outputFormat>]
+Starts ScalarDB SQL CLI.
+  -c, --config=PROPERTIES_FILE
+                          A configuration file in properties format.
+  -e, --execute=COMMAND   A command to execute.
+  -f, --file=FILE         A script file to execute.
+  -h, --help              Display this help message.
+  -l, --log=LOG_FILE      A file to write output.
+  -o, --output-format=<outputFormat>
+                          Format mode for result display. You can specify
+                            table/vertical/csv/tsv/xmlattrs/xmlelements/json/ans
+                            iconsole.
+  -s, --silent            Reduce the amount of informational messages displayed.
 ```
 
 ## Further reading

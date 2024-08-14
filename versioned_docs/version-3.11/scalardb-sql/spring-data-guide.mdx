@@ -9,82 +9,7 @@ This guide describes several important topics to use Spring Data JDBC for Scalar
 
 ## Add Spring Data JDBC for ScalarDB to your project
 
-You need to add dependencies for Spring Data JDBC for ScalarDB and the connection mode you want to use to your project to use the integration.
-
-### Direct mode
-
-:::note
-
-This mode exists only for development purposes and is not recommended for production use.
-For production use, please refer to [Cluster mode](#cluster-mode).
-
-:::
-
-To add the dependencies on Spring Data JDBC for ScalarDB with Direct mode by using Gradle, use the following, replacing `<VERSION>` with the versions of Spring Data JDBC for ScalarDB and the related library, respectively, that you are using:
-
-```gradle
-dependencies {
-    implementation 'com.scalar-labs:scalardb-sql-spring-data:<VERSION>'
-    implementation 'com.scalar-labs:scalardb-sql-direct-mode:<VERSION>'
-}
-```
-
-To add the dependencies by using Maven, use the following, replacing `...` with the version of Spring Data JDBC for ScalarDB that you are using:
-
-```xml
-<dependencies>
-    <dependency>
-        <groupId>com.scalar-labs</groupId>
-        <artifactId>scalardb-sql-spring-data</artifactId>
-        <version>...</version>
-    </dependency>
-    <dependency>
-        <groupId>com.scalar-labs</groupId>
-        <artifactId>scalardb-sql-direct-mode</artifactId>
-        <version>...</version>
-    </dependency>
-</dependencies>
-```
-
-### Server mode
-
-:::note
-
-This mode is now deprecated. Please use [Cluster mode](#cluster-mode) instead.
-
-:::
-
-To add the dependencies on Spring Data JDBC for ScalarDB with Server mode by using Gradle, use the following, replacing `<VERSION>` with the versions of Spring Data JDBC for ScalarDB and the related library, respectively, that you are using:
-
-```gradle
-dependencies {
-    implementation 'com.scalar-labs:scalardb-sql-spring-data:<VERSION>'
-    implementation 'com.scalar-labs:scalardb-sql-server-mode:<VERSION>'
-}
-```
-
-To add the dependencies by using Maven, use the following, replacing `...` with the version of Spring Data JDBC for ScalarDB that you are using:
-
-```xml
-<dependencies>
-    <dependency>
-        <groupId>com.scalar-labs</groupId>
-        <artifactId>scalardb-sql-spring-data</artifactId>
-        <version>...</version>
-    </dependency>
-    <dependency>
-        <groupId>com.scalar-labs</groupId>
-        <artifactId>scalardb-sql-server-mode</artifactId>
-        <version>...</version>
-    </dependency>
-</dependencies>
-```
-
-For details about ScalarDB SQL Server, see [ScalarDB SQL Server](sql-server.mdx).
-
-### Cluster mode
-
-To add the dependencies on Spring Data JDBC for ScalarDB with Cluster mode by using Gradle, use the following, replacing `<VERSION>` with the versions of Spring Data JDBC for ScalarDB and the related library, respectively, that you are using:
+To add the dependencies on Spring Data JDBC for ScalarDB by using Gradle, use the following, replacing `<VERSION>` with the versions of Spring Data JDBC for ScalarDB and the related library, respectively, that you are using:
 
 ```gradle
 dependencies {
@@ -104,13 +29,11 @@ To add the dependencies by using Maven, use the following, replacing `...` with 
     </dependency>
     <dependency>
         <groupId>com.scalar-labs</groupId>
-        <artifactId>scalardb-cluster-client</artifactId>
+        <artifactId>scalardb-cluster-java-client-sdk</artifactId>
         <version>...</version>
     </dependency>
 </dependencies>
 ```
-
-For details about ScalarDB Cluster SQL, see [Getting Started with ScalarDB Cluster SQL via Spring Data JDBC for ScalarDB](https://scalardb.scalar-labs.com/docs/latest/scalardb-cluster/getting-started-with-scalardb-cluster-sql-spring-data-jdbc/).
 
 ## Configurations
 
@@ -120,15 +43,15 @@ Spring Data JDBC for ScalarDB is supposed to be used as a part of Spring applica
 
 This needs to be set to fixed value `com.scalar.db.sql.jdbc.SqlJdbcDriver`.
 
-```
+```console
 spring.datasource.driver-class-name=com.scalar.db.sql.jdbc.SqlJdbcDriver
 ```
 
 ### spring.datasource.url
 
-This value follows the ScalarDB JDBC connection URL configuration. For more information, see [ScalarDB JDBC Guide](jdbc-guide.mdx) and [ScalarDB SQL Configurations](configurations.mdx).
+This value follows the ScalarDB JDBC connection URL configuration. For more information, see [ScalarDB JDBC Guide](jdbc-guide.mdx) and [ScalarDB Cluster SQL client configurations](../scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-client-configurations).
 
-```
+```console
 spring.datasource.url=jdbc:scalardb:\
 ?scalar.db.sql.connection_mode=direct\
 &scalar.db.contact_points=jdbc:mysql://localhost:3306/my_app_ns\
@@ -397,7 +320,7 @@ bankRepository.update(new Bank(bank.bankId, bank.name + " 2", bank.accounts));
 
 ### Multi-storage transaction
 
-ScalarDB supports [Multi-storage Transaction](https://github.com/scalar-labs/scalardb/blob/master/docs/multi-storage-transactions.md), and users can use the feature via Spring Data JDBC for ScalarDB. The following needs to be configured to use the feature.
+ScalarDB supports [Multi-storage Transaction](../multi-storage-transactions.mdx), and users can use the feature via Spring Data JDBC for ScalarDB. The following needs to be configured to use the feature.
 
 #### spring.datasource.url
 Here is a sample datasource URL assuming there are two namespaces "north" and "south" that manage data with MySQL and PostgreSQL respectively.
@@ -493,13 +416,13 @@ There are other options available for retrying transactions, such as Spring Retr
 
 ### Two-phase commit transaction
 
-ScalarDB supports [Two-phase commit transaction](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.md), and users can use the feature via Spring Data JDBC for ScalarDB. The following configurations are needed.
+ScalarDB supports [Two-phase commit transaction](../two-phase-commit-transactions.mdx), and users can use the feature via Spring Data JDBC for ScalarDB. The following configurations are needed.
 
 #### spring.datasource.url
 
 - `scalar.db.sql.default_transaction_mode` property: `two_phase_commit_transaction`
 
-```
+```console
 spring.datasource.url=jdbc:scalardb:\
 ?scalar.db.sql.connection_mode=direct\
 &scalar.db.contact_points=jdbc:mysql://localhost:3306/my_app_ns\
@@ -535,7 +458,7 @@ Spring Data JDBC for ScalarDB supports 2 types of APIs for 2PC transaction. One 
 
 All in-flight operations are rolled back when any exception is thrown from Spring Data repository method.
 
-See [How to execute Two-phase Commit Transactions](https://github.com/scalar-labs/scalardb/blob/master/docs/two-phase-commit-transactions.md#how-to-execute-two-phase-commit-transactions) for details.
+See [How to execute Two-phase Commit Transactions](../two-phase-commit-transactions.mdx#how-to-execute-two-phase-commit-transactions) for details.
 
 ```java
 @Transactional(transactionManager = "scalarDbSuspendableTransactionManager")
@@ -844,9 +767,9 @@ public class SampleService {
 
 You can see the following sample applications that use Spring Data JDBC for ScalarDB. It only serves as a reference and does not necessarily meet production code standards.
 
-- [Sample application of Spring Data JDBC for ScalarDB](https://github.com/scalar-labs/scalardb-samples/tree/main/spring-data-sample)
-- [Sample application of Spring Data JDBC for ScalarDB with Multi-storage Transactions](https://github.com/scalar-labs/scalardb-samples/tree/main/spring-data-multi-storage-transaction-sample)
-- [Sample application of Spring Data JDBC for ScalarDB with Microservice Transactions](https://github.com/scalar-labs/scalardb-samples/tree/main/spring-data-microservice-transaction-sample)
+- [Getting Started with ScalarDB Cluster SQL via Spring Data JDBC for ScalarDB](../scalardb-cluster/getting-started-with-scalardb-cluster-sql-spring-data-jdbc.mdx)
+- [Sample application of Spring Data JDBC for ScalarDB with Multi-storage Transactions](../scalardb-samples/spring-data-multi-storage-transaction-sample/README.mdx)
+- [Sample application of Spring Data JDBC for ScalarDB with Microservice Transactions](../scalardb-samples/spring-data-microservice-transaction-sample/README.mdx)
 
 ## How it works
 
@@ -871,4 +794,4 @@ In order to use Spring Data JDBC for ScalarDB, the following features are implem
 
 - [Spring Data JDBC - Reference Documentation](https://docs.spring.io/spring-data/jdbc/docs/3.0.x/reference/html/)
 - [ScalarDB JDBC Guide](jdbc-guide.mdx)
-- [Javadoc for Spring Data JDBC for ScalarDB](https://javadoc.io/doc/com.scalar-labs/scalardb-sql-spring-data/3.11.1/index.html)
+- [Javadoc for Spring Data JDBC for ScalarDB](https://javadoc.io/doc/com.scalar-labs/scalardb-sql-spring-data/3.11.3/index.html)

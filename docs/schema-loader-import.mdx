@@ -39,7 +39,7 @@ To set up Schema Loader for importing existing tables, see [Set up Schema Loader
 You can import an existing table in JDBC databases to ScalarDB by using the `--import` option and an import-specific schema file. To import tables, run the following command, replacing the contents in the angle brackets as described:
 
 ```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> --import
+java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> --import
 ```
 
 - `<VERSION>`: Version of ScalarDB Schema Loader that you set up.
@@ -49,7 +49,7 @@ $ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROP
 If you use the Consensus Commit transaction manager after importing existing tables, run the following command separately, replacing the contents in the angle brackets as described:
 
 ```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> --coordinator
+java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> --coordinator
 ```
 
 ## Sample import schema file
@@ -120,19 +120,19 @@ The following table shows the supported data types in each JDBC database and the
     - timestamp
     - year
   </TabItem>
-  <TabItem value="PostgreSQL" label="PostgreSQL">
-    | PostgreSQL        | ScalarDB | Notes                      |
-    |-------------------|----------|----------------------------|
-    | bigint            | BIGINT   | See warning [1](#1) below. |
-    | boolean           | BOOLEAN  |                            |
-    | bytea             | BLOB     |                            |
-    | character         | TEXT     | See warning [2](#2) below. |
-    | character varying | TEXT     | See warning [2](#2) below. |
-    | double precision  | DOUBLE   |                            |
-    | integer           | INT      |                            |
-    | real              | FLOAT    |                            |
-    | smallint          | INT      | See warning [2](#2) below. |
-    | text              | TEXT     |                            |
+  <TabItem value="PostgreSQL_YugabyteDB" label="PostgreSQL and YugabyteDB">
+    | PostgreSQL/YugabyteDB | ScalarDB | Notes                      |
+    |-----------------------|----------|----------------------------|
+    | bigint                | BIGINT   | See warning [1](#1) below. |
+    | boolean               | BOOLEAN  |                            |
+    | bytea                 | BLOB     |                            |
+    | character             | TEXT     | See warning [2](#2) below. |
+    | character varying     | TEXT     | See warning [2](#2) below. |
+    | double precision      | DOUBLE   |                            |
+    | integer               | INT      |                            |
+    | real                  | FLOAT    |                            |
+    | smallint              | INT      | See warning [2](#2) below. |
+    | text                  | TEXT     |                            |
 
     Data types not listed in the above are not supported. The following are some common data types that are not supported:
 
@@ -195,7 +195,7 @@ The following table shows the supported data types in each JDBC database and the
     - bfile
     - json
   </TabItem>
-  <TabItem value="SQL_Server" label="SQL Server">
+  <TabItem value="SQLServer" label="SQL Server">
     | SQL Server | ScalarDB | Notes                      |
     |------------|----------|----------------------------|
     | bigint     | BIGINT   | See warning [1](#1) below. |

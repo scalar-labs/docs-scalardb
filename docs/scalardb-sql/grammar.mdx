@@ -35,6 +35,7 @@
   - [ROLLBACK](#rollback)
   - [ABORT](#abort)
   - [SET MODE](#set-mode)
+  - [SHOW NAMESPACES](#show-namespaces)
   - [SHOW TABLES](#show-tables)
   - [DESCRIBE](#describe)
   - [SUSPEND](#suspend)
@@ -55,7 +56,7 @@ CREATE NAMESPACE [IF NOT EXISTS] <namespace name> [WITH creation_options]
 creation_options: <option name>=<option value> [AND <option name>=<option value>] ...
 ```
 
-For details about `creation_options`, see [Creation options](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#creation-options).
+For details about `creation_options`, see [Creation options](../api-guide.mdx#creation-options).
 
 #### Examples
 
@@ -95,7 +96,7 @@ CreateNamespaceStatement statement3 =
 
 The `CREATE TABLE` command creates a table.
 
-For details about the ScalarDB data model, see [ScalarDB Design Document](https://github.com/scalar-labs/scalardb/blob/master/docs/design.md).
+For details about the ScalarDB data model, see [ScalarDB Design Document](../design.mdx).
 
 #### Grammar
 
@@ -406,7 +407,7 @@ The `CREATE COORDINATOR TABLES` command creates coordinator tables.
 #### Grammar
 
 ```sql
-CREATE COORDINATOR TABLES [IF NOT EXIST] [WITH creation_options]
+CREATE COORDINATOR TABLES [IF NOT {EXIST|EXISTS}] [WITH creation_options]
 
 creation_options: <option name>=<option value> [AND <option name>=<option value>] ...
 ```
@@ -473,7 +474,7 @@ The `DROP COORDINATOR TABLES` command drops coordinator tables.
 #### Grammar
 
 ```sql
-DROP COORDINATOR TABLES [IF EXIST]
+DROP COORDINATOR TABLES [IF {EXIST|EXISTS}]
 ```
 
 #### Examples
@@ -532,46 +533,76 @@ AlterTableAddColumnStatement statement =
 
 ### SELECT
 
-The `SELECT` command retrieves records from the database. By default, the `SELECT` command requires the `WHERE` clause to filter records by primary key or an indexed column value. If you want to retrieve all records without specifying the `WHERE` clause, see [SELECT (with cross-partition scan)](#select-with-cross-partition-scan). For JDBC databases only, you can use the `SELECT` command with arbitrary conditions and orderings. For details, see [SELECT (with cross-partition scan filtering and ordering)](#select-with-cross-partition-scan-filtering-and-ordering).
+The `SELECT` command retrieves records from the database. ScalarDB SQL creates an execution plan for a `SELECT` command by using one of the `Get`, partition `Scan`, and cross-partition `Scan` operations in ScalarDB to retrieve records from the database. For the best results, specify primary key columns uniquely as much as possible in the `WHERE` clause to avoid using the cross-partition scan since it might cause performance and consistency issues, especially in non-JDBC databases. See the following rules for selecting operations. The former ones are prior to the latter ones and more efficient. [ScalarDB data model](../data-modeling.mdx) also helps in understanding the best practices for modeling and accessing data.
+
+1. If you fully specify the primary-key columns in the `WHERE` clause, the `SELECT` command will use a `Get` operation for a single record in a single partition.
+2. If you fully specify the partition key and properly specify the clustering key and order in the `WHERE` and `ORDER BY` clauses, the `SELECT` command will use a `Scan` operation for records in a single partition. For more details, see the [Examples of partition scans and index scans](#examples-of-partition-scans-and-index-scans).
+3. If you specify the indexed column value with the `equal to` (`=`) operator in the `WHERE` clause without the `ORDER BY` clause, the `SELECT` command will use an index `Scan` operation.
+4. For other cases, the `SELECT` command will be converted to a cross-partition `Scan` operation.
+
+You need to enable the cross-partition scan option and the cross-partition scan with filtering and ordering options if you want to flexibly retrieve records across partitions with arbitrary conditions and orderings. Currently, the ordering option is available only for JDBC databases. For details about configurations, see [Cross-partition scan configurations](../configurations.mdx#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.mdx).
+
+:::warning
+
+For non-JDBC databases, transactions could be executed at read-committed snapshot isolation (`SNAPSHOT`), which is a lower isolation level, even if you enable cross-partition scan with the `SERIALIZABLE` isolation level. When using non-JDBC databases, use cross-partition scan only if consistency does not matter for your transactions.
+
+:::
 
 #### Grammar
 
 ```sql
 SELECT projection [, projection] ...
   FROM [<namespace name>.]<table name> [AS <alias>] [join_specification [join_specification] ...]
-  WHERE predicate [AND predicate] ...
-  [ORDER BY <clustering key identifier> [order] [, <clustering key identifier> [order]] ...]
+  [WHERE and_predicates [OR and_predicates ...] | or_predicates [AND or_predicates ...]]
+  [ORDER BY identifier [order] [, identifier [order]] ...]
   [LIMIT <limit>]
 
 projection: * | identifier [AS <alias>]
 join_specification: [INNER] JOIN [<namespace name>.]<table name> [AS <alias>] ON join_predicate [AND join_predicate] ... | {LEFT|RIGHT} [OUTER] JOIN [<namespace name>.]<table name> [AS <alias>] ON join_predicate [AND join_predicate] ...
-join_predicate: <identifier> = <identifier>
-predicate: <identifier> operator <column value> | <identifier> BETWEEN <column value> AND <column value>
+join_predicate: identifier = identifier
+and_predicates: predicate | (predicate [AND predicate ...])
+or_predicates: predicate | (predicate [OR predicate ...])
+predicate: identifier operator <column value> | identifier BETWEEN <column value> AND <column value> | identifier [NOT] LIKE <pattern> [ESCAPE <escape character>] | identifier IS [NOT] NULL
 identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
-operator: = | > | >= | < | <=
+operator: = | <> | != | > | >= | < | <=
 order: ASC | DESC
 ```
 
 ##### Note
 
-- You need to specify primary key columns or an indexed column in the `WHERE` clause.
-- In the `WHERE` clause, you can use only the `equal to` (`=`) operator for partition key columns, and you can use the operators above for clustering key columns.
-- You can also use the `BETWEEN` operator for clustering key columns.
-- If you specify the `WHERE` clause to an indexed column, you can only use the `equal to` (`=`) operator for the index column.
-- If you specify the `WHERE` clause to an indexed column, you cannot specify `ORDER BY`.
-- You can specify `<column value>` and `<limit>` to a bind marker (positional `?` and named `:<name>`).
-- If you omit `order`, the default order `ASC` will be used.
+`JOIN` clause:
+
 - For `[INNER] JOIN` and `LEFT [OUTER] JOIN`:
-  - The `join_predicate`s must include either all primary key columns or a secondary index column from the right table.
+  - The `join_predicate`s must include either all primary-key columns or a secondary-index column from the right table.
   - The `WHERE` predicates and the `ORDER BY` clause can only include columns from the table specified in the `FROM` clause.
 - For `RIGHT [OUTER] JOIN`:
   - It must be specified as the first `join_specification`.
-  - The `join_predicate`s must contain all primary key columns or a secondary index column from the left table.
+  - The `join_predicate`s must contain all primary-key columns or a secondary-index column from the left table.
   - The `WHERE` predicates and the `ORDER BY` clause can only specify columns from the table specified in the `RIGHT OUTER JOIN` clause.
 
-For details about retrieving data from a database in ScalarDB, see [Get operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#get-operation) and [Scan operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#scan-operation).
+`WHERE` and `LIMIT` clauses:
 
-#### Examples
+- You can use arbitrary predicates for any columns in the `WHERE` clause.
+- In the `WHERE` clause, predicates must be an OR-wise of `and_predicates` (known as disjunctive normal form) or an AND-wise of `or_predicates` (known as conjunctive normal form).
+- When connecting multiple `and_predicates` or `or_predicates`, which have more than one predicate, you need to put parentheses around `and_predicates` and `or_predicates`.
+- You can specify `<column value>` and `<limit>` to a bind marker (positional `?` and named `:<name>`).
+
+`LIKE` predicate:
+
+- `_` in `<pattern>` matches any single character.
+- `%` in `<pattern>` matches any sequence of zero or more characters.
+- `\` in `<pattern>` works as the escape character by default.
+  - You can change the escape character by specifying the `ESCAPE` clause.
+  - You can disable the escape character by specifying an empty escape character, `ESCAPE ''`.
+
+`ORDER BY` clause:
+
+- You can specify `order` for any columns in the `ORDER BY` clause.
+- If you omit `order`, the default order `ASC` will be used.
+
+For details about retrieving data from a database in ScalarDB, see [Get operation](../api-guide.mdx#get-operation) and [Scan operation](../api-guide.mdx#scan-operation).
+
+#### Examples of partition scans and index scans
 
 Let's say you have the following table and index:
 ```sql
@@ -593,17 +624,26 @@ Examples of `SELECT` are as follows:
 -- With a full primary key
 SELECT * FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23;
 
+-- With a full primary key and predicates for non-primary-key columns
+SELECT * FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 AND c4 < 100;
+
 -- With a partial primary key
 SELECT * FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa';
 
--- With projections and a partition key and clustering key boundaries
+-- With a partial primary key and predicates for non-primary-key columns
+SELECT * FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND (c4 < 100 OR c4 > 500);
+
+-- With projections and a partition key and clustering-key boundaries
 SELECT c1, c2, c3, c5 FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 >= 1.23 AND c3 < 4.56;
 
--- With projections and a partition key and clustering key boundaries and orders and limit
+-- With projections and a partition key and clustering-key boundaries and orders and limit
 SELECT c1 AS a, c2 AS b, c3 AS c, c5 FROM ns.tbl WHERE c1 = 10 AND c2 > 'aaa' AND c2 <= 'ddd' ORDER BY c2 ASC, c3 DESC LIMIT 10;
 
--- With an indexed column
+-- With an equality predicate for an indexed column
 SELECT * FROM ns.tbl WHERE c4 = 100;
+
+-- With an equality predicate for an indexed column and predicates for non-primary-key columns
+SELECT * FROM ns.tbl WHERE c4 = 100 AND c5 = false;
 
 -- With projections and an indexed column and limit
 SELECT c1, c2, c3, c4 FROM ns.tbl WHERE c4 = 100 LIMIT 10;
@@ -622,6 +662,17 @@ SelectStatement statement1 =
         .where(Predicate.column("c1").isEqualTo(Value.of(10)))
         .and(Predicate.column("c2").isEqualTo(Value.of("aaa")))
         .and(Predicate.column("c3").isEqualTo(Value.of(1.23F)))
+        .and(Predicate.column("c4").isLessThan(Value.of(100)))
+        .build();
+
+// With a full primary key and predicates for non-primary-key columns
+SelectStatement statement1 =
+    StatementBuilder.select()
+        .from("ns", "tbl")
+        .where(Predicate.column("c1").isEqualTo(Value.of(10)))
+        .and(Predicate.column("c2").isEqualTo(Value.of("aaa")))
+        .and(Predicate.column("c4").isEqualTo(Value.of(1.23F)))
+        .and(Predicate.column("c4").isLessThan(Value.of(100)))
         .build();
 
 // With a partial primary key
@@ -632,7 +683,19 @@ SelectStatement statement2 =
         .and(Predicate.column("c2").isEqualTo(Value.of("aaa")))
         .build();
 
-// With projections and a partition key and clustering key boundaries
+// With a partial primary key and predicates for non-primary-key columns
+SelectStatement statement2 =
+    StatementBuilder.select()
+        .from("ns", "tbl")
+        .where(Predicate.column("c1").isEqualTo(Value.of(10)))
+        .and(Predicate.column("c2").isEqualTo(Value.of("aaa")))
+        .and(
+            AndPredicateList.predicate(Predicate.column("c4").isLessThan(Value.of(100)))
+                .and(Predicate.column("c4").isGreaterThan(Value.of(500)))
+                .build())
+        .build();
+
+// With projections and a partition key and clustering-key boundaries
 SelectStatement statement3 =
     StatementBuilder.select("c1", "c2", "c3", "c5")
         .from("ns", "tbl")
@@ -657,11 +720,19 @@ SelectStatement statement4 =
         .limit(10)
         .build();
 
-// With an indexed column
+// With an equality predicate for an indexed column
 SelectStatement statement5 =
     StatementBuilder.select()
         .from("ns", "tbl")
         .where(Predicate.column("c4").isEqualTo(Value.of(100)))
+        .build();
+
+// With an equality predicate for an indexed column and predicates for non-primary-key columns
+SelectStatement statement5 =
+    StatementBuilder.select()
+        .from("ns", "tbl")
+        .where(Predicate.column("c4").isEqualTo(Value.of(100)))
+        .and(Predicate.column("c5").isEqualTo(Value.of(false)))
         .build();
 
 // With projections and an indexed column and limit
@@ -760,120 +831,7 @@ SelectStatement statement4 =
         .build();
 ```
 
-### SELECT (with cross-partition scan)
-
-By enabling the cross-partition scan option, the `SELECT` command can retrieve all records across partitions without specifying the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.mdx).
-
-:::warning
-
-For non-JDBC databases, we do not recommend enabling cross-partition scan with the `SERIALIAZABLE` isolation level because transactions could be executed at a lower isolation level (that is, `SNAPSHOT`). When using non-JDBC databases, use cross-partition scan at your own risk only if consistency does not matter for your transactions.
-
-:::
-
-#### Grammar
-
-```sql
-SELECT projection [, projection] ...
-  FROM [<namespace name>.]<table name> [AS <alias>] [join_specification [join_specification] ...]
-  [LIMIT <limit>]
-
-projection: * | identifier [AS <alias>]
-identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
-```
-
-##### Note
-
-- You cannot specify `ORDER BY` if you omit the `WHERE` clause.
-- For JDBC databases, by enabling cross-partition scan with filtering and ordering as described in [SELECT (with cross-partition scan filtering and ordering)](#select-with-cross-partition-scan-filtering-and-ordering), you can specify arbitrary conditions and orderings, including the case with `ORDER BY` without the `WHERE` clause.
-
-For details about the join clause and related examples, see [SELECT](#select).
-
-For details about scanning data from a database in ScalarDB, see [Scan operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#scan-operation).
-
-#### Examples
-
-If you have the following table, for example:
-
-```sql
-CREATE TABLE ns.tbl (
-  c1 INT,
-  c2 TEXT,
-  c3 FLOAT,
-  c4 BIGINT,
-  c5 BOOLEAN,
-  PRIMARY KEY (c1, c2, c3)
-) WITH CLUSTERING ORDER BY (c2 DESC, c3 ASC);
-```
-
-Examples of `SELECT` with cross-partition scan are as follows:
-
-```sql
--- Without the WHERE clause to retrieve all the records of a table
-SELECT * FROM ns.tbl;
-
--- Without the WHERE clause and with projections and a limit
-SELECT c1, c2, c3, c5 FROM ns.tbl LIMIT 10;
-```
-
-Examples of building statement objects for `SELECT` are as follows:
-
-```java
-// Without the WHERE clause to retrieve all the records of a table
-SelectStatement statement1 = StatementBuilder.select().from("ns", "tbl").build();
-
-// Without the WHERE clause and with projections and a limit
-SelectStatement statement2 =
-    StatementBuilder.select("c1", "c2", "c3", "c5").from("ns", "tbl").limit(10).build();
-```
-
-### SELECT (with cross-partition scan filtering and ordering)
-
-By enabling the cross-partition scan option with filtering and ordering, the `SELECT` command can flexibly retrieve records across partitions with arbitrary conditions and orderings. Currently, the options are valid only for JDBC databases. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.mdx).
-
-#### Grammar
-
-```sql
-SELECT projection [, projection] ...
-  FROM [<namespace name>.]<table name> [AS <alias>] [join_specification [join_specification] ...]
-  [WHERE andPredicates [OR andPredicates ...] | orPredicates [AND orPredicates ...]]
-  [ORDER BY <clustering key identifier> [order] [, <clustering key identifier> [order]] ...]
-  [LIMIT <limit>]
-
-projection: * | identifier [AS <alias>]
-identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
-andPredicates: predicate | (predicate [AND predicate ...])
-orPredicates: predicate | (predicate [OR predicate ...])
-predicate: <identifier> operator <column value> | <identifier> BETWEEN <column value> AND <column value> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
-operator: = | <> | != | > | >= | < | <=
-order: ASC | DESC
-```
-
-##### Note
-
-`WHERE` clause:
-
-- You can use arbitrary predicates for any columns in the `WHERE` clause.
-- In the `WHERE` clause, predicates must be an OR-wise of `andPredicates` (known as disjunctive normal form) or an AND-wise of `orPredicates` (known as conjunctive normal form).
-- When connecting multiple `andPredicates` or `orPredicates`, which have more than one predicate, you need to put parentheses around `andPredicates` and `orPredicates`.
-- You can specify `<column value>` and `<limit>` to a bind marker (positional `?` and named `:<name>`).
-
-`LIKE` predicate:
-
-- `_` in `<pattern>` matches any single character.
-- `%` in `<pattern>` matches any sequence of zero or more characters.
-- `\` in `<pattern>` works as the escape character by default.
-- The escape character can be disabled by specifying an empty escape character.
-
-`ORDER BY` clause:
-
-- You can specify `order` for any columns in the `ORDER BY` clause.
-- If you omit `order`, the default order `ASC` will be used.
-
-For details about the join clause and related examples, see [SELECT](#select).
-
-For details about scanning data from a database in ScalarDB, see [Scan operation](https://github.com/scalar-labs/scalardb/blob/master/docs/api-guide.md#scan-operation).
-
-#### Examples
+#### Examples of cross-partition scan
 
 If you have the following table, for example:
 
@@ -887,13 +845,16 @@ CREATE TABLE ns.user (
 )
 ```
 
-Examples of `SELECT` with cross-partition scan filtering and ordering are as follows:
+Examples of `SELECT` with cross-partition scan are as follows:
 
 ```sql
 -- Without the WHERE clause to retrieve all the records of a table
 SELECT * FROM ns.user;
 
--- With AND predicates for non-primary key columns
+-- Without the WHERE clause and with projections and a limit
+SELECT id, name FROM ns.user LIMIT 10;
+
+-- With AND predicates for non-primary-key columns
 SELECT * FROM ns.user WHERE age > 10 AND height > 140;
 
 -- With OR predicates for non-primary key columns
@@ -930,13 +891,19 @@ SELECT * FROM ns.user ORDER BY height;
 SELECT * FROM ns.user WHERE age < ? ORDER BY age ASC, height DESC LIMIT ?;
 ```
 
+For examples that use the `JOIN` clause, see [Examples of partition scans and index scans](#examples-of-partition-scans-and-index-scans).
+
 Examples of building statement objects for `SELECT` are as follows:
 
 ```java
 // Without the WHERE clause to retrieve all the records of a table
 SelectStatement statement1 = StatementBuilder.select().from("ns", "user").build();
 
-// With AND predicates for non-primary key columns
+// Without the WHERE clause and with projections and a limit
+SelectStatement statement2 =
+    StatementBuilder.select("id", "name").from("ns", "user").limit(10).build();
+
+// With AND predicates for non-primary-key columns
 SelectStatement statement2 =
     StatementBuilder.select()
         .from("ns", "user")
@@ -1048,6 +1015,8 @@ SelectStatement statement13 =
         .build();
 ```
 
+For examples that use the `JOIN` clause, see [Examples of partition scans and index scans](#examples-of-partition-scans-and-index-scans).
+
 ### INSERT
 
 The `INSERT` command inserts new records into the database. If any of the target records already exist, a transaction conflict error will be thrown.
@@ -1055,12 +1024,6 @@ The `INSERT` command inserts new records into the database. If any of the target
 This command returns the following column:
 
 - `updateCount`: `INT` - the number of inserted records
-
-:::note
-
-If you read the target records by a `SELECT` command before an `INSERT` command in a transaction, and if the target records already exist, the `INSERT` command will update the target records instead of inserting new records.
-
-:::
 
 #### Grammar
 
@@ -1199,7 +1162,15 @@ UpsertStatement statement4 = StatementBuilder.upsertInto("ns", "tbl")
 
 ### UPDATE
 
-The `UPDATE` command updates existing records in the database. By default, the `UPDATE` command requires the `WHERE` clause to filter records by primary key. If you want to update all records without specifying the `WHERE` clause, see [UPDATE (with cross-partition scan)](#update-with-cross-partition-scan). For JDBC databases only, you can use the `UPDATE` command with arbitrary conditions. For details, see [UPDATE (with cross-partition scan filtering)](#update-with-cross-partition-scan-filtering).
+The `UPDATE` command updates existing records in the database. You can specify any conditions in the `WHERE` clause to filter records. However, specifying a primary key uniquely as much as possible is recommended to avoid the cross-partition operation since it might cause performance and consistency issues, especially in non-JDBC databases. Because ScalarDB SQL creates an execution plan for an `UPDATE` command that uses a `Get` or `Scan` operation to identify the target records, the same rule is applied for the selection of records. To understand what kinds of `WHERE` clauses cause cross-partition operations and to avoid such operations, see [SELECT](#select).
+
+You need to enable the cross-partition scan option if you want to update all records across partitions without specifying the `WHERE` clause. You also need to enable the cross-partition scan with filtering option if you want to flexibly update records across partitions with arbitrary conditions in the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](../configurations.mdx#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.mdx).
+
+:::warning
+
+For non-JDBC databases, transactions could be executed at read-committed snapshot isolation (`SNAPSHOT`), which is a lower isolation level, even if you enable cross-partition scan with the `SERIALIZABLE` isolation level. When using non-JDBC databases, use cross-partition scan only if consistency does not matter for your transactions.
+
+:::
 
 This command returns the following column:
 
@@ -1210,17 +1181,48 @@ This command returns the following column:
 ```sql
 UPDATE [<namespace name>.]<table name> [AS <alias>]
   SET <column identifier> = <column value> [, <column identifier> = <column value>] ...
-  WHERE <primary key identifier> = <column value> [AND <primary key identifier> = <column value>] ...]
+  [WHERE and_predicates [OR and_predicates ...] | or_predicates [AND or_predicates ...]]
 
 identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
+and_predicates: predicate | (predicate [AND predicate ...])
+or_predicates: predicate | (predicate [OR predicate ...])
+predicate: <identifier> operator <column value> | <identifier> BETWEEN <column value> AND <column value> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
+operator: = | <> | != | > | >= | < | <=
 ```
 
-Note that you must specify a full primary key in `UPDATE`.
-And you can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
+##### Note
 
-#### Examples
+`WHERE` clause:
 
-Examples of `UPDATE` are as follows:
+- You can use arbitrary predicates for any columns in the `WHERE` clause.
+- In the `WHERE` clause, predicates must be an OR-wise of `and_predicates` (known as disjunctive normal form) or an AND-wise of `or_predicates` (known as conjunctive normal form).
+- When connecting multiple `and_predicates` or `or_predicates`, which have more than one predicate, you need to put parentheses around `and_predicates` and `or_predicates`.
+- You can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
+
+`LIKE` predicate:
+
+- `_` in `<pattern>` matches any single character.
+- `%` in `<pattern>` matches any sequence of zero or more characters.
+- `\` in `<pattern>` works as the escape character by default.
+  - You can change the escape character by specifying the `ESCAPE` clause.
+  - You can disable the escape character by specifying an empty escape character, `ESCAPE ''`.
+
+#### Examples with the full primary key specified
+
+If you have the following table, for example:
+
+```sql
+CREATE TABLE ns.tbl (
+  c1 INT,
+  c2 TEXT,
+  c3 FLOAT,
+  c4 BIGINT,
+  c5 BOOLEAN,
+  PRIMARY KEY (c1, c2, c3)
+) WITH CLUSTERING ORDER BY (c2 DESC, c3 ASC);
+```
+
+Examples of `UPDATE` with the full primary key specified are as follows:
 
 ```sql
 -- Update a record
@@ -1256,98 +1258,7 @@ UpdateStatement statement2 =
         .build();
 ```
 
-### UPDATE (with cross-partition scan)
-
-By enabling the cross-partition scan option, the `UPDATE` command can update all records across partitions without specifying the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.mdx).
-
-:::warning
-
-For non-JDBC databases, we do not recommend enabling cross-partition scan with the `SERIALIAZABLE` isolation level because transactions could be executed at a lower isolation level (that is, `SNAPSHOT`). When using non-JDBC databases, use cross-partition scan at your own risk only if consistency does not matter for your transactions.
-
-:::
-
-#### Grammar
-
-```sql
-UPDATE [<namespace name>.]<table name> [AS <alias>]
-  SET <column identifier> = <column value> [, <column identifier> = <column value>] ...
-
-identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
-```
-
-##### Note
-
-- For JDBC databases, by enabling cross-partition scan with filtering as described in [UPDATE (with cross-partition scan filtering)](#update-with-cross-partition-scan-filtering), you can specify arbitrary conditions, including the case without the `WHERE` clause.
-
-#### Examples
-
-If you have the following table, for example:
-
-```sql
-CREATE TABLE ns.tbl (
-  c1 INT,
-  c2 TEXT,
-  c3 FLOAT,
-  c4 BIGINT,
-  c5 BOOLEAN,
-  PRIMARY KEY (c1, c2, c3)
-) WITH CLUSTERING ORDER BY (c2 DESC, c3 ASC);
-```
-
-Examples of `UPDATE` with cross-partition scan are as follows:
-
-```sql
--- Without the WHERE clause to update all the records of a table
-UPDATE ns.tbl SET c4 = 200, c5 = false;
-```
-
-Examples of building statement objects for `UPDATE` are as follows:
-
-```java
-// Without the WHERE clause to update all the records of a table
-UpdateStatement statement =
-    StatementBuilder.update("ns", "tbl")
-        .set(
-            Assignment.column("c4").value(Value.of(200L)),
-            Assignment.column("c5").value(Value.of(false)))
-        .build();
-```
-
-### UPDATE (with cross-partition scan filtering)
-
-By enabling the cross-partition scan option with filtering, the `UPDATE` command can flexibly update records across partitions with arbitrary conditions. Currently, the option is valid only for JDBC databases. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.mdx).
-
-#### Grammar
-
-```sql
-UPDATE [<namespace name>.]<table name> [AS <alias>]
-  SET <column identifier> = <column value> [, <column identifier> = <column value>] ...
-  [WHERE andPredicates [OR andPredicates ...] | orPredicates [AND orPredicates ...]]
-
-identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
-andPredicates: predicate | (predicate [AND predicate ...])
-orPredicates: predicate | (predicate [OR predicate ...])
-predicate: <identifier> operator <column value> | <identifier> BETWEEN <column value> AND <column value> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
-operator: = | <> | != | > | >= | < | <=
-```
-
-##### Note
-
-`WHERE` clause:
-
-- You can use arbitrary predicates for any columns in the `WHERE` clause.
-- In the `WHERE` clause, predicates must be an OR-wise of `andPredicates` (known as disjunctive normal form) or an AND-wise of `orPredicates` (known as conjunctive normal form).
-- When connecting multiple `andPredicates` or `orPredicates`, which have more than one predicate, you need to put parentheses around `andPredicates` and `orPredicates`.
-- You can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
-
-`LIKE` predicate:
-
-- `_` in `<pattern>` matches any single character.
-- `%` in `<pattern>` matches any sequence of zero or more characters.
-- `\` in `<pattern>` works as the escape character by default.
-- The escape character can be disabled by specifying an empty escape character.
-
-#### Examples
+#### Examples without the full primary key specified
 
 If you have the following table, for example:
 
@@ -1361,7 +1272,7 @@ CREATE TABLE ns.user (
 )
 ```
 
-Examples of `UPDATE` with cross-partition scan filtering are as follows:
+Examples of `UPDATE` without the full primary key specified are as follows:
 
 ```sql
 -- Without the WHERE clause to update all the records of a table
@@ -1478,7 +1389,15 @@ UpdateStatement statement9 =
 
 ### DELETE
 
-The `DELETE` command deletes records in the database. By default, the `DELETE` command requires the `WHERE` clause to filter records by primary key. If you want to delete all records without specifying the `WHERE` clause, see [DELETE (with cross-partition scan)](#delete-with-cross-partition-scan). For JDBC databases only, you can use the `DELETE` command with arbitrary conditions. For details, see [DELETE (with cross-partition scan filtering)](#delete-with-cross-partition-scan-filtering).
+The `DELETE` command deletes records in the database. You can specify any conditions in the `WHERE` clause to filter records. However, specifying a primary key uniquely is recommended as much as possible to avoid the cross-partition operation since it might cause performance and consistency issues, especially in non-JDBC databases. Because ScalarDB SQL creates an execution plan for a `DELETE` command that uses a `Get` or `Scan` operation to identify the target records, the same rule is applied for the selection of records. To understand what kinds of `WHERE` clauses cause cross-partition operations and to avoid such operations, see [SELECT](#select).
+
+You need to enable the cross-partition scan option if you want to delete all records across partitions without specifying the `WHERE` clause. You also need to enable the cross-partition scan with filtering option if you want to flexibly delete records across partitions with arbitrary conditions in the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](../configurations.mdx#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.mdx).
+
+:::warning
+
+For non-JDBC databases, transactions could be executed at read-committed snapshot isolation (`SNAPSHOT`), which is a lower isolation level, even if you enable cross-partition scan with the `SERIALIZABLE` isolation level. When using non-JDBC databases, use cross-partition scan only if consistency does not matter for your transactions.
+
+:::
 
 This command returns the following column:
 
@@ -1488,15 +1407,46 @@ This command returns the following column:
 
 ```sql
 DELETE FROM [<namespace name>.]<table name> [AS <alias>]
-  WHERE <primary key identifier> = <column value> [AND <primary key identifier> = <column value>] ...]
+  [WHERE and_predicates [OR and_predicates ...] | or_predicates [AND or_predicates ...]]
 
 identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
+and_predicates: predicate | (predicate [AND predicate ...])
+or_predicates: predicate | (predicate [OR predicate ...])
+predicate: <identifier> operator <column value> | <identifier> BETWEEN <column value> AND <column value> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
+operator: = | <> | != | > | >= | < | <=
 ```
 
-Note that you must specify a full primary key in `DELETE`.
-And you can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
+##### Note
 
-#### Examples
+`WHERE` clause:
+
+- You can use arbitrary predicates for any columns in the `WHERE` clause.
+- In the `WHERE` clause, predicates must be an OR-wise of `and_predicates` (known as disjunctive normal form) or an AND-wise of `or_predicates` (known as conjunctive normal form).
+- When connecting multiple `and_predicates` or `or_predicates`, which have more than one predicate, you need to put parentheses around `and_predicates` and `or_predicates`.
+- You can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
+
+`LIKE` predicate:
+
+- `_` in `<pattern>` matches any single character.
+- `%` in `<pattern>` matches any sequence of zero or more characters.
+- `\` in `<pattern>` works as the escape character by default.
+  - You can change the escape character by specifying the `ESCAPE` clause.
+  - You can disable the escape character by specifying an empty escape character, `ESCAPE ''`.
+
+#### Examples with the full primary key specified
+
+If you have the following table, for example:
+
+```sql
+CREATE TABLE ns.tbl (
+  c1 INT,
+  c2 TEXT,
+  c3 FLOAT,
+  c4 BIGINT,
+  c5 BOOLEAN,
+  PRIMARY KEY (c1, c2, c3)
+) WITH CLUSTERING ORDER BY (c2 DESC, c3 ASC);
+```
 
 Examples of `DELETE` are as follows:
 
@@ -1528,89 +1478,7 @@ DeleteStatement statement2 =
         .build();
 ```
 
-### DELETE (with cross-partition scan)
-
-By enabling the cross-partition scan option, the `DELETE` command can delete all records across partitions without specifying the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.mdx).
-
-:::warning
-
-For non-JDBC databases, we do not recommend enabling cross-partition scan with the `SERIALIAZABLE` isolation level because transactions could be executed at a lower isolation level (that is, `SNAPSHOT`). When using non-JDBC databases, use cross-partition scan at your own risk only if consistency does not matter for your transactions.
-
-:::
-
-#### Grammar
-
-```sql
-DELETE FROM [<namespace name>.]<table name> [AS <alias>]
-```
-
-##### Note
-
-- For JDBC databases, by enabling cross-partition scan with filtering as described in [DELETE (with cross-partition scan filtering)](#delete-with-cross-partition-scan-filtering), you can specify arbitrary conditions, including the case without the `WHERE` clause.
-
-#### Examples
-
-If you have the following table, for example:
-
-```sql
-CREATE TABLE ns.tbl (
-  c1 INT,
-  c2 TEXT,
-  c3 FLOAT,
-  c4 BIGINT,
-  c5 BOOLEAN,
-  PRIMARY KEY (c1, c2, c3)
-) WITH CLUSTERING ORDER BY (c2 DESC, c3 ASC);
-```
-
-Examples of `DELETE` with cross-partition scan are as follows:
-
-```sql
--- Without the WHERE clause to delete all the records of a table
-DELETE FROM ns.tbl;
-```
-
-Examples of building statement objects for `DELETE` are as follows:
-
-```java
-// Without the WHERE clause to delete all the records of a table
-DeleteStatement statement = StatementBuilder.deleteFrom("ns", "tbl").build();
-```
-
-### DELETE (with cross-partition scan filtering)
-
-By enabling the cross-partition scan option with filtering, the `DELETE` command can flexibly delete records across partitions with arbitrary conditions. Currently, the option is valid only for JDBC databases. For details about configurations, see [Cross-partition scan configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.mdx).
-
-#### Grammar
-
-```sql
-DELETE FROM [<namespace name>.]<table name> [AS <alias>]
-  [WHERE andPredicates [OR andPredicates ...] | orPredicates [AND orPredicates ...]]
-
-identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
-andPredicates: predicate | (predicate [AND predicate ...])
-orPredicates: predicate | (predicate [OR predicate ...])
-predicate: <identifier> operator <column value> | <identifier> BETWEEN <column value> AND <column value> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
-operator: = | <> | != | > | >= | < | <=
-```
-
-##### Note
-
-`WHERE` clause:
-
-- You can use arbitrary predicates for any columns in the `WHERE` clause.
-- In the `WHERE` clause, predicates must be an OR-wise of `andPredicates` (known as disjunctive normal form) or an AND-wise of `orPredicates` (known as conjunctive normal form).
-- When connecting multiple `andPredicates` or `orPredicates`, which have more than one predicate, you need to put parentheses around `andPredicates` and `orPredicates`.
-- You can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
-
-`LIKE` predicate:
-
-- `_` in `<pattern>` matches any single character.
-- `%` in `<pattern>` matches any sequence of zero or more characters.
-- `\` in `<pattern>` works as the escape character by default.
-- The escape character can be disabled by specifying an empty escape character.
-
-#### Examples
+#### Examples without the full primary key specified
 
 If you have the following table, for example:
 
@@ -2197,6 +2065,35 @@ An example of building statement objects for `SET MODE` is as follows:
 // Switch the current transaction mode to Two-phase Commit Transaction
 SetModeStatement statement =
     StatementBuilder.setMode(TransactionMode.TWO_PHASE_COMMIT_TRANSACTION).build();
+```
+
+### SHOW NAMESPACES
+
+The `SHOW NAMESPACES` command shows namespace names.
+
+:::note
+
+This command extracts the namespace names of user tables dynamically. As a result, only namespaces that contain tables are returned. Starting from ScalarDB 4.0, we plan to improve the design to remove this limitation.
+
+:::
+
+This command returns the following column:
+
+- `namespaceName`: `TEXT` - the namespace name
+
+#### Grammar
+
+```sql
+SHOW NAMESPACES
+```
+
+#### Examples
+
+An example of building statement objects for `SHOW NAMESPACES` is as follows:
+
+```java
+// Show namespace names.
+ShowNamespacesStatement statement = StatementBuilder.showNamespaces().build();
 ```
 
 ### SHOW TABLES

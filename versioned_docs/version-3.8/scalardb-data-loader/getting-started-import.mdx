@@ -1,6 +1,6 @@
 # Getting started with Import
 
-This document explains how you can get started with the Scalar DB Data Loader Import function.
+This document explains how you can get started with the ScalarDB Data Loader Import function.
 
 ## Features
 
@@ -43,8 +43,8 @@ Execute the following steps to successfully import new or existing data
 
 - Optionally specify the `threads` argument to tweak performance
 
-- Run the import from the command line to start importing your data. Make sure to run the Scalar DB Data
-  Loader in the correct `storage` or `transaction` mode depending on your running Scalar DB instance.
+- Run the import from the command line to start importing your data. Make sure to run the ScalarDB Data
+  Loader in the correct `storage` or `transaction` mode depending on your running ScalarDB instance.
 
 ### Command-line flags
 
@@ -52,11 +52,11 @@ Here is a list of flags (options) that can be used with the data loader:
 
 | Flag                            | Description                                                                                                                                                                                                                                                                                                              | Usage                                                       |
 |---------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|
-| --mode                          | The mode in which Scalar DB is running. If omitted, the default value is `storage`                                                                                                                                                                                                                                       | `scalardb-data-loader --mode transaction`                   |
+| --mode                          | The mode in which ScalarDB is running. If omitted, the default value is `storage`                                                                                                                                                                                                                                       | `scalardb-data-loader --mode transaction`                   |
 | --config                        | the path to the scalardb.properties file. If omitted the tool looks for a file named `scalardb.properties` in the current folder                                                                                                                                                                                         | `scalardb-data-loader --config scalardb.properties`         |
 | --namespace                     | Namespace to export table data from. Required when no control file is provided.                                                                                                                                                                                                                                          | `scalardb-data-loader --namespace namespace`                |
 | --table                         | name of the table to export data from. Required when no control file is provided.                                                                                                                                                                                                                                        | `scalardb-data-loader --table tableName`                    |
-| --import-mode                   | Mode to import the data into the Scalar DB table. Supported modes are `insert`, `update` and `upsert`. Optional. Default the value is set to `upsert`                                                                                                                                                                    | `scalardb-data-loader --import-mode=upsert`                 |
+| --import-mode                   | Mode to import the data into the ScalarDB table. Supported modes are `insert`, `update` and `upsert`. Optional. Default the value is set to `upsert`                                                                                                                                                                    | `scalardb-data-loader --import-mode=upsert`                 |
 | --all-columns-required          | If set, data rows cannot be imported if they are missing columns. Optional. By default, the check is not executed.                                                                                                                                                                                                       | `scalardb-data-loader --all-columns-required`               |
 | --file                          | Specify the path to the file that will be imported. Required                                                                                                                                                                                                                                                             | `scalardb-data-loader --file <pathToFile>`                  |
 | --success                       | The path to the file that is created to write the succeed import results to. Both succeed and failed import results will be written to a different file. <br />Optional. By default, the a new file will be created in the current working directory.<br /><br />Note: if the file already exists, it will be overridden. | `scalardb-data-loader --success <path to file>`             |
@@ -67,7 +67,7 @@ Here is a list of flags (options) that can be used with the data loader:
 | --pretty                        | When set, the output to the success and failed files is done in `pretty print` mode. By default the option is not enabled.                                                                                                                                                                                               | `scalardb-data-loader --pretty`                             |
 | --control-file                  | The path to the JSON control file specifying the rules for the custom data mapping and/or multi-table import.                                                                                                                                                                                                            | `scalardb-data-loader --control-file control.json`          |
 | --control-file-validation-level | The validation level for the control file.  `MAPPED`, `KEYS` or` FULL`.    <br /><br />Optional and by default the level is set to `MAPPED`                                                                                                                                                                              | `scalardb-data-loader --control-file-validation-level FULL` |
-| --log-put-value                 | Wether the value that was used in the Scalar DB `PUT` operation is included in the log files or not.<br />Optional and disabled by default.                                                                                                                                                                              | `scalardb-data-loader --log-put-value`                      |
+| --log-put-value                 | Wether the value that was used in the ScalarDB `PUT` operation is included in the log files or not.<br />Optional and disabled by default.                                                                                                                                                                              | `scalardb-data-loader --log-put-value`                      |
 | --error-file-required           | To export an optional error file of type JSON when the import file contains CSV data. By default, this option is disabled.                                                                                                                                                                                               | `scalardb-data-loader --error-file-required`                |
 | --error                         | To specify an optional error file when the import file contains CSV data.                                                                                                                                                                                                                                                | `scalardb-data-loader --error <pathToFile>`                 |
 | --delimiter                     | To specify a custom delimiter if the import file contains CSV data.                                                                                                                                                                                                                                                      | `scalardb-data-loader --delimiter <value>`                  |
@@ -79,9 +79,9 @@ The data loader supports the following import modes:
 
 | Mode   | Description                                                  |
 | ------ | ------------------------------------------------------------ |
-| INSERT | Each source record is treated as new data. If the data already exists in the Scalar DB table, based on the partition and clustering key, the import for this source data will fail. |
-| UPDATE | Each source record is treated as an update for existing data in the Scalar DB table.  If the data does not exist in the table, based on the partition key and clustering key, the import for this source data will fail. |
-| UPSERT | If the target Scalar DB table already contains the data, the import will be done via an UPDATE. If the target data is missing, it will be treated as an INSERT. |
+| INSERT | Each source record is treated as new data. If the data already exists in the ScalarDB table, based on the partition and clustering key, the import for this source data will fail. |
+| UPDATE | Each source record is treated as an update for existing data in the ScalarDB table.  If the data does not exist in the table, based on the partition key and clustering key, the import for this source data will fail. |
+| UPSERT | If the target ScalarDB table already contains the data, the import will be done via an UPDATE. If the target data is missing, it will be treated as an INSERT. |
 
 *Note*:
 
@@ -91,7 +91,7 @@ The data loader supports the following import modes:
 
 ### Automatic mapping
 
-When no control file is provided, the data loader will automatically map the fields in the source JSON data to the available columns in the Scalar DB table. If the name does not match, and if all columns are required, it will be treated as a validation error. In this case, the import for this record will fail and the result will be added to the failed output log.
+When no control file is provided, the data loader will automatically map the fields in the source JSON data to the available columns in the ScalarDB table. If the name does not match, and if all columns are required, it will be treated as a validation error. In this case, the import for this record will fail and the result will be added to the failed output log.
 
 ### Custom mapping
 
@@ -125,8 +125,8 @@ The following levels are supported:
 
 | Level  | Description                                                  |
 | ------ | ------------------------------------------------------------ |
-| FULL   | This validation makes sure that the control file has mappings for each column in the target Scalar DB table. |
-| KEYS   | This validation makes sure that mappings are available for each Scalar DB table partition and, if available, clustering keys columns in the control file mappings. |
+| FULL   | This validation makes sure that the control file has mappings for each column in the target ScalarDB table. |
+| KEYS   | This validation makes sure that mappings are available for each ScalarDB table partition and, if available, clustering keys columns in the control file mappings. |
 | MAPPED | The validation makes sure that the provided source fields and target columns exist for only the mappings that are provided in the control file. <br />No other fields are checked. |
 
 The validation level is optional and can be set via the `--control-file-validation-level` argument when starting the data loader.
@@ -143,7 +143,7 @@ The data loader supports multi-table target importing.
 
 One single row in a JSON or JSONLine file can be imported into multiple tables by specifying table mapping rules in the control file.   Currently, multi-table import is not supported without a control file.
 
-When using multi-table import in Scalar DB transaction mode, a transaction is created for each table import.  e.g. If the source record is mapped to 3 tables in the control file, 3 separate transactions are created.
+When using multi-table import in ScalarDB transaction mode, a transaction is created for each table import.  e.g. If the source record is mapped to 3 tables in the control file, 3 separate transactions are created.
 
 e.g. The import the following source record into `table1` and `table2` we execute the following steps:
 
@@ -264,7 +264,7 @@ Example of a JSON formatted failed log file:
 
 ## Data duplicates
 
-The data loader does not handle duplicates by itself. In Scalar DB transaction mode, trying to
+The data loader does not handle duplicates by itself. In ScalarDB transaction mode, trying to
 update the same target data in fast succession will cause `No Mutation` errors and these are not
 handled by the data loader. These failed data rows will be added to the failed import result output
 file and can be re-tried for import later.
@@ -277,7 +277,7 @@ loader.
 
 ## Storage vs transaction mode
 
-Scalar DB supports both storage and transaction mode and this support is included in the data loader import process.
+ScalarDB supports both storage and transaction mode and this support is included in the data loader import process.
 
 When the loader is started in storage mode, each import is executed in a non-transactional way.   
 

@@ -72,8 +72,13 @@ const config = {
               },
               */
               current: { // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
-                label: '3.12',
+                label: '3.13',
                 path: 'latest', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
+                banner: 'none',
+              },
+              "3.12": {
+                label: '3.12',
+                path: '3.12',
                 banner: 'none',
               },
               "3.11": {
@@ -97,9 +102,9 @@ const config = {
                 banner: 'none',
               },
               "3.7": {
-                label: '3.7',
+                label: '3.7 (unsupported)',
                 path: '3.7',
-                banner: 'none',
+                banner: 'unmaintained',
               },
               "3.6": {
                 label: '3.6 (unsupported)',
@@ -151,6 +156,19 @@ const config = {
           {
             to: '/docs/latest/releases/release-support-policy',
             from: '/docs/releases/release-support-policy',
+          },
+          {
+            to: '/docs/latest/run-non-transactional-storage-operations-through-primitive-crud-interface',
+            from: '/docs/latest/storage-abstraction',
+          },
+          // Uncomment this line when the docs for 3.14 are released.
+          // {
+          //   to: '/docs/3.13/run-non-transactional-storage-operations-through-primitive-crud-interface',
+          //   from: '/docs/3.13/storage-abstraction',
+          // },
+          {
+            to: '/docs/3.12/run-non-transactional-storage-operations-through-primitive-crud-interface',
+            from: '/docs/3.12/storage-abstraction',
           },
         ],
       },
@@ -234,6 +252,11 @@ const config = {
   themeConfig:
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
+      docs: {
+        sidebar: {
+          hideable: true,
+        },
+      },
       // Replace with your project's social card
       image: 'img/scalardb-logo.png',
       navbar: {
@@ -249,6 +272,11 @@ const config = {
             type: 'docsVersionDropdown',
             position: 'left',
             dropdownActiveClassDisabled: true,
+          },
+          {
+            type: 'html',
+            position: 'right',
+            value: '<div id="google_translate_element"></div>',
           },
           {
             href: 'https://developers.scalar-labs.com/docs/',

@@ -28,7 +28,7 @@ To see which types of queries PostgreSQL supports, see the [PostgreSQL documenta
 
 ## Set up ScalarDB Analytics with PostgreSQL
 
-First, you must set up the database to run analytical queries with ScalarDB Analytics with PostgreSQL. If you haven't set up the database yet, please follow the instructions in [Getting Started](https://scalardb.scalar-labs.com/docs/latest/scalardb-analytics-postgresql/getting-started).
+First, you must set up the database to run analytical queries with ScalarDB Analytics with PostgreSQL. If you haven't set up the database yet, please follow the instructions in [Getting Started](../../scalardb-analytics-postgresql/getting-started.mdx).
 
 ### Schema details in ScalarDB
 
@@ -116,7 +116,7 @@ You can find the schema of the ScalarDB tables in `schema.json`. For example, th
 To see the foreign table for `dynamons._customer` in the PostgreSQL database, run the following command and enter your PostgreSQL user password when prompted:
 
 ```console
-$ psql -U postgres -h localhost test -c '\d dynamons._customer';
+psql -U postgres -h localhost test -c '\d dynamons._customer';
 ```
 
 After entering your password, you should see the following output, which shows the same `c_` columns as in the `dynamons.customer` table:
@@ -159,7 +159,7 @@ As you can see in the foreign table, the table also contains the transaction met
 To see the view for `dynamons.customer`, run the following command and enter your PostgreSQL user password when prompted:
 
 ```console
-$ psql -U postgres -h localhost test -c '\d dynamons.customer';
+psql -U postgres -h localhost test -c '\d dynamons.customer';
 ```
 
 After entering your password, you should see the following output:
@@ -186,7 +186,7 @@ Normally, you don't need to access the foreign tables directly. Instead, you can
 
 :::
 
-For details about type mapping between ScalarDB and PostgreSQL, see [Data-type mapping between ScalarDB and other databases](https://scalardb.scalar-labs.com/docs/latest/schema-loader/#data-type-mapping-between-scalardb-and-other-databases).
+For details about type mapping between ScalarDB and PostgreSQL, see [Data-type mapping between ScalarDB and other databases](../../schema-loader.mdx#data-type-mapping-between-scalardb-and-other-databases).
 
 ## Run analytical queries
 
@@ -199,7 +199,7 @@ You can run a query that reads data from `cassandrans.lineitem`, with the actual
 To run the query, log in to the psql terminal by running the following command:
 
 ```console
-$ psql -U postgres -h localhost test
+psql -U postgres -h localhost test
 ```
 
 After entering your password, enter the following query into the psql terminal:
@@ -247,7 +247,7 @@ You can also run a query to join tables that are connected to the three back-end
 To run the query, log in to the psql terminal by running the following command:
 
 ```console
-$ psql -U postgres -h localhost test
+psql -U postgres -h localhost test
 ```
 
 After entering your password, enter the following query into the psql terminal:
@@ -295,5 +295,5 @@ You should see the following output:
 To stop ScalarDB Analytics with PostgreSQL and the database, stop the Docker container by running the following command:
 
 ```console
-$ docker-compose down
+docker-compose down
 ```

@@ -5,67 +5,37 @@ This guide describes several important topics that are specific to ScalarDB JDBC
 
 ## Add ScalarDB JDBC driver to your project
 
-You need to add dependencies for ScalarDB JDBC driver and the connection mode you want to use to your project to use ScalarDB JDBC.
+To add the dependencies for the ScalarDB JDBC driver by using Gradle, use the following, replacing `<VERSION>` with the versions of the ScalarDB JDBC driver and the related library, respectively, that you are using:
 
-### Direct mode
-
-To add the dependencies on ScalarDB JDBC driver with Direct mode using Gradle, use the following:
 ```gradle
 dependencies {
-    implementation 'com.scalar-labs:scalardb-sql-jdbc:<version>'
-    implementation 'com.scalar-labs:scalardb-sql-direct-mode:<version>'
+    implementation 'com.scalar-labs:scalardb-sql-jdbc:<VERSION>'
+    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:<VERSION>'
 }
 ```
 
-To add the dependencies using Maven:
+To add the dependencies by using Maven, use the following, replacing `...` with the version of the ScalarDB JDBC driver that you are using:
+
 ```xml
 <dependencies>
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-sql-jdbc</artifactId>
-        <version>${version}</version>
+        <version>...</version>
     </dependency>
     <dependency>
         <groupId>com.scalar-labs</groupId>
-        <artifactId>scalardb-sql-direct-mode</artifactId>
-        <version>${version}</version>
+        <artifactId>scalardb-cluster-java-client-sdk</artifactId>
+        <version>...</version>
     </dependency>
 </dependencies>
 ```
-
-### Server mode
-
-To add the dependencies on ScalarDB JDBC driver with Server mode using Gradle, use the following:
-```gradle
-dependencies {
-    implementation 'com.scalar-labs:scalardb-sql-jdbc:<version>'
-    implementation 'com.scalar-labs:scalardb-sql-server-mode:<version>'
-}
-```
-
-To add the dependencies using Maven:
-```xml
-<dependencies>
-    <dependency>
-        <groupId>com.scalar-labs</groupId>
-        <artifactId>scalardb-sql-jdbc</artifactId>
-        <version>${version}</version>
-    </dependency>
-    <dependency>
-        <groupId>com.scalar-labs</groupId>
-        <artifactId>scalardb-sql-server-mode</artifactId>
-        <version>${version}</version>
-    </dependency>
-</dependencies>
-```
-
-Please see [ScalarDB SQL Server](sql-server.mdx) for the details of the ScalarDB SQL Server.
 
 ## JDBC connection URL
 
 The JDBC connection URL format of ScalarDB JDBC is as follows:
 
-```shell
+```console
 jdbc:scalardb:<configuration file path>?<property name>=<property value>&<property name>=<property value>&...
 ```
 
@@ -73,25 +43,27 @@ For example:
 
 Only specify configuration file path:
 
-```shell
+```console
 jdbc:scalardb:/path/to/database.properties
 ```
 
 Only specify properties:
 
-```shell
+```console
 jdbc:scalardb:?scalar.db.contact_points=localhost&scalar.db.username=cassandra&scalar.db.password=cassandra&scalar.db.storage=cassandra
 ```
 
 Specify configuration file path and properties:
 
-```shell
+```console
 jdbc:scalardb:/path/to/database.properties?scalar.db.metadata.cache_expiration_time_secs=0
 ```
 
 ## Configurations for ScalarDB JDBC
 
-The configurations for ScalarDB JDBC are as follows:
+Please see [ScalarDB Cluster SQL client configurations](../scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-client-configurations) for details on the configurations.
+
+In addition, the ScalarDB JDBC specific configurations are as follows:
 
 | name                                                                | description                                                                  | default |
 |---------------------------------------------------------------------|------------------------------------------------------------------------------|---------|

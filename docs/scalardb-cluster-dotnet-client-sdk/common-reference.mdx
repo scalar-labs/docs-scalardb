@@ -1,0 +1,154 @@
+# ScalarDB Cluster .NET Client SDK Reference
+
+This reference provides details on how the ScalarDB Cluster .NET Client SDK works.
+
+## Client configuration
+
+The client can be configured by using the following:
+
+- A settings file, like `appsettings.json` or a custom JSON file
+- Environment variables
+- The `ScalarDbOptions` object
+
+If you use the SDK with ASP.NET Core, you can configure an app in more ways. For details, see [Configuration in ASP.NET Core](https://learn.microsoft.com/en-us/aspnet/core/fundamentals/configuration/?view=aspnetcore-8.0).
+
+For a list of options that you can configure, see [Available options](common-reference.mdx#available-options).
+
+### Using a settings file
+
+The SDK supports both the standard `appsettings.json` and custom JSON setting files. To configure the client in a JSON file, add the `ScalarDbOptions` section and configure the options that you need. For example:
+
+```json
+{
+  "ScalarDbOptions": {
+    "Address": "http://localhost:60053",
+    "HopLimit": 10
+  }
+}
+```
+
+Then, create a configured `TransactionFactory` object as follows:
+
+```c#
+// If appsettings.json is used, call the Create() method without parameters.
+var factory = TransactionFactory.Create();
+
+// Or, if a custom file is used, call the Create() method that is passed in the path to the custom file as a parameter.
+factory = TransactionFactory.Create("scalardb-options.json");
+```
+
+If you use the SDK with ASP.NET Core, the settings from `appsettings.json` will be applied automatically when the registered transaction managers and/or `ScalarDbContext` are created. If you want to use a custom JSON file, add it to the configuration framework as follows:
+
+```c#
+var builder = WebApplication.CreateBuilder(args);
+
+// ...
+
+builder.Configuration.AddJsonFile("scalardb-options.json");
+```
+
+:::warning
+
+Because the custom JSON file is applied after all standard configuration providers, the values from the custom file will override values from other sources.
+
+:::
+
+### Using environment variables
+
+To configure the client to use environment variables, you can use the prefix `ScalarDbOptions__`. For example:
+
+```console
+export ScalarDbOptions__Address="http://localhost:60053"
+export ScalarDbOptions__HopLimit=10
+```
+
+:::warning
+
+Values from environment variables will override values from settings files.
+
+:::
+
+### Using the `ScalarDbOptions` object
+
+You can configure the client at runtime by using the `ScalarDbOptions` object as follows:
+
+```c#
+var options = new ScalarDbOptions()
+{
+    Address = "http://localhost:60053",
+    HopLimit = 10
+};
+
+var factory = TransactionFactory.Create(options);
+```
+
+You can also initialize the `ScalarDbOptions` object with values from JSON files and/or environment variables, and then set any remaining values at runtime as follows:
+
+```c#
+// If appsettings.json is used, call the Load() method without parameters.
+var options = ScalarDbOptions.Load();
+
+// Or, if a custom file is used, call the Load() method that is passed in the path to the custom file as a parameter.
+options = ScalarDbOptions.Load("scalardb-options.json");
+
+options.HopLimit = 10;
+
+var factory = TransactionFactory.Create(options);
+```
+
+If you use the SDK with ASP.NET Core, a lambda function of `AddScalarDbCluster` and/or `AddScalarDbContext` can be used as follows:
+
+```c#
+var builder = WebApplication.CreateBuilder(args);
+
+//...
+
+builder.Services.AddScalarDbCluster(options =>
+{
+    options.Address = "http://localhost:60053";
+    options.HopLimit = 10;
+});
+
+builder.Services.AddScalarDbContext<MyDbContext>(options =>
+{
+    options.Address = "http://localhost:60053";
+    options.HopLimit = 10;
+});
+```
+
+By using this configuration, the `ScalarDbOptions` object  that is passed to the lambda function (named `options` in the example above) is initialized with values from the JSON files, environment variables, and other sources.
+
+### Available options
+
+The following options are available:
+
+| Name                      | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | Default                                                                                  |
+|---------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
+| `Address`                 | **Required:** Address of the cluster in the following format: `<PROTOCOL>://<HOSTNAME_OR_IP_ADDRESS>:<PORT>`. `<PROTOCOL>`: `https` if wire encryption (TLS) is enabled; `http` otherwise. `<HOSTNAME_OR_IP_ADDRESS>`: The FQDN or the IP address of the cluster. `<PORT>`: The port number (`60053` by default) of the cluster.                                                                                                                                                                                                                                                                                                                    | -                                                                                        |
+| `HopLimit`                | Number of hops for a request to the cluster. The purpose of the `HopLimit` is to prevent infinite loops within the cluster. Each time a request is forwarded to another cluster node, the `HopLimit` decreases by one. If the `HopLimit` reaches zero, the request will be rejected.                                                                                                                                                                                                                                                                                                                                                                | `3`                                                                                      |
+| `RetryCount`              | How many times a client can try to connect to the cluster if it's unavailable.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `10`                                                                                     |
+| `AuthEnabled`             | Whether ScalarDB Auth is enabled.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | `false`                                                                                  |
+| `Username`                | Username for authentication/authorization.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |                                                                                          |
+| `Password`                | Password for authentication. If this isn't set, authentication is conducted without a password.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |                                                                                          |
+| `AuthTokenExpirationTime` | Time after which the authentication token should be refreshed. If the time set to `AuthTokenExpirationTime` is greater than the expiration time on the cluster, the authentication token will be refreshed when an authentication error is received. If the authentication token is successfully refreshed, the authentication error won't be propagated to the client code. Instead, the operation that has failed with the authentication error will be retried automatically. If more than one operation is running in parallel, all these operations will fail once with the authentication error before the authentication token is refreshed. | `00:00:00` (The authentication token expiration time received from the cluster is used.) |
+| `TlsRootCertPem`          | Custom CA root certificate (PEM data) for TLS communication.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |                                                                                          |
+| `TlsRootCertPath`         | File path to the custom CA root certificate for TLS communication.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  |                                                                                          |
+| `TlsOverrideAuthority`    | Custom authority for TLS communication. This doesn't change what host is actually connected. This is mainly intended for testing. For example, you can specify the hostname presented in the cluster's certificate (the `scalar.db.cluster.node.tls.cert_chain_path` parameter of the cluster). If there's more than one hostname in the cluster's certificate, only the first hostname will be checked.                                                                                                                                                                                                                                            |                                                                                          |
+| `LogSensitiveData`        | If set to `true`, information like username, password, and authentication token will be logged as is without masking when logging gRPC requests and responses.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `false`                                                                                  |
+
+## How ScalarDB column types are converted to and from .NET types
+
+When using [LINQ](getting-started-with-linq.mdx#set-up-classes) or extension methods for the [Transactional API](getting-started-with-scalardb-tables-as-csharp-classes.mdx#create-classes-for-all-scalardb-tables), [SQL API](getting-started-with-distributed-sql-transactions.mdx#execute-sql-queries), or [Administrative API](getting-started-with-scalardb-tables-as-csharp-classes.mdx#use-the-administrative-api), a column's value received from the cluster is automatically converted to a corresponding .NET type. Likewise, a value of a .NET property is automatically converted to a corresponding cluster's type when an object is being saved to the cluster.
+
+In the following table, you can find how types are converted:
+
+| ScalarDB type | .NET type                  | C# alias |
+|---------------|----------------------------|----------|
+| TEXT          | System.String              | string   |
+| INT           | System.Int32               | int      |
+| BIGINT        | System.Int64               | long     |
+| FLOAT         | System.Single              | float    |
+| DOUBLE        | System.Double              | double   |
+| BOOLEAN       | System.Boolean             | bool     |
+| BLOB          | Google.Protobuf.ByteString |          |
+

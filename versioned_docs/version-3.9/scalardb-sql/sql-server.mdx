@@ -15,14 +15,20 @@ ScalarDB SQL Server is written in Java. So the following software is required to
 
 * [Oracle JDK 8](https://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html) (OpenJDK 8) or higher
 
+:::note
+
+This sample application only works with Java 8. However, ScalarDB itself works with Java LTS versions, which means that you can use Java LTS versions for your application that uses ScalarDB. For details on the requirements of ScalarDB, such as which Java versions can be used, see [Requirements](../requirements.mdx).
+
+:::
+
 ## Install ScalarDB SQL Server
 
 We have Docker images in [our repository](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-sql-server) and zip archives of ScalarDB SQL Server available in [releases](https://github.com/scalar-labs/scalardb-sql/releases).
 
 If you are interested in building from source, run the following command:
 
-```shell
-$ ./gradlew installDist
+```console
+./gradlew installDist
 ```
 
 Of course, you can archive the jar and libraries by `./gradlew distZip` and so on.
@@ -81,7 +87,7 @@ scalar.db.consensus_commit.isolation_level=SNAPSHOT
 scalar.db.consensus_commit.serializable_strategy=
 ```
 
-For more details about the configurations for the transaction manager, see [Transaction manager configurations](https://github.com/scalar-labs/scalardb/blob/master/docs/configurations.md#transaction-manager-configurations).
+For more details about the configurations for the transaction manager, see [Transaction manager configurations](../configurations.mdx#transaction-manager-configurations).
 
 In addition, for more details about the configurations for ScalarDB SQL Server, see [ScalarDB SQL Configurations](configurations.mdx).
 
@@ -90,44 +96,44 @@ In addition, for more details about the configurations for ScalarDB SQL Server, 
 ### Docker images
 
 For Docker images, you need to pull the ScalarDB SQL Server image first:
-```shell
-$ docker pull ghcr.io/scalar-labs/scalardb-sql-server:<version>
+```console
+docker pull ghcr.io/scalar-labs/scalardb-sql-server:<version>
 ```
 
 And then, you can start ScalarDB SQL Server with the following command:
-```shell
-$ docker run -v <your local property file path>:/scalardb-sql/server/scalardb-sql-server.properties -d -p 60052:60052 -p 8080:8080 ghcr.io/scalar-labs/scalardb-sql-server:<version>
+```console
+docker run -v <your local property file path>:/scalardb-sql/server/scalardb-sql-server.properties -d -p 60052:60052 -p 8080:8080 ghcr.io/scalar-labs/scalardb-sql-server:<version>
 ```
 
 You can also start it with DEBUG logging as follows:
-```shell
-$ docker run -v <your local property file path>:/scalardb-sql/server/scalardb-sql-server.properties -e SCALAR_DB_LOG_LEVEL=DEBUG -d -p 60052:60052 -p 8080:8080 ghcr.io/scalar-labs/scalardb-sql-server:<version>
+```console
+docker run -v <your local property file path>:/scalardb-sql/server/scalardb-sql-server.properties -e SCALAR_DB_LOG_LEVEL=DEBUG -d -p 60052:60052 -p 8080:8080 ghcr.io/scalar-labs/scalardb-sql-server:<version>
 ````
 
 You can also start it with your custom log configuration as follows:
-```shell
-$ docker run -v <your local property file path>:/scalardb-sql/server/scalardb-sql-server.properties -v <your custom log4j2 configuration file path>:/scalardb-sql/server/log4j2.properties -d -p 60052:60052 -p 8080:8080 ghcr.io/scalar-labs/scalardb-sql-server:<version>
+```console
+docker run -v <your local property file path>:/scalardb-sql/server/scalardb-sql-server.properties -v <your custom log4j2 configuration file path>:/scalardb-sql/server/log4j2.properties -d -p 60052:60052 -p 8080:8080 ghcr.io/scalar-labs/scalardb-sql-server:<version>
 ```
 
 You can also start it with environment variables as follows:
-```shell
-$ docker run --env SCALAR_DB_CONTACT_POINTS=cassandra --env SCALAR_DB_CONTACT_PORT=9042 --env SCALAR_DB_USERNAME=cassandra --env SCALAR_DB_PASSWORD=cassandra --env SCALAR_DB_STORAGE=cassandra -d -p 60052:60052 -p 8080:8080 ghcr.io/scalar-labs/scalardb-sql-server:<version>
+```console
+docker run --env SCALAR_DB_CONTACT_POINTS=cassandra --env SCALAR_DB_CONTACT_PORT=9042 --env SCALAR_DB_USERNAME=cassandra --env SCALAR_DB_PASSWORD=cassandra --env SCALAR_DB_STORAGE=cassandra -d -p 60052:60052 -p 8080:8080 ghcr.io/scalar-labs/scalardb-sql-server:<version>
 ```
 
 You can also start it with JMX as follows:
-```shell
-$ docker run -v <your local property file path>:/scalardb-sql/server/scalardb-sql-server.properties -e JAVA_OPTS="-Djava.rmi.server.hostname=<your container hostname or IP address> -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.port=9990 -Dcom.sun.management.jmxremote.rmi.port=9990 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false" -d -p 60052:60052 -p 8080:8080 -p 9990:9990 ghcr.io/scalar-labs/scalardb-sql-server:<version>
+```console
+docker run -v <your local property file path>:/scalardb-sql/server/scalardb-sql-server.properties -e JAVA_OPTS="-Djava.rmi.server.hostname=<your container hostname or IP address> -Dcom.sun.management.jmxremote -Dcom.sun.management.jmxremote=true -Dcom.sun.management.jmxremote.local.only=false -Dcom.sun.management.jmxremote.port=9990 -Dcom.sun.management.jmxremote.rmi.port=9990 -Dcom.sun.management.jmxremote.ssl=false -Dcom.sun.management.jmxremote.authenticate=false" -d -p 60052:60052 -p 8080:8080 -p 9990:9990 ghcr.io/scalar-labs/scalardb-sql-server:<version>
 ```
 
 ### Zip archives
 
 For zip archives, you can start ScalarDB server with the following commands:
 
-```shell
-$ unzip scalardb-sql-server-<version>.zip
-$ cd scalardb-sql-server-<version>
-$ export JAVA_OPTS="<your JVM options>"
-$ bin/scalardb-sql-server --config <your property file path>
+```console
+unzip scalardb-sql-server-<version>.zip
+cd scalardb-sql-server-<version>
+export JAVA_OPTS="<your JVM options>"
+bin/scalardb-sql-server --config <your property file path>
 ```
 
 ## Usage of the Java client of ScalarDB SQL Server
@@ -153,5 +159,5 @@ Please see [ScalarDB SQL Configurations](configurations.mdx) for more details of
 
 * [Getting Started with ScalarDB SQL](getting-started-with-sql.mdx)
 * [Getting Started with ScalarDB JDBC](getting-started-with-jdbc.mdx)
-* [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.md)
+* [Getting Started with ScalarDB](../getting-started-with-scalardb.mdx)
 * [ScalarDB SQL Configurations](configurations.mdx)

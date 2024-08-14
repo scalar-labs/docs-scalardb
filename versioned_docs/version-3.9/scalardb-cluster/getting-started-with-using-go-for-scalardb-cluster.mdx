@@ -47,7 +47,7 @@ But first, you need to get the `EXTERNAL-IP` address of the service resource of 
 To see the `EXTERNAL-IP` address, run the following command:
 
 ```console
-$ kubectl get svc scalardb-cluster-envoy
+kubectl get svc scalardb-cluster-envoy
 NAME                     TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)           AGE
 scalardb-cluster-envoy   LoadBalancer   10.105.121.51   localhost     60053:30641/TCP   16h
 ```
@@ -67,10 +67,10 @@ For details about the client modes, see [Developer Guide for ScalarDB Cluster wi
 
 ## Step 3. Load a schema
 
-To load a schema via ScalarDB Cluster, you need to use the dedicated Schema Loader for ScalarDB Cluster (Schema Loader for Cluster). Using the Schema Loader for Cluster is basically the same as using the [Schema Loader for ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/schema-loader.md) except the name of the JAR file is different. You can download the Schema Loader for Cluster at [Releases](https://github.com/scalar-labs/scalardb-cluster/releases). After downloading the JAR file, you can run the Schema Loader for Cluster with the following command:
+To load a schema via ScalarDB Cluster, you need to use the dedicated Schema Loader for ScalarDB Cluster (Schema Loader for Cluster). Using the Schema Loader for Cluster is basically the same as using the [Schema Loader for ScalarDB](../schema-loader.mdx) except the name of the JAR file is different. You can download the Schema Loader for Cluster from [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases/tag/v3.9.6). After downloading the JAR file, you can run the Schema Loader for Cluster with the following command:
 
-```shell
-$ java -jar scalardb-cluster-schema-loader-3.9.4-all.jar --config database.properties -f schema.json --coordinator
+```console
+java -jar scalardb-cluster-schema-loader-3.9.6-all.jar --config database.properties -f schema.json --coordinator
 ```
 
 ## Step 4. Set up a Go environment
@@ -88,7 +88,7 @@ To communicate with the gRPC server for ScalarDB Cluster, you will need to gener
 First, in a new working directory, create a directory named `scalardb-cluster`, which you will use to generate the gRPC code from, by running the following command:
 
 ```console
-$ mkdir scalardb-cluster
+mkdir scalardb-cluster
 ```
 
 Then, download the `scalardb-cluster.proto` file and save it in the directory that you created. For ScalarDB Cluster users who have a commercial license, please [contact us](https://www.scalar-labs.com/contact) if you need the `scalardb-cluster.proto` file.
@@ -96,7 +96,7 @@ Then, download the `scalardb-cluster.proto` file and save it in the directory th
 Generate the gRPC code by running the following command:
 
 ```console
-$ protoc --go_out=. --go_opt=paths=source_relative \
+protoc --go_out=. --go_opt=paths=source_relative \
   --go_opt=Mscalardb-cluster/scalardb-cluster.proto=example.com/scalardb-cluster \
   --go-grpc_out=. --go-grpc_opt=paths=source_relative \
   --go-grpc_opt=Mscalardb-cluster/scalardb-cluster.proto=example.com/scalardb-cluster \
@@ -384,38 +384,38 @@ You can then run the program as follows:
 - Charge `1000` to `user1`:
 
     ```console
-    $ go run main.go -action charge -amount 1000 -to user1
+    go run main.go -action charge -amount 1000 -to user1
     ```
 
 - Charge `0` to `merchant1` (Just create an account for `merchant1`):
 
    ```console
-   $ go run main.go -action charge -amount 0 -to merchant1
+   go run main.go -action charge -amount 0 -to merchant1
    ```
 
 - Pay `100` from `user1` to `merchant1`:
 
    ```console
-   $ go run main.go -action pay -amount 100 -from user1 -to merchant1
+   go run main.go -action pay -amount 100 -from user1 -to merchant1
    ```
 
 - Get the balance of `user1`:
 
    ```console
-   $ go run main.go -action getBalance -id user1
+   go run main.go -action getBalance -id user1
    ```
 
 - Get the balance of `merchant1`:
 
    ```console
-   $ go run main.go -action getBalance -id merchant1
+   go run main.go -action getBalance -id merchant1
    ```
 
 Note that you can also use `go build` to get the binary and then run it:
 
 ```console
-$ go build
-$ ./emoney -action getBalance -id user1
+go build
+./emoney -action getBalance -id user1
 ```
 
 ## References
