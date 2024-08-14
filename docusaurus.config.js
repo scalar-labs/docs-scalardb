@@ -157,6 +157,19 @@ const config = {
             to: '/docs/latest/releases/release-support-policy',
             from: '/docs/releases/release-support-policy',
           },
+          {
+            to: '/docs/latest/run-non-transactional-storage-operations-through-primitive-crud-interface',
+            from: '/docs/latest/storage-abstraction',
+          },
+          // Uncomment this line when the docs for 3.14 are released.
+          // {
+          //   to: '/docs/3.13/run-non-transactional-storage-operations-through-primitive-crud-interface',
+          //   from: '/docs/3.13/storage-abstraction',
+          // },
+          {
+            to: '/docs/3.12/run-non-transactional-storage-operations-through-primitive-crud-interface',
+            from: '/docs/3.12/storage-abstraction',
+          },
         ],
       },
     ],
