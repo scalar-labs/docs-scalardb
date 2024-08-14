@@ -189,7 +189,7 @@ const config = {
           {
             tagName: 'link',
             rel: 'icon',
-            href: 'img/favicon.png',
+            href: '/img/favicon.png',
           },
           {
             tagName: 'link',
@@ -199,7 +199,7 @@ const config = {
           {
             tagName: 'meta',
             name: 'theme-color',
-            content: '#fff',
+            content: '#2673BB',
           },
           {
             tagName: 'meta',
@@ -209,7 +209,7 @@ const config = {
           {
             tagName: 'meta',
             name: 'apple-mobile-web-app-status-bar-style',
-            content: '#000',
+            content: '#2673BB',
           },
           {
             tagName: 'link',
@@ -220,7 +220,7 @@ const config = {
             tagName: 'link',
             rel: 'mask-icon',
             href: '/img/favicon.svg',
-            color: 'rgb(38, 115, 187)',
+            color: '#2673BB',
           },
           {
             tagName: 'meta',
@@ -230,7 +230,7 @@ const config = {
           {
             tagName: 'meta',
             name: 'msapplication-TileColor',
-            content: '#000',
+            content: '#2673BB',
           },
         ],
       },
