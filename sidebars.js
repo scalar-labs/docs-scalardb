@@ -144,16 +144,6 @@ const sidebars = {
           items: [
             {
               type: 'doc',
-              id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-transactions',
-              label: 'Use the .NET Client SDK',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-linq',
-              label: 'Use LINQ for the .NET Client SDK',
-            },
-            {
-              type: 'doc',
               id: 'scalardb-cluster/getting-started-with-using-go-for-scalardb-cluster',
               label: 'Use Go for ScalarDB Cluster',
             },
@@ -161,21 +151,6 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/getting-started-with-using-python-for-scalardb-cluster',
               label: 'Use Python for ScalarDB Cluster',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api',
-              label: 'ScalarDB Cluster Java API',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/scalardb-cluster-configurations',
-              label: 'ScalarDB Cluster Configurations',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/scalardb-cluster-grpc-api-guide',
-              label: 'ScalarDB Cluster gRPC API Guide',
             },
             {
               type: 'doc',
@@ -361,6 +336,21 @@ const sidebars = {
               label: 'Schema Loader',
             },
             {
+              type: 'doc',
+              id: 'scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api',
+              label: 'ScalarDB Cluster Java API',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/scalardb-cluster-configurations',
+              label: 'ScalarDB Cluster Configurations',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/scalardb-cluster-grpc-api-guide',
+              label: 'ScalarDB Cluster gRPC API Guide',
+            },
+            {
               type: 'category',
               label: 'SQL Interface',
               collapsible: true,
@@ -443,8 +433,13 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
+                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-transactions',
+                  label: 'Distributed Transactions',
+                },
+                {
+                  type: 'doc',
                   id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-sql-transactions',
-                  label: 'Distributed SQL Transactions Through .NET',
+                  label: 'Distributed SQL Transactions',
                 },
                 {
                   type: 'doc',
@@ -460,6 +455,16 @@ const sidebars = {
                   type: 'doc',
                   id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-scalardb-tables-as-csharp-classes',
                   label: 'Tables as C# Classes',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-linq',
+                  label: 'LINQ',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-aspnet-and-di',
+                  label: 'ASP.NET Core and Dependency Injection',
                 },
                 {
                   type: 'doc',
