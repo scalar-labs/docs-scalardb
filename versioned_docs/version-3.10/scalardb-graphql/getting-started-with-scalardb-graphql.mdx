@@ -6,7 +6,7 @@ In this Getting Started guide, you will run a GraphQL server on your local machi
 
 ## Prerequisites
 
-We assume you have already installed Docker and have access to a ScalarDB-supported database such as Cassandra. Please configure them first by following [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started.md) if you have not set them up yet.
+We assume you have already installed Docker and have access to a ScalarDB-supported database such as Cassandra. Please configure them first by following [Getting Started with ScalarDB](../getting-started.mdx) if you have not set them up yet.
 
 You need a Personal Access Token (PAT) to access the Docker image of ScalarDB GraphQL in GitHub Container registry since the image is private. Ask a person in charge to get your account ready. Please read [the official document](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) for more detail.
 
@@ -35,7 +35,7 @@ We use the following simple example schema.
 To apply the schema to your database, download the Schema Loader that matches the version you use from [scalardb releases](https://github.com/scalar-labs/scalardb/releases), and run the following command to load the schema.
 
 ```console
-$ java -jar scalardb-schema-loader-<version>.jar --config /path/to/database.properties -f emoney.json --coordinator
+java -jar scalardb-schema-loader-<version>.jar --config /path/to/database.properties -f emoney.json --coordinator
 ```
 
 ## Docker login
@@ -44,8 +44,8 @@ $ java -jar scalardb-schema-loader-<version>.jar --config /path/to/database.prop
 
 ```console
 # read:packages scope needs to be selected in a personal access token to login
-$ export CR_PAT=YOUR_PERSONAL_ACCESS_TOKEN
-$ echo $CR_PAT | docker login ghcr.io -u USERNAME --password-stdin
+export CR_PAT=YOUR_PERSONAL_ACCESS_TOKEN
+echo $CR_PAT | docker login ghcr.io -u USERNAME --password-stdin
 ```
 
 ## Configure the GraphQL Server
@@ -64,7 +64,7 @@ scalar.db.graphql.graphiql=true
 The following command starts up the ScalarDB GraphQL server. The first time you run the command, it will download the Docker image from GitHub Container Registry.
 
 ```console
-$ docker run -v /path/to/database.properties:/scalardb-graphql/database.properties.tmpl -p 8080:8080 ghcr.io/scalar-labs/scalardb-graphql:<version>
+docker run -v /path/to/database.properties:/scalardb-graphql/database.properties.tmpl -p 8080:8080 ghcr.io/scalar-labs/scalardb-graphql:<version>
 ```
 
 At this point, the server reads the tables in the specified namespaces and generates a GraphQL schema to perform CRUD operations on the them.

@@ -1,21 +1,40 @@
 # Getting Started with ScalarDB Auth by Using ScalarDB Cluster .NET Client SDK
 
-The ScalarDB Cluster .NET Client SDK supports [ScalarDB Auth](https://github.com/scalar-labs/scalardb-cluster/blob/main/docs/scalardb-auth-with-sql.md), which allows you to authenticate and authorize your requests to ScalarDB Cluster.
+The ScalarDB Cluster .NET Client SDK supports [ScalarDB Auth](../scalardb-cluster/scalardb-auth-with-sql.mdx), which allows you to authenticate and authorize your requests to ScalarDB Cluster.
 
-## Set credentials in `ScalarDbOptions`
+## Install the SDK
 
-First, you need to get a transaction manager or transaction admin object with credentials by using `TransactionFactory` as follows, replacing the contents in the angle brackets as described. Also, be sure to replace `<GET_TRANSACTION_MANAGER>` with `GetTransactionManager()`, `GetTwoPhaseCommitTransactionManager()`, `GetSqlTransactionManager()`, or `GetSqlTwoPhaseCommitTransactionManager()`.  
+Install the same major and minor version of the [SDK](https://www.nuget.org/packages/ScalarDB.Client) as ScalarDB Cluster into the .NET project. You can do this by using the built-in NuGet package manager, replacing `<MAJOR>.<MINOR>` with the version that you're using:
+
+```console
+dotnet add package ScalarDB.Client --version '<MAJOR>.<MINOR>.*'
+```
+
+## Set credentials in the settings file
+
+You need to set credentials in the settings file as follows, replacing the contents in the angle brackets as described:
+
+```json
+{
+  "ScalarDbOptions": {
+    "Address": "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
+    "HopLimit": 10,
+    "AuthEnabled": true,
+    "Username": "<USERNAME>",
+    "Password": "<PASSWORD>"
+  }
+}
+```
+
+For details about settings files and other ways to configure the client, see [Client configuration](common-reference.mdx#client-configuration).
+
+## Get a transaction manager
+
+You need to get a transaction manager or transaction admin object by using `TransactionFactory` as follows. Be sure to replace `<GET_TRANSACTION_MANAGER>` with `GetTransactionManager()`, `GetTwoPhaseCommitTransactionManager()`, `GetSqlTransactionManager()`, or `GetSqlTwoPhaseCommitTransactionManager()`.
 
 ```c#
-var scalarDbOptions = new ScalarDbOptions
-                      {
-                         Address = "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
-                         HopLimit = 10,
-                         AuthEnabled = true,
-                         Username = "<USERNAME>",
-                         Password = "<PASSWORD>"
-                      };
-var factory = TransactionFactory.Create(scalarDbOptions);
+// Pass the path to the settings file.
+var factory = TransactionFactory.Create("scalardb-options.json");
 
 // To get a transaction manager
 using var manager = factory.<GET_TRANSACTION_MANAGER>();
@@ -25,3 +44,17 @@ using var admin = factory.GetTransactionAdmin();
 ```
 
 A transaction manager or transaction admin object created from `TransactionFactory` with the provided credentials will automatically log in to ScalarDB Cluster and can communicate with it.
+
+## Wire encryption
+
+[Wire encryption](../scalardb-cluster/scalardb-auth-with-sql.mdx#wire-encryption) is also supported. It can be turned on by setting `Address` to the URL starting with `https` as follows:
+
+```json
+{
+  "ScalarDbOptions": {
+    "Address": "https://<HOSTNAME_OR_IP_ADDRESS>:<PORT>"
+  }
+}
+```
+
+For details about settings files and other ways to configure the client, see [Client configuration](common-reference.mdx#client-configuration).

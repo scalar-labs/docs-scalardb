@@ -8,13 +8,21 @@ Although we recommend using asynchronous methods, as in the following examples, 
 
 :::
 
+## Install the SDK
+
+Install the same major and minor version of the [SDK](https://www.nuget.org/packages/ScalarDB.Client) as ScalarDB Cluster into the .NET project. You can do this by using the built-in NuGet package manager, replacing `<MAJOR>.<MINOR>` with the version that you're using:
+
+```console
+dotnet add package ScalarDB.Client --version '<MAJOR>.<MINOR>.*'
+```
+
 ## Create classes for all ScalarDB tables
 
 To work with ScalarDB tables as C# objects, you must create a class for each table that you want to use. For example:
 
 ```c#
 using System.ComponentModel.DataAnnotations.Schema;
-using ScalarDB.Net.Client.DataAnnotations;
+using ScalarDB.Client.DataAnnotations;
 
 // ...
 
@@ -32,6 +40,8 @@ public class Statement
 }
 ```
 
+For details about which types should be used for properties, see [How ScalarDB Column Types Are Converted to and from .NET Types](common-reference.mdx#how-scalardb-column-types-are-converted-to-and-from-net-types).
+
 ## Execute CRUD operations
 
 After creating a class for each table, you can use the classes as objects by using the generic `GetAsync`, `ScanAsync`, `InsertAsync`, `UpdateAsync`, `DeleteAsync`, `PutAsync`, or `MutateAsync` method of `IDistributedTransaction` (or more specifically, of `ITransactionCrudOperable`).
@@ -39,7 +49,7 @@ After creating a class for each table, you can use the classes as objects by usi
 To use these generic methods, add the following namespace to the `using` section:
 
 ```c#
-using ScalarDB.Net.Client.Extensions;
+using ScalarDB.Client.Extensions;
 ```
 
 ### Get one object by using the `GetAsync` method
@@ -140,7 +150,7 @@ To modify objects by using the `UpdateAsync`, `DeleteAsync`, `PutAsync`, or `Mut
 C# objects also can be used with the Administrative API. To use generic Administrative API methods, add the following namespace to the `using` section:
 
 ```c#
-using ScalarDB.Net.Client.Extensions;
+using ScalarDB.Client.Extensions;
 ```
 
 ### Create a new namespace

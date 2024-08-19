@@ -39,7 +39,7 @@ To set up Schema Loader for importing existing tables, see [Set up Schema Loader
 You can import an existing table in JDBC databases to ScalarDB by using the `--import` option and an import-specific schema file. To import tables, run the following command, replacing the contents in the angle brackets as described:
 
 ```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> --import
+java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> --import
 ```
 
 - `<VERSION>`: Version of ScalarDB Schema Loader that you set up.
@@ -49,7 +49,7 @@ $ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROP
 If you use the Consensus Commit transaction manager after importing existing tables, run the following command separately, replacing the contents in the angle brackets as described:
 
 ```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> --coordinator
+java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> --coordinator
 ```
 
 ## Sample import schema file
@@ -78,31 +78,31 @@ The following table shows the supported data types in each JDBC database and the
 
 <Tabs groupId="databases" queryString>
   <TabItem value="MySQL" label="MySQL" default>
-    | MySQL        | ScalarDB | Notes                 |
-    |--------------|----------|-----------------------|
-    | bigint       | BIGINT   | [*1](#warn-data-size) |
-    | binary       | BLOB     |                       |
-    | bit          | BOOLEAN  |                       |
-    | blob         | BLOB     | [*2](#warn-data-size) |
-    | char         | TEXT     | [*2](#warn-data-size) |
-    | double       | DOUBLE   |                       |
-    | float        | FLOAT    |                       |
-    | int          | INT      |                       |
-    | int unsigned | BIGINT   | [*2](#warn-data-size) |
-    | integer      | INT      |                       |
-    | longblob     | BLOB     |                       |
-    | longtext     | TEXT     |                       |
-    | mediumblob   | BLOB     | [*2](#warn-data-size) |
-    | mediumint    | INT      | [*2](#warn-data-size) |
-    | mediumtext   | TEXT     | [*2](#warn-data-size) |
-    | smallint     | INT      | [*2](#warn-data-size) |
-    | text         | TEXT     | [*2](#warn-data-size) |
-    | tinyblob     | BLOB     | [*2](#warn-data-size) |
-    | tinyint      | INT      | [*2](#warn-data-size) |
-    | tinyint(1)   | BOOLEAN  |                       |
-    | tinytext     | TEXT     | [*2](#warn-data-size) |
-    | varbinary    | BLOB     | [*2](#warn-data-size) |
-    | varchar      | TEXT     | [*2](#warn-data-size) |
+    | MySQL        | ScalarDB | Notes                      |
+    |--------------|----------|----------------------------|
+    | bigint       | BIGINT   | See warning [1](#1) below. |
+    | binary       | BLOB     |                            |
+    | bit          | BOOLEAN  |                            |
+    | blob         | BLOB     | See warning [2](#1) below. |
+    | char         | TEXT     | See warning [2](#1) below. |
+    | double       | DOUBLE   |                            |
+    | float        | FLOAT    |                            |
+    | int          | INT      |                            |
+    | int unsigned | BIGINT   | See warning [2](#1) below. |
+    | integer      | INT      |                            |
+    | longblob     | BLOB     |                            |
+    | longtext     | TEXT     |                            |
+    | mediumblob   | BLOB     | See warning [2](#1) below. |
+    | mediumint    | INT      | See warning [2](#1) below. |
+    | mediumtext   | TEXT     | See warning [2](#1) below. |
+    | smallint     | INT      | See warning [2](#1) below. |
+    | text         | TEXT     | See warning [2](#1) below. |
+    | tinyblob     | BLOB     | See warning [2](#1) below. |
+    | tinyint      | INT      | See warning [2](#1) below. |
+    | tinyint(1)   | BOOLEAN  |                            |
+    | tinytext     | TEXT     | See warning [2](#1) below. |
+    | varbinary    | BLOB     | See warning [2](#1) below. |
+    | varchar      | TEXT     | See warning [2](#1) below. |
 
     Data types not listed in the above are not supported. The following are some common data types that are not supported:
 
@@ -121,18 +121,18 @@ The following table shows the supported data types in each JDBC database and the
     - year
   </TabItem>
   <TabItem value="PostgreSQL" label="PostgreSQL">
-    | PostgreSQL        | ScalarDB | Notes                 |
-    |-------------------|----------|-----------------------|
-    | bigint            | BIGINT   | [*1](#warn-data-size) |
-    | boolean           | BOOLEAN  |                       |
-    | bytea             | BLOB     |                       |
-    | character         | TEXT     | [*2](#warn-data-size) |
-    | character varying | TEXT     | [*2](#warn-data-size) |
-    | double precision  | DOUBLE   |                       |
-    | integer           | INT      |                       |
-    | real              | FLOAT    |                       |
-    | smallint          | INT      | [*2](#warn-data-size) |
-    | text              | TEXT     |                       |
+    | PostgreSQL        | ScalarDB | Notes                      |
+    |-------------------|----------|----------------------------|
+    | bigint            | BIGINT   | See warning [1](#1) below. |
+    | boolean           | BOOLEAN  |                            |
+    | bytea             | BLOB     |                            |
+    | character         | TEXT     | See warning [2](#1) below. |
+    | character varying | TEXT     | See warning [2](#1) below. |
+    | double precision  | DOUBLE   |                            |
+    | integer           | INT      |                            |
+    | real              | FLOAT    |                            |
+    | smallint          | INT      | See warning [2](#1) below. |
+    | text              | TEXT     |                            |
 
     Data types not listed in the above are not supported. The following are some common data types that are not supported:
 
@@ -168,22 +168,22 @@ The following table shows the supported data types in each JDBC database and the
     - xml
   </TabItem>
   <TabItem value="Oracle" label="Oracle">
-    | Oracle        | ScalarDB        | Notes                 |
-    |---------------|-----------------|-----------------------|
-    | binary_double | DOUBLE          |                       |
-    | binary_float  | FLOAT           |                       |
-    | blob          | BLOB            | [*3](#warn-data-size) |
-    | char          | TEXT            | [*2](#warn-data-size) |
-    | clob          | TEXT            |                       |
-    | float         | DOUBLE          | [*4](#warn-data-size) |
-    | long          | TEXT            |                       |
-    | long raw      | BLOB            |                       |
-    | nchar         | TEXT            | [*2](#warn-data-size) |
-    | nclob         | TEXT            |                       |
-    | number        | BIGINT / DOUBLE | [*5](#warn-data-size) |
-    | nvarchar2     | TEXT            | [*2](#warn-data-size) |
-    | raw           | BLOB            | [*2](#warn-data-size) |
-    | varchar2      | TEXT            | [*2](#warn-data-size) |
+    | Oracle        | ScalarDB        | Notes                      |
+    |---------------|-----------------|----------------------------|
+    | binary_double | DOUBLE          |                            |
+    | binary_float  | FLOAT           |                            |
+    | blob          | BLOB            | See warning [3](#3) below. |
+    | char          | TEXT            | See warning [2](#1) below. |
+    | clob          | TEXT            |                            |
+    | float         | DOUBLE          | See warning [4](#4) below. |
+    | long          | TEXT            |                            |
+    | long raw      | BLOB            |                            |
+    | nchar         | TEXT            | See warning [2](#1) below. |
+    | nclob         | TEXT            |                            |
+    | number        | BIGINT / DOUBLE | See warning [5](#5) below. |
+    | nvarchar2     | TEXT            | See warning [2](#1) below. |
+    | raw           | BLOB            | See warning [2](#1) below. |
+    | varchar2      | TEXT            | See warning [2](#1) below. |
 
     Data types not listed in the above are not supported. The following are some common data types that are not supported:
 
@@ -195,25 +195,25 @@ The following table shows the supported data types in each JDBC database and the
     - bfile
     - json
   </TabItem>
-  <TabItem value="SQL_Server" label="SQL Server">
-    | SQL Server | ScalarDB | Notes                 |
-    |------------|----------|-----------------------|
-    | bigint     | BIGINT   | [*1](#warn-data-size) |
-    | binary     | BLOB     | [*2](#warn-data-size) |
-    | bit        | BOOLEAN  |                       |
-    | char       | TEXT     | [*2](#warn-data-size) |
-    | float      | DOUBLE   |                       |
-    | image      | BLOB     |                       |
-    | int        | INT      |                       |
-    | nchar      | TEXT     | [*2](#warn-data-size) |
-    | ntext      | TEXT     |                       |
-    | nvarchar   | TEXT     | [*2](#warn-data-size) |
-    | real       | FLOAT    |                       |
-    | smallint   | INT      | [*2](#warn-data-size) |
-    | text       | TEXT     |                       |
-    | tinyint    | INT      | [*2](#warn-data-size) |
-    | varbinary  | BLOB     | [*2](#warn-data-size) |
-    | varchar    | TEXT     | [*2](#warn-data-size) |
+  <TabItem value="SQLServer" label="SQL Server">
+    | SQL Server | ScalarDB | Notes                      |
+    |------------|----------|----------------------------|
+    | bigint     | BIGINT   | See warning [1](#1) below. |
+    | binary     | BLOB     | See warning [2](#1) below. |
+    | bit        | BOOLEAN  |                            |
+    | char       | TEXT     | See warning [2](#1) below. |
+    | float      | DOUBLE   |                            |
+    | image      | BLOB     |                            |
+    | int        | INT      |                            |
+    | nchar      | TEXT     | See warning [2](#1) below. |
+    | ntext      | TEXT     |                            |
+    | nvarchar   | TEXT     | See warning [2](#1) below. |
+    | real       | FLOAT    |                            |
+    | smallint   | INT      | See warning [2](#1) below. |
+    | text       | TEXT     |                            |
+    | tinyint    | INT      | See warning [2](#1) below. |
+    | varbinary  | BLOB     | See warning [2](#1) below. |
+    | varchar    | TEXT     | See warning [2](#1) below. |
 
     Data types not listed in the above are not supported. The following are some common data types that are not supported:
 
@@ -240,11 +240,23 @@ The following table shows the supported data types in each JDBC database and the
 
 :::warning
 
-1. The value range of `BIGINT` in ScalarDB is from -2^53 to 2^53, regardless of the size of `bigint` in the underlying database. Thus, if the data out of this range exists in the imported table, ScalarDB cannot read it.
-2. For certain data types noted above, ScalarDB may map a data type larger than that of the underlying database. In that case, You will see errors when putting a value with a size larger than the size specified in the underlying database.
-3. The maximum size of `BLOB` in ScalarDB is about 2GB (precisely 2^31-1 bytes). In contrast, Oracle `blob` can have (4GB-1)*(number of blocks). Thus, if data larger than 2GB exists in the imported table, ScalarDB cannot read it.
-4. ScalarDB does not support Oracle `float` columns that have a higher precision than `DOUBLE` in ScalarDB.
-5. ScalarDB does not support Oracle `numeric(p, s)` columns (`p` is precision and `s` is scale) when `p` is larger than 15 due to the maximum size of the data type in ScalarDB. Note that ScalarDB maps the column to `BIGINT` if `s` is zero; otherwise ScalarDB will map the column to `DOUBLE`. For the latter case, be aware that round-up or round-off can happen in the underlying database since the floating-point value will be cast to a fixed-point value.
+<ol>
+  <li>
+    <a name="1"></a>The value range of `BIGINT` in ScalarDB is from -2^53 to 2^53, regardless of the size of `bigint` in the underlying database. Thus, if the data out of this range exists in the imported table, ScalarDB cannot read it.
+  </li>
+  <li>
+    <a name="2"></a>For certain data types noted above, ScalarDB may map a data type larger than that of the underlying database. In that case, You will see errors when putting a value with a size larger than the size specified in the underlying database.
+  </li>
+  <li>
+    <a name="3"></a>The maximum size of `BLOB` in ScalarDB is about 2GB (precisely 2^31-1 bytes). In contrast, Oracle `blob` can have (4GB-1)*(number of blocks). Thus, if data larger than 2GB exists in the imported table, ScalarDB cannot read it.
+  </li>
+  <li>
+    <a name="4"></a>ScalarDB does not support Oracle `float` columns that have a higher precision than `DOUBLE` in ScalarDB.
+  </li>
+  <li>
+    <a name="5"></a>ScalarDB does not support Oracle `numeric(p, s)` columns (`p` is precision and `s` is scale) when `p` is larger than 15 due to the maximum size of the data type in ScalarDB. Note that ScalarDB maps the column to `BIGINT` if `s` is zero; otherwise ScalarDB will map the column to `DOUBLE`. For the latter case, be aware that round-up or round-off can happen in the underlying database since the floating-point value will be cast to a fixed-point value.
+  </li>
+</ol>
 
 :::
 

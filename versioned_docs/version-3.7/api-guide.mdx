@@ -11,7 +11,7 @@ This section explains how to execute administrative operations programmatically 
 
 :::note
 
-Another method for executing administrative operations is to use [Schema Loader](schema-loader.mdx).
+Another method for executing administrative operations is to use [Schema Loader](schema-loader/README.mdx).
 
 :::
 
@@ -80,7 +80,7 @@ Select your database to see the options available:
     | no-backup  | Disable continuous backup for DynamoDB. | false   |
     | ru         | Base resource unit.                     | 10      |
   </TabItem>
-  <TabItem value="JDBC_databases" label="JDBC_databases">
+  <TabItem value="JDBC_databases" label="JDBC databases">
     No options are available for JDBC databases.
   </TabItem>
 </Tabs>
@@ -515,6 +515,7 @@ Optional<Result> result = transaction.get(get);
 
 If the result has more than one record, `transaction.get()` will throw an exception. If you want to handle multiple results, see [Execute `Scan` by using a secondary index](#execute-scan-by-using-a-secondary-index).
 
+
 :::
 
 #### `Scan` operation
@@ -846,7 +847,7 @@ How to identify a transaction status is delegated to users. You may want to crea
 
 To investigate errors when using the Consensus Commit transaction manager, you can enable a configuration that will return table metadata augmented with transaction metadata columns, which can be helpful when investigating transaction-related issues. This configuration, which is only available when troubleshooting the Consensus Commit transaction manager, enables you to see transaction metadata column details for a given table by using the `DistributedTransactionAdmin.getTableMetadata()` method.
 
-By adding the following configuration, `Get` and `Scan` operations results will contain [transaction metadata](schema-loader.mdx#internal-metadata-for-consensus-commit):
+By adding the following configuration, `Get` and `Scan` operations results will contain [transaction metadata](schema-loader/README.mdx#internal-metadata-for-consensus-commit):
 
 ```properties
 # By default, this configuration is set to `false`.

@@ -40,7 +40,7 @@ The backup methods by database listed below are just examples of some of the dat
 
 :::
 
-<Tabs groupId="database" queryString>
+<Tabs groupId="databases" queryString>
   <TabItem value="Amazon_RDS_or_Azure_Database_for_MySQL_or_PostgreSQL" label="Amazon RDS or Azure Database for MySQL or PostgreSQL" default>
     You can restore to any point within the backup retention period by using the automated backup feature.
   </TabItem>
@@ -90,7 +90,7 @@ The backup methods by database listed below are just examples of some of the dat
 
     However, if the quorum of cluster nodes loses their data, you will need a transactionally consistent backup (snapshot) to restore the cluster to a certain transactionally consistent point.
 
-    To create a transactionally consistent cluster-wide backup (snapshot), pause the application that is using ScalarDB or [ScalarDB Cluster (redirects to the Enterprise docs site)](https://scalardb.scalar-labs.com/docs/latest/scalardb-cluster/) and create backups (snapshots) of the nodes as described in [Back up with explicit pausing](#back-up-with-explicit-pausing) or stop the Cassandra cluster, take copies of all the data in the nodes, and start the cluster.
+    To create a transactionally consistent cluster-wide backup (snapshot), pause the application that is using ScalarDB or [ScalarDB Server](scalardb-server.mdx) and create backups (snapshots) of the nodes as described in [Back up with explicit pausing](#back-up-with-explicit-pausing) or stop the Cassandra cluster, take copies of all the data in the nodes, and start the cluster.
   </TabItem>
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     You must create a Cosmos DB for NoSQL account with a continuous backup policy that has the PITR feature enabled. After enabling the feature, backups are created continuously.

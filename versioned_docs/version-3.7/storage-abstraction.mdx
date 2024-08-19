@@ -202,7 +202,7 @@ You can execute administrative operations programmatically as described in this 
 
 :::note
 
-Another method that you could use to execute administrative operations is by using [Schema Loader](schema-loader.mdx).
+Another method that you could use to execute administrative operations is by using [Schema Loader](schema-loader/README.mdx).
 
 :::
 
@@ -367,6 +367,15 @@ boolean ifExists = true;
 admin.dropNamespace("ns", ifExists);
 ```
 
+#### Get the tables of a namespace
+
+You can get the tables of a namespace as follows:
+
+```java
+// Get the tables of the namespace "ns".
+Set<String> tables = admin.getNamespaceTableNames("ns");
+```
+
 #### Get table metadata
 
 You can get table metadata as follows:
@@ -376,7 +385,7 @@ You can get table metadata as follows:
 TableMetadata tableMetadata = admin.getTableMetadata("ns", "tbl");
 ```
 
-### Repair a table
+#### Repair a table
 
 You can repair the table metadata of an existing table as follows:
 

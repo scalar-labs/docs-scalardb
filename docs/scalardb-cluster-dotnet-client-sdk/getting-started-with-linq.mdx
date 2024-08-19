@@ -14,13 +14,36 @@ SQL support must be enabled on the cluster to use LINQ.
 
 :::
 
+## Install the SDK
+
+Install the same major and minor version of the [SDK](https://www.nuget.org/packages/ScalarDB.Client) as ScalarDB Cluster into the .NET project. You can do this by using the built-in NuGet package manager, replacing `<MAJOR>.<MINOR>` with the version that you're using:
+
+```console
+dotnet add package ScalarDB.Client --version '<MAJOR>.<MINOR>.*'
+```
+
+## Add client settings
+
+Add the `ScalarDbOptions` section to the `appsettings.json` file of your ASP.NET Core app, replacing `<HOSTNAME_OR_IP_ADDRESS>` with the FQDN or the IP address, and `<PORT>` with the port number (`60053` by default) of your cluster:
+
+```json
+{
+  "ScalarDbOptions": {
+    "Address": "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
+    "HopLimit": 10
+  }
+}
+```
+
+For details about settings files and other ways to configure the client, see [Client configuration](common-reference.mdx#client-configuration).
+
 ## Set up classes
 
 After confirming that SQL support is enabled, create a C# class for each ScalarDB table that you want to use. For example:
 
 ```c#
 using System.ComponentModel.DataAnnotations.Schema;
-using ScalarDB.Net.Client.DataAnnotations;
+using ScalarDB.Client.DataAnnotations;
 
 // ...
 
@@ -56,6 +79,8 @@ public class Item
 
 If a partition key, clustering key, or secondary index consists of more than one column, the `Order` property of `ColumnAttribute` will decide the order inside the key or index.
 
+For details about which types should be used for properties, see [How ScalarDB Column Types Are Converted to and from .NET Types](common-reference.mdx#how-scalardb-column-types-are-converted-to-and-from-net-types).
+
 Create a context class that has properties for all the tables you want to use. For example:
 
 ```c#
@@ -69,7 +94,7 @@ Create a context class that has properties for all the tables you want to use. F
 After all the classes are created, you need to add the created context to the Dependency Injection. For example:
 
 ```c#
-using ScalarDB.Net.Client.Extensions;
+using ScalarDB.Client.Extensions;
 
 //...
 
@@ -77,11 +102,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 //...
 
-builder.Services.AddScalarDbContext<MyDbContext>(options =>
-{
-    options.Address = "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>";
-    options.HopLimit = 10;
-});
+builder.Services.AddScalarDbContext<MyDbContext>();
 ```
 
 The context can be injected into the controller's constructor as follows:
@@ -198,7 +219,7 @@ If `Skip` is specified before `Take` or `First`/`FirstOrDefault`, the number tha
                             ItemCount = stat.Count.ToString() })
 ```
 
-- Method calls are not supported inside the key-selecting lambdas of `Join` and `GroupJoin`. 
+- Method calls are not supported inside the key-selecting lambdas of `Join` and `GroupJoin`.
 - Custom equality comparers are not supported. The `comparer` argument in `Join` and `GroupJoin` methods will be ignored if the argument has been passed.
 - More than one `from` directly in one query is not supported, except when the `DefaultIfEmpty` method is used to perform left outer join. Each subsequent `from` is considered to be a separate query.
 
@@ -274,7 +295,7 @@ await _myDbContext.BeginTransactionAsync();
 ### Begin a new transaction with the two-phase commit interface
 
 ```c#
-using ScalarDB.Net.Client.Core;
+using ScalarDB.Client.Core;
 
 // ...
 
@@ -296,7 +317,7 @@ var transactionType = _myDbContext.CurrentTransactionType;
 ### Join an existing transaction with the two-phase commit interface
 
 ```c#
-using ScalarDB.Net.Client.Core;
+using ScalarDB.Client.Core;
 
 // ...
 

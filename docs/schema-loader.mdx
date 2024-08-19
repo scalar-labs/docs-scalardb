@@ -22,15 +22,15 @@ This tool supports only basic options to create, delete, repair, or alter a tabl
 
 Select your preferred method to set up Schema Loader, and follow the instructions.
 
-<Tabs groupId="setup_method" queryString>
-  <TabItem value="fat_JAR" label="Fat JAR" default>
+<Tabs groupId="schema_loader_setup" queryString>
+  <TabItem value="Fat_JAR" label="Fat JAR" default>
     You can download the release versions of Schema Loader from the [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) page.
   </TabItem>
   <TabItem value="Docker_container" label="Docker container">
     You can pull the Docker image from the [Scalar container registry](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-schema-loader) by running the following command, replacing the contents in the angle brackets as described:
 
     ```console
-    $ docker run --rm -v <PATH_TO_YOUR_LOCAL_SCHEMA_FILE>:<PATH_TO_SCHEMA_FILE_DOCKER> [-v <PATH_TO_LOCAL_SCALARDB_PROPERTIES_FILE>:<PATH_TO_SCALARDB_PROPERTIES_FILE_IN_DOCKER>] ghcr.io/scalar-labs/scalardb-schema-loader:<VERSION> <COMMAND_ARGUMENTS>
+    docker run --rm -v <PATH_TO_YOUR_LOCAL_SCHEMA_FILE>:<PATH_TO_SCHEMA_FILE_DOCKER> [-v <PATH_TO_LOCAL_SCALARDB_PROPERTIES_FILE>:<PATH_TO_SCALARDB_PROPERTIES_FILE_IN_DOCKER>] ghcr.io/scalar-labs/scalardb-schema-loader:<VERSION> <COMMAND_ARGUMENTS>
     ```
 
 :::note
@@ -95,42 +95,11 @@ For a sample properties file, see [`database.properties`](https://github.com/sca
 The following database-specific methods have been deprecated. Please use the [commands for configuring the properties file](#available-commands) instead.
 
 <Tabs groupId="databases" queryString>
-  <TabItem value="Cassandra" label="Cassandra" default>
+  <TabItem value="JDBC_databases" label="JDBC databases" default>
     ```console
-    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --cassandra [-D]
-          [-c=<compactionStrategy>] -f=<schemaFile> -h=<hostIp>
-          [-n=<replicationStrategy>] [-p=<password>] [-P=<port>]
-          [-R=<replicationFactor>] [-u=<user>]
-    Create/Delete Cassandra schemas
-      -A, --alter         Alter tables : it will add new columns and create/delete
-                            secondary index for existing tables. It compares the
-                            provided table schema to the existing schema to decide
-                            which columns need to be added and which indexes need
-                            to be created or deleted
-      -c, --compaction-strategy=<compactionStrategy>
-                            Cassandra compaction strategy, must be LCS, STCS or TWCS
-      -D, --delete-all      Delete tables
-      -f, --schema-file=<schemaFile>
-                            Path to the schema json file
-      -h, --host=<hostIp>   Cassandra host IP
-      -n, --network-strategy=<replicationStrategy>
-                            Cassandra network strategy, must be SimpleStrategy or
-                              NetworkTopologyStrategy
-      -p, --password=<password>
-                            Cassandra password
-      -P, --port=<port>     Cassandra Port
-      -R, --replication-factor=<replicationFactor>
-                            Cassandra replication factor
-          --repair-all     Repair tables : it repairs the table metadata of
-                            existing tables
-      -u, --user=<user>     Cassandra user
-    ```
-  </TabItem>
-  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
-    ```console
-    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --cosmos [-D]
-          [--no-scaling] -f=<schemaFile> -h=<uri> -p=<key> [-r=<ru>]
-    Create/Delete Cosmos DB schemas
+    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --jdbc [-D]
+          -f=<schemaFile> -j=<url> -p=<password> -u=<user>
+    Create/Delete JDBC schemas
       -A, --alter         Alter tables : it will add new columns and create/delete
                             secondary index for existing tables. It compares the
                             provided table schema to the existing schema to decide
@@ -139,13 +108,12 @@ The following database-specific methods have been deprecated. Please use the [co
       -D, --delete-all       Delete tables
       -f, --schema-file=<schemaFile>
                             Path to the schema json file
-      -h, --host=<uri>       Cosmos DB account URI
-          --no-scaling       Disable auto-scaling for Cosmos DB
-      -p, --password=<key>   Cosmos DB key
-      -r, --ru=<ru>          Base resource unit
+      -j, --jdbc-url=<url>   JDBC URL
+      -p, --password=<password>
+                            JDBC password
           --repair-all       Repair tables : it repairs the table metadata of
-                              existing tables and repairs stored procedure
-                              attached to each table
+                              existing tables
+      -u, --user=<user>      JDBC user
     ```
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
@@ -176,11 +144,11 @@ The following database-specific methods have been deprecated. Please use the [co
       -u, --user=<awsKeyId>      AWS access key ID
     ```
   </TabItem>
-  <TabItem value="JDBC_databases" label="JDBC databases">
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     ```console
-    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --jdbc [-D]
-          -f=<schemaFile> -j=<url> -p=<password> -u=<user>
-    Create/Delete JDBC schemas
+    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --cosmos [-D]
+          [--no-scaling] -f=<schemaFile> -h=<uri> -p=<key> [-r=<ru>]
+    Create/Delete Cosmos DB schemas
       -A, --alter         Alter tables : it will add new columns and create/delete
                             secondary index for existing tables. It compares the
                             provided table schema to the existing schema to decide
@@ -189,12 +157,44 @@ The following database-specific methods have been deprecated. Please use the [co
       -D, --delete-all       Delete tables
       -f, --schema-file=<schemaFile>
                             Path to the schema json file
-      -j, --jdbc-url=<url>   JDBC URL
-      -p, --password=<password>
-                            JDBC password
+      -h, --host=<uri>       Cosmos DB account URI
+          --no-scaling       Disable auto-scaling for Cosmos DB
+      -p, --password=<key>   Cosmos DB key
+      -r, --ru=<ru>          Base resource unit
           --repair-all       Repair tables : it repairs the table metadata of
-                              existing tables
-      -u, --user=<user>      JDBC user
+                              existing tables and repairs stored procedure
+                              attached to each table
+    ```
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    ```console
+    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --cassandra [-D]
+          [-c=<compactionStrategy>] -f=<schemaFile> -h=<hostIp>
+          [-n=<replicationStrategy>] [-p=<password>] [-P=<port>]
+          [-R=<replicationFactor>] [-u=<user>]
+    Create/Delete Cassandra schemas
+      -A, --alter         Alter tables : it will add new columns and create/delete
+                            secondary index for existing tables. It compares the
+                            provided table schema to the existing schema to decide
+                            which columns need to be added and which indexes need
+                            to be created or deleted
+      -c, --compaction-strategy=<compactionStrategy>
+                            Cassandra compaction strategy, must be LCS, STCS or TWCS
+      -D, --delete-all      Delete tables
+      -f, --schema-file=<schemaFile>
+                            Path to the schema json file
+      -h, --host=<hostIp>   Cassandra host IP
+      -n, --network-strategy=<replicationStrategy>
+                            Cassandra network strategy, must be SimpleStrategy or
+                              NetworkTopologyStrategy
+      -p, --password=<password>
+                            Cassandra password
+      -P, --port=<port>     Cassandra Port
+      -R, --replication-factor=<replicationFactor>
+                            Cassandra replication factor
+          --repair-all     Repair tables : it repairs the table metadata of
+                            existing tables
+      -u, --user=<user>     Cassandra user
     ```
   </TabItem>
 </Tabs>
@@ -206,46 +206,46 @@ The following database-specific methods have been deprecated. Please use the [co
 To create namespaces and tables by using a properties file, run the following command, replacing the contents in the angle brackets as described:
 
 ```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator]
+java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator]
 ```
 
-If `--coordinator` is specified, a [Coordinator table](api-guide.mdx#specify-operations-for-the-coordinator-table) will be created.
+If `--coordinator` is specified, a [Coordinator table](api-guide.mdx#specify-operations-for-the-coordinator-table) will be created. When the [group commit feature for the Coordinator table](api-guide.mdx#group-commit-for-coordinator-table) is enabled, this command creates a Coordinator table with additional columns for the group commit feature.
 
 :::note
 
 The following database-specific CLI arguments have been deprecated. Please use the CLI arguments for configuring the properties file instead.
 
 <Tabs groupId="databases" queryString>
-  <TabItem value="Cassandra" label="Cassandra" default>
+  <TabItem value="JDBC_databases" label="JDBC databases" default>
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> [-n <NETWORK_STRATEGY>] [-R <REPLICATION_FACTOR>]
+    java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE>
     ```
-
-    - If `-P <CASSANDRA_PORT>` is not supplied, it defaults to `9042`.
-    - If `-u <CASSANDRA_USER>` is not supplied, it defaults to `cassandra`.
-    - If `-p <CASSANDRA_PASSWORD>` is not supplied, it defaults to `cassandra`.
-    - `<NETWORK_STRATEGY>` should be `SimpleStrategy` or `NetworkTopologyStrategy`
-  </TabItem>
-  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
-    ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> [-r BASE_RESOURCE_UNIT]
-    ```
-
-    - `<COSMOS_DB_FOR_NOSQL_KEY>` you can use a primary key or a secondary key.
-    - `-r BASE_RESOURCE_UNIT` is an option. You can specify the RU of each database. The maximum RU in tables in the database will be set. If you don't specify RU of tables, the database RU will be set with this option. By default, it's 400.
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> [-r BASE_RESOURCE_UNIT]
+    java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> [-r BASE_RESOURCE_UNIT]
     ```
 
     - `<REGION>` should be a string to specify an AWS region like `ap-northeast-1`.
     - `-r` option is almost the same as Cosmos DB for NoSQL option. However, the unit means DynamoDB capacity unit. The read and write capacity units are set the same value.
   </TabItem>
-  <TabItem value="JDBC_databases" label="JDBC databases">
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE>
+    java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> [-r BASE_RESOURCE_UNIT]
     ```
+
+    - `<COSMOS_DB_FOR_NOSQL_KEY>` you can use a primary key or a secondary key.
+    - `-r BASE_RESOURCE_UNIT` is an option. You can specify the RU of each database. The maximum RU in tables in the database will be set. If you don't specify RU of tables, the database RU will be set with this option. By default, it's 400.
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> [-n <NETWORK_STRATEGY>] [-R <REPLICATION_FACTOR>]
+    ```
+
+    - If `-P <CASSANDRA_PORT>` is not supplied, it defaults to `9042`.
+    - If `-u <CASSANDRA_USER>` is not supplied, it defaults to `cassandra`.
+    - If `-p <CASSANDRA_PASSWORD>` is not supplied, it defaults to `cassandra`.
+    - `<NETWORK_STRATEGY>` should be `SimpleStrategy` or `NetworkTopologyStrategy`.
   </TabItem>
 </Tabs>
 
@@ -258,7 +258,7 @@ You can use a command to add new columns to and create or delete a secondary ind
 To add new columns to and create or delete a secondary index for existing tables, run the following command, replacing the contents in the angle brackets as described:
 
 ```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> --alter
+java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> --alter
 ```
 
 :::note
@@ -266,24 +266,24 @@ $ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROP
 The following database-specific CLI arguments have been deprecated. Please use the CLI arguments for configuring the properties file instead.
 
 <Tabs groupId="databases" queryString>
-  <TabItem value="Cassandra" label="Cassandra" default>
+  <TabItem value="JDBC_databases" label="JDBC databases" default>
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> --alter
-    ```
-  </TabItem>
-  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
-    ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> --alter
+    java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> --alter
     ```
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> --alter
+    java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> --alter
     ```
   </TabItem>
-  <TabItem value="JDBC_databases" label="JDBC databases">
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> --alter
+    java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> --alter
+    ```
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> --alter
     ```
   </TabItem>
 </Tabs>
@@ -295,7 +295,7 @@ The following database-specific CLI arguments have been deprecated. Please use t
 You can delete tables by using the properties file. To delete tables, run the following command, replacing the contents in the angle brackets as described:
 
 ```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator] -D 
+java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator] -D 
 ```
 
 If `--coordinator` is specified, the Coordinator table will be deleted as well.
@@ -305,24 +305,24 @@ If `--coordinator` is specified, the Coordinator table will be deleted as well.
 The following database-specific CLI arguments have been deprecated. Please use the CLI arguments for configuring the properties file instead.
 
 <Tabs groupId="databases" queryString>
-  <TabItem value="Cassandra" label="Cassandra" default>
+  <TabItem value="JDBC_databases" label="JDBC databases" default>
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> -D
-    ```
-  </TabItem>
-  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
-    ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> -D
+    java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> -D
     ```
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> -D
+    java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> -D
     ```
   </TabItem>
-  <TabItem value="JDBC_databases" label="JDBC databases">
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> -D
+    java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> -D
+    ```
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> -D
     ```
   </TabItem>
 </Tabs>
@@ -334,8 +334,17 @@ The following database-specific CLI arguments have been deprecated. Please use t
 You can repair the table metadata of existing tables by using the properties file. To repair table metadata of existing tables, run the following command, replacing the contents in the angle brackets as described:
 
 ```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator] --repair-all 
+java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator] --repair-all
 ```
+
+:::warning
+
+Before executing this command, you should confirm the following configurations are the same as those that were last applied:
+
+- The schema configuration
+- Whether the [group commit feature for the Coordinator table](api-guide.mdx#group-commit-for-coordinator-table) is enabled or not, if the `--coordinator` option described below is specified
+
+:::
 
 If `--coordinator` is specified, the Coordinator table will be repaired as well. In addition, if you're using Cosmos DB for NoSQL, running this command will also repair stored procedures attached to each table.
 
@@ -344,24 +353,24 @@ If `--coordinator` is specified, the Coordinator table will be repaired as well.
 The following database-specific CLI arguments have been deprecated. Please use the CLI arguments for configuring the properties file instead.
 
 <Tabs groupId="databases" queryString>
-  <TabItem value="Cassandra" label="Cassandra" default>
+  <TabItem value="JDBC_databases" label="JDBC databases" default>
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> --repair-all
-    ```
-  </TabItem>
-  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
-    ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> --repair-all
+    java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> --repair-all
     ```
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> [--no-backup] -f <PATH_TO_SCHEMA_FILE> --repair-all
+    java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> [--no-backup] -f <PATH_TO_SCHEMA_FILE> --repair-all
     ```
   </TabItem>
-  <TabItem value="JDBC_databases" label="JDBC databases">
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     ```console
-    $ java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> --repair-all
+    java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> --repair-all
+    ```
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> --repair-all
     ```
   </TabItem>
 </Tabs>
@@ -470,17 +479,17 @@ You can also specify database or storage-specific options in the table definitio
 The database or storage-specific options you can specify are as follows:
 
 <Tabs groupId="databases" queryString>
-  <TabItem value="Cassandra" label="Cassandra" default>
-    The `compaction-strategy` option is the compaction strategy used. This option should be `STCS` (SizeTieredCompaction), `LCS` (LeveledCompactionStrategy), or `TWCS` (TimeWindowCompactionStrategy).
-  </TabItem>
-  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
-    The `ru` option stands for Request Units. For details, see [RUs](#rus).
+  <TabItem value="JDBC_databases" label="JDBC databases" default>
+    No options are available for JDBC databases.
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     The `ru` option stands for Request Units. For details, see [RUs](#rus).
   </TabItem>
-  <TabItem value="JDBC_databases" label="JDBC databases">
-    No options are available for JDBC databases.
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    The `ru` option stands for Request Units. For details, see [RUs](#rus).
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    The `compaction-strategy` option is the compaction strategy used. This option should be `STCS` (SizeTieredCompaction), `LCS` (LeveledCompactionStrategy), or `TWCS` (TimeWindowCompactionStrategy).
   </TabItem>
 </Tabs>
 
@@ -515,24 +524,30 @@ Auto-scaling for Cosmos DB for NoSQL is enabled only when this option is set to 
 
 The following table shows the supported data types in ScalarDB and their mapping to the data types of other databases.
 
-| ScalarDB  | Cassandra | Cosmos DB for NoSQL | DynamoDB | MySQL    | PostgreSQL       | Oracle         | SQL Server      | SQLite  |
-|-----------|-----------|---------------------|----------|----------|------------------|----------------|-----------------|---------|
-| BOOLEAN   | boolean   | boolean (JSON)      | BOOL     | boolean  | boolean          | number(1)      | bit             | boolean |
-| INT       | int       | number (JSON)       | N        | int      | int              | int            | int             | int     |
-| BIGINT    | bigint    | number (JSON)       | N        | bigint   | bigint           | number(19)     | bigint          | bigint  |
-| FLOAT     | float     | number (JSON)       | N        | double   | float            | binary_float   | float(24)       | float   |
-| DOUBLE    | double    | number (JSON)       | N        | double   | double precision | binary_double  | float           | double  |
-| TEXT      | text      | string (JSON)       | S        | longtext | text             | varchar2(4000) | varchar(8000)   | text    |
-| BLOB      | blob      | string (JSON)       | B        | longblob | bytea            | RAW(2000)      | varbinary(8000) | blob    |
+| ScalarDB  | Cassandra | Cosmos DB for NoSQL | DynamoDB | MySQL    | PostgreSQL/YugabyteDB | Oracle         | SQL Server      | SQLite  |
+|-----------|-----------|---------------------|----------|----------|-----------------------|----------------|-----------------|---------|
+| BOOLEAN   | boolean   | boolean (JSON)      | BOOL     | boolean  | boolean               | number(1)      | bit             | boolean |
+| INT       | int       | number (JSON)       | N        | int      | int                   | number(10)     | int             | int     |
+| BIGINT    | bigint    | number (JSON)       | N        | bigint   | bigint                | number(19)     | bigint          | bigint  |
+| FLOAT     | float     | number (JSON)       | N        | real     | real                  | binary_float   | float(24)       | float   |
+| DOUBLE    | double    | number (JSON)       | N        | double   | double precision      | binary_double  | float           | double  |
+| TEXT      | text      | string (JSON)       | S        | longtext | text                  | varchar2(4000) | varchar(8000)   | text    |
+| BLOB      | blob      | string (JSON)       | B        | longblob | bytea                 | RAW(2000)      | varbinary(8000) | blob    |
 
 However, the following data types in JDBC databases are converted differently when they are used as a primary key or a secondary index key. This is due to the limitations of RDB data types.
 
-| ScalarDB | MySQL         | PostgreSQL        | Oracle       |
-|----------|---------------|-------------------|--------------|
-| TEXT     | VARCHAR(64)   | VARCHAR(10485760) | VARCHAR2(64) |
-| BLOB     | VARBINARY(64) |                   | RAW(64)      |
+| ScalarDB | MySQL         | PostgreSQL/YugabyteDB | Oracle       |
+|----------|---------------|-----------------------|--------------|
+| TEXT     | VARCHAR(64)   | VARCHAR(10485760)     | VARCHAR2(64) |
+| BLOB     | VARBINARY(64) |                       | RAW(64)      |
 
 The value range of `BIGINT` in ScalarDB is from -2^53 to 2^53, regardless of the underlying database.
+
+:::note
+
+YugabyteDB has limitations that prevent floating point types (FLOAT and DOUBLE) from functioning correctly as a primary key, clustering keys, or secondary index keys.
+
+:::
 
 If this data-type mapping doesn't match your application, please alter the tables to change the data types after creating them by using this tool.
 

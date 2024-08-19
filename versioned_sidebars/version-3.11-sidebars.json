@@ -1,9 +1,9 @@
 {
   "docs": [
     {
-      "type": "link",
+      "type": "doc",
       "label": "ScalarDB Docs Home",
-      "href": "/docs/latest/"
+      "id": "index"
     },
     {
       "type": "category",
@@ -12,8 +12,9 @@
       "items": [
         "overview",
         "design",
-        "scalardb-supported-databases",
         "requirements",
+        "scalardb-supported-databases",
+        "database-configurations",
         "scalardb-cluster/index"
       ]
     },
@@ -48,7 +49,7 @@
               "label": ".NET Client SDK",
               "collapsible": true,
               "items": [
-                "scalardb-cluster-dotnet-client-sdk/index",
+                "scalardb-cluster-dotnet-client-sdk/overview",
                 "scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-transactions",
                 "scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-sql-transactions",
                 "scalardb-cluster-dotnet-client-sdk/getting-started-with-admin-api",
@@ -68,13 +69,9 @@
       "label": "Samples",
       "collapsible": true,
       "items": [
-        "scalardb-samples/scalardb-sample/README",
         "scalardb-samples/multi-storage-transaction-sample/README",
         "scalardb-samples/microservice-transaction-sample/README",
         "scalardb-samples/scalardb-analytics-postgresql-sample/README",
-        "scalardb-samples/scalardb-graphql-sample/README",
-        "scalardb-samples/scalardb-sql-jdbc-sample/README",
-        "scalardb-samples/spring-data-sample/README",
         "scalardb-samples/spring-data-multi-storage-transaction-sample/README",
         "scalardb-samples/spring-data-microservice-transaction-sample/README"
       ]
@@ -110,6 +107,7 @@
             "scalardb-sql/configurations"
           ]
         },
+        "data-modeling",
         "add-scalardb-to-your-build",
         "scalardb-sql/add-scalardb-sql-to-your-build",
         "schema-loader",
@@ -117,9 +115,7 @@
         "scalardb-analytics-postgresql/scalardb-fdw",
         "scalardb-analytics-postgresql/schema-importer",
         "scalardb-cluster/scalardb-auth-with-sql",
-        "scalardb-graphql/how-to-run-server",
-        "scalardb-graphql/how-to-run-two-phase-commit-transaction",
-        "scalardb-sql/command-line-interface"
+        "scalardb-graphql/how-to-run-two-phase-commit-transaction"
       ]
     },
     {
@@ -208,9 +204,7 @@
                 "helm-charts/configure-custom-values-scalardb-analytics-postgresql",
                 "helm-charts/configure-custom-values-scalar-admin-for-kubernetes",
                 "helm-charts/configure-custom-values-scalar-manager",
-                "helm-charts/configure-custom-values-envoy",
-                "helm-charts/configure-custom-values-scalardb",
-                "helm-charts/configure-custom-values-scalardb-graphql"
+                "helm-charts/configure-custom-values-envoy"
               ]
             },
             "helm-charts/how-to-deploy-scalar-products",
@@ -224,8 +218,7 @@
         },
         "scalardb-cluster/standalone-mode",
         "scalardb-analytics-postgresql/installation",
-        "scalardb-graphql/aws-deployment-guide",
-        "scalardb-sql/sql-server"
+        "scalardb-graphql/aws-deployment-guide"
       ]
     },
     {
@@ -261,7 +254,8 @@
             }
           ]
         },
-        "backup-restore"
+        "backup-restore",
+        "scalar-manager/overview"
       ]
     },
     {

@@ -2,13 +2,13 @@
 
 This document briefly explains how you can get started with ScalarDB SQL with a simple electronic money application.
 Here we assume Oracle JDK 8 and the underlying storage/database such as Cassandra are properly configured.
-Please see [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.md) for the details of how to configure the underlying storage/database.
+Please see [Getting Started with ScalarDB](../getting-started-with-scalardb.mdx) for the details of how to configure the underlying storage/database.
 
 From this point forward, we will assume that **scalardb.properties** that holds the configuration for ScalarDB exists.
 
 Let's move to the `getting-started-with-sql` directory so that we can avoid too much copy-and-paste.
-```shell
-$ cd docs/getting-started-with-sql
+```console
+cd docs/getting-started-with-sql
 ```
 
 ## Set up database schema
@@ -17,20 +17,20 @@ First, you need to define how the data will be organized (a.k.a database schema)
 You can do that with the command line tool for ScalarDB SQL.
 Download the command line tool that matches with the version you use from [ScalarDB SQL releases](https://github.com/scalar-labs/scalardb-sql/releases), and run the following command to start it:
 
-```shell
-$ java -jar scalardb-sql-cli-<version>-all.jar --config scalardb.properties
+```console
+java -jar scalardb-sql-cli-<version>-all.jar --config scalardb.properties
 ```
 
 And then, you need to create the namespace `emoney` and the table `account` in the namespace as follows:
 
-```shell
+```console
 0: scalardb> CREATE NAMESPACE emoney;
 0: scalardb> CREATE TABLE emoney.account (id TEXT PRIMARY KEY, balance INT);
 ```
 
 Also, you need to create coordinator tables that are used in transactions as follows:
 
-```shell
+```console
 0: scalardb> CREATE COORDINATOR TABLES;
 ```
 
@@ -174,43 +174,43 @@ public class ElectronicMoney {
 Before you run the application, you need to specify your GitHub username and your personal access token to access our private Maven repository.
 One of the ways to specify them is using environment variables as follows (See [build.gradle](./getting-started-with-sql/build.gradle)):
 
-```shell
-$ export GPR_USERNAME=<your GitHub username>
-$ export GPR_PASSWORD=<your personal access token>
+```console
+export GPR_USERNAME=<your GitHub username>
+export GPR_PASSWORD=<your personal access token>
 ```
 
 Now we can run the application.
 
 - Charge `1000` to `user1`:
-```shell
-$ ./gradlew run --args="-action charge -amount 1000 -to user1"
+```console
+./gradlew run --args="-action charge -amount 1000 -to user1"
 ```
 
 - Charge `0` to `merchant1` (Just create an account for `merchant1`):
-```shell
-$ ./gradlew run --args="-action charge -amount 0 -to merchant1"
+```console
+./gradlew run --args="-action charge -amount 0 -to merchant1"
 ```
 
 - Pay `100` from `user1` to `merchant1`:
-```shell
-$ ./gradlew run --args="-action pay -amount 100 -from user1 -to merchant1"
+```console
+./gradlew run --args="-action pay -amount 100 -from user1 -to merchant1"
 ```
 
 - Get the balance of `user1`:
-```shell
-$ ./gradlew run --args="-action getBalance -id user1"
+```console
+./gradlew run --args="-action getBalance -id user1"
 ```
 
 - Get the balance of `merchant1`:
-```shell
-$ ./gradlew run --args="-action getBalance -id merchant1"
+```console
+./gradlew run --args="-action getBalance -id merchant1"
 ```
 
 ## Further reading
 
 These are just simple examples of how ScalarDB SQL is used. For more information, please take a look at the following documents.
 
-* [Getting Started with ScalarDB](https://github.com/scalar-labs/scalardb/blob/master/docs/getting-started-with-scalardb.md)
+* [Getting Started with ScalarDB](../getting-started-with-scalardb.mdx)
 * [ScalarDB SQL API Guide](sql-api-guide.mdx)
 * [ScalarDB SQL Grammar](grammar.mdx)
 * [ScalarDB SQL Command Line interface](command-line-interface.mdx)

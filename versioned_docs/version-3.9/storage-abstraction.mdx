@@ -68,7 +68,7 @@ To apply the schema, go to the [ScalarDB Releases](https://github.com/scalar-lab
 Then, run the following command, replacing `<VERSION>` with the version of the ScalarDB Schema Loader that you downloaded:
 
 ```console
-$ java -jar scalardb-schema-loader-<VERSION>.jar --config scalardb.properties -f emoney-storage.json
+java -jar scalardb-schema-loader-<VERSION>.jar --config scalardb.properties -f emoney-storage.json
 ```
 
 ### Example code
@@ -367,6 +367,15 @@ boolean ifExists = true;
 admin.dropNamespace("ns", ifExists);
 ```
 
+#### Get the tables of a namespace
+
+You can get the tables of a namespace as follows:
+
+```java
+// Get the tables of the namespace "ns".
+Set<String> tables = admin.getNamespaceTableNames("ns");
+```
+
 #### Get table metadata
 
 You can get table metadata as follows:
@@ -376,7 +385,7 @@ You can get table metadata as follows:
 TableMetadata tableMetadata = admin.getTableMetadata("ns", "tbl");
 ```
 
-### Repair a table
+#### Repair a table
 
 You can repair the table metadata of an existing table as follows:
 
