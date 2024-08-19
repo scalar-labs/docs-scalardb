@@ -642,6 +642,11 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
+                  id: 'helm-charts/configure-custom-values-scalardb-cluster',
+                  label: 'Configure a custom values file for ScalarDB Cluster',
+                },
+                {
+                  type: 'doc',
                   id: 'helm-charts/configure-custom-values-scalardb-analytics-postgresql',
                   label: 'Configure a Custom Values File for ScalarDB Analytics with PostgreSQL',
                 },
