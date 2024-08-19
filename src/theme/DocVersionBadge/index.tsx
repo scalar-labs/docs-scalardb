@@ -42,16 +42,9 @@ export default function DocVersionBadge({
           values={{versionLabel: versionMetadata.label}}>
           {'Version: {versionLabel}'}
         </Translate>
-        <div
-          className={clsx(
-            'row margin-top--sm',
-            ThemeClassNames.docs.docFooterTagsRow,
-          )}>
-          <div className="col">
-            <TagsListInline tags={tags} />
-            <a href="https://scalar-labs.com/pricing/" target="_blank" className="fa-solid fa-circle-question tooltip"><FontAwesomeIcon icon={faCircleQuestion} size="lg" /><span className="tooltiptext">Features and pricing</span></a>
-          </div>
-        </div>
+        <br />
+        <TagsListInline tags={tags} />
+        <a href="https://scalar-labs.com/pricing/" target="_blank" className="fa-solid fa-circle-question tooltip"><FontAwesomeIcon icon={faCircleQuestion} size="lg" /><span className="tooltiptext">Features and pricing</span></a>
       </span>
     );
   }
