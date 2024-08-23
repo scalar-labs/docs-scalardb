@@ -720,6 +720,11 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
+                  id: 'scalar-manager/overview',
+                  label: 'Scalar Manager Overview',
+                },
+                {
+                  type: 'doc',
                   id: 'helm-charts/how-to-deploy-scalar-manager',
                   label: 'Deploy Scalar Manager',
                 },
