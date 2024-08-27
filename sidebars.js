@@ -428,6 +428,11 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
+                  id: 'scalardb-cluster-dotnet-client-sdk/overview',
+                  label: 'Overview',
+                },
+                {
+                  type: 'doc',
                   id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-two-phase-commit-transactions',
                   label: 'Two-Phase Commit Transactions',
                 },
