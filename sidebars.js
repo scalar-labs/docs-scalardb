@@ -433,11 +433,6 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
-                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-two-phase-commit-transactions',
-                  label: 'Two-Phase Commit Transactions',
-                },
-                {
-                  type: 'doc',
                   id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-transactions',
                   label: 'Distributed Transactions',
                 },
@@ -453,13 +448,13 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
-                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-auth',
-                  label: 'ScalarDB Auth',
+                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-scalardb-tables-as-csharp-classes',
+                  label: 'Tables as C# Classes',
                 },
                 {
                   type: 'doc',
-                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-scalardb-tables-as-csharp-classes',
-                  label: 'Tables as C# Classes',
+                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-aspnet-and-di',
+                  label: 'ASP.NET Core and Dependency Injection',
                 },
                 {
                   type: 'doc',
@@ -468,8 +463,13 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
-                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-aspnet-and-di',
-                  label: 'ASP.NET Core and Dependency Injection',
+                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-two-phase-commit-transactions',
+                  label: 'Two-Phase Commit Transactions',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-auth',
+                  label: 'ScalarDB Auth',
                 },
                 {
                   type: 'doc',
