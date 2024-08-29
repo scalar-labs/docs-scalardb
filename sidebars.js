@@ -709,6 +709,11 @@ const sidebars = {
       collapsible: true,
       items: [
         {
+          type: 'doc',
+          id: 'scalar-kubernetes/HowToScaleScalarDB',
+          label: 'Scale',
+        },
+        {
           type: 'category',
           label: 'Monitor',
           collapsible: true,
