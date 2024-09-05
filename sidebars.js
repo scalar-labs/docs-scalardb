@@ -51,6 +51,11 @@ const sidebars = {
         },
         {
           type: 'doc',
+          id: 'database-configurations',
+          label: 'Underlying Database Configurations',
+        },
+        {
+          type: 'doc',
           id: 'releases/release-notes',
           label: 'Release Notes',
         },
@@ -701,6 +706,11 @@ const sidebars = {
           id: 'schema-loader-import',
           label: 'Import Existing Tables',
         },
+        {
+          'type': 'doc',
+          'id': 'scalardb-sql/migration-guide',
+          'label': 'Migrate Applications and Databases',
+        }
       ],
     },
     {
