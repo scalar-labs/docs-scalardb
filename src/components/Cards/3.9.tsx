@@ -29,11 +29,11 @@ const CardsAbout = [
     // name: '',
     // image: '<LINK_TO>.png',
     url: {
-      page: 'scalardb-supported-databases',
+      page: 'requirements',
     },
     description: (
       <Translate id="home.about.description">
-        Supported databases
+        Requirements
       </Translate>
     ),
   },
