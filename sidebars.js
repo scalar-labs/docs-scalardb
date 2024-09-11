@@ -51,6 +51,11 @@ const sidebars = {
         },
         {
           type: 'doc',
+          id: 'database-configurations',
+          label: 'Underlying Database Configurations',
+        },
+        {
+          type: 'doc',
           id: 'releases/release-notes',
           label: 'Release Notes',
         },
@@ -337,6 +342,11 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'scalardb-cluster/compatibility',
+              label: 'ScalarDB Cluster Compatibility Matrix',
+            },
+            {
+              type: 'doc',
               id: 'scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api',
               label: 'ScalarDB Cluster Java API',
             },
@@ -428,8 +438,8 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
-                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-two-phase-commit-transactions',
-                  label: 'Two-Phase Commit Transactions',
+                  id: 'scalardb-cluster-dotnet-client-sdk/overview',
+                  label: 'Overview',
                 },
                 {
                   type: 'doc',
@@ -448,13 +458,13 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
-                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-auth',
-                  label: 'ScalarDB Auth',
+                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-scalardb-tables-as-csharp-classes',
+                  label: 'Tables as C# Classes',
                 },
                 {
                   type: 'doc',
-                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-scalardb-tables-as-csharp-classes',
-                  label: 'Tables as C# Classes',
+                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-aspnet-and-di',
+                  label: 'ASP.NET Core and Dependency Injection',
                 },
                 {
                   type: 'doc',
@@ -463,8 +473,13 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
-                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-aspnet-and-di',
-                  label: 'ASP.NET Core and Dependency Injection',
+                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-two-phase-commit-transactions',
+                  label: 'Two-Phase Commit Transactions',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-auth',
+                  label: 'ScalarDB Auth',
                 },
                 {
                   type: 'doc',
@@ -642,6 +657,11 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
+                  id: 'helm-charts/configure-custom-values-scalardb-cluster',
+                  label: 'Configure a custom values file for ScalarDB Cluster',
+                },
+                {
+                  type: 'doc',
                   id: 'helm-charts/configure-custom-values-scalardb-analytics-postgresql',
                   label: 'Configure a Custom Values File for ScalarDB Analytics with PostgreSQL',
                 },
@@ -686,6 +706,11 @@ const sidebars = {
           id: 'schema-loader-import',
           label: 'Import Existing Tables',
         },
+        {
+          'type': 'doc',
+          'id': 'scalardb-sql/migration-guide',
+          'label': 'Migrate Applications and Databases',
+        }
       ],
     },
     {
@@ -693,6 +718,11 @@ const sidebars = {
       label: 'Manage',
       collapsible: true,
       items: [
+        {
+          type: 'doc',
+          id: 'scalar-kubernetes/HowToScaleScalarDB',
+          label: 'Scale',
+        },
         {
           type: 'category',
           label: 'Monitor',
@@ -712,6 +742,11 @@ const sidebars = {
                   type: 'doc',
                   id: 'scalar-kubernetes/K8sMonitorGuide',
                   label: 'Kubernetes Monitoring Guide',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalar-manager/overview',
+                  label: 'Scalar Manager Overview',
                 },
                 {
                   type: 'doc',

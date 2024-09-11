@@ -1,12 +1,14 @@
+---
+tags:
+  - Enterprise Option
+  - Private Preview
+---
+
 # Run Analytical Queries on Sample Data by Using ScalarDB Analytics with Spark
 
+import WarningLicenseKeyContact from '/src/components/_warning-license-key-contact.mdx';
+
 This tutorial describes how to run analytical queries on sample data by using ScalarDB Analytics with Spark. The source code is available at https://github.com/scalar-labs/scalardb-samples/scalardb-analytics-spark-sample.
-
-:::warning
-
-You must have a commercial license to use ScalarDB Analytics with Spark. If you need a commercial license, please [contact us](https://scalar-labs.com/contact_us/).
-
-:::
 
 ## What you can do in this sample application
 
@@ -18,6 +20,8 @@ This sample tutorial shows how you can run interactive analysis in the Spark she
 ## Prerequisites
 
 - [Docker](https://www.docker.com/get-started/) 20.10 or later with [Docker Compose](https://docs.docker.com/compose/install/) V2 or later
+
+<WarningLicenseKeyContact product="ScalarDB Analytics with Spark" />
 
 ## Set up ScalarDB Analytics with Spark
 
@@ -42,11 +46,6 @@ Copy your license certificate (`cert.pem`) to the sample directory by running th
 ```console
 cp /<PATH_TO_YOUR_LICENSE>/cert.pem cert.pem
 ```
-:::warning
-
-If you need a commercial license, please [contact us](https://scalar-labs.com/contact_us/).
-
-:::
 
 ### Set up the sample underlying databases in ScalarDB
 
@@ -85,13 +84,11 @@ scala> spark.setupScalarDbAnalytics(
            | namespaces = Set("postgresns", "cassandrans", "dynamons"),
            | license = License.certPath("""{"your":"license", "key":"in", "json":"format"}""", "/etc/cert.pem")
            | )
-````
+```
 
 :::warning
 
-Remember that you must have copied your license certificate to the sample directory as described in [Add your license certificate to the sample directory](#add-your-license-certificate-to-the-sample-directory), since the license is referenced in the JSON string. 
-
-If you need a commercial license, please [contact us](https://scalar-labs.com/contact_us/).
+Remember that you must have copied your license certificate to the sample directory as described in [Add your license certificate to the sample directory](#add-your-license-certificate-to-the-sample-directory), since the license is referenced in the JSON string.
 
 :::
 
