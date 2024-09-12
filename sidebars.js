@@ -41,11 +41,6 @@ const sidebars = {
         },
         {
           type: 'doc',
-          id: 'scalardb-supported-databases',
-          label: 'Supported Databases',
-        },
-        {
-          type: 'doc',
           id: 'requirements',
           label: 'Requirements',
         },
