@@ -157,6 +157,7 @@ const config = {
             to: '/docs/latest/releases/release-support-policy',
             from: '/docs/releases/release-support-policy',
           },
+          // Remove this redirect when the docs for 3.14 are released.
           {
             to: '/docs/latest/run-non-transactional-storage-operations-through-primitive-crud-interface',
             from: '/docs/latest/storage-abstraction',
@@ -169,6 +170,36 @@ const config = {
           {
             to: '/docs/3.12/run-non-transactional-storage-operations-through-primitive-crud-interface',
             from: '/docs/3.12/storage-abstraction',
+          },
+          // Remove this redirect when the docs for 3.14 are released.
+          {
+            to: '/docs/latest/requirements#databases',
+            from: '/docs/latest/scalardb-supported-databases',
+          },
+          // Uncomment this line when the docs for 3.14 are released.
+          // {
+          //   to: '/docs/3.13/requirements#databases',
+          //   from: '/docs/3.13/scalardb-supported-databases',
+          // },
+          {
+            to: '/docs/3.12/requirements#databases',
+            from: '/docs/3.12/scalardb-supported-databases',
+          },
+          {
+            to: '/docs/3.11/requirements#databases',
+            from: '/docs/3.11/scalardb-supported-databases',
+          },
+          {
+            to: '/docs/3.10/requirements#databases',
+            from: '/docs/3.10/scalardb-supported-databases',
+          },
+          {
+            to: '/docs/3.9/requirements#databases',
+            from: '/docs/3.9/scalardb-supported-databases',
+          },
+          {
+            to: '/docs/3.12/requirements#databases',
+            from: '/docs/3.12/scalardb-supported-databases',
           },
         ],
       },
