@@ -719,6 +719,11 @@ const sidebars = {
           label: 'Scale',
         },
         {
+          type: 'doc',
+          id: 'scalar-kubernetes/HowToUpgradeScalarDB',
+          label: 'Upgrade',
+        },
+        {
           type: 'category',
           label: 'Monitor',
           collapsible: true,
