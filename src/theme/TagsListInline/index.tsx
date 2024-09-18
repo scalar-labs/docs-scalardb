@@ -12,17 +12,17 @@ export default function TagsListInline({tags}: Props): JSX.Element {
       {/* <b>
         <Translate
           id="theme.tags.tagsListLabel"
-          description="The label alongside a list of editions">
-          Editions:
+          description="The label alongside a tag list">
+          Tags:
         </Translate>
-      </b> */}
+      </b>
       <ul className={clsx(styles.tags, 'padding--none', 'margin-left--sm')}>
-        {tags.map(({label, permalink: tagPermalink}) => (
-          <li key={tagPermalink} className={styles.tag}>
-            <Tag label={label} permalink={tagPermalink} />
+        {tags.map((tag) => (
+          <li key={tag.permalink} className={styles.tag}>
+            <Tag {...tag} />
           </li>
         ))}
-      </ul>
+      </ul> */}
     </>
   );
 }
