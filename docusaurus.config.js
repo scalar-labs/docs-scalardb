@@ -459,7 +459,7 @@ const config = {
       announcementBar: {
         id: 'new_version',
         content:
-          '<b>Both ScalarDB Community and Enterprise docs now live on this site!</b> Editions that a doc applies to are displayed at the top of each page 🏷️',
+          '<b>Docs for both ScalarDB Community and Enterprise editions now live on this site!</b> Editions that a doc applies to are in tags at the top of each page 🏷️',
           // '<b>The ScalarDB X.X is now available!🥳 For details on what\'s included in this new version, see the <a target="_self" rel="noopener noreferrer" href="/docs/latest/releases/release-notes">release notes</a>.<b>',
         backgroundColor: '#2673BB',
         textColor: '#FFFFFF',
