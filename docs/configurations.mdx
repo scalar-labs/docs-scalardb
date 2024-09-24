@@ -96,16 +96,30 @@ Select a database to see the configurations available for each storage.
 
 :::note
 
-If you use SQLite3 as a JDBC database, you must set `scalar.db.contact_points` as follows.
+#### SQLite3
+
+If you're using SQLite3 as a JDBC database, you must set `scalar.db.contact_points` as follows:
 
 ```properties
 scalar.db.contact_points=jdbc:sqlite:<YOUR_DB>.sqlite3?busy_timeout=10000
 ```
 
-Unlike other JDBC databases, [SQLite3 does not fully support concurrent access](https://www.sqlite.org/lang_transaction.html).
-To avoid frequent errors caused internally by [`SQLITE_BUSY`](https://www.sqlite.org/rescode.html#busy), we recommend setting a [`busy_timeout`](https://www.sqlite.org/c3ref/busy_timeout.html) parameter.
+Unlike other JDBC databases, [SQLite3 doesn't fully support concurrent access](https://www.sqlite.org/lang_transaction.html). To avoid frequent errors caused internally by [`SQLITE_BUSY`](https://www.sqlite.org/rescode.html#busy), setting a [`busy_timeout`](https://www.sqlite.org/c3ref/busy_timeout.html) parameter is recommended.
+
+#### YugabyteDB
+
+If you're using YugabyteDB as a JDBC database, you can specify multiple endpoints in `scalar.db.contact_points` as follows:
+
+```properties
+scalar.db.contact_points=jdbc:yugabytedb://127.0.0.1:5433\\,127.0.0.2:5433\\,127.0.0.3:5433/?load-balance=true
+```
+
+Multiple endpoints should be separated by escaped commas.
+
+For information on YugabyteDB's smart driver and load balancing, see [YugabyteDB smart drivers for YSQL](https://docs.yugabyte.com/preview/drivers-orms/smart-drivers/).
 
 :::
+
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     The following configurations are available for DynamoDB:
