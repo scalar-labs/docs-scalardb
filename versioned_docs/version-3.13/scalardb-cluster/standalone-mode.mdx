@@ -1,0 +1,235 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+---
+
+# ScalarDB Cluster Standalone Mode
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import WarningLicenseKeyContact from '/src/components/_warning-license-key-contact.mdx';
+
+Instead of setting up a Kubernetes cluster and deploying ScalarDB Cluster on top of it by using a Helm Chart, you can run ScalarDB Cluster in standalone mode, which simplifies development and testing processes. A primary use case for this would be when you want to start ScalarDB Cluster in standalone mode via Docker on your local machine and use it for development and testing.
+
+To run ScalarDB Cluster in standalone mode, you need to set the `scalar.db.cluster.node.standalone_mode.enabled` property to `true`:
+
+```properties
+scalar.db.cluster.node.standalone_mode.enabled=true
+```
+
+## Run ScalarDB Cluster in standalone mode on Docker Compose
+
+This section explains how to start ScalarDB Cluster in standalone mode on Docker Compose.
+
+<WarningLicenseKeyContact product="ScalarDB Cluster" />
+
+### Clone the ScalarDB samples repository
+
+Open **Terminal**, then clone the ScalarDB samples repository by running the following command:
+
+```console
+git clone https://github.com/scalar-labs/scalardb-samples
+```
+
+Then, go to the directory that contains the necessary files by running the following command:
+
+```console
+cd scalardb-samples/scalardb-cluster-standalone-mode/
+```
+
+### Set up your database for ScalarDB Cluster
+
+Select your database, and follow the instructions to configure it for ScalarDB Cluster.
+
+For a list of databases that ScalarDB supports, see [Databases](../requirements.mdx#databases).
+
+<Tabs groupId="databases" queryString>
+  <TabItem value="MySQL" label="MySQL" default>
+    <h3>Run MySQL locally</h3>
+
+    You can run MySQL in Docker Compose by using the `docker-compose.yaml` file in the `scalardb-samples/scalardb-cluster-standalone-mode` directory.
+
+    To start MySQL, run the following command:
+
+    ```console
+    docker compose up -d mysql
+    ```
+
+    <h3>Configure ScalarDB Cluster</h3>
+
+    The **scalardb-cluster-node.properties** file in the `scalardb-samples/scalardb-cluster-standalone-mode` directory contains database configurations for ScalarDB Cluster. Please uncomment the properties for MySQL in the **scalardb-cluster-node.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For MySQL
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:mysql://mysql-1:3306/
+    scalar.db.username=root
+    scalar.db.password=mysql
+    ```
+  </TabItem>
+  <TabItem value="PostgreSQL" label="PostgreSQL" default>
+    <h3>Run PostgreSQL locally</h3>
+
+    You can run PostgreSQL in Docker Compose by using the `docker-compose.yaml` file in the `scalardb-samples/scalardb-cluster-standalone-mode` directory.
+
+    To start PostgreSQL, run the following command:
+
+    ```console
+    docker compose up -d postgres
+    ```
+
+    <h3>Configure ScalarDB Cluster</h3>
+
+    The **scalardb-cluster-node.properties** file in the `scalardb-samples/scalardb-cluster-standalone-mode` directory contains database configurations for ScalarDB Cluster. Please uncomment the properties for PostgreSQL in the **scalardb-cluster-node.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For PostgreSQL
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:postgresql://postgres-1:5432/
+    scalar.db.username=postgres
+    scalar.db.password=postgres
+    ```
+  </TabItem>
+  <TabItem value="Oracle Database" label="Oracle Database" default>
+    <h3>Run Oracle Database locally</h3>
+
+    You can run Oracle Database in Docker Compose by using the `docker-compose.yaml` file in the `scalardb-samples/scalardb-cluster-standalone-mode` directory.
+
+    To start Oracle Database, run the following command:
+
+    ```console
+    docker compose up -d oracle
+    ```
+
+    <h3>Configure ScalarDB Cluster</h3>
+
+    The **scalardb-cluster-node.properties** file in the `scalardb-samples/scalardb-cluster-standalone-mode` directory contains database configurations for ScalarDB Cluster. Please uncomment the properties for Oracle Database in the **scalardb-cluster-node.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For Oracle
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:oracle:thin:@//oracle-1:1521/FREEPDB1
+    scalar.db.username=SYSTEM
+    scalar.db.password=Oracle
+    ```
+  </TabItem>
+  <TabItem value="SQL Server" label="SQL Server" default>
+    <h3>Run SQL Server locally</h3>
+
+    You can run SQL Server in Docker Compose by using the `docker-compose.yaml` file in the `scalardb-samples/scalardb-cluster-standalone-mode` directory.
+
+    To start SQL Server, run the following command:
+
+    ```console
+    docker compose up -d sqlserver
+    ```
+
+    <h3>Configure ScalarDB Cluster</h3>
+
+    The **scalardb-cluster-node.properties** file in the `scalardb-samples/scalardb-cluster-standalone-mode` directory contains database configurations for ScalarDB Cluster. Please uncomment the properties for SQL Server in the **scalardb-cluster-node.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For SQL Server
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:sqlserver://sqlserver-1:1433;encrypt=true;trustServerCertificate=true
+    scalar.db.username=sa
+    scalar.db.password=SqlServer22
+    ```
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    <h3>Run Amazon DynamoDB Local</h3>
+
+    You can run Amazon DynamoDB Local in Docker Compose by using the `docker-compose.yaml` file in the `scalardb-samples/scalardb-cluster-standalone-mode` directory.
+
+    To start Amazon DynamoDB Local, run the following command:
+
+    ```console
+    docker compose up -d dynamodb
+    ```
+
+    <h3>Configure ScalarDB Cluster</h3>
+
+    The **scalardb-cluster-node.properties** file in the `scalardb-samples/scalardb-cluster-standalone-mode` directory contains database configurations for ScalarDB Cluster. Please uncomment the properties for Amazon DynamoDB Local in the **scalardb-cluster-node.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For DynamoDB Local
+    scalar.db.storage=dynamo
+    scalar.db.contact_points=sample
+    scalar.db.username=sample
+    scalar.db.password=sample
+    scalar.db.dynamo.endpoint_override=http://dynamodb-1:8000
+    ```
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    To use Azure Cosmos DB for NoSQL, you must have an Azure account. If you don't have an Azure account, visit [Create an Azure Cosmos DB account](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-portal#create-account).
+
+    <h3>Configure Cosmos DB for NoSQL</h3>
+
+    Set the **default consistency level** to **Strong** according to the official document at [Configure the default consistency level](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-manage-consistency#configure-the-default-consistency-level).
+
+    <h3>Configure ScalarDB Cluster</h3>
+
+    The following instructions assume that you have properly installed and configured the JDK in your local environment and properly configured your Cosmos DB for NoSQL account in Azure.
+
+    The **scalardb-cluster-node.properties** file in the `scalardb-samples/scalardb-cluster-standalone-mode` directory contains database configurations for ScalarDB Cluster. Be sure to change the values for `scalar.db.contact_points` and `scalar.db.password` as described.
+
+    ```properties
+    # For Cosmos DB
+    scalar.db.storage=cosmos
+    scalar.db.contact_points=<COSMOS_DB_FOR_NOSQL_URI>
+    scalar.db.password=<COSMOS_DB_FOR_NOSQL_KEY>
+    ```
+
+:::note
+
+You can use a primary key or a secondary key as the value for `scalar.db.password`.
+
+:::
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    <h3>Run Cassandra locally</h3>
+
+    You can run Apache Cassandra in Docker Compose by using the `docker-compose.yaml` file in the `scalardb-samples/scalardb-cluster-standalone-mode` directory.
+
+    To start Apache Cassandra, run the following command:
+    
+    ```console
+    docker compose up -d cassandra
+    ```
+
+    <h3>Configure ScalarDB Cluster</h3>
+
+    The **scalardb-cluster-node.properties** file in the `scalardb-samples/scalardb-cluster-standalone-mode` directory contains database configurations for ScalarDB Cluster. Please uncomment the properties for Cassandra in the **scalardb-cluster-node.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For Cassandra
+    scalar.db.storage=cassandra
+    scalar.db.contact_points=cassandra-1
+    scalar.db.username=cassandra
+    scalar.db.password=cassandra
+    ```
+  </TabItem>
+</Tabs>
+
+### Set the license key
+
+Set the license key (trial license or commercial license) for the ScalarDB Clusters in the configuration file `scalardb-cluster-node.properties`. For details, see [How to Configure a Product License Key](../scalar-licensing/README.mdx).
+
+### Start ScalarDB Cluster in standalone mode
+
+To start ScalarDB Cluster in standalone mode, run the following command:
+
+:::note
+
+If you want to change other configurations for ScalarDB Cluster, update the `scalardb-cluster-node.properties` file before running the command below.
+
+:::
+
+```console
+docker compose up -d scalardb-cluster-node
+```
+
+## Client configurations for the ScalarDB Cluster Java API
+
+You can use the `indirect` client mode to connect to ScalarDB Cluster in standalone mode. For details about client configurations for the ScalarDB Cluster Java API, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.mdx).

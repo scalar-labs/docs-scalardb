@@ -1,0 +1,173 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+---
+
+# Exception Handling in the ScalarDB Cluster .NET Client SDK
+
+When executing a transaction, you will also need to handle exceptions properly.
+
+:::warning
+
+If you don't handle exceptions properly, you may face anomalies or data inconsistency.
+
+:::
+
+:::note
+
+The Transactional API is used in this example, but exceptions can be handled in the same way when using the SQL API or `ScalarDbContext`.
+
+:::
+
+The following sample code shows how to handle exceptions:
+
+```c#
+using System.ComponentModel.DataAnnotations.Schema;
+using ScalarDB.Client;
+using ScalarDB.Client.DataAnnotations;
+using ScalarDB.Client.Exceptions;
+using ScalarDB.Client.Extensions;
+
+var options = new ScalarDbOptions { Address = "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>"};
+
+var factory = TransactionFactory.Create(options);
+using var manager = factory.GetTransactionManager();
+
+var retryCount = 0;
+TransactionException? lastException = null;
+
+while (true)
+{
+    if (retryCount++ > 0)
+    {
+        // Retry the transaction three times maximum in this sample code
+        if (retryCount > 3)
+            // Throw the last exception if the number of retries exceeds the maximum
+            throw lastException!;
+
+        // Sleep 100 milliseconds before retrying the transaction in this sample code
+        await Task.Delay(100);
+    }
+
+    // Begin a transaction
+    var tran = await manager.BeginAsync();
+    try
+    {
+        // Execute CRUD operations in the transaction
+        var getKeys = new Dictionary<string, object> { { nameof(Item.Id), 1 } };
+        var result = await tran.GetAsync<Item>(getKeys);
+
+        var scanKeys = new Dictionary<string, object> { { nameof(Item.Id), 1 } };
+        var results = await tran.ScanAsync<Item>(scanKeys, null);
+
+        await tran.InsertAsync(new Item { Id = 1, Name = "Watermelon", Price = 4500 });
+        await tran.DeleteAsync(new Item { Id = 1 });
+
+        // Commit the transaction
+        await tran.CommitAsync();
+
+        return;
+    }
+    catch (UnsatisfiedConditionException)
+    {
+        // You need to handle `UnsatisfiedConditionException` only if a mutation operation specifies
+        // a condition. This exception indicates the condition for the mutation operation is not met.
+        // InsertAsync/UpdateAsync implicitlly sets IfNotExists/IfExists condition
+
+        try
+        {
+            await tran.RollbackAsync();
+        }
+        catch (TransactionException ex)
+        {
+            // Rolling back the transaction failed. As the transaction should eventually recover, you
+            // don't need to do anything further. You can simply log the occurrence here
+            Console.WriteLine($"Rollback error: {ex}");
+        }
+
+        // You can handle the exception here, according to your application requirements
+
+        return;
+    }
+    catch (UnknownTransactionStatusException)
+    {
+        // If you catch `UnknownTransactionStatusException` when committing the transaction, it
+        // indicates that the status of the transaction, whether it has succeeded or not, is
+        // unknown. In such a case, you need to check if the transaction is committed successfully
+        // or not and retry it if it failed. How to identify a transaction status is delegated to users
+        return;
+    }
+    catch (TransactionException ex)
+    {
+        // For other exceptions, you can try retrying the transaction.
+
+        // For `TransactionConflictException` and `TransactionNotFoundException`,
+        // you can basically retry the transaction. However, for the other exceptions,
+        // the transaction may still fail if the cause of the exception is nontransient.
+        // In such a case, you will exhaust the number of retries and throw the last exception
+
+        try
+        {
+            await tran.RollbackAsync();
+        }
+        catch (TransactionException e)
+        {
+            // Rolling back the transaction failed. As the transaction should eventually recover,
+            // you don't need to do anything further. You can simply log the occurrence here
+            Console.WriteLine($"Rollback error: {e}");
+        }
+
+        lastException = ex;
+    }
+}
+
+[Table("order_service.items")]
+public class Item
+{
+    [PartitionKey]
+    [Column("item_id", Order = 0)]
+    public int Id { get; set; }
+
+    [Column("name", Order = 1)]
+    public string Name { get; set; } = String.Empty;
+
+    [Column("price", Order = 2)]
+    public int Price { get; set; }
+}
+
+```
+
+:::note
+
+In the sample code, the transaction is retried a maximum of three times and sleeps for 100 milliseconds before it is retried. You can choose a retry policy, such as exponential backoff, according to your application requirements.
+
+:::
+
+### Exception details
+
+The table below shows transaction exceptions that can occur when communicating with the cluster:
+
+| Exception                         | Operations                                                   | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |
+|-----------------------------------|--------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| AuthenticationErrorException      | All                                                          | The authentication failed because of a wrong username and/or password when calling the cluster.                                                                                                                                                                                                                                                                                                                                                                                                             |
+| AuthorizationErrorException       | Put, Insert, Update, Delete, Mutate, Execute, Administrative | The authorization failed because of a lack of permissions.                                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| HopLimitExceededException         | All                                                          | The hop limit was exceeded. This occurs when the routing information between cluster nodes is inconsistent. The error is usually resolved in a short amount of time, so you can retry the transaction from the beginning after some time has passed since encountering this error.                                                                                                                                                                                                                          |
+| IllegalArgumentException          | All                                                          | The argument in the request message is invalid.                                                                                                                                                                                                                                                                                                                                                                                                                                                             |
+| IllegalStateException             | All                                                          | The RPC was called in an invalid state.                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| InternalErrorException            | All                                                          | The operation failed due to transient or nontransient faults. You can try retrying the transaction from the beginning, but the transaction may still fail if the cause is nontransient.                                                                                                                                                                                                                                                                                                                     |
+| TransactionConflictException      | All except Begin, Join, Rollback                             | A transaction conflict occurred. If you encounter this error, please retry the transaction from the beginning.                                                                                                                                                                                                                                                                                                                                                                                              |
+| TransactionNotFoundException      | All except Begin, Join                                       | The transaction associated with the specified transaction ID was not found. This error indicates that the transaction has expired or the routing information has been updated due to cluster topology changes. In this case, please retry the transaction from the beginning.                                                                                                                                                                                                                               |
+| UnavailableException              | All                                                          | ScalarDB Cluster is unavailable even after trying to connect multiple times.                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| UnknownTransactionStatusException | Commit                                                       | The status of the transaction is unknown (it is uncertain whether the transaction was successfully committed or not). In this situation, you need to check whether the transaction was successfully committed, and if not, to retry it. You are responsible for determining the transaction status. You may benefit from creating a transaction status table and updating it in conjunction with other application data. Doing so may help you determine the status of a transaction from the table itself. |
+| UnsatisfiedConditionException     | Put, Insert, Update, Delete, Mutate                          | The mutation condition is not satisfied.                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
+
+If you encounter an exception, you should roll back the transaction, except in the case of `Begin`. After rolling back the transaction, you can retry the transaction from the beginning for the exceptions that can be resolved by retrying.
+
+Besides the exceptions listed above, you may encounter exceptions thrown by the gRPC library. In such cases, you can check the `RpcException` property for more information.
+
+Also, `ScalarDbContext` will throw a `TransactionException` type exception in the following cases:
+
+- If `BeginTransaction` or `JoinTransaction` were called when there was already an active transaction
+- If `CommitTransaction` or `RollbackTransaction` were called without an active transaction
+- If `PrepareTransaction` or `ValidateTransaction` were called without an active two-phase commit transaction
