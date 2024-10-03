@@ -79,7 +79,7 @@ In addition, you should pause for a sufficient amount of time (for example, five
 
 :::
 
-To make ScalarDB drain outstanding requests and stop accepting new requests so that a pause duration can be created, you should implement the [Scalar Admin](https://github.com/scalar-labs/scalar-admin) interface properly in your application that uses ScalarDB or use [ScalarDB Cluster (redirects to the Enterprise docs site)](https://scalardb.scalar-labs.com/docs/latest/scalardb-cluster/), which implements the Scalar Admin interface.
+To make ScalarDB drain outstanding requests and stop accepting new requests so that a pause duration can be created, you should implement the [Scalar Admin](https://github.com/scalar-labs/scalar-admin) interface properly in your application that uses ScalarDB or use [ScalarDB Cluster](scalardb-cluster/index.mdx), which implements the Scalar Admin interface.
 
 By using the [Scalar Admin client tool](https://github.com/scalar-labs/scalar-admin/tree/main/java#scalar-admin-client-tool), you can pause nodes, servers, or applications that implement the Scalar Admin interface without losing ongoing transactions.
 
@@ -107,7 +107,7 @@ The backup methods by database listed below are just examples of some of the dat
 
     However, if the quorum of cluster nodes loses their data, you will need a transactionally consistent backup (snapshot) to restore the cluster to a certain transactionally consistent point.
 
-    To create a transactionally consistent cluster-wide backup (snapshot), pause the application that is using ScalarDB or [ScalarDB Cluster (redirects to the Enterprise docs site)](https://scalardb.scalar-labs.com/docs/latest/scalardb-cluster/) and create backups (snapshots) of the nodes as described in [Back up with explicit pausing](#back-up-with-explicit-pausing) or stop the Cassandra cluster, take copies of all the data in the nodes, and start the cluster.
+    To create a transactionally consistent cluster-wide backup (snapshot), pause the application that is using ScalarDB or [ScalarDB Cluster](scalardb-cluster/index.mdx) and create backups (snapshots) of the nodes as described in [Back up with explicit pausing](#back-up-with-explicit-pausing) or stop the Cassandra cluster, take copies of all the data in the nodes, and start the cluster.
   </TabItem>
 </Tabs>
 
