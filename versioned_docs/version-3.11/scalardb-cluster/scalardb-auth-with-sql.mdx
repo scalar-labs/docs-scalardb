@@ -3,24 +3,24 @@ tags:
   - Enterprise Premium
 ---
 
-# ScalarDB Auth with ScalarDB SQL
+# Authenticate and Authorize Users
 
-ScalarDB Auth is an authentication and authorization mechanism for ScalarDB.
+ScalarDB Cluster has a mechanism to authenticate and authorize users.
 
-This document describes how to use ScalarDB Auth with ScalarDB SQL.
+This guide describes how to use authentication and authorization in ScalarDB Cluster.
 
-## ScalarDB Auth Overview
+## Overview
 
-By using ScalarDB Auth, you can create users and grant or revoke their privileges. You can create a user by using the `CREATE USER` command, and you can grant or revoke one's privileges on a table or a namespace by using the `GRANT` or `REVOKE` command, respectively. For details about such data control language (DCL) commands, see [DCL](../scalardb-sql/grammar.mdx#dcl).
+By using authentication and authorization, you can create users and grant or revoke their privileges. You can create a user by using the `CREATE USER` command, and you can grant or revoke one's privileges on a table or a namespace by using the `GRANT` or `REVOKE` command, respectively. For details about such data control language (DCL) commands, see [DCL](../scalardb-sql/grammar.mdx#dcl).
 
 Users can log in to ScalarDB Cluster with a username and a password and execute SQL statements if they have the required privileges.
 
-ScalarDB Auth supports two types of users:
+Authentication and authorization support two types of users:
 
 - **Superusers:** This type of user has all privileges. Only superusers can create or drop other users and namespaces.
 - **Normal users:** This type of user initially doesn't have any privileges, so they need to be granted privileges by a superuser or another user who has the `GRANT` privilege.
 
-In ScalarDB Auth, the following privileges are available:
+The following privileges are available when using authentication and authorization:
 
 - `SELECT`
 - `INSERT`
@@ -36,38 +36,38 @@ For details about privileges, see [Which privileges are required for each type o
 
 ## Configurations
 
-This section describes the available configurations in ScalarDB Cluster.
+This section describes the available configurations for authentication and authorization.
 
 ### ScalarDB Cluster node configurations
 
-To enable ScalarDB Auth, you need to set `scalar.db.cluster.auth.enabled` to `true`.
+To enable authentication and authorization, you need to set `scalar.db.cluster.auth.enabled` to `true`.
 
-| Name                             | Description                        | Default              |
-|----------------------------------|------------------------------------|----------------------|
-| `scalar.db.cluster.auth.enabled` | Whether ScalarDB Auth is enabled.  | `false`              |
+| Name                             | Description                        | Default |
+|----------------------------------|------------------------------------|---------|
+| `scalar.db.cluster.auth.enabled` | Whether authentication and authorization are enabled.  | `false` |
 
 You can also set the following configurations:
 
 | Name                                                           | Description                                                                                               | Default            |
 |----------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|--------------------|
-| `scalar.db.cluster.auth.cache_expiration_time_millis`          | Cache expiration time for auth information in milliseconds.                                               | `60000` (1 minute) |
-| `scalar.db.cluster.auth.auth_token_expiration_time_minutes`    | Auth token expiration time in minutes.                                                                    | `1440` (1 day)     |
-| `scalar.db.cluster.auth.auth_token_gc_thread_interval_minutes` | Auth token garbage collection (GC) thread interval in minutes.                                            | `360` (6 hours)    |
-| `scalar.db.cluster.auth.pepper`                                | A secret value added to a password before hashing. If not specified, A password is hashed without pepper. |                    |
+| `scalar.db.cluster.auth.cache_expiration_time_millis`          | Cache expiration time for authentication and authorization information in milliseconds.                                               | `60000` (1 minute) |
+| `scalar.db.cluster.auth.auth_token_expiration_time_minutes`    | Authentication and authorization token expiration time in minutes.                                                                    | `1440` (1 day)     |
+| `scalar.db.cluster.auth.auth_token_gc_thread_interval_minutes` | Authentication and authorization token garbage collection (GC) thread interval in minutes.                                            | `360` (6 hours)    |
+| `scalar.db.cluster.auth.pepper`                                | A secret value added to a password before hashing. If not specified, the password is hashed without pepper. |                    |
 
 :::note
 
-If you enable ScalarDB Auth, you will also need to set `scalar.db.cross_partition_scan.enabled` to `true` for the system namespace (`scalardb` by default) because ScalarDB Auth performs cross-partition scans internally.
+If you enable authentication and authorization, you will also need to set `scalar.db.cross_partition_scan.enabled` to `true` for the system namespace (`scalardb` by default) because authentication and authorization perform cross-partition scans internally.
 
 :::
 
 ### ScalarDB Cluster Java client SDK configurations
 
-To enable ScalarDB Auth on the client side, you need to set `scalar.db.cluster.auth.enabled` to `true`.
+To enable authentication and authorization on the client side, you need to set `scalar.db.cluster.auth.enabled` to `true`.
 
-| Name                             | Description                       | Default              |
-|----------------------------------|-----------------------------------|----------------------|
-| `scalar.db.cluster.auth.enabled` | Whether ScalarDB Auth is enabled. | `false`              |
+| Name                             | Description                       | Default |
+|----------------------------------|-----------------------------------|---------|
+| `scalar.db.cluster.auth.enabled` | Whether authentication and authorization are enabled. | `false` |
 
 In addition to the configuration in the [ScalarDB Cluster SQL client configurations](developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-client-configurations) section, you also need to set `scalar.db.sql.cluster_mode.username` and `scalar.db.sql.cluster_mode.password` to specify the username and password of the client.
 
@@ -78,7 +78,7 @@ In addition to the configuration in the [ScalarDB Cluster SQL client configurati
 
 ## Initial user
 
-When you enable ScalarDB Auth, the initial user `admin` is created and the initial password of that user is `admin`. This user is a superuser and has all privileges. You can log in with this user and create other users if necessary.
+When you enable authentication and authorization, the initial user `admin` is created and the initial password of that user is `admin`. This user is a superuser and has all privileges. You can log in with this user and create other users if necessary.
 
 :::warning
 
