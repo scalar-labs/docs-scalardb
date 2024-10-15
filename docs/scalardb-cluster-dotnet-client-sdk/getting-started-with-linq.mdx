@@ -55,13 +55,16 @@ using ScalarDB.Client.DataAnnotations;
 [Table("ns.statements")]
 public class Statement
 {
-    [Column("statement_id", Order = 0), PartitionKey]
+    [PartitionKey]
+    [Column("statement_id", Order = 0)]
     public int Id { get; set; }
-    
-    [Column("order_id", Order = 1), SecondaryIndex]
+
+    [SecondaryIndex]
+    [Column("order_id", Order = 1)]
     public string OrderId { get; set; } = String.Empty;
 
-    [Column("item_id", Order = 2), SecondaryIndex]
+    [SecondaryIndex]
+    [Column("item_id", Order = 2)]
     public int ItemId { get; set; }
 
     [Column("count", Order = 3)]
@@ -71,7 +74,8 @@ public class Statement
 [Table("order_service.items")]
 public class Item
 {
-    [Column("item_id", Order = 0), PartitionKey]
+    [PartitionKey]
+    [Column("item_id", Order = 0)]
     public int Id { get; set; }
 
     [Column("name", Order = 1)]

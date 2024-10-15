@@ -52,7 +52,7 @@ using var manager = factory.GetTransactionManager();
 
 ## Manage transactions
 
-To execute CRUD operations, a transaction is needed. You can begin a transaction by using the transaction manager as follows:
+To execute multiple CRUD operations as part of a single transaction, first, you need to begin a transaction. You can begin a transaction by using the transaction manager as follows:
 
 ```c#
 var transaction = await manager.BeginAsync();
@@ -84,9 +84,15 @@ await transaction.RollbackAsync();
 
 ## Execute CRUD operations
 
-A transaction has `GetAsync`, `ScanAsync`, `PutAsync`, `DeleteAsync`, and `MutateAsync` methods to execute CRUD commands against the cluster. As a parameter, these methods have a command object. A command object can be created by using the builders listed in this section.
+A transaction has `GetAsync`, `ScanAsync`, `InsertAsync`, `UpsertAsync`, `UpdateAsync`, `DeleteAsync`, and `MutateAsync` methods to execute CRUD operations against the cluster. As a parameter, these methods have an operation object. An operation object can be created by using the builders listed in this section.
 
-To use these builders add the following namespace to the `using` section:
+:::note
+
+CRUD operations can be executed in a one-shot transaction manner without needing to explicitly create a transaction. For that, a manager object has the same CRUD methods as a transaction object.
+
+:::
+
+To use builders, add the following namespace to the `using` section:
 
 ```c#
 using ScalarDB.Client.Builders;
@@ -100,16 +106,13 @@ The cluster does not support parallel execution of commands inside one transacti
 
 ### `GetAsync` method example
 
+To retrieve a single record, you can use the `GetAsync` method as follows:
+
 ```c#
-using GetTypeEnum = Scalar.Db.Cluster.Rpc.V1.Get.Types.GetType;
-
-// ...
-
 var get =
     new GetBuilder()
         .SetNamespaceName("ns")
         .SetTableName("statements")
-        .SetGetType(GetTypeEnum.Get)
         .AddPartitionKey("order_id", "1")
         .AddClusteringKey("item_id", 2)
         .SetProjections("item_id", "count")
@@ -118,15 +121,44 @@ var get =
 var getResult = await transaction.GetAsync(get);
 ```
 
-#### Handle `Result` objects
-
-The `GetAsync` and `ScanAsync` methods return `Result` objects. The SDK has `GetValue`, `TryGetValue`, and `IsNull` extension methods to simplify using them:
+It is possible to retrieve a record by using an index instead of a partition key. To do that, you need to set the type of operation to `GetWithIndex` as follows:
 
 ```c#
-using ScalarDB.Client.Extensions;
+// ...
+using ScalarDB.Client.Core;
 
 // ...
 
+var get =
+    new GetBuilder()
+        // ...
+        .SetGetType(GetOperationType.GetWithIndex)
+        .AddPartitionKey("index_column", "1")
+        .Build();
+```
+
+You can also specify arbitrary conditions that a retrieved record must meet, or it won't be returned. The conditions can be set as conjunctions of conditions as follows:
+
+```c#
+var get =
+    new GetBuilder()
+        // ...
+        .AddConjunction(c => c.AddCondition("cost", 1000, Operator.LessThan))
+        .AddConjunction(c =>
+        {
+            c.AddCondition("cost", 10000, Operator.LessThan);
+            c.AddCondition("in_stock", true, Operator.Equal);
+        })
+        .Build();
+```
+
+In the above example, a record will be returned only if its `cost` is less than `1000`, or if its `cost` is less than `10000` and `in_stock` is true.
+
+#### Handle `IResult` objects
+
+The `GetAsync` and `ScanAsync` methods return `IResult` objects. An `IResult` object contains columns of the retrieved record. The value of the specific column can be retrieved in the following manner:
+
+```c#
 // Getting an integer value from the "item_id" column.
 // If it fails, an exception will be thrown.
 var itemId = result.GetValue<int>("item_id");
@@ -145,16 +177,13 @@ For details about which type should be used in `GetValue<T>` and `TryGetValue<T>
 
 ### `ScanAsync` method example
 
+To retrieve a range of records, you can use the `ScanAsync` method as follows:
+
 ```c#
-using static Scalar.Db.Cluster.Rpc.V1.Scan.Types;
-
-// ..
-
 var scan =
     new ScanBuilder()
         .SetNamespaceName("ns")
         .SetTableName("statements")
-        .SetScanType(ScanType.Scan)
         .AddPartitionKey("order_id", "1")
         .AddStartClusteringKey("item_id", 2)
         .SetStartInclusive(true)
@@ -166,11 +195,31 @@ var scan =
 var scanResult = await transaction.ScanAsync(scan);
 ```
 
-### `PutAsync` method example
+It is possible to retrieve a record by using an index instead of a partition key. To do that, you need to set the type of operation to `ScanWithIndex` as follows:
 
 ```c#
-var put =
-    new PutBuilder()
+// ...
+using ScalarDB.Client.Core;
+
+// ...
+
+var scan =
+    new ScanBuilder()
+        // ...
+        .SetScanType(ScanOperationType.ScanWithIndex)
+        .AddPartitionKey("index_column", "1")
+        .Build();
+```
+
+The arbitrary conditions that a retrieved record must meet can also be set for a scan operation in the same way as for a [get operation](getting-started-with-distributed-transactions.mdx#getasync-method-example).
+
+### `InsertAsync` method example
+
+To insert a new record, you can use the `InsertAsync` method as follows:
+
+```c#
+var insert =
+    new InsertBuilder()
         .SetNamespaceName("ns")
         .SetTableName("statements")
         .AddPartitionKey("order_id", "1")
@@ -178,46 +227,102 @@ var put =
         .AddColumn("count", 11)
         .Build();
 
-await client.PutAsync(put);
+await transaction.InsertAsync(insert);
+```
+
+### `UpsertAsync` method example
+
+To upsert a record (update an existing record or insert a new one), you can use the `UpsertAsync` method as follows:
+
+```c#
+var upsert =
+    new UpsertBuilder()
+        .SetNamespaceName("ns")
+        .SetTableName("statements")
+        .AddPartitionKey("order_id", "1")
+        .AddClusteringKey("item_id", 2)
+        .AddColumn("count", 11)
+        .Build();
+
+await transaction.UpsertAsync(upsert);
+```
+
+### `UpdateAsync` method example
+
+To update an existing record, you can use the `UpdateAsync` method as follows:
+
+```c#
+// ...
+using ScalarDB.Client.Core;
+
+// ...
+
+var update =
+    new UpdateBuilder()
+        .SetNamespaceName("ns")
+        .SetTableName("statements")
+        .AddPartitionKey("order_id", "1")
+        .AddClusteringKey("item_id", 2)
+        .AddColumn("count", 11)
+        .AddCondition("processed", false, Operator.Equal)
+        .Build();
+
+await transaction.UpdateAsync(update);
 ```
 
 ### `DeleteAsync` method example
 
+To delete a record, you can use the `DeleteAsync` method as follows:
+
 ```c#
+// ...
+using ScalarDB.Client.Core;
+
+// ...
+
 var delete =
     new DeleteBuilder()
         .SetNamespaceName("ns")
         .SetTableName("statements")
         .AddPartitionKey("order_id", "1")
         .AddClusteringKey("item_id", 2)
+        .AddCondition("processed", false, Operator.Equal)
         .Build();
 
-await client.DeleteAsync(delete);
+await transaction.DeleteAsync(delete);
 ```
 
-### `MutateAsync` method example:
+### `MutateAsync` method example
+
+The `MutateAsync` method allows you to execute more than one mutation operation in a single call to the cluster. You can do this in the following manner:
 
 ```c#
-using Scalar.Db.Cluster.Rpc.V1;
+// ...
+using ScalarDB.Client.Core;
 
 // ...
 
-var put =
-    new PutBuilder()
-        .SetNamespaceName("ns")
-        .SetTableName("statements")
-        .AddPartitionKey("order_id", "1")
-        .AddClusteringKey("item_id", 2)
-        .AddColumn("count", 11)
-        .Build();
+var mutations = new IMutation[]
+                {
+                    new InsertBuilder()
+                        // ...
+                        .Build(),
+                    new UpsertBuilder()
+                        // ...
+                        .Build(),
+                    new UpdateBuilder()
+                        // ...
+                        .Build(),
+                    new DeleteBuilder()
+                        // ...
+                        .Build()
+                };
 
-var mutate = new Mutation { Put = put };
-
-await client.MutateAsync(new[] { mutate });
+await transaction.MutateAsync(mutations);
 ```
 
 :::note
 
-To modify data by using the `PutAsync`, `DeleteAsync`, or `MutateAsync` method, the data must be retrieved first by using the `GetAsync` or `ScanAsync` method.
+To modify data by using the `InsertAsync`, `UpsertAsync`, `UpdateAsync`, `DeleteAsync`, or `MutateAsync` method, the data must be retrieved first by using the `GetAsync` or `ScanAsync` method.
 
 :::
