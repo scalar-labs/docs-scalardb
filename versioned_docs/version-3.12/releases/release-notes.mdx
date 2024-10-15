@@ -9,6 +9,42 @@ tags:
 
 This page includes a list of release notes for ScalarDB 3.12.
 
+## v3.12.4
+
+**Release date:** October 13, 2024
+
+### Summary
+
+This release includes several bug fixes, and vulnerability fixes.
+
+### Community edition
+
+#### Enhancements
+
+- Added support for MariaDB 11.4 and Oracle 19. ([#2061](https://github.com/scalar-labs/scalardb/pull/2061))
+
+#### Bug fixes
+
+- Fixed a bug where `NullPointerException` when a table specified in a Get/Scan object is not found in Consensus Commit. ([#2083](https://github.com/scalar-labs/scalardb/pull/2083))
+- Upgraded the mysql driver to fix security issues. [CVE-2023-22102](https://github.com/advisories/GHSA-m6vm-37g8-gqvh "CVE-2023-22102") ([#2238](https://github.com/scalar-labs/scalardb/pull/2238))
+- Upgraded the gRPC library, the Protocol Buffers library, grpc_health_probe, and scalar-admin to fix security issues. [CVE-2024-7254](https://github.com/advisories/GHSA-735f-pc8j-v9w8 "CVE-2024-7254"), [CVE-2024-25638](https://github.com/advisories/GHSA-cfxw-4h78-h7fw "CVE-2024-25638"), and [CVE-2024-34156](https://github.com/advisories/GHSA-crqm-pwhx-j97f "CVE-2024-34156") ([#2277](https://github.com/scalar-labs/scalardb/pull/2277))
+
+### Enterprise edition
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Fixed a bug where incorrect results are returned when executing SELECT queries with the same column names.
+- Fix a bug where `NullPointerException` occurs when catching an exception without message.
+- Upgraded `grpc_health_probe` to fix a security issue. [CVE-2024-34156](https://github.com/advisories/GHSA-crqm-pwhx-j97f "CVE-2024-34156")
+- Upgraded `scalar-admin` to fix a security issue. [CVE-2024-25638](https://github.com/advisories/GHSA-cfxw-4h78-h7fw "CVE-2024-25638")
+- Upgraded the Protobuf Java library to fix a security issue. [CVE-2024-7254](https://github.com/advisories/GHSA-735f-pc8j-v9w8 "CVE-2024-7254")
+
+##### ScalarDB GraphQL
+
+- Upgraded the GraphQL Java library to fix security issues. [CVE-2024-40094](https://github.com/advisories/GHSA-h9mq-f6q5-6c8m "CVE-2024-40094")
+
 ## v3.12.3
 
 **Release date:** July 3, 2024
