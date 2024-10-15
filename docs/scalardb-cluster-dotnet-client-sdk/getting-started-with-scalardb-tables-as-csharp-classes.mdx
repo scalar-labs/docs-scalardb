@@ -35,10 +35,12 @@ using ScalarDB.Client.DataAnnotations;
 [Table("ns.statements")]
 public class Statement
 {
-    [Column("order_id", Order = 0), PartitionKey]
+    [PartitionKey]
+    [Column("order_id", Order = 0)]
     public string OrderId { get; set; } = String.Empty;
 
-    [Column("item_id", Order = 1), ClusteringKey]
+    [ClusteringKey]
+    [Column("item_id", Order = 1)]
     public int ItemId { get; set; }
 
     [Column("count", Order = 2)]
@@ -50,7 +52,7 @@ For details about which types should be used for properties, see [How ScalarDB C
 
 ## Execute CRUD operations
 
-After creating a class for each table, you can use the classes as objects by using the generic `GetAsync`, `ScanAsync`, `InsertAsync`, `UpdateAsync`, `DeleteAsync`, `PutAsync`, or `MutateAsync` method of `IDistributedTransaction` (or more specifically, of `ITransactionCrudOperable`).
+After creating a class for each table, you can use the classes as objects by using the generic `GetAsync`, `ScanAsync`, `InsertAsync`, `UpdateAsync`, `DeleteAsync`, `UpsertAsync`, or `MutateAsync` method of `ITransactionCrudOperable`.
 
 To use these generic methods, add the following namespace to the `using` section:
 
@@ -117,7 +119,7 @@ await transaction.UpdateAsync(statement);
 await transaction.DeleteAsync(statement);
 ```
 
-### Upsert an object by using the `PutAsync` method
+### Upsert an object by using the `UpsertAsync` method
 
 ```c#
 var statement = new Statement
@@ -126,10 +128,10 @@ var statement = new Statement
                     ItemId = 4,
                     Count = 8
                 };
-await transaction.PutAsync(statement);
+await transaction.UpsertAsync(statement);
 ```
 
-### Put and delete multiple objects at once by using the `MutateAsync` method
+### Upsert and delete multiple objects at once by using the `MutateAsync` method
 
 ```c#
 var statement = new Statement
@@ -141,13 +143,13 @@ var statement = new Statement
 
 // ...
 
-await client.MutateAsync(objectsToPut: new[] { statement },
-                         objectsToDelete: new[] { statement2 });
+await transaction.MutateAsync(objectsToUpsert: new[] { statement },
+                              objectsToDelete: new[] { statement2 });
 ```
 
 :::note
 
-To modify objects by using the `UpdateAsync`, `DeleteAsync`, `PutAsync`, or `MutateAsync` method, the objects must be retrieved first by using the `GetAsync` or `ScanAsync` method.
+To modify objects by using the `UpdateAsync`, `DeleteAsync`, `UpsertAsync`, or `MutateAsync` method, the objects must be retrieved first by using the `GetAsync` or `ScanAsync` method.
 
 :::
 
