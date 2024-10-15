@@ -51,10 +51,10 @@ using var manager = factory.GetSqlTransactionManager();
 
 ## Execute SQL queries
 
-To execute a SQL statement, you need a `SqlStatement` object, which can be created by using a builder as follows:
+To execute a SQL statement, you need an `ISqlStatement` object, which can be created by using a builder as follows:
 
 ```c#
-using ScalarDB.Client.Builders;
+using ScalarDB.Client.Builders.Sql;
 
 // ...
 
@@ -71,13 +71,9 @@ A single SQL statement can be executed directly by using the transaction manager
 var resultSet = await manager.ExecuteAsync(sqlStatement);
 ```
 
-The result from the `ExecuteAsync` method will contain records received from the cluster. The SDK has `GetValue`, `TryGetValue`, and `IsNull` extension methods to simplify using the records:
+The result from the `ExecuteAsync` method will contain records received from the cluster. The value of the specific column can be retrieved in the following manner:
 
 ```c#
-using ScalarDB.Client.Extensions;
-
-// ...
-
 foreach (var record in resultSet.Records)
 {
     // Getting an integer value from the "item_id" column.
