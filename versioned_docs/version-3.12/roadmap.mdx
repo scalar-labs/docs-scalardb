@@ -44,7 +44,7 @@ If you have a feature request or want to prioritize feature development, please 
 - **One-phase commit optimization**
     - Users will experience faster execution for simple transactions that write to a single partition. ScalarDB will omit the prepare-record and commit-state phases without sacrificing correctness if a transaction updates only one partition by exploiting the single-partition linearizable operations of the underlying databases.
 - **Reduction of storage space needed for managing ScalarDB metadata**
-    - Users will likely use less storage space to run ScalarDB. ScalarDB will remove the before image of committed transactions after they are committed. However, whether or not those committed transaaction will impact actual storage space depends on the underlying databases.
+    - Users will likely use less storage space to run ScalarDB. ScalarDB will remove the before image of committed transactions after they are committed. However, whether or not those committed transactions will impact actual storage space depends on the underlying databases.
 
 #### Cloud support
 
