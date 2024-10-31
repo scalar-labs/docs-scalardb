@@ -808,31 +808,19 @@ const sidebars = {
           },
           items: [
             {
-              type: 'category',
-              label: 'Reference',
-              collapsible: true,
-              items: [
-                {
-                  type: 'doc',
-                  id: 'backup-restore',
-                  label: 'Back Up and Restore Databases Used Through ScalarDB',
-                },
-                {
-                  type: 'doc',
-                  id: 'backup-restore',
-                  label: 'Back Up and Restore Databases Used Through ScalarDB',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalar-kubernetes/BackupNoSQL',
-                  label: 'Back Up a NoSQL Database in Kubernetes',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalar-kubernetes/RestoreDatabase',
-                  label: 'Restore Databases in Kubernetes',
-                },
-              ]
+              type: 'doc',
+              id: 'backup-restore',
+              label: 'Back Up and Restore Databases Used Through ScalarDB',
+            },
+            {
+              type: 'doc',
+              id: 'scalar-kubernetes/BackupNoSQL',
+              label: 'Back Up a NoSQL Database in Kubernetes',
+            },
+            {
+              type: 'doc',
+              id: 'scalar-kubernetes/RestoreDatabase',
+              label: 'Restore Databases in Kubernetes',
             },
           ],
         },
