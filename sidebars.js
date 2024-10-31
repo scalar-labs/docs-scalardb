@@ -28,12 +28,11 @@ const sidebars = {
       type: 'category',
       label: 'About ScalarDB',
       collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'overview',
+      },
       items: [
-        {
-          type: 'doc',
-          id: 'overview',
-          label: 'Overview',
-        },
         {
           type: 'doc',
           id: 'design',
@@ -70,16 +69,19 @@ const sidebars = {
       type: 'category',
       label: 'Quickstart',
       collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'quick-start-overview',
+      },
       items: [
-        {
-          type: 'doc',
-          id: 'quick-start-overview',
-          label: 'Overview',
-        },
         {
           type: 'category',
           label: 'Try Running Transactions Through the ScalarDB Core Library',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'quickstart-scalardb-core',
+          },
           items: [
             {
               type: 'doc',
@@ -97,6 +99,10 @@ const sidebars = {
           type: 'category',
           label: 'Try Running Transactions Through ScalarDB Cluster',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'quickstart-scalardb-cluster',
+          },
           items: [
             {
               type: 'doc',
@@ -124,6 +130,10 @@ const sidebars = {
           type: 'category',
           label: 'Try Running Analytical Queries Through ScalarDB Analytics',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'quickstart-scalardb-analytics',
+          },
           items: [
             {
               type: 'doc',
@@ -165,16 +175,19 @@ const sidebars = {
       type: 'category',
       label: 'Develop',
       collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'develop-overview',
+      },
       items: [
-        {
-          type: 'doc',
-          id: 'develop-overview',
-          label: 'Overview',
-        },
         {
           type: 'category',
           label: 'Run Transactions',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'develop-run-transactions',
+          },
           items: [
             {
               type: 'doc',
@@ -225,6 +238,10 @@ const sidebars = {
         {
           type: 'category',
           label: 'Run Analytical Queries',
+          link: {
+            type: 'doc',
+            id: 'develop-run-analytical-queries',
+          },
           collapsible: true,
           items: [
             {
@@ -243,6 +260,10 @@ const sidebars = {
           type: 'category',
           label: 'Run Non-Transactional Storage Operations',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'develop-run-non-transactional-operations',
+          },
           items: [
             {
               type: 'category',
@@ -277,6 +298,10 @@ const sidebars = {
           type: 'category',
           label: 'Create Sample Applications',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'develop-sample-applications',
+          },
           items: [
             {
               type: 'doc',
@@ -496,12 +521,11 @@ const sidebars = {
       type: 'category',
       label: 'Deploy',
       collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'deploy-overview',
+      },
       items: [
-        {
-          type: 'doc',
-          id: 'deploy-overview',
-          label: 'Overview',
-        },
         {
           type: 'doc',
           id: 'scalardb-cluster/setup-scalardb-cluster-on-kubernetes-by-using-helm-chart',
@@ -695,6 +719,10 @@ const sidebars = {
       type: 'category',
       label: 'Migrate',
       collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'migrate',
+      },
       items: [
         {
           type: 'doc',
@@ -712,6 +740,10 @@ const sidebars = {
       type: 'category',
       label: 'Manage',
       collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'manage',
+      },
       items: [
         {
           type: 'doc',
@@ -727,6 +759,10 @@ const sidebars = {
           type: 'category',
           label: 'Monitor',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'manage-monitor',
+          },
           items: [
             {
               type: 'doc',
@@ -766,17 +802,21 @@ const sidebars = {
           type: 'category',
           label: 'Back Up and Restore',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'manage-backup-and-restore',
+          },
           items: [
-            {
-              type: 'doc',
-              id: 'manage-backup-and-restore',
-              label: 'Back Up and Restore Databases',
-            },
             {
               type: 'category',
               label: 'Reference',
               collapsible: true,
               items: [
+                {
+                  type: 'doc',
+                  id: 'backup-restore',
+                  label: 'Back Up and Restore Databases Used Through ScalarDB',
+                },
                 {
                   type: 'doc',
                   id: 'backup-restore',
@@ -802,11 +842,19 @@ const sidebars = {
       type: 'category',
       label: 'Troubleshoot',
       collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'troubleshoot',
+      },
       items: [
         {
           type: 'category',
           label: 'Error Codes',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'troubleshoot-error-codes',
+          },
           items: [
             {
               type: 'doc',
