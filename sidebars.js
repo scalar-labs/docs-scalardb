@@ -80,7 +80,7 @@ const sidebars = {
           collapsible: true,
           link: {
             type: 'doc',
-            id: 'quickstart-scalardb-core',
+            id: 'quickstart-scalardb-core-overview',
           },
           items: [
             {
@@ -101,7 +101,7 @@ const sidebars = {
           collapsible: true,
           link: {
             type: 'doc',
-            id: 'quickstart-scalardb-cluster',
+            id: 'quickstart-scalardb-cluster-overview',
           },
           items: [
             {
@@ -132,7 +132,7 @@ const sidebars = {
           collapsible: true,
           link: {
             type: 'doc',
-            id: 'quickstart-scalardb-analytics',
+            id: 'quickstart-scalardb-analytics-overview',
           },
           items: [
             {
@@ -186,7 +186,7 @@ const sidebars = {
           collapsible: true,
           link: {
             type: 'doc',
-            id: 'develop-run-transactions',
+            id: 'develop-run-transactions-overview',
           },
           items: [
             {
@@ -240,7 +240,7 @@ const sidebars = {
           label: 'Run Analytical Queries',
           link: {
             type: 'doc',
-            id: 'develop-run-analytical-queries',
+            id: 'develop-run-analytical-queries-overview',
           },
           collapsible: true,
           items: [
@@ -262,7 +262,7 @@ const sidebars = {
           collapsible: true,
           link: {
             type: 'doc',
-            id: 'develop-run-non-transactional-operations',
+            id: 'develop-run-non-transactional-operations-overview',
           },
           items: [
             {
@@ -300,7 +300,7 @@ const sidebars = {
           collapsible: true,
           link: {
             type: 'doc',
-            id: 'develop-sample-applications',
+            id: 'develop-sample-applications-overview',
           },
           items: [
             {
@@ -721,7 +721,7 @@ const sidebars = {
       collapsible: true,
       link: {
         type: 'doc',
-        id: 'migrate',
+        id: 'migrate-overview',
       },
       items: [
         {
@@ -742,7 +742,7 @@ const sidebars = {
       collapsible: true,
       link: {
         type: 'doc',
-        id: 'manage',
+        id: 'manage-overview',
       },
       items: [
         {
@@ -761,7 +761,7 @@ const sidebars = {
           collapsible: true,
           link: {
             type: 'doc',
-            id: 'manage-monitor',
+            id: 'manage-monitor-overview',
           },
           items: [
             {
@@ -832,7 +832,7 @@ const sidebars = {
       collapsible: true,
       link: {
         type: 'doc',
-        id: 'troubleshoot',
+        id: 'troubleshoot-overview',
       },
       items: [
         {
@@ -841,7 +841,7 @@ const sidebars = {
           collapsible: true,
           link: {
             type: 'doc',
-            id: 'troubleshoot-error-codes',
+            id: 'troubleshoot-error-codes-overview',
           },
           items: [
             {
