@@ -201,6 +201,22 @@ const config = {
             to: '/docs/3.12/requirements#databases',
             from: '/docs/3.12/scalardb-supported-databases',
           },
+          {
+            to: '/docs/latest/helm-charts/getting-started-scalar-manager',
+            from: '/docs/latest/helm-charts/how-to-deploy-scalar-manager',
+          },
+          {
+            to: '/docs/3.12/helm-charts/getting-started-scalar-manager',
+            from: '/docs/3.12/helm-charts/how-to-deploy-scalar-manager',
+          },
+          {
+            to: '/docs/3.11/helm-charts/getting-started-scalar-manager',
+            from: '/docs/3.11/helm-charts/how-to-deploy-scalar-manager',
+          },
+          {
+            to: '/docs/3.10/helm-charts/getting-started-scalar-manager',
+            from: '/docs/3.10/helm-charts/how-to-deploy-scalar-manager',
+          },
         ],
       },
     ],

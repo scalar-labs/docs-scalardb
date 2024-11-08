@@ -750,11 +750,6 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
-                  id: 'helm-charts/how-to-deploy-scalar-manager',
-                  label: 'Deploy Scalar Manager',
-                },
-                {
-                  type: 'doc',
                   id: 'helm-charts/how-to-deploy-scalar-admin-for-kubernetes',
                   label: 'Deploy Scalar Admin for Kubernetes',
                 },
