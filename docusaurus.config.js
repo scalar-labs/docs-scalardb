@@ -143,6 +143,11 @@ const config = {
     ],
   ],
 
+  // The following versions have Japanese docs, so the language dropdown should be displayed only when visitors are reading these versions of docs.
+  customFields: {
+    allowedLanguageDropdownVersions: ["current", "latest", "3.13"],
+  },
+
   plugins: [
     [
       '@docusaurus/plugin-client-redirects',
