@@ -433,7 +433,7 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
-                  id: 'scalardb-cluster-dotnet-client-sdk/overview',
+                  id: 'scalardb-cluster-dotnet-client-sdk/index',
                   label: 'Overview',
                 },
                 {

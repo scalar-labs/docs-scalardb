@@ -217,6 +217,18 @@ const config = {
             to: '/docs/3.10/helm-charts/getting-started-scalar-manager',
             from: '/docs/3.10/helm-charts/how-to-deploy-scalar-manager',
           },
+          {
+            to: '/docs/latest/scalardb-cluster-dotnet-client-sdk',
+            from: '/docs/latest/scalardb-cluster-dotnet-client-sdk/overview',
+          },
+          {
+            to: '/docs/3.12/scalardb-cluster-dotnet-client-sdk',
+            from: '/docs/3.12/scalardb-cluster-dotnet-client-sdk/overview',
+          },
+          {
+            to: '/docs/3.11/scalardb-cluster-dotnet-client-sdk',
+            from: '/docs/3.11/scalardb-cluster-dotnet-client-sdk/overview',
+          },
         ],
       },
     ],
