@@ -10,31 +10,44 @@ import clsx from 'clsx';
 import { useLocation } from '@docusaurus/router';
 import type { Props } from '@theme/NavbarItem/HtmlNavbarItem';
 
-function loadGoogleTranslateScript() {
-  if (typeof window !== "undefined" && typeof document !== "undefined") {
-    // Check if the script is already added.
+function loadGoogleTranslateScript(callback: () => void) {
+  if (typeof window !== 'undefined' && typeof document !== 'undefined') {
     const existingScript = document.getElementById('google-translate-script');
     if (!existingScript) {
       const addScript = document.createElement('script');
       addScript.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
       addScript.async = true;
-      addScript.id = 'google-translate-script'; // Assign unique id.
+      addScript.id = 'google-translate-script';
+      addScript.onload = callback; // Trigger callback once loaded.
       document.body.appendChild(addScript);
+    } else {
+      callback(); // Script already exists, proceed to callback directly.
     }
   }
 }
 
 function initializeGoogleTranslate() {
-  // Check if window.google is available.
-  if (typeof window !== 'undefined' && window.google) {
+  if (typeof window !== 'undefined' && window.google && window.google.translate) {
     const targetElement = document.getElementById('google_translate_element');
     if (targetElement && !window.googleTranslateElement) {
-      window.googleTranslateElement = new window.google.translate.TranslateElement(
-        { pageLanguage: 'en', includedLanguages: 'ja' },
-        'google_translate_element'
-      );
+      try {
+        window.googleTranslateElement = new window.google.translate.TranslateElement(
+          { pageLanguage: 'en', includedLanguages: 'ja' },
+          'google_translate_element'
+        );
+      } catch (error) {
+        console.error('Error initializing Google Translate:', error);
+      }
     }
   }
+}
+
+function removeGoogleTranslateWidget() {
+  const existingElement = document.getElementById('google_translate_element');
+  if (existingElement) existingElement.innerHTML = ''; // Clear content.
+  const script = document.getElementById('google-translate-script');
+  if (script) script.remove(); // Remove the Google Translate script.
+  window.googleTranslateElement = null;
 }
 
 export default function HtmlNavbarItem({
@@ -46,33 +59,31 @@ export default function HtmlNavbarItem({
   const Comp = isDropdownItem ? 'li' : 'div';
   const { pathname } = useLocation();
 
-  // List of specific versions to show Google Translate.
   const allowedVersions = ['3.4', '3.5', '3.6', '3.7', '3.8', '3.9', '3.10', '3.11', '3.12'];
-
-  // Extract the version from the pathname, ignoring "latest" and "current".
   const versionMatch = pathname.match(/\/docs\/(\d+\.\d+)\//);
   const currentVersion = versionMatch ? versionMatch[1] : null;
 
   useEffect(() => {
-    // Only load and initialize Google Translate if the version is in allowedVersions.
     if (currentVersion && allowedVersions.includes(currentVersion)) {
-      loadGoogleTranslateScript();
-      window.googleTranslateElementInit = initializeGoogleTranslate;
+      // Ensure Google Translate script is loaded.
+      loadGoogleTranslateScript(() => {
+        if (!sessionStorage.getItem('googleTranslateInitialized')) {
+          window.googleTranslateElementInit = () => {
+            initializeGoogleTranslate();
+            sessionStorage.setItem('googleTranslateInitialized', 'true');
+          };
+        } else {
+          initializeGoogleTranslate(); // Re-initialize if already loaded.
+        }
+      });
     } else {
-      // Clear the element content if it's not an allowed version.
-      const existingElement = document.getElementById('google_translate_element');
-      if (existingElement) {
-        existingElement.innerHTML = ''; // Clear the element content.
-      }
-
-      // Reset Google Translate instance.
-      if (window.googleTranslateElement) {
-        window.googleTranslateElement = null;
-      }
+      // Clear widget if on an unallowed version.
+      removeGoogleTranslateWidget();
+      sessionStorage.removeItem('googleTranslateInitialized');
     }
-  }, [currentVersion, allowedVersions]);
+  }, [currentVersion]);
 
-  // If the version is not in allowedVersions, return an empty div.
+  // Hide component if version is not in allowed versions.
   if (currentVersion && !allowedVersions.includes(currentVersion)) {
     return null;
   }
