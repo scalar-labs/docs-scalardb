@@ -275,7 +275,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: 'Create Sample Applications',
+          label: 'Run Sample Applications',
           collapsible: true,
           items: [
             {
