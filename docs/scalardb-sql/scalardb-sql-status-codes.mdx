@@ -9,9 +9,9 @@ This page provides a list of error codes in ScalarDB SQL.
 
 ## Error code classes and descriptions
 
-| Class       | Description                                              |
-|:------------|:---------------------------------------------------------|
-| `SQL-1xxxx` | Errors for the user error category.                      |
+| Class       | Description                        |
+|:------------|:-----------------------------------|
+| `SQL-1xxxx` | Errors for the user error category |
 
 ## `SQL-1xxxx` status codes
 
@@ -559,3 +559,26 @@ The column %s is specified twice in the JOIN predicates. Predicates: %s
 Either all primary key columns or an indexed column for the table %s must be specified in the JOIN predicates. Predicates: %s
 ```
 
+### `SQL-10068`
+
+**Message**
+
+```markdown
+Cannot issue mutation DML SQLs such as INSERT, UPDATE or DELETE with executeQuery()
+```
+
+### `SQL-10069`
+
+**Message**
+
+```markdown
+Cannot issue SELECT SQLs with executeUpdate()
+```
+
+### `SQL-10070`
+
+**Message**
+
+```markdown
+The TWO_PHASE_COMMIT_TRANSACTION mode is not supported in the current transaction manager
+```
