@@ -75,7 +75,7 @@ const CardsSamples = [
     },
     description: (
       <Translate id="home.samples.description">
-        Create a sample application with multi-storage transaction support
+        Run a sample application with multi-storage transaction support
       </Translate>
     ),
   },
@@ -87,7 +87,7 @@ const CardsSamples = [
     },
     description: (
       <Translate id="home.samples.description">
-        Create a sample application that supports microservice transactions
+        Run a sample application that supports microservice transactions
       </Translate>
     ),
   },
