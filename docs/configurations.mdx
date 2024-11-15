@@ -101,7 +101,7 @@ Select a database to see the configurations available for each storage.
 If you're using SQLite3 as a JDBC database, you must set `scalar.db.contact_points` as follows:
 
 ```properties
-scalar.db.contact_points=jdbc:sqlite:<YOUR_DB>.sqlite3?busy_timeout=10000
+scalar.db.contact_points=jdbc:sqlite:<SQLITE_DB_FILE_PATH>?busy_timeout=10000
 ```
 
 Unlike other JDBC databases, [SQLite3 doesn't fully support concurrent access](https://www.sqlite.org/lang_transaction.html). To avoid frequent errors caused internally by [`SQLITE_BUSY`](https://www.sqlite.org/rescode.html#busy), setting a [`busy_timeout`](https://www.sqlite.org/c3ref/busy_timeout.html) parameter is recommended.
