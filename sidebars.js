@@ -211,7 +211,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalardb-cluster/scalardb-auth-with-sql',
-                  label: 'ScalarDB Auth with ScalarDB SQL',
+                  label: 'Authenticate and Authorize Users by Using SQL',
                 },
                 {
                   type: 'doc',
@@ -275,7 +275,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: 'Create Sample Applications',
+          label: 'Run Sample Applications',
           collapsible: true,
           items: [
             {
@@ -433,7 +433,7 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
-                  id: 'scalardb-cluster-dotnet-client-sdk/overview',
+                  id: 'scalardb-cluster-dotnet-client-sdk/index',
                   label: 'Overview',
                 },
                 {
@@ -474,7 +474,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-auth',
-                  label: 'ScalarDB Auth',
+                  label: 'Authenticate and Authorize Users',
                 },
                 {
                   type: 'doc',
@@ -750,11 +750,6 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
-                  id: 'helm-charts/how-to-deploy-scalar-manager',
-                  label: 'Deploy Scalar Manager',
-                },
-                {
-                  type: 'doc',
                   id: 'helm-charts/how-to-deploy-scalar-admin-for-kubernetes',
                   label: 'Deploy Scalar Admin for Kubernetes',
                 },
@@ -820,11 +815,6 @@ const sidebars = {
             },
             {
               type: 'doc',
-              id: 'scalardb-cluster/scalardb-auth-status-codes',
-              label: 'ScalarDB Auth',
-            },
-            {
-              type: 'doc',
               id: 'scalardb-graphql/scalardb-graphql-status-codes',
               label: 'ScalarDB GraphQL',
             },
@@ -832,6 +822,11 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-sql/scalardb-sql-status-codes',
               label: 'ScalarDB SQL',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/scalardb-auth-status-codes',
+              label: 'Authentication and Authorization',
             },
           ],
         },

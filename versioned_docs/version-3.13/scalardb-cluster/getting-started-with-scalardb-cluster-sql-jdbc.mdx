@@ -9,15 +9,13 @@ This tutorial describes how to create a sample application by using ScalarDB Clu
 
 ## Prerequisites for this sample application
 
-- One of the following Java Development Kits (JDKs):
-  - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) 8
-  - OpenJDK 8 from [Eclipse Temurin](https://adoptium.net/temurin/releases/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft](https://learn.microsoft.com/en-us/java/openjdk/download)
+- OpenJDK LTS version (8, 11, 17, or 21) from [Eclipse Temurin](https://adoptium.net/temurin/releases/)
 - ScalarDB Cluster running on a Kubernetes cluster
   - We assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.mdx).
 
 :::note
 
-This sample application only works with Java 8. However, ScalarDB itself works with Java LTS versions, which means that you can use Java LTS versions for your application that uses ScalarDB. For details on the requirements of ScalarDB, such as which Java versions can be used, see [Requirements](../requirements.mdx).
+This sample application has been tested with OpenJDK from Eclipse Temurin. ScalarDB itself, however, has been tested with JDK distributions from various vendors. For details about the requirements for ScalarDB, including compatible JDK distributions, please see [Requirements](../requirements.mdx).
 
 :::
 
@@ -87,10 +85,10 @@ For details about the client modes, see [Developer Guide for ScalarDB Cluster wi
 
 ## Step 3. Load a schema
 
-To load a schema, you need to use [the SQL CLI](developer-guide-for-scalardb-cluster-with-java-api.mdx#sql-cli). You can download the SQL CLI from [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases/tag/v3.13.0). After downloading the JAR file, you can use SQL CLI for Cluster by running the following command:
+To load a schema, you need to use [the SQL CLI](developer-guide-for-scalardb-cluster-with-java-api.mdx#sql-cli). You can download the SQL CLI from [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases/tag/v3.13.1). After downloading the JAR file, you can use SQL CLI for Cluster by running the following command:
 
 ```console
-java -jar scalardb-cluster-sql-cli-3.13.0-all.jar --config scalardb-sql.properties --file schema.sql
+java -jar scalardb-cluster-sql-cli-3.13.1-all.jar --config scalardb-sql.properties --file schema.sql
 ```
 
 ## Step 4. Load the initial data

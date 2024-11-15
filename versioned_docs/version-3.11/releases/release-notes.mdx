@@ -9,6 +9,41 @@ tags:
 
 This page includes a list of release notes for ScalarDB 3.11.
 
+## v3.11.4
+
+**Release date:** October 13, 2024
+
+### Summary
+
+This release includes several bug fixes, and vulnerability fixes.
+
+### Community edition
+
+#### Enhancements
+
+- Added support for MariaDB 11.4 and Oracle 19. ([#2061](https://github.com/scalar-labs/scalardb/pull/2061))
+
+#### Bug fixes
+
+- Fixed a bug where `NullPointerException` when a table specified in a Get/Scan object is not found in Consensus Commit. ([#2083](https://github.com/scalar-labs/scalardb/pull/2083))
+- Upgraded the mysql driver to fix security issues. [CVE-2023-22102](https://github.com/advisories/GHSA-m6vm-37g8-gqvh "CVE-2023-22102") ([#2238](https://github.com/scalar-labs/scalardb/pull/2238))
+- Upgraded the gRPC library, the Protocol Buffers library, grpc_health_probe, and scalar-admin to fix security issues. [CVE-2024-7254](https://github.com/advisories/GHSA-735f-pc8j-v9w8 "CVE-2024-7254"), [CVE-2024-25638](https://github.com/advisories/GHSA-cfxw-4h78-h7fw "CVE-2024-25638"), and [CVE-2024-34156](https://github.com/advisories/GHSA-crqm-pwhx-j97f "CVE-2024-34156") ([#2277](https://github.com/scalar-labs/scalardb/pull/2277))
+
+### Enterprise edition
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Fixed a bug where incorrect results are returned when executing SELECT queries with the same column names.
+- Upgraded `grpc_health_probe` to fix a security issue. [CVE-2024-34156](https://github.com/advisories/GHSA-crqm-pwhx-j97f "CVE-2024-34156")
+- Upgraded `scalar-admin` to fix a security issue. [CVE-2024-25638](https://github.com/advisories/GHSA-cfxw-4h78-h7fw "CVE-2024-25638")
+- Upgraded the Protobuf Java library to fix a security issue. [CVE-2024-7254](https://github.com/advisories/GHSA-735f-pc8j-v9w8 "CVE-2024-7254")
+
+##### ScalarDB GraphQL
+
+- Upgraded the GraphQL Java library to fix security issues. [CVE-2024-40094](https://github.com/advisories/GHSA-h9mq-f6q5-6c8m "CVE-2024-40094")
+
 ## v3.11.3
 
 **Release date:** July 3, 2024
@@ -118,7 +153,7 @@ This release has several bug and vulnerability fixes.
 
 ### Summary
 
-This release has a lot of enhancements, improvements, and bug fixes. There are many SQL enhancements including `JOIN` support and cross-partition scan support. This release also includes ScalarDB Auth, which is an authentication and authorization mechanism for ScalarDB Cluster. Please see the following for a list of detailed changes.
+This release has a lot of enhancements, improvements, and bug fixes. There are many SQL enhancements including `JOIN` support and cross-partition scan support. This release also includes an authentication and authorization mechanism for ScalarDB Cluster. Please see the following for a list of detailed changes.
 
 ScalarDB provides a Community edition and an Enterprise edition. The Community edition is available as open-source software that you can use under the Apache 2.0 License. The Enterprise edition includes not only the features of the Community edition but also many advanced features. Release notes for the Enterprise edition are available under the “Enterprise edition” section. To use the features in the Enterprise edition, you must have a license agreement with Scalar Inc.
 
@@ -150,7 +185,7 @@ ScalarDB provides a Community edition and an Enterprise edition. The Community e
 - Added import functionalities for existing relational databases.
 - Added support for operating a ScalarDB Cluster node in standalone mode to make development and testing more convenient. You can activate standalone mode by setting `scalar.db.cluster.node.standalone_mode.enabled` to `true`.
 - Added the `docker-compose.yaml` file to test standalone mode. You can run ScalarDB Cluster for testing purposes in your local environment by using the `docker compose up` command.
-- Introduced ScalarDB Auth, an authentication and authorization mechanism for ScalarDB Cluster.
+- Introduced an authentication and authorization mechanism for ScalarDB Cluster.
 
 ##### ScalarDB SQL
 

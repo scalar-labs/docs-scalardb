@@ -6,7 +6,7 @@ tags:
 
 # Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart
 
-import WarningLicenseKeyContact from '/src/components/_warning-license-key-contact.mdx';
+import WarningLicenseKeyContact from '/src/components/en-us/_warning-license-key-contact.mdx';
 
 This document provides instructions on how to set up a ScalarDB Cluster by using a Helm Chart on a Kubernetes cluster, specifically designed for a test environment.
 
@@ -165,7 +165,7 @@ You can deploy PostgreSQL on the Kubernetes cluster as follows:
 5. Set the chart version of ScalarDB Cluster.
 
    ```console
-   SCALAR_DB_CLUSTER_VERSION=3.13.0
+   SCALAR_DB_CLUSTER_VERSION=3.12.4
    SCALAR_DB_CLUSTER_CHART_VERSION=$(helm search repo scalar-labs/scalardb-cluster -l | grep -F "${SCALAR_DB_CLUSTER_VERSION}" | awk '{print $2}' | sort --version-sort -r | head -n 1)
    ```
 

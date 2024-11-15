@@ -102,9 +102,9 @@ const config = {
                 banner: 'none',
               },
               "3.8": {
-                label: '3.8',
+                label: '3.8 (unsupported)',
                 path: '3.8',
-                banner: 'none',
+                banner: 'unmaintained',
               },
               "3.7": {
                 label: '3.7 (unsupported)',
@@ -205,6 +205,34 @@ const config = {
           {
             to: '/docs/3.12/requirements#databases',
             from: '/docs/3.12/scalardb-supported-databases',
+          },
+          {
+            to: '/docs/latest/helm-charts/getting-started-scalar-manager',
+            from: '/docs/latest/helm-charts/how-to-deploy-scalar-manager',
+          },
+          {
+            to: '/docs/3.12/helm-charts/getting-started-scalar-manager',
+            from: '/docs/3.12/helm-charts/how-to-deploy-scalar-manager',
+          },
+          {
+            to: '/docs/3.11/helm-charts/getting-started-scalar-manager',
+            from: '/docs/3.11/helm-charts/how-to-deploy-scalar-manager',
+          },
+          {
+            to: '/docs/3.10/helm-charts/getting-started-scalar-manager',
+            from: '/docs/3.10/helm-charts/how-to-deploy-scalar-manager',
+          },
+          {
+            to: '/docs/latest/scalardb-cluster-dotnet-client-sdk',
+            from: '/docs/latest/scalardb-cluster-dotnet-client-sdk/overview',
+          },
+          {
+            to: '/docs/3.12/scalardb-cluster-dotnet-client-sdk',
+            from: '/docs/3.12/scalardb-cluster-dotnet-client-sdk/overview',
+          },
+          {
+            to: '/docs/3.11/scalardb-cluster-dotnet-client-sdk',
+            from: '/docs/3.11/scalardb-cluster-dotnet-client-sdk/overview',
           },
         ],
       },
