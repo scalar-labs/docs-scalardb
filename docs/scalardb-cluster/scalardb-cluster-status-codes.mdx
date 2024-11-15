@@ -10,11 +10,11 @@ This page provides a list of error codes in ScalarDB Cluster.
 
 ## Error code classes and descriptions
 
-| Class           | Description                                              |
-|:----------------|:---------------------------------------------------------|
-| `CLUSTER-1xxxx` | Errors for the user error category.                      |
-| `CLUSTER-2xxxx` | Errors for the concurrency error category                |
-| `CLUSTER-3xxxx` | Errors for the internal error category                   |
+| Class           | Description                               |
+|:----------------|:------------------------------------------|
+| `CLUSTER-1xxxx` | Errors for the user error category        |
+| `CLUSTER-2xxxx` | Errors for the concurrency error category |
+| `CLUSTER-3xxxx` | Errors for the internal error category    |
 
 ## `CLUSTER-1xxxx` status codes
 
@@ -290,6 +290,38 @@ The property 'scalar.db.sql.cluster_mode.contact_points' must be prefixed with '
 The format of the property 'scalar.db.sql.cluster_mode.contact_points' for direct-kubernetes client mode is 'direct-kubernetes:<NAMESPACE_NAME>/<ENDPOINT_NAME>' or 'direct-kubernetes:<ENDPOINT_NAME>'
 ```
 
+### `CLUSTER-10034`
+
+**Message**
+
+```markdown
+ClusterNodeManagerFactory is not specified
+```
+
+### `CLUSTER-10035`
+
+**Message**
+
+```markdown
+The update condition type is unspecified
+```
+
+### `CLUSTER-10036`
+
+**Message**
+
+```markdown
+The update condition type is unrecognized
+```
+
+### `CLUSTER-10037`
+
+**Message**
+
+```markdown
+The two-phase commit interface is not supported
+```
+
 ## `CLUSTER-2xxxx` status codes
 
 ### `CLUSTER-20000`
@@ -358,3 +390,10 @@ Reading the Kubernetes endpoint failed. Namespace: %s; Name: %s; Code: %d; Respo
 Configuring TLS failed
 ```
 
+### `CLUSTER-30006`
+
+**Message**
+
+```markdown
+No nearest cluster nodes are found
+```
