@@ -1,0 +1,278 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+---
+
+# ScalarDB Schema Loader を使用して既存のテーブルを ScalarDB にインポートする
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+既存のデータベースで ScalarDB を使用したい場合があります (データベースにまたがるトランザクションなど)。その場合、ScalarDB Schema Loader を使用して、それらのデータベースを ScalarDB の制御下にインポートできます。ScalarDB Schema Loader は、既存の各テーブルとメタデータテーブルに ScalarDB 内部メタデータ列を自動的に追加し、複数のデータベースにわたるトランザクション管理などのさまざまな ScalarDB 機能を有効にします。
+
+## 始める前に
+
+:::warning
+
+運用環境で ScalarDB にテーブルをインポートする場合は、データベーステーブルと ScalarDB メタデータテーブルにトランザクションメタデータ列が追加されるため、慎重に計画する必要があります。この場合、データベースと ScalarDB の間にはいくつかの違いがあり、いくつかの制限もあります。
+
+:::
+
+### データベースに追加されるもの
+
+- **ScalarDB メタデータテーブル:** ScalarDB は、'scalardb' という名前空間 (基盤となるデータベースのスキーマまたはデータベース) で名前空間名とテーブルメタデータを管理します。
+- **トランザクションメタデータ列:** Consensus Commit トランザクションマネージャーでは、トランザクションを適切に処理するために、実際のレコードとともに保存されたメタデータ (トランザクション ID、レコードバージョン、トランザクションステータスなど) が必要です。したがって、Consensus Commit トランザクションマネージャーを使用する場合、このツールはメタデータ列を追加します。
+
+:::note
+
+このツールはデータベースのメタデータのみを変更します。そのため、処理時間はデータベースのサイズに比例して増加することはなく、通常は数秒しかかかりません。
+
+:::
+
+### 要件
+
+- SQLite を除く [JDBC データベース](./requirements.mdx#リレーショナルデータベース)をインポートできます。
+- 各テーブルにはプライマリーキー列が必要です。(複合プライマリーキーを使用できます。)
+- ターゲットテーブルには、サポートされているデータ型の列のみが必要です。詳細については、[JDBC データベースから ScalarDB へのデータ型マッピング](#jdbc-データベースから-scalardb-へのデータ型マッピング))を参照してください。
+
+### Schema Loader の設定
+
+既存のテーブルをインポートするために Schema Loader を設定するには、[Schema Loader を設定する](./schema-loader.mdx#schema-loader-を設定する)を参照してください。
+
+## 既存のテーブルをインポートするために Schema Loader を実行する
+
+`--import` オプションとインポート固有のスキーマファイルを使用して、JDBC データベース内の既存のテーブルを ScalarDB にインポートできます。テーブルをインポートするには、次のコマンドを実行し、山括弧内の内容を説明に従って置き換えます。
+
+```console
+java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> --import
+```
+
+- `<VERSION>`: 設定した ScalarDB Schema Loader のバージョン。
+- `<PATH_TO_SCALARDB_PROPERTIES_FILE>`: ScalarDB のプロパティファイルへのパス。サンプルのプロパティファイルについては、[`database.properties`](https://github.com/scalar-labs/scalardb/blob/master/conf/database.properties) を参照してください。
+- `<PATH_TO_SCHEMA_FILE>`: インポートスキーマファイルへのパス。サンプルについては、[サンプルインポートスキーマファイル](#サンプルインポートスキーマファイル)を参照してください。
+
+既存のテーブルをインポートした後に Consensus Commit トランザクションマネージャーを使用する場合は、次のコマンドを個別に実行し、説明に従って山括弧内の内容を置き換えます。
+
+```console
+java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> --coordinator
+```
+
+## サンプルインポートスキーマファイル
+
+以下は、テーブルをインポートするためのサンプルスキーマです。サンプルスキーマファイルについては、[`import_schema_sample.json`](https://github.com/scalar-labs/scalardb/blob/master/schema-loader/sample/import_schema_sample.json) を参照してください。
+
+```json
+{
+  "sample_namespace1.sample_table1": {
+    "transaction": true
+  },
+  "sample_namespace1.sample_table2": {
+    "transaction": true
+  },
+  "sample_namespace2.sample_table3": {
+    "transaction": false
+  }
+}
+```
+
+インポートテーブルスキーマは、名前空間名、テーブル名、および `transaction` フィールドで設定されます。`transaction` フィールドは、テーブルがトランザクション用にインポートされるかどうかを示します。`transaction` フィールドを `true` に設定するか、`transaction` フィールドを指定しない場合、このツールは必要に応じてトランザクションメタデータを含むテーブルを作成します。`transaction` フィールドを `false` に設定すると、このツールはトランザクションメタデータを追加せずにテーブルをインポートします (つまり、[Storage API](storage-abstraction.mdx) を使用するテーブルの場合)。
+
+## JDBC データベースから ScalarDB へのデータ型マッピング
+
+次の表は、各 JDBC データベースでサポートされているデータ型と、それらの ScalarDB データ型へのマッピングを示しています。データベースを選択し、既存のテーブルをインポートできるかどうかを確認してください。
+
+<Tabs groupId="databases" queryString>
+  <TabItem value="MySQL" label="MySQL" default>
+    | MySQL        | ScalarDB | 注記                                |
+    |--------------|----------|------------------------------------|
+    | bigint       | BIGINT   | 下記の警告 [1](#1) を参照してください。 |
+    | binary       | BLOB     |                                    |
+    | bit          | BOOLEAN  |                                    |
+    | blob         | BLOB     | 下記の警告 [2](#2) を参照してください。 |
+    | char         | TEXT     | 下記の警告 [2](#2) を参照してください。 |
+    | double       | DOUBLE   |                                    |
+    | float        | FLOAT    |                                    |
+    | int          | INT      |                                    |
+    | int unsigned | BIGINT   | 下記の警告 [2](#2) を参照してください。 |
+    | integer      | INT      |                                    |
+    | longblob     | BLOB     |                                    |
+    | longtext     | TEXT     |                                    |
+    | mediumblob   | BLOB     | 下記の警告 [2](#2) を参照してください。 |
+    | mediumint    | INT      | 下記の警告 [2](#2) を参照してください。 |
+    | mediumtext   | TEXT     | 下記の警告 [2](#2) を参照してください。 |
+    | smallint     | INT      | 下記の警告 [2](#2) を参照してください。 |
+    | text         | TEXT     | 下記の警告 [2](#2) を参照してください。 |
+    | tinyblob     | BLOB     | 下記の警告 [2](#2) を参照してください。 |
+    | tinyint      | INT      | 下記の警告 [2](#2) を参照してください。 |
+    | tinyint(1)   | BOOLEAN  |                                    |
+    | tinytext     | TEXT     | 下記の警告 [2](#2) を参照してください。 |
+    | varbinary    | BLOB     | 下記の警告 [2](#2) を参照してください。 |
+    | varchar      | TEXT     | 下記の警告 [2](#2) を参照してください。 |
+
+    上記に記載されていないデータ型はサポートされていません。サポートされていない一般的なデータ型は次のとおりです。
+
+    - bigint unsigned
+    - bit(n) (n > 1)
+    - date
+    - datetime
+    - decimal
+    - enum
+    - geometry
+    - json
+    - numeric
+    - set
+    - time
+    - timestamp
+    - year
+  </TabItem>
+  <TabItem value="PostgreSQL_YugabyteDB" label="PostgreSQL and YugabyteDB">
+    | PostgreSQL/YugabyteDB | ScalarDB | 注記                                |
+    |-----------------------|----------|------------------------------------|
+    | bigint                | BIGINT   | 下記の警告 [1](#1) を参照してください。 |
+    | boolean               | BOOLEAN  |                                    |
+    | bytea                 | BLOB     |                                    |
+    | character             | TEXT     | 下記の警告 [2](#2) を参照してください。 |
+    | character varying     | TEXT     | 下記の警告 [2](#2) を参照してください。 |
+    | double precision      | DOUBLE   |                                    |
+    | integer               | INT      |                                    |
+    | real                  | FLOAT    |                                    |
+    | smallint              | INT      | 下記の警告 [2](#2) を参照してください。 |
+    | text                  | TEXT     |                                    |
+
+    上記に記載されていないデータ型はサポートされていません。サポートされていない一般的なデータ型は次のとおりです。
+
+    - bigserial
+    - bit
+    - box
+    - cidr
+    - circle
+    - date
+    - inet
+    - interval
+    - json
+    - jsonb
+    - line
+    - lseg
+    - macaddr
+    - macaddr8
+    - money
+    - numeric
+    - path
+    - pg_lsn
+    - pg_snapshot
+    - point
+    - polygon
+    - smallserial
+    - serial
+    - time
+    - timestamp
+    - tsquery
+    - tsvector
+    - txid_snapshot
+    - uuid
+    - xml
+  </TabItem>
+  <TabItem value="Oracle" label="Oracle">
+    | Oracle        | ScalarDB        | 注記                                |
+    |---------------|-----------------|------------------------------------|
+    | binary_double | DOUBLE          |                                    |
+    | binary_float  | FLOAT           |                                    |
+    | blob          | BLOB            | 下記の警告 [3](#3) を参照してください。 |
+    | char          | TEXT            | 下記の警告 [2](#2) を参照してください。 |
+    | clob          | TEXT            |                                    |
+    | float         | DOUBLE          | 下記の警告 [4](#4) を参照してください。 |
+    | long          | TEXT            |                                    |
+    | long raw      | BLOB            |                                    |
+    | nchar         | TEXT            | 下記の警告 [2](#2) を参照してください。 |
+    | nclob         | TEXT            |                                    |
+    | number        | BIGINT / DOUBLE | 下記の警告 [5](#5) を参照してください。 |
+    | nvarchar2     | TEXT            | 下記の警告 [2](#2) を参照してください。 |
+    | raw           | BLOB            | 下記の警告 [2](#2) を参照してください。 |
+    | varchar2      | TEXT            | 下記の警告 [2](#2) を参照してください。 |
+
+    上記に記載されていないデータ型はサポートされていません。サポートされていない一般的なデータ型は次のとおりです。
+
+    - date
+    - timestamp
+    - interval
+    - rowid
+    - urowid
+    - bfile
+    - json
+  </TabItem>
+  <TabItem value="SQLServer" label="SQL Server">
+    | SQL Server | ScalarDB | 注記                                |
+    |------------|----------|------------------------------------|
+    | bigint     | BIGINT   | 下記の警告 [1](#1) を参照してください。 |
+    | binary     | BLOB     | 下記の警告 [2](#2) を参照してください。 |
+    | bit        | BOOLEAN  |                                    |
+    | char       | TEXT     | 下記の警告 [2](#2) を参照してください。 |
+    | float      | DOUBLE   |                                    |
+    | image      | BLOB     |                                    |
+    | int        | INT      |                                    |
+    | nchar      | TEXT     | 下記の警告 [2](#2) を参照してください。 |
+    | ntext      | TEXT     |                                    |
+    | nvarchar   | TEXT     | 下記の警告 [2](#2) を参照してください。 |
+    | real       | FLOAT    |                                    |
+    | smallint   | INT      | 下記の警告 [2](#2) を参照してください。 |
+    | text       | TEXT     |                                    |
+    | tinyint    | INT      | 下記の警告 [2](#2) を参照してください。 |
+    | varbinary  | BLOB     | 下記の警告 [2](#2) を参照してください。 |
+    | varchar    | TEXT     | 下記の警告 [2](#2) を参照してください。 |
+
+    上記に記載されていないデータ型はサポートされていません。サポートされていない一般的なデータ型は次のとおりです。
+
+    - cursor
+    - date
+    - datetime
+    - datetime2
+    - datetimeoffset
+    - decimal
+    - geography
+    - geometry
+    - hierarchyid
+    - money
+    - numeric
+    - rowversion
+    - smalldatetime
+    - smallmoney
+    - sql_variant
+    - time
+    - uniqueidentifier
+    - xml
+  </TabItem>
+</Tabs>
+
+:::warning
+
+<ol>
+  <li>
+    <a name="1"></a>ScalarDB の `BIGINT` の値の範囲は、基礎となるデータベースの `bigint` のサイズに関係なく、-2^53 から 2^53 です。したがって、インポートされたテーブルにこの範囲外のデータが存在する場合、ScalarDB はそれを読み取ることができません。
+  </li>
+  <li>
+    <a name="2"></a>上記の特定のデータ型の場合、ScalarDB は基になるデータベースのデータ型よりも大きいデータ型をマップする場合があります。その場合、基になるデータベースで指定されたサイズよりも大きいサイズの値を入力するとエラーが表示されます。
+  </li>
+  <li>
+    <a name="3"></a>ScalarDB の `BLOB` の最大サイズは約 2GB (正確には 2^31-1 バイト) です。対照的に、Oracle の `blob` は (4GB-1)*(ブロック数) を持つことができます。したがって、インポートされたテーブルに 2GB を超えるデータが存在する場合、ScalarDB はそれを読み取ることができません。
+  </li>
+  <li>
+    <a name="4"></a>ScalarDB は、ScalarDB の `DOUBLE` よりも精度の高い Oracle `float` 列をサポートしていません。
+  </li>
+  <li>
+    <a name="5"></a>ScalarDB では、ScalarDB のデータ型の最大サイズにより、`p` が 15 より大きい場合、Oracle の `numeric(p, s)` 列 (`p` は精度、`s` はスケール) をサポートしません。`s` が 0 の場合、ScalarDB は列を `BIGINT` にマッピングします。それ以外の場合は、ScalarDB は列を `DOUBLE` にマッピングします。後者の場合、浮動小数点値が固定小数点値にキャストされるため、基になるデータベースで切り上げまたは切り捨てが発生する可能性があることに注意してください。
+  </li>
+</ol>
+
+:::
+
+## アプリケーションでインポート機能を使用する
+
+次のインターフェースを使用して、アプリケーションでインポート機能を使用できます。
+
+- [ScalarDB Admin API](./api-guide.mdx#テーブルをインポートする)
+- [ScalarDB Schema Loader API](./schema-loader.mdx#アプリケーションで-schema-loader-を使用する)

@@ -59,7 +59,8 @@ while (true)
         var result = await tran.GetAsync<Item>(getKeys);
 
         var scanKeys = new Dictionary<string, object> { { nameof(Item.Id), 1 } };
-        var results = await tran.ScanAsync<Item>(scanKeys, null);
+        await foreach (var item in tran.ScanAsync<Item>(scanKeys, null))
+            Console.WriteLine($"{item.Id}, {item.Name}, {item.Price}");
 
         await tran.InsertAsync(new Item { Id = 1, Name = "Watermelon", Price = 4500 });
         await tran.DeleteAsync(new Item { Id = 1 });

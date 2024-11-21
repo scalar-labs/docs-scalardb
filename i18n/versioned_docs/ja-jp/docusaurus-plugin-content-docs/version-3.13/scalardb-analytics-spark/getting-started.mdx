@@ -1,0 +1,189 @@
+---
+tags:
+  - Enterprise Option
+  - Private Preview
+---
+
+# ScalarDB Analytics with Spark をはじめよう
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+:::warning
+
+このバージョンの ScalarDB Analytics with Spark はプライベートプレビューでした。代わりにバージョン 3.14 以降を使用してください。
+
+:::
+
+このガイドでは、ScalarDB Analytics with Spark の使用を開始する方法について説明します。
+
+## 前提条件
+
+ScalarDB Analytics with Spark を使用してクエリを実行する前に、ScalarDB テーブルを設定し、Apache Spark をインストールする必要があります。
+
+### ScalarDB テーブルの設定
+
+ScalarDB Analytics with Spark を使用するには、分析クエリを実行するための ScalarDB の基盤となるデータベースが少なくとも 1 つ必要です。ScalarDB に独自の基盤となるデータベースを設定している場合は、このセクションをスキップして、代わりにそのデータベースを使用できます。
+
+独自のデータベースをまだ設定していない場合は、[ScalarDB Analytics with Spark を使用してサンプルデータに対して分析クエリを実行する](../scalardb-samples/scalardb-analytics-spark-sample/README.mdx)の手順に従って、サンプルの基盤となるデータベースを使用して ScalarDB を設定できます。
+
+### Apache Spark のインストール
+
+Apache Spark のパッケージリリースも必要です。すでに Spark がインストールされている場合は、このセクションをスキップできます。
+
+Spark が必要な場合は、[Spark ウェブサイト](https://spark.apache.org/downloads.html)からダウンロードできます。圧縮された Spark ファイルをダウンロードしたら、次のコマンドを実行してファイルを解凍する必要があります。`X.X.X` は、ダウンロードした Spark のバージョンに置き換えてください。
+
+```console
+tar xf spark-X.X.X-bin-hadoop3.tgz
+```
+
+次に、次のコマンドを実行してディレクトリに入ります。ここでも、`X.X.X` はダウンロードした Spark のバージョンに置き換えます。
+
+```console
+cd spark-X.X.X-bin-hadoop3
+```
+
+## Spark シェルを設定する
+
+以下では、Spark シェルを使用してインタラクティブな分析を実行する方法について説明します。
+
+ScalarDB Analytics with Spark は Maven Central Repository で利用できるため、`--packages` オプションを使用して Spark シェルで ScalarDB Analytics with Spark を有効にすることができます。`<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_WITH_SPARK_VERSION>` は、使用しているバージョンに置き換えてください。
+
+```console
+./bin/spark-shell --packages com.scalar-labs:scalardb-analytics-spark-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_WITH_SPARK_VERSION>
+```
+
+:::warning
+
+ScalarDB Analytics with Spark は、さまざまな Spark および Scala バージョン用のさまざまなアーティファクトを提供します。これは、`scalardb-analytics-spark-<SPARK_VERSION>_<SCALA_VERSION>` の形式で提供されます。使用している Spark および Scala バージョンに一致するアーティファクトを選択してください。
+
+参考として、[ScalarDB Analytics with Spark のバージョン互換性](version-compatibility.mdx)を参照してください。
+
+:::
+
+次に、シェルで ScalarDB Analytics with Spark 環境を設定する必要があります。ScalarDB Analytics with Spark には、分析クエリを実行するためのすべての設定を行うヘルパーメソッドが用意されています。
+
+```scala
+spark-shell> import com.scalar.db.analytics.spark.implicits._
+spark-shell> spark.setupScalarDbAnalytics(
+           | // ScalarDB config file
+           | configPath = "/<PATH_TO_YOUR_SCALARDB_PROPERTIES>/config.properties",
+           | // Namespaces in ScalarDB to import
+           | namespaces = Set("<YOUR_NAMESPACE_NAME_1>", "<YOUR_NAMESPACE_NAME_2>"),
+           | // License information
+           | license = License.certPath("""{"your":"license", "key":"in", "json":"format"}""", "/<PATH_TO_YOUR_LICENSE>/cert.pem")
+           | )
+```
+
+これで、ScalarDB の基盤となるデータベースのテーブルからデータを読み取り、Spark Dataset API を通じて任意の分析クエリを実行できるようになりました。例:
+
+```console
+spark-shell> spark.sql("select * from <YOUR_NAMESPACE_NAME_1>.<YOUR_TABLE_NAME>").show()
+```
+
+## Spark アプリケーションを実装して起動する
+
+このセクションでは、ScalarDB Analytics with Spark を使用して Spark アプリケーションを実装し、当該アプリケーションを起動する方法について説明します。
+
+SBT、Gradle、Maven などのビルドツールを使用して、ScalarDB Analytics with Spark をアプリケーションに統合できます。
+
+<Tabs groupId="implementation" queryString>
+  <TabItem value="gradle" label="Gradle" default>
+    Gradle プロジェクトの場合は、`build.gradle.kts` ファイルに以下を追加し、`<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_WITH_SPARK_VERSION>` を使用しているバージョンに置き換えます。
+
+    ```kotlin
+    implementation("com.scalar-labs:scalardb-analytics-spark-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_WITH_SPARK_VERSION>")
+    ```
+  </TabItem>
+  <TabItem value="maven" label="Maven" default>
+    Groovy を使用して Gradle を設定するには、`build.gradle` ファイルに以下を追加し、`<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_WITH_SPARK_VERSION>` を、使用しているバージョンに置き換えます。
+
+    ```groovy
+    implementation 'com.scalar-labs:scalardb-analytics-spark-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_WITH_SPARK_VERSION>'
+    ```
+  </TabItem>
+  <TabItem value="sbt" label="SBT">
+    アプリケーションを SBT プロジェクトに追加するには、`build.sbt` ファイルに次のコードを挿入し、`<SPARK_VERSION>` と `<SCALA_VERSION>` を使用しているバージョンに置き換えます。
+
+    ```scala
+    libraryDependencies += "com.scalar-labs" %% "scalardb-analytics-spark-<SPARK_VERSION>" % "<SCALA_VERSION>"
+    ```
+  </TabItem>
+</Tabs>
+
+ScalarDB Analytics with Spark をアプリケーションに統合した後、上記で説明したのと同じヘルパーメソッドを使用して、Spark アプリケーションで ScalarDB Analytics with Spark を設定できます。
+
+<Tabs groupId="helper_method" queryString>
+  <TabItem value="Scala" label="Scala" default>
+    以下は Scala を使用するサンプルアプリケーションです。
+
+    ```scala
+    import com.scalar.db.analytics.spark.implicits._
+
+    object YourApp {
+      def main(args: Array[String]): Unit = {
+        // Initialize SparkSession as usual
+        val spark = SparkSession.builder.appName("<YOUR_APPLICATION_NAME>").getOrCreate()
+        // Setup ScalarDB Analytics with Spark via helper method
+        spark.setupScalarDbAnalytics(
+          // ScalarDB config file
+          configPath = "/<PATH_TO_YOUR_SCALARDB_PROPERTIES>/config.properties",
+          // Namespaces in ScalarDB to import
+          namespaces = Set("<YOUR_NAMESPACE_NAME_1>", "<YOUR_NAMESPACE_NAME_2>"),
+          // License information
+          license = License.certPath("""{"your":"license", "key":"in", "json":"format"}""", "/<PATH_TO_YOUR_LICENSE>/cert.pem")
+        )
+        // Run arbitrary queries
+        spark.sql("select * from <YOUR_NAMESPACE_NAME_1>.<YOUR_TABLE_NAME>").show()
+        // Stop SparkSession
+        spark.stop()
+      }
+    }
+    ```
+  </TabItem>
+    <TabItem value="Java" label="Java">
+    Java で ScalarDB Analytics with Spark を使用した Spark アプリケーションを作成できます。
+
+    ```java
+    import com.scalar.db.analytics.spark.ScalarDbAnalyticsInitializer
+
+    class YourApp {
+      public static void main(String[] args) {
+        // Initialize SparkSession as usual
+        SparkSession spark = SparkSession.builder().appName("<YOUR_APPLICATION_NAME>").getOrCreate()
+        // Setup ScalarDB Analytics with Spark via helper class
+        ScalarDbAnalyticsInitializer
+          .builder()
+          .spark(spark)
+          .configPath("/<PATH_TO_YOUR_SCALARDB_PROPERTIES>/config.properties")
+          .namespace("<YOUR_NAMESPACE_NAME_1>")
+          .namespace("<YOUR_NAMESPACE_NAME_2>")
+          .licenseKey("{\"your\":\"license\", \"key\":\"in\", \"json\":\"format\"}")
+          .licenseCertPath("/<PATH_TO_YOUR_LICENSE>/cert.pem")
+          .build()
+          .run()
+        // Run arbitrary queries
+        spark.sql("select * from <YOUR_NAMESPACE_NAME_1>.<YOUR_TABLE_NAME>").show()
+        // Stop SparkSession
+        spark.stop()
+      }
+    }
+    ```
+  </TabItem>
+</Tabs>
+
+次に、`sbt package` や `./gradlew assemble` などの好みのビルドツールを使用して .jar ファイルを作成する必要があります。
+
+.jar ファイルを作成したら、`spark-submit` を使用してその .jar ファイルを Spark クラスターに送信できます。`--packages` オプションを使用して、次のコマンドを実行し、クラスターで ScalarDB Analytics ライブラリを有効にします。`<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_WITH_SPARK_VERSION>` は、使用しているバージョンに置き換えてください。
+
+```console
+./bin/spark-submit \
+      --class "YourApp" \
+      --packages com.scalar-labs:scalardb-analytics-spark-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_WITH_SPARK_VERSION> \
+      <YOUR_APP_NAME>.jar
+```
+
+一般的な Spark アプリケーション開発の詳細については、[Apache Spark ドキュメント](https://spark.apache.org/docs/latest/)を参照してください。

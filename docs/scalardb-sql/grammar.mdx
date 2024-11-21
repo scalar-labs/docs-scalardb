@@ -45,6 +45,8 @@ tags:
   - [DESCRIBE](#describe)
   - [SUSPEND](#suspend)
   - [RESUME](#resume)
+  - [SHOW USERS](#show-users)
+  - [SHOW GRANTS](#show-grants)
 
 ## DDL
 
@@ -117,13 +119,15 @@ data_type: BOOLEAN | INT | BIGINT | FLOAT | DOUBLE | TEXT | BLOB
 creation_options: <option name>=<option value> [AND <option name>=<option value>] ...
 ```
 
+- You can specify `ENCRYPTED` for non-primary-key columns to encrypt the data in those columns.
+
 Create a table with a primary key that is composed of one partition key column and multiple clustering key columns:
 ```sql
 CREATE TABLE [IF NOT EXISTS] [<namespace name>.]<table name> (
   <partition key column name> data_type,
   <clustering key column name> data_type,
   ...,
-  <column name> data_type,
+  <column name> data_type [ENCRYPTED],
   ...,
   PRIMARY KEY (<partition key column name>, <clustering key column name> [, <clustering key column name>] ...)
 ) [WITH [clustering_order_definition [AND creation_options]] | creation_options]
@@ -132,7 +136,7 @@ clustering_order_definition: CLUSTERING ORDER BY (<clustering key column name> [
 clustering_order: ASC | DESC
 ```
 
-If you omit `clustering_order`, the default clustering order `ASC` is used.
+- If you omit `clustering_order`, the default clustering order `ASC` will be used.
 
 Create a table with a primary key that is composed of multiple partition key columns and multiple clustering key columns:
 ```sql
@@ -141,8 +145,8 @@ CREATE TABLE [IF NOT EXISTS] [<namespace name>.]<table name> (
   ...,
   <clustering key column name> data_type,
   ...,
-  <column name1> data_type,
-  <column name2> data_type,
+  <column name1> data_type [ENCRYPTED],
+  <column name2> data_type [ENCRYPTED],
   ...,
   PRIMARY KEY ((<partition key column name> [, <partition key column name>] ...), <clustering key column name> [, <clustering key column name>] ...)
 ) [WITH [clustering_order_definition [AND creation_options]] | creation_options]
@@ -181,6 +185,15 @@ CREATE TABLE ns.tbl (
   c5 BOOLEAN,
   PRIMARY KEY ((c1, c2), c3, c4)
 ) WITH CLUSTERING ORDER BY (c3 DESC, c4 ASC) AND 'option1' = 'value1' AND 'option2' = 'value2' AND 'option3' = 'value3';
+
+-- Create a table with a primary key ("c1") and encrypted columns ("c2", "c3", "c4", and "c5")
+CREATE TABLE ns.tbl (
+  c1 INT PRIMARY KEY,
+  c2 TEXT ENCRYPTED,
+  c3 FLOAT ENCRYPTED,
+  c4 BIGINT ENCRYPTED,
+  c5 BOOLEAN ENCRYPTED
+);
 ```
 
 Examples of building statement objects for `CREATE TABLE` are as follows:
@@ -226,11 +239,27 @@ CreateTableStatement statement3 =
         .withOption("option2", "value2")
         .withOption("option3", "value3")
         .build();
+
+// Create a table with a primary key ("c1") and encrypted columns ("c2", "c3", "c4", and "c5")
+CreateTableStatement statement4 =
+    StatementBuilder.createTable("ns", "tbl")
+        .withPartitionKey("c1", DataType.INT)
+        .withColumn("c2", DataType.TEXT, true)
+        .withColumn("c3", DataType.FLOAT, true)
+        .withColumn("c4", DataType.BIGINT, true)
+        .withColumn("c5", DataType.BOOLEAN, true)
+        .build();
 ```
 
 ### CREATE INDEX
 
-The `CREATE INDEX` command creates a secondary index on a table.
+The `CREATE INDEX` command creates a secondary index on a table. 
+
+:::note
+
+You cannot create a secondary index on encrypted columns.
+
+:::
 
 #### Grammar
 
@@ -512,10 +541,12 @@ The `ALTER TABLE` command alters a table (ex. adding a column).
 #### Grammar
 
 ```sql
-ALTER TABLE [<namespace name>.]<table name> ADD [COLUMN] <column name> data_type
+ALTER TABLE [<namespace name>.]<table name> ADD [COLUMN] <column name> data_type [ENCRYPTED]
 
 data_type: BOOLEAN | INT | BIGINT | FLOAT | DOUBLE | TEXT | BLOB
 ```
+
+- You can specify `ENCRYPTED` for the column to encrypt the data in that column.
 
 #### Examples
 
@@ -524,6 +555,9 @@ Examples of `ALTER TABLE` are as follows:
 ```sql
 -- Add a new column "new_col" to "ns.tbl"
 ALTER TABLE ns.tbl ADD COLUMN new_col INT;
+
+-- Add a new encrypted column "new_col" to "ns.tbl"
+ALTER TABLE ns.tbl ADD COLUMN new_col TEXT ENCRYPTED;
 ```
 
 Examples of building statement objects for `ALTER TABLE` are as follows:
@@ -532,6 +566,10 @@ Examples of building statement objects for `ALTER TABLE` are as follows:
 // Add a new column "new_col" to "ns.tbl"
 AlterTableAddColumnStatement statement =
     StatementBuilder.alterTable("ns", "tbl").addColumn("new_col", DataType.INT).build();
+
+// Add a new encrypted column "new_col" to "ns.tbl"
+AlterTableAddColumnStatement statement =
+    StatementBuilder.alterTable("ns", "tbl").addColumn("new_col", DataType.TEXT, true).build();
 ```
 
 ## DML
@@ -585,12 +623,13 @@ order: ASC | DESC
   - The `join_predicate`s must contain all primary-key columns or a secondary-index column from the left table.
   - The `WHERE` predicates and the `ORDER BY` clause can only specify columns from the table specified in the `RIGHT OUTER JOIN` clause.
 
-`WHERE` and `LIMIT` clauses:
+`WHERE` clauses:
 
 - You can use arbitrary predicates for any columns in the `WHERE` clause.
 - In the `WHERE` clause, predicates must be an OR-wise of `and_predicates` (known as disjunctive normal form) or an AND-wise of `or_predicates` (known as conjunctive normal form).
 - When connecting multiple `and_predicates` or `or_predicates`, which have more than one predicate, you need to put parentheses around `and_predicates` and `or_predicates`.
-- You can specify `<column value>` and `<limit>` to a bind marker (positional `?` and named `:<name>`).
+- You can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
+- You cannot specify encrypted columns in the `WHERE` clause.
 
 `LIKE` predicate:
 
@@ -604,6 +643,11 @@ order: ASC | DESC
 
 - You can specify `order` for any columns in the `ORDER BY` clause.
 - If you omit `order`, the default order `ASC` will be used.
+- You cannot specify encrypted columns in the `ORDER BY` clause.
+
+`LIMIT` clause:
+
+- You can specify `<limit>` to a bind marker (positional `?` and named `:<name>`).
 
 For details about retrieving data from a database in ScalarDB, see [Get operation](../api-guide.mdx#get-operation) and [Scan operation](../api-guide.mdx#scan-operation).
 
@@ -1037,8 +1081,8 @@ INSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ..
   VALUES (<column value> [, <column value>] ...) [, (<column value> [, <column value>] ...)] ...
 ```
 
-Note that you must specify a full primary key in `INSERT`.
-And you can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
+- You must specify a full primary key in `INSERT`.
+- You can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
 
 #### Examples
 
@@ -1107,11 +1151,8 @@ UPSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ..
   VALUES (<column value> [, <column value>] ...) [, (<column value> [, <column value>] ...)] ...
 ```
 
-:::note
-
-You must specify a full primary key in `UPSERT`. In addition, you can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
-
-:::
+- You must specify a full primary key in `UPSERT`.
+- You can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
 
 #### Examples
 
@@ -1203,6 +1244,7 @@ operator: = | <> | != | > | >= | < | <=
 - In the `WHERE` clause, predicates must be an OR-wise of `and_predicates` (known as disjunctive normal form) or an AND-wise of `or_predicates` (known as conjunctive normal form).
 - When connecting multiple `and_predicates` or `or_predicates`, which have more than one predicate, you need to put parentheses around `and_predicates` and `or_predicates`.
 - You can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
+- You cannot specify encrypted columns in the `WHERE` clause.
 
 `LIKE` predicate:
 
@@ -1429,6 +1471,7 @@ operator: = | <> | != | > | >= | < | <=
 - In the `WHERE` clause, predicates must be an OR-wise of `and_predicates` (known as disjunctive normal form) or an AND-wise of `or_predicates` (known as conjunctive normal form).
 - When connecting multiple `and_predicates` or `or_predicates`, which have more than one predicate, you need to put parentheses around `and_predicates` and `or_predicates`.
 - You can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
+- You cannot specify encrypted columns in the `WHERE` clause.
 
 `LIKE` predicate:
 
@@ -1613,9 +1656,10 @@ The `CREATE USER` command creates a new user with the specified username, passwo
 CREATE USER <username> [WITH] {PASSWORD <password> | SUPERUSER | NO_SUPERUSER} ...
 ```
 
-If you don't specify a password for a user, the user is created without password.
-
-If you specify the `SUPERUSER` attribute for a user, the user becomes a superuser. If you specify the `NO_SUPERUSER` attribute for a user, the user becomes a normal user. If you don't specify either `SUPERUSER` or `NO_SUPERUSER` for a user, the user becomes a normal user.
+- If you don't specify a password for a user, the user is created without a password.
+- If you specify the `SUPERUSER` attribute for a user, the user becomes a superuser.
+- If you specify the `NO_SUPERUSER` attribute for a user, the user becomes a normal user.
+- If you don't specify either `SUPERUSER` or `NO_SUPERUSER` for a user, the user becomes a normal user.
 
 #### Examples
 
@@ -1656,7 +1700,8 @@ The `ALTER USER` command changes the password and user attributes of the specifi
 ALTER USER <username> [WITH] {PASSWORD <password> | SUPERUSER | NO_SUPERUSER} ...
 ```
 
-If you specify the `SUPERUSER` attribute for a user, the user becomes a superuser. If you specify the `NO_SUPERUSER` attribute for a user, the user becomes a normal user.
+- If you specify the `SUPERUSER` attribute for a user, the user becomes a superuser.
+- If you specify the `NO_SUPERUSER` attribute for a user, the user becomes a normal user.
 
 #### Examples
 
@@ -1720,7 +1765,9 @@ GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON NAMESPACE <namespace n
 privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER  
 ```
 
-If you specify the `WITH GRANT OPTION` option, the user can grant privileges to other users.
+- You must grant `INSERT` and `UPDATE` privileges together.
+- To grant a user the `UPDATE` or `DELETE` privilege, the target user must have the `SELECT` privilege.
+- If you specify the `WITH GRANT OPTION` option, the user can grant privileges to other users.
 
 #### Examples
 
@@ -1792,6 +1839,9 @@ REVOKE GRANT OPTION ON NAMESPACE <namespace name> [, <namespace name>] ... FROM 
 
 privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER  
 ```
+
+- You must revoke `INSERT` and `UPDATE` privileges together.
+- If the target user has the `INSERT` or `UPDATE` privilege, you cannot revoke the `SELECT` privilege from them.
 
 #### Examples
 
@@ -2225,4 +2275,77 @@ An example of building statement objects for `RESUME` is as follows:
 ```java
 // Resume a transaction
 ResumeStatement statement = StatementBuilder.resume("id").build();
+```
+
+### SHOW USERS
+
+The `SHOW USERS` command shows usernames and user attributes. If you are a superuser, you can see all users. If you are a normal user, you can see only your own user name and attritubes.
+
+This command returns the following columns:
+
+- `username`: `TEXT` - a username
+- `isSuperuser`: `BOOLEAN` - whether the user is a superuser
+
+#### Grammar
+
+```sql
+SHOW USERS
+```
+
+#### Examples
+
+An example of `SHOW USERS` is as follows:
+
+```sql
+-- Show usernames and user attributes
+SHOW USERS;
+```
+
+An example of building statement objects for `SHOW USERS` is as follows:
+
+```java
+// Show usernames and user attributes
+ShowUsersStatement statement = StatementBuilder.showUsers().build();
+```
+
+### SHOW GRANTS
+
+The `SHOW GRANTS` command shows the privileges granted to the current user or the specified user.
+
+This command returns the following columns:
+
+- `name`: `TEXT` - a namespace name or a table name, depending on the type
+- `type`: `TEXT` - the type of the object (either `NAMESPACE` or `TABLE`)
+- `privilege`: `TEXT` - a privilege
+
+#### Grammar
+
+```sql
+-- Show privileges granted to the current user
+SHOW GRANTS
+
+-- Show privileges granted to the specified user
+SHOW GRANTS FOR <username>
+```
+
+#### Examples
+
+Examples of `SHOW GRANTS` are as follows:
+
+```sql
+-- Show privileges granted to the current user
+SHOW GRANTS;
+
+-- Show privileges granted to user1
+SHOW GRANTS FOR user1;
+```
+
+Examples of building statement objects for `SHOW GRANTS` are as follows:
+
+```java
+// Show privileges granted to the current user
+ShowGrantsStatement statement1 = StatementBuilder.showGrants().build();
+
+// Show privileges granted to user1
+ShowGrantsStatement statement2 = StatementBuilder.showGrants().forUser("user1").build();
 ```

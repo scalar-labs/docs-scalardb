@@ -1,24 +1,20 @@
 ---
 tags:
   - Enterprise Option
-  - Private Preview
+  - Public Preview
 ---
 
-# ScalarDB Analytics with Spark
+# ScalarDB Analytics
 
 import WarningLicenseKeyContact from '/src/components/en-us/_warning-license-key-contact.mdx';
 
-ScalarDB, as a universal transaction manager, targets mainly transactional workloads and therefore supports limited subsets of relational queries.
+**ScalarDB Analytics** is the analytical component of ScalarDB. Similar to ScalarDB, it unifies diverse data sources - ranging from RDBMSs like PostgreSQL and MySQL to NoSQL databases such as Cassandra and DynamoDB - into a single logical database. While ScalarDB focuses on operational workloads with strong transactional consistency across multiple databases, ScalarDB Analytics is optimized for analytical workloads. It supports a wide range of queries, including complex joins, aggregations, and window functions. ScalarDB Analytics operates seamlessly on both ScalarDB-managed data sources and non-ScalarDB-managed ones, enabling advanced analytical queries across various datasets.
 
-ScalarDB Analytics with Spark extends the functionality of ScalarDB to process analytical queries on ScalarDB-managed data by using Apache Spark and Spark SQL.
-
-Since ScalarDB Analytics with Spark is provided as a Spark catalog plugin, you can read externally managed data sources with its data schema. By using this plugin, you can read data from ScalarDB tables as Spark SQL tables with the same schema.
+The current version of ScalarDB Analytics leverages **Apache Spark** as its execution engine. It provides a unified view of ScalarDB-managed and non-ScalarDB-managed data sources by utilizing a Spark custom catalog. Using ScalarDB Analytics, you can treat tables from these data sources as native Spark tables. This allows you to execute arbitrary Spark SQL queries seamlessly. For example, you can join a table stored in Cassandra with a table in PostgreSQL to perform a cross-database analysis with ease.
 
 <WarningLicenseKeyContact product="ScalarDB Analytics with Spark" />
 
 ## Further reading
 
-* To run ad-hoc analytical queries or development applications by using ScalarDB Analytics with Spark, see [Getting Started with ScalarDB Analytics with Spark](getting-started.mdx).
-* For tutorials on how to use ScalarDB Analytics with Spark by using a sample dataset and application, see [Run Analytical Queries on Sample Data by Using ScalarDB Analytics with Spark](../scalardb-samples/scalardb-analytics-spark-sample/README.mdx).
-* For details on how to configure ScalarDB Analytics with Spark, see [Configuration of ScalarDB Analytics with Spark](configuration.mdx).
+* For tutorials on how to use ScalarDB Analytics by using a sample dataset and application, see [Getting Started with ScalarDB Analytics](../scalardb-samples/scalardb-analytics-spark-sample/README.mdx).
 * For supported Spark and Scala versions, see [Version Compatibility of ScalarDB Analytics with Spark](version-compatibility.mdx)
