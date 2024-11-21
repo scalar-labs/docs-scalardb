@@ -1,0 +1,62 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+---
+
+# データのエクスポート
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このドキュメントでは、ScalarDB Data Loader のエクスポート機能について説明します。
+
+## 機能
+
+ScalarDB Data Loader を使用すると、次の形式でデータをエクスポートできます。
+
+- JSON
+- JSONLines
+- CSV
+
+各エクスポートでは、Data Loader の実行時に指定された CLI 引数に基づいて ScalarDB スキャン操作が実行されます。
+
+## 使用方法
+
+Data Loader のエクスポート機能は、次の最小限の設定で開始できます。
+
+```console
+./scalardb-data-loader export --config scalardb.properties --namespace namespace --table tableName
+```
+
+- --config: 接続プロパティファイルへのパス
+- --namespace: データを含むテーブルの名前空間
+- --table: データを含むテーブルの名前
+
+デフォルトでは、`--output-file` 引数も省略されている場合、Data Loader は作業ディレクトリに出力ファイルを作成します。
+
+### コマンドラインオプション
+
+ScalarDB Data Loader で使用できるオプションの一覧を次に示します。
+
+| オプション          | 説明                                                                                                                                                                                                                                                                     | 使用方法                                                 |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------ |
+| --config          | 設定ファイルへのパス。省略すると、ツールは現在のフォルダーで `scalardb.properties` という名前のファイルを検索します。                                                                                                                                                                    | `scalardb-data-loader --config scalardb.properties`    |
+| --namespace       | テーブルデータをエクスポートする名前空間。必須。                                                                                                                                                                                                                                 | `scalardb-data-loader --namespace namespace`           |
+| --table           | データをエクスポートするテーブルの名前。必須。                                                                                                                                                                                                                                   | `scalardb-data-loader --table tableName`               |
+| --key             | 特定のパーティションキーのデータをエクスポートします。デフォルトでは、指定されたテーブルのすべてのデータがエクスポートされます。                                                                                                                                                               | `scalardb-data-loader --key columnName=value`          |
+| --sort            | 並べ替える列を指定します。列はクラスタリングキーである必要があります。引数を繰り返して複数の並べ替えを行うことができます。このオプションは `--key` にのみ適用されます。                                                                                                                             | `scalardb-data-loader --sort columnName=desc`          |
+| --projection      | 投影を指定してエクスポートする列を制限します。引数を繰り返して複数の投影を指定できます。                                                                                                                                                                                                | `scalardb-data-loader --projection columnName`         |
+| --start           | スキャン開始をマークするクラスタリングキー。このオプションは `--key` にのみ適用されます。                                                                                                                                                                                             | `scalardb-data-loader --start columnName=value`        |
+| --start-exclusive | スキャン開始が排他的かどうか。省略した場合、デフォルト値は `false` です。このオプションは `--key` にのみ適用されます。                                                                                                                                                                    | `scalardb-data-loader --start-exclusive`               |
+| --end             | スキャン終了をマークするクラスタリングキー。このオプションは `--key` にのみ適用されます。                                                                                                                                                                                              | `scalardb-data-loader --end columnName=value`          |
+| --end-exclusive   | スキャン開始が排他的かどうか。省略した場合、デフォルト値は `false` です。このオプションは `--key` にのみ適用されます。                                                                                                                                                                    | `scalardb-data-loader --end-exclusive`                 |
+| --limit           | スキャンの結果を制限します。省略した場合、デフォルト値は `0` で、制限がないことを意味します。                                                                                                                                                                                           | `scalardb-data-loader --limit 1000`                    |
+| --output-file     | 出力ファイルの名前とパス。省略した場合、ツールは現在のフォルダーに次の名前形式でファイルを保存します:<br />`export_namespace.tableName_timestamp.json` または `export_namespace.tableName_timestamp.csv`<br /><br />出力フォルダーが存在する必要があります。dataloader は出力フォルダーを作成しません。 | `scalardb-data-loader --output-file ./out/output.json` |
+| --format          | 出力形式。デフォルトでは `json` が選択されます。                                                                                                                                                                                                                                | `scalardb-data-loader --format json`                   |
+| --metadata        | `true` に設定すると、トランザクションメタデータがエクスポートに含まれます。デフォルトでは `false` に設定されています。                                                                                                                                                                     | `scalardb-data-loader --metadata`                      |
+| --delimiter       | CSV ファイルで使用される区切り文字。デフォルト値は `;` です。                                                                                                                                                                                                                     | `scalardb-data-loader --delimiter ;`                   |
+| --no-headers      | CSV ファイルからヘッダー行を除外します。デフォルトは `false` です。                                                                                                                                                                                                                | `scalardb-data-loader --no-headers`                    |
+| --threads         | 同時処理のスレッド数。                                                                                                                                                                                                                                                       | `scalardb-data-loader --threads 500`                   |
