@@ -232,11 +232,12 @@ const sidebars = {
               id: 'scalardb-samples/scalardb-analytics-postgresql-sample/README',
               label: 'Run ScalarDB Analytics with PostgreSQL',
             },
-            {
-              type: 'doc',
-              id: 'scalardb-analytics-spark/getting-started',
-              label: 'Run ScalarDB Analytics with Spark',
-            },
+            // This doc no longer exists but we should have some type of doc here.
+            // {
+            //   type: 'doc',
+            //   id: 'scalardb-analytics-spark/getting-started',
+            //   label: 'Run ScalarDB Analytics with Spark',
+            // },
           ],
         },
         {
@@ -413,11 +414,6 @@ const sidebars = {
                   type: 'doc',
                   id: 'scalardb-analytics-postgresql/schema-importer',
                   label: 'PostgreSQL Schema Importer for PostgreSQL',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-analytics-spark/configuration',
-                  label: 'Configurations for Spark',
                 },
                 {
                   type: 'doc',
