@@ -1,0 +1,194 @@
+---
+tags:
+  - Enterprise Premium
+---
+
+# ScalarDB JDBC ガイド
+
+ScalarDB JDBC の使用方法は、基本的に [Java JDBC API](https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/) に従います。
+このガイドでは、ScalarDB JDBC に固有の重要なトピックをいくつか説明します。
+
+## プロジェクトに ScalarDB JDBC ドライバーを追加する
+
+Gradle を使用して ScalarDB JDBC ドライバーの依存関係を追加するには、次を使用します。`<VERSION>` は、使用している ScalarDB JDBC ドライバーと関連ライブラリのバージョンに置き換えます。
+
+```gradle
+dependencies {
+    implementation 'com.scalar-labs:scalardb-sql-jdbc:<VERSION>'
+    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:<VERSION>'
+}
+```
+
+Maven を使用して依存関係を追加するには、次のコマンドを使用します。`...` は、使用している ScalarDB JDBC ドライバーのバージョンに置き換えます。
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.scalar-labs</groupId>
+        <artifactId>scalardb-sql-jdbc</artifactId>
+        <version>...</version>
+    </dependency>
+    <dependency>
+        <groupId>com.scalar-labs</groupId>
+        <artifactId>scalardb-cluster-java-client-sdk</artifactId>
+        <version>...</version>
+    </dependency>
+</dependencies>
+```
+
+## JDBC 接続 URL
+
+ScalarDB JDBC の JDBC 接続 URL 形式は次のとおりです。
+
+```console
+jdbc:scalardb:<configuration file path>?<property name>=<property value>&<property name>=<property value>&...
+```
+
+例:
+
+設定ファイルのパスのみを指定します:
+
+```console
+jdbc:scalardb:/path/to/database.properties
+```
+
+プロパティのみを指定します:
+
+```console
+jdbc:scalardb:?scalar.db.contact_points=localhost&scalar.db.username=cassandra&scalar.db.password=cassandra&scalar.db.storage=cassandra
+```
+
+設定ファイルのパスとプロパティを指定します。
+
+```console
+jdbc:scalardb:/path/to/database.properties?scalar.db.metadata.cache_expiration_time_secs=0
+```
+
+## ScalarDB JDBC の設定
+
+設定の詳細については、[ScalarDB Cluster SQL クライアント設定](../scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-クライアント設定)を参照してください。
+
+さらに、ScalarDB JDBC 固有の設定は次のとおりです。
+
+| 名前                                                                 | 説明                                               | デフォルト  |
+|---------------------------------------------------------------------|----------------------------------------------------|-----------|
+| scalar.db.sql.jdbc.default_auto_commit                              | デフォルトの接続の自動コミットモード。                   | true      |
+| scalar.db.sql.jdbc.sql_session_factory_cache.expiration_time_millis | SQL セッションファクトリのキャッシュの有効期限 (ミリ秒)。  | 10000     |
+
+## ScalarDB と JDBC 間のデータ型マッピング
+
+ScalarDB は JDBC で定義されているすべてのデータ型をサポートしているわけではないため、以下では ScalarDB と JDBC 間のデータ型マッピングについて説明します。
+
+ScalarDB と JDBC 間のデータ型マッピングは次のとおりです。
+
+| ScalarDB タイプ | JDBC (Java) タイプ     |
+|----------------|-----------------------|
+| Boolean        | boolean または Boolean |
+| Int            | int または Integer     |
+| BigInt         | long または Long       |
+| Float          | float または Float     |
+| Double         | double または Double   |
+| Text           | String                |
+| Blob           | byte[]                |
+
+各データ型の `java.sql.ResultSet` オブジェクトからデータを取得する方法は次のとおりです。
+
+```java
+try (ResultSet resultSet = ...) {
+  resultSet.next();
+
+  // Get a Boolean value of a column
+  boolean booleanValue = resultSet.getBoolean("<column name>");
+
+  // Get an Int value of a column
+  int intValue = resultSet.getInt("<column name>");
+
+  // Get a BigInt value of a column
+  long bigIntValue = resultSet.getLong("<column name>");
+
+  // Get a Float value of a column
+  float floatValue = resultSet.getFloat("<column name>");
+
+  // Get a Double value of a column
+  double doubleValue = resultSet.getDouble("<column name>");
+
+  // Get a Text value of a column
+  String textValue = resultSet.getString("<column name>");
+
+  // Get a Blob value of a column
+  byte[] blobValue = resultSet.getBytes("<column name>");
+}
+```
+
+`java.sql.PreparedStatement` オブジェクトの各データ型のパラメータとしてデータを設定する方法は次のとおりです。
+
+```java
+try (PreparedStatement preparedStatement = ...) {
+  // Set a Boolean value as parameter
+  preparedStatement.setBoolean(1, <Boolean value>);
+
+  // Set an Int value as parameter
+  preparedStatement.setInt(2, <Int value>);
+
+  // Set a BigInt value as parameter
+  preparedStatement.setLong(3, <BigInt value>);
+
+  // Set a Float value as parameter
+  preparedStatement.setFloat(4, <Float value>);
+
+  // Set a Double value as parameter
+  preparedStatement.setDouble(5, <Double value>);
+
+  // Set a Text value as parameter
+  preparedStatement.setString(7, "<Text value>");
+
+  // Set a Blob value as parameter
+  preparedStatement.setBytes(8, <Blob value>);
+
+  preparedStatement.execute();
+}
+```
+
+## SQLException の処理
+
+例外処理は基本的に ScalarDB SQL API と同じです。
+
+```java
+// If you execute multiple statements in a transaction, you need to set auto-commit to false.
+connection.setAutoCommit(false);
+
+try {
+  // Execute statements (SELECT/INSERT/UPDATE/DELETE) in the transaction
+  ...
+
+  // Commit the transaction
+  connection.commit();
+} catch (SQLException e) {
+  if (e.getErrorCode() == 301) {
+    // The error code 301 indicates that you catch `UnknownTransactionStatusException`.
+    // If you catch `UnknownTransactionStatusException`, it indicates that the status of the 
+    // transaction, whether it has succeeded or not, is unknown. In such a case, you need to check
+    // if the transaction is committed successfully or not and retry it if it failed. How to 
+    // identify a transaction status is delegated to users
+  } else {
+    // For other cases, you can try retrying the transaction
+
+    // Rollback the transaction
+    connection.rollback();
+
+    // The cause of the exception can be `TransactionRetryableException` or the other
+    // exceptions. For `TransactionRetryableException`, you can basically retry the transaction.
+    // However, for the other exceptions, the transaction may still fail if the cause of the
+    // exception is nontransient. For such a case, you need to limit the number of retries and
+    // give up retrying
+  }
+}
+```
+
+例外処理の詳細については、[ScalarDB SQL API ガイド](sql-api-guide.mdx)も参照してください。
+
+## 参考文献
+
+- [Java JDBC API](https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/)
+- [ScalarDB SQL API ガイド](sql-api-guide.mdx)
+- [Javadoc for ScalarDB JDBC](https://javadoc.io/doc/com.scalar-labs/scalardb-sql-jdbc/3.14.0/index.html)
