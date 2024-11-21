@@ -5,50 +5,51 @@
  * LICENSE file in the root directory of this source tree.
  */
 
-import React, {useEffect} from 'react';
+import React, { useEffect } from 'react';
 import clsx from 'clsx';
+import { useLocation } from '@docusaurus/router';
+import type { Props } from '@theme/NavbarItem/HtmlNavbarItem';
 
-import type {Props} from '@theme/NavbarItem/HtmlNavbarItem';
+function loadGoogleTranslateScript(callback: () => void) {
+  if (typeof window !== 'undefined' && typeof document !== 'undefined') {
+    const existingScript = document.getElementById('google-translate-script');
+    if (!existingScript) {
+      const addScript = document.createElement('script');
+      addScript.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
+      addScript.async = true;
+      addScript.id = 'google-translate-script';
+      addScript.onload = callback; // Trigger callback once loaded.
+      document.body.appendChild(addScript);
+    } else {
+      callback(); // Script already exists, proceed to callback directly.
+    }
+  }
+}
 
-function loadGoogleTranslateScript() {
-  if (typeof window !== "undefined" && typeof document !== "undefined") {
-    const addScript = document.createElement('script');
-    addScript.src = '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit';
-    addScript.async = true;
-    document.body.appendChild(addScript);
-    window.googleTranslateElementInit = async function () {
-      // Function to initialize the Google Translate widget
-      const initGoogleTranslate = () => {
-        new google.translate.TranslateElement(
+function initializeGoogleTranslate() {
+  if (typeof window !== 'undefined' && window.google && window.google.translate) {
+    const targetElement = document.getElementById('google_translate_element');
+    if (targetElement && !window.googleTranslateElement) {
+      try {
+        window.googleTranslateElement = new window.google.translate.TranslateElement(
           { pageLanguage: 'en', includedLanguages: 'ja' },
           'google_translate_element'
         );
-      };
-
-      // Function will wait for element id to be available
-      const waitForElement = () => {
-        return new Promise<void>((resolve) => {
-          const checkElement = () => {
-            const targetElement = document.getElementById('google_translate_element');
-            if (targetElement) {
-              // If the target element is available, resolve the Promise
-              resolve();
-            } else {
-              // If the target element is not available, wait and check again
-              setTimeout(checkElement, 100); // Adjust the time delay as needed
-            }
-          };
-          checkElement(); // Start checking for the element
-        });
-      };
-    
-      // Wait for the target element to be available before initializing the widget
-      await waitForElement();
-      initGoogleTranslate();
-    };
-    
+      } catch (error) {
+        console.error('Error initializing Google Translate:', error);
+      }
+    }
   }
 }
+
+function removeGoogleTranslateWidget() {
+  const existingElement = document.getElementById('google_translate_element');
+  if (existingElement) existingElement.innerHTML = ''; // Clear content.
+  const script = document.getElementById('google-translate-script');
+  if (script) script.remove(); // Remove the Google Translate script.
+  window.googleTranslateElement = null;
+}
+
 export default function HtmlNavbarItem({
   value,
   className,
@@ -56,13 +57,37 @@ export default function HtmlNavbarItem({
   isDropdownItem = false,
 }: Props): JSX.Element {
   const Comp = isDropdownItem ? 'li' : 'div';
+  const { pathname } = useLocation();
+
+  const allowedVersions = ['3.4', '3.5', '3.6', '3.7', '3.8', '3.9', '3.10', '3.11', '3.12'];
+  const versionMatch = pathname.match(/\/docs\/(\d+\.\d+)\//);
+  const currentVersion = versionMatch ? versionMatch[1] : null;
+
   useEffect(() => {
-    if(process.env.NODE_ENV !== 'development') {
-    loadGoogleTranslateScript();
+    if (currentVersion && allowedVersions.includes(currentVersion)) {
+      // Ensure Google Translate script is loaded.
+      loadGoogleTranslateScript(() => {
+        if (!sessionStorage.getItem('googleTranslateInitialized')) {
+          window.googleTranslateElementInit = () => {
+            initializeGoogleTranslate();
+            sessionStorage.setItem('googleTranslateInitialized', 'true');
+          };
+        } else {
+          initializeGoogleTranslate(); // Re-initialize if already loaded.
+        }
+      });
     } else {
-      console.log('Google Translate Not loaded in Dev');
+      // Clear widget if on an unallowed version.
+      removeGoogleTranslateWidget();
+      sessionStorage.removeItem('googleTranslateInitialized');
     }
-  },[]);
+  }, [currentVersion]);
+
+  // Hide component if version is not in allowed versions.
+  if (currentVersion && !allowedVersions.includes(currentVersion)) {
+    return null;
+  }
+
   return (
     <Comp
       className={clsx(
@@ -72,7 +97,7 @@ export default function HtmlNavbarItem({
         },
         className,
       )}
-      dangerouslySetInnerHTML={{__html: value}}
+      dangerouslySetInnerHTML={{ __html: value }}
     />
   );
 }

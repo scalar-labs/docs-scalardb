@@ -29,26 +29,26 @@ const config = {
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
-  // i18n: {
-  //   defaultLocale: 'en-us',
-  //   locales: ['en-us', 'ja-jp'],
-  //   localeConfigs: {
-  //     'en-us': {
-  //       label: 'English',
-  //       direction: 'ltr',
-  //       htmlLang: 'en-US',
-  //       calendar: 'gregory',
-  //       path: 'versioned_docs/en-us',
-  //     },
-  //     'ja-jp': {
-  //       label: '日本語',
-  //       direction: 'ltr',
-  //       htmlLang: 'ja-JP',
-  //       calendar: 'gregory',
-  //       path: 'versioned_docs/ja-jp',
-  //     },
-  //   },
-  // },
+  i18n: {
+    defaultLocale: 'en-us',
+    locales: ['en-us', 'ja-jp'],
+    localeConfigs: {
+      'en-us': {
+        label: 'English',
+        direction: 'ltr',
+        htmlLang: 'en-US',
+        calendar: 'gregory',
+        path: 'versioned_docs/en-us',
+      },
+      'ja-jp': {
+        label: '日本語',
+        direction: 'ltr',
+        htmlLang: 'ja-JP',
+        calendar: 'gregory',
+        path: 'versioned_docs/ja-jp',
+      },
+    },
+  },
 
   presets: [
     [
@@ -147,6 +147,11 @@ const config = {
       }),
     ],
   ],
+
+  // The following versions have Japanese docs, so the language dropdown should be displayed only when visitors are reading these versions of docs.
+  customFields: {
+    allowedLanguageDropdownVersions: ["current", "latest", "3.13"],
+  },
 
   plugins: [
     [
@@ -345,18 +350,15 @@ const config = {
             label: 'Scalar Docs Home',
           },
           {
+            type: 'localeDropdown',
+            position: 'right',
+          },
+          {
             href: 'https://github.com/scalar-labs/scalardb',
             position: 'right',
             className: 'header-github-link',
             'aria-label': 'GitHub repository',
           },
-          /*
-          The "localeDropdown" configuration should be uncommented (enabled) after we create Japanese versions of docs.
-          */
-          // {
-          //   type: 'localeDropdown',
-          //   position: 'right',
-          // },
         ],
       },
       algolia: {
