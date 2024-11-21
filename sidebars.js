@@ -186,19 +186,19 @@ const sidebars = {
               label: 'Run Through the CRUD Interface',
               collapsible: true,
               items: [
-                { // To be created
+                {
                   type: 'doc',
                   id: 'run-transactions-through-scalardb-core-library',
                   label: 'Use the ScalarDB Core Library',
                 },
-                { // To be created
+                {
                   type: 'doc',
                   id: 'scalardb-cluster/run-transactions-through-scalardb-cluster',
                   label: 'Use ScalarDB Cluster',
                 },
               ],
             },
-            { // To be created
+            {
               type: 'doc',
               id: 'scalardb-cluster/run-transactions-through-scalardb-cluster-sql',
               label: 'Run Through the SQL Interface',
@@ -232,11 +232,12 @@ const sidebars = {
               id: 'scalardb-samples/scalardb-analytics-postgresql-sample/README',
               label: 'Run ScalarDB Analytics with PostgreSQL',
             },
-            {
-              type: 'doc',
-              id: 'scalardb-analytics-spark/getting-started',
-              label: 'Run ScalarDB Analytics with Spark',
-            },
+            // This doc no longer exists but we should have some type of doc here.
+            // {
+            //   type: 'doc',
+            //   id: 'scalardb-analytics-spark/getting-started',
+            //   label: 'Run ScalarDB Analytics with Spark',
+            // },
           ],
         },
         {
@@ -249,24 +250,24 @@ const sidebars = {
               label: 'Run Through the CRUD Interface',
               collapsible: true,
               items: [
-                { // To be created
+                {
                   type: 'doc',
                   id: 'run-non-transactional-storage-operations-through-library',
                   label: 'Use the ScalarDB Core Library',
                 },
-                { // To be created
+                {
                   type: 'doc',
                   id: 'scalardb-cluster/run-non-transactional-storage-operations-through-scalardb-cluster',
                   label: 'Use ScalarDB Cluster',
                 },
               ],
             },
-            { // To be created
+            {
               type: 'doc',
               id: 'scalardb-cluster/run-non-transactional-storage-operations-through-sql-interface',
               label: 'Run Through the SQL Interface',
             },
-            { // To be created
+            {
               type: 'doc',
               id: 'run-non-transactional-storage-operations-through-primitive-crud-interface',
               label: 'Run Through the Primitive CRUD Interface',
@@ -356,6 +357,16 @@ const sidebars = {
               label: 'ScalarDB Cluster gRPC API Guide',
             },
             {
+              type: 'doc',
+              id: 'scalardb-cluster/encrypt-data-at-rest',
+              label: 'Encrypt Data at Rest',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/encrypt-wire-communications',
+              label: 'Encrypt Wire Communications',
+            },
+            {
               type: 'category',
               label: 'SQL Interface',
               collapsible: true,
@@ -413,11 +424,6 @@ const sidebars = {
                   type: 'doc',
                   id: 'scalardb-analytics-postgresql/schema-importer',
                   label: 'PostgreSQL Schema Importer for PostgreSQL',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-analytics-spark/configuration',
-                  label: 'Configurations for Spark',
                 },
                 {
                   type: 'doc',

@@ -1,0 +1,399 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+---
+
+# ScalarDB Cluster Error Codes
+
+This page provides a list of error codes in ScalarDB Cluster.
+
+## Error code classes and descriptions
+
+| Class           | Description                               |
+|:----------------|:------------------------------------------|
+| `CLUSTER-1xxxx` | Errors for the user error category        |
+| `CLUSTER-2xxxx` | Errors for the concurrency error category |
+| `CLUSTER-3xxxx` | Errors for the internal error category    |
+
+## `CLUSTER-1xxxx` status codes
+
+### `CLUSTER-10000`
+
+**Message**
+
+```markdown
+The namespace does not exist. Namespace: %s
+```
+
+### `CLUSTER-10001`
+
+**Message**
+
+```markdown
+The table does not exist. Table: %s
+```
+
+### `CLUSTER-10002`
+
+**Message**
+
+```markdown
+The user does not exist. User: %s
+```
+
+### `CLUSTER-10003`
+
+**Message**
+
+```markdown
+ClusterConfig is not specified
+```
+
+### `CLUSTER-10004`
+
+**Message**
+
+```markdown
+The get type is unspecified
+```
+
+### `CLUSTER-10005`
+
+**Message**
+
+```markdown
+The get type is unrecognized
+```
+
+### `CLUSTER-10006`
+
+**Message**
+
+```markdown
+The value of the column is not set. Column: %s
+```
+
+### `CLUSTER-10007`
+
+**Message**
+
+```markdown
+The scan type is unspecified
+```
+
+### `CLUSTER-10008`
+
+**Message**
+
+```markdown
+The scan type is unrecognized
+```
+
+### `CLUSTER-10009`
+
+**Message**
+
+```markdown
+The order is unspecified
+```
+
+### `CLUSTER-10010`
+
+**Message**
+
+```markdown
+The order is unrecognized
+```
+
+### `CLUSTER-10011`
+
+**Message**
+
+```markdown
+The clustering order is unspecified
+```
+
+### `CLUSTER-10012`
+
+**Message**
+
+```markdown
+The clustering order is unrecognized
+```
+
+### `CLUSTER-10013`
+
+**Message**
+
+```markdown
+The put condition type is unspecified
+```
+
+### `CLUSTER-10014`
+
+**Message**
+
+```markdown
+The put condition type is unrecognized
+```
+
+### `CLUSTER-10015`
+
+**Message**
+
+```markdown
+The delete condition type is unspecified
+```
+
+### `CLUSTER-10016`
+
+**Message**
+
+```markdown
+The delete condition type is unrecognized
+```
+
+### `CLUSTER-10017`
+
+**Message**
+
+```markdown
+The operator is unspecified
+```
+
+### `CLUSTER-10018`
+
+**Message**
+
+```markdown
+The operator is unrecognized
+```
+
+### `CLUSTER-10019`
+
+**Message**
+
+```markdown
+The mutation is not set
+```
+
+### `CLUSTER-10020`
+
+**Message**
+
+```markdown
+The data type is unspecified
+```
+
+### `CLUSTER-10021`
+
+**Message**
+
+```markdown
+The data type is unrecognized
+```
+
+### `CLUSTER-10022`
+
+**Message**
+
+```markdown
+The user option is unspecified
+```
+
+### `CLUSTER-10023`
+
+**Message**
+
+```markdown
+The user option is unrecognized
+```
+
+### `CLUSTER-10024`
+
+**Message**
+
+```markdown
+The privilege is unspecified
+```
+
+### `CLUSTER-10025`
+
+**Message**
+
+```markdown
+The privilege is unrecognized
+```
+
+### `CLUSTER-10026`
+
+**Message**
+
+```markdown
+The username is not set
+```
+
+### `CLUSTER-10027`
+
+**Message**
+
+```markdown
+This feature is not supported in ScalarDB Cluster
+```
+
+### `CLUSTER-10028`
+
+**Message**
+
+```markdown
+The property 'scalar.db.contact_points' must not be empty
+```
+
+### `CLUSTER-10029`
+
+**Message**
+
+```markdown
+The property 'scalar.db.contact_points' must be prefixed with 'indirect:' or 'direct-kubernetes:'
+```
+
+### `CLUSTER-10030`
+
+**Message**
+
+```markdown
+The format of the property 'scalar.db.contact_points' for direct-kubernetes client mode is 'direct-kubernetes:<NAMESPACE_NAME>/<ENDPOINT_NAME>' or 'direct-kubernetes:<ENDPOINT_NAME>'
+```
+
+### `CLUSTER-10031`
+
+**Message**
+
+```markdown
+The property 'scalar.db.sql.cluster_mode.contact_points' must not be empty
+```
+
+### `CLUSTER-10032`
+
+**Message**
+
+```markdown
+The property 'scalar.db.sql.cluster_mode.contact_points' must be prefixed with 'indirect:' or 'direct-kubernetes:'
+```
+
+### `CLUSTER-10033`
+
+**Message**
+
+```markdown
+The format of the property 'scalar.db.sql.cluster_mode.contact_points' for direct-kubernetes client mode is 'direct-kubernetes:<NAMESPACE_NAME>/<ENDPOINT_NAME>' or 'direct-kubernetes:<ENDPOINT_NAME>'
+```
+
+### `CLUSTER-10034`
+
+**Message**
+
+```markdown
+ClusterNodeManagerFactory is not specified
+```
+
+### `CLUSTER-10035`
+
+**Message**
+
+```markdown
+The update condition type is unspecified
+```
+
+### `CLUSTER-10036`
+
+**Message**
+
+```markdown
+The update condition type is unrecognized
+```
+
+### `CLUSTER-10037`
+
+**Message**
+
+```markdown
+The two-phase commit interface is not supported
+```
+
+## `CLUSTER-2xxxx` status codes
+
+### `CLUSTER-20000`
+
+**Message**
+
+```markdown
+The hop limit is exceeded
+```
+
+### `CLUSTER-20001`
+
+**Message**
+
+```markdown
+A transaction associated with the specified transaction ID is not found. The transaction might have expired, or the cluster node that handled the transaction might have been restarted. Transaction ID: %s
+```
+
+## `CLUSTER-3xxxx` status codes
+
+### `CLUSTER-30000`
+
+**Message**
+
+```markdown
+Getting local IP addresses failed
+```
+
+### `CLUSTER-30001`
+
+**Message**
+
+```markdown
+Getting a cluster node object from the cache failed. Cluster Node IP Address: %s
+```
+
+### `CLUSTER-30002`
+
+**Message**
+
+```markdown
+The ring is empty
+```
+
+### `CLUSTER-30003`
+
+**Message**
+
+```markdown
+Getting the Kubernetes API client failed
+```
+
+### `CLUSTER-30004`
+
+**Message**
+
+```markdown
+Reading the Kubernetes endpoint failed. Namespace: %s; Name: %s; Code: %d; Response Headers: %s; Response Body: %s
+```
+
+### `CLUSTER-30005`
+
+**Message**
+
+```markdown
+Configuring TLS failed
+```
+
+### `CLUSTER-30006`
+
+**Message**
+
+```markdown
+No nearest cluster nodes are found
+```
