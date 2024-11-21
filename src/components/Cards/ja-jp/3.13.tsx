@@ -21,7 +21,7 @@ const CardsAbout = [
     },
     description: (
       <Translate id="home.about.description">
-        Overview
+        概要
       </Translate>
     ),
   },
@@ -33,7 +33,7 @@ const CardsAbout = [
     },
     description: (
       <Translate id="home.about.description">
-        Requirements
+        要件
       </Translate>
     ),
   },
@@ -48,7 +48,7 @@ const CardsQuickstart = [
     },
     description: (
       <Translate id="home.quickstart.description">
-        Getting started with ScalarDB
+        ScalarDB をはじめよう
       </Translate>
     ),
   },
@@ -60,34 +60,7 @@ const CardsQuickstart = [
     },
     description: (
       <Translate id="home.quickstart.description">
-        Getting started with ScalarDB Cluster
-      </Translate>
-    ),
-  },
-]
-
-const CardsSamples = [
-  {
-    // name: '',
-    // image: '<LINK_TO>.png',
-    url: {
-      page: 'scalardb-samples/multi-storage-transaction-sample',
-    },
-    description: (
-      <Translate id="home.samples.description">
-        Run a sample application with multi-storage transaction support
-      </Translate>
-    ),
-  },
-  {
-    // name: '',
-    // image: '<LINK_TO>.png',
-    url: {
-      page: 'scalardb-samples/microservice-transaction-sample',
-    },
-    description: (
-      <Translate id="home.samples.description">
-        Run a sample application that supports microservice transactions
+        ScalarDB Cluster をはじめよう
       </Translate>
     ),
   },
@@ -102,7 +75,7 @@ const CardsDevelop = [
     },
     description: (
       <Translate id="home.develop.description">
-        Add ScalarDB to your build
+        ビルドに ScalarDB を追加する
       </Translate>
     ),
   },
@@ -129,7 +102,7 @@ const CardsDeploy = [
     },
     description: (
       <Translate id="home.deploy.description">
-        See the ScalarDB Cluster production checklist
+        ScalarDB Cluster の運用チェックリストを参照する
       </Translate>
     ),
   },
@@ -141,7 +114,7 @@ const CardsDeploy = [
     },
     description: (
       <Translate id="home.deploy.description">
-        Deploy ScalarDB Cluster on Amazon EKS
+        Amazon EKS に ScalarDB Cluster をデプロイする
       </Translate>
     ),
   },
@@ -155,8 +128,8 @@ const CardsMigrate = [
       page: 'schema-loader-import',
     },
     description: (
-      <Translate id="home.migrate.description">
-        Import Existing Tables by Using ScalarDB Schema Loader
+      <Translate id="home.manage.description">
+        ScalarDB Schema Loader を使用して既存のテーブルをインポートする
       </Translate>
     ),
   },
@@ -167,8 +140,8 @@ const CardsMigrate = [
       page: 'scalardb-sql/migration-guide',
     },
     description: (
-      <Translate id="home.migrate.description">
-        Migrate Your Applications and Databases
+      <Translate id="home.manage.description">
+        アプリケーションとデータベースの移行
       </Translate>
     ),
   },
@@ -182,8 +155,8 @@ const CardsManage = [
       page: 'scalar-kubernetes/K8sMonitorGuide',
     },
     description: (
-      <Translate id="home.manage.description">
-        Monitor ScalarDB in a Kubernetes cluster
+      <Translate id="home.migrate.description">
+        Kubernetes クラスター上の Scalar 製品の監視
       </Translate>
     ),
   },
@@ -194,8 +167,8 @@ const CardsManage = [
       page: 'scalar-kubernetes/BackupNoSQL',
     },
     description: (
-      <Translate id="home.manage.description">
-        Back up a NoSQL database in a Kubernetes environment
+      <Translate id="home.migrate.description">
+        Kubernetes 環境で NoSQL データベースをバックアップする
       </Translate>
     ),
   },
@@ -210,7 +183,7 @@ const CardsReference = [
     },
     description: (
       <Translate id="home.reference.description">
-        ScalarDB Core Error Codes
+        ScalarDB Core エラーコード
       </Translate>
     ),
   },
@@ -222,7 +195,7 @@ const CardsReference = [
     },
     description: (
       <Translate id="home.reference.description">
-        How to Configure a Product License Key
+        製品ライセンスキーの設定方法
       </Translate>
     ),
   },
@@ -278,16 +251,6 @@ export function CardRowQuickstart(): JSX.Element {
   return (
     <div className="row">
       {CardsQuickstart.map((special) => (
-        <Card key={special.name} {...special} />
-      ))}
-    </div>
-  );
-}
-
-export function CardRowSamples(): JSX.Element {
-  return (
-    <div className="row">
-      {CardsSamples.map((special) => (
         <Card key={special.name} {...special} />
       ))}
     </div>
