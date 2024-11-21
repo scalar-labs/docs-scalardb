@@ -39,7 +39,7 @@ const CardsAbout = [
   },
 ]
 
-const CardsGettingStarted = [
+const CardsQuickstart = [
   {
     // name: '',
     // image: '<LINK_TO>.png',
@@ -47,7 +47,7 @@ const CardsGettingStarted = [
       page: 'getting-started-with-scalardb',
     },
     description: (
-      <Translate id="home.gettingStarted.description">
+      <Translate id="home.quickstart.description">
         Getting started with ScalarDB
       </Translate>
     ),
@@ -59,7 +59,7 @@ const CardsGettingStarted = [
       page: 'scalardb-cluster/getting-started-with-scalardb-cluster',
     },
     description: (
-      <Translate id="home.gettingStarted.description">
+      <Translate id="home.quickstart.description">
         Getting started with ScalarDB Cluster
       </Translate>
     ),
@@ -125,11 +125,11 @@ const CardsDeploy = [
     // name: '',
     // image: '<LINK_TO>.png',
     url: {
-      page: 'scalar-kubernetes/SetupDatabaseForAWS',
+      page: 'scalar-kubernetes/ProductionChecklistForScalarDBCluster',
     },
     description: (
       <Translate id="home.deploy.description">
-        Set up a database for ScalarDB on AWS
+        See the ScalarDB Cluster production checklist
       </Translate>
     ),
   },
@@ -137,11 +137,38 @@ const CardsDeploy = [
     // name: '',
     // image: '<LINK_TO>.png',
     url: {
-      page: 'scalar-kubernetes/ProductionChecklistForScalarDBCluster',
+      page: 'scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS',
     },
     description: (
       <Translate id="home.deploy.description">
-        See the ScalarDB Cluster production checklist
+        Deploy ScalarDB Cluster on Amazon EKS
+      </Translate>
+    ),
+  },
+]
+
+const CardsMigrate = [
+  {
+    // name: '',
+    // image: '<LINK_TO>.png',
+    url: {
+      page: 'schema-loader-import',
+    },
+    description: (
+      <Translate id="home.migrate.description">
+        Import Existing Tables by Using ScalarDB Schema Loader
+      </Translate>
+    ),
+  },
+  {
+    // name: '',
+    // image: '<LINK_TO>.png',
+    url: {
+      page: 'scalardb-sql/migration-guide',
+    },
+    description: (
+      <Translate id="home.migrate.description">
+        Migrate Your Applications and Databases
       </Translate>
     ),
   },
@@ -164,11 +191,11 @@ const CardsManage = [
     // name: '',
     // image: '<LINK_TO>.png',
     url: {
-      page: 'scalar-kubernetes/BackupRestoreGuide',
+      page: 'scalar-kubernetes/BackupNoSQL',
     },
     description: (
       <Translate id="home.manage.description">
-        Back up and restore in a Kubernetes environment
+        Back up a NoSQL database in a Kubernetes environment
       </Translate>
     ),
   },
@@ -179,11 +206,11 @@ const CardsReference = [
     // name: '',
     // image: '<LINK_TO>.png',
     url: {
-      page: 'scalardb-benchmarks',
+      page: 'scalardb-core-status-codes',
     },
     description: (
       <Translate id="home.reference.description">
-        Benchmarking tools
+        ScalarDB Core Error Codes
       </Translate>
     ),
   },
@@ -191,11 +218,11 @@ const CardsReference = [
     // name: '',
     // image: '<LINK_TO>.png',
     url: {
-      page: 'storage-abstraction',
+      page: 'scalar-licensing',
     },
     description: (
       <Translate id="home.reference.description">
-        Storage abstraction and API guide
+        How to Configure a Product License Key
       </Translate>
     ),
   },
@@ -247,10 +274,10 @@ export function CardRowAbout(): JSX.Element {
   );
 }
 
-export function CardRowGettingStarted(): JSX.Element {
+export function CardRowQuickstart(): JSX.Element {
   return (
     <div className="row">
-      {CardsGettingStarted.map((special) => (
+      {CardsQuickstart.map((special) => (
         <Card key={special.name} {...special} />
       ))}
     </div>
@@ -287,6 +314,16 @@ export function CardRowDeploy(): JSX.Element {
   );
 }
 
+export function CardRowMigrate(): JSX.Element {
+  return (
+    <div className="row">
+      {CardsMigrate.map((special) => (
+        <Card key={special.name} {...special} />
+      ))}
+    </div>
+  );
+}
+
 export function CardRowManage(): JSX.Element {
   return (
     <div className="row">
@@ -296,6 +333,7 @@ export function CardRowManage(): JSX.Element {
     </div>
   );
 }
+
 export function CardRowReference(): JSX.Element {
   return (
     <div className="row">
