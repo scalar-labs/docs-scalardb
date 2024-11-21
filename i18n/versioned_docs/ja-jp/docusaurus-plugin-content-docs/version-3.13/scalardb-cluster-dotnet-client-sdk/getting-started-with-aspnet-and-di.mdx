@@ -1,0 +1,81 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+---
+
+# ScalarDB Cluster .NET Client SDK での ASP.NET Core と依存性注入をはじめよう
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+ScalarDB Cluster .NET Client SDK は、ASP.NET Core などのフレームワークでの依存性注入をサポートしています。
+
+## SDK をインストールする
+
+ScalarDB Cluster と同じメジャーバージョンとマイナーバージョンの [SDK](https://www.nuget.org/packages/ScalarDB.Client) を .NET プロジェクトにインストールします。組み込みの NuGet パッケージマネージャーを使用してこれを行うことができます。`<MAJOR>.<MINOR>` を使用しているバージョンに置き換えます。
+
+```console
+dotnet add package ScalarDB.Client --version '<MAJOR>.<MINOR>.*'
+```
+
+## クライアント設定の追加
+
+ASP.NET Core アプリの `appsettings.json` ファイルに `ScalarDbOptions` セクションを追加し、`<HOSTNAME_OR_IP_ADDRESS>` を FQDN または IP アドレスに、`<PORT>` をクラスターのポート番号 (デフォルトでは `60053`) に置き換えます。
+
+```json
+{
+  "ScalarDbOptions": {
+    "Address": "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
+    "HopLimit": 10
+  }
+}
+```
+
+設定ファイルやクライアントを設定するその他の方法の詳細については、[クライアント設定](common-reference.mdx#クライアント設定)を参照してください。
+
+## トランザクションマネージャーをセットアップする
+
+次のように、ScalarDB トランザクションマネージャーを `IServiceCollection` のサービスとして登録できます。
+
+```c#
+using ScalarDB.Client.Extensions;
+
+//...
+
+var builder = WebApplication.CreateBuilder(args);
+
+//...
+
+builder.Services.AddScalarDb();
+```
+
+トランザクションマネージャーを登録したら、次のようにコントローラーのコンストラクターに挿入できます。
+
+```c#
+[ApiController]
+public class OrderController: ControllerBase
+{
+    private readonly IDistributedTransactionManager _manager;
+    private readonly ISqlTransactionManager _sqlManager;
+    private readonly ITwoPhaseCommitTransactionManager _twoPhaseManager;
+    private readonly ISqlTwoPhaseCommitTransactionManager _sqlTwoPhaseManager;
+    private readonly IDistributedTransactionAdmin _admin;
+
+    public OrderController(IDistributedTransactionManager manager,
+                           ISqlTransactionManager sqlManager,
+                           ITwoPhaseCommitTransactionManager twoPhaseManager,
+                           ISqlTwoPhaseCommitTransactionManager sqlTwoPhaseManager,
+                           IDistributedTransactionAdmin admin)
+    {
+        _manager = manager;
+        _sqlManager = sqlManager;
+        _twoPhaseManager = twoPhaseManager;
+        _sqlTwoPhaseManager = sqlTwoPhaseManager;
+        _admin = admin;
+    }
+}
+```
+
+これらの例は WebApi プロジェクト用ですが、GrpcService プロジェクトでも同様に動作します。
