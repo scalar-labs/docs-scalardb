@@ -1,0 +1,360 @@
+---
+tags:
+  - Enterprise Premium
+---
+
+# Authenticate and Authorize Users
+
+import WarningLicenseKeyContact from '/src/components/en-us/_warning-license-key-contact.mdx';
+
+ScalarDB Cluster has a mechanism to authenticate and authorize users.
+
+This guide describes how to use authentication and authorization in ScalarDB Cluster.
+
+## Overview
+
+By using authentication and authorization, you can create users and grant or revoke their privileges. You can create a user by using the `CREATE USER` command, and you can grant or revoke one's privileges on a table or a namespace by using the `GRANT` or `REVOKE` command, respectively. For details about such data control language (DCL) commands, see [DCL](../scalardb-sql/grammar.mdx#dcl).
+
+Users can log in to ScalarDB Cluster with a username and a password and execute SQL statements if they have the required privileges.
+
+Authentication and authorization support two types of users:
+
+- **Superusers:** This type of user has all privileges. Only superusers can create or drop other users and namespaces.
+- **Normal users:** This type of user initially doesn't have any privileges, so they need to be granted privileges by a superuser or another user who has the `GRANT` privilege.
+
+The following privileges are available when using authentication and authorization:
+
+- `SELECT`
+- `INSERT`
+- `UPDATE`
+- `DELETE`
+- `CREATE`
+- `DROP`
+- `TRUNCATE`
+- `ALTER`
+- `GRANT`
+
+For details about privileges, see [Which privileges are required for each type of operation](#which-privileges-are-required-for-each-type-of-operation).
+
+## Configurations
+
+This section describes the available configurations for authentication and authorization.
+
+### ScalarDB Cluster node configurations
+
+To enable authentication and authorization, you need to set `scalar.db.cluster.auth.enabled` to `true`.
+
+| Name                             | Description                        | Default |
+|----------------------------------|------------------------------------|---------|
+| `scalar.db.cluster.auth.enabled` | Whether authentication and authorization are enabled.  | `false` |
+
+You can also set the following configurations:
+
+| Name                                                           | Description                                                                                               | Default            |
+|----------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|--------------------|
+| `scalar.db.cluster.auth.cache_expiration_time_millis`          | Cache expiration time for authentication and authorization information in milliseconds.                                               | `60000` (1 minute) |
+| `scalar.db.cluster.auth.auth_token_expiration_time_minutes`    | Authentication and authorization token expiration time in minutes.                                                                    | `1440` (1 day)     |
+| `scalar.db.cluster.auth.auth_token_gc_thread_interval_minutes` | Authentication and authorization token garbage collection (GC) thread interval in minutes.                                            | `360` (6 hours)    |
+| `scalar.db.cluster.auth.pepper`                                | A secret value added to a password before hashing. If not specified, the password is hashed without pepper. |                    |
+
+:::note
+
+If you enable authentication and authorization, you will also need to set `scalar.db.cross_partition_scan.enabled` to `true` for the system namespace (`scalardb` by default) because authentication and authorization perform cross-partition scans internally.
+
+:::
+
+### ScalarDB Cluster Java client SDK configurations
+
+To enable authentication and authorization on the client side, you need to set `scalar.db.cluster.auth.enabled` to `true`.
+
+| Name                             | Description                       | Default |
+|----------------------------------|-----------------------------------|---------|
+| `scalar.db.cluster.auth.enabled` | Whether authentication and authorization are enabled. | `false` |
+
+In addition to the configuration in the [ScalarDB Cluster SQL client configurations](developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-client-configurations) section, you also need to set `scalar.db.sql.cluster_mode.username` and `scalar.db.sql.cluster_mode.password` to specify the username and password of the client.
+
+| Name                                  | Description                 | Default |
+|---------------------------------------|-----------------------------|---------|
+| `scalar.db.sql.cluster_mode.username` | The username of the client. |         |
+| `scalar.db.sql.cluster_mode.password` | The password of the client. |         |
+
+## Initial user
+
+When you enable authentication and authorization, the initial user `admin` is created and the initial password of that user is `admin`. This user is a superuser and has all privileges. You can log in with this user and create other users if necessary.
+
+:::warning
+
+For security purposes, be sure to change the password of the initial user, especially before deploying to a production environment.
+
+:::
+
+## Which privileges are required for each type of operation
+
+The following tables show which privileges are required for each type of operation:
+
+### DDL
+
+| Command                       | Superuser required | Required privileges |
+|-------------------------------|--------------------|---------------------|
+| `CREATE NAMESPACE`            | `true`             |                     |
+| `DROP NAMESPACE`              | `true`             |                     |
+| `CREATE TABLE`                |                    | `CREATE`            |
+| `DROP TABLE`                  |                    | `DROP`              |
+| `CREATE INDEX`                |                    | `CREATE`            |
+| `DROP INDEX`                  |                    | `DROP`              |
+| `TRUNCATE TABLE`              |                    | `TRUNCATE`          |
+| `ALTER TABLE`                 |                    | `ALTER`             |
+| `CREATE COORDINATOR TABLES`   | `true`             |                     |
+| `DROP COORDINATOR TABLES`     | `true`             |                     |
+| `TRUNCATE COORDINATOR TABLES` | `true`             |                     |
+
+### DML
+
+| Command  | Superuser required | Required privileges   |
+|----------|--------------------|-----------------------|
+| `SELECT` |                    | `SELECT`              |
+| `INSERT` |                    | `INSERT`              |
+| `UPSERT` |                    | `INSERT`              |
+| `UPDATE` |                    | `SELECT` and `UPDATE` |
+| `DELETE` |                    | `SELECT` and `DELETE` |
+
+### DCL
+
+| Command       | Superuser required                            | Required privileges                                            |
+|---------------|-----------------------------------------------|----------------------------------------------------------------|
+| `CREATE USER` | `true`                                        |                                                                |
+| `ALTER USER`  | `true` (Users can change their own password.) |                                                                |
+| `DROP USER`   | `true`                                        |                                                                |
+| `GRANT`       |                                               | `GRANT` (Users can grant only the privileges that they have.)  |
+| `REVOKE`      |                                               | `GRANT` (Users can revoke only the privileges that they have.) |
+
+## Limitations
+
+There are some limitations to the privileges granted or revoked in authentication and authorization:
+
+- You must grant or revoke `INSERT` and `UPDATE` privileges together.
+- To grant a user the `UPDATE` or `DELETE` privilege, the target user must have the `SELECT` privilege.
+- If the target user has the `INSERT` or `UPDATE` privilege, you cannot revoke the `SELECT` privilege from them.
+
+## Wire encryption
+
+If you enable authentication and authorization, enabling wire encryption to protect the user credentials is strongly recommended, especially in production environments. For details about wire encryption, see [Encrypt Wire Communications](encrypt-wire-communications.mdx).
+
+## Tutorial - Authenticate and authorize users
+
+This tutorial explains how to use authentication and authorization.
+
+<WarningLicenseKeyContact product="ScalarDB Cluster" />
+
+### 1. Create the ScalarDB Cluster configuration file
+
+Create the following configuration file as `scalardb-cluster-node.properties`, replacing `<YOUR_LICENSE_KEY>` and `<LICENSE_CHECK_CERT_PEM>` with your ScalarDB license key and license check certificate values. For more information about the license key and certificate, see [How to Configure a Product License Key](../scalar-licensing/README.mdx).
+
+```properties
+scalar.db.storage=jdbc
+scalar.db.contact_points=jdbc:postgresql://postgresql:5432/postgres
+scalar.db.username=postgres
+scalar.db.password=postgres
+scalar.db.cluster.node.standalone_mode.enabled=true
+scalar.db.cross_partition_scan.enabled=true
+scalar.db.sql.enabled=true
+
+# Enable authentication and authorization
+scalar.db.cluster.auth.enabled=true
+
+# License key configurations
+scalar.db.cluster.node.licensing.license_key=<YOUR_LICENSE_KEY>
+scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
+```
+
+### 2. Create the Docker Compose file
+
+Create the following configuration file as `docker-compose.yaml`.
+
+```yaml
+services:
+  postgresql:
+    container_name: "postgresql"
+    image: "postgres:15"
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+      start_period: 30s
+
+  scalardb-cluster-standalone:
+    container_name: "scalardb-cluser-node"
+    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:3.14.0"
+    ports:
+      - 60053:60053
+      - 9080:9080
+    volumes:
+      - ./scalardb-cluster-node.properties:/scalardb-cluster/node/scalardb-cluster-node.properties
+    depends_on:
+      postgresql:
+        condition: service_healthy
+```
+
+### 3. Start PostgreSQL and ScalarDB Cluster
+
+Run the following command to start PostgreSQL and ScalarDB Cluster in standalone mode.
+
+```console
+docker compose up -d
+```
+
+It may take a few minutes for ScalarDB Cluster to fully start.
+
+### 4. Connect to ScalarDB Cluster
+
+To connect to ScalarDB Cluster, this tutorial uses the SQL CLI, a tool for connecting to ScalarDB Cluster and executing SQL queries. You can download the SQL CLI from the [ScalarDB releases page](https://github.com/scalar-labs/scalardb/releases).
+
+Create a configuration file named `scalardb-cluster-sql-cli.properties`. This file will be used to connect to ScalarDB Cluster by using the SQL CLI.
+
+```properties
+scalar.db.sql.connection_mode=cluster
+scalar.db.sql.cluster_mode.contact_points=indirect:localhost
+
+# Enable authentication and authorization
+scalar.db.cluster.auth.enabled=true
+```
+
+Then, start the SQL CLI by running the following command.
+
+```console
+java -jar scalardb-cluster-sql-cli-3.14.0-all.jar --config scalardb-cluster-sql-cli.properties
+```
+
+Enter the username and password as `admin` and `admin`, respectively.
+
+Now you're ready to use the database with authentication and authorization enabled in ScalarDB Cluster.
+
+### 5. Create namespaces and a table
+
+Create namespaces.
+
+```sql
+CREATE NAMESPACE ns1;
+
+CREATE NAMESPACE ns2;
+```
+
+Next, create a table in the `ns1` namespaces.
+
+```sql
+CREATE TABLE ns1.tbl (
+  id INT PRIMARY KEY,
+  col1 TEXT,
+  col2 INT);
+```
+
+### 6. Create a user
+
+Create a user named `user1`.
+
+```sql
+CREATE USER user1 WITH PASSWORD 'user1';
+```
+
+To check the user, run the following command.
+
+```sql
+SHOW USERS;
+```
+
+```console
++----------+-------------+
+| username | isSuperuser |
++----------+-------------+
+| user1    | false       |
+| admin    | true        |
++----------+-------------+
+```
+
+You can see that the `user1` user has been created.
+
+### 7. Grant privileges
+
+Grant the `SELECT`, `INSERT`, and `UPDATE` privileges to `user1` on the `ns1.tbl` table.
+
+```sql
+GRANT SELECT, INSERT, UPDATE ON ns1.tbl TO user1;
+```
+
+Then, grant the `SELECT` privilege to `user1` on the `ns2` namespace.
+
+```sql
+GRANT SELECT ON NAMESPACE ns2 TO user1;
+```
+
+To check the privileges, run the following command.
+
+```sql
+SHOW GRANTS FOR user1;
+```
+
+```console
++---------+-----------+-----------+
+|  name   |   type    | privilege |
++---------+-----------+-----------+
+| ns2     | NAMESPACE | SELECT    |
+| ns1.tbl | TABLE     | SELECT    |
+| ns1.tbl | TABLE     | INSERT    |
+| ns1.tbl | TABLE     | UPDATE    |
++---------+-----------+-----------+
+```
+
+You can see that `user1` has been granted the `SELECT`, `INSERT`, and `UPDATE` privileges on the `ns.tbl` table, and the `SELECT` privilege on the `ns2` namespace.
+
+### 8. Log in as `user1`
+
+Log in as `user1` and execute SQL statements.
+
+```console
+java -jar scalardb-cluster-sql-cli-3.14.0-all.jar --config scalardb-cluster-sql-cli.properties
+```
+
+Enter the username and password as `user1` and `user1`, respectively.
+
+Now you can execute SQL statements as `user1`.
+
+### 9. Execute DML statements
+
+Execute the following `INSERT` statement as `user1`.
+
+```sql
+INSERT INTO ns1.tbl VALUES (1, 'a', 1);
+```
+
+Then, execute the following `SELECT` statement as `user1`.
+
+```sql
+SELECT * FROM ns1.tbl;
+```
+
+```console
++----+------+------+
+| id | col1 | col2 |
++----+------+------+
+| 1  | a    | 1    |
++----+------+------+
+```
+
+You can see that `user1` can execute `INSERT` and `SELECT` statements.
+
+Next, try executing the following `DELETE` statement as `user1`.
+
+```sql
+DELETE FROM ns1.tbl WHERE id = 1;
+```
+
+```console
+Error: Authorization error (PERMISSION_DENIED: SQL-10021: Access denied: You need the DELETE privilege on the table ns1.tbl to execute this operation) (state=SDB11,code=9911)
+```
+
+You will see the above error message because `user1` doesn't have the `DELETE` privilege on the `ns1.tbl` table.
