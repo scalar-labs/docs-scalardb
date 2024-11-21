@@ -1,0 +1,304 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+---
+
+# 認証および認可エラーコード
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このページでは、認証および認可に関連するエラーコードの一覧を示します。
+
+## エラーコードのクラスと説明
+
+| クラス        | 説明                       |
+|:-------------|:--------------------------|
+| `AUTH-1xxxx` | ユーザーエラーカテゴリのエラー |
+| `AUTH-3xxxx` | 内部エラーカテゴリのエラー    |
+
+## `AUTH-1xxxx` ステータスコード
+
+### `AUTH-10000`
+
+**メッセージ**
+
+```markdown
+The user already exists. Username: %s
+```
+
+### `AUTH-10001`
+
+**メッセージ**
+
+```markdown
+The user does not exist. Username: %s
+```
+
+### `AUTH-10003`
+
+**メッセージ**
+
+```markdown
+The namespace does not exist. Namespace: %s
+```
+
+### `AUTH-10004`
+
+**メッセージ**
+
+```markdown
+The table does not exist. Table: %s
+```
+
+### `AUTH-10005`
+
+**メッセージ**
+
+```markdown
+Invalid username or password
+```
+
+### `AUTH-10006`
+
+**メッセージ**
+
+```markdown
+Access denied: Invalid auth token
+```
+
+### `AUTH-10007`
+
+**メッセージ**
+
+```markdown
+Access denied: You need the %s privilege on the namespace %s to execute this operation
+```
+
+### `AUTH-10008`
+
+**メッセージ**
+
+```markdown
+Access denied: You need the %s privilege on the table %s to execute this operation
+```
+
+### `AUTH-10009`
+
+**メッセージ**
+
+```markdown
+Access denied: You can't grant the %s privilege because you don't have the same privilege on the table %s
+```
+
+### `AUTH-10010`
+
+**メッセージ**
+
+```markdown
+Access denied: You can't access information about the user %s
+```
+
+### `AUTH-10011`
+
+**メッセージ**
+
+```markdown
+Access denied: You can't alter the user %s
+```
+
+### `AUTH-10012`
+
+**メッセージ**
+
+```markdown
+Access denied: You must be a superuser to change the SUPERUSER attribute
+```
+
+### `AUTH-10013`
+
+**メッセージ**
+
+```markdown
+You can't change the SUPERUSER attribute for the current user %s
+```
+
+### `AUTH-10014`
+
+**メッセージ**
+
+```markdown
+You can't drop the current user %s
+```
+
+### `AUTH-10015`
+
+**メッセージ**
+
+```markdown
+Access denied: You can't grant the %s privilege because you don't have the same privilege for the table %s
+```
+
+### `AUTH-10016`
+
+**メッセージ**
+
+```markdown
+Access denied: You can't grant the %s privilege because you don't have the same privilege on the namespace %s
+```
+
+### `AUTH-10017`
+
+**メッセージ**
+
+```markdown
+Access denied: You can't revoke the %s privilege because you don't have the same privilege on the table %s
+```
+
+### `AUTH-10018`
+
+**メッセージ**
+
+```markdown
+Access denied: You can't revoke the %s privilege because you don't have the same privilege on the namespace %s
+```
+
+### `AUTH-10019`
+
+**メッセージ**
+
+```markdown
+The operation does not have the target namespace or table name. Operation: %s
+```
+
+## `AUTH-3xxxx` ステータスコード
+
+### `AUTH-30000`
+
+**メッセージ**
+
+```markdown
+Getting auth token information failed
+```
+
+### `AUTH-30001`
+
+**メッセージ**
+
+```markdown
+Getting the user failed. Username: %s
+```
+
+### `AUTH-30002`
+
+**メッセージ**
+
+```markdown
+Creating a user failed. Username: %s
+```
+
+### `AUTH-30003`
+
+**メッセージ**
+
+```markdown
+Altering the user failed. Username: %s
+```
+
+### `AUTH-30004`
+
+**メッセージ**
+
+```markdown
+Dropping the user failed. Username: %s
+```
+
+### `AUTH-30005`
+
+**メッセージ**
+
+```markdown
+Granting privileges failed. Username: %s; Namespace: %s; Privileges: %s
+```
+
+### `AUTH-30006`
+
+**メッセージ**
+
+```markdown
+Granting privileges failed. Username: %s; Table: %s; Privileges: %s
+```
+
+### `AUTH-30007`
+
+**メッセージ**
+
+```markdown
+Revoking privileges failed. Username: %s; Namespace: %s; Privileges: %s
+```
+
+### `AUTH-30008`
+
+**メッセージ**
+
+```markdown
+Revoking privileges failed. Username: %s; Table: %s; Privileges: %s
+```
+
+### `AUTH-30009`
+
+**メッセージ**
+
+```markdown
+Getting users failed
+```
+
+### `AUTH-30010`
+
+**メッセージ**
+
+```markdown
+Getting privileges failed. Username: %s; Namespace: %s
+```
+
+### `AUTH-30011`
+
+**メッセージ**
+
+```markdown
+Getting privileges failed. Username: %s; Table: %s
+```
+
+### `AUTH-30012`
+
+**メッセージ**
+
+```markdown
+Deleting privileges failed. Namespace: %s
+```
+
+### `AUTH-30013`
+
+**メッセージ**
+
+```markdown
+Deleting privileges failed. Table: %s
+```
+
+### `AUTH-30014`
+
+**メッセージ**
+
+```markdown
+Logging in failed. Username: %s
+```
+
+### `AUTH-30015`
+
+**メッセージ**
+
+```markdown
+Logging out failed
+```

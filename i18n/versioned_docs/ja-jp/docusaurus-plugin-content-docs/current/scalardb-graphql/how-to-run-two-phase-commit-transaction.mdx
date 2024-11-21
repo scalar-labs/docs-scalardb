@@ -1,0 +1,144 @@
+---
+tags:
+  - Enterprise Premium
+---
+
+# 2 フェーズコミットトランザクションを実行する方法
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+ScalarDB GraphQL は、[2 フェーズコミットトランザクション](../two-phase-commit-transactions.mdx)と呼ばれるトランザクションをサポートしています。
+2 フェーズコミットトランザクションを使用すると、複数のプロセス/アプリケーション (マイクロサービスなど) にまたがるトランザクションを実行できます。
+トランザクションを開始するアプリケーションを「コーディネーター」と名付け、トランザクションに参加するアプリケーションを「参加者」と名付けます。
+すべての 2 フェーズコミット操作では、ミューテーションまたはクエリ操作に `@twoPhaseCommit` ディレクティブをアノテーションする必要があります。以下は、このような操作の説明です。
+
+## トランザクションを開始する
+
+トランザクションを開始するには、パラメータを設定せずに `@twoPhaseCommit` ディレクティブを追加します。
+
+```graphql
+query some_query @twoPhaseCommit {
+  # some query
+}
+```
+
+開始されたトランザクションのトランザクション ID は、結果の一部である拡張オブジェクトで返されます。
+
+```json
+{
+  "data": {
+    ...
+  },
+  "extensions": {
+    "transaction": {
+      "id": "the_transaction_id"
+    }
+  }
+}
+```
+
+## トランザクションに参加する (参加者用)
+
+参加者アプリケーションで、コーディネーターアプリケーションによって開始されたトランザクションに参加するには、トランザクション ID を `id` パラメータで設定し、`join` パラメータを true に設定します。
+
+```graphql
+query some_query_from_participant @twoPhaseCommit(id:"the_transaction_id", join:true) {
+  # some query
+}
+```
+
+## トランザクションを再開する
+
+開始または結合されたトランザクションで操作の実行を継続するには、`@twoPhaseCommit` ディレクティブの `id` パラメータにトランザクション ID 値を設定します。
+
+```graphql
+mutation some_mutation @twoPhaseCommit(id:"the_transaction_id") {
+  # some mutation
+}
+```
+
+## トランザクションの準備、検証、コミット
+
+クエリと変更操作が完了したら、トランザクションをコミットする必要があります。
+
+よく知られている 2 フェーズコミットプロトコルと同様に、準備とコミットの 2 つのフェーズがあります。
+
+まず、すべてのコーディネータ/参加者アプリケーションでトランザクションを準備し、次にすべてのコーディネータ/参加者アプリケーションでトランザクションをコミットする必要があります。
+
+Consensus Commit トランザクションマネージャーが `SERIALIZABLE` 分離レベルで `EXTRA_READ` シリアル化可能戦略を使用して設定されている場合、準備フェーズとコミットフェーズの間に追加の「検証」フェーズが必要です。
+
+準備とコミットと同様に、検証はすべてのコーディネータ/参加者アプリケーションで実行する必要があります。
+
+準備、検証、コミットは、すべてのコーディネータ/参加者アプリケーションで並行して実行できます。
+
+### トランザクションを準備する
+
+2 フェーズコミットトランザクションを準備するには、2 つのオプションがあります。
+
+#### ディレクティブパラメータ経由
+
+ディレクティブの `prepare` パラメータを使用すると、操作フィールドの実行後に、エラーが発生しない場合にのみトランザクションが準備されます。
+
+```graphql
+mutation some_mutation_then_prepare_tx @twoPhaseCommit(id:"the_transaction_id", prepare:true) {
+  mutation1 : ...
+  mutation2 : ...
+  # the transaction will be prepared after the execution of the mutation1 and mutation2 fields
+}
+```
+
+#### ミューテーションフィールド経由
+
+ミューテーション操作に `prepare` フィールドを追加します。このフィールドはトランザクションの準備を開始します。
+
+```graphql
+mutation prepare_tx @twoPhaseCommit(id:"the_transaction_id") {
+  prepare
+}
+```
+
+### トランザクションを検証する
+
+ミューテーション操作に `validate` フィールドを追加します。このフィールドはトランザクションの検証をトリガーします。
+
+```graphql
+mutation validate_tx @twoPhaseCommit(id:"the_transaction_id") {
+  validate
+}
+```
+
+### トランザクションをコミットする
+
+ミューテーション操作に `commit` フィールドを追加します。このフィールドはトランザクションのコミットをトリガーします。
+
+```graphql
+mutation commit_tx @twoPhaseCommit(id:"the_transaction_id") {
+  commit
+}
+```
+
+### トランザクションのアボート/ロールバック
+
+トランザクションを明示的にアボート/ロールバックする必要がある場合は、`abort` または `rollback` ミューテーションフィールドを互換的に使用できます (どちらも効果と使用法は同じです)。他の操作と混在させることはできないため、単独で指定する必要があります。
+
+```graphql
+mutation AbortTx @twoPhaseCommit(id: "the_transaction_id") {
+  abort
+}
+```
+
+または
+
+```graphql
+mutation RollbackTx @twoPhaseCommit(id: "the_transaction_id") {
+  rollback
+}
+```
+
+## エラー処理
+
+`@twoPhaseCommit` 操作によって例外がスローされた場合、ScalarDB GraphQL はトランザクションを回復するロールバックプロシージャをトリガーします。
+2 フェーズコミットトランザクションでの例外処理の詳細については、
+[ScalarDB 2 フェーズコミットトランザクションの例外処理ガイド](../two-phase-commit-transactions.mdx#handle-exceptions) を参照してください。
