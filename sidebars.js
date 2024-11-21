@@ -357,6 +357,16 @@ const sidebars = {
               label: 'ScalarDB Cluster gRPC API Guide',
             },
             {
+              type: 'doc',
+              id: 'scalardb-cluster/encrypt-data-at-rest',
+              label: 'Encrypt Data at Rest',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/encrypt-wire-communications',
+              label: 'Encrypt Wire Communications',
+            },
+            {
               type: 'category',
               label: 'SQL Interface',
               collapsible: true,
