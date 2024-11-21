@@ -186,19 +186,19 @@ const sidebars = {
               label: 'Run Through the CRUD Interface',
               collapsible: true,
               items: [
-                { // To be created
+                {
                   type: 'doc',
                   id: 'run-transactions-through-scalardb-core-library',
                   label: 'Use the ScalarDB Core Library',
                 },
-                { // To be created
+                {
                   type: 'doc',
                   id: 'scalardb-cluster/run-transactions-through-scalardb-cluster',
                   label: 'Use ScalarDB Cluster',
                 },
               ],
             },
-            { // To be created
+            {
               type: 'doc',
               id: 'scalardb-cluster/run-transactions-through-scalardb-cluster-sql',
               label: 'Run Through the SQL Interface',
@@ -250,24 +250,24 @@ const sidebars = {
               label: 'Run Through the CRUD Interface',
               collapsible: true,
               items: [
-                { // To be created
+                {
                   type: 'doc',
                   id: 'run-non-transactional-storage-operations-through-library',
                   label: 'Use the ScalarDB Core Library',
                 },
-                { // To be created
+                {
                   type: 'doc',
                   id: 'scalardb-cluster/run-non-transactional-storage-operations-through-scalardb-cluster',
                   label: 'Use ScalarDB Cluster',
                 },
               ],
             },
-            { // To be created
+            {
               type: 'doc',
               id: 'scalardb-cluster/run-non-transactional-storage-operations-through-sql-interface',
               label: 'Run Through the SQL Interface',
             },
-            { // To be created
+            {
               type: 'doc',
               id: 'run-non-transactional-storage-operations-through-primitive-crud-interface',
               label: 'Run Through the Primitive CRUD Interface',
