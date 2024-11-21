@@ -1,0 +1,68 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+---
+
+# ScalarDB 3.14 Release Notes
+
+This page includes a list of release notes for ScalarDB 3.14.
+
+## v3.14.0
+
+**Release date:** November 22, 2024
+
+### Summary
+
+This release includes a lot of enhancements, improvements, bug fixes, and vulnerability fixes.
+
+### Community edition
+
+#### Enhancements
+
+- Added the encrypted column concept to ScalarDB. ([#1907](https://github.com/scalar-labs/scalardb/pull/1907) [#1975](https://github.com/scalar-labs/scalardb/pull/1975))
+- Added support for MariaDB 11.4 and Oracle 19. ([#2061](https://github.com/scalar-labs/scalardb/pull/2061))
+
+#### Improvements
+
+- Added options for changing the key column size for MySQL and Oracle and used 128 bytes as the default. ([#2245](https://github.com/scalar-labs/scalardb/pull/2245))
+- Changed the default value of the metadata cache expiration time (`scalar.db.metadata.cache_expiration_time_secs`) to 60 seconds. ([#2274](https://github.com/scalar-labs/scalardb/pull/2274))
+
+#### Bug fixes
+
+- Fixed a bug where `NullPointerException` when a table specified in a Get/Scan object is not found in Consensus Commit. ([#2083](https://github.com/scalar-labs/scalardb/pull/2083))
+- Fixed a corner case issue that causes inconsistent Coordinator states when lazy recovery happens before group commit ([#2135](https://github.com/scalar-labs/scalardb/pull/2135))
+- Upgraded the mysql driver to fix security issues. [CVE-2023-22102](https://github.com/advisories/GHSA-m6vm-37g8-gqvh "CVE-2023-22102") ([#2238](https://github.com/scalar-labs/scalardb/pull/2238))
+
+### Enterprise edition
+
+#### Enhancements
+
+##### ScalarDB Cluster
+
+- Added support for encrypted columns introduced in [#1907](https://github.com/scalar-labs/scalardb/pull/1907).
+- Added support for the group commit feature for the Coordinator table.
+- Added support for encryption.
+- Added support for `getCurrentUser()` in `DistributedTransactionAdmin` and `Metadata` to retrieve the current logged-in user.
+
+##### ScalarDB SQL
+
+- Added support for encrypted columns introduced in [#1907](https://github.com/scalar-labs/scalardb/pull/1907) for the Metadata API.
+- Added support for encrypted columns for `CREATE TABLE` and `ALTER TABLE ADD COLUMN` statements.
+- Added `SHOW USERS` and `SHOW GRANTS` commands, which list users and privileges for a specified user, respectively.
+
+#### Improvements
+
+##### ScalarDB GraphQL
+
+- With this update, if `scalar.db.graphql.namespaces` is not specified, GraphQL server generates a GraphQL schema for all tables in all ScalarDB-managed namespaces.
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Fixed a bug where `NullPointerException` occurs when catching an exception without message.
+- Upgraded `grpc_health_probe` to fix a security issue. [CVE-2024-34156](https://github.com/advisories/GHSA-crqm-pwhx-j97f "CVE-2024-34156")
+- Upgraded `scalar-admin` to fix a security issue. [CVE-2024-25638](https://github.com/advisories/GHSA-cfxw-4h78-h7fw "CVE-2024-25638")
+- Upgraded the Protobuf Java library to fix a security issue. [CVE-2024-7254](https://github.com/advisories/GHSA-735f-pc8j-v9w8 "CVE-2024-7254")
