@@ -159,6 +159,10 @@ const config = {
             from: ['/', '/docs'],
           },
           {
+            to: '/ja-jp/docs/latest/overview',
+            from: ['/ja-jp', '/ja-jp/docs'],
+          },
+          {
             to: '/docs/latest/releases/release-support-policy',
             from: '/docs/releases/release-support-policy',
           },
