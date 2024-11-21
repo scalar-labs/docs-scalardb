@@ -1,0 +1,122 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+---
+
+# ScalarDB の基盤となるデータベースの設定
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このドキュメントでは、ScalarDB を使用するアプリケーションが正しく効率的に動作するように、ScalarDB の基盤となるデータベースを設定する方法について説明します。
+
+## 基盤となるデータベースの一般的な要件
+
+ScalarDB では、基盤となる各データベースが、データベースでトランザクションと分析を実行するための特定の機能を提供する必要があります。このドキュメントでは、一般的な要件と、要件を満たすために各データベースを設定する方法について説明します。
+
+### トランザクション
+
+ScalarDB では、基盤となる各データベースが、データベースでトランザクションを実行するために少なくとも次の機能を提供する必要があります。
+
+- 単一のデータベースレコードに対する線形化可能な読み取りと条件付きミューテーション (書き込みと削除)。
+- 書き込まれたデータベースレコードの耐久性。
+- 各データベースレコードにアプリケーションデータのほかに任意のデータを保存できる機能。
+
+### 分析
+
+ScalarDB では、基盤となる各データベースが、データベースで分析を実行するために次の機能を提供する必要があります。
+
+- コミットされたレコードのみを返す機能。
+
+:::note
+
+ScalarDB は、CRUD 操作だけでなく、スキーマ、テーブル、インデックスの作成や変更などの操作を実行するために、基盤となるデータベース上で実行されるため、ScalarDB を介してデータベースにアクセスするのに十分な権限を持つデータベースアカウントが必要です。基本的に、ScalarDB では、基盤となるデータベースにアクセスするために完全な権限を持つアカウントが必要です。
+
+:::
+
+## 一般的な要件を満たすようにデータベースを設定する方法
+
+一般的な要件を満たすようにデータベースを設定する方法の詳細については、データベースを選択してください。
+
+<Tabs groupId="databases" queryString>
+  <TabItem value="JDBC_databases" label="JDBC データベース" default>
+    <h4>トランザクション</h4>
+
+    - すべての操作に単一のプライマリサーバーまたは同期された複数のプライマリサーバーを使用します (プライマリデータベースから非同期にレプリケートされた読み取りレプリカに対する読み取り操作はありません)。
+    - 読み取りコミットまたはより厳格な分離レベルを使用します。
+
+    <h4>分析</h4>
+
+    - 読み取りコミットまたはより厳格な分離レベルを使用します。
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    <h4>トランザクション</h4>
+
+    - すべての操作に単一のプライマリリージョンを使用します。(プライマリリージョン以外のグローバルテーブルに対する読み取りおよび書き込み操作は実行できません。)
+      - DynamoDB にはプライマリリージョンの概念がないため、プライマリリージョンは自分で指定する必要があります。
+
+    <h4>分析</h4>
+
+    - 該当なし。DynamoDB は常にコミットされたレコードを返すため、DynamoDB 固有の要件はありません。
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    <h4>トランザクション</h4>
+
+    - 「Strong」または「Bounded Staleness」の一貫性を持つすべての操作に単一のプライマリリージョンを使用します。
+
+    <h4>分析</h4>
+
+    - 該当なし。Cosmos DB は常にコミットされたレコードを返すため、Cosmos DB 固有の要件はありません。
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    <h4>トランザクション</h4>
+
+    - すべての操作に単一のプライマリクラスターを使用します (プライマリ以外のクラスターでは読み取りまたは書き込み操作は行いません)。
+    - `commitlog_sync` には `batch` または `group` を使用します。
+    - Cassandra 互換データベースを使用している場合、それらのデータベースは軽量トランザクション (LWT) を適切にサポートしている必要があります。
+
+    <h4>分析</h4>
+
+    - 該当なし。Cassandra は常にコミットされたレコードを返すため、Cassandra 固有の要件はありません。
+  </TabItem>
+</Tabs>
+
+## 推奨事項
+
+ScalarDB の基盤となる各データベースを適切に設定して、高パフォーマンスと高可用性を実現することが推奨されます。次の推奨事項には、更新すべきいくつかのオプションが含まれています。
+
+:::note
+
+ScalarDB は基盤となるデータベースのアプリケーションと見なすことができるため、効率を向上させるためによく使用されるその他のオプションを更新してみることをお勧めします。
+
+:::
+
+<Tabs groupId="databases" queryString>
+  <TabItem value="JDBC_databases" label="JDBC データベース" default>
+    - パフォーマンスを向上させるには、読み取りコミット分離を使用します。
+    - 各データベースのパフォーマンス最適化のベストプラクティスに従います。たとえば、パフォーマンスを向上させるには、通常、バッファサイズ (PostgreSQL の `shared_buffers` など) を増やし、接続数 (PostgreSQL の `max_connections` など) を増やすことが推奨されます。
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    - 読み取り容量ユニット (RCU) と書き込み容量ユニット (WCU) の数を増やして、スループットを高めます。
+    - ポイントインタイムリカバリ (PITR) を有効にします。
+
+:::note
+
+DynamoDB はデフォルトで複数のアベイラビリティーゾーンにデータを保存するため、可用性を向上させるために設定を調整する必要はありません。
+
+:::
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    - 高いスループットを実現するために、リクエストユニット (RU) の数を増やします。
+    - ポイントインタイムリストア (PITR) を有効にします。
+    - 可用性ゾーンを有効にします。
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    - スループットを高めるために、`concurrent_reads` と `concurrent_writes` を増やします。詳細については、[`concurrent_writes`](https://cassandra.apache.org/doc/stable/cassandra/configuration/cass_yaml_file.html#concurrent_writes) に関する Cassandra の公式ドキュメントを参照してください。
+  </TabItem>
+</Tabs>

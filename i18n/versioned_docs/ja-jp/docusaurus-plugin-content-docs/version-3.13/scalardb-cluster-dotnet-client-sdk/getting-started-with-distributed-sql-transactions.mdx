@@ -1,0 +1,195 @@
+---
+tags:
+  - Enterprise Premium
+---
+
+# ScalarDB Cluster .NET Client SDK での分散 SQL トランザクションをはじめよう
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+ScalarDB Cluster .NET Client SDK は、ScalarDB Cluster の分散 SQL トランザクション機能をサポートします。SDK には、クラスター内での通信を容易にするためのトランザクションとマネージャーの抽象化が含まれています。
+
+:::note
+
+次の例のように非同期メソッドを使用することをお勧めしますが、代わりに同期メソッドを使用することもできます。
+
+:::
+
+分散非 SQL トランザクションの詳細については、[ScalarDB Cluster .NET Client SDK での分散トランザクションをはじめよう](getting-started-with-distributed-transactions.mdx)を参照してください。
+
+## SDK をインストールする
+
+ScalarDB Cluster と同じメジャーバージョンとマイナーバージョンの [SDK](https://www.nuget.org/packages/ScalarDB.Client) を .NET プロジェクトにインストールします。組み込みの NuGet パッケージマネージャーを使用してこれを行うことができます。`<MAJOR>.<MINOR>` を、使用しているバージョンに置き換えます。
+
+```console
+dotnet add package ScalarDB.Client --version '<MAJOR>.<MINOR>.*'
+```
+
+## 設定ファイルを作成する
+
+`scalardb-options.json` ファイルを作成し、次の内容を追加します。`<HOSTNAME_OR_IP_ADDRESS>` を FQDN または IP アドレスに、`<PORT>` をクラスターのポート番号 (デフォルトでは `60053`) に置き換えます。
+
+```json
+{
+  "ScalarDbOptions": {
+    "Address": "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
+    "HopLimit": 10
+  }
+}
+```
+
+設定ファイルやクライアントを設定するその他の方法の詳細については、[クライアント設定](common-reference.mdx#クライアント設定)を参照してください。
+
+## トランザクションマネージャーを取得する
+
+分散 SQL トランザクション用のトランザクションマネージャーオブジェクトを取得する必要があります。トランザクションマネージャーオブジェクトを取得するには、次のように `TransactionFactory` を使用します。
+
+```c#
+// Pass the path to the settings file created in the previous step.
+var factory = TransactionFactory.Create("scalardb-options.json");
+
+using var manager = factory.GetSqlTransactionManager();
+```
+
+## SQL クエリを実行する
+
+SQL ステートメントを実行するには、次のようにビルダーを使用して作成できる `ISqlStatement` オブジェクトが必要です。
+
+```c#
+using ScalarDB.Client.Builders.Sql;
+
+// ...
+
+var sqlStatement =
+    new SqlStatementBuilder()
+        .SetSql("SELECT * FROM order_service.statements WHERE item_id = :item_id")
+        .AddParam("item_id", 2)
+        .Build();
+```
+
+次のようにトランザクションマネージャーを使用して、単一の SQL ステートメントを直接実行できます。
+
+```c#
+var resultSet = await manager.ExecuteAsync(sqlStatement);
+```
+
+`ExecuteAsync` メソッドの結果には、クラスターから受信したレコードが含まれます。特定の列の値は、次の方法で取得できます。
+
+```c#
+foreach (var record in resultSet.Records)
+{
+    // Getting an integer value from the "item_id" column.
+    // If it fails, an exception will be thrown.
+    var itemId = record.GetValue<int>("item_id");
+
+    // Trying to get a string value from the "order_id" column.
+    // If it fails, no exception will be thrown.
+    if (record.TryGetValue<string>("order_id", out var orderId))
+        Console.WriteLine($"order_id: {orderId}");
+
+    // Checking if the "count" column is null.
+    if (record.IsNull("count"))
+        Console.WriteLine("'count' is null");
+}
+```
+
+`GetValue<T>` および `TryGetValue<T>` で使用する型の詳細については、[ScalarDB 列型を .NET 型に変換する方法](common-reference.mdx#scalardb-列型と-net-型間の変換方法) を参照してください。
+
+## トランザクションで SQL クエリを実行する
+
+1 つのトランザクションの一部として複数の SQL ステートメントを実行するには、トランザクションオブジェクトが必要です。
+
+次のようにトランザクションマネージャーを使用してトランザクションオブジェクトを作成できます。
+
+```c#
+var transaction = await manager.BeginAsync();
+```
+
+次のようにして、すでに開始されているトランザクションを再開することもできます。
+
+```c#
+var transaction = manager.Resume(transactionIdString);
+```
+
+:::note
+
+`Resume` メソッドはトランザクションオブジェクトを作成するだけなので、非同期バージョンはありません。このため、間違った ID を使用してトランザクションを再開する可能性があります。
+
+:::
+
+トランザクションには、トランザクションマネージャーと同じ `ExecuteAsync` メソッドがあります。このメソッドを使用して、SQL ステートメントを実行できます。
+
+トランザクションをコミットする準備ができたら、次のようにトランザクションの `CommitAsync` メソッドを呼び出すことができます。
+
+```c#
+await transaction.CommitAsync();
+```
+
+トランザクションをロールバックするには、`RollbackAsync` メソッドを使用できます。
+
+```c#
+await transaction.RollbackAsync();
+```
+
+## メタデータを取得する
+
+次のように、Metadata プロパティを使用して ScalarDB のメタデータを取得できます。
+
+```c#
+// namespaces, tables metadata
+var namespaceNames = new List<string>();
+
+await foreach (var ns in manager.Metadata.GetNamespacesAsync())
+{
+    namespaceNames.Add(ns.Name);
+    Console.WriteLine($"Namespace: {ns.Name}");
+
+    await foreach (var tbl in ns.GetTablesAsync())
+    {
+        Console.WriteLine($"  Table: {tbl.Name}");
+
+        Console.WriteLine($"  Columns:");
+        foreach (var col in tbl.Columns)
+            Console.WriteLine($"    {col.Name} [{col.DataType}]");
+
+        Console.WriteLine($"  PartitionKey:");
+        foreach (var col in tbl.PartitionKey)
+            Console.WriteLine($"    {col.Name}");
+
+        Console.WriteLine($"  ClusteringKey:");
+        foreach (var col in tbl.ClusteringKey)
+            Console.WriteLine($"    {col.Name} [{col.ClusteringOrder}]");
+
+        Console.WriteLine($"  Indexes:");
+        foreach (var index in tbl.Indexes)
+            Console.WriteLine($"    {index.ColumnName}");
+
+        Console.WriteLine();
+    }
+}
+
+// users metadata
+await foreach (var user in manager.Metadata.GetUsersAsync())
+{
+    Console.WriteLine($"User: {user.Name} [IsSuperuser: {user.IsSuperuser}]");
+
+    foreach (var nsName in namespaceNames)
+    {
+        Console.WriteLine($"  Namespace: {nsName}");
+
+        Console.WriteLine($"  Privileges:");
+        foreach (var privilege in await user.GetPrivilegesAsync(nsName))
+            Console.WriteLine($"    {privilege}");
+    }
+
+    Console.WriteLine();
+}
+```
+
+:::note
+
+`IAsyncEnumerable<T>` で LINQ メソッドを使用するには、[System.Linq.Async](https://www.nuget.org/packages/System.Linq.Async/) パッケージをインストールします。
+
+:::

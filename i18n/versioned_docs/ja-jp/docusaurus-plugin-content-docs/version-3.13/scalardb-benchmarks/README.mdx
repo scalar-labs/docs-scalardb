@@ -1,0 +1,216 @@
+---
+tags:
+  - Community
+---
+
+# ScalarDB ベンチマークツール
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このチュートリアルでは、ScalarDB のベンチマークツールを実行する方法について説明します。データベースベンチマークは、一連の標準データセットワークロードに対するデータベースのパフォーマンスを評価するのに役立ちます。
+
+## ベンチマークのワークロード
+
+- TPC-C
+- YCSB (ワークロード A、C、および F)
+- マルチストレージ YCSB (ワークロード C および F)
+  - この YCSB バリアントは、ScalarDB を使用するマルチストレージ環境用です。
+  - マルチストレージ YCSB のワーカーは、2 つの名前空間 (`ycsb_primary` と `ycsb_secondary`) で同じ数の読み取り操作と書き込み操作を実行します。
+
+## 前提条件
+
+- 次の Java 開発キット (JDK) のいずれか:
+  - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) LTS バージョン 8
+  - [OpenJDK](https://openjdk.org/install/) LTS バージョン 8
+- Gradle
+- [Kelpie](https://github.com/scalar-labs/kelpie)
+  - Kelpie は、システムのベンチマークや検証などのエンドツーエンドのテストを実行するためのフレームワークです。 [Kelpie Releases](https://github.com/scalar-labs/kelpie) から最新バージョンを入手し、アーカイブファイルを解凍します。
+- ベンチマークツールを実行するクライアント
+- ターゲットデータベース
+  - ScalarDB がサポートするデータベースの一覧については、[Supported Databases](../scalardb-supported-databases.mdx) を参照してください。
+
+:::note
+
+現在、ベンチマークツールを実行するときに使用できるのは JDK 8 のみです。
+
+:::
+
+## ベンチマークツールをセットアップする
+
+次のセクションでは、ベンチマークツールのセットアップ方法について説明します。
+
+### ScalarDB ベンチマークリポジトリをクローンする
+
+**ターミナル**を開き、次のコマンドを実行して ScalarDB ベンチマークリポジトリのクローンを作成します。
+
+```console
+git clone https://github.com/scalar-labs/scalardb-benchmarks
+```
+
+次に、下記のコマンドを実行して、ベンチマークファイルが含まれるディレクトリに移動します。
+
+```console
+cd scalardb-benchmarks
+```
+
+### ツールをビルドする
+
+ベンチマークツールをビルドするには、次のコマンドを実行します。
+
+```console
+./gradlew shadowJar
+```
+
+### スキーマをロードする
+
+初期データをロードする前に、[ScalarDB Schema Loader](../schema-loader.mdx) を使用してテーブルを定義する必要があります。スキーマを適用するには、[ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) ページに移動し、使用している ScalarDB のバージョンに一致する ScalarDB Schema Loader を `scalardb-benchmarks` ルートフォルダーにダウンロードします。
+
+さらに、ScalarDB のデータベース設定を含むプロパティファイルが必要です。ScalarDB プロパティファイルの設定の詳細については、[ScalarDB 設定](../configurations.mdx)を参照してください。
+
+スキーマを適用してプロパティファイルを設定したら、ベンチマークを選択し、指示に従ってテーブルを作成します。
+
+<Tabs groupId="benchmarks" queryString>
+  <TabItem value="TPC-C" label="TPC-C" default>
+    TPC-C ベンチマーク用のテーブル ([`tpcc-schema.json`](https://github.com/scalar-labs/scalardb-benchmarks/blob/master/tpcc-schema.json)) を作成するには、山括弧内の内容を説明に従って置き換えて、次のコマンドを実行します。
+
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f tpcc-schema.json --coordinator
+    ```
+  </TabItem>
+  <TabItem value="YCSB" label="YCSB">
+    YCSB ベンチマーク用のテーブル ([`ycsb-schema.json`](https://github.com/scalar-labs/scalardb-benchmarks/blob/master/ycsb-schema.json)) を作成するには、山括弧内の内容を説明に従って置き換えて、次のコマンドを実行します。
+
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f ycsb-schema.json --coordinator
+    ```
+  </TabItem>
+  <TabItem value="multi-storage_YCSB" label="マルチストレージ YCSB">
+    マルチストレージ YCSB ベンチマーク用のテーブル ([`ycsb-multi-storage-schema.json`](https://github.com/scalar-labs/scalardb-benchmarks/blob/master/ycsb-multi-storage-schema.json)) を作成するには、山括弧内の内容を説明に従って置き換えて、次のコマンドを実行します。
+
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f ycsb-multi-storage-schema.json --coordinator
+    ```
+  </TabItem>
+</Tabs>
+
+### ベンチマーク設定ファイルを準備する
+
+ベンチマークを実行するには、まずベンチマーク設定ファイルを準備する必要があります。設定ファイルには、少なくとも実行するワークロードモジュールの場所とデータベース設定が必要です。
+
+以下は、TPC-C ベンチマークを実行するための設定例です。`config_file` に指定する ScalarDB プロパティファイルは、[以前に設定したベンチマーク環境](#ベンチマーク-ツールをセットアップする)のプロパティファイルである必要があります。
+
+:::note
+
+または、ScalarDB プロパティファイルを使用する代わりに、`.toml` ファイルで各データベース設定項目を指定することもできます。`config_file` が指定されている場合、`[database_config]` の下の他のすべての設定は、コメントが解除されていても無視されます。
+
+:::
+
+```toml
+[modules]
+[modules.preprocessor]
+name = "com.scalar.db.benchmarks.tpcc.TpccLoader"
+path = "./build/libs/scalardb-benchmarks-all.jar"
+[modules.processor]
+name = "com.scalar.db.benchmarks.tpcc.TpccBench"
+path = "./build/libs/scalardb-benchmarks-all.jar"
+[modules.postprocessor]
+name = "com.scalar.db.benchmarks.tpcc.TpccReporter"
+path = "./build/libs/scalardb-benchmarks-all.jar"
+
+[database_config]
+config_file = "<PATH_TO_SCALARDB_PROPERTIES_FILE>"
+#contact_points = "localhost"
+#contact_port = 9042
+#username = "cassandra"
+#password = "cassandra"
+#storage = "cassandra"
+```
+
+モジュールに渡すパラメータは設定ファイルで定義できます。詳細については、以下のサンプル設定ファイルと [共通パラメータ](#共通パラメータ)で使用可能なパラメータを参照してください。
+
+- **TPC-C:** [`tpcc-benchmark-config.toml`](https://github.com/scalar-labs/scalardb-benchmarks/blob/master/tpcc-benchmark-config.toml)
+- **YCSB:** [`ycsb-benchmark-config.toml`](https://github.com/scalar-labs/scalardb-benchmarks/blob/master/ycsb-benchmark-config.toml)
+- **マルチストレージ YCSB:** [`ycsb-multi-storage-benchmark-config.toml`](https://github.com/scalar-labs/scalardb-benchmarks/blob/master/ycsb-multi-storage-benchmark-config.toml)
+
+## ベンチマークを実行する
+
+ベンチマークを選択し、指示に従ってベンチマークを実行します。
+
+<Tabs groupId="benchmarks" queryString>
+  <TabItem value="TPC-C" label="TPC-C" default>
+    TPC-C ベンチマークを実行するには、`<PATH_TO_KELPIE>` を Kelpie ディレクトリへのパスに置き換えて、次のコマンドを実行します。
+
+    ```console
+    /<PATH_TO_KELPIE>/bin/kelpie --config tpcc-benchmark-config.toml
+    ```
+  </TabItem>
+  <TabItem value="YCSB" label="YCSB">
+    YCSB ベンチマークを実行するには、`<PATH_TO_KELPIE>` を Kelpie ディレクトリへのパスに置き換えて、次のコマンドを実行します。
+
+    ```console
+    /<PATH_TO_KELPIE>/bin/kelpie --config ycsb-benchmark-config.toml
+    ```
+  </TabItem>
+  <TabItem value="Multi-storage_YCSB" label="マルチストレージ YCSB">
+    マルチストレージ YCSB ベンチマークを実行するには、`<PATH_TO_KELPIE>` を Kelpie ディレクトリへのパスに置き換えて、次のコマンドを実行します。
+
+    ```console
+    /<PATH_TO_KELPIE>/bin/kelpie --config ycsb-multi-storage-benchmark-config.toml
+    ```
+  </TabItem>
+</Tabs>
+
+さらに、次のオプションが利用可能です。
+
+- `--only-pre`。データのみをロードします。
+- `--only-process`。ベンチマークのみを実行します。
+- `--except-pre`。データをロードせずにジョブを実行します。
+- `--except-process`。ベンチマークを実行せずにジョブを実行します。
+
+## 共通パラメータ
+
+| 名前            | 説明                              | デフォルト  |
+|:---------------|:----------------------------------|:----------|
+| `concurrency`  | ベンチマーク用のスレッド数。           | `1`       |
+| `run_for_sec`  | ベンチマークの継続時間 (秒単位)。      | `60`      |
+| `ramp_for_sec` | ベンチマーク前の立ち上げ時間 (秒単位)。 | `0`       |
+
+## ワークロード固有のパラメータ
+
+ワークロードを選択すると、使用可能なパラメータが表示されます。
+
+<Tabs groupId="benchmarks" queryString>
+  <TabItem value="TPC-C" label="TPC-C" default>
+    | 名前                   | 説明                                                                                                                                                                                                                          | デフォルト   |
+    |:-----------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------|
+    | `num_warehouses`       | ベンチマーク用のウェアハウスの数 (スケール係数)。                                                                                                                                                                                | `1`       |
+    | `load_concurrency`     | ロード用のスレッド数。                                                                                                                                                                                                       | `1`       |
+    | `load_start_warehouse` | ロード中のウェアハウスの開始 ID。このオプションは、複数のクライアントで大規模なデータをロードする場合や、ウェアハウスを追加する場合に、`--skip-item-load` と一緒に使用すると便利です。                                                                | `1`       |
+    | `load_end_warehouse`   | ロード中のウェアハウスの終了 ID。ロード中のウェアハウスの数を指定するには、`--num-warehouses` または `--end-warehouse` のいずれかを使用できます。                                                                                                 | `1`       |
+    | `skip_item_load`       | アイテムテーブルのロードをスキップするかどうか。                                                                                                                                                                                           | `false`   |
+    | `use_table_index`      | ScalarDB のセカンダリインデックスの代わりに、汎用テーブルベースのセカンダリインデックスを使用するかどうか。                                                                                                                                   | `false`   |
+    | `np_only`              | 新規注文と支払いトランザクションのみ (それぞれ 50%) でベンチマークを実行します。                                                                                                                                                               | `false`   |
+    | `rate_new_order`       | 新規注文トランザクションの割合。必要に応じてこの割合を指定する場合、他のすべてのレートパラメータの割合を指定する必要があります。その場合、すべてのレートパラメータの合計は 100% に等しくなければなりません。    | N/A       |
+    | `rate_payment`         | 支払いトランザクションの割合。必要に応じてこの割合を指定する場合、他のすべてのレートパラメータの割合を指定する必要があります。その場合、すべてのレートパラメータの合計は 100% に等しくなければなりません。      | N/A       |
+    | `rate_order_status`    | 注文ステータストランザクションの割合。ニーズに基づいてこのパーセンテージを指定する場合、他のすべてのレートパラメータのパーセンテージを指定する必要があります。その場合、すべてのレートパラメータの合計は 100 パーセントに等しくなければなりません。 | N/A       |
+    | `rate_delivery`        | 配送トランザクションのパーセンテージ。ニーズに基づいてこのパーセンテージを指定する場合、他のすべてのレートパラメータのパーセンテージを指定する必要があります。その場合、すべてのレートパラメータの合計は 100 パーセントに等しくなければなりません。     | N/A       |
+    | `rate_stock_level`     | 在庫レベルトランザクションのパーセンテージ。ニーズに基づいてこのパーセンテージを指定する場合、他のすべてのレートパラメータのパーセンテージを指定する必要があります。その場合、すべてのレートパラメータの合計は 100 パーセントに等しくなければなりません。  | N/A       |
+    | `backoff`              | 競合によりトランザクションがアボートされた後に挿入されるスリープ時間 (ミリ秒単位)。                                                                                                                                                | `0`       |
+  </TabItem>
+  <TabItem value="YCSB_multi-storage YCSB" label="YCSB とマルチストレージ YCSB">
+    | 名前                    | 説明                                                                       | デフォルト                                       |
+    |:------------------------|:----------------------------------------------------------------------------------|:----------------------------------------------|
+    | `load_concurrency`      | ロード用のスレッド数。                                                    | `1`                                           |
+    | `load_batch_size`       | 1回のロードトランザクションで入力されるレコード数。                            | `1`                                           |
+    | `load_overwrite`        | レコードをロードするときに上書きするかどうか。                                 | `false`                                       |
+    | `ops_per_tx`            | 1回のトランザクションでの操作数。                                     | `2` (ワークロード A および C) <br /> `1` (ワークロード F) |
+    | `record_count`          | ターゲットテーブル内のレコード数。                                            | `1000`                                        |
+    | `use_read_modify_write` | ワークロード A でブラインド書き込みではなく読み取り、変更、書き込みを使用するかどうか。   | `false`[^rmw]                                 |
+
+    [^rmw]: ワークロード A はトランザクションが最初に元のレコードを読み取ることを想定していないため、`use_read_modify_write` のデフォルト値は `false` です。ただし、トランザクションマネージャーとして Consensus Commit を使用している場合は、`use_read_modify_write` を `true` に設定する必要があります。これは、ScalarDB が既存のレコードに対するブラインド書き込みを許可しないためです。
+  </TabItem>
+</Tabs>
