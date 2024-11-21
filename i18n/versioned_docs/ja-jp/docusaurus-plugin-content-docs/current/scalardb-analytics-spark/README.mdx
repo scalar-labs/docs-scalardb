@@ -7,24 +7,17 @@ tags:
 # ScalarDB Analytics with Spark
 
 import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+import WarningLicenseKeyContact from '/src/components/ja-jp/_warning-license-key-contact.mdx';
 
 <TranslationBanner />
 
-ScalarDB は、ユニバーサルトランザクションマネージャーとして、主にトランザクションワークロードを対象としているため、リレーショナルクエリの限定されたサブセットをサポートしています。
+**ScalarDB Analytics** は、ScalarDB の分析コンポーネントです。ScalarDB と同様に、PostgreSQL や MySQL などの RDBMS から Cassandra や DynamoDB などの NoSQL データベースに至るまで、さまざまなデータソースを 1 つの論理データベースに統合します。ScalarDB は複数のデータベース間でトランザクションの一貫性が強い運用ワークロードに重点を置いているのに対し、ScalarDB Analytics は分析ワークロード向けに最適化されています。複雑な結合、集計、ウィンドウ関数など、幅広いクエリをサポートしています。ScalarDB Analytics は、ScalarDB 管理のデータソースと非 ScalarDB 管理のデータソースの両方でシームレスに動作し、さまざまなデータセットにわたる高度な分析クエリを可能にします。
 
-ScalarDB Analytics with Spark は、Apache Spark と Spark SQL を使用して、ScalarDB が管理するデータに対する分析クエリを処理するために ScalarDB の機能を拡張します。
+現在のバージョンの ScalarDB Analytics は、**Apache Spark** を実行エンジンとして活用しています。Spark カスタムカタログを使用することで、ScalarDB 管理下のデータソースと ScalarDB 管理外のデータソースの統合ビューを提供します。ScalarDB Analytics を使用すると、これらのデータソースのテーブルをネイティブの Spark テーブルとして扱うことができ、Spark SQL クエリをシームレスに実行できます。たとえば、Cassandra に保存されているテーブルを PostgreSQL のテーブルと結合して、複数のデータソースにまたがる分析を簡単に実行できます。
 
-ScalarDB Analytics with Spark は Spark カタログプラグインとして提供されるため、外部で管理されるデータソースをそのデータスキーマで読み取ることができます。このプラグインを使用すると、ScalarDB テーブルから同じスキーマを持つ Spark SQL テーブルとしてデータを読み取ることができます。
-
-:::warning
-
-ScalarDB Analytics with Spark を使用するには、商用ライセンスが必要です。商用ライセンスが必要な場合は、[お問い合わせ](https://scalar-labs.com/contact_us/)ください。
-
-:::
+<WarningLicenseKeyContact product="ScalarDB Analytics with Spark" />
 
 ## 参考資料
 
-* ScalarDB Analytics with Spark を使用してアドホック分析クエリまたは開発アプリケーションを実行するには、[ScalarDB Analytics with Spark の使用開始](getting-started.mdx)を参照してください。
-* サンプルデータセットとアプリケーションを使用して ScalarDB Analytics with Spark を使用する方法に関するチュートリアルについては、[ScalarDB Analytics with Spark を使用してサンプルデータで分析クエリを実行する](../scalardb-samples/scalardb-analytics-spark-sample/README.mdx)を参照してください。
-* ScalarDB Analytics with Spark を設定する方法の詳細については、[ScalarDB Analytics with Spark の設定](configuration.mdx)を参照してください。
+* サンプルデータセットとアプリケーションを使用して ScalarDB Analytics を使用する方法に関するチュートリアルについては、[ScalarDB Analytics をはじめよう](../scalardb-samples/scalardb-analytics-spark-sample/README.mdx)を参照してください。
 * サポートされている Spark および Scala のバージョンについては、[ScalarDB Analytics with Spark のバージョン互換性](version-compatibility.mdx)を参照してください。
