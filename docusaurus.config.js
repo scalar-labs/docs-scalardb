@@ -227,6 +227,15 @@ const config = {
             from: '/docs/3.11/scalardb-cluster-dotnet-client-sdk/overview',
           },
         ],
+        createRedirects(existingPath) {
+          if (existingPath.includes('/ja-jp/docs')) {
+            // Redirect from /docs/ja-jp/X to /ja-jp/docs/X.
+            return [
+              existingPath.replace('/ja-jp/docs', '/docs/ja-jp'),
+            ];
+          }
+          return undefined; // Return a falsy value: no redirect created
+        },
       },
     ],
     require.resolve('docusaurus-plugin-image-zoom'),
