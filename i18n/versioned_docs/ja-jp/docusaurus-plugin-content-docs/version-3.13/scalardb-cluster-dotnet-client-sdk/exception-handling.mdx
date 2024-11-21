@@ -1,0 +1,176 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+---
+
+# ScalarDB Cluster .NET Client SDK での例外処理
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+トランザクションを実行するときは、例外も適切に処理する必要があります。
+
+:::warning
+
+例外を適切に処理しないと、異常やデータの不整合が発生する可能性があります。
+
+:::
+
+:::note
+
+この例では Transactional API が使用されていますが、SQL API または `ScalarDbContext` を使用する場合も例外は同じ方法で処理できます。
+
+:::
+
+次のサンプルコードは、例外を処理する方法を示しています。
+
+```c#
+using System.ComponentModel.DataAnnotations.Schema;
+using ScalarDB.Client;
+using ScalarDB.Client.DataAnnotations;
+using ScalarDB.Client.Exceptions;
+using ScalarDB.Client.Extensions;
+
+var options = new ScalarDbOptions { Address = "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>"};
+
+var factory = TransactionFactory.Create(options);
+using var manager = factory.GetTransactionManager();
+
+var retryCount = 0;
+TransactionException? lastException = null;
+
+while (true)
+{
+    if (retryCount++ > 0)
+    {
+        // Retry the transaction three times maximum in this sample code
+        if (retryCount > 3)
+            // Throw the last exception if the number of retries exceeds the maximum
+            throw lastException!;
+
+        // Sleep 100 milliseconds before retrying the transaction in this sample code
+        await Task.Delay(100);
+    }
+
+    // Begin a transaction
+    var tran = await manager.BeginAsync();
+    try
+    {
+        // Execute CRUD operations in the transaction
+        var getKeys = new Dictionary<string, object> { { nameof(Item.Id), 1 } };
+        var result = await tran.GetAsync<Item>(getKeys);
+
+        var scanKeys = new Dictionary<string, object> { { nameof(Item.Id), 1 } };
+        await foreach (var item in tran.ScanAsync<Item>(scanKeys, null))
+            Console.WriteLine($"{item.Id}, {item.Name}, {item.Price}");
+
+        await tran.InsertAsync(new Item { Id = 1, Name = "Watermelon", Price = 4500 });
+        await tran.DeleteAsync(new Item { Id = 1 });
+
+        // Commit the transaction
+        await tran.CommitAsync();
+
+        return;
+    }
+    catch (UnsatisfiedConditionException)
+    {
+        // You need to handle `UnsatisfiedConditionException` only if a mutation operation specifies
+        // a condition. This exception indicates the condition for the mutation operation is not met.
+        // InsertAsync/UpdateAsync implicitlly sets IfNotExists/IfExists condition
+
+        try
+        {
+            await tran.RollbackAsync();
+        }
+        catch (TransactionException ex)
+        {
+            // Rolling back the transaction failed. As the transaction should eventually recover, you
+            // don't need to do anything further. You can simply log the occurrence here
+            Console.WriteLine($"Rollback error: {ex}");
+        }
+
+        // You can handle the exception here, according to your application requirements
+
+        return;
+    }
+    catch (UnknownTransactionStatusException)
+    {
+        // If you catch `UnknownTransactionStatusException` when committing the transaction, it
+        // indicates that the status of the transaction, whether it has succeeded or not, is
+        // unknown. In such a case, you need to check if the transaction is committed successfully
+        // or not and retry it if it failed. How to identify a transaction status is delegated to users
+        return;
+    }
+    catch (TransactionException ex)
+    {
+        // For other exceptions, you can try retrying the transaction.
+
+        // For `TransactionConflictException` and `TransactionNotFoundException`,
+        // you can basically retry the transaction. However, for the other exceptions,
+        // the transaction may still fail if the cause of the exception is nontransient.
+        // In such a case, you will exhaust the number of retries and throw the last exception
+
+        try
+        {
+            await tran.RollbackAsync();
+        }
+        catch (TransactionException e)
+        {
+            // Rolling back the transaction failed. As the transaction should eventually recover,
+            // you don't need to do anything further. You can simply log the occurrence here
+            Console.WriteLine($"Rollback error: {e}");
+        }
+
+        lastException = ex;
+    }
+}
+
+[Table("order_service.items")]
+public class Item
+{
+    [PartitionKey]
+    [Column("item_id", Order = 0)]
+    public int Id { get; set; }
+
+    [Column("name", Order = 1)]
+    public string Name { get; set; } = String.Empty;
+
+    [Column("price", Order = 2)]
+    public int Price { get; set; }
+}
+
+```
+
+:::note
+
+サンプルコードでは、トランザクションは最大 3 回再試行され、再試行される前に 100 ミリ秒間スリープします。アプリケーションの要件に応じて、指数バックオフなどの再試行ポリシーを選択できます。
+
+:::
+
+### 例外の詳細
+
+以下の表は、クラスターとの通信時に発生する可能性のあるトランザクション例外を示しています。
+
+| 例外                               | 操作                                                         | 説明                                                                                                                                                                                                                                                                                                                                                                                                |
+|-----------------------------------|--------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| AuthorizationErrorException       | Put, Insert, Update, Delete, Mutate, Execute, Administrative | 権限が不足しているため、認証に失敗しました。                                                                                                                                                                                                                                                                                                                                                               |
+| IllegalArgumentException          | 全て                                                          | 要求メッセージ内の引数が無効です。                                                                                                                                                                                                                                                                                                                                                                       |
+| IllegalStateException             | 全て                                                          | RPC が無効な状態で呼び出されました。                                                                                                                                                                                                                                                                                                                                                                    |
+| InternalErrorException            | 全て                                                          | 一時的または非一時的障害のため、操作が失敗しました。トランザクションを最初から再試行することはできますが、原因が非一時的である場合は、トランザクションが失敗する可能性があります。                                                                                                                                                                                                                                               |
+| TransactionConflictException      | Begin、Join、Rollback を除くすべて                              | トランザクションの競合が発生しました。このエラーが発生した場合は、トランザクションを最初から再試行してください。                                                                                                                                                                                                                                                                                                      |
+| TransactionNotFoundException      | Begin、Join を除くすべて                                        | 指定されたトランザクション ID に関連付けられたトランザクションが見つかりませんでした。このエラーは、トランザクションの有効期限が切れたか、クラスタートポロジの変更によりルーティング情報が更新されたことを示します。この場合、トランザクションを最初から再試行してください。                                                                                                                                                                    |
+| UnavailableException              | 全て                                                          | ScalarDB Cluster は、複数回接続を試みても利用できません。                                                                                                                                                                                                                                                                                                                                                |
+| UnknownTransactionStatusException | Commit                                                       | トランザクションのステータスは不明です (トランザクションが正常にコミットされたかどうかは不明です)。この状況では、トランザクションが正常にコミットされたかどうかを確認し、そうでない場合は再試行する必要があります。トランザクションステータスの判断はユーザーの責任です。トランザクションステータステーブルを作成し、他のアプリケーションデータと連動して更新すると、役立つ場合があります。そうすることで、テーブル自体からトランザクションのステータスを判断できるようになります。 |
+| UnsatisfiedConditionException     | Put, Insert, Update, Delete, Mutate                          | 突然変異条件が満たされていません。                                                                                                                                                                                                                                                                                                                                                                       |
+
+例外が発生した場合は、`Begin` の場合を除き、トランザクションをロールバックする必要があります。トランザクションをロールバックした後、再試行によって解決できる例外については、トランザクションを最初から再試行できます。
+
+上記の例外の他に、gRPC ライブラリによってスローされる例外が発生する場合があります。このような場合は、`RpcException` プロパティで詳細を確認できます。
+
+また、`ScalarDbContext` は、次の場合に `TransactionException` タイプの例外をスローします。
+
+- すでにアクティブなトランザクションがあるときに `BeginTransaction` または `JoinTransaction` が呼び出された場合
+- アクティブなトランザクションがない状態で `CommitTransaction` または `RollbackTransaction` が呼び出された場合
+- アクティブな 2 フェーズコミットトランザクションがない状態で `PrepareTransaction` または `ValidateTransaction` が呼び出された場合

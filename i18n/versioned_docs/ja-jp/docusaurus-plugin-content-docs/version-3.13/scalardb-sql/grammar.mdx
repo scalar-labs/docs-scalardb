@@ -1,0 +1,2222 @@
+---
+tags:
+  - Enterprise Premium
+---
+
+# ScalarDB SQL 文法
+
+- DDL
+  - [CREATE NAMESPACE](#create-namespace)
+  - [CREATE TABLE](#create-table)
+  - [CREATE INDEX](#create-index)
+  - [TRUNCATE TABLE](#truncate-table)
+  - [DROP INDEX](#drop-index)
+  - [DROP TABLE](#drop-table)
+  - [DROP NAMESPACE](#drop-namespace)
+  - [CREATE COORDINATOR TABLES](#create-coordinator-tables)
+  - [TRUNCATE COORDINATOR TABLES](#truncate-coordinator-tables)
+  - [DROP COORDINATOR TABLES](#drop-coordinator-tables)
+  - [ALTER TABLE](#alter-table)
+- DML
+  - [SELECT](#select)
+  - [INSERT](#insert)
+  - [UPSERT](#upsert)
+  - [UPDATE](#update)
+  - [DELETE](#delete)
+- DCL
+  - [CREATE USER](#create-user)
+  - [ALTER USER](#alter-user)
+  - [DROP USER](#drop-user)
+  - [GRANT](#grant)
+  - [REVOKE](#revoke)
+- Others
+  - [USE](#use)
+  - [BEGIN](#begin)
+  - [START TRANSACTION](#start-transaction)
+  - [JOIN](#join)
+  - [PREPARE](#prepare)
+  - [VALIDATE](#validate)
+  - [COMMIT](#commit)
+  - [ROLLBACK](#rollback)
+  - [ABORT](#abort)
+  - [SET MODE](#set-mode)
+  - [SHOW NAMESPACES](#show-namespaces)
+  - [SHOW TABLES](#show-tables)
+  - [DESCRIBE](#describe)
+  - [SUSPEND](#suspend)
+  - [RESUME](#resume)
+
+## DDL
+
+### CREATE NAMESPACE
+
+テーブルは 1 つの名前空間に属しているため、テーブルを作成する前に名前空間を作成する必要があります。`CREATE NAMESPACE` コマンドは名前空間を作成します。
+
+#### 文法
+
+```sql
+CREATE NAMESPACE [IF NOT EXISTS] <namespace name> [WITH creation_options]
+
+creation_options: <option name>=<option value> [AND <option name>=<option value>] ...
+```
+
+`creation_options` の詳細については、[作成オプション](../api-guide.mdx#creation-options)を参照してください。
+
+#### 例
+
+`CREATE NAMESPACE` の例は次のとおりです。
+
+```sql
+-- Create a namespace "ns"
+CREATE NAMESPACE ns;
+
+-- Create a namespace only if it does not already exist
+CREATE NAMESPACE IF NOT EXISTS ns;
+
+-- Create a namespace with options
+CREATE NAMESPACE ns WITH 'option1' = 'value1' AND 'option2' = 'value2' AND 'option3' = 'value3';
+```
+
+`CREATE NAMESPACE` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Create a namespace "ns"
+CreateNamespaceStatement statement1 = StatementBuilder.createNamespace("ns").build();
+
+// Create a namespace only if it does not already exist
+CreateNamespaceStatement statement2 =
+    StatementBuilder.createNamespace("ns").ifNotExists().build();
+
+// Create a namespace with options
+CreateNamespaceStatement statement3 =
+    StatementBuilder.createNamespace("ns")
+        .withOption("option1", "value1")
+        .withOption("option2", "value2")
+        .withOption("option3", "value3")
+        .build();
+```
+
+### CREATE TABLE
+
+`CREATE TABLE` コマンドはテーブルを作成します。
+
+ScalarDB データモデルの詳細については、[ScalarDB 設計ドキュメント](../design.mdx)を参照してください。
+
+#### 文法
+
+単一の列で構成される主キーを持つテーブルを作成します。
+
+```sql
+CREATE TABLE [IF NOT EXISTS] [<namespace name>.]<table name> (
+  <primary key column name> data_type PRIMARY KEY,
+  <column name> data_type,
+  ...
+) [WITH creation_options]
+
+data_type: BOOLEAN | INT | BIGINT | FLOAT | DOUBLE | TEXT | BLOB
+creation_options: <option name>=<option value> [AND <option name>=<option value>] ...
+```
+
+1 つのパーティションキー列と複数のクラスタリングキー列で構成される主キーを持つテーブルを作成します。
+
+```sql
+CREATE TABLE [IF NOT EXISTS] [<namespace name>.]<table name> (
+  <partition key column name> data_type,
+  <clustering key column name> data_type,
+  ...,
+  <column name> data_type,
+  ...,
+  PRIMARY KEY (<partition key column name>, <clustering key column name> [, <clustering key column name>] ...)
+) [WITH [clustering_order_definition [AND creation_options]] | creation_options]
+
+clustering_order_definition: CLUSTERING ORDER BY (<clustering key column name> [clustering_order] [, <clustering key column name> [clustering_order]] ...)
+clustering_order: ASC | DESC
+```
+
+`clustering_order` を省略すると、デフォルトのクラスタリング順序 `ASC` が使用されます。
+
+複数のパーティションキー列と複数のクラスタリングキー列で構成される主キーを持つテーブルを作成します。
+
+```sql
+CREATE TABLE [IF NOT EXISTS] [<namespace name>.]<table name> (
+  <partition key column name> data_type,
+  ...,
+  <clustering key column name> data_type,
+  ...,
+  <column name1> data_type,
+  <column name2> data_type,
+  ...,
+  PRIMARY KEY ((<partition key column name> [, <partition key column name>] ...), <clustering key column name> [, <clustering key column name>] ...)
+) [WITH [clustering_order_definition [AND creation_options]] | creation_options]
+```
+
+#### 例
+
+`CREATE TABLE` の例は次のとおりです。
+
+```sql
+-- Create a table with a primary key ("c1") and creation options
+CREATE TABLE ns.tbl (
+  c1 INT PRIMARY KEY,
+  c2 TEXT,
+  c3 FLOAT,
+  c4 BIGINT,
+  c5 BOOLEAN
+) WITH 'option1' = 'value1' AND 'option2' = 'value2' AND 'option3' = 'value3';
+
+-- Create a table with a partition key ("c1") and a clustering key ("c2" and "c3") with clustering order definition only if it does not already exist
+CREATE TABLE IF NOT EXISTS tbl (
+  c1 INT,
+  c2 TEXT,
+  c3 FLOAT,
+  c4 BIGINT,
+  c5 BOOLEAN,
+  PRIMARY KEY (c1, c2, c3)
+) WITH CLUSTERING ORDER BY (c2 DESC, c3 ASC);
+
+-- Create a table with a partition key ("c1", "c2") and a clustering key ("c3" and "c4") with clustering order definition and creation options
+CREATE TABLE ns.tbl (
+  c1 INT,
+  c2 TEXT,
+  c3 FLOAT,
+  c4 BIGINT,
+  c5 BOOLEAN,
+  PRIMARY KEY ((c1, c2), c3, c4)
+) WITH CLUSTERING ORDER BY (c3 DESC, c4 ASC) AND 'option1' = 'value1' AND 'option2' = 'value2' AND 'option3' = 'value3';
+```
+
+`CREATE TABLE` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Create a table with a primary key ("c1") and creation options
+CreateTableStatement statement1 =
+    StatementBuilder.createTable("ns", "tbl")
+        .withPartitionKey("c1", DataType.INT)
+        .withColumn("c2", DataType.TEXT)
+        .withColumn("c3", DataType.FLOAT)
+        .withColumn("c4", DataType.BIGINT)
+        .withColumn("c5", DataType.BOOLEAN)
+        .withOption("option1", "value1")
+        .withOption("option2", "value2")
+        .withOption("option3", "value3")
+        .build();
+
+// Create a table with a partition key ("c1") and a clustering key ("c2" and "c3") with clustering order definition
+CreateTableStatement statement2 =
+    StatementBuilder.createTable("tbl")
+        .ifNotExists()
+        .withPartitionKey("c1", DataType.INT)
+        .withClusteringKey("c2", DataType.TEXT)
+        .withClusteringKey("c3", DataType.FLOAT)
+        .withColumn("c4", DataType.BIGINT)
+        .withColumn("c5", DataType.BOOLEAN)
+        .withClusteringOrder("c2", ClusteringOrder.DESC)
+        .withClusteringOrder("c3", ClusteringOrder.ASC)
+        .build();
+
+// Create a table with a partition key ("c1", "c2") and a clustering key ("c3" and "c4") with clustering order definition and creation options
+CreateTableStatement statement3 =
+    StatementBuilder.createTable("ns", "tbl")
+        .withPartitionKey("c1", DataType.INT)
+        .withPartitionKey("c2", DataType.TEXT)
+        .withClusteringKey("c3", DataType.FLOAT)
+        .withClusteringKey("c4", DataType.BIGINT)
+        .withColumn("c5", DataType.BOOLEAN)
+        .withClusteringOrder("c3", ClusteringOrder.DESC)
+        .withClusteringOrder("c4", ClusteringOrder.ASC)
+        .withOption("option1", "value1")
+        .withOption("option2", "value2")
+        .withOption("option3", "value3")
+        .build();
+```
+
+### CREATE INDEX
+
+`CREATE INDEX` コマンドはテーブルにセカンダリインデックスを作成します。
+
+#### 文法
+
+```sql
+CREATE INDEX [IF NOT EXISTS] ON [<namespace name>.]<table name> (<column name>)
+```
+
+#### 例
+
+`CREATE INDEX` の例は次のとおりです。
+
+```sql
+-- Create a secondary index on a column "c4" of a table "ns.tbl"
+CREATE INDEX ON ns.tbl (c4);
+
+-- Create a secondary index only if it does not already exist
+CREATE INDEX IF NOT EXISTS ON tbl (c4);
+
+-- Create a secondary index with options
+CREATE INDEX ON ns.tbl (c4) WITH 'option1' = 'value1' AND 'option2' = 'value2' AND 'option3' = 'value3';
+```
+
+`CREATE INDEX` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Create a secondary index on a column "c4" of a table "ns.tbl"
+CreateIndexStatement statement1 =
+    StatementBuilder.createIndex().onTable("ns", "tbl").column("c4").build();
+
+// Create a secondary index only if it does not already exist
+CreateIndexStatement statement2 =
+    StatementBuilder.createIndex().ifNotExists().onTable("tbl").column("c4").build();
+
+// Create a secondary index with options
+CreateIndexStatement statement3 =
+    StatementBuilder.createIndex()
+        .onTable("ns", "tbl")
+        .column("c4")
+        .withOption("option1", "value1")
+        .withOption("option2", "value2")
+        .withOption("option3", "value3")
+        .build();
+```
+
+### TRUNCATE TABLE
+
+`TRUNCATE TABLE` コマンドはテーブルのすべての行を削除します。
+
+#### 文法
+
+```sql
+TRUNCATE TABLE [<namespace name>.]<table name>
+```
+
+#### 例
+
+`TRUNCATE TABLE` の例は次のとおりです。
+
+```sql
+-- Truncate a table "ns.tbl"
+TRUNCATE TABLE ns.tbl;
+```
+
+`TRUNCATE TABLE` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Truncate a table "ns.tbl"
+TruncateTableStatement statement = StatementBuilder.truncateTable("ns", "tbl").build();
+```
+
+### DROP INDEX
+
+`DROP INDEX` コマンドはセカンダリインデックスを削除します。
+
+#### 文法
+
+```sql
+DROP INDEX [IF EXISTS] ON [<namespace name>.]<table name> (<column name>)
+```
+
+#### 例
+
+`DROP INDEX` の例は次のとおりです。
+
+```sql
+-- Drop a secondary index on a column "c4" of a table "ns.tbl"
+DROP INDEX ON ns.tbl (c4);
+
+-- Drop a secondary index only if it exists
+DROP INDEX IF EXISTS ON tbl (c4);
+```
+
+`DROP INDEX` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Drop a secondary index on a column "c4" of a table "ns.tbl"
+DropIndexStatement statement1 =
+    StatementBuilder.dropIndex().onTable("ns", "tbl").column("c4").build();
+
+// Drop a secondary index only if it exists
+DropIndexStatement statement2 =
+    StatementBuilder.dropIndex().ifExists().onTable("ns", "tbl").column("c4").build();
+```
+
+### DROP TABLE
+
+`DROP TABLE` コマンドはテーブルを削除します。
+
+#### 文法
+
+```sql
+DROP TABLE [IF EXISTS] [<namespace name>.]<table name>
+```
+
+#### 例
+
+`DROP TABLE` の例は次のとおりです。
+
+```sql
+-- Drop a table "ns.tbl"
+DROP TABLE ns.tbl;
+
+-- Drop a table only if it exists
+DROP TABLE IF EXISTS tbl;
+```
+
+`DROP TABLE` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Drop a table "ns.tbl"
+DropTableStatement statement1 = StatementBuilder.dropTable("ns", "tbl").build();
+
+// Drop a table only if it exists
+DropTableStatement statement2 = StatementBuilder.dropTable("ns", "tbl").ifExists().build();
+```
+
+### DROP NAMESPACE
+
+`DROP NAMESPACE` コマンドは名前空間を削除します。
+
+#### 文法
+
+```sql
+DROP NAMESPACE [IF EXISTS] <namespace name> [CASCADE]
+```
+
+#### 例
+
+`DROP NAMESPACE` の例は次のとおりです。
+
+```sql
+-- Drop a namespace "ns"
+DROP NAMESPACE ns;
+
+-- Drop a namespace only if it exists
+DROP NAMESPACE IF EXISTS ns;
+
+-- Drop a namespace with cascade
+DROP NAMESPACE ns CASCADE;
+```
+
+`DROP NAMESPACE` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Drop a namespace "ns"
+DropNamespaceStatement statement1 = StatementBuilder.dropNamespace("ns").build();
+
+// Drop a namespace only if it exists
+DropNamespaceStatement statement2 = StatementBuilder.dropNamespace("ns").ifExists().build();
+
+// Drop a namespace with cascade
+DropNamespaceStatement statement3 = StatementBuilder.dropNamespace("ns").cascade().build();
+```
+
+### CREATE COORDINATOR TABLES
+
+`CREATE COORDINATOR TABLES` コマンドは Coordinator テーブルを作成します。
+
+#### 文法
+
+```sql
+CREATE COORDINATOR TABLES [IF NOT {EXIST|EXISTS}] [WITH creation_options]
+
+creation_options: <option name>=<option value> [AND <option name>=<option value>] ...
+```
+
+#### 例
+
+Examples of `CREATE COORDINATOR TABLES` are as follows:
+
+```sql
+-- Create coordinator tables
+CREATE COORDINATOR TABLES;
+
+-- Create coordinator tables only if they do not already exist
+CREATE COORDINATOR TABLES IF NOT EXIST;
+
+-- Create coordinator tables with options
+CREATE COORDINATOR TABLES WITH 'option1' = 'value1' AND 'option2' = 'value2' AND 'option3' = 'value3';
+```
+
+`CREATE COORDINATOR TABLES` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Create coordinator tables
+CreateCoordinatorTablesStatement statement1 =
+    StatementBuilder.createCoordinatorTables().build();
+
+// Create coordinator tables only if they do not already exist
+CreateCoordinatorTablesStatement statement2 =
+    StatementBuilder.createCoordinatorTables().ifNotExist().build();
+
+// Create coordinator tables with options
+CreateCoordinatorTablesStatement statement3 =
+    StatementBuilder.createCoordinatorTables()
+        .withOption("option1", "value1")
+        .withOption("option2", "value2")
+        .withOption("option3", "value3")
+        .build();
+```
+
+### TRUNCATE COORDINATOR TABLES
+
+`TRUNCATE COORDINATOR TABLES` コマンドは Coordinator テーブルのすべての行を削除します。
+
+#### 文法
+
+```sql
+TRUNCATE COORDINATOR TABLES
+```
+
+#### 例
+
+`TRUNCATE COORDINATOR TABLES` のステートメントオブジェクトを構築する例を次に示します。
+
+```java
+// Truncate coordinator tables
+TruncateCoordinatorTablesStatement statement =
+    StatementBuilder.truncateCoordinatorTables().build();
+```
+
+### DROP COORDINATOR TABLES
+
+`DROP COORDINATOR TABLES` コマンドは Coordinator テーブルを削除します。
+
+#### 文法
+
+```sql
+DROP COORDINATOR TABLES [IF {EXIST|EXISTS}]
+```
+
+#### 例
+
+`DROP COORDINATOR TABLES` の例は次のとおりです。
+
+```sql
+-- Drop coordinator tables
+DROP COORDINATOR TABLES;
+
+-- Drop coordinator tables if they exist
+DROP COORDINATOR TABLES IF EXIST;
+```
+
+`DROP COORDINATOR TABLES` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Drop coordinator tables
+DropCoordinatorTablesStatement statement1 = StatementBuilder.dropCoordinatorTables().build();
+
+// Drop coordinator tables if they exist
+DropCoordinatorTablesStatement statement2 =
+    StatementBuilder.dropCoordinatorTables().ifExist().build();
+```
+
+### ALTER TABLE
+
+`ALTER TABLE` コマンドはテーブルを変更します (例: 列の追加)。
+
+#### 文法
+
+```sql
+ALTER TABLE [<namespace name>.]<table name> ADD [COLUMN] <column name> data_type
+
+data_type: BOOLEAN | INT | BIGINT | FLOAT | DOUBLE | TEXT | BLOB
+```
+
+#### 例
+
+`ALTER TABLE` の例は次のとおりです。
+
+```sql
+-- Add a new column "new_col" to "ns.tbl"
+ALTER TABLE ns.tbl ADD COLUMN new_col INT;
+```
+
+`ALTER TABLE` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Add a new column "new_col" to "ns.tbl"
+AlterTableAddColumnStatement statement =
+    StatementBuilder.alterTable("ns", "tbl").addColumn("new_col", DataType.INT).build();
+```
+
+## DML
+
+### SELECT
+
+`SELECT` コマンドは、データベースからレコードを取得します。ScalarDB SQL は、ScalarDB の `Get`、パーティション `Scan`、およびクロスパーティション `Scan` 操作のいずれかを使用して、データベースからレコードを取得し、`SELECT` コマンドの実行プランを作成します。最良の結果を得るには、クロスパーティションスキャンの使用を避けるため、`WHERE` 句で主キー列を可能な限り一意に指定します。クロスパーティションスキャンを使用すると、特に非 JDBC データベースでパフォーマンスと一貫性の問題が発生する可能性があります。操作の選択については、次のルールを参照してください。前者は後者よりも優先され、より効率的です。[ScalarDB データモデル](../data-modeling.mdx)は、データのモデリングとアクセスに関するベストプラクティスを理解するのにも役立ちます。
+
+1. `WHERE` 句で主キー列を完全に指定すると、`SELECT` コマンドは単一パーティション内の単一レコードに対して `Get` 操作を使用します。
+2. パーティションキーを完全に指定し、`WHERE` 句と `ORDER BY` 句でクラスタリングキーと順序を適切に指定すると、`SELECT` コマンドは単一パーティション内のレコードに対して `Scan` 操作を使用します。詳細については、[パーティションスキャンとインデックススキャンの例](#パーティションスキャンとインデックススキャンの例)を参照してください。
+3. `ORDER BY` 句を使用せずに `WHERE` 句で `equal to` (`=`) 演算子を使用してインデックス列の値を指定すると、`SELECT` コマンドはインデックス `Scan` 操作を使用します。
+4. その他の場合、`SELECT` コマンドはクロスパーティション `Scan` 操作に変換されます。
+
+任意の条件と順序でパーティション間でレコードを柔軟に取得したい場合は、クロスパーティションスキャンオプションと、フィルタリングおよび順序付けオプション付きのクロスパーティションスキャンを有効にする必要があります。現在、順序付けオプションは JDBC データベースでのみ使用できます。設定の詳細については、[クロスパーティションスキャン設定](../configurations.mdx#クロスパーティションスキャン設定)および [ScalarDB SQL 設定](./configurations.mdx)を参照してください。
+
+:::warning
+
+非 JDBC データベースの場合、`SERIALIZABLE` 分離レベルでクロスパーティションスキャンを有効にした場合でも、トランザクションは読み取りコミットスナップショット分離 (`SNAPSHOT`) で実行される可能性があります。これは、より低い分離レベルです。非 JDBC データベースを使用する場合は、トランザクションの一貫性が重要でない場合にのみ、クロスパーティションスキャンを使用してください。
+
+:::
+
+#### 文法
+
+```sql
+SELECT projection [, projection] ...
+  FROM [<namespace name>.]<table name> [AS <alias>] [join_specification [join_specification] ...]
+  [WHERE and_predicates [OR and_predicates ...] | or_predicates [AND or_predicates ...]]
+  [ORDER BY identifier [order] [, identifier [order]] ...]
+  [LIMIT <limit>]
+
+projection: * | identifier [AS <alias>]
+join_specification: [INNER] JOIN [<namespace name>.]<table name> [AS <alias>] ON join_predicate [AND join_predicate] ... | {LEFT|RIGHT} [OUTER] JOIN [<namespace name>.]<table name> [AS <alias>] ON join_predicate [AND join_predicate] ...
+join_predicate: identifier = identifier
+and_predicates: predicate | (predicate [AND predicate ...])
+or_predicates: predicate | (predicate [OR predicate ...])
+predicate: identifier operator <column value> | identifier BETWEEN <column value> AND <column value> | identifier [NOT] LIKE <pattern> [ESCAPE <escape character>] | identifier IS [NOT] NULL
+identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
+operator: = | <> | != | > | >= | < | <=
+order: ASC | DESC
+```
+
+##### 注記
+
+`JOIN` 句:
+
+- `[INNER] JOIN` および `LEFT [OUTER] JOIN` の場合:
+  - `join_predicate` には、右側のテーブルのすべての主キー列またはセカンダリインデックス列のいずれかが含まれている必要があります。
+  - `WHERE` 述語および `ORDER BY` 句には、`FROM` 句で指定されたテーブルの列のみを含めることができます。
+- `RIGHT [OUTER] JOIN` の場合:
+  - 最初の `join_specification` として指定する必要があります。
+  - `join_predicate` には、左側のテーブルのすべての主キー列またはセカンダリインデックス列が含まれている必要があります。
+  - `WHERE` 述語および `ORDER BY` 句には、`RIGHT OUTER JOIN` 句で指定されたテーブルの列のみを指定できます。
+
+`WHERE` 句と `LIMIT` 句:
+
+- `WHERE` 句の任意の列に任意の述語を使用できます。
+- `WHERE` 句では、述語は `and_predicates` の OR 形式 (論理和標準形と呼ばれます) または `or_predicates` の AND 形式 (論理積標準形と呼ばれます) である必要があります。
+- 複数の述語を持つ複数の `and_predicates` または `or_predicates` を接続する場合は、`and_predicates` と `or_predicates` を括弧で囲む必要があります。
+- バインドマーカー (位置 `?` および名前 `:<name>`) に `<column value>` と `<limit>` を指定できます。
+
+`LIKE` 述語:
+
+- `<pattern>` 内の `_` は任意の 1 文字に一致します。
+- `<pattern>` 内の `%` は 0 個以上の文字の任意のシーケンスに一致します。
+- `<pattern>` 内の `\` はデフォルトでエスケープ文字として機能します。
+  - `ESCAPE` 句を指定してエスケープ文字を変更できます。
+  - 空のエスケープ文字 `ESCAPE ''` を指定してエスケープ文字を無効にすることができます。
+
+`ORDER BY` 句:
+
+- `ORDER BY` 句の任意の列に `order` を指定できます。
+- `order` を省略すると、デフォルトの順序 `ASC` が使用されます。
+
+ScalarDB のデータベースからデータを取得する方法の詳細については、[Get 操作](../api-guide.mdx#get-操作)および [Scan 操作](../api-guide.mdx#操作)を参照してください。
+
+#### パーティションスキャンとインデックススキャンの例
+
+次のようなテーブルとインデックスがあるとします。
+
+```sql
+CREATE TABLE ns.tbl (
+  c1 INT,
+  c2 TEXT,
+  c3 FLOAT,
+  c4 BIGINT,
+  c5 BOOLEAN,
+  PRIMARY KEY (c1, c2, c3)
+) WITH CLUSTERING ORDER BY (c2 DESC, c3 ASC);
+
+CREATE INDEX ON ns.tbl (c4);
+```
+
+`SELECT` の例は次のとおりです。
+
+```sql
+-- With a full primary key
+SELECT * FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23;
+
+-- With a full primary key and predicates for non-primary-key columns
+SELECT * FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 AND c4 < 100;
+
+-- With a partial primary key
+SELECT * FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa';
+
+-- With a partial primary key and predicates for non-primary-key columns
+SELECT * FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND (c4 < 100 OR c4 > 500);
+
+-- With projections and a partition key and clustering-key boundaries
+SELECT c1, c2, c3, c5 FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 >= 1.23 AND c3 < 4.56;
+
+-- With projections and a partition key and clustering-key boundaries and orders and limit
+SELECT c1 AS a, c2 AS b, c3 AS c, c5 FROM ns.tbl WHERE c1 = 10 AND c2 > 'aaa' AND c2 <= 'ddd' ORDER BY c2 ASC, c3 DESC LIMIT 10;
+
+-- With an equality predicate for an indexed column
+SELECT * FROM ns.tbl WHERE c4 = 100;
+
+-- With an equality predicate for an indexed column and predicates for non-primary-key columns
+SELECT * FROM ns.tbl WHERE c4 = 100 AND c5 = false;
+
+-- With projections and an indexed column and limit
+SELECT c1, c2, c3, c4 FROM ns.tbl WHERE c4 = 100 LIMIT 10;
+
+-- With positional bind markers
+SELECT * FROM ns.tbl WHERE c1 = ? AND c2 > ? AND c2 <= ? ORDER BY c2 ASC, c3 DESC LIMIT ?;
+```
+
+`SELECT` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// With a full primary key
+SelectStatement statement1 =
+    StatementBuilder.select()
+        .from("ns", "tbl")
+        .where(Predicate.column("c1").isEqualTo(Value.of(10)))
+        .and(Predicate.column("c2").isEqualTo(Value.of("aaa")))
+        .and(Predicate.column("c3").isEqualTo(Value.of(1.23F)))
+        .and(Predicate.column("c4").isLessThan(Value.of(100)))
+        .build();
+
+// With a full primary key and predicates for non-primary-key columns
+SelectStatement statement1 =
+    StatementBuilder.select()
+        .from("ns", "tbl")
+        .where(Predicate.column("c1").isEqualTo(Value.of(10)))
+        .and(Predicate.column("c2").isEqualTo(Value.of("aaa")))
+        .and(Predicate.column("c4").isEqualTo(Value.of(1.23F)))
+        .and(Predicate.column("c4").isLessThan(Value.of(100)))
+        .build();
+
+// With a partial primary key
+SelectStatement statement2 =
+    StatementBuilder.select()
+        .from("ns", "tbl")
+        .where(Predicate.column("c1").isEqualTo(Value.of(10)))
+        .and(Predicate.column("c2").isEqualTo(Value.of("aaa")))
+        .build();
+
+// With a partial primary key and predicates for non-primary-key columns
+SelectStatement statement2 =
+    StatementBuilder.select()
+        .from("ns", "tbl")
+        .where(Predicate.column("c1").isEqualTo(Value.of(10)))
+        .and(Predicate.column("c2").isEqualTo(Value.of("aaa")))
+        .and(
+            AndPredicateList.predicate(Predicate.column("c4").isLessThan(Value.of(100)))
+                .and(Predicate.column("c4").isGreaterThan(Value.of(500)))
+                .build())
+        .build();
+
+// With projections and a partition key and clustering-key boundaries
+SelectStatement statement3 =
+    StatementBuilder.select("c1", "c2", "c3", "c5")
+        .from("ns", "tbl")
+        .where(Predicate.column("c1").isEqualTo(Value.of(10)))
+        .and(Predicate.column("c2").isEqualTo(Value.of("aaa")))
+        .and(Predicate.column("c3").isGreaterThanOrEqualTo(Value.of(1.23F)))
+        .and(Predicate.column("c3").isLessThan(Value.of(4.56F)))
+        .build();
+
+// With projections and a partition key and clustering key boundaries and orders and limit
+SelectStatement statement4 =
+   StatementBuilder.select(
+             Projection.column("c1").as("a"),
+             Projection.column("c2").as("b"),
+             Projection.column("c3").as("c"),
+             Projection.column("c5").as("d"))
+        .from("ns", "tbl")
+        .where(Predicate.column("c1").isEqualTo(Value.of(10)))
+        .and(Predicate.column("c2").isGreaterThan(Value.of("aaa")))
+        .and(Predicate.column("c2").isLessThanOrEqualTo(Value.of("ddd")))
+        .orderBy(Ordering.column("c2").asc(), Ordering.column("c3").desc())
+        .limit(10)
+        .build();
+
+// With an equality predicate for an indexed column
+SelectStatement statement5 =
+    StatementBuilder.select()
+        .from("ns", "tbl")
+        .where(Predicate.column("c4").isEqualTo(Value.of(100)))
+        .build();
+
+// With an equality predicate for an indexed column and predicates for non-primary-key columns
+SelectStatement statement5 =
+    StatementBuilder.select()
+        .from("ns", "tbl")
+        .where(Predicate.column("c4").isEqualTo(Value.of(100)))
+        .and(Predicate.column("c5").isEqualTo(Value.of(false)))
+        .build();
+
+// With projections and an indexed column and limit
+SelectStatement statement6 =
+    StatementBuilder.select("c1", "c2", "c3", "c4")
+        .from("ns", "tbl")
+        .where(Predicate.column("c4").isEqualTo(Value.of(100)))
+        .limit(10)
+        .build();
+
+// With positional bind markers
+SelectStatement statement7 =
+    StatementBuilder.select()
+        .from("ns", "tbl")
+        .where(Predicate.column("c1").isEqualTo(BindMarker.positional()))
+        .and(Predicate.column("c2").isGreaterThan(BindMarker.positional()))
+        .and(Predicate.column("c2").isLessThanOrEqualTo(BindMarker.positional()))
+        .orderBy(Ordering.column("c2").asc(), Ordering.column("c3").desc())
+        .limit(BindMarker.positional())
+        .build();
+```
+
+`JOIN` を使用した `SELECT` の例は次のとおりです。
+
+```sql
+-- For INNER JOIN and LEFT OUTER JOIN:
+SELECT * FROM tbl1 as t1
+  INNER JOIN tbl2 as t2 on t1.col1=t2.id1 and t1.col2=t2.id2 -- This part must have all primary key columns or a secondary index column of `tbl2`.
+  WHERE t1.pkey=1 -- Only columns of `tbl1` can be specified here.
+  ORDER BY t1.ckey DESC; -- Only columns of `tbl1` can be specified here.
+
+SELECT * FROM tbl1 as t1
+  INNER JOIN tbl2 as t2 on t1.col1=t2.id -- This part must have all primary key columns or a secondary index column of `tbl2`.
+  LEFT OUTER JOIN tbl3 as t3 on t1.col2=t3.id -- This part must have all primary key columns or a secondary index column of `tbl3`.
+  WHERE t1.pkey=1 -- Only columns of `tbl1` can be specified here.
+  ORDER BY t1.ckey DESC; -- Only columns of `tbl1` can be specified here.
+
+-- For RIGHT OUTER JOIN:
+SELECT * FROM tbl1 as t1
+  RIGHT OUTER JOIN tbl2 as t2 on t1.id=t2.col -- Acceptable as the first join. And this part must have all primary key columns or a secondary index column of `tbl1`.
+  LEFT OUTER JOIN tbl3 as t3 on t1.col2=t3.id
+  WHERE t2.pkey=1 -- Only columns of `tbl2` can be specified here.
+  ORDER BY t2.ckey DESC; -- Only columns of `tbl2` can be specified here.
+
+SELECT * FROM tbl1 as t1
+  RIGHT OUTER JOIN tbl2 as t2 on t1.id1=t2.col1 and t1.id2=t2.col2 -- This part must have all primary key columns or a secondary index column of `tbl1`.
+  WHERE t2.pkey=1 -- Only columns of `tbl2` can be specified here.
+  ORDER BY t2.ckey DESC; -- Only columns of `tbl2` can be specified here.
+```
+
+`JOIN` を使用して `SELECT` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// For INNER JOIN and LEFT OUTER JOIN:
+SelectStatement statement1 =
+   StatementBuilder.select()
+        .from("tbl1", "t1")
+        .innerJoin("tbl2", "t2")
+        .on(JoinPredicate.column("t1", "col1").isEqualTo("t2", "id1"))
+        .and(JoinPredicate.column("t1", "col2").isEqualTo("t2", "id2")) // This part must have all primary key columns or a secondary index column of `tbl2`.
+        .where(Predicate.column("t1", "pkey").isEqualTo(Value.of(1))) // Only columns of `tbl1` can be specified here.
+        .orderBy(Ordering.column("t1", "ckey").desc()) // Only columns of `tbl1` can be specified here.
+        .build();
+
+SelectStatement statement2 =
+    StatementBuilder.select()
+        .from("tbl1", "t1")
+        .innerJoin("tbl2", "t2")
+        .on(JoinPredicate.column("t1", "col1").isEqualTo("t2", "id")) // This part must have all primary key columns or a secondary index column of `tbl2`.
+        .leftOuterJoin("tbl3", "t3")
+        .on(JoinPredicate.column("t1", "col2").isEqualTo("t3", "id")) // This part must have all primary key columns or a secondary index column of `tbl3`.
+        .where(Predicate.column("t1", "pkey").isEqualTo(Value.of(1))) // Only columns of `tbl1` can be specified here.
+        .orderBy(Ordering.column("t1", "ckey").desc()) // Only columns of `tbl1` can be specified here.
+        .build();
+
+// For RIGHT OUTER JOIN:
+SelectStatement statement3 =
+    StatementBuilder.select()
+        .from("tbl1", "t1")
+        .rightOuterJoin("tbl2", "t2")
+        .on(JoinPredicate.column("t1", "id").isEqualTo("t2", "col")) // Acceptable as the first join. And this part must have all primary key columns or a secondary index column of `tbl1`.
+        .leftOuterJoin("tbl3", "t3")
+        .on(JoinPredicate.column("t1", "col2").isEqualTo("t3", "id"))
+        .where(Predicate.column("t2", "pkey").isEqualTo(Value.of(1))) // Only columns of `tbl2` can be specified here.
+        .orderBy(Ordering.column("t2", "ckey").desc()) // Only columns of `tbl2` can be specified here.
+        .build();
+
+SelectStatement statement4 =
+    StatementBuilder.select()
+        .from("tbl1", "t1")
+        .rightOuterJoin("tbl2", "t2")
+        .on(JoinPredicate.column("t1", "id1").isEqualTo("t2", "col1"))
+        .and(JoinPredicate.column("t1", "id2").isEqualTo("t2", "col2")) // This part must have all primary key columns or a secondary index column of `tbl1`.
+        .where(Predicate.column("t2", "pkey").isEqualTo(Value.of(1))) // Only columns of `tbl2` can be specified here.
+        .orderBy(Ordering.column("t2", "ckey").desc()) // Only columns of `tbl2` can be specified here.
+        .build();
+```
+
+#### クロスパーティションスキャンの例
+
+たとえば、次のテーブルがあるとします。
+
+```sql
+CREATE TABLE ns.user (
+  id INT,
+  name TEXT,
+  age INT,
+  height FLOAT,
+  PRIMARY KEY (id)
+)
+```
+
+クロスパーティションスキャンを使用した `SELECT` の例は次のとおりです。
+
+```sql
+-- Without the WHERE clause to retrieve all the records of a table
+SELECT * FROM ns.user;
+
+-- Without the WHERE clause and with projections and a limit
+SELECT id, name FROM ns.user LIMIT 10;
+
+-- With AND predicates for non-primary-key columns
+SELECT * FROM ns.user WHERE age > 10 AND height > 140;
+
+-- With OR predicates for non-primary key columns
+SELECT * FROM ns.user WHERE age > 10 OR height > 140;
+
+-- With OR-wise of AND predicates
+SELECT * FROM ns.user WHERE (age > 10 AND height > 150) OR (age > 15 AND height > 145);
+
+-- With AND-wise of OR predicates
+SELECT * FROM ns.user WHERE (age < 10 OR age > 65) AND (height < 145 OR height > 175);
+
+-- With LIKE predicates
+SELECT * FROM ns.user WHERE name LIKE 'A%' OR name NOT LIKE 'B_b';
+
+-- With LIKE predicates with an escape character
+SELECT * FROM ns.user WHERE name LIKE '+%Alice' ESCAPE '+';
+
+-- With IS NULL predicates
+SELECT * FROM ns.user WHERE name IS NOT NULL AND age IS NULL;
+
+-- With projections
+SELECT name, age, height FROM ns.user WHERE (age < 10 OR age > 65) AND age <> 0;
+
+-- With limit
+SELECT name, age, height FROM ns.user WHERE age < 10 OR age > 65 LIMIT 10;
+
+-- With orderings
+SELECT * FROM ns.user WHERE age < 10 ORDER BY height DESC;
+
+-- With orderings without the WHERE clause
+SELECT * FROM ns.user ORDER BY height;
+
+-- With positional bind markers
+SELECT * FROM ns.user WHERE age < ? ORDER BY age ASC, height DESC LIMIT ?;
+```
+
+`JOIN` 句を使用する例については、[パーティションスキャンとインデックススキャンの例](#パーティションスキャンとインデックススキャンの例)を参照してください。
+
+`SELECT` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Without the WHERE clause to retrieve all the records of a table
+SelectStatement statement1 = StatementBuilder.select().from("ns", "user").build();
+
+// Without the WHERE clause and with projections and a limit
+SelectStatement statement2 =
+    StatementBuilder.select("id", "name").from("ns", "user").limit(10).build();
+
+// With AND predicates for non-primary-key columns
+SelectStatement statement2 =
+    StatementBuilder.select()
+        .from("ns", "user")
+        .where(Predicate.column("age").isGreaterThan(Value.of(10)))
+        .and(Predicate.column("height").isGreaterThan(Value.of(140.0F)))
+        .build();
+
+// With OR predicates for non-primary key columns
+SelectStatement statement3 =
+    StatementBuilder.select()
+        .from("ns", "user")
+        .where(Predicate.column("age").isGreaterThan(Value.of(10)))
+        .or(Predicate.column("height").isGreaterThan(Value.of(140.0F)))
+        .build();
+
+// With OR-wise of AND predicates
+SelectStatement statement4 =
+    StatementBuilder.select()
+        .from("ns", "user")
+        .where(
+            AndPredicateList.predicate(Predicate.column("age").isGreaterThan(Value.of(10)))
+                .and(Predicate.column("height").isGreaterThan(Value.of(140.0F)))
+                .build())
+        .or(
+            AndPredicateList.predicate(Predicate.column("age").isGreaterThan(Value.of(15)))
+                .and(Predicate.column("height").isGreaterThan(Value.of(145.0F)))
+                .build())
+        .build();
+
+// With AND-wise of OR predicates
+SelectStatement statement5 =
+    StatementBuilder.select()
+        .from("ns", "user")
+        .where(
+            OrPredicateList.predicate(Predicate.column("age").isLessThan(Value.of(10)))
+                .or(Predicate.column("age").isGreaterThan(Value.of(65)))
+                .build())
+        .and(
+            OrPredicateList.predicate(Predicate.column("height").isLessThan(Value.of(145.0F)))
+                .or(Predicate.column("height").isGreaterThan(Value.of(175.0F)))
+                .build())
+        .build();
+
+// With LIKE predicates
+SelectStatement statement6 =
+    StatementBuilder.select()
+        .from("ns", "user")
+        .where(Predicate.column("name").isLike(Value.of("A%")))
+        .or(Predicate.column("name").isNotLike(Value.of("B_b")))
+        .build();
+
+// With LIKE predicates with an escape character
+SelectStatement statement7 =
+    StatementBuilder.select()
+        .from("ns", "user")
+        .where(Predicate.column("name").isLike(Value.of("+%Alice"), Value.of("+")))
+        .build();
+
+// With IS NULL predicates
+SelectStatement statement8 =
+    StatementBuilder.select()
+        .from("ns", "user")
+        .where(Predicate.column("name").isNotNull())
+        .and(Predicate.column("age").isNull())
+        .build();
+
+// With projections
+SelectStatement statement9 =
+    StatementBuilder.select("name", "age", "height")
+        .from("ns", "user")
+        .where(
+            OrPredicateList.predicate(Predicate.column("age").isLessThan(Value.of(10)))
+                .or(Predicate.column("age").isGreaterThan(Value.of(65)))
+                .build())
+        .and(Predicate.column("height").isNotEqualTo(Value.of(0)))
+        .build();
+
+// With limit
+SelectStatement statement10 =
+    StatementBuilder.select("name", "age", "height")
+        .from("ns", "user")
+        .where(Predicate.column("age").isLessThan(Value.of(10)))
+        .or(Predicate.column("age").isGreaterThan(Value.of(65)))
+        .limit(10)
+        .build();
+
+// With orderings
+SelectStatement statement11 =
+    StatementBuilder.select()
+        .from("ns", "user")
+        .where(Predicate.column("age").isLessThan(Value.of(10)))
+        .orderBy(Ordering.column("height").desc())
+        .build();
+
+// With orderings without the WHERE clause
+SelectStatement statement12 =
+    StatementBuilder.select()
+        .from("ns", "user")
+        .orderBy(Ordering.column("height").desc())
+        .build();
+
+// With positional bind markers
+SelectStatement statement13 =
+    StatementBuilder.select()
+        .from("ns", "user")
+        .where(Predicate.column("age").isLessThan(BindMarker.positional()))
+        .orderBy(Ordering.column("age").asc(), Ordering.column("height").desc())
+        .limit(BindMarker.positional())
+        .build();
+```
+
+`JOIN` 句を使用する例については、[パーティションスキャンとインデックススキャンの例](#パーティションスキャンとインデックススキャンの例)を参照してください。
+
+### INSERT
+
+`INSERT` コマンドは、データベースに新しいレコードを挿入します。対象レコードのいずれかがすでに存在する場合、トランザクション競合エラーがスローされます。
+
+このコマンドは次の列を返します:
+
+- `updateCount`: `INT` - 挿入されたレコードの数
+
+#### 文法
+
+```sql
+INSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ...)]
+  VALUES (<column value> [, <column value>] ...) [, (<column value> [, <column value>] ...)] ...
+```
+
+`INSERT` では完全な主キーを指定する必要があることに注意してください。また、バインドマーカー (位置 `?` および名前 `:<name>`) に `<column value>` を指定できます。
+
+#### 例
+
+`INSERT` の例は次のとおりです。
+
+```sql
+-- Insert a record without specifying column names
+INSERT INTO ns.tbl VALUES (10, 'aaa', 1.23, 100, true);
+
+-- Insert a record with column names
+INSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100);
+
+-- With positional bind markers
+INSERT INTO tbl VALUES (?, ?, ?, ?, ?);
+
+-- Insert multiple records
+INSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100), (20, 'bbb', 4.56, 200);
+```
+
+`INSERT` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Insert a record without specifying column names.
+InsertStatement statement1 = StatementBuilder.insertInto("ns", "tbl")
+    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
+    .build();
+
+// Insert a record with column names.
+InsertStatement statement2 = StatementBuilder.insertInto("ns", "tbl")
+    .columns("c1", "c2", "c3", "c4", "c5")
+    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
+    .build();
+
+// With positional bind markers
+InsertStatement statement3 =
+    StatementBuilder.insertInto("tbl")
+        .columns("c1", "c2", "c3", "c4", "c5")
+        .values(
+            BindMarker.positional(),
+            BindMarker.positional(),
+            BindMarker.positional(),
+            BindMarker.positional(),
+            BindMarker.positional())
+        .build();
+
+// Insert multiple records.
+InsertStatement statement4 = StatementBuilder.insertInto("ns", "tbl")
+    .columns("c1", "c2", "c3", "c4", "c5")
+    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
+    .values(Value.ofInt(20), Value.ofText("bbb"), Value.of(2.46F), Value.of(200L), Value.of(false))
+    .build();
+```
+
+### UPSERT
+
+`UPSERT` コマンドは、データベースに新しいレコードが存在しない場合はそれを挿入し、すでに存在する場合はターゲットレコードを更新します。
+
+このコマンドは次の列を返します:
+
+- `updateCount`: `INT` - 挿入または更新されたレコードの数
+
+#### 文法
+
+```sql
+UPSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ...)]
+  VALUES (<column value> [, <column value>] ...) [, (<column value> [, <column value>] ...)] ...
+```
+
+:::note
+
+`UPSERT` では完全な主キーを指定する必要があります。また、バインドマーカー (位置 `?` および名前 `:<name>`) に `<column value>` を指定できます。
+
+:::
+
+#### 例
+
+`UPSERT` の例は次のとおりです。
+
+```sql
+-- Upsert a record without specifying column names.
+UPSERT INTO ns.tbl VALUES (10, 'aaa', 1.23, 100, true);
+
+-- Upsert a record with column names.
+UPSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100);
+
+-- With positional bind markers
+UPSERT INTO tbl VALUES (?, ?, ?, ?, ?);
+
+-- Upsert multiple records.
+UPSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100), (20, 'bbb', 4.56, 200);
+```
+
+`UPSERT` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Upsert a record without specifying column names.
+UpsertStatement statement1 = StatementBuilder.upsertInto("ns", "tbl")
+    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
+    .build();
+
+// Upsert a record with column names.
+UpsertStatement statement2 = StatementBuilder.upsertInto("ns", "tbl")
+    .columns("c1", "c2", "c3", "c4", "c5")
+    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
+    .build();
+
+// With positional bind markers
+UpsertStatement statement3 =
+    StatementBuilder.upsertInto("tbl")
+        .columns("c1", "c2", "c3", "c4", "c5")
+        .values(
+            BindMarker.positional(),
+            BindMarker.positional(),
+            BindMarker.positional(),
+            BindMarker.positional(),
+            BindMarker.positional())
+        .build();
+
+// Upsert multiple records.
+UpsertStatement statement4 = StatementBuilder.upsertInto("ns", "tbl")
+    .columns("c1", "c2", "c3", "c4", "c5")
+    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
+    .values(Value.ofInt(20), Value.ofText("bbb"), Value.of(2.46F), Value.of(200L), Value.of(false))
+    .build();
+```
+
+### UPDATE
+
+`UPDATE` コマンドは、データベース内の既存のレコードを更新します。`WHERE` 句に任意の条件を指定してレコードをフィルタリングできます。ただし、特に非 JDBC データベースでは、クロスパーティション操作によってパフォーマンスと一貫性の問題が発生する可能性があるため、クロスパーティション操作を回避するには、主キーを可能な限り一意に指定することをお勧めします。ScalarDB SQL は、`Get` または `Scan` 操作を使用してターゲットレコードを識別する `UPDATE` コマンドの実行プランを作成するため、レコードの選択にも同じルールが適用されます。クロスパーティション操作を引き起こす `WHERE` 句の種類を理解し、そのような操作を回避するには、[SELECT](#select) を参照してください。
+
+`WHERE` 句を指定せずにパーティション全体のすべてのレコードを更新する場合は、クロスパーティションスキャンオプションを有効にする必要があります。また、`WHERE` 句で任意の条件を使用してパーティション全体のレコードを柔軟に更新する場合は、フィルタリングオプション付きのクロスパーティションスキャンを有効にする必要があります。設定の詳細については、[クロスパーティションスキャン設定](../configurations.mdx#クロスパーティションスキャン設定)および [ScalarDB SQL 設定](./configurations.mdx)を参照してください。
+
+:::warning
+
+非 JDBC データベースの場合、`SERIALIZABLE` 分離レベルでクロスパーティションスキャンを有効にした場合でも、トランザクションは読み取りコミットスナップショット分離 (`SNAPSHOT`) で実行される可能性があります。これは、より低い分離レベルです。非 JDBC データベースを使用する場合は、トランザクションの一貫性が重要でない場合にのみ、クロスパーティションスキャンを使用してください。
+
+:::
+
+このコマンドは次の列を返します:
+
+- `updateCount`: `INT` - 更新されたレコードの数
+
+#### 文法
+
+```sql
+UPDATE [<namespace name>.]<table name> [AS <alias>]
+  SET <column identifier> = <column value> [, <column identifier> = <column value>] ...
+  [WHERE and_predicates [OR and_predicates ...] | or_predicates [AND or_predicates ...]]
+
+identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
+and_predicates: predicate | (predicate [AND predicate ...])
+or_predicates: predicate | (predicate [OR predicate ...])
+predicate: <identifier> operator <column value> | <identifier> BETWEEN <column value> AND <column value> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
+operator: = | <> | != | > | >= | < | <=
+```
+
+##### 注記
+
+`WHERE` 句:
+
+- `WHERE` 句の任意の列に任意の述語を使用できます。
+- `WHERE` 句では、述語は `and_predicates` の OR 形式 (論理和標準形と呼ばれます) または `or_predicates` の AND 形式 (論理積標準形と呼ばれます) である必要があります。
+- 複数の述語を持つ複数の `and_predicates` または `or_predicates` を接続する場合は、`and_predicates` と `or_predicates` を括弧で囲む必要があります。
+- バインドマーカー (位置 `?` および名前 `:<name>`) に `<column value>` を指定できます。
+
+`LIKE` 述語:
+
+- `<pattern>` 内の `_` は任意の 1 文字に一致します。
+- `<pattern>` 内の `%` は 0 個以上の文字の任意のシーケンスに一致します。
+- `<pattern>` 内の `\` はデフォルトでエスケープ文字として機能します。
+  - `ESCAPE` 句を指定してエスケープ文字を変更できます。
+  - 空のエスケープ文字 `ESCAPE ''` を指定してエスケープ文字を無効にすることができます。
+
+#### 完全な主キーを指定した例
+
+たとえば、次のテーブルがあるとします。
+
+```sql
+CREATE TABLE ns.tbl (
+  c1 INT,
+  c2 TEXT,
+  c3 FLOAT,
+  c4 BIGINT,
+  c5 BOOLEAN,
+  PRIMARY KEY (c1, c2, c3)
+) WITH CLUSTERING ORDER BY (c2 DESC, c3 ASC);
+```
+
+完全な主キーを指定した `UPDATE` の例は次のとおりです。
+
+```sql
+-- Update a record
+UPDATE ns.tbl SET c4 = 200, c5 = false WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23;
+
+-- With positional bind markers
+UPDATE ns.tbl SET c4 = ?, c5 = ? WHERE c1 = ? AND c2 = ? AND c3 = ?;
+```
+
+`UPDATE` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Update a record
+UpdateStatement statement1 =
+    StatementBuilder.update("ns", "tbl")
+        .set(
+            Assignment.column("c4").value(Value.of(200L)),
+            Assignment.column("c5").value(Value.of(false)))
+        .where(Predicate.column("c1").isEqualTo(Value.of(10)))
+        .and(Predicate.column("c2").isEqualTo(Value.of("aaa")))
+        .and(Predicate.column("c3").isEqualTo(Value.of(1.23F)))
+        .build();
+
+// With positional bind markers
+UpdateStatement statement2 =
+    StatementBuilder.update("tbl")
+        .set(
+            Assignment.column("c4").value(BindMarker.positional()),
+            Assignment.column("c5").value(BindMarker.positional()))
+        .where(Predicate.column("c1").isEqualTo(BindMarker.positional()))
+        .and(Predicate.column("c2").isEqualTo(BindMarker.positional()))
+        .and(Predicate.column("c3").isEqualTo(BindMarker.positional()))
+        .build();
+```
+
+#### 完全な主キーが指定されていない例
+
+たとえば、次のテーブルがあるとします。
+
+```sql
+CREATE TABLE ns.user (
+  id INT,
+  name TEXT,
+  age INT,
+  height FLOAT,
+  PRIMARY KEY (id)
+)
+```
+
+完全な主キーを指定しない `UPDATE` の例は次のとおりです。
+
+```sql
+-- Without the WHERE clause to update all the records of a table
+UPDATE ns.user SET age = 31;
+
+-- With AND predicates for non-primary key columns
+UPDATE ns.user SET age = 31 WHERE age > 10 AND height > 140;
+
+-- With OR predicates for non-primary key columns
+UPDATE ns.user SET age = 31 WHERE age > 10 OR height > 140;
+
+-- With OR-wise of AND predicates
+UPDATE ns.user SET age = 31 WHERE (age > 10 AND height > 150) OR (age > 15 AND height > 145);
+
+-- With AND-wise of OR predicates
+UPDATE ns.user SET age = 31 WHERE (age < 10 OR age > 65) AND (height < 145 OR height > 175);
+
+-- With LIKE predicates
+UPDATE ns.user SET age = 31 WHERE name LIKE 'A%' OR name NOT LIKE 'B_b';
+
+-- With LIKE predicates with an escape character
+UPDATE ns.user SET age = 31 WHERE name LIKE '+%Alice' ESCAPE '+';
+
+-- With IS NULL predicates
+UPDATE ns.user SET age = 31 WHERE name IS NOT NULL AND age IS NULL;
+
+-- With positional bind markers
+UPDATE ns.user SET age = ? WHERE age < ?;
+```
+
+`UPDATE` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Without the WHERE clause to update all the records of a table
+UpdateStatement statement1 =
+    StatementBuilder.update("ns", "user")
+        .set(Assignment.column("age").value(Value.of(30)))
+        .build();
+
+// With AND predicates for non-primary key columns
+UpdateStatement statement2 =
+    StatementBuilder.update("ns", "user")
+        .set(Assignment.column("age").value(Value.of(30)))
+        .where(Predicate.column("age").isGreaterThan(Value.of(10)))
+        .and(Predicate.column("height").isGreaterThan(Value.of(140.0F)))
+        .build();
+
+// With OR predicates for non-primary key columns
+UpdateStatement statement3 =
+    StatementBuilder.update("ns", "user")
+        .set(Assignment.column("age").value(Value.of(30)))
+        .where(Predicate.column("age").isGreaterThan(Value.of(10)))
+        .or(Predicate.column("height").isGreaterThan(Value.of(140.0F)))
+        .build();
+
+// With OR-wise of AND predicates
+UpdateStatement statement4 =
+    StatementBuilder.update("ns", "user")
+        .set(Assignment.column("age").value(Value.of(30)))
+        .where(
+            AndPredicateList.predicate(Predicate.column("age").isGreaterThan(Value.of(10)))
+                .and(Predicate.column("height").isGreaterThan(Value.of(140.0F)))
+                .build())
+        .or(
+            AndPredicateList.predicate(Predicate.column("age").isGreaterThan(Value.of(15)))
+                .and(Predicate.column("height").isGreaterThan(Value.of(145.0F)))
+                .build())
+        .build();
+
+// With AND-wise of OR predicates
+UpdateStatement statement5 =
+    StatementBuilder.update("ns", "user")
+        .set(Assignment.column("age").value(Value.of(30)))
+        .where(
+            OrPredicateList.predicate(Predicate.column("age").isLessThan(Value.of(10)))
+                .or(Predicate.column("age").isGreaterThan(Value.of(65)))
+                .build())
+        .and(
+            OrPredicateList.predicate(Predicate.column("height").isLessThan(Value.of(145.0F)))
+                .or(Predicate.column("height").isGreaterThan(Value.of(175.0F)))
+                .build())
+        .build();
+
+// With LIKE predicates
+UpdateStatement statement6 =
+    StatementBuilder.update("ns", "user")
+        .set(Assignment.column("age").value(Value.of(30)))
+        .where(Predicate.column("name").isLike(Value.of("A%")))
+        .or(Predicate.column("name").isNotLike(Value.of("B_b")))
+        .build();
+
+// With LIKE predicates with an escape character
+UpdateStatement statement7 =
+    StatementBuilder.update("ns", "user")
+        .set(Assignment.column("age").value(Value.of(30)))
+        .where(Predicate.column("name").isLike(Value.of("+%Alice"), Value.of("+")))
+        .build();
+
+// With IS NULL predicates
+UpdateStatement statement8 =
+    StatementBuilder.update("ns", "user")
+        .set(Assignment.column("age").value(Value.of(30)))
+        .where(Predicate.column("name").isNotNull())
+        .and(Predicate.column("age").isNull())
+        .build();
+
+// With positional bind markers
+UpdateStatement statement9 =
+    StatementBuilder.update("ns", "user")
+        .set(Assignment.column("age").value(BindMarker.positional()))
+        .where(Predicate.column("age").isLessThan(BindMarker.positional()))
+        .build();
+```
+
+### DELETE
+
+`DELETE` コマンドは、データベース内のレコードを削除します。`WHERE` 句に任意の条件を指定してレコードをフィルターできます。ただし、特に非 JDBC データベースでは、クロスパーティション操作によってパフォーマンスと一貫性の問題が発生する可能性があるため、クロスパーティション操作を回避するには、可能な限り主キーを一意に指定することをお勧めします。ScalarDB SQL は、ターゲットレコードを識別するために `Get` または `Scan` 操作を使用する `DELETE` コマンドの実行プランを作成するため、レコードの選択にも同じルールが適用されます。クロスパーティション操作を引き起こす `WHERE` 句の種類を理解し、そのような操作を回避するには、[SELECT](#select) を参照してください。
+
+`WHERE` 句を指定せずにパーティション全体のすべてのレコードを削除する場合は、クロスパーティションスキャンオプションを有効にする必要があります。また、`WHERE` 句で任意の条件を使用してパーティション全体のレコードを柔軟に削除する場合は、フィルタリングオプションを使用したクロスパーティションスキャンを有効にする必要があります。設定の詳細については、[クロスパーティションスキャン設定](../configurations.mdx#クロスパーティションスキャン設定)および [ScalarDB SQL 設定](./configurations.mdx)を参照してください。
+
+:::warning
+
+非 JDBC データベースの場合、`SERIALIZABLE` 分離レベルでクロスパーティションスキャンを有効にした場合でも、トランザクションは読み取りコミットスナップショット分離 (`SNAPSHOT`) で実行される可能性があります。これは、より低い分離レベルです。非 JDBC データベースを使用する場合は、トランザクションの一貫性が重要でない場合にのみ、クロスパーティションスキャンを使用してください。
+
+:::
+
+このコマンドは次の列を返します:
+
+- `updateCount`: `INT` - 削除されたレコードの数
+
+#### 文法
+
+```sql
+DELETE FROM [<namespace name>.]<table name> [AS <alias>]
+  [WHERE and_predicates [OR and_predicates ...] | or_predicates [AND or_predicates ...]]
+
+identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
+and_predicates: predicate | (predicate [AND predicate ...])
+or_predicates: predicate | (predicate [OR predicate ...])
+predicate: <identifier> operator <column value> | <identifier> BETWEEN <column value> AND <column value> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
+operator: = | <> | != | > | >= | < | <=
+```
+
+##### 注記
+
+`WHERE` 句:
+
+- `WHERE` 句の任意の列に任意の述語を使用できます。
+- `WHERE` 句では、述語は `and_predicates` の OR 形式 (論理和標準形と呼ばれます) または `or_predicates` の AND 形式 (論理積標準形と呼ばれます) である必要があります。
+- 複数の述語を持つ複数の `and_predicates` または `or_predicates` を接続する場合は、`and_predicates` と `or_predicates` を括弧で囲む必要があります。
+- バインドマーカー (位置 `?` および名前 `:<name>`) に `<column value>` を指定できます。
+
+`LIKE` 述語:
+
+- `<pattern>` 内の `_` は任意の 1 文字に一致します。
+- `<pattern>` 内の `%` は 0 個以上の文字の任意のシーケンスに一致します。
+- `<pattern>` 内の `\` はデフォルトでエスケープ文字として機能します。
+  - `ESCAPE` 句を指定してエスケープ文字を変更できます。
+  - 空のエスケープ文字 `ESCAPE ''` を指定してエスケープ文字を無効にすることができます。
+
+#### 完全な主キーを指定した例
+
+たとえば、次のテーブルがあるとします。
+
+```sql
+CREATE TABLE ns.tbl (
+  c1 INT,
+  c2 TEXT,
+  c3 FLOAT,
+  c4 BIGINT,
+  c5 BOOLEAN,
+  PRIMARY KEY (c1, c2, c3)
+) WITH CLUSTERING ORDER BY (c2 DESC, c3 ASC);
+```
+
+`DELETE` の例は次のとおりです。
+
+```sql
+-- Delete a record
+DELETE FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23;
+
+-- With positional bind markers
+DELETE FROM tbl WHERE c1 = ? AND c2 = ? AND c3 = ?;
+```
+
+`DELETE` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Delete a record
+DeleteStatement statement1 =
+    StatementBuilder.deleteFrom("ns", "tbl")
+        .where(Predicate.column("c1").isEqualTo(Value.of(10)))
+        .and(Predicate.column("c2").isEqualTo(Value.of("aaa")))
+        .and(Predicate.column("c3").isEqualTo(Value.of(1.23F)))
+        .build();
+
+// With positional bind markers
+DeleteStatement statement2 =
+    StatementBuilder.deleteFrom("tbl")
+        .where(Predicate.column("c1").isEqualTo(BindMarker.positional()))
+        .and(Predicate.column("c2").isEqualTo(BindMarker.positional()))
+        .and(Predicate.column("c3").isEqualTo(BindMarker.positional()))
+        .build();
+```
+
+#### 完全な主キーが指定されていない例
+
+たとえば、次のテーブルがあるとします。
+
+```sql
+CREATE TABLE ns.user (
+  id INT,
+  name TEXT,
+  age INT,
+  height FLOAT,
+  PRIMARY KEY (id)
+)
+```
+
+クロスパーティションスキャンフィルタリングを使用した `DELETE` の例は次のとおりです。
+
+```sql
+-- Without the WHERE clause to delete all the records of a table
+DELETE FROM ns.user;
+
+-- With AND predicates for non-primary key columns
+DELETE FROM ns.user WHERE age > 10 AND height > 140;
+
+-- With OR predicates for non-primary key columns
+DELETE FROM ns.user WHERE age > 10 OR height > 140;
+
+-- With OR-wise of AND predicates
+DELETE FROM ns.user WHERE (age > 10 AND height > 150) OR (age > 15 AND height > 145);
+
+-- With AND-wise of OR predicates
+DELETE FROM ns.user WHERE (age < 10 OR age > 65) AND (height < 145 OR height > 175);
+
+-- With LIKE predicates
+DELETE FROM ns.user WHERE name LIKE 'A%' OR name NOT LIKE 'B_b';
+
+-- With LIKE predicates with an escape character
+DELETE FROM ns.user WHERE name LIKE '+%Alice' ESCAPE '+';
+
+-- With IS NULL predicates
+DELETE FROM ns.user WHERE name IS NOT NULL AND age IS NULL;
+
+-- With positional bind markers
+DELETE FROM ns.user WHERE age < ?;
+```
+
+`DELETE` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Without the WHERE clause to delete all the records of a table
+DeleteStatement statement1 = StatementBuilder.deleteFrom("ns", "tbl").build();
+
+// With AND predicates for non-primary key columns
+DeleteStatement statement2 =
+    StatementBuilder.deleteFrom("ns", "tbl")
+        .where(Predicate.column("age").isGreaterThan(Value.of(10)))
+        .and(Predicate.column("height").isGreaterThan(Value.of(140.0F)))
+        .build();
+
+// With OR predicates for non-primary key columns
+DeleteStatement statement3 =
+    StatementBuilder.deleteFrom("ns", "tbl")
+        .where(Predicate.column("age").isGreaterThan(Value.of(10)))
+        .or(Predicate.column("height").isGreaterThan(Value.of(140.0F)))
+        .build();
+
+// With OR-wise of AND predicates
+DeleteStatement statement4 =
+    StatementBuilder.deleteFrom("ns", "tbl")
+        .where(
+            AndPredicateList.predicate(Predicate.column("age").isGreaterThan(Value.of(10)))
+                .and(Predicate.column("height").isGreaterThan(Value.of(140.0F)))
+                .build())
+        .or(
+            AndPredicateList.predicate(Predicate.column("age").isGreaterThan(Value.of(15)))
+                .and(Predicate.column("height").isGreaterThan(Value.of(145.0F)))
+                .build())
+        .build();
+
+// With AND-wise of OR predicates
+DeleteStatement statement5 =
+    StatementBuilder.deleteFrom("ns", "tbl")
+        .where(
+            OrPredicateList.predicate(Predicate.column("age").isLessThan(Value.of(10)))
+                .or(Predicate.column("age").isGreaterThan(Value.of(65)))
+                .build())
+        .and(
+            OrPredicateList.predicate(Predicate.column("height").isLessThan(Value.of(145.0F)))
+                .or(Predicate.column("height").isGreaterThan(Value.of(175.0F)))
+                .build())
+        .build();
+
+// With LIKE predicates
+DeleteStatement statement6 =
+    StatementBuilder.deleteFrom("ns", "tbl")
+        .where(Predicate.column("name").isLike(Value.of("A%")))
+        .or(Predicate.column("name").isNotLike(Value.of("B_b")))
+        .build();
+
+// With LIKE predicates with an escape character
+DeleteStatement statement7 =
+    StatementBuilder.deleteFrom("ns", "tbl")
+        .where(Predicate.column("name").isLike(Value.of("+%Alice"), Value.of("+")))
+        .build();
+
+// With IS NULL predicates
+DeleteStatement statement8 =
+    StatementBuilder.deleteFrom("ns", "tbl")
+        .where(Predicate.column("name").isNotNull())
+        .and(Predicate.column("age").isNull())
+        .build();
+
+// With positional bind markers
+DeleteStatement statement9 =
+    StatementBuilder.deleteFrom("ns", "tbl")
+        .where(Predicate.column("age").isLessThan(BindMarker.positional()))
+        .build();
+```
+
+## DCL
+
+### CREATE USER
+
+`CREATE USER` コマンドは、指定されたユーザー名、パスワード、およびユーザー属性を持つ新しいユーザーを作成します。
+
+#### 文法
+
+```sql
+CREATE USER <username> [WITH] {PASSWORD <password> | SUPERUSER | NO_SUPERUSER} ...
+```
+
+ユーザーにパスワードを指定しない場合、ユーザーはパスワードなしで作成されます。
+
+ユーザーに `SUPERUSER` 属性を指定すると、ユーザーはスーパーユーザーになります。ユーザーに `NO_SUPERUSER` 属性を指定すると、ユーザーは通常のユーザーになります。ユーザーに `SUPERUSER` または `NO_SUPERUSER` のどちらも指定しない場合、ユーザーは通常のユーザーになります。
+
+#### 例
+
+`CREATE USER` の例は次のとおりです。
+
+```sql
+-- Create a user with a password as a superuser.
+CREATE USER user1 WITH PASSWORD 'password1' SUPERUSER;
+
+-- Create a user with a password.
+CREATE USER user2 WITH PASSWORD 'password2';
+
+-- Create a user without a password.
+CREATE USER user3;
+```
+
+`CREATE USER` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Create a user with a password and the `SUPERUSER` attribute.
+CreateUserStatement statement1 =
+    StatementBuilder.createUser("user1").with("password", UserOption.SUPERUSER).build();
+
+// Create a user with a password.
+CreateUserStatement statement2 = StatementBuilder.createUser("user1").with("password").build();
+
+// Create a user without a password.
+CreateUserStatement statement3 = StatementBuilder.createUser("user1").build();
+```
+
+### ALTER USER
+
+`ALTER USER` コマンドは、指定されたユーザーのパスワードとユーザー属性を変更します。
+
+#### 文法
+
+```sql
+ALTER USER <username> [WITH] {PASSWORD <password> | SUPERUSER | NO_SUPERUSER} ...
+```
+
+ユーザーに `SUPERUSER` 属性を指定すると、そのユーザーはスーパーユーザーになります。ユーザーに `NO_SUPERUSER` 属性を指定すると、そのユーザーは通常のユーザーになります。
+
+#### 例
+
+`ALTER USER` の例は次のとおりです。
+
+```sql
+-- Change the password of a user.
+ALTER USER user1 WITH PASSWORD 'password1';
+
+-- Change a user to a superuser.
+ALTER USER user1 WITH SUPERUSER;
+```
+
+`ALTER USER` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Change the password of a user.
+AlterUserStatement statement1 = StatementBuilder.alterUser("user1").with("password2").build();
+
+// Change a user to a superuser.
+AlterUserStatement statement2 =
+        StatementBuilder.alterUser("user1").with(UserOption.SUPERUSER).build();
+```
+
+### DROP USER
+
+`DROP USER` コマンドは指定されたユーザーを削除します。
+
+#### 文法
+
+```sql
+DROP USER <username>
+```
+
+#### 例
+
+`DROP USER` の例は次のとおりです。
+
+```sql
+-- Delete a user.
+DROP USER user1;
+```
+
+`DROP USER` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Delete a user.
+DropUserStatement statement = StatementBuilder.dropUser("user1").build();
+```
+
+### GRANT
+
+`GRANT` コマンドは指定されたユーザーに権限を付与します。
+
+#### 文法
+
+```sql
+GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON [TABLE] <table name> [, <table name>] ... TO <username> [, <username>] ... [WITH GRANT OPTION]
+GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON NAMESPACE <namespace name> [, <namespace name>] ... TO <username> [, <username>] ... [WITH GRANT OPTION]
+
+privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER
+```
+
+`WITH GRANT OPTION` オプションを指定すると、ユーザーは他のユーザーに権限を付与できます。
+
+#### 例
+
+`GRANT` の例は次のとおりです。
+
+```sql
+-- Grant the SELECT privilege on a table to a user.
+GRANT SELECT ON ns.tbl TO user1;
+
+-- Grant the SELECT privilege on tables to users.
+GRANT SELECT ON ns.tbl1, ns.tbl2 TO user1, user2;
+
+-- Grant the SELECT privilege on all tables in a namespace to a user.
+GRANT SELECT ON NAMESPACE ns TO user1;
+
+-- Grant all privileges and GRANT OPTION on a table to a user.
+GRANT ALL ON ns.tbl TO user1 WITH GRANT OPTION;
+
+-- Grant all privileges and GRANT OPTION on all tables in a namespace to a user.
+GRANT ALL ON NAMESPACE ns TO user1 WITH GRANT OPTION;
+```
+
+`GRANT` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Grant the SELECT privilege on a table to a user.
+GrantStatement statement1 =
+    StatementBuilder.grant(Privilege.SELECT).on("ns", "tbl").to("user1").build();
+
+// Grant the SELECT privilege on tables to users.
+GrantStatement statement2 =
+    StatementBuilder.grant(Privilege.SELECT)
+        .on("ns", "tbl1", "ns", "tbl2")
+        .to("user1", "user2")
+        .build();
+
+// Grant the SELECT privilege on all tables in a namespace to a user.
+GrantStatement statement3 =
+    StatementBuilder.grant(Privilege.SELECT).onNamespace("ns").to("user1").build();
+
+// Grant all privileges and GRANT OPTION on a table to a user.
+GrantStatement statement4 =
+    StatementBuilder.grant(Privilege.values())
+        .on("ns", "tbl")
+        .to("user1")
+        .withGrantOption()
+        .build();
+
+// Grant all privileges and GRANT OPTION on all tables in a namespace to a user.
+GrantStatement statement5 =
+    StatementBuilder.grant(Privilege.values())
+        .onNamespace("ns")
+        .to("user1")
+        .withGrantOption()
+        .build();
+```
+
+### REVOKE
+
+`REVOKE` コマンドは、指定されたユーザーの権限を取り消します。
+
+#### 文法
+
+```sql
+REVOKE {privilege [, privilege] ... | ALL [PRIVILEGES]} [, GRANT OPTION] ON [TABLE] <table name> [, <table name>] ... FROM <username> [, <username>] ...
+REVOKE GRANT OPTION ON [TABLE] <table name> [, <table name>] ... FROM <username> [, <username>] ...
+REVOKE {privilege [, privilege] ... | ALL [PRIVILEGES]} [, GRANT OPTION] ON NAMESPACE <namespace name> [, <namespace name>] ... FROM <username> [, <username>] ...
+REVOKE GRANT OPTION ON NAMESPACE <namespace name> [, <namespace name>] ... FROM <username> [, <username>] ...
+
+privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER
+```
+
+#### 例
+
+`REVOKE` の例は次のとおりです。
+
+```sql
+-- Revoke the SELECT privilege on a table from a user.
+REVOKE SELECT ON ns.tbl FROM user1;
+
+-- Revoke the SELECT privilege on tables from users.
+REVOKE SELECT ON ns.tbl1, ns.tbl2 FROM user1, user2;
+
+-- Revoke the SELECT privilege on all tables in a namespace from a user.
+REVOKE SELECT ON NAMESPACE ns FROM user1;
+
+-- Revoke all privileges and GRANT OPTION on a table from a user.
+REVOKE ALL, GRANT OPTION ON ns.tbl FROM user1;
+
+-- Revoke all privileges and GRANT OPTION on all tables in a namespace from a user.
+REVOKE ALL, GRANT OPTION ON NAMESPACE ns FROM user1;
+```
+
+`REVOKE` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Revoke the SELECT privilege on a table from a user.
+RevokeStatement statement1 =
+    StatementBuilder.revoke(Privilege.SELECT).on("ns", "tbl").from("user1").build();
+
+// Revoke the SELECT privilege on tables from users.
+RevokeStatement statement2 =
+    StatementBuilder.revoke(Privilege.SELECT)
+        .on("ns", "tbl1", "ns", "tbl2")
+        .from("user1", "user2")
+        .build();
+
+// Revoke the SELECT privilege on all tables in a namespace from a user.
+RevokeStatement statement3 =
+    StatementBuilder.revoke(Privilege.SELECT).onNamespace("ns").from("user1").build();
+
+// Revoke all privileges and GRANT OPTION on a table from a user.
+RevokeStatement statement4 =
+    StatementBuilder.revoke(Privilege.values())
+        .on("ns", "tbl")
+        .from("user1")
+        .build();
+
+// Revoke all privileges and GRANT OPTION on all tables in a namespace from a user.
+RevokeStatement statement5 =
+    StatementBuilder.revoke(Privilege.values())
+        .onNamespace("ns")
+        .from("user1")
+        .build();
+```
+
+## その他
+
+### USE
+
+`USE` コマンドはデフォルトの名前空間を指定します。SQL で名前空間名が省略されている場合は、デフォルトの名前空間が使用されます。
+
+#### 文法
+
+```sql
+USE <namespace name>
+```
+
+#### 例
+
+`USE` の例は次のとおりです。
+
+```sql
+-- Specify a default namespace name "ns"
+USE ns;
+```
+
+`USE` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Specify a default namespace name "ns"
+UseStatement statement = StatementBuilder.use("ns").build();
+```
+
+### BEGIN
+
+`BEGIN` コマンドはトランザクションを開始します。
+
+このコマンドは次の列を返します:
+
+- `transactionId`: `TEXT` - 開始したトランザクションに関連付けられたトランザクション ID
+
+#### 文法
+
+```sql
+BEGIN
+```
+
+#### 例
+
+`BEGIN` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Begin a transaction
+BeginStatement statement = StatementBuilder.begin().build();
+```
+
+### START TRANSACTION
+
+`START TRANSACTION` コマンドはトランザクションを開始します。このコマンドは `BEGIN` の別名です。
+
+このコマンドは次の列を返します:
+
+- `transactionId`: `TEXT` - 開始したトランザクションに関連付けられたトランザクション ID
+
+#### 文法
+
+```sql
+START TRANSACTION
+```
+
+#### 例
+
+`START TRANSACTION` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Start a transaction.
+StartTransactionStatement statement = StatementBuilder.startTransaction().build();
+```
+
+### JOIN
+
+`JOIN` コマンドは、指定されたトランザクション ID に関連付けられたトランザクションを結合します。
+
+#### 文法
+
+```sql
+JOIN <transaction ID>
+```
+
+#### 例
+
+`JOIN` の例は次のとおりです。
+
+```sql
+-- Join a transaction
+JOIN 'id';
+```
+
+`JOIN` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Join a transaction
+JoinStatement statement = StatementBuilder.join("id").build();
+```
+
+### PREPARE
+
+`PREPARE` コマンドは現在のトランザクションを準備します。
+
+#### 文法
+
+```sql
+PREPARE
+```
+
+#### 例
+
+`PREPARE` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Prepare the current transaction
+PrepareStatement statement = StatementBuilder.prepare().build();
+```
+
+### VALIDATE
+
+`VALIDATE` コマンドは現在のトランザクションを検証します。
+
+#### 文法
+
+```sql
+VALIDATE
+```
+
+#### 例
+
+`VALIDATE` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Validate the current transaction
+ValidateStatement statement = StatementBuilder.validate().build();
+```
+
+### COMMIT
+
+`COMMIT` コマンドは現在のトランザクションをコミットします。
+
+#### 文法
+
+```sql
+COMMIT
+```
+
+#### 例
+
+`COMMIT` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Commit the current transaction
+CommitStatement statement = StatementBuilder.commit().build();
+```
+
+### ROLLBACK
+
+`ROLLBACK` コマンドは現在のトランザクションをロールバックします。
+
+#### 文法
+
+```sql
+ROLLBACK
+```
+
+#### 例
+
+`ROLLBACK` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Rollback the current transaction
+RollbackStatement statement = StatementBuilder.rollback().build();
+```
+
+### ABORT
+
+`ABORT` コマンドは現在のトランザクションをロールバックします。このコマンドは `ROLLBACK` の別名です。
+
+#### 文法
+
+```sql
+ABORT
+```
+
+#### 例
+
+`ABORT` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Abort the current transaction.
+AbortStatement statement = StatementBuilder.abort().build();
+```
+
+### SET MODE
+
+`SET MODE` コマンドは、現在のトランザクションモードを切り替えます。
+
+#### 文法
+
+```sql
+SET MODE transaction_mode
+
+transaction_mode: TRANSACTION | TWO_PHASE_COMMIT_TRANSACTION
+```
+
+#### 例
+
+`SET MODE` の例は次のとおりです。
+
+```sql
+-- Switch the current transaction mode to Two-phase Commit Transaction
+SET MODE TWO_PHASE_COMMIT_TRANSACTION;
+```
+
+`SET MODE` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Switch the current transaction mode to Two-phase Commit Transaction
+SetModeStatement statement =
+    StatementBuilder.setMode(TransactionMode.TWO_PHASE_COMMIT_TRANSACTION).build();
+```
+
+### SHOW NAMESPACES
+
+`SHOW NAMESPACES` コマンドは名前空間名を表示します。
+
+このコマンドは次の列を返します:
+
+- `namespaceName`: `TEXT` - 名前空間名
+
+#### 文法
+
+```sql
+SHOW NAMESPACES
+```
+
+#### 例
+
+`SHOW NAMESPACES` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Show namespace names.
+ShowNamespacesStatement statement = StatementBuilder.showNamespaces().build();
+```
+
+### SHOW TABLES
+
+`SHOW TABLES` コマンドは、名前空間内のテーブル名を表示します。名前空間名を省略すると、デフォルトの名前空間が使用されます。
+
+このコマンドは次の列を返します:
+
+- `tableName`: `TEXT` - テーブル名
+
+#### 文法
+
+```sql
+SHOW TABLES [FROM <namespace name>]
+```
+
+#### 例
+
+`SHOW TABLES` の例は次のとおりです。
+
+```sql
+-- Show table names in the default namespace
+SHOW TABLES;
+
+-- Show table names in a namespace "ns"
+SHOW TABLES FROM ns;
+```
+
+`SHOW TABLES` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Show table names in the default namespace
+ShowTablesStatement statement1 = StatementBuilder.showTables().build();
+
+// Show table names in a namespace "ns"
+ShowTablesStatement statement2 = StatementBuilder.showTables().from("ns").build();
+```
+
+### DESCRIBE
+
+`DESCRIBE` コマンドは、指定されたテーブルの列メタデータを返します。
+
+このコマンドは次の列を返します:
+
+- `columnName`: `TEXT` - テーブル名
+- `type`: `TEXT` - タイプ名
+- `isPrimaryKey`: `BOOLEAN` - 主キーの列部分であるかどうか
+- `isPartitionKey`: `BOOLEAN` - パーティションキーの列部分であるかどうか
+- `isClusteringKey`: `BOOLEAN` - クラスタリングキーの列部分であるかどうか
+- `clusteringOrder`: `TEXT` - クラスタリング順序
+- `isIndexed`: `BOOLEAN` - インデックス付き列であるかどうか
+
+#### 文法
+
+```sql
+DESCRIBE [<namespace name>.]<table name>
+
+DESC [<namespace name>.]<table name>
+```
+
+#### 例
+
+`DESCRIBE` の例は次のとおりです。
+
+```sql
+-- Returns column metadata for "ns.tbl"
+DESCRIBE ns.tbl;
+
+-- Returns column metadata for "tbl"
+DESC tbl;
+```
+
+`DESCRIBE` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Returns column metadata for "ns.tbl"
+DescribeStatement statement1 = StatementBuilder.describe("ns", "tbl").build();
+
+// Returns column metadata for "tbl"
+DescribeStatement statement2 = StatementBuilder.describe("tbl").build();
+```
+
+### SUSPEND
+
+`SUSPEND` コマンドは、現在のセッションで進行中のトランザクションを一時停止します。
+
+#### 文法
+
+```sql
+SUSPEND
+```
+
+#### 例
+
+`SUSPEND` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Suspend the ongonig transaction in the current session
+SuspendStatement statement = StatementBuilder.suspend().build();
+```
+
+### RESUME
+
+`RESUME` コマンドは、現在のセッションで指定されたトランザクション ID に関連付けられたトランザクションを再開します。
+
+#### 文法
+
+```sql
+RESUME <transaction ID>
+```
+
+#### 例
+
+`RESUME` の例は次のとおりです。
+
+```sql
+-- Resume a transaction
+RESUME 'id';
+```
+
+`RESUME` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Resume a transaction
+ResumeStatement statement = StatementBuilder.resume("id").build();
+```

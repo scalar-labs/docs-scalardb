@@ -1,0 +1,324 @@
+---
+tags:
+  - Enterprise Premium
+---
+
+# ScalarDB Cluster GraphQL をはじめよう
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+ScalarDB Cluster gRPC API の詳細については、以下を参照してください。
+
+## 前提条件
+
+- 以下のいずれかの Java 開発キット (JDK):
+  - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) LTS バージョン (8、11、17、または 21)
+  - [OpenJDK](https://openjdk.org/install/) LTS バージョン (8、11、17、または 21)
+- Kubernetes クラスターで実行されている ScalarDB Cluster
+  - [ScalarDB Cluster をローカルにデプロイする方法](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.mdx) の手順に従ってデプロイした Kubernetes クラスターで ScalarDB Cluster が実行されていることを前提としています。
+
+## サンプルアプリケーション
+
+このチュートリアルでは、口座間で資金を移動できる電子マネーアプリケーションを作成するプロセスについて説明します。
+
+次の図は、サンプルアプリケーションのシステムアーキテクチャを示しています。
+
+```
+                              +-----------------------------------------------------------------------------------------------------------------------------------------+
+                              | [Kubernetes クラスター]                                                                                                                   |
+                              |                                                                                                                                         |
+                              |                         [ポッド]                                                              [ポッド]                      [ポッド]       |
+                              |                                                                                                                                         |
+                              |                        +-------+                                                                                                        |
+                              |                  +---> | Envoy | ---+                                                                                                   |
+                              |                  |     +-------+    |                                                                                                   |
+                              |                  |                  |                                                                                                   |
+ +------------------------+   |   +---------+    |     +-------+    |           +--------------------+                                                                  |
+ |     Schema Loader      | --+-> | サービス  | ---+---> | Envoy | ---+---------> |      サービス       | ---+                                                             |
+ |  (間接クライアントモード)  |   |   | (Envoy) |    |     +-------+    |           | (ScalarDB Cluster) |    |                                                             |
+ +------------------------+   |   +---------+    |                  |           +--------------------+    |         +------------------------+                          |
+                              |                  |     +-------+    |                                     |   +---> | ScalarDB Cluster ノード | ---+                     |
+                              |                  +---> | Envoy | ---+                                     |   |     +------------------------+    |                     |
+                              |                        +-------+                                          |   |                                   |                     |
+                              |                                                                           |   |     +------------------------+    |     +------------+  |
+                              |                                                                           +---+---> | ScalarDB Cluster ノード | ---+---> | PostgreSQL |  |
+                              |                                                                           |   |     +------------------------+    |     +------------+  |
+                              |                                                                           |   |                                   |                     |
+                              |                                                                           |   |     +------------------------+    |                     |
+                              |                                                                           |   +---> | ScalarDB Cluster ノード | ---+                     |
+                              |                                                                           |         +------------------------+                          |
+         +------------+       |                                         +----------------------------+    |                                                             |
+         |  ブラウザ   | ------+---------------------------------------> |          サービス            | ---+                                                             |
+         | (GraphiQL) |       |                                         | (ScalarDB Cluster GraphQL) |                                                                  |
+         +------------+       |                                         +----------------------------+                                                                  |
+                              |                                                                                                                                         |
+                              +-----------------------------------------------------------------------------------------------------------------------------------------+
+```
+
+## ステップ 1. `schema.json` を作成する
+
+以下は簡単なサンプルスキーマです。
+
+`schema.json` を作成し、ファイルに次の内容を追加します。
+
+```json
+{
+  "emoney.account": {
+    "transaction": true,
+    "partition-key": [
+      "id"
+    ],
+    "clustering-key": [],
+    "columns": {
+      "id": "TEXT",
+      "balance": "INT"
+    }
+  }
+}
+```
+
+## ステップ 2. `database.properties` を作成する
+
+ScalarDB Cluster の Schema Loader 用に `database.properties` を作成する必要があります。
+
+ただし、まず Envoy (`scalardb-cluster-envoy`) のサービスリソースの `EXTERNAL-IP` アドレスを取得する必要があります。
+
+`EXTERNAL-IP` アドレスを確認するには、次のコマンドを実行します。
+
+```console
+kubectl get svc scalardb-cluster-envoy
+NAME                     TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)           AGE
+scalardb-cluster-envoy   LoadBalancer   10.105.121.51   localhost     60053:30641/TCP   16h
+```
+
+この場合、`EXTERNAL-IP` アドレスは `localhost` です。
+
+次に、`database.properties` を作成し、ファイルに次の内容を追加します。
+
+```properties
+scalar.db.transaction_manager=cluster
+scalar.db.contact_points=indirect:localhost
+```
+
+ScalarDB Cluster に接続するには、`scalar.db.transaction_manager` プロパティに `cluster` を指定する必要があります。
+
+また、このチュートリアルでは `indirect` クライアントモードを使用して Envoy のサービスリソースに接続します。
+
+クライアントモードの詳細については、[Java API を使用した ScalarDB Cluster の開発者ガイド](developer-guide-for-scalardb-cluster-with-java-api.mdx) を参照してください。
+
+## ステップ 3. スキーマをロードする
+
+ScalarDB Cluster 経由でスキーマをロードするには、ScalarDB Cluster 専用の Schema Loader (Schema Loader for Cluster) を使用する必要があります。Schema Loader for Cluster の使用方法は、JAR ファイルの名前が異なることを除いて、[Schema Loader for ScalarDB](../schema-loader.mdx) の使用方法と基本的に同じです。Cluster 用の Schema Loader は、[ScalarDB リリース](https://github.com/scalar-labs/scalardb/releases/tag/v3.13.1) からダウンロードできます。JAR ファイルをダウンロードしたら、次のコマンドで Cluster 用の Schema Loader を実行できます。
+
+```console
+java -jar scalardb-cluster-schema-loader-3.13.1-all.jar --config database.properties -f schema.json --coordinator
+```
+
+## ステップ 4. GraphiQL から操作を実行する
+
+ScalarDB Cluster では、`scalar.db.graphql.graphiql` プロパティが `true` に設定されている場合 (`true` がデフォルト値)、GraphiQL IDE が使用可能になります。
+
+ScalarDB Cluster GraphQL (`scalardb-cluster-graphql`) のサービスリソースの `EXTERNAL-IP` アドレスを取得するには、次のコマンドを実行します。
+
+```console
+kubectl get svc scalardb-cluster-graphql
+NAME                       TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)          AGE
+scalardb-cluster-graphql   LoadBalancer   10.105.74.214   localhost     8080:30514/TCP   16h
+```
+
+この場合、`EXTERNAL-IP` アドレスは `localhost`、GraphiQL IDE のエンドポイント URL は `http://localhost:8080/graphql` です。
+Web ブラウザでその URL を開くと、GraphiQL 画面が表示されます。
+
+最初のレコードを挿入してみましょう。左ペインに次のミューテーションを貼り付け、ウィンドウ上部の三角形の `Execute Query` ボタンを押します。
+
+```graphql
+mutation PutUser1 {
+  account_put(put: {key: {id: "user1"}, values: {balance: 1000}})
+}
+```
+
+ScalarDB GraphQL は常にトランザクションを使用してクエリを実行します。上記のクエリは新しいトランザクションを開始し、ScalarDB Put コマンドを実行し、実行の最後にトランザクションをコミットします。
+
+GraphQL サーバーからの次の応答が右側のペインに表示されます。
+
+```json
+{
+  "data": {
+    "account_put": true
+  }
+}
+```
+
+`"data"` フィールドには実行結果が含まれます。この応答は、ミューテーションの `account_put` フィールドが成功したことを示しています。ミューテーションの結果タイプは `Boolean!` で、操作が成功したかどうかを示します。
+
+次に、挿入したレコードを取得しましょう。左ペインの前のミューテーションの横に次のクエリを貼り付けて、`Execute Query` ボタンをクリックします。上記の `mutation PutUser1` を削除していないため、ボタンの下にプルダウンメニューが表示され、実行する操作を選択できます。 以下に示すように、`GetUser1` を選択します。
+
+```graphql
+query GetUser1 {
+  account_get(get: {key: {id: "user1"}}) {
+    account {
+      id
+      balance
+    }
+  }
+}
+```
+
+右側のペインに次の結果が表示されます。
+
+```json
+{
+  "data": {
+    "account_get": {
+      "account": {
+        "id": "user1",
+        "balance": 1000
+      }
+    }
+  }
+}
+```
+
+### GraphQL API と ScalarDB Java API 間のマッピング
+
+自動的に生成された GraphQL スキーマは、クエリ、ミューテーション、および入出力のオブジェクトタイプを定義し、ターゲット名前空間内のすべてのテーブルに対して CRUD 操作を実行できるようにします。
+
+これらの操作は、[`DistributedTransaction`](https://javadoc.io/doc/com.scalar-labs/scalardb/3.13.1/com/scalar/db/api/DistributedTransaction.html) インターフェースで定義されている ScalarDB API と一致するように設計されています。
+
+名前空間に `account` テーブルがあると仮定すると、次のクエリとミューテーションが生成されます。
+
+| ScalarDB API                                           | GraphQL ルートタイプ | GraphQL フィールド                                                                      |
+|--------------------------------------------------------|-------------------|------------------------------------------------------------------------------------|
+| `get(Get get)`                                         | `Query`           | `account_get(get: account_GetInput!): account_GetPayload`                          |
+| `scan(Scan scan)`                                      | `Query`           | `account_scan(scan: account_ScanInput!): account_ScanPayload`                      |
+| `put(Put put)`                                         | `Mutation`        | `account_put(put: account_PutInput!): Boolean!`                                    |
+| `put(java.util.List<Put> puts)`                        | `Mutation`        | `account_bulkPut(put: [account_PutInput!]!): Boolean!`                             |
+| `delete(Delete delete)`                                | `Mutation`        | `account_delete(delete: account_DeleteInput!): Boolean!`                           |
+| `delete(java.util.List<Delete> deletes)`               | `Mutation`        | `account_bulkDelete(delete: [account_DeleteInput!]!): Boolean!`                    |
+| `mutate(java.util.List<? extends Mutation> mutations)` | `Mutation`        | `account_mutate(put: [account_PutInput!]delete: [account_DeleteInput!]): Boolean!` |
+
+クラスタリングキーのないテーブルでは、`scan` フィールドは生成されないことに注意してください。これが、この電子マネーサンプルアプリケーションで `account_scan` フィールドが使用できない理由です。
+
+生成されたすべての GraphQL タイプは、GraphiQL のドキュメントエクスプローラー (左上隅の `< Docs` リンク) で確認できます。
+
+## ステップ 5. GraphiQL からの複数のリクエストにまたがるトランザクションを実行する
+
+複数の GraphQL リクエストにまたがるトランザクションを実行してみましょう。
+
+生成されたスキーマには、トランザクションを識別できる `@transaction` ディレクティブが用意されています。このディレクティブは、クエリとミューテーションの両方で使用できます。
+
+トランザクションを開始する前に、次のミューテーションを使用して必要なレコードを挿入する必要があります。
+
+```graphql
+mutation PutUser2 {
+  account_put(put: {key: {id: "user2"}, values: {balance: 1000}})
+}
+```
+
+### 操作を実行する前にトランザクションを開始する
+
+以下を実行して、クエリまたはミューテーションに引数のない `@transaction` ディレクティブを追加すると、実行時に新しいトランザクションが開始されます。
+
+```graphql
+query GetAccounts @transaction {
+  user1: account_get(get: {key: {id: "user1"}}) {
+    account { balance }
+  }
+  user2: account_get(get: {key: {id: "user2"}}) {
+    account { balance }
+  }
+}
+```
+
+上記のコマンドを実行すると、`extensions` フィールドにトランザクション ID が入った結果が返されます。extensions の `id` 値は、リクエスト内の操作が実行されたトランザクション ID です。この場合、リクエストによって開始されたトランザクションの新しい ID は次のとおりです。
+
+```json
+{
+  "data": {
+    "user1": {
+      "account": {
+        "balance": 1000
+      }
+    },
+    "user2": {
+      "account": {
+        "balance": 1000
+      }
+    }
+  },
+  "extensions": {
+    "transaction": {
+      "id": "c88da8a6-a13f-4857-82fe-45f1ab4150f9"
+    }
+  }
+}
+```
+
+### 継続トランザクションで操作を実行する
+
+開始したトランザクションで次のクエリまたはミューテーションを実行するには、トランザクション ID を `@transaction` の `id` 引数として指定します。次の例では、同じトランザクションで user1 のアカウントから user2 のアカウントに残高を転送することにより、前の例で取得した 2 つのアカウントを更新します。
+
+```graphql
+mutation Transfer @transaction(id: "c88da8a6-a13f-4857-82fe-45f1ab4150f9") {
+  user1: account_put(put: {key: {id: "user1"}, values: {balance: 750}})
+  user2: account_put(put: {key: {id: "user2"}, values: {balance: 1250}})
+}
+```
+
+GraphQL で開始されたトランザクションには 1 分のタイムアウト (デフォルト) があり、タイムアウトを超えると自動的にアボートされることに注意してください。
+
+### トランザクションをコミットする
+
+継続中のトランザクションをコミットするには、`@transaction` ディレクティブの引数として `id` と `commit: true` フラグの両方を指定します。
+
+```graphql
+query GetAndCommit @transaction(id: "c88da8a6-a13f-4857-82fe-45f1ab4150f9", commit: true) {
+  user1: account_get(get: {key: {id: "user1"}}) {
+    account { balance }
+  }
+  user2: account_get(get: {key: {id: "user2"}}) {
+    account { balance }
+  }
+}
+```
+
+**注:** `@transaction(commit: true)` のように `id` 引数なしで `commit: true` フラグを指定すると、新しいトランザクションが開始され、1 つの操作に対してのみコミットされます。この動作は、GraphiQL を使用した上記の例で見られるように、`@transaction` ディレクティブを指定しない場合とまったく同じです。つまり、`@transaction(commit: true)` が指定されている場合は、ディレクティブ自体を省略できます。
+
+### トランザクションをアボートまたはロールバックする
+
+トランザクションを明示的にアボートまたはロールバックする必要がある場合は、`abort` または `rollback` ミューテーションフィールドを互換的に使用できます (どちらも効果と使用方法は同じです)。これらのフィールドを他の操作と混在させることはできないため、次のように `abort` または `rollback` ミューテーションフィールドのみを指定する必要があります。
+
+```graphql
+mutation AbortTx @transaction(id: "c88da8a6-a13f-4857-82fe-45f1ab4150f9") {
+  abort
+}
+```
+
+または:
+
+```graphql
+mutation RollbackTx @transaction(id: "c88da8a6-a13f-4857-82fe-45f1ab4150f9") {
+  rollback
+}
+```
+
+## 参照
+
+その他の ScalarDB Cluster チュートリアルについては、以下を参照してください。
+
+- [ScalarDB Cluster をはじめよう](getting-started-with-scalardb-cluster.mdx)
+- [JDBC 経由の ScalarDB Cluster SQL をはじめよう](getting-started-with-scalardb-cluster-sql-jdbc.mdx)
+- [Spring Data JDBC for ScalarDB を使用した ScalarDB Cluster SQL をはじめよう](getting-started-with-scalardb-cluster-sql-spring-data-jdbc.mdx)
+- [ScalarDB Cluster での Go をはじめよう](getting-started-with-using-go-for-scalardb-cluster.mdx)
+- [ScalarDB Cluster での Python をはじめよう](getting-started-with-using-python-for-scalardb-cluster.mdx)
+
+Java API で ScalarDB Cluster を使用するアプリケーションの開発の詳細については、以下を参照してください。
+
+- [Java API を使用した ScalarDB Cluster の開発者ガイド](developer-guide-for-scalardb-cluster-with-java-api.mdx)
+
+ScalarDB Cluster gRPC API の詳細については、以下を参照してください。
+
+- [ScalarDB Cluster gRPC API ガイド](scalardb-cluster-grpc-api-guide.mdx)
+- [ScalarDB Cluster SQL gRPC API ガイド](scalardb-cluster-sql-grpc-api-guide.mdx)
