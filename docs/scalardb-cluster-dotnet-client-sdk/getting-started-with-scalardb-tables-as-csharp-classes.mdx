@@ -84,11 +84,16 @@ var endKeys = new Dictionary<string, object>
               {
                   { nameof(Statement.ItemId), 6}
               };
-var statements = await transaction.ScanAsync<Statement>(startKeys, endKeys);
 
-foreach (var s in statements)
+await foreach (var s in transaction.ScanAsync<Statement>(startKeys, endKeys))
     Console.WriteLine($"ItemId: {s.ItemId}, Count: {s.Count}");
 ```
+
+:::note
+
+To use LINQ methods with `IAsyncEnumerable<T>`, you can install [System.Linq.Async](https://www.nuget.org/packages/System.Linq.Async/) package.
+
+:::
 
 ### Insert a new object by using the `InsertAsync` method
 

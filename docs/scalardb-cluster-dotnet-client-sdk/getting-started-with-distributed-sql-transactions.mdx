@@ -135,13 +135,14 @@ You can retrieve ScalarDB's metadata with the Metadata property as follows:
 
 ```c#
 // namespaces, tables metadata
-var namespaces = (await manager.Metadata.GetNamespacesAsync()).ToList();
+var namespaceNames = new List<string>();
 
-foreach (var ns in namespaces)
+await foreach (var ns in manager.Metadata.GetNamespacesAsync())
 {
+    namespaceNames.Add(ns.Name);
     Console.WriteLine($"Namespace: {ns.Name}");
     
-    foreach (var tbl in await ns.GetTablesAsync())
+    await foreach (var tbl in ns.GetTablesAsync())
     {
         Console.WriteLine($"  Table: {tbl.Name}");
 
@@ -166,19 +167,25 @@ foreach (var ns in namespaces)
 }
 
 // users metadata
-foreach (var user in await manager.Metadata.GetUsersAsync())
+await foreach (var user in manager.Metadata.GetUsersAsync())
 {
     Console.WriteLine($"User: {user.Name} [IsSuperuser: {user.IsSuperuser}]");
 
-    foreach (var ns in namespaces)
+    foreach (var nsName in namespaceNames)
     {
-        Console.WriteLine($"  Namespace: {ns.Name}");
+        Console.WriteLine($"  Namespace: {nsName}");
 
         Console.WriteLine($"  Privileges:");
-        foreach (var privilege in await user.GetPrivilegesAsync(ns.Name))
+        foreach (var privilege in await user.GetPrivilegesAsync(nsName))
             Console.WriteLine($"    {privilege}");
     }
 
     Console.WriteLine();
 }
 ```
+
+:::note
+
+To use LINQ methods with `IAsyncEnumerable<T>`, you can install [System.Linq.Async](https://www.nuget.org/packages/System.Linq.Async/) package.
+
+:::
