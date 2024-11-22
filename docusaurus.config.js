@@ -491,7 +491,7 @@ const config = {
       announcementBar: {
         id: 'new_version',
         content:
-          '<b>Docs for both ScalarDB Community and Enterprise editions now live on this site!</b> Editions that a doc applies to are in tags at the top of each page 🏷️',
+          '<b>Announcing the release of ScalarDB 3.14!🚀 For details on what\'s included in this new version, see the <a target="_self" rel="noopener noreferrer" href="/docs/latest/releases/release-notes">release notes</a>.',
           // '<b>Announcing the release of ScalarDB X.X!🚀 For details on what\'s included in this new version, see the <a target="_self" rel="noopener noreferrer" href="/docs/latest/releases/release-notes">release notes</a>.<b>',
         backgroundColor: '#2673BB',
         textColor: '#FFFFFF',
