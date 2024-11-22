@@ -133,7 +133,7 @@ const sidebars = {
             {
               type: 'doc',
               id: 'scalardb-samples/scalardb-analytics-spark-sample/README',
-              label: 'Use ScalarDB Analytics with Spark',
+              label: 'Use ScalarDB Analytics',
             },
           ],
         },
@@ -236,7 +236,7 @@ const sidebars = {
             // {
             //   type: 'doc',
             //   id: 'scalardb-analytics-spark/getting-started',
-            //   label: 'Run ScalarDB Analytics with Spark',
+            //   label: 'Run ScalarDB Analytics',
             // },
           ],
         },
