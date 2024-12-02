@@ -1078,12 +1078,12 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: 'Run Non-Transactional Storage Operations',
+          label: '非トランザクションストレージ操作を実行する',
           collapsible: true,
           items: [
             {
               type: 'category',
-              label: '非トランザクションストレージ操作を実行する',
+              label: 'CRUD インターフェースを使用して実行する',
               collapsible: true,
               items: [
                 {
@@ -1248,7 +1248,7 @@ const sidebars = {
             },
             {
               type: 'category',
-              label: 'Analytics',
+              label: '分析',
               collapsible: true,
               items: [
                 {
