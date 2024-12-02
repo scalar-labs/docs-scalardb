@@ -1567,7 +1567,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: 'Monitor',
+          label: '監視',
           collapsible: true,
           items: [
             {
