@@ -975,7 +975,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: '管理',
+          label: '詳細',
           collapsible: true,
           items: [
             {
@@ -1139,7 +1139,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: '管理',
+          label: '詳細',
           collapsible: true,
           items: [
             {
@@ -1316,7 +1316,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-auth',
-                  label: 'ユーザーを認証および承認する',
+                  label: 'ユーザーを認証および認可する',
                 },
                 {
                   type: 'doc',
@@ -1356,7 +1356,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: '管理',
+          label: '詳細',
           collapsible: true,
           items: [
             {
@@ -1452,7 +1452,7 @@ const sidebars = {
             },
             {
               type: 'category',
-              label: '展開ガイド',
+              label: 'デプロイメントガイド',
               collapsible: true,
               items: [
                 {
@@ -1463,7 +1463,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalar-kubernetes/CreateBastionServer',
-                  label: '要塞サーバーを作成する',
+                  label: '踏み台サーバーを作成する',
                 },
                 {
                   type: 'doc',
@@ -1601,7 +1601,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: 'バックアップと復元する',
+          label: 'バックアップと復元',
           collapsible: true,
           items: [
             {
@@ -1617,7 +1617,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'backup-restore',
-                  label: 'ScalarDB を通じて使用されるデータベースのバックアップと復元する',
+                  label: 'ScalarDB を通じて使用されるデータベースのバックアップと復元を行う',
                 },
                 {
                   type: 'doc',
@@ -1668,7 +1668,7 @@ const sidebars = {
             {
               type: 'doc',
               id: 'scalardb-cluster/scalardb-auth-status-codes',
-              label: '認証と承認',
+              label: '認証と認可',
             },
           ],
         },
@@ -1682,7 +1682,7 @@ const sidebars = {
         {
           type: 'doc',
           id: 'scalar-licensing/README',
-          label: '製品ライセンスキーの設定する',
+          label: '製品ライセンスキーの設定',
         },
       ],
     },
