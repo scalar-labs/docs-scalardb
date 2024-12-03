@@ -1367,7 +1367,7 @@ const sidebars = {
             {
               type: 'doc',
               id: 'scalar-kubernetes/ProductionChecklistForScalarDBCluster',
-              label: 'ScalarDB Cluster の制作チェックリスト',
+              label: 'ScalarDB Cluster の本番環境チェックリスト',
             },
             {
               type: 'category',
