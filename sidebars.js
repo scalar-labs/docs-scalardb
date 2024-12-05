@@ -883,7 +883,7 @@ const sidebars = {
         {
           type: 'doc',
           id: 'database-configurations',
-          label: '基盤となるデータベースの設定',
+          label: '基本の設定',
         },
         {
           type: 'doc',
@@ -975,7 +975,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: '詳細',
+          label: '関連情報',
           collapsible: true,
           items: [
             {
@@ -1577,7 +1577,7 @@ const sidebars = {
             },
             {
               type: 'category',
-              label: '管理',
+              label: '詳細',
               collapsible: true,
               items: [
                 {
@@ -1611,7 +1611,7 @@ const sidebars = {
             },
             {
               type: 'category',
-              label: '管理',
+              label: '詳細',
               collapsible: true,
               items: [
                 {
