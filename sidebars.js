@@ -914,62 +914,62 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: 'ScalarDB Core ライブラリを使用してトランザクションを実行してみる',
+          label: 'ScalarDB Core ライブラリを使用してトランザクションを実行',
           collapsible: true,
           items: [
             {
               type: 'doc',
               id: 'getting-started-with-scalardb',
-              label: 'ScalarDB Core を使用する',
+              label: 'ScalarDB Core を使用',
             },
             {
               type: 'doc',
               id: 'getting-started-with-scalardb-by-using-kotlin',
-              label: 'Kotlin を使用する',
+              label: 'Kotlin を使用',
             },
           ],
         },
         {
           type: 'category',
-          label: 'ScalarDB Cluster を使用してトランザクションを実行してみる',
+          label: 'ScalarDB Cluster を使用してトランザクションを実行',
           collapsible: true,
           items: [
             {
               type: 'doc',
               id: 'scalardb-cluster/getting-started-with-scalardb-cluster',
-              label: 'ScalarDB Cluster を使用する',
+              label: 'ScalarDB Cluster を使用',
             },
             {
               type: 'doc',
               id: 'scalardb-cluster/getting-started-with-scalardb-cluster-sql-jdbc',
-              label: 'JDBC 経由で SQL を使用する',
+              label: 'JDBC 経由で SQL を使用',
             },
             {
               type: 'doc',
               id: 'scalardb-cluster/getting-started-with-scalardb-cluster-sql-spring-data-jdbc',
-              label: 'Spring Data JDBC 経由で SQL を使用する',
+              label: 'Spring Data JDBC 経由で SQL を使用',
             },
             {
               type: 'doc',
               id: 'scalardb-cluster/getting-started-with-scalardb-cluster-graphql',
-              label: 'GraphQL を使用する',
+              label: 'GraphQL を使用',
             },
           ],
         },
         {
           type: 'category',
-          label: 'ScalarDB Analytics を使用して分析クエリを実行してみる',
+          label: 'ScalarDB Analytics を使用して分析クエリを実行',
           collapsible: true,
           items: [
             {
               type: 'doc',
               id: 'scalardb-analytics-postgresql/getting-started',
-              label: 'ScalarDB Analytics with PostgreSQL を使用する',
+              label: 'ScalarDB Analytics with PostgreSQL を使用',
             },
             {
               type: 'doc',
               id: 'scalardb-samples/scalardb-analytics-spark-sample/README',
-              label: 'ScalarDB Analytics を使用する',
+              label: 'ScalarDB Analytics を使用',
             },
           ],
         },
@@ -981,17 +981,17 @@ const sidebars = {
             {
               type: 'doc',
               id: 'scalardb-cluster/getting-started-with-using-go-for-scalardb-cluster',
-              label: 'ScalarDB Cluster に Go を使用する',
+              label: 'Go から ScalarDB Cluster を使用',
             },
             {
               type: 'doc',
               id: 'scalardb-cluster/getting-started-with-using-python-for-scalardb-cluster',
-              label: 'ScalarDB Cluster に Python を使用する',
+              label: 'Python から ScalarDB Cluster を使用',
             },
             {
               type: 'doc',
               id: 'scalardb-analytics-postgresql/installation',
-              label: 'ScalarDB Analytics with PostgreSQL をローカルにインストールする',
+              label: 'ScalarDB Analytics with PostgreSQL をローカルにインストール',
             }
           ],
         },
@@ -1009,17 +1009,17 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: 'トランザクションを実行する',
+          label: 'トランザクションを実行',
           collapsible: true,
           items: [
             {
               type: 'doc',
               id: 'data-modeling',
-              label: 'データをモデル化する',
+              label: 'データモデリング',
             },
             {
               type: 'category',
-              label: 'CRUD インターフェースを使用して実行する',
+              label: 'CRUD インターフェースを使用して実行',
               collapsible: true,
               items: [
                 {
@@ -1037,7 +1037,7 @@ const sidebars = {
             {
               type: 'doc',
               id: 'scalardb-cluster/run-transactions-through-scalardb-cluster-sql',
-              label: 'SQL インターフェースを使用して実行する',
+              label: 'SQL インターフェースを使用して実行',
             },
             {
               type: 'category',
@@ -1047,12 +1047,12 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalardb-cluster/scalardb-auth-with-sql',
-                  label: 'SQL を使用してユーザーを認証および承認する',
+                  label: 'SQL を使用してユーザーを認証および承認',
                 },
                 {
                   type: 'doc',
                   id: 'scalardb-benchmarks/README',
-                  label: 'ベンチマークを実行する',
+                  label: 'ベンチマークを実行',
                 },
               ],
             },
@@ -1060,13 +1060,13 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: '分析クエリを実行する',
+          label: '分析クエリを実行',
           collapsible: true,
           items: [
             {
               type: 'doc',
               id: 'scalardb-samples/scalardb-analytics-postgresql-sample/README',
-              label: 'ScalarDB Analytics with PostgreSQL を実行する',
+              label: 'ScalarDB Analytics with PostgreSQL を実行',
             },
             // This doc no longer exists but we should have some type of doc here.
             // {
@@ -1078,41 +1078,41 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: '非トランザクションストレージ操作を実行する',
+          label: '非トランザクションストレージ操作を実行',
           collapsible: true,
           items: [
             {
               type: 'category',
-              label: 'CRUD インターフェースを使用して実行する',
+              label: 'CRUD インターフェースを使用して実行',
               collapsible: true,
               items: [
                 {
                   type: 'doc',
                   id: 'run-non-transactional-storage-operations-through-library',
-                  label: 'ScalarDB Core ライブラリーを使用する',
+                  label: 'ScalarDB Core ライブラリーを使用',
                 },
                 {
                   type: 'doc',
                   id: 'scalardb-cluster/run-non-transactional-storage-operations-through-scalardb-cluster',
-                  label: 'ScalarDB Cluster を使用する',
+                  label: 'ScalarDB Cluster を使用',
                 },
               ],
             },
             {
               type: 'doc',
               id: 'scalardb-cluster/run-non-transactional-storage-operations-through-sql-interface',
-              label: 'SQL インターフェースを使用して実行する',
+              label: 'SQL インターフェースを使用して実行',
             },
             {
               type: 'doc',
               id: 'run-non-transactional-storage-operations-through-primitive-crud-interface',
-              label: 'プリミティブ CRUD インターフェースを使用して実行する',
+              label: 'プリミティブ CRUD インターフェースを使用して実行',
             },
           ],
         },
         {
           type: 'category',
-          label: 'サンプルアプリケーションを実行する',
+          label: 'サンプルアプリケーションを実行',
           collapsible: true,
           items: [
             {
@@ -1145,7 +1145,7 @@ const sidebars = {
             {
               type: 'doc',
               id: 'add-scalardb-to-your-build',
-              label: 'ビルドに ScalarDB を追加する',
+              label: 'ビルドに ScalarDB を追加',
             },
             {
               type: 'doc',
@@ -1195,12 +1195,12 @@ const sidebars = {
             {
               type: 'doc',
               id: 'scalardb-cluster/encrypt-data-at-rest',
-              label: '保存データを暗号化する',
+              label: '保存データを暗号化',
             },
             {
               type: 'doc',
               id: 'scalardb-cluster/encrypt-wire-communications',
-              label: 'ワイヤ通信を暗号化する',
+              label: 'ワイヤ通信を暗号化',
             },
             {
               type: 'category',
@@ -1316,7 +1316,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-auth',
-                  label: 'ユーザーを認証および認可する',
+                  label: 'ユーザーを認証および認可',
                 },
                 {
                   type: 'doc',
@@ -1347,12 +1347,12 @@ const sidebars = {
         {
           type: 'doc',
           id: 'scalardb-cluster/setup-scalardb-cluster-on-kubernetes-by-using-helm-chart',
-          label: 'ScalarDB Cluster をローカルにデプロイする',
+          label: 'ScalarDB Cluster をローカルにデプロイ',
         },
         {
           type: 'doc',
           id: 'scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS',
-          label: 'Amazon EKS に ScalarDB Cluster をデプロイする',
+          label: 'Amazon EKS に ScalarDB Cluster をデプロイ',
         },
         {
           type: 'category',
@@ -1436,7 +1436,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalar-kubernetes/HowToGetContainerImages',
-                  label: 'コンテナイメージを取得する',
+                  label: 'コンテナイメージを取得',
                 },
                 {
                   type: 'doc',
@@ -1458,22 +1458,22 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalar-kubernetes/CreateEKSClusterForScalarDBCluster',
-                  label: 'ScalarDB Cluster 用の EKS クラスターを作成する',
+                  label: 'ScalarDB Cluster 用の EKS クラスターを作成',
                 },
                 {
                   type: 'doc',
                   id: 'scalar-kubernetes/CreateBastionServer',
-                  label: '踏み台サーバーを作成する',
+                  label: '踏み台サーバーを作成',
                 },
                 {
                   type: 'doc',
                   id: 'helm-charts/how-to-deploy-scalardb-cluster',
-                  label: 'Helm Chart を使用して ScalarDB Cluster をデプロイする',
+                  label: 'Helm Chart を使用して ScalarDB Cluster をデプロイ',
                 },
                 {
                   type: 'doc',
                   id: 'helm-charts/how-to-deploy-scalardb-analytics-postgresql',
-                  label: 'Helm Chart を使用して ScalarDB Analytics with PostgreSQL をデプロイする',
+                  label: 'Helm Chart を使用して ScalarDB Analytics with PostgreSQL をデプロイ',
                 },
               ],
             },
@@ -1485,47 +1485,47 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalar-kubernetes/AccessScalarProducts',
-                  label: 'アプリケーションから Kubernetes 環境にアクセスする',
+                  label: 'アプリケーションから Kubernetes 環境にアクセス',
                 },
                 {
                   type: 'doc',
                   id: 'scalar-kubernetes/HowToCreateKeyAndCertificateFiles',
-                  label: '秘密鍵と証明書ファイルを作成する',
+                  label: '秘密鍵と証明書ファイルを作成',
                 },
                 {
                   type: 'doc',
                   id: 'helm-charts/configure-custom-values-scalardb-cluster',
-                  label: 'ScalarDB Cluster のカスタム値ファイルを構成する',
+                  label: 'ScalarDB Cluster のカスタム値ファイルを構成',
                 },
                 {
                   type: 'doc',
                   id: 'helm-charts/configure-custom-values-scalardb-analytics-postgresql',
-                  label: 'ScalarDB Analytics with PostgreSQL のカスタム値ファイルを構成する',
+                  label: 'ScalarDB Analytics with PostgreSQL のカスタム値ファイルを構成',
                 },
                 {
                   type: 'doc',
                   id: 'helm-charts/configure-custom-values-scalar-admin-for-kubernetes',
-                  label: 'Scalar Admin for Kubernetes のカスタム値ファイルを構成する',
+                  label: 'Scalar Admin for Kubernetes のカスタム値ファイルを構成',
                 },
                 {
                   type: 'doc',
                   id: 'helm-charts/configure-custom-values-scalar-manager',
-                  label: 'Scalar Manager のカスタム値ファイルを構成する',
+                  label: 'Scalar Manager のカスタム値ファイルを構成',
                 },
                 {
                   type: 'doc',
                   id: 'helm-charts/configure-custom-values-envoy',
-                  label: 'Scalar Envoy のカスタム値ファイルを構成する',
+                  label: 'Scalar Envoy のカスタム値ファイルを構成',
                 },
                 {
                   type: 'doc',
                   id: 'helm-charts/mount-files-or-volumes-on-scalar-pods',
-                  label: 'ScalarDB ポッドにファイルまたはボリュームをマウントする',
+                  label: 'ScalarDB ポッドにファイルまたはボリュームをマウント',
                 },
                 {
                   type: 'doc',
                   id: 'helm-charts/use-secret-for-credentials',
-                  label: 'シークレットリソースを使用する',
+                  label: 'シークレットリソースを使用',
                 },
               ],
             },
@@ -1541,7 +1541,7 @@ const sidebars = {
         {
           type: 'doc',
           id: 'schema-loader-import',
-          label: '既存のテーブルをインポートする',
+          label: '既存のテーブルをインポート',
         },
         {
           'type': 'doc',
@@ -1552,18 +1552,18 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: '管理',
+      label: '運用',
       collapsible: true,
       items: [
         {
           type: 'doc',
           id: 'scalar-kubernetes/HowToScaleScalarDB',
-          label: 'スケーリングする',
+          label: 'スケーリング',
         },
         {
           type: 'doc',
           id: 'scalar-kubernetes/HowToUpgradeScalarDB',
-          label: 'アップグレードする',
+          label: 'アップグレード',
         },
         {
           type: 'category',
@@ -1573,7 +1573,7 @@ const sidebars = {
             {
               type: 'doc',
               id: 'monitor-by-using-scalar-manager',
-              label: 'Scalar Manager を使用する',
+              label: 'Scalar Manager を使用',
             },
             {
               type: 'category',
@@ -1593,7 +1593,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'helm-charts/how-to-deploy-scalar-admin-for-kubernetes',
-                  label: 'Kubernetes 用の Scalar Admin をデプロイする',
+                  label: 'Kubernetes 用の Scalar Admin をデプロイ',
                 },
               ]
             },
@@ -1607,7 +1607,7 @@ const sidebars = {
             {
               type: 'doc',
               id: 'manage-backup-and-restore',
-              label: 'データベースをバックアップおよび復元する',
+              label: 'データベースをバックアップおよび復元',
             },
             {
               type: 'category',
@@ -1617,17 +1617,17 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'backup-restore',
-                  label: 'ScalarDB を通じて使用されるデータベースのバックアップと復元を行う',
+                  label: 'ScalarDB を通じて使用されるデータベースのバックアップと復元',
                 },
                 {
                   type: 'doc',
                   id: 'scalar-kubernetes/BackupNoSQL',
-                  label: 'Kubernetes で NoSQL データベースをバックアップする',
+                  label: 'Kubernetes で NoSQL データベースをバックアップ',
                 },
                 {
                   type: 'doc',
                   id: 'scalar-kubernetes/RestoreDatabase',
-                  label: 'Kubernetes でデータベースを復元する',
+                  label: 'Kubernetes でデータベースを復元',
                 },
               ]
             },
