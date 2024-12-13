@@ -1676,7 +1676,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: '管理',
+      label: '関連情報',
       collapsible: true,
       items: [
         {
