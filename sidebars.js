@@ -85,7 +85,7 @@ const sidebars = {
             {
               type: 'doc',
               id: 'getting-started-with-scalardb',
-              label: 'Use ScalarDB Core',
+              label: 'Use Java',
             },
             {
               type: 'doc',
@@ -102,7 +102,7 @@ const sidebars = {
             {
               type: 'doc',
               id: 'scalardb-cluster/getting-started-with-scalardb-cluster',
-              label: 'Use ScalarDB Cluster',
+              label: 'Use the Java API',
             },
             {
               type: 'doc',
@@ -128,13 +128,13 @@ const sidebars = {
           items: [
             {
               type: 'doc',
-              id: 'scalardb-analytics-postgresql/getting-started',
-              label: 'Use ScalarDB Analytics with PostgreSQL',
+              id: 'scalardb-samples/scalardb-analytics-spark-sample/README',
+              label: 'Use Spark as an execution engine',
             },
             {
               type: 'doc',
-              id: 'scalardb-samples/scalardb-analytics-spark-sample/README',
-              label: 'Use ScalarDB Analytics',
+              id: 'scalardb-analytics-postgresql/getting-started',
+              label: 'Use PostgreSQL as an execution engine',
             },
           ],
         },
@@ -883,7 +883,7 @@ const sidebars = {
         {
           type: 'doc',
           id: 'database-configurations',
-          label: '基本の設定',
+          label: 'データベースの設定',
         },
         {
           type: 'doc',
@@ -920,7 +920,7 @@ const sidebars = {
             {
               type: 'doc',
               id: 'getting-started-with-scalardb',
-              label: 'ScalarDB Core を使用',
+              label: 'Java を使用',
             },
             {
               type: 'doc',
@@ -937,7 +937,7 @@ const sidebars = {
             {
               type: 'doc',
               id: 'scalardb-cluster/getting-started-with-scalardb-cluster',
-              label: 'ScalarDB Cluster を使用',
+              label: 'Java API を使用',
             },
             {
               type: 'doc',
@@ -963,13 +963,13 @@ const sidebars = {
           items: [
             {
               type: 'doc',
-              id: 'scalardb-analytics-postgresql/getting-started',
-              label: 'ScalarDB Analytics with PostgreSQL を使用',
+              id: 'scalardb-samples/scalardb-analytics-spark-sample/README',
+              label: 'Spark を実行エンジンとして使用',
             },
             {
               type: 'doc',
-              id: 'scalardb-samples/scalardb-analytics-spark-sample/README',
-              label: 'ScalarDB Analytics を使用',
+              id: 'scalardb-analytics-postgresql/getting-started',
+              label: 'PostgreSQL を実行エンジンとして使用',
             },
           ],
         },
