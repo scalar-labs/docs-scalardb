@@ -542,7 +542,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'helm-charts/getting-started-scalar-helm-charts',
-                  label: 'Scalar Helm Charts',
+                  label: 'Use Scalar Helm Charts',
                 },
                 {
                   type: 'doc',
