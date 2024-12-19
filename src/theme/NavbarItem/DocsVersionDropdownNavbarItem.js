@@ -36,9 +36,13 @@ export default function DocsVersionDropdownNavbarItem({
   const versions = useVersions(docsPluginId);
   const {savePreferredVersionName} = useDocsPreferredVersion(docsPluginId);
 
-  // Filter out versions with "unsupported" in the label
+  // Filter out versions with "unsupported" or "サポートされていない" in the label
   const supportedVersions = versions.filter((version) => {
-    return !version.label.toLowerCase().includes('unsupported');
+    const label = version.label.toLowerCase();
+    return (
+      !label.includes('(unsupported)') &&
+      !label.includes('(サポートされていない)')
+    );
   });
 
   function versionToLink(version) {
