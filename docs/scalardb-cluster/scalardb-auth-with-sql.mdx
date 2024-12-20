@@ -5,6 +5,8 @@ tags:
 
 # Authenticate and Authorize Users
 
+import WarningLicenseKeyContact from '/src/components/en-us/_warning-license-key-contact.mdx';
+
 ScalarDB Cluster has a mechanism to authenticate and authorize users.
 
 This guide describes how to use authentication and authorization in ScalarDB Cluster.
@@ -108,13 +110,13 @@ The following tables show which privileges are required for each type of operati
 
 ### DML
 
-| Command          | Superuser required | Required privileges   |
-|------------------|--------------------|-----------------------|
-| `SELECT`         |                    | `SELECT`              |
-| `INSERT`         |                    | `INSERT`              |
-| `UPSERT`         |                    | `INSERT`              |
-| `UPDATE`         |                    | `SELECT` and `UPDATE` |
-| `DELETE`         |                    | `SELECT` and `DELETE` |
+| Command  | Superuser required | Required privileges   |
+|----------|--------------------|-----------------------|
+| `SELECT` |                    | `SELECT`              |
+| `INSERT` |                    | `INSERT`              |
+| `UPSERT` |                    | `INSERT`              |
+| `UPDATE` |                    | `SELECT` and `UPDATE` |
+| `DELETE` |                    | `SELECT` and `DELETE` |
 
 ### DCL
 
@@ -126,55 +128,233 @@ The following tables show which privileges are required for each type of operati
 | `GRANT`       |                                               | `GRANT` (Users can grant only the privileges that they have.)  |
 | `REVOKE`      |                                               | `GRANT` (Users can revoke only the privileges that they have.) |
 
+## Limitations
+
+There are some limitations to the privileges granted or revoked in authentication and authorization:
+
+- You must grant or revoke `INSERT` and `UPDATE` privileges together.
+- To grant a user the `UPDATE` or `DELETE` privilege, the target user must have the `SELECT` privilege.
+- If the target user has the `INSERT` or `UPDATE` privilege, you cannot revoke the `SELECT` privilege from them.
+
 ## Wire encryption
 
-ScalarDB Cluster also supports wire encryption by using Transport Layer Security (TLS). If you enable authentication and authorization, enabling wire encryption in production environments to protect the user credentials is strongly recommended.
+If you enable authentication and authorization, enabling wire encryption to protect the user credentials is strongly recommended, especially in production environments. For details about wire encryption, see [Encrypt Wire Communications](encrypt-wire-communications.mdx).
 
-This wire encryption feature encrypts:
+## Tutorial - Authenticate and authorize users
 
-* The communications between the ScalarDB Cluster node and clients.
-* The communications between all ScalarDB Cluster nodes (the cluster's internal communications).
+This tutorial explains how to use authentication and authorization.
 
-This feature uses gRPC's TLS support. For details, see the official gRPC [Security Policy](https://github.com/grpc/grpc-java/blob/master/SECURITY.md).
+<WarningLicenseKeyContact product="ScalarDB Cluster" />
 
-### Configurations
+### 1. Create the ScalarDB Cluster configuration file
 
-This section describes the available configurations for wire encryption.
+Create the following configuration file as `scalardb-cluster-node.properties`, replacing `<YOUR_LICENSE_KEY>` and `<LICENSE_CHECK_CERT_PEM>` with your ScalarDB license key and license check certificate values. For more information about the license key and certificate, see [How to Configure a Product License Key](../scalar-licensing/README.mdx).
 
-#### ScalarDB Cluster node configurations
+```properties
+scalar.db.storage=jdbc
+scalar.db.contact_points=jdbc:postgresql://postgresql:5432/postgres
+scalar.db.username=postgres
+scalar.db.password=postgres
+scalar.db.cluster.node.standalone_mode.enabled=true
+scalar.db.cross_partition_scan.enabled=true
+scalar.db.sql.enabled=true
 
-To enable wire encryption, you need to set `scalar.db.cluster.tls.enabled` to `true`.
+# Enable authentication and authorization
+scalar.db.cluster.auth.enabled=true
 
-| Name                            | Description                               | Default |
-|---------------------------------|-------------------------------------------|---------|
-| `scalar.db.cluster.tls.enabled` | Whether wire encryption (TLS) is enabled. | `false` |
+# License key configurations
+scalar.db.cluster.node.licensing.license_key=<YOUR_LICENSE_KEY>
+scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
+```
 
-You also need to set the following configurations:
+### 2. Create the Docker Compose file
 
-| Name                                          | Description                                                                                                                                                                                                                                                                                                                                                 | Default |
-|-----------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
-| `scalar.db.cluster.tls.ca_root_cert_pem`      | The custom CA root certificate (PEM data) for TLS communication.                                                                                                                                                                                                                                                                                            |         |
-| `scalar.db.cluster.tls.ca_root_cert_path`     | The custom CA root certificate (file path) for TLS communication.                                                                                                                                                                                                                                                                                           |         |
-| `scalar.db.cluster.tls.override_authority`    | The custom authority for TLS communication. This doesn't change what host is actually connected. This is intended for testing, but may safely be used outside of tests as an alternative to DNS overrides. For example, you can specify the hostname presented in the certificate chain file that you set for `scalar.db.cluster.node.tls.cert_chain_path`. |         |
-| `scalar.db.cluster.node.tls.cert_chain_path`  | The certificate chain file used for TLS communication.                                                                                                                                                                                                                                                                                                      |         |
-| `scalar.db.cluster.node.tls.private_key_path` | The private key file used for TLS communication.                                                                                                                                                                                                                                                                                                            |         |
+Create the following configuration file as `docker-compose.yaml`.
 
-To specify the certificate authority (CA) root certificate, you should set either `scalar.db.cluster.tls.ca_root_cert_pem` or `scalar.db.cluster.tls.ca_root_cert_path`. If you set both, `scalar.db.cluster.tls.ca_root_cert_pem` will be used.
+```yaml
+services:
+  postgresql:
+    container_name: "postgresql"
+    image: "postgres:15"
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+      start_period: 30s
 
-#### ScalarDB Cluster Java client SDK configurations
+  scalardb-cluster-standalone:
+    container_name: "scalardb-cluser-node"
+    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:3.14.0"
+    ports:
+      - 60053:60053
+      - 9080:9080
+    volumes:
+      - ./scalardb-cluster-node.properties:/scalardb-cluster/node/scalardb-cluster-node.properties
+    depends_on:
+      postgresql:
+        condition: service_healthy
+```
 
-To enable wire encryption on the client side, you need to set `scalar.db.cluster.tls.enabled` to `true`.
+### 3. Start PostgreSQL and ScalarDB Cluster
 
-| Name                            | Description                               | Default |
-|---------------------------------|-------------------------------------------|---------|
-| `scalar.db.cluster.tls.enabled` | Whether wire encryption (TLS) is enabled. | `false` |
+Run the following command to start PostgreSQL and ScalarDB Cluster in standalone mode.
 
-You also need to set the following configurations:
+```console
+docker compose up -d
+```
 
-| Name                                          | Description                                                                                                                                                                                                                                                                                                                                                 | Default |
-|-----------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
-| `scalar.db.cluster.tls.ca_root_cert_pem`      | The custom CA root certificate (PEM data) for TLS communication.                                                                                                                                                                                                                                                                                            |         |
-| `scalar.db.cluster.tls.ca_root_cert_path`     | The custom CA root certificate (file path) for TLS communication.                                                                                                                                                                                                                                                                                           |         |
-| `scalar.db.cluster.tls.override_authority`    | The custom authority for TLS communication. This doesn't change what host is actually connected. This is intended for testing, but may safely be used outside of tests as an alternative to DNS overrides. For example, you can specify the hostname presented in the certificate chain file that you set for `scalar.db.cluster.node.tls.cert_chain_path`. |         |
+It may take a few minutes for ScalarDB Cluster to fully start.
 
-To specify the CA root certificate, you should set either `scalar.db.cluster.tls.ca_root_cert_pem` or `scalar.db.cluster.tls.ca_root_cert_path`. If you set both, `scalar.db.cluster.tls.ca_root_cert_pem` will be used.
+### 4. Connect to ScalarDB Cluster
+
+To connect to ScalarDB Cluster, this tutorial uses the SQL CLI, a tool for connecting to ScalarDB Cluster and executing SQL queries. You can download the SQL CLI from the [ScalarDB releases page](https://github.com/scalar-labs/scalardb/releases).
+
+Create a configuration file named `scalardb-cluster-sql-cli.properties`. This file will be used to connect to ScalarDB Cluster by using the SQL CLI.
+
+```properties
+scalar.db.sql.connection_mode=cluster
+scalar.db.sql.cluster_mode.contact_points=indirect:localhost
+
+# Enable authentication and authorization
+scalar.db.cluster.auth.enabled=true
+```
+
+Then, start the SQL CLI by running the following command.
+
+```console
+java -jar scalardb-cluster-sql-cli-3.14.0-all.jar --config scalardb-cluster-sql-cli.properties
+```
+
+Enter the username and password as `admin` and `admin`, respectively.
+
+Now you're ready to use the database with authentication and authorization enabled in ScalarDB Cluster.
+
+### 5. Create namespaces and a table
+
+Create namespaces.
+
+```sql
+CREATE NAMESPACE ns1;
+
+CREATE NAMESPACE ns2;
+```
+
+Next, create a table in the `ns1` namespaces.
+
+```sql
+CREATE TABLE ns1.tbl (
+  id INT PRIMARY KEY,
+  col1 TEXT,
+  col2 INT);
+```
+
+### 6. Create a user
+
+Create a user named `user1`.
+
+```sql
+CREATE USER user1 WITH PASSWORD 'user1';
+```
+
+To check the user, run the following command.
+
+```sql
+SHOW USERS;
+```
+
+```console
++----------+-------------+
+| username | isSuperuser |
++----------+-------------+
+| user1    | false       |
+| admin    | true        |
++----------+-------------+
+```
+
+You can see that the `user1` user has been created.
+
+### 7. Grant privileges
+
+Grant the `SELECT`, `INSERT`, and `UPDATE` privileges to `user1` on the `ns1.tbl` table.
+
+```sql
+GRANT SELECT, INSERT, UPDATE ON ns1.tbl TO user1;
+```
+
+Then, grant the `SELECT` privilege to `user1` on the `ns2` namespace.
+
+```sql
+GRANT SELECT ON NAMESPACE ns2 TO user1;
+```
+
+To check the privileges, run the following command.
+
+```sql
+SHOW GRANTS FOR user1;
+```
+
+```console
++---------+-----------+-----------+
+|  name   |   type    | privilege |
++---------+-----------+-----------+
+| ns2     | NAMESPACE | SELECT    |
+| ns1.tbl | TABLE     | SELECT    |
+| ns1.tbl | TABLE     | INSERT    |
+| ns1.tbl | TABLE     | UPDATE    |
++---------+-----------+-----------+
+```
+
+You can see that `user1` has been granted the `SELECT`, `INSERT`, and `UPDATE` privileges on the `ns.tbl` table, and the `SELECT` privilege on the `ns2` namespace.
+
+### 8. Log in as `user1`
+
+Log in as `user1` and execute SQL statements.
+
+```console
+java -jar scalardb-cluster-sql-cli-3.14.0-all.jar --config scalardb-cluster-sql-cli.properties
+```
+
+Enter the username and password as `user1` and `user1`, respectively.
+
+Now you can execute SQL statements as `user1`.
+
+### 9. Execute DML statements
+
+Execute the following `INSERT` statement as `user1`.
+
+```sql
+INSERT INTO ns1.tbl VALUES (1, 'a', 1);
+```
+
+Then, execute the following `SELECT` statement as `user1`.
+
+```sql
+SELECT * FROM ns1.tbl;
+```
+
+```console
++----+------+------+
+| id | col1 | col2 |
++----+------+------+
+| 1  | a    | 1    |
++----+------+------+
+```
+
+You can see that `user1` can execute `INSERT` and `SELECT` statements.
+
+Next, try executing the following `DELETE` statement as `user1`.
+
+```sql
+DELETE FROM ns1.tbl WHERE id = 1;
+```
+
+```console
+Error: Authorization error (PERMISSION_DENIED: SQL-10021: Access denied: You need the DELETE privilege on the table ns1.tbl to execute this operation) (state=SDB11,code=9911)
+```
+
+You will see the above error message because `user1` doesn't have the `DELETE` privilege on the `ns1.tbl` table.

@@ -10,16 +10,10 @@ This tutorial describes how to use ScalarDB Cluster GraphQL.
 ## Prerequisites
 
 - One of the following Java Development Kits (JDKs):
-  - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) LTS version (8, 11, or 17)
-  - [OpenJDK](https://openjdk.org/install/) LTS version (8, 11, or 17)
+  - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) LTS version (8, 11, 17, or 21)
+  - [OpenJDK](https://openjdk.org/install/) LTS version (8, 11, 17, or 21)
 - ScalarDB Cluster running on a Kubernetes cluster
   - We assume that you have a ScalarDB Cluster running on a Kubernetes cluster that you deployed by following the instructions in [Set Up ScalarDB Cluster on Kubernetes by Using a Helm Chart](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.mdx).
-
-:::note
-
-This sample application only works with Java 8. However, ScalarDB itself works with Java LTS versions, which means that you can use Java LTS versions for your application that uses ScalarDB. For details on the requirements of ScalarDB, such as which Java versions can be used, see [Requirements](../requirements.mdx).
-
-:::
 
 ## Sample application
 
@@ -111,11 +105,11 @@ For details about the client modes, see [Developer Guide for ScalarDB Cluster wi
 
 To load a schema via ScalarDB Cluster, you need to use the dedicated Schema Loader for ScalarDB Cluster (Schema Loader for Cluster).
 Using the Schema Loader for Cluster is basically the same as using the [Schema Loader for ScalarDB](../schema-loader.mdx) except the name of the JAR file is different.
-You can download the Schema Loader for Cluster from [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases/tag/v3.13.1).
+You can download the Schema Loader for Cluster from [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases/tag/v3.14.0).
 After downloading the JAR file, you can run the Schema Loader for Cluster with the following command:
 
 ```console
-java -jar scalardb-cluster-schema-loader-3.13.1-all.jar --config database.properties -f schema.json --coordinator
+java -jar scalardb-cluster-schema-loader-3.14.0-all.jar --config database.properties -f schema.json --coordinator
 ```
 
 ## Step 4. Run operations from GraphiQL
@@ -192,7 +186,7 @@ You should get the following result in the right pane:
 ### Mappings between GraphQL API and ScalarDB Java API
 
 The automatically generated GraphQL schema defines queries, mutations, and object types for input/output to allow you to run CRUD operations for all the tables in the target namespaces.
-These operations are designed to match the ScalarDB APIs defined in the [`DistributedTransaction`](https://javadoc.io/doc/com.scalar-labs/scalardb/3.13.1/com/scalar/db/api/DistributedTransaction.html) interface.
+These operations are designed to match the ScalarDB APIs defined in the [`DistributedTransaction`](https://javadoc.io/doc/com.scalar-labs/scalardb/3.14.0/com/scalar/db/api/DistributedTransaction.html) interface.
 
 Assuming you have an `account` table in a namespace, the following queries and mutations will be generated:
 

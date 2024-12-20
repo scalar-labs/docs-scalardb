@@ -4,15 +4,24 @@ This document shows the compatibility of ScalarDB Cluster versions among client 
 
 ## ScalarDB Cluster compatibility with client SDKs
 
-| ScalarDB Cluster version         | ScalarDB Cluster Java Client SDK version | ScalarDB Cluster .NET Client SDK version |
-| :------------------------------- | :--------------------------------------- | :------------------------------- |
-| 3.13                             | 3.9 - 3.13                               | 3.12*                            |
-| 3.12                             | 3.9 - 3.12                               | 3.12*                            |
-| 3.11                             | 3.9 - 3.11                               | Not supported                    |
-| 3.10                             | 3.9 - 3.10                               | Not supported                    |
-| 3.9                              | 3.9                                      | Not supported                    |
+| ScalarDB Cluster version | ScalarDB Cluster Java Client SDK version | ScalarDB Cluster .NET Client SDK version |
+|:-------------------------|:-----------------------------------------|:-----------------------------------------|
+| 3.14                     | 3.9 - 3.14                               | 3.12* - 3.14                             |
+| 3.13                     | 3.9 - 3.13                               | 3.12* - 3.13                             |
+| 3.12                     | 3.9 - 3.12                               | 3.12*                                    |
+| 3.11                     | 3.9 - 3.11                               | Not supported                            |
+| 3.10                     | 3.9 - 3.10                               | Not supported                            |
+| 3.9                      | 3.9                                      | Not supported                            |
 
 \* This version is in private preview, which means that future versions might have backward-incompatible updates.
+
+:::note
+
+- You can consider the client tools (for example, [ScalarDB Cluster SQL CLI](developer-guide-for-scalardb-cluster-with-java-api.mdx#sql-cli) and [ScalarDB Cluster Schema Loader](developer-guide-for-scalardb-cluster-with-java-api.mdx#schema-loader-for-cluster)) to be the same as the ScalarDB Cluster Java Client SDK. In other words, you can apply the same compatibility rules to client tools as the ScalarDB Cluster Java Client SDK.
+- When you access backend databases by using ScalarDB Data Loader, you must use a version of ScalarDB Data Loader that is compatible with the version of ScalarDB Cluster that you're using. In this case, the supported version of ScalarDB Data Loader is the same as the version of the ScalarDB Cluster Java Client SDK shown in the matrix above. Note that ScalarDB Data Loader doesn't access ScalarDB Cluster directly.
+- If you use a new feature that ScalarDB Cluster provides in a new minor version, you may need to use the same or a later version of the client tools or re-create (or update) existing schemas. For details, please refer to the relevant documentation about each feature.
+
+:::
 
 ## Version skew policy
 

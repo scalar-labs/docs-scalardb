@@ -72,8 +72,13 @@ const config = {
               },
               */
               current: { // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
-                label: '3.13',
+                label: '3.14',
                 path: 'latest', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
+                banner: 'none',
+              },
+              "3.13": {
+                label: '3.13',
+                path: '3.13',
                 banner: 'none',
               },
               "3.12": {
@@ -97,9 +102,9 @@ const config = {
                 banner: 'none',
               },
               "3.8": {
-                label: '3.8',
+                label: '3.8 (unsupported)',
                 path: '3.8',
-                banner: 'none',
+                banner: 'unmaintained',
               },
               "3.7": {
                 label: '3.7 (unsupported)',
@@ -143,6 +148,11 @@ const config = {
     ],
   ],
 
+  // The following versions have Japanese docs, so the language dropdown should be displayed only when visitors are reading these versions of docs.
+  customFields: {
+    allowedLanguageDropdownVersions: ["current", "latest", "3.13"],
+  },
+
   plugins: [
     [
       '@docusaurus/plugin-client-redirects',
@@ -157,30 +167,18 @@ const config = {
             to: '/docs/latest/releases/release-support-policy',
             from: '/docs/releases/release-support-policy',
           },
-          // Remove this redirect when the docs for 3.14 are released.
           {
-            to: '/docs/latest/run-non-transactional-storage-operations-through-primitive-crud-interface',
-            from: '/docs/latest/storage-abstraction',
+            to: '/docs/3.13/run-non-transactional-storage-operations-through-primitive-crud-interface',
+            from: '/docs/3.13/storage-abstraction',
           },
-          // Uncomment this line when the docs for 3.14 are released.
-          // {
-          //   to: '/docs/3.13/run-non-transactional-storage-operations-through-primitive-crud-interface',
-          //   from: '/docs/3.13/storage-abstraction',
-          // },
           {
             to: '/docs/3.12/run-non-transactional-storage-operations-through-primitive-crud-interface',
             from: '/docs/3.12/storage-abstraction',
           },
-          // Remove this redirect when the docs for 3.14 are released.
           {
-            to: '/docs/latest/requirements#databases',
-            from: '/docs/latest/scalardb-supported-databases',
+            to: '/docs/3.13/requirements#databases',
+            from: '/docs/3.13/scalardb-supported-databases',
           },
-          // Uncomment this line when the docs for 3.14 are released.
-          // {
-          //   to: '/docs/3.13/requirements#databases',
-          //   from: '/docs/3.13/scalardb-supported-databases',
-          // },
           {
             to: '/docs/3.12/requirements#databases',
             from: '/docs/3.12/scalardb-supported-databases',
@@ -201,7 +199,44 @@ const config = {
             to: '/docs/3.12/requirements#databases',
             from: '/docs/3.12/scalardb-supported-databases',
           },
+          {
+            to: '/docs/latest/helm-charts/getting-started-scalar-manager',
+            from: '/docs/latest/helm-charts/how-to-deploy-scalar-manager',
+          },
+          {
+            to: '/docs/3.12/helm-charts/getting-started-scalar-manager',
+            from: '/docs/3.12/helm-charts/how-to-deploy-scalar-manager',
+          },
+          {
+            to: '/docs/3.11/helm-charts/getting-started-scalar-manager',
+            from: '/docs/3.11/helm-charts/how-to-deploy-scalar-manager',
+          },
+          {
+            to: '/docs/3.10/helm-charts/getting-started-scalar-manager',
+            from: '/docs/3.10/helm-charts/how-to-deploy-scalar-manager',
+          },
+          {
+            to: '/docs/latest/scalardb-cluster-dotnet-client-sdk',
+            from: '/docs/latest/scalardb-cluster-dotnet-client-sdk/overview',
+          },
+          {
+            to: '/docs/3.12/scalardb-cluster-dotnet-client-sdk',
+            from: '/docs/3.12/scalardb-cluster-dotnet-client-sdk/overview',
+          },
+          {
+            to: '/docs/3.11/scalardb-cluster-dotnet-client-sdk',
+            from: '/docs/3.11/scalardb-cluster-dotnet-client-sdk/overview',
+          },
         ],
+        createRedirects(existingPath) {
+          if (existingPath.includes('/ja-jp/docs')) {
+            // Redirect from /docs/ja-jp/X to /ja-jp/docs/X.
+            return [
+              existingPath.replace('/ja-jp/docs', '/docs/ja-jp'),
+            ];
+          }
+          return undefined; // Return a falsy value: no redirect created
+        },
       },
     ],
     require.resolve('docusaurus-plugin-image-zoom'),
@@ -315,18 +350,15 @@ const config = {
             label: 'Scalar Docs Home',
           },
           {
+            type: 'localeDropdown',
+            position: 'right',
+          },
+          {
             href: 'https://github.com/scalar-labs/scalardb',
             position: 'right',
             className: 'header-github-link',
             'aria-label': 'GitHub repository',
           },
-          /*
-          The "localeDropdown" configuration should be uncommented (enabled) after we create Japanese versions of docs.
-          */
-          // {
-          //   type: 'localeDropdown',
-          //   position: 'right',
-          // },
         ],
       },
       algolia: {
@@ -459,11 +491,11 @@ const config = {
       announcementBar: {
         id: 'new_version',
         content:
-          '<b>Docs for both ScalarDB Community and Enterprise editions now live on this site!</b> Editions that a doc applies to are in tags at the top of each page 🏷️',
-          // '<b>The ScalarDB X.X is now available!🥳 For details on what\'s included in this new version, see the <a target="_self" rel="noopener noreferrer" href="/docs/latest/releases/release-notes">release notes</a>.<b>',
+          '<b>Announcing the release of ScalarDB 3.14!🚀 For details on what\'s included in this new version, see the <a target="_self" rel="noopener noreferrer" href="/docs/latest/releases/release-notes">release notes</a>.',
+          // '<b>Announcing the release of ScalarDB X.X!🚀 For details on what\'s included in this new version, see the <a target="_self" rel="noopener noreferrer" href="/docs/latest/releases/release-notes">release notes</a>.<b>',
         backgroundColor: '#2673BB',
         textColor: '#FFFFFF',
-        isCloseable: true,
+        isCloseable: false,
       },
       zoom: {
         selector: '.markdown :not(em) > img',

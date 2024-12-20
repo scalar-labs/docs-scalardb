@@ -1,0 +1,184 @@
+---
+tags:
+  - Enterprise Premium
+---
+
+# ユーザーの認証と認可
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+ScalarDB Cluster には、ユーザーを認証および認可するメカニズムがあります。
+
+このガイドでは、ScalarDB Cluster で認証と認可を使用する方法について説明します。
+
+## 概要
+
+認証と認可を使用することで、ユーザーを作成し、その権限を付与または取り消すことができます。`CREATE USER` コマンドを使用してユーザーを作成し、`GRANT` コマンドまたは `REVOKE` コマンドを使用して、それぞれテーブルまたは名前空間に対する権限を付与または取り消すことができます。このようなデータ制御言語 (DCL) コマンドの詳細については、[DCL](../scalardb-sql/grammar.mdx#dcl) を参照してください。
+
+ユーザーは、必要な権限を持っている場合、ユーザー名とパスワードを使用して ScalarDB Cluster にログインし、SQL ステートメントを実行できます。
+
+認証と認可では、次の 2 種類のユーザーがサポートされます。
+
+- **スーパーユーザー:** このタイプのユーザーにはすべての権限があります。スーパーユーザーのみが他のユーザーや名前空間を作成または削除できます。
+- **通常のユーザー:** このタイプのユーザーには最初は権限がないため、スーパーユーザーまたは `GRANT` 権限を持つ別のユーザーによって権限を付与する必要があります。
+
+認証と認可を使用する場合、次の権限が利用できます。
+
+- `SELECT`
+- `INSERT`
+- `UPDATE`
+- `DELETE`
+- `CREATE`
+- `DROP`
+- `TRUNCATE`
+- `ALTER`
+- `GRANT`
+
+権限の詳細については、[各タイプの操作に必要な権限](#各タイプの操作に必要な権限)を参照してください。
+
+## 構成
+
+このセクションでは、認証と認可に使用できる構成について説明します。
+
+### ScalarDB Cluster ノードの構成
+
+認証と認可を有効にするには、`scalar.db.cluster.auth.enabled` を `true` に設定する必要があります。
+
+| 名前                              | 説明                         | デフォルト |
+|----------------------------------|-----------------------------|-----------|
+| `scalar.db.cluster.auth.enabled` | 認証と認可が有効かどうか。       | `false`  |
+
+次の構成を設定することもできます。
+
+| 名前                                                            | 説明                                                                                               | デフォルト       |
+|----------------------------------------------------------------|---------------------------------------------------------------------------------------------------|-----------------|
+| `scalar.db.cluster.auth.cache_expiration_time_millis`          | 認証および認可情報のキャッシュ有効期限（ミリ秒単位）。                                                      | `60000` (1 分)  |
+| `scalar.db.cluster.auth.auth_token_expiration_time_minutes`    | 認証および認可トークンの有効期限（分単位）。                                                               | `1440` (1 日)  |
+| `scalar.db.cluster.auth.auth_token_gc_thread_interval_minutes` | 認証および認可トークンのガベージコレクション (GC) スレッド間隔 (分単位)。                                    | 360（6 時間）    |
+| `scalar.db.cluster.auth.pepper`                                | ハッシュ化の前にパスワードに追加されるシークレットの値。指定しない場合、パスワードはペッパーなしでハッシュ化されます。 |                |
+
+:::note
+
+認証と認可を有効にする場合は、認証と認可によって内部的にパーティション間スキャンが実行されるため、システム名前空間 (デフォルトでは `scalardb`) の `scalar.db.cross_partition_scan.enabled` を `true` に設定する必要もあります。
+
+:::
+
+### ScalarDB Cluster Java Client SDK 構成
+
+クライアント側で認証と認可を有効にするには、`scalar.db.cluster.auth.enabled` を `true` に設定する必要があります。
+
+| 名前                              | 説明                   | デフォルト |
+|----------------------------------|------------------------|----------|
+| `scalar.db.cluster.auth.enabled` | 認証と認可が有効かどうか。 | `false`  |
+
+[ScalarDB Cluster SQL クライアント構成](developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-クライアント構成) セクションの構成に加えて、クライアントのユーザー名とパスワードを指定するために `scalar.db.sql.cluster_mode.username` と `scalar.db.sql.cluster_mode.password` も設定する必要があります。
+
+| 名前                                  | 説明                 | デフォルト |
+|---------------------------------------|-----------------------------|---------|
+| `scalar.db.sql.cluster_mode.username` | クライアントのユーザー名。 |         |
+| `scalar.db.sql.cluster_mode.password` | クライアントのパスワード。 |         |
+
+## 初期ユーザー
+
+認証と認可を有効にすると、初期ユーザー `admin` が作成され、そのユーザーの初期パスワードは `admin` になります。このユーザーはスーパーユーザーであり、すべての権限を持ちます。このユーザーでログインし、必要に応じて他のユーザーを作成できます。
+
+:::warning
+
+セキュリティ上の理由から、特に実稼働環境にデプロイする前に、初期ユーザーのパスワードを必ず変更してください。
+
+:::
+
+## 各タイプの操作に必要な権限
+
+次の表は、各タイプの操作に必要な権限を示しています。
+
+### DDL
+
+| コマンド                        | スーパーユーザーが必要です | 必要な権限           |
+|-------------------------------|-----------------------|---------------------|
+| `CREATE NAMESPACE`            | `true`                |                     |
+| `DROP NAMESPACE`              | `true`                |                     |
+| `CREATE TABLE`                |                       | `CREATE`            |
+| `DROP TABLE`                  |                       | `DROP`              |
+| `CREATE INDEX`                |                       | `CREATE`            |
+| `DROP INDEX`                  |                       | `DROP`              |
+| `TRUNCATE TABLE`              |                       | `TRUNCATE`          |
+| `ALTER TABLE`                 |                       | `ALTER`             |
+| `CREATE COORDINATOR TABLES`   | `true`                |                     |
+| `DROP COORDINATOR TABLES`     | `true`                |                     |
+| `TRUNCATE COORDINATOR TABLES` | `true`                |                     |
+
+### DML
+
+| コマンド           | スーパーユーザーが必要です | 必要な権限             |
+|------------------|------------------------|----------------------|
+| `SELECT`         |                        | `SELECT`             |
+| `INSERT`         |                        | `INSERT`             |
+| `UPSERT`         |                        | `INSERT`             |
+| `UPDATE`         |                        | `SELECT` と `UPDATE` |
+| `DELETE`         |                        | `SELECT` と `DELETE` |
+
+### DCL
+
+| コマンド        | スーパーユーザーが必要です                      | 必要な権限                                                    |
+|---------------|---------------------------------------------|-------------------------------------------------------------|
+| `CREATE USER` | `true`                                      |                                                             |
+| `ALTER USER`  | `true` (ユーザーは自分のパスワードを変更できます。) |                                                             |
+| `DROP USER`   | `true`                                      |                                                             |
+| `GRANT`       |                                             | `GRANT` (ユーザーは自分が持っている権限のみを付与できます。)         |
+| `REVOKE`      |                                             | `GRANT` (ユーザーは自分が持っている権限のみを取り消すことができます。) |
+
+## ワイヤ暗号化
+
+ScalarDB Cluster は、トランスポート層セキュリティ (TLS) を使用したワイヤ暗号化もサポートしています。認証と認可を有効にする場合は、ユーザー資格情報を保護するために、運用環境でワイヤ暗号化を有効にすることを強くお勧めします。
+
+このワイヤ暗号化機能では、次のものが暗号化されます:
+
+* ScalarDB Cluster ノードとクライアント間の通信。
+* すべての ScalarDB Cluster ノード間の通信 (クラスターの内部通信)。
+
+この機能では、gRPC の TLS サポートが使用されます。詳細については、公式の gRPC [セキュリティポリシー](https://github.com/grpc/grpc-java/blob/master/SECURITY.md) を参照してください。
+
+### 構成
+
+このセクションでは、ワイヤ暗号化に使用できる構成について説明します。
+
+#### ScalarDB Cluster ノードの構成
+
+ワイヤ暗号化を有効にするには、`scalar.db.cluster.tls.enabled` を `true` に設定する必要があります。
+
+| 名前                             | 説明                            | デフォルト |
+|---------------------------------|--------------------------------|-----------|
+| `scalar.db.cluster.tls.enabled` | ワイヤ暗号化 (TLS) が有効かどうか。 | `false`   |
+
+次の構成も設定する必要があります。
+
+| 名前                                           | 説明                                                                                                                                                                                                                                                            | デフォルト |
+|-----------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
+| `scalar.db.cluster.tls.ca_root_cert_pem`      | TLS 通信用のカスタム CA ルート証明書 (PEM データ)。                                                                                                                                                                                                                   |         |
+| `scalar.db.cluster.tls.ca_root_cert_path`     | TLS 通信用のカスタム CA ルート証明書 (ファイルパス)。                                                                                                                                                                                                                  |         |
+| `scalar.db.cluster.tls.override_authority`    | TLS 通信のカスタム権限。これは、実際に接続されているホストを変更するものではありません。これはテスト用ですが、DNS オーバーライドの代替としてテスト以外でも安全に使用できます。たとえば、`scalar.db.cluster.node.tls.cert_chain_path` に設定した証明書チェーンファイルで提示されるホスト名を指定できます。 |         |
+| `scalar.db.cluster.node.tls.cert_chain_path`  | TLS 通信に使用される証明書チェーンファイル。                                                                                                                                                                                                                           |         |
+| `scalar.db.cluster.node.tls.private_key_path` | TLS 通信に使用されるシークレット鍵ファイル。                                                                                                                                                                                                                           |         |
+
+証明機関 (CA) ルート証明書を指定するには、`scalar.db.cluster.tls.ca_root_cert_pem` または `scalar.db.cluster.tls.ca_root_cert_path` のいずれかを設定する必要があります。両方を設定すると、`scalar.db.cluster.tls.ca_root_cert_pem` が使用されます。
+
+#### ScalarDB Cluster Java Client SDK 構成
+
+クライアント側でワイヤ暗号化を有効にするには、`scalar.db.cluster.tls.enabled` を `true` に設定する必要があります。
+
+| 名前                             | 説明                            | デフォルト |
+|---------------------------------|--------------------------------|----------|
+| `scalar.db.cluster.tls.enabled` | ワイヤ暗号化 (TLS) が有効かどうか。 | `false`  |
+
+次の構成も設定する必要があります。
+
+| 名前                                        | 説明                                                                                                                                                                                                                                                            | デフォルト |
+|--------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|
+| `scalar.db.cluster.tls.ca_root_cert_pem`   | TLS 通信用のカスタム CA ルート証明書 (PEM データ)。                                                                                                                                                                                                                   |          |
+| `scalar.db.cluster.tls.ca_root_cert_path`  | TLS 通信用のカスタム CA ルート証明書 (ファイルパス)。                                                                                                                                                                                                                  |          |
+| `scalar.db.cluster.tls.override_authority` | TLS 通信のカスタム権限。これは、実際に接続されているホストを変更するものではありません。これはテスト用ですが、DNS オーバーライドの代替としてテスト以外でも安全に使用できます。たとえば、`scalar.db.cluster.node.tls.cert_chain_path` に設定した証明書チェーンファイルで提示されるホスト名を指定できます。 |          |
+
+CA ルート証明書を指定するには、`scalar.db.cluster.tls.ca_root_cert_pem` または `scalar.db.cluster.tls.ca_root_cert_path` のいずれかを設定する必要があります。両方を設定すると、`scalar.db.cluster.tls.ca_root_cert_pem` が使用されます。

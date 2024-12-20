@@ -13,7 +13,7 @@ This page provides a list of error codes in ScalarDB.
 
 | Class        | Description                                              |
 |:-------------|:---------------------------------------------------------|
-| `CORE-1xxxx` | Errors for the user error category.                      |
+| `CORE-1xxxx` | Errors for the user error category                       |
 | `CORE-2xxxx` | Errors for the concurrency error category                |
 | `CORE-3xxxx` | Errors for the internal error category                   |
 | `CORE-4xxxx` | Errors for the unknown transaction status error category |
@@ -1028,6 +1028,14 @@ Columns must be specified. Table: %s
 Invalid column type. Table: %s; Column: %s; Type: %s
 ```
 
+### `CORE-10145`
+
+**Message**
+
+```markdown
+The value of the column %s in the primary key contains an illegal character. Primary-key columns must not contain any of the following characters in Cosmos DB: ':', '/', '\', '#', '?'. Value: %s
+```
+
 ## `CORE-2xxxx` status codes
 
 ### `CORE-20000`
@@ -1601,4 +1609,3 @@ The coordinator status is unknown
 ```markdown
 Aborting state failed with NoMutationException, but the coordinator status does not exist
 ```
-

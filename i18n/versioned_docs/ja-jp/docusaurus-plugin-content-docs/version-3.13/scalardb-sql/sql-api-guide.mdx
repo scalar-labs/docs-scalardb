@@ -1,0 +1,364 @@
+---
+tags:
+  - Enterprise Premium
+---
+
+# ScalarDB SQL API ガイド
+
+このガイドでは、ScalarDB SQL API の使用方法について説明します。
+
+## プロジェクトに ScalarDB SQL API を追加する
+
+Gradle を使用して ScalarDB SQL API への依存関係を追加するには、次のコードを使用します。`<VERSION>` は、使用している ScalarDB SQL API と関連ライブラリのバージョンに置き換えてください。
+
+```gradle
+dependencies {
+    implementation 'com.scalar-labs:scalardb-sql:<VERSION>'
+    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:<VERSION>'
+}
+```
+
+Maven を使用して依存関係を追加するには、以下を使用します (`...` を使用している ScalarDB SQL API のバージョンに置き換えます)。
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.scalar-labs</groupId>
+        <artifactId>scalardb-sql</artifactId>
+        <version>...</version>
+    </dependency>
+    <dependency>
+        <groupId>com.scalar-labs</groupId>
+        <artifactId>scalardb-cluster-java-client-sdk</artifactId>
+        <version>...</version>
+    </dependency>
+</dependencies>
+```
+
+## SqlSessionFactory
+
+ScalarDB SQL API では、`SqlSessionFactory` でインスタンス化された `SqlSession` インスタンスを通じてすべての操作を実行します。このセクションでは、それらの使用方法を説明します。
+
+`SqlSessionFactory` を説明する前に、接続モードとトランザクションモードについて説明します。
+
+### トランザクションモード
+
+また、ScalarDB SQL には、*トランザクション* モードと *2 フェーズコミットトランザクション* モードの 2 つのトランザクションモードがあります。
+
+トランザクションモードでは、ユーザーには `commit` インターフェイスのみが公開され、バックグラウンドで 2 フェーズコミットが実行されます。一方、2 フェーズコミットトランザクションモードでは、ユーザーに 2 フェーズコミットスタイルのインターフェイス (`prepare` と `commit`) が公開されます。
+
+デフォルトのトランザクションモードは、設定ファイルで指定するか、`SqlSessionFactory` をビルドするときに指定できます。
+
+また、`SqlSession` の `setTransactionMode()` メソッドを使用して変更することもできます。
+
+### SqlSessionFactory をビルドする
+
+次のように、プロパティファイルを使用して `SqlSessionFactory` をビルドできます。
+
+```java
+SqlSessionFactory sqlSessionFactory = SqlSessionFactory.builder()
+    .withPropertiesFile("<your configuration file>")
+    // If you need to set custom properties, you can specify them with withProperty() or withProperties()
+    .withProperty("<custom property name>", "<custom property value>")
+    .build();
+```
+
+設定の詳細については、[ScalarDB Cluster SQL クライアント設定](../scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-クライアント設定)を参照してください。
+
+### SqlSession インスタンスを取得する
+
+次のように、`SqlSessionFactory` を使用して `SqlSession` インスタンスを取得できます。
+
+```java
+SqlSession sqlSession = sqlSessionFactory.createSqlSession();
+```
+
+`SqlSession` はスレッドセーフではないことに注意してください。
+
+複数のスレッドから同時に使用しないでください。
+
+#### SqlSession インスタンスを閉じる
+
+`SqlSession` インスタンスですべての操作が完了したら、SqlSession インスタンスを閉じる必要があります。
+
+```java
+sqlSession.close();
+```
+
+### SqlSessionFactory インスタンスを閉じる
+
+`sqlSessionFactory` も、不要になったら閉じる必要があります。
+
+```java
+sqlSessionFactory.close();
+```
+
+## SQL を実行する
+
+次のように `SqlSession` を使用して SQL を実行できます。
+
+```java
+ResultSet resultSet = sqlSession.execute("<SQL>");
+```
+
+次のように `SqlSession` を使用して `Statement` オブジェクトを実行することもできます。
+
+```java
+// Build a statement
+Statement statement = StatementBuilder.<factory method>...;
+
+// Execute the statement
+ResultSet resultSet = sqlSession.execute(statement);
+```
+
+`Statement` オブジェクトは、対応する SQL のファクトリメソッドを持つ `StatementBuilder` によって構築できます。
+詳細については、[`StatementBuilder` の Javadoc](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.13.1/com/scalar/db/sql/statement/builder/StatementBuilder.html) および [ScalarDB SQL 文法](grammar.mdx)を参照してください。
+
+### ResultSet オブジェクトの処理
+
+SQL 実行の結果として、`SqlSession` は `ResultSet` オブジェクトを返します。
+
+ここでは、`ResultSet` オブジェクトの処理方法について説明します。
+
+`ResultSet` オブジェクトから結果を1つずつ取得する場合は、次のように `one()` メソッドを使用できます。
+```java
+Optional<Record> record = resultSet.one();
+```
+
+または、すべての結果を `List` として一度に取得したい場合は、次のように `all()` メソッドを使用できます。
+```java
+List<Record> records = resultSet.all();
+```
+
+また、`ResultSet` は `Iterable` を実装しているので、次のように for-each ループで使用できます。
+
+```java
+for (Record record : resultSet) {
+    ...
+}
+```
+
+`ResultSet` オブジェクトのメタデータを取得する場合は、次のように `getColumnDefinitions()` メソッドを使用できます。
+
+```java
+ColumnDefinitions columnDefinitions = resultSet.getColumnDefinitions();
+```
+
+詳細については、[`ColumnDefinitions` の Javadoc](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.13.1/com/scalar/db/sql/ColumnDefinition.html) を参照してください。
+
+### Record オブジェクトの処理
+
+前述のように、`ResultSet` オブジェクトは、データベースのレコードを表す `Record` オブジェクトを返します。
+
+次のように、`getXXX("<column name>")` メソッドまたは `getXXX(<column index>)` メソッド (XXX は型名) を使用して結果の列値を取得できます。
+
+```java
+// Get a Boolean value of a column
+boolean booleanValueGottenByName = record.getBoolean("<column name>");
+boolean booleanValueGottenByIndex = record.getBoolean(<column index>);
+
+// Get an Int value of a column
+int intValueGottenByName = record.getInt("<column name>");
+int intValueGottenByIndex = record.getInt(<column index>);
+
+// Get a BigInt value of a column
+long bigIntValueGottenByName = record.getBigInt("<column name>");
+long bigIntValueGottenByIndex = record.getBigInt(<column index>);
+
+// Get a Float value of a column
+float floatValueGottenByName = record.getFloat("<column name>");
+float floatValueGottenByIndex = record.getFloat(<column index>);
+
+// Get a Double value of a column
+double doubleValueGottenByName = record.getDouble("<column name>");
+double doubleValueGottenByIndex = record.getDouble(<column index>);
+
+// Get a Text value of a column
+String textValueGottenByName = record.getText("<column name>");
+String textValueGottenByIndex = record.getText(<column index>);
+
+// Get a Blob value of a column (as a ByteBuffer)
+ByteBuffer blobValueGottenByName = record.getBlob("<column name>");
+ByteBuffer blobValueGottenByIndex = record.getBlob(<column index>);
+
+// Get a Blob value of a column as a byte array
+byte[] blobValueAsBytesGottenByName = record.getBlobAsBytes("<column name>");
+byte[] blobValueAsBytesGottenByIndex = record.getBlobAsBytes(<column index>);
+```
+
+列の値が null かどうかを確認する必要がある場合は、`isNull("<列名>")` または `isNull(<列インデックス>)` メソッドを使用できます。
+
+``` java
+// Check if a value of a column is null
+boolean isNullGottenByName = record.isNull("<column name>");
+boolean isNullGottenByIndex = record.isNull(<column index>);
+```
+
+詳細については、[`Record` の Javadoc](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.13.1/com/scalar/db/sql/Record.html) も参照してください。
+
+### 準備済みステートメント
+
+アプリケーションで複数回実行されるクエリには、`PreparedStatement` を使用できます。
+
+```java
+PreparedStatement preparedStatement = sqlSession.prepareStatement("<SQL>");
+ResultSet result = preparedStatement.execute();
+```
+
+同じクエリを2回目以降に実行すると、キャッシュされた事前解析済みステートメントオブジェクトが使用されます。
+したがって、クエリを複数回実行すると、`PreparedStatement` を使用するとパフォーマンス上の利点が得られます。
+クエリを1回だけ実行する場合、準備済みステートメントは余分な処理が必要になるため非効率的です。
+その場合は、代わりに `sqlSession.execute()` メソッドの使用を検討してください。
+
+また、バインドパラメータで `PreparedStatement` を使用することもできます。
+パラメータは、位置指定または名前付きのいずれかになります。
+
+```java
+// Positional parameters
+PreparedStatement preparedStatement1 =
+    sqlSession.prepareStatement("INSERT INTO tbl (c1, c2) VALUES (?, ?)");
+
+// Named parameters
+PreparedStatement preparedStatement2 =
+    sqlSession.prepareStatement("INSERT INTO tbl (c1, c2) VALUES (:a, :b)");
+```
+
+最初にパラメータを設定して実行することができます:
+
+```java
+// Positional setters
+preparedStatement1
+    .setInt(0, 10)
+    .setText(1, "value")
+    .execute();
+
+// Named setters
+preparedStatement2
+    .setInt("a", 10)
+    .setText("b", "value")
+    .execute();
+```
+
+詳細については、[`PreparedStatement` の Javadoc](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.13.1/com/scalar/db/sql/PreparedStatement.html) も参照してください。
+
+## トランザクションの実行
+
+ScalarDB SQL では、DML ステートメント (SELECT/INSERT/UPDATE/DELETE) はトランザクション内でのみ実行できます。
+
+したがって、DML ステートメントを実行する前に、トランザクションを開始する必要があります。
+
+DML ステートメント以外のステートメントはトランザクションで実行できないことに注意してください。
+
+したがって、トランザクションを開始した後に非 DML ステートメントを実行しても、そのステートメントはすぐに実行され、開始したトランザクションには影響しません。
+
+このセクションでは、トランザクションモードと 2 フェーズコミットトランザクションモードの各トランザクションモードについて、トランザクションを実行する方法について説明します。
+
+### トランザクションモード
+
+トランザクションモードのサンプルコードは次のとおりです。
+
+```java
+try {
+  // Begin a transaction
+  sqlSession.begin();
+
+  // Execute statements (SELECT/INSERT/UPDATE/DELETE) in the transaction
+  ...
+
+  // Commit the transaction
+  sqlSession.commit();
+} catch (UnknownTransactionStatusException e) {
+  // If you catch `UnknownTransactionStatusException`, it indicates that the status of the 
+  // transaction, whether it has succeeded or not, is unknown. In such a case, you need to check if
+  // the transaction is committed successfully or not and retry it if it failed. How to identify a
+  // transaction status is delegated to users
+} catch (SqlException e) {
+  // For other exceptions, you can try retrying the transaction
+
+  // Rollback the transaction
+  sqlSession.rollback();
+
+  // For `TransactionRetryableException`, you can basically retry the transaction. However, for
+  // the other exceptions, the transaction may still fail if the cause of the exception is
+  // nontransient. For such a case, you need to limit the number of retries and give up retrying
+}
+```
+
+`UnknownTransactionStatusException` をキャッチした場合、トランザクションのステータス (成功したかどうか) が不明であることを示します。
+このような場合、トランザクションが正常にコミットされたかどうかを確認し、失敗した場合は再試行する必要があります。
+トランザクションステータスを識別する方法はユーザーに委任されています。
+トランザクションステータステーブルを作成し、他のアプリケーションデータを使用してトランザクション的に更新して、ステータステーブルからトランザクションのステータスを取得できるようにすることをお勧めします。
+
+別の例外をキャッチした場合は、トランザクションを再試行することができます。
+`TransactionRetryableException` の場合、基本的にトランザクションを再試行することができます。
+ただし、他の例外の場合、例外の原因が一時的でない場合は、トランザクションが失敗する可能性があります。
+このような場合は、再試行回数を制限し、再試行をあきらめる必要があります。
+
+### 2 フェーズコミットトランザクションモード
+
+これを読む前に、[このドキュメント](../two-phase-commit-transactions.mdx) を読んで、2 フェーズコミットトランザクションの概念を学んでください。
+
+コーディネータのトランザクションを開始するには、次のようにします。
+
+```java
+String transactionId = sqlSession.begin();
+```
+
+参加者のトランザクションに参加するには、次のようにします。
+
+```java
+sqlSession.join(transactionId);
+```
+
+2 フェーズコミットトランザクションモードのコード例は次のとおりです。
+
+```java
+try {
+  // Begin a transaction
+  sqlSession.begin();
+
+  // Execute statements (SELECT/INSERT/UPDATE/DELETE) in the transaction
+  ...
+
+  // Prepare the transaction
+  sqlSession.prepare();
+
+  // Validate the transaction
+  sqlSession.validate();
+
+  // Commit the transaction
+  sqlSession.commit();
+} catch (UnknownTransactionStatusException e) {
+  // If you catch `UnknownTransactionStatusException` when committing the transaction, it
+  // indicates that the status of the transaction, whether it has succeeded or not, is unknown.
+  // In such a case, you need to check if the transaction is committed successfully or not and
+  // retry it if it failed. How to identify a transaction status is delegated to users
+} catch (SqlException e) {
+  // For other exceptions, you can try retrying the transaction
+    
+  // Rollback the transaction
+  sqlSession.rollback();
+
+  // For `TransactionRetryableException`, you can basically retry the transaction. However, for
+  // the other exceptions, the transaction may still fail if the cause of the exception is
+  // nontransient. For that case, you need to limit the number of retries and give up retrying
+}
+```
+
+例外処理はトランザクションモードと同じです。
+
+## メタデータの取得
+
+次のように `SqlSession.getMetadata()` メソッドを使用してメタデータを取得できます。
+
+```java
+Metadata metadata = sqlSession.getMetadata();
+```
+
+詳細については、[`Metadata` の Javadoc](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.13.1/com/scalar/db/sql/metadata/Metadata.html) を参照してください。
+
+## 参考文献
+
+- [ScalarDB SQL 文法](grammar.mdx)
+- [2 フェーズコミットトランザクション](../two-phase-commit-transactions.mdx)
+- [Javadoc for ScalarDB SQL](https://javadoc.io/doc/com.scalar-labs/scalardb-sql/3.13.0/index.html)

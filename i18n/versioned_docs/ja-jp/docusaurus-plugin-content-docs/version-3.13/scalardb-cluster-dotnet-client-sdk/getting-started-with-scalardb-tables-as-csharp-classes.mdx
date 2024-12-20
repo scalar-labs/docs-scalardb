@@ -1,0 +1,207 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+---
+
+# ScalarDB Cluster .NET Client SDK で C# クラスとしてテーブルをはじめよう
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+ScalarDB Cluster .NET Client SDK は、ScalarDB テーブルを C# オブジェクトとして抽象化することで、クラスターにアクセスするコードの作成に役立ちます。クラスター内のテーブルを表すクラスを定義すると、クラスターをクエリするときに列名やその型が混同されないようにすることができます。さらに、テーブルの構造が変更された場合は、IDE のリファクタリング機能を使用してコードに変更を適用できます。
+
+:::note
+
+次の例のように非同期メソッドを使用することをお勧めしますが、代わりに同期メソッドを使用することもできます。
+
+:::
+
+## SDK をインストールする
+
+ScalarDB Cluster と同じメジャーバージョンとマイナーバージョンの [SDK](https://www.nuget.org/packages/ScalarDB.Client) を .NET プロジェクトにインストールします。組み込みの NuGet パッケージマネージャーを使用してこれを行うことができます。`<MAJOR>.<MINOR>` を、使用しているバージョンに置き換えます。
+
+```console
+dotnet add package ScalarDB.Client --version '<MAJOR>.<MINOR>.*'
+```
+
+## すべての ScalarDB テーブルのクラスを作成する
+
+ScalarDB テーブルを C# オブジェクトとして操作するには、使用するテーブルごとにクラスを作成する必要があります。例:
+
+```c#
+using System.ComponentModel.DataAnnotations.Schema;
+using ScalarDB.Client.DataAnnotations;
+
+// ...
+
+[Table("ns.statements")]
+public class Statement
+{
+    [PartitionKey]
+    [Column("order_id", Order = 0)]
+    public string OrderId { get; set; } = String.Empty;
+
+    [ClusteringKey]
+    [Column("item_id", Order = 1)]
+    public int ItemId { get; set; }
+
+    [Column("count", Order = 2)]
+    public int Count { get; set; }
+}
+```
+
+プロパティに使用する型の詳細については、[ScalarDB 列型と .NET 型間の変換方法](common-reference.mdx#scalardb-列型と-net-型間の変換方法)を参照してください。
+
+## CRUD 操作を実行する
+
+各テーブルのクラスを作成した後、`ITransactionCrudOperable` の汎用 `GetAsync`、`ScanAsync`、`InsertAsync`、`UpdateAsync`、`DeleteAsync`、`UpsertAsync`、または `MutateAsync` メソッドを使用して、クラスをオブジェクトとして使用できます。
+
+これらの汎用メソッドを使用するには、`using` セクションに次の名前空間を追加します。
+
+```c#
+using ScalarDB.Client.Extensions;
+```
+
+### `GetAsync` メソッドを使用して 1 つのオブジェクトを取得します
+
+```c#
+var keys = new Dictionary<string, object>
+           {
+               { nameof(Statement.OrderId), "1" }
+           };
+var statement = await transaction.GetAsync<Statement>(keys);
+
+Console.WriteLine($"ItemId: {statement.ItemId}, Count: {statement.Count}");
+```
+
+### `ScanAsync` メソッドを使用して複数のオブジェクトを取得する
+
+```c#
+var startKeys = new Dictionary<string, object>
+                {
+                    { nameof(Statement.OrderId), "1" },
+                    { nameof(Statement.ItemId), 3 }
+                };
+var endKeys = new Dictionary<string, object>
+              {
+                  { nameof(Statement.ItemId), 6}
+              };
+
+await foreach (var s in transaction.ScanAsync<Statement>(startKeys, endKeys))
+    Console.WriteLine($"ItemId: {s.ItemId}, Count: {s.Count}");
+```
+
+:::note
+
+`IAsyncEnumerable<T>` で LINQ メソッドを使用するには、[System.Linq.Async](https://www.nuget.org/packages/System.Linq.Async/) パッケージをインストールします。
+
+:::
+
+### `InsertAsync` メソッドを使用して新しいオブジェクトを挿入します
+
+```c#
+var statement = new Statement
+                {
+                    OrderId = "2",
+                    ItemId = 4,
+                    Count = 8
+                };
+await transaction.InsertAsync(statement);
+```
+
+### `UpdateAsync` メソッドを使用してオブジェクトを更新する
+
+```c#
+// ...
+statement.ItemId = 4;
+statement.Count = 8;
+
+await transaction.UpdateAsync(statement);
+```
+
+### `DeleteAsync` メソッドを使用してオブジェクトを削除する
+
+```c#
+// ...
+await transaction.DeleteAsync(statement);
+```
+
+### `UpsertAsync` メソッドを使用してオブジェクトをUPSERTする
+
+```c#
+var statement = new Statement
+                {
+                    OrderId = "2",
+                    ItemId = 4,
+                    Count = 8
+                };
+await transaction.UpsertAsync(statement);
+```
+
+### `MutateAsync` メソッドを使用して複数のオブジェクトを一度にUPSERTおよび削除する
+
+```c#
+var statement = new Statement
+                {
+                    OrderId = "2",
+                    ItemId = 4,
+                    Count = 16
+                };
+
+// ...
+
+await transaction.MutateAsync(objectsToUpsert: new[] { statement },
+                              objectsToDelete: new[] { statement2 });
+```
+
+:::note
+
+`UpdateAsync`、`DeleteAsync`、`UpsertAsync`、または `MutateAsync` メソッドを使用してオブジェクトを変更するには、まず `GetAsync` または `ScanAsync` メソッドを使用してオブジェクトを取得する必要があります。
+
+:::
+
+## Administrative API を使用する
+
+C# オブジェクトも Administrative API で使用できます。汎用 Administrative API メソッドを使用するには、次の名前空間を `using` セクションに追加します。
+
+```c#
+using ScalarDB.Client.Extensions;
+```
+
+### 新しい名前空間を作成する
+
+```c#
+await admin.CreateNamespaceAsync<Statement>();
+```
+
+### 既存の名前空間を削除する
+
+```c#
+await admin.DropNamespaceAsync<Statement>();
+```
+
+### 名前空間が存在するかどうかを確認する
+
+```c#
+var namespaceExists = await admin.IsNamespacePresentAsync<Statement>();
+```
+
+### 新しいテーブルを作成する
+
+```c#
+await admin.CreateTableAsync<Statement>();
+```
+
+### 既存のテーブルを削除する
+
+```c#
+await admin.DropTableAsync<Statement>();
+```
+
+### テーブルが存在するかどうかを確認する
+
+```c#
+var tableExists = await admin.IsTablePresentAsync<Statement>();
+```

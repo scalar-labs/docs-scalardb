@@ -1,0 +1,165 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+---
+
+# ScalarDB 3.13 リリースノート
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このページには、ScalarDB 3.13 のリリースノートのリストが含まれています。
+
+## v3.13.1
+
+**発売日:** 2024 年 10 月 13 日
+
+### まとめ
+
+このリリースには、いくつかのバグ修正と脆弱性修正が含まれています。
+
+### Community edition
+
+#### 機能強化
+
+- MariaDB 11.4 および Oracle 19 のサポートを追加しました。([#2061](https://github.com/scalar-labs/scalardb/pull/2061))
+
+#### バグの修正
+
+- Get/Scan オブジェクトで指定されたテーブルが Consensus Commit で見つからない場合に `NullPointerException` が発生するバグを修正しました。([#2083](https://github.com/scalar-labs/scalardb/pull/2083))
+- グループコミットの前に遅延リカバリが発生すると、Coordinator の状態が不整合になるという稀なケースの問題を修正しました。([#2135](https://github.com/scalar-labs/scalardb/pull/2135))
+- セキュリティの問題を修正するために、mysql ドライバーをアップグレードしました。[CVE-2023-22102](https://github.com/advisories/GHSA-m6vm-37g8-gqvh "CVE-2023-22102") ([#2238](https://github.com/scalar-labs/scalardb/pull/2238))
+- セキュリティ問題を修正するため、gRPC ライブラリ、プロトコルバッファーライブラリ、grpc_health_probe、scalar-admin をアップグレードしました。 [CVE-2024-7254](https://github.com/advisories/GHSA-735f-pc8j-v9w8 "CVE-2024-7254")、[CVE-2024-25638](https://github.com/advisories/GHSA-cfxw-4h78-h7fw "CVE-2024-25638")、および [CVE-2024-34156](https://github.com/advisories/GHSA-crqm-pwhx-j97f "CVE-2024-34156") ([#2277](https://github.com/scalar-labs/scalardb/pull/2277))
+
+### Enterprise edition
+
+#### 機能強化
+
+##### ScalarDB Cluster
+
+- ScalarDB Cluster の Coordinator テーブルのグループコミット機能をサポート。
+
+#### 改善点
+
+##### ScalarDB GraphQL
+
+- このアップデートにより、`scalar.db.graphql.namespaces` が指定されていない場合、GraphQL サーバーは、すべての ScalarDB 管理名前空間内のすべてのテーブルに対して GraphQL スキーマを生成します。
+
+#### バグの修正
+
+##### ScalarDB Cluster
+
+- メッセージのない例外をキャッチすると `NullPointerException` が発生するバグを修正しました。
+- セキュリティ問題を修正するため、`grpc_health_probe` をアップグレードしました。[CVE-2024-34156](https://github.com/advisories/GHSA-crqm-pwhx-j97f "CVE-2024-34156")
+- セキュリティ問題を修正するため、`scalar-admin` をアップグレードしました。[CVE-2024-25638](https://github.com/advisories/GHSA-cfxw-4h78-h7fw "CVE-2024-25638")
+- セキュリティ問題を修正するため、Protobuf Java ライブラリをアップグレードしました。[CVE-2024-7254](https://github.com/advisories/GHSA-735f-pc8j-v9w8 "CVE-2024-7254")
+
+## v3.13.0
+
+**発売日:** 2024 年 7 月 8 日
+
+### まとめ
+
+このリリースには、多くの機能強化、改善、バグ修正、脆弱性修正が含まれています。
+
+### Community edition
+
+#### 機能強化
+
+- 非 JDBC データベースの動的な任意フィルタリングを追加しました。([#1682](https://github.com/scalar-labs/scalardb/pull/1682))
+- トランザクション API に挿入、アップサート、更新の各操作を追加しました。([#1697](https://github.com/scalar-labs/scalardb/pull/1697))
+- JDBC ストレージの 1 つとして YugabyteDB アダプターを追加しました。([#1710](https://github.com/scalar-labs/scalardb/pull/1710))
+- Coordinator テーブルにグループコミット機能を追加しました。([#1728](https://github.com/scalar-labs/scalardb/pull/1728))
+- トランザクションマネージャーを使用して CRUD 操作を直接実行できるようになりました。([#1755](https://github.com/scalar-labs/scalardb/pull/1755))
+- パーティションスキャンとインデックススキャンの任意のフィルタリングのサポートを追加しました。([#1763](https://github.com/scalar-labs/scalardb/pull/1763))
+- 単一の CRUD 操作トランザクションマネージャーを追加しました。このトランザクションマネージャーの実装では、`begin()`/`start()` を呼び出してトランザクションを開始することはできません。トランザクションマネージャーから CRUD 操作を直接実行することのみが可能です。([#1793](https://github.com/scalar-labs/scalardb/pull/1793))
+- 取得操作の任意のフィルタリングのサポートを追加しました。([#1834](https://github.com/scalar-labs/scalardb/pull/1834))
+- MySQL では、ScalarDB の `FLOAT` 型が `DOUBLE` から `REAL` (単精度浮動小数点値) に変更されました ([#2000](https://github.com/scalar-labs/scalardb/pull/2000))
+- ユーザー名前空間を一覧表示する新しい Admin API `admin.getNamespacesNames()` が追加されました。ただし、この API はテーブルを含まない名前空間を返しません。ScalarDB 4.0 からは、この制限を抑制するために設計を改善する予定です。([#2002](https://github.com/scalar-labs/scalardb/pull/2002))
+
+#### 改善点
+
+- JDBC アダプターで MySQL および SQL Server のハードコードされた照合順序を削除しました。その結果、テーブルの作成時に、基礎となるデータベースで構成された照合順序が使用されます。([#1518](https://github.com/scalar-labs/scalardb/pull/1518))
+- Schema Loader のエラーメッセージにエラーコードを追加しました。([#1564](https://github.com/scalar-labs/scalardb/pull/1564))
+- バックグラウンドワーカーで優先キューを使用することで、グループコミットのパフォーマンスが向上しました。([#1641](https://github.com/scalar-labs/scalardb/pull/1641))
+- フィルタリングによるスキャンをリファクタリングしました。([#1715](https://github.com/scalar-labs/scalardb/pull/1715))
+- リソース消費を減らし、パフォーマンスを向上させるために、内部の一意のインデックスの作成を可能な限り回避しました。([#1723](https://github.com/scalar-labs/scalardb/pull/1723))
+- Oracle ユーザーのハードコードされたパスワードを、JDBC アダプターでより安全なものに変更しました。([#1765](https://github.com/scalar-labs/scalardb/pull/1765))
+- コンテナイメージのベースイメージを更新しました。この更新により、cgroup v2 環境の Kubernetes での OOM 問題が修正されます。以前のバージョンでは、cgroup v2 で Kubernetes クラスターを使用すると、OOM によって強制終了される問題が発生する可能性がありました。([#1826](https://github.com/scalar-labs/scalardb/pull/1826))
+- マルチストレージ内のすべてのストレージのグローバルプロパティを指定する機能を追加しました。([#1486](https://github.com/scalar-labs/scalardb/pull/1486))
+
+#### バグの修正
+
+- セキュリティ問題を修正するためにベースイメージをアップグレードしました。[CVE-2023-47038](https://github.com/advisories/GHSA-96fh-9q43-rmjh "CVE-2023-47038") ([#1522](https://github.com/scalar-labs/scalardb/pull/1522) [#1521](https://github.com/scalar-labs/scalardb/pull/1521))
+- セキュリティ問題を修正するために PostgresSQL ライブラリをアップグレードしました。[CVE-2024-1597](https://github.com/advisories/GHSA-24rp-q3w6-vc56 "CVE-2024-1597") ([#1547](https://github.com/scalar-labs/scalardb/pull/1547))
+- トランザクション内のレコードをスキャンしているときに `EXTRA_READ` 検証中に `NullPointerException` が発生するが、その一部が他のトランザクションによって削除されるというバグを修正しました。([#1624](https://github.com/scalar-labs/scalardb/pull/1624))
+- put および delete 操作の暗黙的な事前読み取りに対して遅延リカバリが実行されないというバグを修正しました。([#1681](https://github.com/scalar-labs/scalardb/pull/1681))
+- 関連するレコードをコンセンサスコミットトランザクションに入れた後、インデックスキーでレコードをスキャンすると、一貫性のない結果が表示されるバグを修正しました。([#1727](https://github.com/scalar-labs/scalardb/pull/1727))
+- セキュリティ問題を修正するために `grpc_health_probe` をアップグレードしました。[CVE-2024-24790](https://github.com/advisories/GHSA-49gw-vxvf-fc2g "CVE-2024-24790")、[CVE-2023-45283](https://github.com/advisories/GHSA-vvjp-q62m-2vph "CVE-2023-45283")、[CVE-2023-45288](https://github.com/advisories/GHSA-4v7x-pqxf-cx7m "CVE-2023-45288") ([#1980](https://github.com/scalar-labs/scalardb/pull/1980))
+- スナップショット管理の問題を修正しました。([#1976](https://github.com/scalar-labs/scalardb/pull/1976))
+- MySQL ストレージを使用しているときに、同じテーブル名を持つ別の名前空間のテーブルにアクセスできる可能性があるという、import-table 機能のバグを修正しました。([#2001](https://github.com/scalar-labs/scalardb/pull/2001))
+
+### Enterprise edition
+
+#### 機能強化
+
+##### ScalarDB Cluster
+
+- ScalarDB Cluster で [#1679](https://github.com/scalar-labs/scalardb/pull/1679) で導入された Put 操作の挿入モードのサポートを追加しました。
+- ScalarDB Cluster で [#1697](https://github.com/scalar-labs/scalardb/pull/1697) で導入された挿入、アップサート、更新 API のサポートを追加しました。
+- ワンショットトランザクションで CRUD 操作を実行するサポートを追加しました。
+- ScalarDB Cluster に [#1763](https://github.com/scalar-labs/scalardb/pull/1763) で導入されたパーティションスキャンとインデックススキャンの任意のフィルタリングのサポートを追加しました。
+- ScalarDB Cluster に Consensus Commit 以外のトランザクションマネージャーのサポートを追加しました。
+- ScalarDB Cluster の [#1793](https://github.com/scalar-labs/scalardb/pull/1793) で導入された単一 CRUD 操作トランザクションマネージャーのサポートを追加しました。
+- ScalarDB Cluster の [#1834](https://github.com/scalar-labs/scalardb/pull/1834) で導入された get 操作の任意のフィルタリングのサポートを追加しました。
+- `DistributedTransactionAdmin.getNamespaceNames()` のサポートを追加しました
+
+##### ScalarDB SQL
+
+- [#1793](https://github.com/scalar-labs/scalardb/pull/1793) で導入された単一の CRUD 操作トランザクションマネージャーのサポートを ScalarDB SQL に追加しました。
+- この更新により、ユーザーは ScalarDB SQL で ScalarDB 管理の名前空間にアクセスする方法が複数提供されるようになりました。
+
+#### 改善点
+
+##### ScalarDB Cluster
+
+- 認証および承認モジュールのエラーメッセージにエラーコードを追加しました。
+- エラーメッセージにエラーコードを追加しました。
+- Prometheus エクスポーターの TLS サポートを追加しました。この変更により、ScalarDB Cluster ノードで TLS を有効にすると (`scalar.db.cluster.tls.enabled` を `true` に設定)、Prometheus エクスポーターも TLS (HTTPS) で起動します。
+- コンテナーイメージのベースイメージを更新しました。この更新により、cgroup v2 環境の Kubernetes での OOM の問題が修正されます。以前のバージョンでは、cgroup v2 で Kubernetes クラスターを使用すると、OOM によって強制終了される問題が発生する可能性がありました。
+
+##### ScalarDB GraphQL
+
+- エラーメッセージにエラーコードを追加しました。
+- コンテナイメージのベースイメージを更新しました。この更新により、cgroup v2 環境の Kubernetes での OOM 問題が修正されます。以前のバージョンでは、cgroup v2 で Kubernetes クラスターを使用すると、OOM によって強制終了される問題が発生する可能性がありました。
+
+##### ScalarDB SQL
+
+- エラーメッセージにエラーコードを追加しました。
+- `ConditionSetBuilder` および `AndConditionSet` のパッケージを変更しました。
+- `CREATE/DROP COORDINATOR TABLES` ステートメントで `EXISTS` キーワードの使用を許可しました。
+- コンテナイメージのベースイメージを更新しました。この更新により、cgroup v2 環境の Kubernetes での OOM 問題が修正されます。以前のバージョンでは、cgroup v2 で Kubernetes クラスターを使用すると、OOM によって強制終了される問題が発生する可能性がありました。
+- パーティションスキャンとインデックススキャンを利用して、フィルタリングによる選択クエリのパフォーマンスが向上しました。
+
+#### バグの修正
+
+##### ScalarDB Cluster
+
+- セキュリティ問題を修正するためにベースイメージをアップグレードしました。[CVE-2023-47038](https://github.com/advisories/GHSA-96fh-9q43-rmjh "CVE-2023-47038")
+- セキュリティ問題を修正するためにKubernetesクライアントJavaライブラリをアップグレードしました: [CVE-2024-25710](https://github.com/advisories/GHSA-4g9r-vxhx-9pgx "CVE-2024-25710") および [CVE-2024-26308](https://github.com/advisories/GHSA-4265-ccf5-phj5 "CVE-2024-26308")。
+- セキュリティ問題を修正するために`grpc_health_probe`をアップグレードしました。[CVE-2024-24790](https://github.com/advisories/GHSA-49gw-vxvf-fc2g "CVE-2024-24790")、[CVE-2023-45283](https://github.com/advisories/GHSA-vvjp-q62m-2vph "CVE-2023-45283")、[CVE-2023-45288](https://github.com/advisories/GHSA-4v7x-pqxf-cx7m "CVE-2023-45288")
+- 同じ列名で SELECT クエリを実行したときに誤った結果が返されるバグを修正しました。
+
+##### ScalarDB GraphQL
+
+- セキュリティ問題を修正するためにベースイメージをアップグレードしました。[CVE-2023-47038](https://github.com/advisories/GHSA-96fh-9q43-rmjh "CVE-2023-47038")
+
+##### ScalarDB SQL
+
+- セキュリティ問題を修正するためにベースイメージをアップグレードしました。[CVE-2023-47038](https://github.com/advisories/GHSA-96fh-9q43-rmjh "CVE-2023-47038")
+- Spring Data JDBC for ScalarDB が Spring Boot 3 で動作しないバグを修正しました
+- 同じ列名で SELECT クエリを実行すると誤った結果が返されるバグを修正しました。
+- セキュリティ問題を修正するために `grpc_health_probe` をアップグレードしました。[CVE-2024-24790](https://github.com/advisories/GHSA-49gw-vxvf-fc2g "CVE-2024-24790")、[CVE-2023-45283](https://github.com/advisories/GHSA-vvjp-q62m-2vph "CVE-2023-45283")、および [CVE-2023-45288](https://github.com/advisories/GHSA-4v7x-pqxf-cx7m "CVE-2023-45288")

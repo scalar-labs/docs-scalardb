@@ -1,0 +1,64 @@
+---
+tags:
+  - Community
+---
+
+# Docker を使用してローカル環境に ScalarDB Analytics with PostgreSQL をインストールする方法
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このドキュメントでは、[Docker Compose](https://docs.docker.com/compose/) を使用して、Cassandra、PostgreSQL、および DynamoDB ローカルサーバーのマルチストレージバックエンドを使用して、ScalarDB Analytics with PostgreSQL を実行するローカル環境を設定する方法について説明します。
+
+## 前提条件
+
+- [Docker Engine](https://docs.docker.com/engine/) および [Docker Compose](https://docs.docker.com/compose/)。
+
+プラットフォームに応じて、Docker ウェブサイトの手順に従ってください。
+
+## ステップ 1. `scalardb-samples` リポジトリを複製します
+
+[scalardb-samples/scalardb-analytics-postgresql-sample](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-analytics-postgresql-sample) リポジトリは、ScalarDB Analytics with PostgreSQL を設定するためのサンプル設定を含むプロジェクトです。
+
+scalardb-analytics-postgresql-sample アプリを実行するローカルマシン上の場所を決定します。次に、ターミナルを開き、`cd` コマンドを使用してその場所に移動し、次のコマンドを実行します。
+
+```console
+git clone https://github.com/scalar-labs/scalardb-samples.git
+cd scalardb-samples/scalardb-analytics-postgresql-sample
+```
+
+## ステップ 2. ScalarDB Analytics with PostgreSQL サービスを起動する
+
+次のコマンドは、ScalarDB Analytics with PostgreSQL を提供する PostgreSQL インスタンスと、Docker コンテナ内の Cassandra、PostgreSQL、および DynamoDB ローカルのバックエンドサーバーを起動します。このコマンドを初めて実行すると、必要な Docker イメージが GitHub Container Registry からダウンロードされます。
+
+```console
+docker-compose up
+```
+
+コンテナをバックグラウンドで実行する場合は、`-d` (--detach) オプションを追加します。
+
+```console
+docker-compose up -d
+```
+
+すでに独自の ScalarDB データベースがあり、それをバックエンドサービスとして使用したい場合は、コンテナー内で追加のバックエンドサーバーを起動せずに、PostgreSQL インスタンスのみを起動できます。
+
+```console
+docker-compose up analytics
+```
+
+## ステップ 3. 分析クエリを実行する
+
+これで、必要なサービスがすべて実行されているはずです。分析クエリを実行するには、[ScalarDB Analytics with PostgreSQL の開始方法](./getting-started.mdx)を参照してください。
+
+## ステップ 4. ScalarDB Analytics with PostgreSQL サービスをシャットダウンする
+
+コンテナをシャットダウンするには、方法に応じて、ターミナルで次のいずれかを実行します。
+
+- フォアグラウンドでコンテナを起動した場合は、`docker-compose` が実行されている場所で Ctrl+C を押します。
+- バックグラウンドでコンテナを起動した場合は、次のコマンドを実行します。
+
+```console
+docker-compose down
+```

@@ -13,7 +13,7 @@ This page provides a list of error codes in ScalarDB.
 
 | Class        | Description                                              |
 |:-------------|:---------------------------------------------------------|
-| `CORE-1xxxx` | Errors for the user error category.                      |
+| `CORE-1xxxx` | Errors for the user error category                       |
 | `CORE-2xxxx` | Errors for the concurrency error category                |
 | `CORE-3xxxx` | Errors for the internal error category                   |
 | `CORE-4xxxx` | Errors for the unknown transaction status error category |
@@ -201,7 +201,7 @@ The clustering key is not properly specified. Operation: %s
 **Message**
 
 ```markdown
-This feature is not supported in the ScalarDB Community edition
+The authentication and authorization feature is not enabled. To use this feature, you must enable it. Note that this feature is supported only in the ScalarDB Enterprise edition
 ```
 
 ### `CORE-10023`
@@ -308,20 +308,12 @@ This operation is supported only when scanning records of a database by using an
 This operation is not supported when scanning records of a database by using an index
 ```
 
-### `CORE-10036`
-
-**Message**
-
-```markdown
-This operation is supported only when scanning all the records of a database
-```
-
 ### `CORE-10037`
 
 **Message**
 
 ```markdown
-This operation is supported only when no conditions are specified at all. If you want to modify the condition, please use clearConditions() to remove all existing conditions first
+This operation is supported only when no conditions are specified. If you want to modify a condition, please use clearConditions() to remove all existing conditions first
 ```
 
 ### `CORE-10038`
@@ -556,14 +548,6 @@ Storage '%s' is not found
 Transaction manager '%s' is not found
 ```
 
-### `CORE-10067`
-
-**Message**
-
-```markdown
-Cross-partition scan with filtering or ordering is not supported in Cassandra
-```
-
 ### `CORE-10068`
 
 **Message**
@@ -594,14 +578,6 @@ The %s network strategy does not exist
 
 ```markdown
 The property 'scalar.db.contact_port' must be greater than or equal to zero
-```
-
-### `CORE-10072`
-
-**Message**
-
-```markdown
-Cross-partition scan with filtering or ordering is not supported in Cosmos DB
 ```
 
 ### `CORE-10073`
@@ -658,14 +634,6 @@ The specified consistency level is not supported. Consistency level: %s
 
 ```markdown
 Cannot encode a Text value that contains '\u0000'
-```
-
-### `CORE-10080`
-
-**Message**
-
-```markdown
-Cross-partition scan with filtering or ordering is not supported in DynamoDB
 ```
 
 ### `CORE-10081`
@@ -1028,6 +996,166 @@ Columns must be specified. Table: %s
 Invalid column type. Table: %s; Column: %s; Type: %s
 ```
 
+### `CORE-10126`
+
+**Message**
+
+```markdown
+The mutation type is not supported. Only the Put or Delete type is supported. Mutation: %s
+```
+
+### `CORE-10127`
+
+**Message**
+
+```markdown
+This condition is not allowed for the UpdateIf operation. Condition: %s
+```
+
+### `CORE-10128`
+
+**Message**
+
+```markdown
+Cross-partition scan with ordering is not supported in Cassandra
+```
+
+### `CORE-10129`
+
+**Message**
+
+```markdown
+Cross-partition scan with ordering is not supported in Cosmos DB
+```
+
+### `CORE-10130`
+
+**Message**
+
+```markdown
+Cross-partition scan with ordering is not supported in DynamoDB
+```
+
+### `CORE-10131`
+
+**Message**
+
+```markdown
+The directory '%s' does not have write permissions. Please ensure that the current user has write access to the directory.
+```
+
+### `CORE-10132`
+
+**Message**
+
+```markdown
+Failed to create the directory '%s'. Please check if you have sufficient permissions and if there are any file system restrictions. Details: %s
+```
+
+### `CORE-10133`
+
+**Message**
+
+```markdown
+Directory path cannot be null or empty.
+```
+
+### `CORE-10134`
+
+**Message**
+
+```markdown
+No file extension was found on the provided file name %s.
+```
+
+### `CORE-10135`
+
+**Message**
+
+```markdown
+Invalid file extension: %s. Allowed extensions are: %s
+```
+
+### `CORE-10136`
+
+**Message**
+
+```markdown
+Getting a transaction state is not supported in single CRUD operation transactions
+```
+
+### `CORE-10137`
+
+**Message**
+
+```markdown
+Rolling back a transaction is not supported in single CRUD operation transactions
+```
+
+### `CORE-10138`
+
+**Message**
+
+```markdown
+Multiple mutations are not supported in single CRUD operation transactions
+```
+
+### `CORE-10139`
+
+**Message**
+
+```markdown
+Beginning a transaction is not allowed in single CRUD operation transactions
+```
+
+### `CORE-10140`
+
+**Message**
+
+```markdown
+Resuming a transaction is not allowed in single CRUD operation transactions
+```
+
+### `CORE-10141`
+
+**Message**
+
+```markdown
+Using the group commit feature on the Coordinator table with a two-phase commit interface is not allowed
+```
+
+### `CORE-10142`
+
+**Message**
+
+```markdown
+This operation is supported only when no conditions are specified. If you want to modify a condition, please use clearConditions() to remove all existing conditions first
+```
+
+### `CORE-10143`
+
+**Message**
+
+```markdown
+The encryption feature is not enabled. To encrypt data at rest, you must enable this feature. Note that this feature is supported only in the ScalarDB Enterprise edition
+```
+
+### `CORE-10144`
+
+**Message**
+
+```markdown
+The variable key column size must be greater than or equal to 64
+```
+
+### `CORE-10145`
+
+**Message**
+
+```markdown
+The value of the column %s in the primary key contains an illegal character. Primary-key columns must not contain any of the following characters in Cosmos DB: ':', '/', '\', '#', '?'. Value: %s
+```
+
 ## `CORE-2xxxx` status codes
 
 ### `CORE-20000`
@@ -1123,7 +1251,7 @@ A transaction conflict occurred in the mutation. Details: %s
 **Message**
 
 ```markdown
-A conflict occurred. Please try restarting the transaction
+A conflict occurred. Please try restarting the transaction. Details: %s
 ```
 
 ### `CORE-20012`
@@ -1212,6 +1340,30 @@ Reading empty records might cause a write skew anomaly, so the transaction has b
 
 ```markdown
 An anti-dependency was found. The transaction has been aborted
+```
+
+### `CORE-20023`
+
+**Message**
+
+```markdown
+A transaction conflict occurred in the Insert operation
+```
+
+### `CORE-20024`
+
+**Message**
+
+```markdown
+The %s condition of the %s operation is not satisfied. Targeting column(s): %s
+```
+
+### `CORE-20025`
+
+**Message**
+
+```markdown
+A transaction conflict occurred in the Insert operation
 ```
 
 ## `CORE-3xxxx` status codes
@@ -1453,7 +1605,7 @@ Fetching the next result failed
 **Message**
 
 ```markdown
-Rolling back the transaction failed
+Rolling back the transaction failed. Details: %s
 ```
 
 ### `CORE-30030`
@@ -1461,7 +1613,7 @@ Rolling back the transaction failed
 **Message**
 
 ```markdown
-Committing the transaction failed
+Committing the transaction failed. Details: %s
 ```
 
 ### `CORE-30031`
@@ -1469,7 +1621,7 @@ Committing the transaction failed
 **Message**
 
 ```markdown
-The Get operation failed
+The Get operation failed. Details: %s
 ```
 
 ### `CORE-30032`
@@ -1477,7 +1629,7 @@ The Get operation failed
 **Message**
 
 ```markdown
-The Scan operation failed
+The Scan operation failed. Details: %s
 ```
 
 ### `CORE-30033`
@@ -1485,7 +1637,7 @@ The Scan operation failed
 **Message**
 
 ```markdown
-The Put operation failed
+The Put operation failed. Details: %s
 ```
 
 ### `CORE-30034`
@@ -1493,7 +1645,7 @@ The Put operation failed
 **Message**
 
 ```markdown
-The Delete operation failed
+The Delete operation failed. Details: %s
 ```
 
 ### `CORE-30035`
@@ -1501,7 +1653,7 @@ The Delete operation failed
 **Message**
 
 ```markdown
-Beginning a transaction failed
+Beginning a transaction failed. Details: %s
 ```
 
 ### `CORE-30036`
@@ -1533,7 +1685,7 @@ Executing implicit pre-read failed
 **Message**
 
 ```markdown
-The Get operation failed
+Reading a record from the underlying storage failed
 ```
 
 ### `CORE-30040`
@@ -1541,7 +1693,7 @@ The Get operation failed
 **Message**
 
 ```markdown
-The Scan operation failed
+Scanning records from the underlying storage failed
 ```
 
 ### `CORE-30041`
@@ -1560,6 +1712,30 @@ Rollback failed because the transaction has already been committed
 Rollback failed
 ```
 
+### `CORE-30043`
+
+**Message**
+
+```markdown
+The Insert operation failed. Details: %s
+```
+
+### `CORE-30044`
+
+**Message**
+
+```markdown
+The Upsert operation failed. Details: %s
+```
+
+### `CORE-30045`
+
+**Message**
+
+```markdown
+The Update operation failed. Details: %s
+```
+
 ## `CORE-4xxxx` status codes
 
 ### `CORE-40000`
@@ -1567,7 +1743,7 @@ Rollback failed
 **Message**
 
 ```markdown
-Rolling back the transaction failed
+Rolling back the transaction failed. Details: %s
 ```
 
 ### `CORE-40001`
@@ -1601,4 +1777,3 @@ The coordinator status is unknown
 ```markdown
 Aborting state failed with NoMutationException, but the coordinator status does not exist
 ```
-

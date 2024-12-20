@@ -9,9 +9,9 @@ This page provides a list of error codes in ScalarDB SQL.
 
 ## Error code classes and descriptions
 
-| Class       | Description                                              |
-|:------------|:---------------------------------------------------------|
-| `SQL-1xxxx` | Errors for the user error category.                      |
+| Class       | Description                        |
+|:------------|:-----------------------------------|
+| `SQL-1xxxx` | Errors for the user error category |
 
 ## `SQL-1xxxx` status codes
 
@@ -180,7 +180,7 @@ The connection mode '%s' is not found. Specify one of the following connection m
 **Message**
 
 ```markdown
-Access denied: You need the %s privilege for the namespace %s to execute this operation
+Access denied: You need the %s privilege on the namespace %s to execute this operation
 ```
 
 ### `SQL-10021`
@@ -188,7 +188,7 @@ Access denied: You need the %s privilege for the namespace %s to execute this op
 **Message**
 
 ```markdown
-Access denied: You need the %s privilege for the table %s to execute this operation
+Access denied: You need the %s privilege on the table %s to execute this operation
 ```
 
 ### `SQL-10022`
@@ -196,7 +196,7 @@ Access denied: You need the %s privilege for the table %s to execute this operat
 **Message**
 
 ```markdown
-Access denied: You can't grant the %s privilege because you don't have the same privilege for the table %s
+Access denied: You can't grant the %s privilege because you don't have the same privilege on the table %s
 ```
 
 ### `SQL-10023`
@@ -204,7 +204,7 @@ Access denied: You can't grant the %s privilege because you don't have the same 
 **Message**
 
 ```markdown
-Access denied: You can't grant the %s privilege because you don't have the same privilege for the namespace %s
+Access denied: You can't grant the %s privilege because you don't have the same privilege on the namespace %s
 ```
 
 ### `SQL-10024`
@@ -212,7 +212,7 @@ Access denied: You can't grant the %s privilege because you don't have the same 
 **Message**
 
 ```markdown
-Access denied: You can't revoke the %s privilege because you don't have the same privilege for the table %s
+Access denied: You can't revoke the %s privilege because you don't have the same privilege on the table %s
 ```
 
 ### `SQL-10025`
@@ -220,7 +220,7 @@ Access denied: You can't revoke the %s privilege because you don't have the same
 **Message**
 
 ```markdown
-Access denied: You can't revoke the %s privilege because you don't have the same privilege for the namespace %s
+Access denied: You can't revoke the %s privilege because you don't have the same privilege on the namespace %s
 ```
 
 ### `SQL-10026`
@@ -559,3 +559,42 @@ The column %s is specified twice in the JOIN predicates. Predicates: %s
 Either all primary key columns or an indexed column for the table %s must be specified in the JOIN predicates. Predicates: %s
 ```
 
+### `SQL-10068`
+
+**Message**
+
+```markdown
+Cannot issue mutation DML SQLs such as INSERT, UPDATE or DELETE with executeQuery()
+```
+
+### `SQL-10069`
+
+**Message**
+
+```markdown
+Cannot issue SELECT SQLs with executeUpdate()
+```
+
+### `SQL-10070`
+
+**Message**
+
+```markdown
+The TWO_PHASE_COMMIT_TRANSACTION mode is not supported in the current transaction manager
+```
+
+### `SQL-10071`
+
+**Message**
+
+```markdown
+The encrypted column %s is not allowed in the %s clause
+```
+
+### `SQL-10072`
+
+**Message**
+
+```markdown
+The user %s does not exist
+```

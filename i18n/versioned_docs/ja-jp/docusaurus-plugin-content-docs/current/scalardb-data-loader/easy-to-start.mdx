@@ -1,0 +1,40 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+---
+
+# ScalarDB Data Loader API
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このドキュメントでは、ScalarDB Data Loader API を開始する方法について説明します。
+
+## ScalarDB Data Loader API を起動します
+
+* `scalardb-data-loader` リポジトリをクローンします
+```
+git clone https://github.com/scalar-labs/scalardb-data-loader.git
+```
+
+* `scalardb-data-loader` ディレクトリに移動します
+
+* 適切なクラウド認証情報を使用して、`fixtures/test/conf/application.yml` ファイル内の次のプロパティを更新します
+    * storage.jclouds.provider
+    * storage.jclouds.identity
+    * storage.jclouds.credential
+    * storage.jclouds.container
+
+* `scalardb-data-loader-api` Docker イメージをビルドします
+```
+./gradlew :api:docker
+```
+
+* `scalardb-data-loader-api` を起動します
+```
+cd fixtures/test
+docker-compose up
+```

@@ -580,7 +580,7 @@ And if you need to check if a value of a column is null, you can use the `isNull
 boolean isNull = result.isNull("<COLUMN_NAME>");
 ```
 
-For more details, see the `Result` page in the [Javadoc](https://javadoc.io/doc/com.scalar-labs/scalardb/3.13.1/index.html) of the version of ScalarDB that you're using.
+For more details, see the `Result` page in the [Javadoc](https://javadoc.io/doc/com.scalar-labs/scalardb/3.14.0/index.html) of the version of ScalarDB that you're using.
 
 ###### Execute `Get` by using a secondary index
 
@@ -787,7 +787,7 @@ For details about the `WHERE` clause, see [Use the `WHERE` clause](#use-the-wher
 
 :::note
 
-The `Put` operation is deprecated as of ScalarDB 3.13.1 and will be removed in a future release. Instead of using the `Put` operation, use the `Insert` operation, the `Upsert` operation, or the `Update` operation.
+The `Put` operation is deprecated as of ScalarDB 3.13 and will be removed in a future release. Instead of using the `Put` operation, use the `Insert` operation, the `Upsert` operation, or the `Update` operation.
 
 :::
 
@@ -1232,7 +1232,7 @@ For details about the `Scan` operation, see [`Scan` operation](#scan-operation).
 
 :::note
 
-The `Put` operation is deprecated as of ScalarDB 3.13.1 and will be removed in a future release. Instead of using the `Put` operation, use the `Insert` operation, the `Upsert` operation, or the `Update` operation.
+The `Put` operation is deprecated as of ScalarDB 3.13 and will be removed in a future release. Instead of using the `Put` operation, use the `Insert` operation, the `Upsert` operation, or the `Update` operation.
 
 :::
 
@@ -1539,7 +1539,7 @@ In the sample code, the transaction is retried three times maximum and sleeps fo
 
 :::
 
-### Group commit for the Coordinator table
+## Group commit for the Coordinator table
 
 The Coordinator table that is used for Consensus Commit transactions is a vital data store, and using robust storage for it is recommended. However, utilizing more robust storage options, such as internally leveraging multi-AZ or multi-region replication, may lead to increased latency when writing records to the storage, resulting in poor throughput performance.
 
@@ -1559,11 +1559,11 @@ scalar.db.consensus_commit.coordinator.group_commit.enabled=true
 # scalar.db.consensus_commit.coordinator.group_commit.metrics_monitor_log_enabled=true
 ```
 
-#### Limitations
+### Limitations
 
 This section describes the limitations of the group commit feature.
 
-##### Custom transaction ID passed by users
+#### Custom transaction ID passed by users
 
 The group commit feature implicitly generates an internal value and uses it as a part of transaction ID. Therefore, a custom transaction ID manually passed by users via `com.scalar.db.transaction.consensuscommit.ConsensusCommitManager.begin(String txId)` or `com.scalar.db.transaction.consensuscommit.TwoPhaseConsensusCommitManager.begin(String txId)` can't be used as is for later API calls. You need to use a transaction ID returned from`com.scalar.db.transaction.consensuscommit.ConsensusCommit.getId()` or `com.scalar.db.transaction.consensuscommit.TwoPhaseConsensusCommit.getId()` instead.
 
@@ -1582,7 +1582,7 @@ The group commit feature implicitly generates an internal value and uses it as a
    logger.info("The transaction state: {}", manager.getState(transaction.getId()));
 ```
 
-##### Prohibition of use with a two-phase commit interface
+#### Prohibition of use with a two-phase commit interface
 
 The group commit feature manages all ongoing transactions in memory. If this feature is enabled with a two-phase commit interface, the information must be solely maintained by the coordinator service to prevent conflicts caused by participant services' inconsistent writes to the Coordinator table, which may contain different transaction distributions over groups.
 
