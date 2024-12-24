@@ -2,6 +2,7 @@
 tags:
   - Enterprise Standard
   - Enterprise Premium
+displayed_sidebar: docsJapanese
 ---
 
 # ScalarDB Cluster の構成
@@ -28,10 +29,10 @@ import TabItem from '@theme/TabItem';
 | `scalar.db.cluster.node.grpc.max_inbound_metadata_size`           | 受信できるメタデータの最大サイズ。                                                                                                                                       | gRPCのデフォルト値    |
 | `scalar.db.cluster.node.port`                                     | ScalarDB Cluster ノードのポート番号。                                                                                                                             | `60053`        |
 | `scalar.db.cluster.node.prometheus_exporter_port`                 | Prometheus エクスポーターのポート番号。                                                                                                                               | `9080`         |
-| `scalar.db.cluster.grpc.deadline_duration_millis`                 | gRPC の期限期間（ミリ秒単位）。                                                                                                                                      | `60000` (60 秒) |
+| `scalar.db.cluster.grpc.deadline_duration_millis`                 | gRPC の期限期間（ミリ秒単位）。                                                                                                                                      | `60000` (60秒) |
 | `scalar.db.cluster.node.standalone_mode.enabled`                  | スタンドアロンモードが有効かどうか。スタンドアロンモードが有効になっている場合、メンバーシップ構成 (`scalar.db.cluster.membership.*`) は無視されることに注意してください。                                                 | `false`        |
 | `scalar.db.metadata.cache_expiration_time_secs`                   | ScalarDB には、データベースへのリクエスト数を減らすためのメタデータキャッシュがあります。この設定では、キャッシュの有効期限を秒単位で指定します。`-1`を指定した場合は、キャッシュは期限切れになりません。                                             | `60`           |
-| `scalar.db.active_transaction_management.expiration_time_millis`  | ScalarDB Cluster ノードは進行中のトランザクションを維持し、トランザクション ID を使用して再開できます。この構成では、このトランザクション管理機能の有効期限をミリ秒単位で指定します。                                                   | `60000` (60 秒) |
+| `scalar.db.active_transaction_management.expiration_time_millis`  | ScalarDB Cluster ノードは進行中のトランザクションを維持し、トランザクション ID を使用して再開できます。この構成では、このトランザクション管理機能の有効期限をミリ秒単位で指定します。                                                   | `60000` (60秒) |
 | `scalar.db.system_namespace_name`                                 | 指定された名前空間名は ScalarDB によって内部的に使用されます。                                                                                                                    | `scalardb`     |
 
 ## トランザクションマネージャーの構成
@@ -61,7 +62,7 @@ scalar.db.transaction_manager=consensus-commit
 | `scalar.db.transaction_manager`                       | `consensus-commit` を指定する必要があります。                                                                                                                                                                                                                                                                                                                                                                      | -             |
 | `scalar.db.consensus_commit.isolation_level`          | コンセンサスコミットに使用される分離レベル。`SNAPSHOT` または `SERIALIZABLE` のいずれかを指定できます。                                                                                                                                                                                                                                                                                                             | `SNAPSHOT`    |
 | `scalar.db.consensus_commit.serializable_strategy`    | コンセンサスコミットに使用されるシリアル化可能な戦略。`EXTRA_READ` または `EXTRA_WRITE` のいずれかを指定できます。`scalar.db.consensus_commit.isolation_level` プロパティで `SNAPSHOT` が指定されている場合、この構成は無視されます。                                                                                                                                                                         | `EXTRA_READ`  |
-| `scalar.db.consensus_commit.coordinator.namespace`    | コーディネーターテーブルの名前空間名。                                                                                                                                                                                                                                                                                                                                                                        | `coordinator` |
+| `scalar.db.consensus_commit.coordinator.namespace`    | Coordinator テーブルの名前空間名。                                                                                                                                                                                                                                                                                                                                                                        | `coordinator` |
 | `scalar.db.consensus_commit.include_metadata.enabled` | `true` に設定すると、`Get` および `Scan` 操作の結果にトランザクションメタデータが含まれます。特定のテーブルのトランザクションメタデータ列の詳細を表示するには、`DistributedTransactionAdmin.getTableMetadata()` メソッドを使用します。このメソッドは、トランザクションメタデータ列が追加されたテーブルメタデータを返します。この構成を使用すると、トランザクション関連の問題を調査するのに役立ちます。 | `false`       |
 
 #### パフォーマンス関連の構成
@@ -78,7 +79,7 @@ scalar.db.transaction_manager=consensus-commit
 | `scalar.db.consensus_commit.async_commit.enabled`                                      | コミットフェーズが非同期で実行されるかどうか。                                                                                                                                                                                                                               | `false`                                                           |
 | `scalar.db.consensus_commit.async_rollback.enabled`                                    | ロールバックフェーズが非同期に実行されるかどうか。                                                                                                                                                                                                                             | `scalar.db.consensus_commit.async_commit.enabled` の値    |
 | `scalar.db.consensus_commit.parallel_implicit_pre_read.enabled`                        | 暗黙的な事前読み取りが並列で実行されるかどうか。                                                                                                                                                                                                                                 | `true`                                                            |
-| `scalar.db.consensus_commit.coordinator.group_commit.enabled`                          | トランザクション状態のコミットがバッチモードで実行されるかどうか。この機能は、2 フェーズコミットインターフェイスでは使用できません。                                                                                                                                                  | `false`                                                           |
+| `scalar.db.consensus_commit.coordinator.group_commit.enabled`                          | トランザクション状態のコミットがバッチモードで実行されるかどうか。この機能は、2フェーズコミットインターフェイスでは使用できません。                                                                                                                                                  | `false`                                                           |
 | `scalar.db.consensus_commit.coordinator.group_commit.slot_capacity`                    | グループコミット機能のグループ内のスロットの最大数。値が大きいとグループコミットの効率は向上しますが、待ち時間が増加し、トランザクションの競合が発生する可能性も高くなります。[^1]                                                                                    | `20`                                                              |
 | `scalar.db.consensus_commit.coordinator.group_commit.group_size_fix_timeout_millis`    | グループ内のスロットのサイズを固定するためのタイムアウト。値が大きいとグループコミットの効率が向上しますが、待ち時間が増加し、トランザクションの競合が発生する可能性も高くなります。[^1]                                                                                                        | `40`                                                              |
 | `scalar.db.consensus_commit.coordinator.group_commit.delayed_slot_move_timeout_millis` | 遅延スロットをグループから別の分離グループに移動して、元のグループが遅延トランザクションの影響を受けないようにするためのタイムアウト。値が大きいとグループコミットの効率が向上しますが、待ち時間が増加し、トランザクションの競合が発生する可能性も高くなります。[^1] | `1200`                                                            |
@@ -207,15 +208,15 @@ ScalarDB Cluster GraphQL の構成は次のとおりです。
 | `scalar.db.graphql.path`                            | GraphQL エンドポイントの URL のパスコンポーネント。                                                                                                                                                       | `/graphql`           |
 | `scalar.db.graphql.namespaces`                      | GraphQL サーバーがスキーマを生成するテーブルの名前空間のコンマ区切りリスト。指定しない場合、GraphQL サーバーは、すべての ScalarDB 管理名前空間内のすべてのテーブルのスキーマを生成します。 |                      |
 | `scalar.db.graphql.graphiql`                        | GraphQL サーバーが [GraphiQL](https://github.com/graphql/graphiql) IDE を提供するかどうか。                                                                                                                   | `true`               |
-| `scalar.db.graphql.schema_checking_interval_millis` | ScalarDB スキーマに変更が検出された場合に GraphQL サーバーが GraphQL スキーマを再構築する間隔 (ミリ秒単位)。                                                                       | `30000` (30 秒) |
+| `scalar.db.graphql.schema_checking_interval_millis` | ScalarDB スキーマに変更が検出された場合に GraphQL サーバーが GraphQL スキーマを再構築する間隔 (ミリ秒単位)。                                                                       | `30000` (30秒) |
 
 ### サーバーの実行中に ScalarDB スキーマを作成または変更する
 
-GraphQL スキーマはサーバーの起動時に静的に構築されるため、ScalarDB スキーマが変更された場合 (たとえば、テーブルが追加、変更、または削除された場合)、対応する GraphQL スキーマは再構築されない限り変更を反映しません。これに対処するために、GraphQL サーバーは、定期的なチェックとオンデマンドチェックの 2 つのメカニズムを提供します。
+GraphQL スキーマはサーバーの起動時に静的に構築されるため、ScalarDB スキーマが変更された場合 (たとえば、テーブルが追加、変更、または削除された場合)、対応する GraphQL スキーマは再構築されない限り変更を反映しません。これに対処するために、GraphQL サーバーは、定期的なチェックとオンデマンドチェックの2つのメカニズムを提供します。
 
 #### 定期的なチェックを実行する
 
-サーバーは、ScalarDB スキーマに変更が発生したかどうかを定期的にチェックし、必要に応じて対応する GraphQL スキーマを再構築します。デフォルトでは、チェックは 30 秒ごとに行われますが、間隔は `scalar.db.graphql.schema_checking_interval_millis` プロパティを使用して構成できます。
+サーバーは、ScalarDB スキーマに変更が発生したかどうかを定期的にチェックし、必要に応じて対応する GraphQL スキーマを再構築します。デフォルトでは、チェックは30秒ごとに行われますが、間隔は `scalar.db.graphql.schema_checking_interval_millis` プロパティを使用して構成できます。
 
 定期的なチェックを実行する必要がない場合は、プロパティ値を `-1` に設定して無効にすることができます。
 
