@@ -1,47 +1,44 @@
 ---
 tags:
   - Enterprise Option
+displayed_sidebar: docsEnglish
 ---
 
-# Scalar Manager 概要
+# Scalar Manager Overview
 
-import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+Scalar Manager is a centralized management and monitoring solution for ScalarDB and ScalarDL within Kubernetes cluster environments.
+It simplifies the operational tasks associated with these products by aggregating essential functionalities into a graphical user interface (GUI).
 
-<TranslationBanner />
+## Why Scalar Manager?
 
-Scalar Manager は、Kubernetes クラスタ環境内で ScalarDB および ScalarDL の集中管理および監視ソリューションです。
-これらの製品に関連する運用タスクを、グラフィカルユーザーインターフェイスに主要な機能を集約することで簡素化します。
+Before Scalar Manager was released, you would need to use various command-line tools and third-party solutions individually to manage and monitor ScalarDB and ScalarDL deployments.
+For example, `kubectl` is often used to check deployment status, the Prometheus stack for monitoring metrics, the Loki stack for log analysis, and Scalar's proprietary CLI tool for pausing Scalar products to ensure transactional consistency between multiple databases.
+This constellation of tools presented a steep learning curve and lacked a unified interface, resulting in inefficient workflows for performing routine management tasks or troubleshooting issues.
 
-## なぜ Scalar Manager なのか？
+Scalar Manager mitigates these pain points by aggregating essential functionalities into a single, user-friendly GUI.
+With Scalar Manager, you can reduce the time and effort needed for management and monitoring, allowing you to focus on business development and operations.
 
-Scalar Manager がリリースされる前は、ユーザーは ScalarDB および ScalarDL のデプロイメントを管理および監視するために、さまざまなコマンドラインツールやサードパーティソリューションを個別に使用する必要がありました。
-例えば、ユーザーはデプロイメントのステータスを確認するために kubectl を使用し、メトリクスの監視には Prometheus スタック、ログ分析には Loki スタックを使用し、複数のデータベース間でトランザクションの一貫性を確保するために Scalar の独自の CLI ツールを使用して Scalar 製品を一時停止していました。
-これらのツールの組み合わせは、習得の難易度が高く、統一されたインターフェースが欠けていたため、日常の管理タスクやトラブルシューティングの際に効率的なワークフローを提供できませんでした。
+## Key features
 
-Scalar Manager は、これらの問題点を解消し、主要な機能を単一のユーザーフレンドリーな GUI に集約することで、管理および監視に必要な時間と労力を削減します。
-これにより、ユーザーはビジネスの開発や運用に集中できるようになります。
+At its core, Scalar Manager provides the following features.
 
-## 主な機能
+### Centralized cluster visualization
 
-Scalar Manager は、以下の機能をユーザーに提供します。
-
-### 集中化されたクラスターの可視化
-
-ユーザーは、クラスターの健康状態、pod ログ、ハードウェアの使用状況、リクエスト毎秒などのパフォーマンスメトリクス、および統合された Grafana ダッシュボードを介して時系列データの詳細な可視化について、リアルタイムのメトリクスを迅速に取得できます。
+You can quickly gain real-time metrics about cluster health, pod logs, hardware usage, performance metrics like requests per second, and deep visibility into time-series data via integrated Grafana dashboards.
 
 ![dashboard-cluster](images/dashboard-cluster.png)
 ![dashboard-pod-list](images/dashboard-pod-list.png)
 
-Pod ログとメトリクスは、リアルタイムまたは時系列で表示することができます。
+You can view pod logs and metrics in real time or in time series.
 
 ![logs](images/logs.png)
 ![metrics](images/metrics.png)
 
-### 簡素化されたジョブの一時停止管理
+### Streamlined pausing job management
 
-ユーザーは、トランザクションの一貫性を確保するために、一時停止ジョブを実行またはスケジュールし、スケジュールされたジョブを確認および管理し、直感的な GUI 内で一時停止状態を監視することができます。
+You can execute or schedule pausing jobs to ensure transactional consistency, review and manage scheduled jobs, and monitor paused states within an intuitive GUI.
 
 ![create-pauses](images/backup-and-restore-create-pauses.png)
 ![check-pauses](images/backup-and-restore-check-pauses.png)
 
-さまざまなツールやソリューションを使用して ScalarDB および ScalarDL を管理および監視し続けることはできますが、Scalar Manager は運用効率とユーザーエクスペリエンスを向上させるよりシンプルなアプローチを提供します。
+Although you can continue using various tools and solutions to manage or monitor ScalarDB and ScalarDL, Scalar Manager offers a more straightforward approach that enhances operational efficiency and user experience.
