@@ -3,6 +3,7 @@ tags:
   - Community
   - Enterprise Standard
   - Enterprise Premium
+displayed_sidebar: docsJapanese
 ---
 
 # ScalarDB Schema Loader を使用して既存のテーブルを ScalarDB にインポートする
@@ -252,19 +253,19 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
 
 <ol>
   <li>
-    <a name="1"></a>ScalarDB の `BIGINT` の値の範囲は、基礎となるデータベースの `bigint` のサイズに関係なく、-2^53 から 2^53 です。したがって、インポートされたテーブルにこの範囲外のデータが存在する場合、ScalarDB はそれを読み取ることができません。
+    <a name="1"></a>ScalarDB の `BIGINT` の値の範囲は、基礎となるデータベースの `bigint` のサイズに関係なく、-2^53から2^53です。したがって、インポートされたテーブルにこの範囲外のデータが存在する場合、ScalarDB はそれを読み取ることができません。
   </li>
   <li>
     <a name="2"></a>上記の特定のデータ型の場合、ScalarDB は基になるデータベースのデータ型よりも大きいデータ型をマップする場合があります。その場合、基になるデータベースで指定されたサイズよりも大きいサイズの値を入力するとエラーが表示されます。
   </li>
   <li>
-    <a name="3"></a>ScalarDB の `BLOB` の最大サイズは約 2GB (正確には 2^31-1 バイト) です。対照的に、Oracle の `blob` は (4GB-1)*(ブロック数) を持つことができます。したがって、インポートされたテーブルに 2GB を超えるデータが存在する場合、ScalarDB はそれを読み取ることができません。
+    <a name="3"></a>ScalarDB の `BLOB` の最大サイズは約 2GB (正確には2^31-1バイト) です。対照的に、Oracle の `blob` は (4GB-1)*(ブロック数) を持つことができます。したがって、インポートされたテーブルに 2GB を超えるデータが存在する場合、ScalarDB はそれを読み取ることができません。
   </li>
   <li>
     <a name="4"></a>ScalarDB は、ScalarDB の `DOUBLE` よりも精度の高い Oracle `float` 列をサポートしていません。
   </li>
   <li>
-    <a name="5"></a>ScalarDB では、ScalarDB のデータ型の最大サイズにより、`p` が 15 より大きい場合、Oracle の `numeric(p, s)` 列 (`p` は精度、`s` はスケール) をサポートしません。`s` が 0 の場合、ScalarDB は列を `BIGINT` にマッピングします。それ以外の場合は、ScalarDB は列を `DOUBLE` にマッピングします。後者の場合、浮動小数点値が固定小数点値にキャストされるため、基になるデータベースで切り上げまたは切り捨てが発生する可能性があることに注意してください。
+    <a name="5"></a>ScalarDB では、ScalarDB のデータ型の最大サイズにより、`p` が15より大きい場合、Oracle の `numeric(p, s)` 列 (`p` は精度、`s` はスケール) をサポートしません。`s` が0の場合、ScalarDB は列を `BIGINT` にマッピングします。それ以外の場合は、ScalarDB は列を `DOUBLE` にマッピングします。後者の場合、浮動小数点値が固定小数点値にキャストされるため、基になるデータベースで切り上げまたは切り捨てが発生する可能性があることに注意してください。
   </li>
 </ol>
 

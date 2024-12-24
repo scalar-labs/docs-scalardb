@@ -1,6 +1,7 @@
 ---
 tags:
   - Enterprise Premium
+displayed_sidebar: docsJapanese
 ---
 
 # 保存データの暗号化
@@ -84,7 +85,7 @@ HashiCorp Vault 暗号化を使用するには、ScalarDB Cluster ノード設�
 | `scalar.db.cluster.encryption.self.key_type`                                  | キーの種類。現在、`AES128_GCM`、`AES256_GCM`、`AES128_EAX`、`AES256_EAX`、`AES128_CTR_HMAC_SHA256`、`AES256_CTR_HMAC_SHA256`、`CHACHA20_POLY1305`、および `XCHACHA20_POLY1305` がサポートされています。キーの種類の詳細については、[キータイプの選択](https://developers.google.com/tink/aead?hl=ja#choose_a_key_type)を参照してください。 | `AES128_GCM`         |
 | `scalar.db.cluster.encryption.self.associated_data_required`                  | AEAD 暗号化に関連データが必要かどうか。                                                                                                                                                                                                                                                               | `false`              |
 | `scalar.db.cluster.encryption.self.kubernetes.secret.namespace_name`          | Kubernetes Secrets の名前空間名。                                                                                                                                                                                                                                                                          | `default`            |
-| `scalar.db.cluster.encryption.self.data_encryption_key_cache_expiration_time` | DEK キャッシュの有効期限（ミリ秒単位）。                                                                                                                                                                                                                                                                  | `60000` (60 秒) |
+| `scalar.db.cluster.encryption.self.data_encryption_key_cache_expiration_time` | DEK キャッシュの有効期限（ミリ秒単位）。                                                                                                                                                                                                                                                                  | `60000` (60秒) |
 
 ### テーブルを削除するときに DEK を削除する
 
