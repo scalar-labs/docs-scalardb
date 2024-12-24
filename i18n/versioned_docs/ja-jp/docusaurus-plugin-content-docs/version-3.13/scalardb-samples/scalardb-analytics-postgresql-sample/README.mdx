@@ -1,6 +1,7 @@
 ---
 tags:
   - Community
+displayed_sidebar: docsJapanese
 ---
 
 # ScalarDB Analytics with PostgreSQL を使用してサンプルデータに対して分析クエリを実行する
@@ -13,7 +14,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 ## 概要
 
-このサンプルチュートリアルでは、単一テーブルクエリと複数テーブルクエリの 2 種類のクエリを実行する方法を示します。
+このサンプルチュートリアルでは、単一テーブルクエリと複数テーブルクエリの2種類のクエリを実行する方法を示します。
 
 ### このサンプルチュートリアルで実行できること
 
@@ -32,7 +33,7 @@ PostgreSQL がサポートするクエリの種類を確認するには、[Postg
 
 ## 前提条件
 
-- [Docker](https://www.docker.com/get-started/) 20.10 以降、および [Docker Compose](https://docs.docker.com/compose/install/) V2 以降
+- [Docker](https://www.docker.com/get-started/) 20.10以降、および [Docker Compose](https://docs.docker.com/compose/install/) V2以降
 - [psql](https://www.postgresql.org/docs/current/app-psql.html)
 
 ## ScalarDB Analytics with PostgreSQL を設定する
@@ -97,7 +98,7 @@ erDiagram
 
 ### PostgreSQL のスキーマの詳細
 
-ScalarDB の設定時にスキーマインポーターを実行すると、ScalarDB データベースのテーブルスキーマを PostgreSQL データベースにインポートできます。より正確には、ScalarDB データベースの各 `namespace_name.table_name` テーブルに対して、PostgreSQL データベースに `namespace_name._table_name` の外部テーブルと `namespace_name.table_name` のビューが作成されます。
+ScalarDB の設定時に Schema Importer を実行すると、ScalarDB データベースのテーブルスキーマを PostgreSQL データベースにインポートできます。より正確には、ScalarDB データベースの各 `namespace_name.table_name` テーブルに対して、PostgreSQL データベースに `namespace_name._table_name` の外部テーブルと `namespace_name.table_name` のビューが作成されます。
 
 作成された外部テーブルには、ScalarDB テーブルと同じ列と、ScalarDB が内部で管理するトランザクションメタデータ列が含まれます。作成されたビューは、外部テーブルからトランザクションメタデータ列を除外するように定義されているため、作成されたビューには ScalarDB テーブルと同じ列のみが含まれます。
 
@@ -251,7 +252,7 @@ ORDER BY
 
 ### 複数のストレージにまたがるテーブルを結合する
 
-クエリを実行して、3 つのバックエンドストレージに接続されているテーブルを結合し、特定の日付に最も高い収益を持つ未出荷の注文を計算することもできます。
+クエリを実行して、3つのバックエンドストレージに接続されているテーブルを結合し、特定の日付に最も高い収益を持つ未出荷の注文を計算することもできます。
 
 クエリを実行するには、次のコマンドを実行して psql ターミナルにログインします。
 

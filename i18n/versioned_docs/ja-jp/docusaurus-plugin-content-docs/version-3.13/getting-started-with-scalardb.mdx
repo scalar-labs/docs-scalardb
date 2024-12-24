@@ -3,6 +3,7 @@ tags:
   - Community
   - Enterprise Standard
   - Enterprise Premium
+displayed_sidebar: docsJapanese
 ---
 
 # ScalarDB をはじめよう
@@ -26,7 +27,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 ScalarDB は Java で記述されているため、環境に次のいずれかの Java Development Kit (JDK) がインストールされている必要があります。
 
 - [Eclipse Temurin](https://adoptium.net/temurin/releases/) の OpenJDK LTS バージョン (8、11、17、または 21)
-- [Docker](https://www.docker.com/get-started/) 20.10 以降と [Docker Compose](https://docs.docker.com/compose/install/) V2 以降
+- [Docker](https://www.docker.com/get-started/) 20.10以降と [Docker Compose](https://docs.docker.com/compose/install/) V2以降
 
 :::note
 
@@ -193,7 +194,7 @@ ScalarDB がサポートするデータベースの一覧については、[デ�
 
 :::note
 
-Azure Cosmos DB アカウントのプライマリーキーまたはセカンダリキーを `scalar.db.password` の値として使用できます。
+Azure Cosmos DB アカウントの主キーまたはセカンダリキーを `scalar.db.password` の値として使用できます。
 
 :::
   </TabItem>
@@ -307,7 +308,7 @@ Azure Cosmos DB アカウントのプライマリーキーまたはセカンダ�
 
 `transaction` が `true` に設定されたテーブルがスキーマ内に存在するため、`--coordinator` オプションが指定されています。スキーマの設定とロードの詳細については、[ScalarDB Schema Loader](schema-loader.mdx) を参照してください。
 
-また、`--replication-factor=1` オプションは Cassandra を使用する場合にのみ有効です。デフォルトのレプリケーション係数は `3` ですが、このチュートリアルではセットアップを容易にするために `1` が使用されているため、3 つのノードではなく 1 つのノードを持つクラスターを準備するだけで済みます。ただし、レプリケーション係数 `1` は本番環境には適していないことに注意してください。
+また、`--replication-factor=1` オプションは Cassandra を使用する場合にのみ有効です。デフォルトのレプリケーション係数は `3` ですが、このチュートリアルではセットアップを容易にするために `1` が使用されているため、3つのノードではなく1つのノードを持つクラスターを準備するだけで済みます。ただし、レプリケーション係数 `1` は本番環境には適していないことに注意してください。
 
 :::
   </TabItem>
@@ -378,7 +379,7 @@ Azure Cosmos DB アカウントのプライマリーキーまたはセカンダ�
 
 ### 注文する
 
-次に、次のコマンドを実行して、顧客 ID `1` にリンゴ 3 個とオレンジ 2 個を注文してもらいます。
+次に、次のコマンドを実行して、顧客 ID `1` にリンゴ3個とオレンジ2個を注文してもらいます。
 
 :::note
 
@@ -416,7 +417,7 @@ Azure Cosmos DB アカウントのプライマリーキーまたはセカンダ�
 
 ### 別の注文をする
 
-次のコマンドを実行して、顧客 ID `1` の `credit_total` の残額を使用してメロン 1 個を注文します。
+次のコマンドを実行して、顧客 ID `1` の `credit_total` の残額を使用してメロン1個を注文します。
 
 ```console
 ./gradlew run --args="PlaceOrder 1 5:1"
@@ -462,7 +463,7 @@ Azure Cosmos DB アカウントのプライマリーキーまたはセカンダ�
 ...
 ```
 
-次のコマンドを実行して、ブドウ 1 個とマンゴー 1 個を注文してみます。
+次のコマンドを実行して、ブドウ1個とマンゴー1個を注文してみます。
 
 ```console
 ./gradlew run --args="PlaceOrder 1 3:1,4:1"
@@ -510,7 +511,7 @@ java.lang.RuntimeException: Credit limit exceeded
 ...
 ```
 
-顧客 ID `1` が支払いを済ませたので、次のコマンドを実行してブドウ 1 個とメロン 1 個を注文します。
+顧客 ID `1` が支払いを済ませたので、次のコマンドを実行してブドウ1個とメロン1個を注文します。
 
 ```console
 ./gradlew run --args="PlaceOrder 1 3:1,4:1"

@@ -3,6 +3,7 @@ tags:
   - Community
   - Enterprise Standard
   - Enterprise Premium
+displayed_sidebar: docsJapanese
 ---
 
 # マルチストレージトランザクションをサポートするサンプルアプリケーションを作成する
@@ -43,7 +44,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 ## このサンプルアプリケーションの前提条件
 
 - [Eclipse Temurin](https://adoptium.net/temurin/releases/) の OpenJDK LTS バージョン (8、11、17、または 21)
-- [Docker](https://www.docker.com/get-started/) 20.10 以降 ([Docker Compose](https://docs.docker.com/compose/install/) V2 以降)
+- [Docker](https://www.docker.com/get-started/) 20.10以降 ([Docker Compose](https://docs.docker.com/compose/install/) V2以降)
 
 :::note
 
@@ -81,7 +82,7 @@ docker-compose up -d
 
 :::note
 
-開発環境によっては、Docker コンテナの起動に 1 分以上かかる場合があります。
+開発環境によっては、Docker コンテナの起動に1分以上かかる場合があります。
 
 :::
 
@@ -162,7 +163,7 @@ Docker コンテナが起動したら、次のコマンドを実行して初期�
 
 ### 注文する
 
-次に、次のコマンドを実行して、顧客 ID `1` にリンゴ 3 個とオレンジ 2 個を注文してもらいます。
+次に、次のコマンドを実行して、顧客 ID `1` にリンゴ3個とオレンジ2個を注文してもらいます。
 
 :::note
 
@@ -200,7 +201,7 @@ Docker コンテナが起動したら、次のコマンドを実行して初期�
 
 ### 別の注文をする
 
-次のコマンドを実行して、顧客 ID `1` の `credit_total` の残額を使用してメロン 1 個を注文します。
+次のコマンドを実行して、顧客 ID `1` の `credit_total` の残額を使用してメロン1個を注文します。
 
 ```console
 ./gradlew run --args="PlaceOrder 1 5:1"
@@ -246,7 +247,7 @@ Docker コンテナが起動したら、次のコマンドを実行して初期�
 ...
 ```
 
-次のコマンドを実行して、ブドウ 1 個とマンゴー 1 個を注文してみます。
+次のコマンドを実行して、ブドウ1個とマンゴー1個を注文してみます。
 
 ```console
 ./gradlew run --args="PlaceOrder 1 3:1,4:1"
@@ -294,7 +295,7 @@ java.lang.RuntimeException: Credit limit exceeded
 ...
 ```
 
-顧客 ID `1` が支払いを済ませたので、次のコマンドを実行してブドウ 1 個とメロン 1 個を注文します。
+顧客 ID `1` が支払いを済ませたので、次のコマンドを実行してブドウ1個とメロン1個を注文します。
 
 ```console
 ./gradlew run --args="PlaceOrder 1 3:1,4:1"
