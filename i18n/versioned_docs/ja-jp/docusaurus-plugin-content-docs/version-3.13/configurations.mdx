@@ -3,6 +3,7 @@ tags:
   - Community
   - Enterprise Standard
   - Enterprise Premium
+displayed_sidebar: docsJapanese
 ---
 
 # ScalarDB の設定
@@ -59,7 +60,7 @@ Consensus Commit トランザクションマネージャーでは、次のパフ
 | `scalar.db.consensus_commit.async_commit.enabled`                                      | コミットフェーズが非同期で実行されるかどうか。                                                                                                                                                                                  | `false`                                                  |
 | `scalar.db.consensus_commit.async_rollback.enabled`                                    | ロールバックフェーズが非同期に実行されるかどうか。                                                                                                                                                                               | `scalar.db.consensus_commit.async_commit.enabled` の値   |
 | `scalar.db.consensus_commit.parallel_implicit_pre_read.enabled`                        | 暗黙的な事前読み取りが並列で実行されるかどうか。                                                                                                                                                                                | `true`                                                   |
-| `scalar.db.consensus_commit.coordinator.group_commit.enabled`                          | トランザクション状態のコミットがバッチモードで実行されるかどうか。この機能は、2 フェーズコミットインターフェイスでは使用できません。                                                                                                          | `false`                                                  |
+| `scalar.db.consensus_commit.coordinator.group_commit.enabled`                          | トランザクション状態のコミットがバッチモードで実行されるかどうか。この機能は、2フェーズコミットインターフェイスでは使用できません。                                                                                                          | `false`                                                  |
 | `scalar.db.consensus_commit.coordinator.group_commit.slot_capacity`                    | グループコミット機能のグループ内のスロットの最大数。値が大きいとグループコミットの効率は向上しますが、待ち時間が増加し、トランザクションの競合が発生する可能性も高くなります。[^1]                                                                    | `20`                                                     |
 | `scalar.db.consensus_commit.coordinator.group_commit.group_size_fix_timeout_millis`    | グループ内のスロットのサイズを固定するためのタイムアウト。値が大きいとグループコミットの効率が向上しますが、待ち時間が増加し、トランザクションの競合が発生する可能性も高くなります。[^1]                                                               | `40`                                                     |
 | `scalar.db.consensus_commit.coordinator.group_commit.delayed_slot_move_timeout_millis` | 遅延スロットをグループから別の分離グループに移動して、元のグループが遅延トランザクションの影響を受けないようにするためのタイムアウト。値が大きいとグループコミットの効率が向上しますが、待ち時間が増加し、トランザクションの競合が発生する可能性も高くなります。[^1] | `1200`                                                   |
@@ -290,4 +291,4 @@ scalar.db.contact_points=indirect:<SCALARDB_CLUSTER_CONTACT_POINT>
 
 クライアント設定の詳細については、[ScalarDB Cluster クライアント設定](scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#クライアント設定) を参照してください。
 
-[^1]: アプリケーションのアクセスパターンを考慮し、アプリケーションが使用する同じ基盤ストレージで、いくつかのバリエーション (たとえば、デフォルト値の 75% と 125%) でパフォーマンスをベンチマークして、最適な設定を決定することは価値があります。最適な設定は実際にはこれらの要因によって決まるためです。また、これらのパラメーターの組み合わせ (たとえば、1 番目に `slot_capacity:20` と `group_size_fix_timeout_millis:40`、2 番目に `slot_capacity:30` と `group_size_fix_timeout_millis:40`、3 番目に `slot_capacity:20` と `group_size_fix_timeout_millis:80`) をベンチマークして、最適な組み合わせを決定することも重要です。
+[^1]: アプリケーションのアクセスパターンを考慮し、アプリケーションが使用する同じ基盤ストレージで、いくつかのバリエーション (たとえば、デフォルト値の 75% と 125%) でパフォーマンスをベンチマークして、最適な設定を決定することは価値があります。最適な設定は実際にはこれらの要因によって決まるためです。また、これらのパラメーターの組み合わせ (たとえば、1番目に `slot_capacity:20` と `group_size_fix_timeout_millis:40`、2番目に `slot_capacity:30` と `group_size_fix_timeout_millis:40`、3番目に `slot_capacity:20` と `group_size_fix_timeout_millis:80`) をベンチマークして、最適な組み合わせを決定することも重要です。

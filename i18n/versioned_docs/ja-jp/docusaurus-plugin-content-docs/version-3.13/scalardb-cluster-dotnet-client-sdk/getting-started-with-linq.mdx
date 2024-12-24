@@ -1,6 +1,7 @@
 ---
 tags:
   - Enterprise Premium
+displayed_sidebar: docsJapanese
 ---
 
 # ScalarDB Cluster .NET Client SDK での LINQ をはじめよう
@@ -156,7 +157,7 @@ _myDbContext.Statements
             .Take(2);
 ```
 
-### `First` メソッドを使用して、パーティションキーで 1 つの `Statement` を取得します。
+### `First` メソッドを使用して、パーティションキーで1つの `Statement` を取得します。
 
 ```c#
 _myDbContext.Statements.First(stat => stat.OrderId == "1");
@@ -234,7 +235,7 @@ _myDbContext.Statements
 
 - `Join` および `GroupJoin` のキー選択ラムダ内では、メソッド呼び出しはサポートされていません。
 - カスタム等価比較子はサポートされていません。`Join` および `GroupJoin` メソッドの `comparer` 引数は、引数が渡された場合は無視されます。
-- `DefaultIfEmpty` メソッドを使用して左外部結合を実行する場合を除き、1 つのクエリ内で複数の `from` を直接使用することはサポートされていません。後続の各 `from` は、個別のクエリと見なされます。
+- `DefaultIfEmpty` メソッドを使用して左外部結合を実行する場合を除き、1つのクエリ内で複数の `from` を直接使用することはサポートされていません。後続の各 `from` は、個別のクエリと見なされます。
 
 ```c#
 var firstQuery = from stat in _myDbContext.Statements
@@ -297,7 +298,7 @@ await _myDbContext.Statements.RemoveAsync(statement);
 
 ## トランザクションの管理
 
-LINQ クエリと `AddAsync`、`UpdateAsync`、および `RemoveAsync` メソッドは、明示的に開始されたトランザクションなしで実行できます。ただし、1 つのトランザクションの一部として複数のクエリとメソッドを実行するには、トランザクションを明示的に開始してコミットする必要があります。`ScalarDbContext` は、通常のトランザクションと、ScalarDB の 2 フェーズコミットインターフェイスを使用したトランザクションの両方をサポートします。
+LINQ クエリと `AddAsync`、`UpdateAsync`、および `RemoveAsync` メソッドは、明示的に開始されたトランザクションなしで実行できます。ただし、1つのトランザクションの一部として複数のクエリとメソッドを実行するには、トランザクションを明示的に開始してコミットする必要があります。`ScalarDbContext` は、通常のトランザクションと、ScalarDB の2フェーズコミットインターフェイスを使用したトランザクションの両方をサポートします。
 
 ### 新しいトランザクションを開始する
 
@@ -305,7 +306,7 @@ LINQ クエリと `AddAsync`、`UpdateAsync`、および `RemoveAsync` メソッ
 await _myDbContext.BeginTransactionAsync();
 ```
 
-### 2 フェーズコミットインターフェースで新しいトランザクションを開始する
+### 2フェーズコミットインターフェースで新しいトランザクションを開始する
 
 ```c#
 await _myDbContext.BeginTwoPhaseCommitTransactionAsync();
@@ -317,7 +318,7 @@ await _myDbContext.BeginTwoPhaseCommitTransactionAsync();
 var transactionId = _myDbContext.CurrentTransactionId;
 ```
 
-### 2 フェーズコミットインターフェースを使用して既存のトランザクションに参加する
+### 2フェーズコミットインターフェースを使用して既存のトランザクションに参加する
 
 ```c#
 await _myDbContext.JoinTwoPhaseCommitTransactionAsync(transactionId);
@@ -329,7 +330,7 @@ await _myDbContext.JoinTwoPhaseCommitTransactionAsync(transactionId);
 await _myDbContext.ResumeTransaction(transactionId);
 ```
 
-### 2 フェーズコミットインターフェースを使用して既存のトランザクションを再開する
+### 2フェーズコミットインターフェースを使用して既存のトランザクションを再開する
 
 ```c#
 await _myDbContext.ResumeTwoPhaseCommitTransaction(transactionId);
@@ -341,25 +342,25 @@ await _myDbContext.ResumeTwoPhaseCommitTransaction(transactionId);
 
 :::
 
-### トランザクションをコミットする（通常または 2 フェーズコミット）
+### トランザクションをコミットする（通常または2フェーズコミット）
 
 ```c#
 await _myDbContext.CommitTransactionAsync();
 ```
 
-### トランザクションをロールバックする（通常または 2 フェーズコミット）
+### トランザクションをロールバックする（通常または2フェーズコミット）
 
 ```c#
 await _myDbContext.RollbackTransactionAsync();
 ```
 
-### コミット用の 2 フェーズコミットインターフェースを使用してトランザクションを準備する
+### コミット用の2フェーズコミットインターフェースを使用してトランザクションを準備する
 
 ```c#
 await _myDbContext.PrepareTransactionAsync();
 ```
 
-### コミット前に 2 フェーズコミットインターフェースでトランザクションを検証する
+### コミット前に2フェーズコミットインターフェースでトランザクションを検証する
 
 ```c#
 await _myDbContext.ValidateTransactionAsync();

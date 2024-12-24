@@ -2,6 +2,7 @@
 tags:
   - Enterprise Standard
   - Enterprise Premium
+displayed_sidebar: docsJapanese
 ---
 
 # ScalarDB Cluster gRPC API ガイド
@@ -26,7 +27,7 @@ ScalarDB Cluster gRPC API のサービスとメッセージの詳細について
 ScalarDB Cluster gRPC API は、次のサービスで構成されています。
 
 - `scalardb.cluster.rpc.v1.DistributedTransaction`: ScalarDB Cluster に分散トランザクション機能を提供します。
-- `scalardb.cluster.rpc.v1.TwoPhaseCommitTransaction`: ScalarDB Cluster に 2 フェーズコミットトランザクション機能を提供します。
+- `scalardb.cluster.rpc.v1.TwoPhaseCommitTransaction`: ScalarDB Cluster に2フェーズコミットトランザクション機能を提供します。
 - `scalardb.cluster.rpc.v1.DistributedTransactionAdmin`: 包括的な管理操作を提供します。
 
 次のセクションでは、各サービスの使用方法について説明します。
@@ -35,7 +36,7 @@ ScalarDB Cluster gRPC API は、次のサービスで構成されています。
 
 各サービスの使用方法を説明する前に、このセクションでは ScalarDB Cluster gRPC API でのエラー処理の仕組みについて説明します。
 
-ScalarDB Cluster gRPC API は、エラー処理に [Richer error model](https://grpc.io/docs/guides/error/#richer-error-model) を採用しています。このモデルにより、サーバーは 1 つ以上の protobuf メッセージとして表現される追加のエラー詳細を返すことができ、クライアントはそれを利用できるようになります。ScalarDB Cluster gRPC API は、[standard set of error message types](https://github.com/googleapis/googleapis/blob/master/google/rpc/error_details.proto) の 1 つである `google.rpc.ErrorInfo` を使用し、追加のエラー詳細を `ErrorInfo` フィールドに格納します。
+ScalarDB Cluster gRPC API は、エラー処理に [Richer error model](https://grpc.io/docs/guides/error/#richer-error-model) を採用しています。このモデルにより、サーバーは1つ以上の protobuf メッセージとして表現される追加のエラー詳細を返すことができ、クライアントはそれを利用できるようになります。ScalarDB Cluster gRPC API は、[standard set of error message types](https://github.com/googleapis/googleapis/blob/master/google/rpc/error_details.proto) の1つである `google.rpc.ErrorInfo` を使用し、追加のエラー詳細を `ErrorInfo` フィールドに格納します。
 
 `ErrorInfo` には次のフィールドがあります:
 
@@ -68,7 +69,7 @@ ScalarDB Cluster gRPC API は、エラー処理に [Richer error model](https://
 
 `Begin` を呼び出すときに、オプションでトランザクション ID を指定できます。トランザクション ID を指定する場合、ユーザーは ID の一意性を保証する責任があります。トランザクション ID を指定しない場合は、ScalarDB Cluster がトランザクションのトランザクション ID を生成します。
 
-RPC リクエストごとに `RequestHeader` を設定する必要があります。`RequestHeader` には、リクエストのホップ数を制限している `hop_limit` フィールドが含まれています。`hop_limit` の目的は、クラスター内での無限ループを防ぐことです。リクエストが別のクラスターノードに転送されるたびに、`hop_limit` は 1 つ減少します。`hop_limit` が 0 に達すると、リクエストは拒否されます。
+RPC リクエストごとに `RequestHeader` を設定する必要があります。`RequestHeader` には、リクエストのホップ数を制限している `hop_limit` フィールドが含まれています。`hop_limit` の目的は、クラスター内での無限ループを防ぐことです。リクエストが別のクラスターノードに転送されるたびに、`hop_limit` は1つ減少します。`hop_limit` が0に達すると、リクエストは拒否されます。
 
 ### エラー処理
 
@@ -126,7 +127,7 @@ gRPC では、RPC ごとに期限を設定できます。期限を超えると�
 
 `Begin` を呼び出すときに、オプションでトランザクション ID を指定できます。トランザクション ID を指定する場合、ID の一意性を保証するのはユーザーの責任です。トランザクション ID を指定しない場合、ScalarDB Cluster はトランザクションのトランザクション ID を生成します。
 
-RPC リクエストごとに `RequestHeader` を設定する必要があります。`RequestHeader` には、リクエストのホップ数を制限している `hop_limit` フィールドが含まれています。`hop_limit` の目的は、クラスター内での無限ループを防ぐことです。リクエストが別のクラスターノードに転送されるたびに、`hop_limit` は 1 つ減ります。`hop_limit` が 0 に達すると、リクエストは拒否されます。
+RPC リクエストごとに `RequestHeader` を設定する必要があります。`RequestHeader` には、リクエストのホップ数を制限している `hop_limit` フィールドが含まれています。`hop_limit` の目的は、クラスター内での無限ループを防ぐことです。リクエストが別のクラスターノードに転送されるたびに、`hop_limit` は1つ減ります。`hop_limit` が0に達すると、リクエストは拒否されます。
 
 ### エラー処理
 
@@ -187,11 +188,11 @@ gRPC では、各 RPC に期限を設定できます。期限を超えると、`
 - `RepairNamespace`: 不明な状態にある可能性がある名前空間を修復します。
 - `RepairTable`: 不明な状態にある可能性がある名前空間を修復します。
 - `AddNewColumnToTable`: テーブルに新しい列を追加します。
-- `CreateCoordinatorTables`: コーディネーターテーブルを作成します。
-- `DropCoordinatorTables`: コーディネーターテーブルを削除します。
-- `TruncateCoordinatorTables`: コーディネーターテーブルを切り捨てます。
-- `CoordinatorTablesExist`: コーディネーターテーブルが存在するかどうかを返します。
-- `RepairCoordinatorTables`: コーディネーターテーブルを修復します。
+- `CreateCoordinatorTables`: Coordinator テーブルを作成します。
+- `DropCoordinatorTables`: Coordinator テーブルを削除します。
+- `TruncateCoordinatorTables`: Coordinator テーブルを切り捨てます。
+- `CoordinatorTablesExist`: Coordinator テーブルが存在するかどうかを返します。
+- `RepairCoordinatorTables`: Coordinator テーブルを修復します。
 - `GetTableMetadata`: 指定されたテーブルのテーブルメタデータを返します。
 - `GetNamespaceTableNames`: 指定された名前空間内のテーブルを返します。
 - `GetNamespaceNames`: ScalarDB によって作成された既存の名前空間名を返します。

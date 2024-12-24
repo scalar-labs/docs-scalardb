@@ -1,6 +1,7 @@
 ---
 tags:
   - Enterprise Premium
+displayed_sidebar: docsJapanese
 ---
 
 # ユーザーの認証と認可
@@ -19,7 +20,7 @@ ScalarDB Cluster には、ユーザーを認証および認可するメカニズ
 
 ユーザーは、必要な権限を持っている場合、ユーザー名とパスワードを使用して ScalarDB Cluster にログインし、SQL ステートメントを実行できます。
 
-認証と認可では、次の 2 種類のユーザーがサポートされます。
+認証と認可では、次の2種類のユーザーがサポートされます。
 
 - **スーパーユーザー:** このタイプのユーザーにはすべての権限があります。スーパーユーザーのみが他のユーザーや名前空間を作成または削除できます。
 - **通常のユーザー:** このタイプのユーザーには最初は権限がないため、スーパーユーザーまたは `GRANT` 権限を持つ別のユーザーによって権限を付与する必要があります。
@@ -54,9 +55,9 @@ ScalarDB Cluster には、ユーザーを認証および認可するメカニズ
 
 | 名前                                                            | 説明                                                                                               | デフォルト       |
 |----------------------------------------------------------------|---------------------------------------------------------------------------------------------------|-----------------|
-| `scalar.db.cluster.auth.cache_expiration_time_millis`          | 認証および認可情報のキャッシュ有効期限（ミリ秒単位）。                                                      | `60000` (1 分)  |
-| `scalar.db.cluster.auth.auth_token_expiration_time_minutes`    | 認証および認可トークンの有効期限（分単位）。                                                               | `1440` (1 日)  |
-| `scalar.db.cluster.auth.auth_token_gc_thread_interval_minutes` | 認証および認可トークンのガベージコレクション (GC) スレッド間隔 (分単位)。                                    | 360（6 時間）    |
+| `scalar.db.cluster.auth.cache_expiration_time_millis`          | 認証および認可情報のキャッシュ有効期限（ミリ秒単位）。                                                      | `60000` (1分)  |
+| `scalar.db.cluster.auth.auth_token_expiration_time_minutes`    | 認証および認可トークンの有効期限（分単位）。                                                               | `1440` (1日)  |
+| `scalar.db.cluster.auth.auth_token_gc_thread_interval_minutes` | 認証および認可トークンのガベージコレクション (GC) スレッド間隔 (分単位)。                                    | 360（6時間）    |
 | `scalar.db.cluster.auth.pepper`                                | ハッシュ化の前にパスワードに追加されるシークレットの値。指定しない場合、パスワードはペッパーなしでハッシュ化されます。 |                |
 
 :::note

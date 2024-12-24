@@ -3,6 +3,7 @@ tags:
   - Community
   - Enterprise Standard
   - Enterprise Premium
+displayed_sidebar: docsJapanese
 ---
 
 # Kotlin を使って ScalarDB をはじめよう
@@ -26,7 +27,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 ScalarDB は Java で記述されているため、環境に次のいずれかの Java Development Kit (JDK) がインストールされている必要があります。
 
 - [Eclipse Temurin](https://adoptium.net/temurin/releases/) の OpenJDK LTS バージョン (8、11、17、または 21)
-- [Docker](https://www.docker.com/get-started/) 20.10 以降と [Docker Compose](https://docs.docker.com/compose/install/) V2 以降
+- [Docker](https://www.docker.com/get-started/) 20.10以降と [Docker Compose](https://docs.docker.com/compose/install/) V2以降
 
 :::note
 
@@ -193,7 +194,7 @@ ScalarDB がサポートするデータベースの一覧については、[デ�
 
 :::note
 
-Azure Cosmos DB アカウントのプライマリーキーまたはセカンダリキーを `scalar.db.password` の値として使用できます。
+Azure Cosmos DB アカウントの主キーまたはセカンダリキーを `scalar.db.password` の値として使用できます。
 
 :::
   </TabItem>
@@ -308,7 +309,7 @@ Azure Cosmos DB アカウントのプライマリーキーまたはセカンダ�
 
 `transaction` が `true` に設定されたテーブルがスキーマ内に存在するため、`--coordinator` オプションが指定されています。スキーマの設定とロードの詳細については、[ScalarDB Schema Loader](schema-loader.mdx) を参照してください。
 
-また、`--replication-factor=1` オプションは Cassandra を使用する場合にのみ有効です。デフォルトのレプリケーション係数は `3` ですが、このチュートリアルではセットアップを容易にするために `1` が使用されているため、3 つのノードではなく 1 つのノードを持つクラスターを準備するだけで済みます。ただし、レプリケーション係数 `1` は本番環境には適していないことに注意してください。
+また、`--replication-factor=1` オプションは Cassandra を使用する場合にのみ有効です。デフォルトのレプリケーション係数は `3` ですが、このチュートリアルではセットアップを容易にするために `1` が使用されているため、3つのノードではなく1つのノードを持つクラスターを準備するだけで済みます。ただし、レプリケーション係数 `1` は本番環境には適していないことに注意してください。
 
 :::
   </TabItem>
@@ -322,7 +323,7 @@ Azure Cosmos DB アカウントのプライマリーキーまたはセカンダ�
 
 - アカウントを作成します。
 - アカウントに資金を追加します。
-- 2 つのアカウント間で資金を送信します。
+- 2つのアカウント間で資金を送信します。
 - アカウント残高を取得します。
 
 :::note
@@ -363,9 +364,9 @@ Azure Cosmos DB アカウントのプライマリーキーまたはセカンダ�
 
 **customer1** のアカウントの残高は **1000** になります。
 
-### 2 つのアカウント間で電子マネーを送金する
+### 2つのアカウント間で電子マネーを送金する
 
-これで 2 つのアカウントが作成され、少なくとも 1 つのアカウントに残高があるので、一方のアカウントからもう一方のアカウントに資金を送金できます。
+これで 2つのアカウントが作成され、少なくとも1つのアカウントに残高があるので、一方のアカウントからもう一方のアカウントに資金を送金できます。
 
 **customer1** が **merchant1** に **100** を支払うようにするには、次のコマンドを実行します。
 
