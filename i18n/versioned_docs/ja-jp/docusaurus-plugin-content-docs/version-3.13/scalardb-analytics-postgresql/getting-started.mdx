@@ -1,6 +1,7 @@
 ---
 tags:
   - Community
+displayed_sidebar: docsJapanese
 ---
 
 # ScalarDB Analytics with PostgreSQL をはじめよう
@@ -17,13 +18,13 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 ScalarDB Analytics with PostgreSQL は、PostgreSQL とその外部データラッパー (FDW) 拡張機能を使用して、ScalarDB の機能を拡張し、ScalarDB が管理するデータに対する分析クエリを処理します。
 
-ScalarDB Analytics with PostgreSQL は、主に PostgreSQL と Schema Importer の 2 つのコンポーネントで構成されています。
+ScalarDB Analytics with PostgreSQL は、主に PostgreSQL と Schema Importer の2つのコンポーネントで構成されています。
 
 PostgreSQL はサービスとして実行され、ユーザーからのクエリを受け入れて処理します。FDW 拡張機能は、ScalarDB が管理するバックエンドストレージからデータを読み取るために使用されます。Schema Importer は、ScalarDB データベースのスキーマを PostgreSQL にインポートするツールです。これにより、ユーザーは PostgreSQL 側のテーブル (ScalarDB 側のテーブルと同一) を表示できます。
 
 ## ScalarDB データベースをセットアップする
 
-まず、ScalarDB Analytics with PostgreSQL で分析クエリを実行するには、1 つ以上の ScalarDB データベースが必要です。独自の ScalarDB データベースがある場合は、このセクションをスキップして、代わりにそのデータベースを使用できます。[scalardb-samples/scalardb-analytics-postgresql-sample](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-analytics-postgresql-sample) プロジェクトを使用する場合は、プロジェクトディレクトリで次のコマンドを実行してサンプルデータベースを設定できます。
+まず、ScalarDB Analytics with PostgreSQL で分析クエリを実行するには、1つ以上の ScalarDB データベースが必要です。独自の ScalarDB データベースがある場合は、このセクションをスキップして、代わりにそのデータベースを使用できます。[scalardb-samples/scalardb-analytics-postgresql-sample](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-analytics-postgresql-sample) プロジェクトを使用する場合は、プロジェクトディレクトリで次のコマンドを実行してサンプルデータベースを設定できます。
 
 ```console
 docker compose run --rm schema-loader \
