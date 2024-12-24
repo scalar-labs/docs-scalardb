@@ -1,6 +1,7 @@
 ---
 tags:
   - Enterprise Premium
+displayed_sidebar: docsJapanese
 ---
 
 # ScalarDB Cluster SQL gRPC API ガイド
@@ -21,7 +22,7 @@ ScalarDB Cluster SQL gRPC API のサービスとメッセージの詳細につ�
 ScalarDB Cluster SQL gRPC API は、次のサービスで構成されています:
 
 - `scalardb.cluster.rpc.v1.sql.SqlTransaction`: ScalarDB Cluster SQL のトランザクション機能を提供します。
-- `scalardb.cluster.rpc.v1.sql.SqlTwoPhaseCommitTransaction`: ScalarDB Cluster SQL の 2 フェーズコミットトランザクション機能を提供します。
+- `scalardb.cluster.rpc.v1.sql.SqlTwoPhaseCommitTransaction`: ScalarDB Cluster SQL の2フェーズコミットトランザクション機能を提供します。
 - `scalardb.cluster.rpc.v1.sql.Metadata`: ScalarDB Cluster SQL のメタデータビューを提供します。
 
 次のセクションでは、各サービスの使用方法について説明します。
@@ -32,9 +33,9 @@ ScalarDB Cluster SQL gRPC API は、次のサービスで構成されていま�
 
 ScalarDB Cluster SQL gRPC API は、エラー処理に [Richer error model](https://grpc.io/docs/guides/error/#richer-error-model) を採用しています。
 
-このモデルにより、サーバーは 1 つ以上の protobuf メッセージとして表現される追加のエラー詳細を返すことができ、クライアントはそれを利用できるようになります。
+このモデルにより、サーバーは1つ以上の protobuf メッセージとして表現される追加のエラー詳細を返すことができ、クライアントはそれを利用できるようになります。
 
-ScalarDB Cluster SQL gRPC API は、[standard set of error message types](https://github.com/googleapis/googleapis/blob/master/google/rpc/error_details.proto) の 1 つである `google.rpc.ErrorInfo` を使用し、追加のエラー詳細を `ErrorInfo` フィールドに格納します。
+ScalarDB Cluster SQL gRPC API は、[standard set of error message types](https://github.com/googleapis/googleapis/blob/master/google/rpc/error_details.proto) の1つである `google.rpc.ErrorInfo` を使用し、追加のエラー詳細を `ErrorInfo` フィールドに格納します。
 
 `ErrorInfo` には次のフィールドがあります:
 
@@ -63,7 +64,7 @@ ScalarDB Cluster SQL gRPC API は、[standard set of error message types](https:
 
 `Begin` を呼び出すときに、オプションでトランザクション ID を指定できます。トランザクション ID を指定する場合、ユーザーは ID の一意性を保証する責任があります。トランザクション ID を指定しない場合、ScalarDB Cluster はトランザクションのトランザクション ID を生成します。
 
-各 RPC リクエストに対して `RequestHeader` を設定する必要があります。`RequestHeader` には、リクエストのホップ数を制限する `hop_limit` フィールドが含まれています。`hop_limit` の目的は、クラスター内での無限ループを防ぐことです。リクエストが別のクラスターノードに転送されるたびに、`hop_limit` は 1 つ減ります。`hop_limit` が 0 に達すると、リクエストは拒否されます。
+各 RPC リクエストに対して `RequestHeader` を設定する必要があります。`RequestHeader` には、リクエストのホップ数を制限する `hop_limit` フィールドが含まれています。`hop_limit` の目的は、クラスター内での無限ループを防ぐことです。リクエストが別のクラスターノードに転送されるたびに、`hop_limit` は1つ減ります。`hop_limit` が0に達すると、リクエストは拒否されます。
 
 ### エラー処理
 
@@ -119,7 +120,7 @@ gRPC では、RPC ごとに期限を設定できます。期限を超えると�
 
 `Begin` を呼び出すときに、オプションでトランザクション ID を指定できます。トランザクション ID を指定する場合、ID の一意性を保証するのはユーザーの責任です。トランザクション ID を指定しない場合、ScalarDB Cluster はトランザクションのトランザクション ID を生成します。
 
-RPC リクエストごとに `RequestHeader` を設定する必要があります。`RequestHeader` には、リクエストのホップ数を制限している `hop_limit` フィールドが含まれています。`hop_limit` の目的は、クラスター内での無限ループを防ぐことです。リクエストが別のクラスターノードに転送されるたびに、`hop_limit` は 1 つ減ります。`hop_limit` が 0 に達すると、リクエストは拒否されます。
+RPC リクエストごとに `RequestHeader` を設定する必要があります。`RequestHeader` には、リクエストのホップ数を制限している `hop_limit` フィールドが含まれています。`hop_limit` の目的は、クラスター内での無限ループを防ぐことです。リクエストが別のクラスターノードに転送されるたびに、`hop_limit` は1つ減ります。`hop_limit` が0に達すると、リクエストは拒否されます。
 
 ### エラー処理
 

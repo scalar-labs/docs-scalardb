@@ -1,6 +1,7 @@
 ---
 tags:
   - Enterprise Premium
+displayed_sidebar: docsJapanese
 ---
 
 # マルチストレージトランザクションを備えた Spring Data JDBC for ScalarDB のサンプルアプリケーション
@@ -15,7 +16,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 ## このサンプルアプリケーションの前提条件
 
 - [Eclipse Temurin](https://adoptium.net/temurin/releases/) の OpenJDK LTS バージョン (8、11、17、または 21)
-- [Docker](https://www.docker.com/get-started/) 20.10 以降 ([Docker Compose](https://docs.docker.com/compose/install/) V2 以降)
+- [Docker](https://www.docker.com/get-started/) 20.10以降 ([Docker Compose](https://docs.docker.com/compose/install/) V2以降)
 
 :::note
 
@@ -99,7 +100,7 @@ CREATE TABLE IF NOT EXISTS "order".items (
 
 ### トランザクション
 
-このサンプルアプリケーションでは、次の 5 つのトランザクションが実装されています:
+このサンプルアプリケーションでは、次の5つのトランザクションが実装されています:
 
 1. 顧客情報の取得
 2. クレジットカードによる注文 (注文のコストがクレジット限度額を下回っているかどうかを確認し、注文履歴を記録して、チェックに合格した場合は `credit_total` を更新します)
@@ -135,14 +136,14 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=
 
 - `scalar.db.storage`: ScalarDB でマルチストレージトランザクションを使用するには、`multi-storage` を指定する必要があります。
 - `scalar.db.multi_storage.storages`: ここでストレージ名を定義する必要があります。
-- `scalar.db.multi_storage.storages.cassandra.*`: これらの設定は、`scalar.db.multi_storage.storages` で定義されているストレージ名の 1 つである `cassandra` ストレージ用です。ここで、`cassandra` ストレージのすべての `scalar.db.*` プロパティを設定できます。
-- `scalar.db.multi_storage.storages.mysql.*`: これらの設定は、`scalar.db.multi_storage.storages` で定義されているストレージ名の 1 つである `mysql` ストレージ用です。ここで、`mysql` ストレージのすべての `scalar.db.*` プロパティを設定できます。
+- `scalar.db.multi_storage.storages.cassandra.*`: これらの設定は、`scalar.db.multi_storage.storages` で定義されているストレージ名の1つである `cassandra` ストレージ用です。ここで、`cassandra` ストレージのすべての `scalar.db.*` プロパティを設定できます。
+- `scalar.db.multi_storage.storages.mysql.*`: これらの設定は、`scalar.db.multi_storage.storages` で定義されているストレージ名の1つである `mysql` ストレージ用です。ここで、`mysql` ストレージのすべての `scalar.db.*` プロパティを設定できます。
 - `scalar.db.multi_storage.namespace_mapping`: この設定は、名前空間をストレージにマップします。このサンプルアプリケーションでは、`customer` 名前空間テーブルの操作は `mysql` ストレージにマップされ、`order` 名前空間テーブルの操作は `cassandra` ストレージにマップされます。また、Consensus Commit トランザクションで使用される `coordinator` 名前空間にマップされるストレージを定義することもできます。
 - `scalar.db.multi_storage.default_storage`: この設定は、マップされていない名前空間テーブルの操作に使用されるデフォルトのストレージを設定します。
 
 詳細については、[マルチストレージトランザクション](../../multi-storage-transactions.mdx)を参照してください。
 
-このサンプル アプリケーションでは、ScalarDB Cluster はスタンドアロンモード (`scalar.db.cluster.node.standalone_mode.enabled=true`) で実行されています。
+このサンプルアプリケーションでは、ScalarDB Cluster はスタンドアロンモード (`scalar.db.cluster.node.standalone_mode.enabled=true`) で実行されています。
 
 また、設定ファイルで ScalarDB Cluster のライセンスキー (試用ライセンスまたは商用ライセンス) を設定する必要があります。 詳細については、[製品ライセンスキーの設定方法](../../scalar-licensing/README.mdx)を参照してください。
 
@@ -183,7 +184,7 @@ Cassandra、MySQL、および ScalarDB Cluster を起動するには、次の `d
 docker-compose up -d
 ```
 
-コンテナの起動には 1 分以上かかる場合があることに注意してください。
+コンテナの起動には1分以上かかる場合があることに注意してください。
 
 ### スキーマをロード
 
@@ -232,7 +233,7 @@ java -jar scalardb-cluster-sql-cli-<VERSION>-all.jar --config scalardb-sql.prope
 ...
 ```
 
-次に、顧客 ID `1` を使用して、リンゴ 3 個とオレンジ 2 個を注文します。注文形式は `<Item ID>:<Count>,<Item ID>:<Count>,...` であることに注意してください。
+次に、顧客 ID `1` を使用して、リンゴ3個とオレンジ2個を注文します。注文形式は `<Item ID>:<Count>,<Item ID>:<Count>,...` であることに注意してください。
 
 ```console
 ./gradlew run --args="PlaceOrder 1 1:3,2:2"

@@ -1,6 +1,7 @@
 ---
 tags:
   - Enterprise Premium
+displayed_sidebar: docsJapanese
 ---
 
 # ワイヤ通信の暗号化
@@ -42,9 +43,9 @@ ScalarDB Cluster は、トランスポート層セキュリティ (TLS) を使�
 |-----------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|
 | `scalar.db.cluster.tls.ca_root_cert_pem`      | TLS 通信用のカスタム CA ルート証明書 (PEM データ)。                                                                                                                                                                                                                  |          |
 | `scalar.db.cluster.tls.ca_root_cert_path`     | TLS 通信用のカスタム CA ルート証明書 (ファイルパス)。                                                                                                                                                                                                                 |          |
-| `scalar.db.cluster.tls.override_authority`    | TLS 通信のカスタム権限。これは、実際に接続しているホストを変更するものではありません。これはテスト用ですが、DNS オーバーライドの代替としてテスト以外でも安全に使用できます。たとえば、`scalar.db.cluster.node.tls.cert_chain_path` に設定した証明書チェーンファイルで提示 されるホスト名を指定できます。 |          |
+| `scalar.db.cluster.tls.override_authority`    | TLS 通信のカスタム権限。これは、実際に接続しているホストを変更するものではありません。これはテスト用ですが、DNS オーバーライドの代替としてテスト以外でも安全に使用できます。たとえば、`scalar.db.cluster.node.tls.cert_chain_path` に設定した証明書チェーンファイルで提示されるホスト名を指定できます。 |          |
 | `scalar.db.cluster.node.tls.cert_chain_path`  | TLS 通信に使用される証明書チェーンファイル。                                                                                                                                                                                                                          |          |
-| `scalar.db.cluster.node.tls.private_key_path` | TLS 通信に使用されるシークレット鍵ファイル。                                                                                                                                                                                                                          |          |
+| `scalar.db.cluster.node.tls.private_key_path` | TLS 通信に使用される秘密鍵ファイル。                                                                                                                                                                                                                          |          |
 
 証明機関 (CA) ルート証明書を指定するには、`scalar.db.cluster.tls.ca_root_cert_pem` または `scalar.db.cluster.tls.ca_root_cert_path` のいずれかを設定する必要があります。両方を設定すると、`scalar.db.cluster.tls.ca_root_cert_pem` が使用されます。
 
