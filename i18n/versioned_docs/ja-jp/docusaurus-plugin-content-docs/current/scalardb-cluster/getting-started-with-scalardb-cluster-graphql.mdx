@@ -1,6 +1,7 @@
 ---
 tags:
   - Enterprise Premium
+displayed_sidebar: docsJapanese
 ---
 
 # ScalarDB Cluster GraphQL をはじめよう
@@ -13,7 +14,7 @@ ScalarDB Cluster gRPC API の詳細については、以下を参照してくだ
 
 ## 前提条件
 
-- 以下のいずれかの Java 開発キット (JDK):
+- 以下のいずれかの Java Development Kit (JDK):
   - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) LTS バージョン (8、11、17、または 21)
   - [OpenJDK](https://openjdk.org/install/) LTS バージョン (8、11、17、または 21)
 - Kubernetes クラスターで実行されている ScalarDB Cluster
@@ -258,7 +259,7 @@ query GetAccounts @transaction {
 
 ### 継続トランザクションで操作を実行する
 
-開始したトランザクションで次のクエリまたはミューテーションを実行するには、トランザクション ID を `@transaction` の `id` 引数として指定します。次の例では、同じトランザクションで user1 のアカウントから user2 のアカウントに残高を転送することにより、前の例で取得した 2 つのアカウントを更新します。
+開始したトランザクションで次のクエリまたはミューテーションを実行するには、トランザクション ID を `@transaction` の `id` 引数として指定します。次の例では、同じトランザクションで user1 のアカウントから user2 のアカウントに残高を転送することにより、前の例で取得した2つのアカウントを更新します。
 
 ```graphql
 mutation Transfer @transaction(id: "c88da8a6-a13f-4857-82fe-45f1ab4150f9") {
@@ -267,7 +268,7 @@ mutation Transfer @transaction(id: "c88da8a6-a13f-4857-82fe-45f1ab4150f9") {
 }
 ```
 
-GraphQL で開始されたトランザクションには 1 分のタイムアウト (デフォルト) があり、タイムアウトを超えると自動的にアボートされることに注意してください。
+GraphQL で開始されたトランザクションには1分のタイムアウト (デフォルト) があり、タイムアウトを超えると自動的にアボートされることに注意してください。
 
 ### トランザクションをコミットする
 
@@ -284,7 +285,7 @@ query GetAndCommit @transaction(id: "c88da8a6-a13f-4857-82fe-45f1ab4150f9", comm
 }
 ```
 
-**注:** `@transaction(commit: true)` のように `id` 引数なしで `commit: true` フラグを指定すると、新しいトランザクションが開始され、1 つの操作に対してのみコミットされます。この動作は、GraphiQL を使用した上記の例で見られるように、`@transaction` ディレクティブを指定しない場合とまったく同じです。つまり、`@transaction(commit: true)` が指定されている場合は、ディレクティブ自体を省略できます。
+**注:** `@transaction(commit: true)` のように `id` 引数なしで `commit: true` フラグを指定すると、新しいトランザクションが開始され、1つの操作に対してのみコミットされます。この動作は、GraphiQL を使用した上記の例で見られるように、`@transaction` ディレクティブを指定しない場合とまったく同じです。つまり、`@transaction(commit: true)` が指定されている場合は、ディレクティブ自体を省略できます。
 
 ### トランザクションをアボートまたはロールバックする
 

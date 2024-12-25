@@ -1,6 +1,7 @@
 ---
 tags:
   - Enterprise Premium
+displayed_sidebar: docsJapanese
 ---
 
 # Spring Data JDBC for ScalarDB ガイド
@@ -296,7 +297,7 @@ Spring Data JDBC for ScalarDB では、次の例外がスローされる可能�
 - `deleteById(ID id)`
 - `deleteAllById(Iterable<? extends ID> ids)`
 
-### 2 つのエンティティ間の1対多の関係
+### 2つのエンティティ間の1対多の関係
 
 Spring Data JDBC は1対多の関係をサポートしています。ただし、親の属性のみが変更された場合でも、関連付けられているすべての子レコードが暗黙的に削除され、再作成されます。この動作により、パフォーマンスが低下します。さらに、Spring Data JDBC for ScalarDB の1対多の関係の特定のユースケースは、ScalarDB SQL のいくつかの制限との組み合わせにより失敗します。これらの懸念と制限を考慮すると、Spring Data JDBC for ScalarDB の機能を使用することは推奨されません。
 
@@ -423,9 +424,9 @@ public class MyApp {
 
 トランザクションを再試行するための他のオプションとして、Spring Retry の RetryTemplate や Resilience4j などがあります。お好みの再試行ライブラリを自由に選択して使用してください。
 
-### 2 フェーズコミットトランザクション
+### 2フェーズコミットトランザクション
 
-ScalarDB は [2 フェーズコミットトランザクション](../two-phase-commit-transactions.mdx)をサポートしており、ユーザーは Spring Data JDBC for ScalarDB を介してこの機能を使用できます。次の設定が必要です。
+ScalarDB は[2フェーズコミットトランザクション](../two-phase-commit-transactions.mdx)をサポートしており、ユーザーは Spring Data JDBC for ScalarDB を介してこの機能を使用できます。次の設定が必要です。
 
 #### spring.datasource.url
 
@@ -467,7 +468,7 @@ Spring Data JDBC for ScalarDB は、2PC トランザクション用の2種類の
 
 Spring Data リポジトリメソッドから例外がスローされると、実行中のすべての操作がロールバックされます。
 
-詳細については、[2 フェーズコミットトランザクションの実行方法](../two-phase-commit-transactions.mdx#2-フェーズコミットトランザクションの実行方法)を参照してください。
+詳細については、[2フェーズコミットトランザクションの実行方法](../two-phase-commit-transactions.mdx#2フェーズコミットトランザクションの実行方法)を参照してください。
 
 ```java
 @Transactional(transactionManager = "scalarDbSuspendableTransactionManager")
@@ -562,7 +563,7 @@ public interface TwoPcPlayerRepository extends ScalarDbTwoPcRepository<Player, S
 - `rollbackTransactionOnParticipant`
   - 参加者サービスでトランザクションをロールバックします。この API は、トランザクションマネージャーの設定に応じて、`prepareTransactionOnParticipant` または `validateTransactionOnParticipant` の後に呼び出す必要があります。
 
-Spring Data JDBC for ScalarDB の高レベル 2PC API を使用すると、次のように複雑なトランザクション操作を API 内に隠すことで、ビジネス ロジックに集中できます。
+Spring Data JDBC for ScalarDB の高レベル 2PC API を使用すると、次のように複雑なトランザクション操作を API 内に隠すことで、ビジネスロジックに集中できます。
 
 **コーディネーターサービス**
 
@@ -778,7 +779,7 @@ public class SampleService {
 
 ### `A constructor parameter name must not be null to be used with Spring Data JDBC` ランタイムエラー
 
-Spring Boot 3 の使用時に、`A constructor parameter name must not be null to be used with Spring Data JDBC` というランタイムエラーが発生する場合があります。この問題を回避するには、次のように `javac` に `-parameters` オプションを渡します。
+Spring Boot 3の使用時に、`A constructor parameter name must not be null to be used with Spring Data JDBC` というランタイムエラーが発生する場合があります。この問題を回避するには、次のように `javac` に `-parameters` オプションを渡します。
 
 ```gradle
   compileJava {
@@ -790,7 +791,7 @@ Spring Boot 3 の使用時に、`A constructor parameter name must not be null t
 
 Spring Data JDBC for ScalarDB を使用する次のサンプルアプリケーションを確認できます。これは参照用であり、必ずしも本番環境のコード標準を満たしているわけではありません。
 
-- [Spring Data JDBC for ScalarDB を使用した ScalarDB Cluster SQL の開始](../scalardb-cluster/getting-started-with-scalardb-cluster-sql-spring-data-jdbc.mdx)
+- [Spring Data JDBC for ScalarDB を使用した ScalarDB Cluster SQL をはじめよう](../scalardb-cluster/getting-started-with-scalardb-cluster-sql-spring-data-jdbc.mdx)
 - [マルチストレージトランザクションを使用した Spring Data JDBC for ScalarDB のサンプルアプリケーション](../scalardb-samples/spring-data-multi-storage-transaction-sample/README.mdx)
 - [マイクロサービストランザクションを使用した Spring Data JDBC for ScalarDB のサンプルアプリケーション](../scalardb-samples/spring-data-microservice-transaction-sample/README.mdx)
 

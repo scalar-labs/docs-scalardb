@@ -3,6 +3,7 @@ tags:
   - Community
   - Enterprise Standard
   - Enterprise Premium
+displayed_sidebar: docsJapanese
 ---
 
 # ScalarDB Schema Loader
@@ -17,7 +18,7 @@ ScalarDB には、実装固有のデータモデルとスキーマにマップ�
 
 トランザクションのスキーママッピングとメタデータの管理は難しい場合があるため、スキーママッピングやメタデータに関する詳細な知識を必要としないスキーマ作成ツールである ScalarDB Schema Loader を使用できます。
 
-Schema Loader で一般的な CLI オプションを指定するには、次の 2 つのオプションがあります。
+Schema Loader で一般的な CLI オプションを指定するには、次の2つのオプションがあります。
 
 - ScalarDB プロパティファイルとデータベース固有またはストレージ固有のオプションを渡します。
 - ScalarDB プロパティファイルなしでデータベース固有またはストレージ固有のオプションを渡します。(非推奨)
@@ -249,8 +250,8 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
     java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> [-r BASE_RESOURCE_UNIT]
     ```
 
-    - `<COSMOS_DB_FOR_NOSQL_KEY>` では、プライマリーキーまたはセカンダリキーを使用できます。
-    - `-r BASE_RESOURCE_UNIT` はオプションです。各データベースの RU を指定できます。データベース内のテーブルの最大 RU が設定されます。テーブルの RU を指定しない場合は、このオプションでデータベース RU が設定されます。デフォルトでは 400 です。
+    - `<COSMOS_DB_FOR_NOSQL_KEY>` では、主キーまたはセカンダリキーを使用できます。
+    - `-r BASE_RESOURCE_UNIT` はオプションです。各データベースの RU を指定できます。データベース内のテーブルの最大 RU が設定されます。テーブルの RU を指定しない場合は、このオプションでデータベース RU が設定されます。デフォルトでは400です。
   </TabItem>
   <TabItem value="Cassandra" label="Cassandra">
     ```console
@@ -554,18 +555,18 @@ Cosmos DB for NoSQL の自動スケーリングは、このオプションが `4
 | TEXT      | text      | string (JSON)       | S        | longtext | text                  | varchar2(4000) | varchar(8000)   | text    |
 | BLOB      | blob      | string (JSON)       | B        | longblob | bytea                 | RAW(2000)      | varbinary(8000) | blob    |
 
-ただし、JDBC データベースの次のデータ型は、プライマリーキーまたはセカンダリインデックスキーとして使用される場合、異なる方法で変換されます。これは、RDB データ型の制限によるものです。
+ただし、JDBC データベースの次のデータ型は、主キーまたはセカンダリインデックスキーとして使用される場合、異なる方法で変換されます。これは、RDB データ型の制限によるものです。
 
 | ScalarDB | MySQL         | PostgreSQL/YugabyteDB | Oracle       |
 |----------|---------------|-----------------------|--------------|
 | TEXT     | VARCHAR(64)   | VARCHAR(10485760)     | VARCHAR2(64) |
 | BLOB     | VARBINARY(64) |                       | RAW(64)      |
 
-ScalarDB の `BIGINT` の値の範囲は、基になるデータベースに関係なく、-2^53 から 2^53 です。
+ScalarDB の `BIGINT` の値の範囲は、基になるデータベースに関係なく、-2^53から2^53です。
 
 :::note
 
-YugabyteDB には、浮動小数点型 (FLOAT および DOUBLE) がプライマリーキー、クラスタリングキー、またはセカンダリインデックスキーとして正しく機能しないという制限があります。
+YugabyteDB には、浮動小数点型 (FLOAT および DOUBLE) が主キー、クラスタリングキー、またはセカンダリインデックスキーとして正しく機能しないという制限があります。
 
 :::
 

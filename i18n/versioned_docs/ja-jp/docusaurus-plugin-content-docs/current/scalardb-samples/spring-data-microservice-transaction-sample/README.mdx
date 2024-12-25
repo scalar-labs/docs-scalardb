@@ -1,6 +1,7 @@
 ---
 tags:
   - Enterprise Premium
+displayed_sidebar: docsJapanese
 ---
 
 # マイクロサービストランザクションを使用した Spring Data JDBC for ScalarDB のサンプルアプリケーション
@@ -12,12 +13,12 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 このチュートリアルでは、Spring Data JDBC for ScalarDB を使用してマイクロサービストランザクション用のサンプル Spring Boot アプリケーションを作成する方法について説明します。
 
-これらの機能の詳細については、[2 フェーズコミットトランザクション](../../two-phase-commit-transactions.mdx) および [Spring Data JDBC for ScalarDB ガイド](../../scalardb-sql/spring-data-guide.mdx)を参照してください。
+これらの機能の詳細については、[2フェーズコミットトランザクション](../../two-phase-commit-transactions.mdx) および [Spring Data JDBC for ScalarDB ガイド](../../scalardb-sql/spring-data-guide.mdx)を参照してください。
 
 ## このサンプルアプリケーションの前提条件
 
 - [Eclipse Temurin](https://adoptium.net/temurin/releases/) の OpenJDK LTS バージョン (8、11、17、または 21)
-- [Docker](https://www.docker.com/get-started/) 20.10 以降 ([Docker Compose](https://docs.docker.com/compose/install/) V2 以降)
+- [Docker](https://www.docker.com/get-started/) 20.10以降 ([Docker Compose](https://docs.docker.com/compose/install/) V2以降)
 
 :::note
 
@@ -31,9 +32,9 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 ### 概要
 
-このチュートリアルでは、ScalarDB の [2 フェーズコミットインターフェースを使用したトランザクション](../../two-phase-commit-transactions.mdx)を通じて、アイテムを注文し、信用枠で支払うことができるサンプル電子商取引アプリケーションを作成するプロセスについて説明します。
+このチュートリアルでは、ScalarDB の[2フェーズコミットインターフェースを使用したトランザクション](../../two-phase-commit-transactions.mdx)を通じて、アイテムを注文し、信用枠で支払うことができるサンプル電子商取引アプリケーションを作成するプロセスについて説明します。
 
-このサンプルアプリケーションには、[*Database-per-service* pattern](https://microservices.io/patterns/data/database-per-service.html) に基づく *Customer Service* と *Order Service* という 2 つのマイクロサービスがあります。
+このサンプルアプリケーションには、[*Database-per-service* pattern](https://microservices.io/patterns/data/database-per-service.html) に基づく *Customer Service* と *Order Service* という2つのマイクロサービスがあります。
 
 Customer Service は、クレジット限度額やクレジット合計などのクレジットカード情報を含む顧客情報を管理します。Order Service は、注文の確定や注文履歴の取得などの注文操作を担当します。
 
@@ -45,7 +46,7 @@ Customer Service は、クレジット限度額やクレジット合計などの
 
 :::note
 
-両方の ScalarDB Cluster は、Consensus Commit プロトコルに使用される小さなコーディネーターデータベースにアクセスします。このサンプルアプリケーションでは、セットアップと説明を簡単にするために、コーディネーターデータベースは Order Service の同じ Cassandra インスタンスに共存していますが、もちろん、コーディネーターデータベースは別のデータベースとして管理できます。
+両方の ScalarDB Cluster は、Consensus Commit プロトコルに使用される小さな Coordinator データベースにアクセスします。このサンプルアプリケーションでは、セットアップと説明を簡単にするために、Coordinator データベースは Order Service の同じ Cassandra インスタンスに共存していますが、もちろん、Coordinator データベースは別のデータベースとして管理できます。
 
 また、サンプルアプリケーションでは ScalarDB の使用方法の説明に重点を置いているため、アプリケーション固有のエラー処理、認証処理などは省略されています。
 
@@ -120,11 +121,11 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=
 - `scalar.db.sql.connection_mode`: この設定は、ScalarDB への接続方法を決定します。
 - `scalar.db.storage`: ScalarDB でマルチストレージトランザクションを使用するには、`multi-storage` を指定する必要があります。
 - `scalar.db.multi_storage.storages`: ここでストレージ名を定義する必要があります。
-- `scalar.db.multi_storage.storages.cassandra.*`: これらの設定は、`scalar.db.multi_storage.storages` で定義されているストレージ名の 1 つである `cassandra` ストレージ用です。`cassandra` ストレージのすべての `scalar.db.*` プロパティをここで設定できます。
-- `scalar.db.multi_storage.storages.mysql.*`: これらの設定は、`scalar.db.multi_storage.storages` で定義されているストレージ名の 1 つである `mysql` ストレージ用です。ここで、`mysql` ストレージのすべての `scalar.db.*` プロパティを設定できます。
+- `scalar.db.multi_storage.storages.cassandra.*`: これらの設定は、`scalar.db.multi_storage.storages` で定義されているストレージ名の1つである `cassandra` ストレージ用です。`cassandra` ストレージのすべての `scalar.db.*` プロパティをここで設定できます。
+- `scalar.db.multi_storage.storages.mysql.*`: これらの設定は、`scalar.db.multi_storage.storages` で定義されているストレージ名の1つである `mysql` ストレージ用です。ここで、`mysql` ストレージのすべての `scalar.db.*` プロパティを設定できます。
 - `scalar.db.multi_storage.namespace_mapping`: この設定は、名前空間をストレージにマップします。このサンプルアプリケーションでは、`customer_service` 名前空間テーブルの操作は `mysql` ストレージにマップされ、`order_service` 名前空間テーブルの操作は `cassandra` ストレージにマップされます。また、Consensus Commit トランザクションで使用される `coordinator` 名前空間にマップされるストレージを定義することもできます。
 - `scalar.db.multi_storage.default_storage`: この設定は、マッピングされていない名前空間テーブルでの操作に使用されるデフォルトのストレージを設定します。
-- `scalar.db.sql.default_transaction_mode`: ScalarDB で 2 フェーズコミットトランザクションモードを使用するには、`two_phase_commit_transaction` を指定する必要があります。
+- `scalar.db.sql.default_transaction_mode`: ScalarDB で2フェーズコミットトランザクションモードを使用するには、`two_phase_commit_transaction` を指定する必要があります。
 - `scalar.db.consensus_commit.isolation_level`: この設定は、ConsensusCommit に使用される分離レベルを決定します。
 
 詳細については、[マルチストレージトランザクション](../../multi-storage-transactions.mdx)を参照してください。
@@ -151,7 +152,7 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=
 - `scalar.db.username`: この設定では、Cassandra に接続するためのユーザー名を指定します。
 - `scalar.db.password`: この設定では、Cassandra に接続するためのパスワードを指定します。
 - `scalar.db.sql.default_namespace_name`: この設定では、デフォルトの名前空間が `order_service` に設定されるため、アプリケーションで名前空間を指定する必要がなくなります。
-- `scalar.db.sql.default_transaction_mode`: ScalarDB で 2 フェーズコミットトランザクションモードを使用するには、`two_phase_commit_transaction` を指定する必要があります。
+- `scalar.db.sql.default_transaction_mode`: ScalarDB で2フェーズコミットトランザクションモードを使用するには、`two_phase_commit_transaction` を指定する必要があります。
 - `scalar.db.consensus_commit.isolation_level`: この設定は、ConsensusCommit に使用される分離レベルを決定します。
 
 このサンプルアプリケーションでは、ScalarDB Cluster はスタンドアロンモード (`scalar.db.cluster.node.standalone_mode.enabled=true`) で実行されています。
@@ -188,7 +189,7 @@ docker-compose up -d cassandra mysql scalardb-cluster-node-for-customer-service 
 
 :::note
 
-コンテナが完全に起動するまで 1 分以上待つ必要があります。
+コンテナが完全に起動するまで1分以上待つ必要があります。
 
 :::
 
@@ -283,7 +284,7 @@ docker-compose up -d customer-service order-service
 
 この時点では、`credit_total` は表示されません。つまり、`credit_total` の現在の値は `0` です。
 
-次に、顧客 ID `1` を使用して、リンゴ 3 個とオレンジ 2 個を注文します。
+次に、顧客 ID `1` を使用して、リンゴ3個とオレンジ2個を注文します。
 
 注文の形式は `<Item ID>:<Count>,<Item ID>:<Count>,...` であることに注意してください。
 
@@ -380,11 +381,11 @@ docker-compose down
 
 ![シーケンス図](images/sequence_diagram.png)
 
-### 1. 2 フェーズコミットインターフェースによるトランザクションが開始されます
+### 1. 2フェーズコミットインターフェースによるトランザクションが開始されます
 
 クライアントが Order Service に注文リクエストを送信すると、`OrderService.placeOrder()` が呼び出され、マイクロサービストランザクションが開始されます。
 
-最初に、Order Service は次のように `ScalarDbTwoPcRepository.executeTwoPcTransaction()` を使用して 2 フェーズコミットインターフェースによるトランザクションを開始します。参考として、[`OrderService.java`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/order-service/src/main/java/sample/order/OrderService.java) を参照してください。
+最初に、Order Service は次のように `ScalarDbTwoPcRepository.executeTwoPcTransaction()` を使用して2フェーズコミットインターフェースによるトランザクションを開始します。参考として、[`OrderService.java`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/order-service/src/main/java/sample/order/OrderService.java) を参照してください。
 
 ```java
 // Start a two-phase commit interface transaction
@@ -393,11 +394,11 @@ TwoPcResult<String> result = orderRepository.executeTwoPcTransaction(txId -> {
 }, ...);
 ```
 
-[CRUD 操作が実行される](#2-crud-operations-are-executed)、[2 フェーズコミットプロトコルを使用してトランザクションがコミットされる](#3-トランザクションは-2-相コミットプロトコルを使用してコミットされます)、[エラー処理](#エラー処理)のアクションは、API によって自動的に実行されます。
+[CRUD 操作が実行される](#2-crud-operations-are-executed)、[2フェーズコミットプロトコルを使用してトランザクションがコミットされる](#3-トランザクションは2相コミットプロトコルを使用してコミットされます)、[エラー処理](#エラー処理)のアクションは、API によって自動的に実行されます。
 
 ### 2. CRUD 操作が実行される
 
-2 フェーズコミットインターフェイスを使用したトランザクションが開始されると、`ScalarDbTwoPcRepository.executeTwoPcTransaction()` によって CRUD 操作が実行されます。Order Service は、注文情報を `order_service.orders` テーブルに、詳細情報を `order_service.statements` テーブルに次のように格納します。参考までに、[`OrderService.java`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/order-service/src/main/java/sample/order/OrderService.java) を参照してください。
+2フェーズコミットインターフェイスを使用したトランザクションが開始されると、`ScalarDbTwoPcRepository.executeTwoPcTransaction()` によって CRUD 操作が実行されます。Order Service は、注文情報を `order_service.orders` テーブルに、詳細情報を `order_service.statements` テーブルに次のように格納します。参考までに、[`OrderService.java`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/order-service/src/main/java/sample/order/OrderService.java) を参照してください。
 
 ```java
 // Put the order info into the `orders` table
@@ -461,7 +462,7 @@ if (updatedCreditTotal > customer.creditLimit) {
 customerRepository.update(customer.withCreditTotal(updatedCreditTotal));
 ```
 
-### 3. トランザクションは 2 相コミットプロトコルを使用してコミットされます
+### 3. トランザクションは2相コミットプロトコルを使用してコミットされます
 
 Order Service は、支払いが成功したという更新を受け取った後、トランザクションをコミットしようとします。
 

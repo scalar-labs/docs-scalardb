@@ -2,6 +2,7 @@
 tags:
   - Enterprise Option
   - Public Preview
+displayed_sidebar: docsJapanese
 ---
 
 # ScalarDB Analytics をはじめよう
@@ -21,7 +22,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 ## このサンプルアプリケーションの前提条件
 
-- [Docker](https://www.docker.com/get-started/) 20.10 以降と [Docker Compose](https://docs.docker.com/compose/install/) V2 以降
+- [Docker](https://www.docker.com/get-started/) 20.10以降と [Docker Compose](https://docs.docker.com/compose/install/) V2以降
 
 <WarningLicenseKeyContact product="ScalarDB Analytics" />
 
@@ -62,10 +63,9 @@ ScalarDB Analytics を設定するために **spark-defaults.conf** で必要な
 docker compose up -d --wait
 ```
 
-このコマンドは、PostgreSQL、Cassandra、MySQL の 3 つのサービスをローカルで起動します。
+このコマンドは、PostgreSQL、Cassandra、MySQL の3つのサービスをローカルで起動します。
 
 - **PostgreSQL:** 単独で使用されます (ScalarDB 管理外)。
-
 - **Cassandra および MySQL:** ScalarDB のバックエンドデータベースとして使用されます (ScalarDB 管理下)。
 
 このガイドでは、PostgreSQL は ScalarDB トランザクションによって管理されない **ScalarDB 管理外データベース** と呼ばれ、Cassandra および DynamoDB は ScalarDB トランザクションによって管理される **ScalarDB 管理下データベース** と呼ばれます。

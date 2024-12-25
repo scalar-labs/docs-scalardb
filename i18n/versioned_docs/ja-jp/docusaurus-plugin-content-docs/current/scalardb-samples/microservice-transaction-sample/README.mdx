@@ -3,6 +3,7 @@ tags:
   - Community
   - Enterprise Standard
   - Enterprise Premium
+displayed_sidebar: docsJapanese
 ---
 
 # マイクロサービストランザクションをサポートするサンプルアプリケーションを作成する
@@ -15,9 +16,9 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 ## 概要
 
-このチュートリアルでは、ScalarDB の [2 フェーズコミットインターフェースを使用したトランザクション](../../two-phase-commit-transactions.mdx)を通じてアイテムを注文し、信用枠で支払いを行うことができるサンプル電子商取引アプリケーションを作成するプロセスを示します。
+このチュートリアルでは、ScalarDB の[2フェーズコミットインターフェースを使用したトランザクション](../../two-phase-commit-transactions.mdx)を通じてアイテムを注文し、信用枠で支払いを行うことができるサンプル電子商取引アプリケーションを作成するプロセスを示します。
 
-サンプルアプリケーションには、[database-per-service pattern](https://microservices.io/patterns/data/database-per-service.html) に基づく *Customer Service* と *Order Service* という 2 つのマイクロサービスがあります。
+サンプルアプリケーションには、[database-per-service pattern](https://microservices.io/patterns/data/database-per-service.html) に基づく *Customer Service* と *Order Service* という2つのマイクロサービスがあります。
 
 - **Customer Service** は、信用枠情報、信用限度額、信用合計などの顧客情報を管理します。
 - **Order Service** は、注文の確定や注文履歴の取得などの注文操作を担当します。
@@ -36,7 +37,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 サンプルアプリケーションは ScalarDB の使用方法を示すことに重点を置いているため、アプリケーション固有のエラー処理、認証処理、および同様の機能はサンプルアプリケーションに含まれていません。ScalarDB での例外処理の詳細については、[例外の処理方法](../../api-guide.mdx#例外の処理方法)を参照してください。
 
-さらに、サンプルアプリケーションの目的上、各サービスには 1 つのコンテナがあるため、サービス間のリクエストルーティングは不要です。ただし、実稼働環境では、スケーラビリティと可用性のために各サービスに複数のサーバーまたはホストがあるため、2 フェーズコミットインターフェイスを使用したトランザクションでは、サービス間のリクエストルーティングを検討する必要があります。要求ルーティングの詳細については、[2 フェーズコミットインターフェイスを使用したトランザクションでのリクエストルーティング](../../two-phase-commit-transactions.mdx#2-フェーズコミットインターフェイスを使用したトランザクションでのリクエストルーティング) を参照してください。
+さらに、サンプルアプリケーションの目的上、各サービスには1つのコンテナがあるため、サービス間のリクエストルーティングは不要です。ただし、実稼働環境では、スケーラビリティと可用性のために各サービスに複数のサーバーまたはホストがあるため、2フェーズコミットインターフェイスを使用したトランザクションでは、サービス間のリクエストルーティングを検討する必要があります。要求ルーティングの詳細については、[2フェーズコミットインターフェイスを使用したトランザクションでのリクエストルーティング](../../two-phase-commit-transactions.mdx#2フェーズコミットインターフェイスを使用したトランザクションでのリクエストルーティング) を参照してください。
 
 :::
 
@@ -80,7 +81,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 ## このサンプルアプリケーションの前提条件
 
 - [Eclipse Temurin](https://adoptium.net/temurin/releases/) の OpenJDK LTS バージョン (8、11、17、または 21)
-- [Docker](https://www.docker.com/get-started/) 20.10 以降 ([Docker Compose](https://docs.docker.com/compose/install/) V2 以降)
+- [Docker](https://www.docker.com/get-started/) 20.10以降 ([Docker Compose](https://docs.docker.com/compose/install/) V2以降)
 
 :::note
 
@@ -118,7 +119,7 @@ docker-compose up -d mysql cassandra
 
 :::note
 
-開発環境によっては、Docker コンテナの起動に 1 分以上かかる場合があります。
+開発環境によっては、Docker コンテナの起動に1分以上かかる場合があります。
 
 :::
 
@@ -126,7 +127,7 @@ docker-compose up -d mysql cassandra
 
 サンプルアプリケーションのデータベーススキーマ (データを整理する方法) は、Customer Service の場合は [`customer-service-schema.json`](https://github.com/scalar-labs/scalardb-samples/blob/main/microservice-transaction-sample/customer-service-schema.json)、Order Service の場合は [`order-service-schema.json`](https://github.com/scalar-labs/scalardb-samples/blob/main/microservice-transaction-sample/order-service-schema.json) で既に定義されています。
 
-スキーマを適用するには、[ScalarDB リリース](https://github.com/scalar-labs/scalardb/releases)ページに移動し、使用する ScalarDB のバージョンに一致する ScalarDB スキーマローダーを `scalardb-samples/microservice-transaction-sample` フォルダーにダウンロードします。
+スキーマを適用するには、[ScalarDB リリース](https://github.com/scalar-labs/scalardb/releases)ページに移動し、使用する ScalarDB のバージョンに一致する ScalarDB Schema Loader を `scalardb-samples/microservice-transaction-sample` フォルダーにダウンロードします。
 
 #### MySQL
 
@@ -218,7 +219,7 @@ docker-compose up -d customer-service order-service
 
 ### 注文する
 
-次に、次のコマンドを実行して、顧客 ID `1` にリンゴ 3 個とオレンジ 2 個を注文してもらいます。
+次に、次のコマンドを実行して、顧客 ID `1` にリンゴ3個とオレンジ2個を注文してもらいます。
 
 :::note
 
@@ -256,7 +257,7 @@ docker-compose up -d customer-service order-service
 
 ### 別の注文をする
 
-次のコマンドを実行して、顧客 ID `1` の `credit_total` の残額を使用してメロン 1 個を注文します。
+次のコマンドを実行して、顧客 ID `1` の `credit_total` の残額を使用してメロン1個を注文します。
 
 ```console
 ./gradlew :client:run --args="PlaceOrder 1 5:1"
@@ -302,7 +303,7 @@ docker-compose up -d customer-service order-service
 ...
 ```
 
-次のコマンドを実行して、ブドウ 1 個とマンゴー 1 個を注文してみます。
+次のコマンドを実行して、ブドウ1個とマンゴー1個を注文してみます。
 
 ```console
 ./gradlew :client:run --args="PlaceOrder 1 3:1,4:1"
@@ -355,7 +356,7 @@ io.grpc.StatusRuntimeException: FAILED_PRECONDITION: Credit limit exceeded
 ...
 ```
 
-顧客 ID `1` が支払いを済ませたので、次のコマンドを実行してブドウ 1 個とメロン 1 個を注文します。
+顧客 ID `1` が支払いを済ませたので、次のコマンドを実行してブドウ1個とメロン1個を注文します。
 
 ```console
 ./gradlew :client:run --args="PlaceOrder 1 3:1,4:1"
@@ -385,11 +386,11 @@ docker-compose down
 
 ![マイクロサービストランザクションシーケンス図](images/sequence_diagram.png)
 
-### 1. 2 フェーズコミットインターフェースを使用したトランザクションが開始されます
+### 1. 2フェーズコミットインターフェースを使用したトランザクションが開始されます
 
 クライアントが Order Service に注文リクエストを送信すると、`OrderService.placeOrder()` が呼び出され、マイクロサービストランザクションが開始されます。
 
-最初に、Order Service は次のように `start()` を使用して 2 フェーズコミットインターフェースを使用したトランザクションを開始します。参考として、[`OrderService.java`](https://github.com/scalar-labs/scalardb-samples/blob/main/microservice-transaction-sample/order-service/src/main/java/sample/order/OrderService.java) を参照してください。
+最初に、Order Service は次のように `start()` を使用して2フェーズコミットインターフェースを使用したトランザクションを開始します。参考として、[`OrderService.java`](https://github.com/scalar-labs/scalardb-samples/blob/main/microservice-transaction-sample/order-service/src/main/java/sample/order/OrderService.java) を参照してください。
 
 ```java
 transaction = twoPhaseCommitTransactionManager.start();
@@ -397,7 +398,7 @@ transaction = twoPhaseCommitTransactionManager.start();
 
 ### 2. CRUD 操作が実行されます
 
-2 フェーズコミットインターフェースを使用したトランザクションが開始されると、CRUD 操作が実行されます。Order Service は、次のように、注文情報を `order_service.orders` テーブルに、詳細情報を `order_service.statements` テーブルに格納します。参考として、[`OrderService.java`](https://github.com/scalar-labs/scalardb-samples/blob/main/microservice-transaction-sample/order-service/src/main/java/sample/order/OrderService.java) を参照してください。
+2フェーズコミットインターフェースを使用したトランザクションが開始されると、CRUD 操作が実行されます。Order Service は、次のように、注文情報を `order_service.orders` テーブルに、詳細情報を `order_service.statements` テーブルに格納します。参考として、[`OrderService.java`](https://github.com/scalar-labs/scalardb-samples/blob/main/microservice-transaction-sample/order-service/src/main/java/sample/order/OrderService.java) を参照してください。
 
 ```java
 // Put the order info into the `orders` table.
@@ -474,7 +475,7 @@ execOperationsAsParticipant("Payment", request.getTransactionId(),
 );
 ```
 
-### 3. 2 フェーズコミットプロトコルを使用してトランザクションがコミットされます
+### 3. 2フェーズコミットプロトコルを使用してトランザクションがコミットされます
 
 Order Service は、支払いが成功したという更新を受信すると、トランザクションをコミットしようとします。
 

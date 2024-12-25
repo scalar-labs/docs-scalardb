@@ -1,6 +1,7 @@
 ---
 tags:
   - Enterprise Premium
+displayed_sidebar: docsJapanese
 ---
 
 # ScalarDB SQL API ガイド
@@ -43,9 +44,9 @@ ScalarDB SQL API では、`SqlSessionFactory` でインスタンス化された 
 
 ### トランザクションモード
 
-また、ScalarDB SQL には、*トランザクション* モードと *2 フェーズコミットトランザクション* モードの 2 つのトランザクションモードがあります。
+また、ScalarDB SQL には、*トランザクション* モードと*2フェーズコミットトランザクション*モードの2つのトランザクションモードがあります。
 
-トランザクションモードでは、ユーザーには `commit` インターフェイスのみが公開され、バックグラウンドで 2 フェーズコミットが実行されます。一方、2 フェーズコミットトランザクションモードでは、ユーザーに 2 フェーズコミットスタイルのインターフェイス (`prepare` と `commit`) が公開されます。
+トランザクションモードでは、ユーザーには `commit` インターフェイスのみが公開され、バックグラウンドで2フェーズコミットが実行されます。一方、2フェーズコミットトランザクションモードでは、ユーザーに2フェーズコミットスタイルのインターフェイス (`prepare` と `commit`) が公開されます。
 
 デフォルトのトランザクションモードは、設定ファイルで指定するか、`SqlSessionFactory` をビルドするときに指定できます。
 
@@ -251,7 +252,7 @@ DML ステートメント以外のステートメントはトランザクショ�
 
 したがって、トランザクションを開始した後に非 DML ステートメントを実行しても、そのステートメントはすぐに実行され、開始したトランザクションには影響しません。
 
-このセクションでは、トランザクションモードと 2 フェーズコミットトランザクションモードの各トランザクションモードについて、トランザクションを実行する方法について説明します。
+このセクションでは、トランザクションモードと2フェーズコミットトランザクションモードの各トランザクションモードについて、トランザクションを実行する方法について説明します。
 
 ### トランザクションモード
 
@@ -294,9 +295,9 @@ try {
 ただし、他の例外の場合、例外の原因が一時的でない場合は、トランザクションが失敗する可能性があります。
 このような場合は、再試行回数を制限し、再試行をあきらめる必要があります。
 
-### 2 フェーズコミットトランザクションモード
+### 2フェーズコミットトランザクションモード
 
-これを読む前に、[このドキュメント](../two-phase-commit-transactions.mdx) を読んで、2 フェーズコミットトランザクションの概念を学んでください。
+これを読む前に、[このドキュメント](../two-phase-commit-transactions.mdx) を読んで、2フェーズコミットトランザクションの概念を学んでください。
 
 コーディネータのトランザクションを開始するには、次のようにします。
 
@@ -310,7 +311,7 @@ String transactionId = sqlSession.begin();
 sqlSession.join(transactionId);
 ```
 
-2 フェーズコミットトランザクションモードのコード例は次のとおりです。
+2フェーズコミットトランザクションモードのコード例は次のとおりです。
 
 ```java
 try {
@@ -335,7 +336,7 @@ try {
   // retry it if it failed. How to identify a transaction status is delegated to users
 } catch (SqlException e) {
   // For other exceptions, you can try retrying the transaction
-    
+
   // Rollback the transaction
   sqlSession.rollback();
 
@@ -360,5 +361,5 @@ Metadata metadata = sqlSession.getMetadata();
 ## 参考文献
 
 - [ScalarDB SQL 文法](grammar.mdx)
-- [2 フェーズコミットトランザクション](../two-phase-commit-transactions.mdx)
+- [2フェーズコミットトランザクション](../two-phase-commit-transactions.mdx)
 - [Javadoc for ScalarDB SQL](https://javadoc.io/doc/com.scalar-labs/scalardb-sql/3.13.0/index.html)
