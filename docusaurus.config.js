@@ -69,27 +69,32 @@ const config = {
                 label: '<VERSION_NUMBER>',
                 path: 'latest', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
                 banner: 'none',
+                className: 'X.X.X', // This should be the most recent version (major.minor.patch) so that the Javadoc links point to the latest version based on the major.minor version that the visitor is viewing on the docs site.
               },
               */
               current: { // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
                 label: '3.14',
                 path: 'latest', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
                 banner: 'none',
+                className: '3.14.0',
               },
               "3.13": {
                 label: '3.13',
                 path: '3.13',
                 banner: 'none',
+                className: '3.13.1',
               },
               "3.12": {
                 label: '3.12',
                 path: '3.12',
                 banner: 'none',
+                className: '3.12.4',
               },
               "3.11": {
                 label: '3.11',
                 path: '3.11',
                 banner: 'none',
+                className: '3.11.4',
               },
               "3.10": {
                 label: '3.10',
