@@ -185,8 +185,8 @@ You can use placeholders in the values, and they are replaced with environment v
 The following is an example of a configuration that uses placeholders:
 
 ```properties
-scalar.db.username=${env:<SCALAR_DB_USERNAME>:-admin}
-scalar.db.password=${env:<SCALAR_DB_PASSWORD>}
+scalar.db.username=${env:SCALAR_DB_USERNAME:-admin}
+scalar.db.password=${env:SCALAR_DB_PASSWORD}
 ```
 
 In this example configuration, ScalarDB reads the username and password from environment variables. If the environment variable `SCALAR_DB_USERNAME` does not exist, ScalarDB uses the default value `admin`.
