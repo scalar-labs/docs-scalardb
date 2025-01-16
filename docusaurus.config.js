@@ -102,9 +102,9 @@ const config = {
                 banner: 'none',
               },
               "3.9": {
-                label: '3.9',
+                label: '3.9 (unsupported)',
                 path: '3.9',
-                banner: 'none',
+                banner: 'unmaintained',
               },
               "3.8": {
                 label: '3.8 (unsupported)',
