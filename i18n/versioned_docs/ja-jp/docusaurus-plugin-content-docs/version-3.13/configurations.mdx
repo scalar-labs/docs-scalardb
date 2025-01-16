@@ -217,8 +217,8 @@ ScalarDB で使用できる追加の設定は次のとおりです。
 以下は、プレースホルダーを使用する設定の例です。
 
 ```properties
-scalar.db.username=${env:<SCALAR_DB_USERNAME>:-admin}
-scalar.db.password=${env:<SCALAR_DB_PASSWORD>}
+scalar.db.username=${env:SCALAR_DB_USERNAME:-admin}
+scalar.db.password=${env:SCALAR_DB_PASSWORD}
 ```
 
 この設定例では、ScalarDB は環境変数からユーザー名とパスワードを読み取ります。環境変数 `SCALAR_DB_USERNAME` が存在しない場合、ScalarDB はデフォルト値 `admin` を使用します。
