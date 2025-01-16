@@ -41,6 +41,11 @@ const sidebars = {
           label: 'Design',
         },
         {
+          "type": "doc",
+          "id": "glossary",
+          "label": "Glossary",
+        },
+        {
           type: 'doc',
           id: 'requirements',
           label: 'Requirements',
@@ -874,6 +879,11 @@ const sidebars = {
           type: 'doc',
           id: 'design',
           label: 'デザイン',
+        },
+        {
+          "type": "doc",
+          "id": "glossary",
+          "label": "用語集",
         },
         {
           type: 'doc',
