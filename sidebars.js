@@ -228,24 +228,18 @@ const sidebars = {
             },
           ],
         },
-        {
-          type: 'category',
-          label: 'Run Analytical Queries',
-          collapsible: true,
-          items: [
-            {
-              type: 'doc',
-              id: 'scalardb-samples/scalardb-analytics-postgresql-sample/README',
-              label: 'Run ScalarDB Analytics with PostgreSQL',
-            },
-            // This doc no longer exists but we should have some type of doc here.
-            // {
-            //   type: 'doc',
-            //   id: 'scalardb-analytics-spark/getting-started',
-            //   label: 'Run ScalarDB Analytics',
-            // },
-          ],
-        },
+        // {
+        //   type: 'category',
+        //   label: 'Run Analytical Queries',
+        //   collapsible: true,
+        //   items: [
+        //     {
+        //       type: 'doc',
+        //       id: '<PATH_TO_FILE>',
+        //       label: '<LABEL>',
+        //     }
+        //   ],
+        // },
         {
           type: 'category',
           label: 'Run Non-Transactional Storage Operations',
@@ -304,6 +298,11 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-samples/spring-data-microservice-transaction-sample/README',
               label: 'Microservice Transactions Through Spring Data JDBC',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-samples/scalardb-analytics-postgresql-sample/README',
+              label: 'Analytical Queries by Using ScalarDB Analytics with PostgreSQL',
             },
           ],
         },
@@ -1068,24 +1067,18 @@ const sidebars = {
             },
           ],
         },
-        {
-          type: 'category',
-          label: '分析クエリを実行',
-          collapsible: true,
-          items: [
-            {
-              type: 'doc',
-              id: 'scalardb-samples/scalardb-analytics-postgresql-sample/README',
-              label: 'ScalarDB Analytics with PostgreSQL を実行',
-            },
-            // This doc no longer exists but we should have some type of doc here.
-            // {
-            //   type: 'doc',
-            //   id: 'scalardb-analytics-spark/getting-started',
-            //   label: 'Run ScalarDB Analytics',
-            // },
-          ],
-        },
+        // {
+        //   type: 'category',
+        //   label: '分析クエリを実行',
+        //   collapsible: true,
+        //   items: [
+        //     {
+        //       type: 'doc',
+        //       id: '<PATH_TO_FILE>',
+        //       label: '<LABEL>',
+        //     }
+        //   ],
+        // },
         {
           type: 'category',
           label: '非トランザクションストレージ操作を実行',
@@ -1144,6 +1137,11 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-samples/spring-data-microservice-transaction-sample/README',
               label: 'Spring Data JDBC によるマイクロサービストランザクション',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-samples/scalardb-analytics-postgresql-sample/README',
+              label: 'ScalarDB Analytics with PostgreSQL を使用した分析クエリ',
             },
           ],
         },
