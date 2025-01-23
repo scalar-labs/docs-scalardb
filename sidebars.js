@@ -29,12 +29,11 @@ const sidebars = {
       type: 'category',
       label: 'About ScalarDB',
       collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'overview',
+      },
       items: [
-        {
-          type: 'doc',
-          id: 'overview',
-          label: 'Overview',
-        },
         {
           type: 'doc',
           id: 'design',
@@ -76,16 +75,19 @@ const sidebars = {
       type: 'category',
       label: 'Quickstart',
       collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'quickstart-overview',
+      },
       items: [
-        {
-          type: 'doc',
-          id: 'quick-start-overview',
-          label: 'Overview',
-        },
         {
           type: 'category',
           label: 'Try Running Transactions Through the ScalarDB Core Library',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'quickstart-scalardb-core-overview',
+          },
           items: [
             {
               type: 'doc',
@@ -103,6 +105,10 @@ const sidebars = {
           type: 'category',
           label: 'Try Running Transactions Through ScalarDB Cluster',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'quickstart-scalardb-cluster-overview',
+          },
           items: [
             {
               type: 'doc',
@@ -130,6 +136,10 @@ const sidebars = {
           type: 'category',
           label: 'Try Running Analytical Queries Through ScalarDB Analytics',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'quickstart-scalardb-analytics-overview',
+          },
           items: [
             {
               type: 'doc',
@@ -171,16 +181,19 @@ const sidebars = {
       type: 'category',
       label: 'Develop',
       collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'develop-overview',
+      },
       items: [
-        {
-          type: 'doc',
-          id: 'develop-overview',
-          label: 'Overview',
-        },
         {
           type: 'category',
           label: 'Run Transactions',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'develop-run-transactions-overview',
+          },
           items: [
             {
               type: 'doc',
@@ -232,6 +245,10 @@ const sidebars = {
         //   type: 'category',
         //   label: 'Run Analytical Queries',
         //   collapsible: true,
+        //   link: {
+        //     type: 'doc',
+        //     id: 'develop-run-analytical-queries-overview',
+        //   },
         //   items: [
         //     {
         //       type: 'doc',
@@ -244,6 +261,10 @@ const sidebars = {
           type: 'category',
           label: 'Run Non-Transactional Storage Operations',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'develop-run-non-transactional-operations-overview',
+          },
           items: [
             {
               type: 'category',
@@ -278,6 +299,10 @@ const sidebars = {
           type: 'category',
           label: 'Run Sample Applications',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'scalardb-samples/README',
+          },
           items: [
             {
               type: 'doc',
@@ -507,12 +532,11 @@ const sidebars = {
       type: 'category',
       label: 'Deploy',
       collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'deploy-overview',
+      },
       items: [
-        {
-          type: 'doc',
-          id: 'deploy-overview',
-          label: 'Overview',
-        },
         {
           type: 'doc',
           id: 'scalardb-cluster/setup-scalardb-cluster-on-kubernetes-by-using-helm-chart',
@@ -706,6 +730,10 @@ const sidebars = {
       type: 'category',
       label: 'Migrate',
       collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'migrate-overview',
+      },
       items: [
         {
           type: 'doc',
@@ -723,6 +751,10 @@ const sidebars = {
       type: 'category',
       label: 'Manage',
       collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'manage-overview',
+      },
       items: [
         {
           type: 'doc',
@@ -738,33 +770,25 @@ const sidebars = {
           type: 'category',
           label: 'Monitor',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'manage-monitor-overview',
+          },
           items: [
             {
               type: 'doc',
-              id: 'monitor-by-using-scalar-manager',
-              label: 'Use Scalar Manager',
+              id: 'scalar-manager/overview',
+              label: 'Scalar Manager Overview',
             },
             {
-              type: 'category',
-              label: 'Reference',
-              collapsible: true,
-              items: [
-                {
-                  type: 'doc',
-                  id: 'scalar-kubernetes/K8sMonitorGuide',
-                  label: 'Kubernetes Monitoring Guide',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalar-manager/overview',
-                  label: 'Scalar Manager Overview',
-                },
-                {
-                  type: 'doc',
-                  id: 'helm-charts/how-to-deploy-scalar-admin-for-kubernetes',
-                  label: 'Deploy Scalar Admin for Kubernetes',
-                },
-              ]
+              type: 'doc',
+              id: 'scalar-kubernetes/K8sMonitorGuide',
+              label: 'Kubernetes Monitoring Guide',
+            },
+            {
+              type: 'doc',
+              id: 'helm-charts/how-to-deploy-scalar-admin-for-kubernetes',
+              label: 'Deploy Scalar Admin for Kubernetes',
             },
           ],
         },
@@ -772,33 +796,25 @@ const sidebars = {
           type: 'category',
           label: 'Back Up and Restore',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'manage-backup-and-restore',
+          },
           items: [
             {
               type: 'doc',
-              id: 'manage-backup-and-restore',
-              label: 'Back Up and Restore Databases',
+              id: 'backup-restore',
+              label: 'Back Up and Restore Databases Used Through ScalarDB',
             },
             {
-              type: 'category',
-              label: 'Reference',
-              collapsible: true,
-              items: [
-                {
-                  type: 'doc',
-                  id: 'backup-restore',
-                  label: 'Back Up and Restore Databases Used Through ScalarDB',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalar-kubernetes/BackupNoSQL',
-                  label: 'Back Up a NoSQL Database in Kubernetes',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalar-kubernetes/RestoreDatabase',
-                  label: 'Restore Databases in Kubernetes',
-                },
-              ]
+              type: 'doc',
+              id: 'scalar-kubernetes/BackupNoSQL',
+              label: 'Back Up a NoSQL Database in Kubernetes',
+            },
+            {
+              type: 'doc',
+              id: 'scalar-kubernetes/RestoreDatabase',
+              label: 'Restore Databases in Kubernetes',
             },
           ],
         },
@@ -868,12 +884,11 @@ const sidebars = {
       type: 'category',
       label: 'ScalarDB について',
       collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'overview',
+      },
       items: [
-        {
-          type: 'doc',
-          id: 'overview',
-          label: '概要',
-        },
         {
           type: 'doc',
           id: 'design',
@@ -915,16 +930,19 @@ const sidebars = {
       type: 'category',
       label: 'クイックスタート',
       collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'quickstart-overview',
+      },
       items: [
-        {
-          type: 'doc',
-          id: 'quick-start-overview',
-          label: '概要',
-        },
         {
           type: 'category',
           label: 'ScalarDB Core ライブラリを使用してトランザクションを実行',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'quickstart-scalardb-core-overview',
+          },
           items: [
             {
               type: 'doc',
@@ -942,6 +960,10 @@ const sidebars = {
           type: 'category',
           label: 'ScalarDB Cluster を使用してトランザクションを実行',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'quickstart-scalardb-cluster-overview',
+          },
           items: [
             {
               type: 'doc',
@@ -969,6 +991,10 @@ const sidebars = {
           type: 'category',
           label: 'ScalarDB Analytics を使用して分析クエリを実行',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'quickstart-scalardb-analytics-overview',
+          },
           items: [
             {
               type: 'doc',
@@ -1010,16 +1036,19 @@ const sidebars = {
       type: 'category',
       label: '開発',
       collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'develop-overview',
+      },
       items: [
-        {
-          type: 'doc',
-          id: 'develop-overview',
-          label: '概要',
-        },
         {
           type: 'category',
           label: 'トランザクションを実行',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'develop-run-transactions-overview',
+          },
           items: [
             {
               type: 'doc',
@@ -1083,6 +1112,10 @@ const sidebars = {
           type: 'category',
           label: '非トランザクションストレージ操作を実行',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'develop-run-non-transactional-operations-overview',
+          },
           items: [
             {
               type: 'category',
@@ -1117,6 +1150,10 @@ const sidebars = {
           type: 'category',
           label: 'サンプルアプリケーションを実行',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'scalardb-samples/README',
+          },
           items: [
             {
               type: 'doc',
@@ -1346,12 +1383,11 @@ const sidebars = {
       type: 'category',
       label: 'デプロイ',
       collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'deploy-overview',
+      },
       items: [
-        {
-          type: 'doc',
-          id: 'deploy-overview',
-          label: '概要',
-        },
         {
           type: 'doc',
           id: 'scalardb-cluster/setup-scalardb-cluster-on-kubernetes-by-using-helm-chart',
@@ -1545,6 +1581,10 @@ const sidebars = {
       type: 'category',
       label: '移行',
       collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'migrate-overview',
+      },
       items: [
         {
           type: 'doc',
@@ -1562,6 +1602,10 @@ const sidebars = {
       type: 'category',
       label: '運用',
       collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'manage-overview',
+      },
       items: [
         {
           type: 'doc',
@@ -1577,33 +1621,25 @@ const sidebars = {
           type: 'category',
           label: '監視',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'manage-monitor-overview',
+          },
           items: [
             {
               type: 'doc',
-              id: 'monitor-by-using-scalar-manager',
-              label: 'Scalar Manager を使用',
+              id: 'scalar-manager/overview',
+              label: 'Scalar Manager の概要',
             },
             {
-              type: 'category',
-              label: '詳細',
-              collapsible: true,
-              items: [
-                {
-                  type: 'doc',
-                  id: 'scalar-kubernetes/K8sMonitorGuide',
-                  label: 'Kubernetes モニタリングガイド',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalar-manager/overview',
-                  label: 'Scalar Manager の概要',
-                },
-                {
-                  type: 'doc',
-                  id: 'helm-charts/how-to-deploy-scalar-admin-for-kubernetes',
-                  label: 'Kubernetes 用の Scalar Admin をデプロイ',
-                },
-              ]
+              type: 'doc',
+              id: 'scalar-kubernetes/K8sMonitorGuide',
+              label: 'Kubernetes モニタリングガイド',
+            },
+            {
+              type: 'doc',
+              id: 'helm-charts/how-to-deploy-scalar-admin-for-kubernetes',
+              label: 'Kubernetes 用の Scalar Admin をデプロイ',
             },
           ],
         },
@@ -1611,33 +1647,25 @@ const sidebars = {
           type: 'category',
           label: 'バックアップと復元',
           collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'manage-backup-and-restore',
+          },
           items: [
             {
               type: 'doc',
-              id: 'manage-backup-and-restore',
-              label: 'データベースをバックアップおよび復元',
+              id: 'backup-restore',
+              label: 'ScalarDB を通じて使用されるデータベースのバックアップと復元',
             },
             {
-              type: 'category',
-              label: '詳細',
-              collapsible: true,
-              items: [
-                {
-                  type: 'doc',
-                  id: 'backup-restore',
-                  label: 'ScalarDB を通じて使用されるデータベースのバックアップと復元',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalar-kubernetes/BackupNoSQL',
-                  label: 'Kubernetes で NoSQL データベースをバックアップ',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalar-kubernetes/RestoreDatabase',
-                  label: 'Kubernetes でデータベースを復元',
-                },
-              ]
+              type: 'doc',
+              id: 'scalar-kubernetes/BackupNoSQL',
+              label: 'Kubernetes で NoSQL データベースをバックアップ',
+            },
+            {
+              type: 'doc',
+              id: 'scalar-kubernetes/RestoreDatabase',
+              label: 'Kubernetes でデータベースを復元',
             },
           ],
         },
