@@ -1,6 +1,8 @@
 ---
 tags:
   - Community
+  - Enterprise Standard
+  - Enterprise Premium
 displayed_sidebar: docsJapanese
 ---
 
@@ -68,9 +70,11 @@ cd scalardb-benchmarks
 
 ### スキーマをロードする
 
-初期データをロードする前に、[ScalarDB Schema Loader](../schema-loader.mdx) を使用してテーブルを定義する必要があります。スキーマを適用するには、[ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) ページに移動し、使用している ScalarDB のバージョンに一致する ScalarDB Schema Loader を `scalardb-benchmarks` ルートフォルダーにダウンロードします。
+初期データをロードする前に、[ScalarDB Schema Loader](../schema-loader.mdx) を使用してテーブルを定義する必要があります。ScalarDB Schema Loader は、[ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) ページからダウンロードできます。ScalarDB へのアクセス方法に基づいて Schema Loader を選択してください。
+- **ScalarDB コアライブラリ (コミュニティエディション) を使用する場合:** 使用している ScalarDB のバージョンに応じて `scalardb-schema-loader-<VERSION>.jar` を選択します。次に、`.jar` ファイルを `scalardb-benchmarks` ルートディレクトリに保存します。
+- **ScalarDB Cluster (エンタープライズエディション) を使用する場合:** 使用している ScalarDB Cluster のバージョンに応じて `scalardb-cluster-schema-loader-<VERSION>-all.jar` を選択します。次に、`.jar` ファイルを `scalardb-benchmarks` ルート ディレクトリに保存します。
 
-さらに、ScalarDB のデータベース設定を含むプロパティファイルが必要です。ScalarDB プロパティファイルの設定の詳細については、[ScalarDB 設定](../configurations.mdx)を参照してください。
+さらに、Java CRUD インターフェースを介して ScalarDB にアクセスするためのプロパティファイルも必要です。ScalarDB プロパティファイルの設定の詳細については、[ScalarDB 設定](../configurations.mdx)または [ScalarDB Cluster クライアント構成](../scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#クライアント構成)を参照してください。
 
 スキーマを適用してプロパティファイルを設定したら、ベンチマークを選択し、指示に従ってテーブルを作成します。
 
@@ -81,6 +85,12 @@ cd scalardb-benchmarks
     ```console
     java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f tpcc-schema.json --coordinator
     ```
+
+    ScalarDB Cluster を使用している場合は、代わりに次のコマンドを実行します。
+
+    ```console
+    java -jar scalardb-cluster-schema-loader-<VERSION>-all.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f tpcc-schema.json --coordinator
+    ```
   </TabItem>
   <TabItem value="YCSB" label="YCSB">
     YCSB ベンチマーク用のテーブル ([`ycsb-schema.json`](https://github.com/scalar-labs/scalardb-benchmarks/blob/master/ycsb-schema.json)) を作成するには、山括弧内の内容を説明に従って置き換えて、次のコマンドを実行します。
@@ -88,12 +98,24 @@ cd scalardb-benchmarks
     ```console
     java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f ycsb-schema.json --coordinator
     ```
+
+    ScalarDB Cluster を使用している場合は、代わりに次のコマンドを実行します。
+
+    ```console
+    java -jar scalardb-cluster-schema-loader-<VERSION>-all.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f ycsb-schema.json --coordinator
+    ```
   </TabItem>
   <TabItem value="multi-storage_YCSB" label="マルチストレージ YCSB">
     マルチストレージ YCSB ベンチマーク用のテーブル ([`ycsb-multi-storage-schema.json`](https://github.com/scalar-labs/scalardb-benchmarks/blob/master/ycsb-multi-storage-schema.json)) を作成するには、山括弧内の内容を説明に従って置き換えて、次のコマンドを実行します。
 
     ```console
     java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f ycsb-multi-storage-schema.json --coordinator
+    ```
+
+    ScalarDB Cluster を使用している場合は、代わりに次のコマンドを実行します。
+
+    ```console
+    java -jar scalardb-cluster-schema-loader-<VERSION>-all.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f ycsb-multi-storage-schema.json --coordinator
     ```
   </TabItem>
 </Tabs>
