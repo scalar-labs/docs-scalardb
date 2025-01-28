@@ -14,9 +14,38 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 このページには、ScalarDB 3.14 のリリースノートのリストが含まれています。
 
+## v3.14.1
+
+**発売日:** 2025年01月23日
+
+### まとめ
+
+このリリースには、いくつかの改善とバグ修正が含まれています。
+
+### Community edition
+
+#### 改善点
+
+- ScalarDB は、MySQL 8.4 および 8.0、PostgreSQL 17、16、15、14、13、Amazon Aurora PostgreSQL 16、15、14、13、Amazon Aurora MySQL 3 および 2 をサポートするようになりました。(#2302)
+
+#### バグの修正
+
+- Cosmos DB アダプターの主鍵列の検証を追加しました。検証により、主鍵列のテキスト値に不正な文字 (`:`、`/`、`\`、`#`、`?`) が含まれていないことが保証されます。(#2292)
+- Consensus Commit のトランザクションで同じレコードに対して複数のミューテーションが発生する動作を修正しました。 (#2340)
+- Cosmos アダプターで存在しないレコードを削除するときの動作を修正しました。(#2341)
+- GetBuilder と ScanBuilder のバグを修正しました。(#2352)
+
+### Enterprise edition
+
+#### バグの修正
+
+##### ScalarDB SQL
+
+- [Spring Data JDBC For ScalarDB] `existsById()` API が動作しないというバグを修正しました。
+
 ## v3.14.0
 
-**発売日:** 2024 年 11 月 22 日
+**発売日:** 2024年11月22日
 
 ### まとめ
 
@@ -31,7 +60,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 #### 改善点
 
-- MySQL および Oracle のキー列サイズを変更するオプションを追加し、デフォルトとして 128 バイトを使用しました。([#2245](https://github.com/scalar-labs/scalardb/pull/2245))
+- MySQL および Oracle の鍵列サイズを変更するオプションを追加し、デフォルトとして 128 バイトを使用しました。([#2245](https://github.com/scalar-labs/scalardb/pull/2245))
 - メタデータキャッシュの有効期限 (`scalar.db.metadata.cache_expiration_time_secs`) のデフォルト値を 60 秒に変更しました。([#2274](https://github.com/scalar-labs/scalardb/pull/2274))
 
 #### バグの修正
