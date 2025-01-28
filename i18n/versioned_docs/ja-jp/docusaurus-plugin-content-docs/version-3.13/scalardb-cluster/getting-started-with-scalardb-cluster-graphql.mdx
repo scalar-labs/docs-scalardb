@@ -111,10 +111,10 @@ ScalarDB Cluster に接続するには、`scalar.db.transaction_manager` プロ�
 
 ## ステップ 3. スキーマをロードする
 
-ScalarDB Cluster 経由でスキーマをロードするには、ScalarDB Cluster 専用の Schema Loader (Schema Loader for Cluster) を使用する必要があります。Schema Loader for Cluster の使用方法は、JAR ファイルの名前が異なることを除いて、[Schema Loader for ScalarDB](../schema-loader.mdx) の使用方法と基本的に同じです。Cluster 用の Schema Loader は、[ScalarDB リリース](https://github.com/scalar-labs/scalardb/releases/tag/v3.13.1) からダウンロードできます。JAR ファイルをダウンロードしたら、次のコマンドで Cluster 用の Schema Loader を実行できます。
+ScalarDB Cluster 経由でスキーマをロードするには、ScalarDB Cluster 専用の Schema Loader (Schema Loader for Cluster) を使用する必要があります。Schema Loader for Cluster の使用方法は、JAR ファイルの名前が異なることを除いて、[Schema Loader for ScalarDB](../schema-loader.mdx) の使用方法と基本的に同じです。Cluster 用の Schema Loader は、[ScalarDB リリース](https://github.com/scalar-labs/scalardb/releases/tag/v3.13.2) からダウンロードできます。JAR ファイルをダウンロードしたら、次のコマンドで Cluster 用の Schema Loader を実行できます。
 
 ```console
-java -jar scalardb-cluster-schema-loader-3.13.1-all.jar --config database.properties -f schema.json --coordinator
+java -jar scalardb-cluster-schema-loader-3.13.2-all.jar --config database.properties -f schema.json --coordinator
 ```
 
 ## ステップ 4. GraphiQL から操作を実行する
@@ -186,7 +186,7 @@ query GetUser1 {
 
 自動的に生成された GraphQL スキーマは、クエリ、ミューテーション、および入出力のオブジェクトタイプを定義し、ターゲット名前空間内のすべてのテーブルに対して CRUD 操作を実行できるようにします。
 
-これらの操作は、[`DistributedTransaction`](https://javadoc.io/doc/com.scalar-labs/scalardb/3.13.1/com/scalar/db/api/DistributedTransaction.html) インターフェースで定義されている ScalarDB API と一致するように設計されています。
+これらの操作は、[`DistributedTransaction`](https://javadoc.io/doc/com.scalar-labs/scalardb/3.13.2/com/scalar/db/api/DistributedTransaction.html) インターフェースで定義されている ScalarDB API と一致するように設計されています。
 
 名前空間に `account` テーブルがあると仮定すると、次のクエリとミューテーションが生成されます。
 
