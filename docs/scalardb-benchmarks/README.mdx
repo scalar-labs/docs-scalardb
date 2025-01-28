@@ -1,6 +1,8 @@
 ---
 tags:
   - Community
+  - Enterprise Standard
+  - Enterprise Premium
 displayed_sidebar: docsEnglish
 ---
 
@@ -65,9 +67,11 @@ To build the benchmarking tools, run the following command:
 
 ### Load the schema
 
-Before loading the initial data, the tables must be defined by using the [ScalarDB Schema Loader](../schema-loader.mdx). To apply the schema, go to the [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) page and download the ScalarDB Schema Loader that matches the version of ScalarDB that you are using to the `scalardb-benchmarks` root folder.
+Before loading the initial data, the tables must be defined by using the [ScalarDB Schema Loader](../schema-loader.mdx). You can download the ScalarDB Schema Loader on the [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) page. Select the Schema Loader based on how you access ScalarDB:
+- **Using the ScalarDB Core library (Community edition)?:** Choose `scalardb-schema-loader-<VERSION>.jar` for the version of ScalarDB that you're using. Then, save the `.jar` file in the `scalardb-benchmarks` root directory.
+- **Using ScalarDB Cluster (Enterprise edition)?:** Choose `scalardb-cluster-schema-loader-<VERSION>-all.jar` for the version of ScalarDB Cluster that you're using. Then, save the `.jar` file in the `scalardb-benchmarks` root directory.
 
-In addition, you need a properties file that contains database configurations for ScalarDB. For details about configuring the ScalarDB properties file, see [ScalarDB Configurations](../configurations.mdx).
+In addition, you need a properties file for accessing ScalarDB via the Java CRUD interface. For details about configuring the ScalarDB properties file, see [ScalarDB Configurations](../configurations.mdx) or [ScalarDB Cluster Client Configurations](../scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#client-configurations).
 
 After applying the schema and configuring the properties file, select a benchmark and follow the instructions to create the tables.
 
@@ -78,6 +82,12 @@ After applying the schema and configuring the properties file, select a benchmar
     ```console
     java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f tpcc-schema.json --coordinator
     ```
+
+    If you are using ScalarDB Cluster, run the following command instead:
+
+    ```console
+    java -jar scalardb-cluster-schema-loader-<VERSION>-all.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f tpcc-schema.json --coordinator
+    ```
   </TabItem>
   <TabItem value="YCSB" label="YCSB">
     To create tables for YCSB benchmarking ([`ycsb-schema.json`](https://github.com/scalar-labs/scalardb-benchmarks/blob/master/ycsb-schema.json)), run the following command, replacing the contents in the angle brackets as described:
@@ -85,12 +95,24 @@ After applying the schema and configuring the properties file, select a benchmar
     ```console
     java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f ycsb-schema.json --coordinator
     ```
+
+    If you are using ScalarDB Cluster, run the following command instead:
+
+    ```console
+    java -jar scalardb-cluster-schema-loader-<VERSION>-all.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f ycsb-schema.json --coordinator
+    ```
   </TabItem>
   <TabItem value="multi-storage_YCSB" label="Multi-storage YCSB">
     To create tables for multi-storage YCSB benchmarking ([`ycsb-multi-storage-schema.json`](https://github.com/scalar-labs/scalardb-benchmarks/blob/master/ycsb-multi-storage-schema.json)), run the following command, replacing the contents in the angle brackets as described:
 
     ```console
     java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f ycsb-multi-storage-schema.json --coordinator
+    ```
+
+    If you are using ScalarDB Cluster, run the following command instead:
+
+    ```console
+    java -jar scalardb-cluster-schema-loader-<VERSION>-all.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f ycsb-multi-storage-schema.json --coordinator
     ```
   </TabItem>
 </Tabs>
