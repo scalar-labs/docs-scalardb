@@ -81,7 +81,7 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
 }
 ```
 
-インポートテーブルスキーマは、名前空間名、テーブル名、および `transaction` フィールドで設定されます。`transaction` フィールドは、テーブルがトランザクション用にインポートされるかどうかを示します。`transaction` フィールドを `true` に設定するか、`transaction` フィールドを指定しない場合、このツールは必要に応じてトランザクションメタデータを含むテーブルを作成します。`transaction` フィールドを `false` に設定すると、このツールはトランザクションメタデータを追加せずにテーブルをインポートします (つまり、[Storage API](storage-abstraction.mdx) を使用するテーブルの場合)。
+インポートテーブルスキーマは、名前空間名、テーブル名、および `transaction` フィールドで設定されます。`transaction` フィールドは、テーブルがトランザクション用にインポートされるかどうかを示します。`transaction` フィールドを `true` に設定するか、`transaction` フィールドを指定しない場合、このツールは必要に応じてトランザクションメタデータを含むテーブルを作成します。`transaction` フィールドを `false` に設定すると、このツールはトランザクションメタデータを追加せずにテーブルをインポートします (つまり、[Storage API](run-non-transactional-storage-operations-through-primitive-crud-interface.mdx) を使用するテーブルの場合)。
 
 ## JDBC データベースから ScalarDB へのデータ型マッピング
 
