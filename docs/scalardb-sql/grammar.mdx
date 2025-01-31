@@ -584,7 +584,7 @@ The `SELECT` command retrieves records from the database. ScalarDB SQL creates a
 3. If you specify the indexed column value with the `equal to` (`=`) operator in the `WHERE` clause without the `ORDER BY` clause, the `SELECT` command will use an index `Scan` operation.
 4. For other cases, the `SELECT` command will be converted to a cross-partition `Scan` operation.
 
-You need to enable the cross-partition scan option and the cross-partition scan with filtering and ordering options if you want to flexibly retrieve records across partitions with arbitrary conditions and orderings. Currently, the ordering option is available only for JDBC databases. For details about configurations, see [Cross-partition scan configurations](../configurations.mdx#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.mdx).
+You need to enable the cross-partition scan option and the cross-partition scan with filtering and ordering options if you want to flexibly retrieve records across partitions with arbitrary conditions and orderings. Currently, the ordering option is available only for JDBC databases. For details about configurations, see [Cross-partition scan configurations](../configurations.mdx#cross-partition-scan-configurations) and [ScalarDB Cluster SQL configurations](../scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-client-configurations).
 
 :::warning
 
@@ -1211,7 +1211,7 @@ UpsertStatement statement4 = StatementBuilder.upsertInto("ns", "tbl")
 
 The `UPDATE` command updates existing records in the database. You can specify any conditions in the `WHERE` clause to filter records. However, specifying a primary key uniquely as much as possible is recommended to avoid the cross-partition operation since it might cause performance and consistency issues, especially in non-JDBC databases. Because ScalarDB SQL creates an execution plan for an `UPDATE` command that uses a `Get` or `Scan` operation to identify the target records, the same rule is applied for the selection of records. To understand what kinds of `WHERE` clauses cause cross-partition operations and to avoid such operations, see [SELECT](#select).
 
-You need to enable the cross-partition scan option if you want to update all records across partitions without specifying the `WHERE` clause. You also need to enable the cross-partition scan with filtering option if you want to flexibly update records across partitions with arbitrary conditions in the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](../configurations.mdx#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.mdx).
+You need to enable the cross-partition scan option if you want to update all records across partitions without specifying the `WHERE` clause. You also need to enable the cross-partition scan with filtering option if you want to flexibly update records across partitions with arbitrary conditions in the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](../configurations.mdx#cross-partition-scan-configurations) and [ScalarDB Cluster SQL configurations](../scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-client-configurations).
 
 :::warning
 
@@ -1439,7 +1439,7 @@ UpdateStatement statement9 =
 
 The `DELETE` command deletes records in the database. You can specify any conditions in the `WHERE` clause to filter records. However, specifying a primary key uniquely is recommended as much as possible to avoid the cross-partition operation since it might cause performance and consistency issues, especially in non-JDBC databases. Because ScalarDB SQL creates an execution plan for a `DELETE` command that uses a `Get` or `Scan` operation to identify the target records, the same rule is applied for the selection of records. To understand what kinds of `WHERE` clauses cause cross-partition operations and to avoid such operations, see [SELECT](#select).
 
-You need to enable the cross-partition scan option if you want to delete all records across partitions without specifying the `WHERE` clause. You also need to enable the cross-partition scan with filtering option if you want to flexibly delete records across partitions with arbitrary conditions in the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](../configurations.mdx#cross-partition-scan-configurations) and [ScalarDB SQL Configurations](./configurations.mdx).
+You need to enable the cross-partition scan option if you want to delete all records across partitions without specifying the `WHERE` clause. You also need to enable the cross-partition scan with filtering option if you want to flexibly delete records across partitions with arbitrary conditions in the `WHERE` clause. For details about configurations, see [Cross-partition scan configurations](../configurations.mdx#cross-partition-scan-configurations) and [ScalarDB Cluster SQL configurations](../scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-client-configurations).
 
 :::warning
 
