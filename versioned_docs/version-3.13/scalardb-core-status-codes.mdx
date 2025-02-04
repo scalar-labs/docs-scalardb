@@ -6,9 +6,9 @@ tags:
 displayed_sidebar: docsEnglish
 ---
 
-# ScalarDB Error Codes
+# ScalarDB Core Error Codes
 
-This page provides a list of error codes in ScalarDB.
+This page provides a list of error codes in ScalarDB Core.
 
 ## Error code classes and descriptions
 
@@ -202,7 +202,7 @@ The clustering key is not properly specified. Operation: %s
 **Message**
 
 ```markdown
-This feature is not supported in the ScalarDB Community edition
+The authentication and authorization feature is not enabled. To use this feature, you must enable it. Note that this feature is supported only in the ScalarDB Enterprise edition
 ```
 
 ### `CORE-10023`
@@ -1139,6 +1139,54 @@ This operation is supported only when no conditions are specified. If you want t
 
 ```markdown
 The value of the column %s in the primary key contains an illegal character. Primary-key columns must not contain any of the following characters in Cosmos DB: ':', '/', '\', '#', '?'. Value: %s
+```
+
+### `CORE-10146`
+
+**Message**
+
+```markdown
+Inserting already-written data is not allowed
+```
+
+### `CORE-10147`
+
+**Message**
+
+```markdown
+Deleting already-inserted data is not allowed
+```
+
+### `CORE-10148`
+
+**Message**
+
+```markdown
+Invalid key: Column %s does not exist in the table %s in namespace %s.
+```
+
+### `CORE-10149`
+
+**Message**
+
+```markdown
+Invalid base64 encoding for blob value for column %s in table %s in namespace %s
+```
+
+### `CORE-10150`
+
+**Message**
+
+```markdown
+Invalid number specified for column %s in table %s in namespace %s
+```
+
+### `CORE-10151`
+
+**Message**
+
+```markdown
+Method null argument not allowed
 ```
 
 ## `CORE-2xxxx` status codes
