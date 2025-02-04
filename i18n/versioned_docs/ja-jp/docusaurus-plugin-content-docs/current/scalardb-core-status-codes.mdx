@@ -6,13 +6,13 @@ tags:
 displayed_sidebar: docsJapanese
 ---
 
-# ScalarDB エラーコード
+# ScalarDB Core エラーコード
 
 import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 <TranslationBanner />
 
-このページでは、ScalarDB のエラーコードの一覧を示します。
+このページでは、ScalarDB Core のエラーコードの一覧を示します。
 
 ## エラーコードのクラスと説明
 
@@ -206,7 +206,7 @@ The clustering key is not properly specified. Operation: %s
 **メッセージ**
 
 ```markdown
-The encryption feature is not enabled. To encrypt data at rest, you must enable this feature. Note that this feature is supported only in the ScalarDB Enterprise edition
+The authentication and authorization feature is not enabled. To use this feature, you must enable it. Note that this feature is supported only in the ScalarDB Enterprise edition
 ```
 
 ### `CORE-10023`
@@ -1142,7 +1142,7 @@ This operation is supported only when no conditions are specified. If you want t
 **メッセージ**
 
 ```markdown
-ScalarDB Transparent Data Encryption is not enabled. To use ScalarDB Transparent Data Encryption, you must enable it. Note that this feature is supported only in the ScalarDB Enterprise edition
+The encryption feature is not enabled. To encrypt data at rest, you must enable this feature. Note that this feature is supported only in the ScalarDB Enterprise edition
 ```
 
 ### `CORE-10144`
@@ -1159,6 +1159,54 @@ The variable key column size must be greater than or equal to 64
 
 ```markdown
 The value of the column %s in the primary key contains an illegal character. Primary-key columns must not contain any of the following characters in Cosmos DB: ':', '/', '\', '#', '?'. Value: %s
+```
+
+### `CORE-10146`
+
+**メッセージ**
+
+```markdown
+Inserting already-written data is not allowed
+```
+
+### `CORE-10147`
+
+**メッセージ**
+
+```markdown
+Deleting already-inserted data is not allowed
+```
+
+### `CORE-10148`
+
+**メッセージ**
+
+```markdown
+Invalid key: Column %s does not exist in the table %s in namespace %s.
+```
+
+### `CORE-10149`
+
+**メッセージ**
+
+```markdown
+Invalid base64 encoding for blob value for column %s in table %s in namespace %s
+```
+
+### `CORE-10150`
+
+**メッセージ**
+
+```markdown
+Invalid number specified for column %s in table %s in namespace %s
+```
+
+### `CORE-10151`
+
+**メッセージ**
+
+```markdown
+Method null argument not allowed
 ```
 
 ## `CORE-2xxxx` ステータスコード
@@ -1610,7 +1658,7 @@ Fetching the next result failed
 **メッセージ**
 
 ```markdown
-Rolling back the transaction failed
+Rolling back the transaction failed. Details: %s
 ```
 
 ### `CORE-30030`
