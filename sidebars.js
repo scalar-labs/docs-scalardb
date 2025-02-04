@@ -373,6 +373,11 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'scalardb-cluster/deployment-patterns-for-microservices',
+              label: 'ScalarDB Cluster Deployment Patterns for Microservices',
+            },
+            {
+              type: 'doc',
               id: 'scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api',
               label: 'ScalarDB Cluster Java API',
             },
@@ -1221,6 +1226,11 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/compatibility',
               label: 'ScalarDB Cluster 互換性マトリックス',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/deployment-patterns-for-microservices',
+              label: 'マイクロサービスにおける ScalarDB Cluster のデプロイパターン',
             },
             {
               type: 'doc',
