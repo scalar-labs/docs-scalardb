@@ -251,6 +251,12 @@ ScalarDB has its own data model and schema that maps to the implementation-speci
 
 You can run transactions by using a one-phase or a two-phase commit interface. Select your method for running transactions.
 
+:::note
+
+If you are building a monolithic application, you should use the one-phase commit interface. However, if you are building a microservice application, see [ScalarDB Cluster Deployment Patterns for Microservices](./deployment-patterns-for-microservices.mdx) to decide which interface to use.
+
+:::
+
 <Tabs groupId="interfaces" queryString>
   <TabItem value="Java" label="Java" default>
     <h3>One-phase commit interface</h3>
