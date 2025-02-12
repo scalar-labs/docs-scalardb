@@ -83,13 +83,13 @@ The data type mapping between ScalarDB and JDBC is as follows:
 
 | ScalarDB Type | JDBC (Java) Type   |
 |---------------|--------------------|
-| Boolean       | boolean or Boolean |
-| Int           | int or Integer     |
-| BigInt        | long or Long       |
-| Float         | float or Float     |
-| Double        | double or Double   |
-| Text          | String             |
-| Blob          | byte[]             |
+| BOOLEAN       | boolean or Boolean |
+| INT           | int or Integer     |
+| BIGINT        | long or Long       |
+| FLOAT         | float or Float     |
+| DOUBLE        | double or Double   |
+| TEXT          | String             |
+| BLOB          | byte[]             |
 
 How to get the data from a `java.sql.ResultSet` object for each data type is as follows:
 
@@ -97,25 +97,25 @@ How to get the data from a `java.sql.ResultSet` object for each data type is as 
 try (ResultSet resultSet = ...) {
   resultSet.next();
 
-  // Get a Boolean value of a column
+  // Get a BOOLEAN value of a column
   boolean booleanValue = resultSet.getBoolean("<column name>");
 
-  // Get an Int value of a column
+  // Get an INT value of a column
   int intValue = resultSet.getInt("<column name>");
 
-  // Get a BigInt value of a column
+  // Get a BIGINT value of a column
   long bigIntValue = resultSet.getLong("<column name>");
 
-  // Get a Float value of a column
+  // Get a FLOAT value of a column
   float floatValue = resultSet.getFloat("<column name>");
 
-  // Get a Double value of a column
+  // Get a DOUBLE value of a column
   double doubleValue = resultSet.getDouble("<column name>");
 
-  // Get a Text value of a column
+  // Get a TEXT value of a column
   String textValue = resultSet.getString("<column name>");
 
-  // Get a Blob value of a column
+  // Get a BLOB value of a column
   byte[] blobValue = resultSet.getBytes("<column name>");
 }
 ```
@@ -124,26 +124,26 @@ How to set the data as a parameter for each data type for a `java.sql.PreparedSt
 
 ```java
 try (PreparedStatement preparedStatement = ...) {
-  // Set a Boolean value as parameter
-  preparedStatement.setBoolean(1, <Boolean value>);
+  // Set a BOOLEAN value as parameter
+  preparedStatement.setBoolean(1, <BOOLEAN value>);
 
-  // Set an Int value as parameter
-  preparedStatement.setInt(2, <Int value>);
+  // Set an INT value as parameter
+  preparedStatement.setInt(2, <INT value>);
 
-  // Set a BigInt value as parameter
-  preparedStatement.setLong(3, <BigInt value>);
+  // Set a BIGINT value as parameter
+  preparedStatement.setLong(3, <BIGINT value>);
 
-  // Set a Float value as parameter
-  preparedStatement.setFloat(4, <Float value>);
+  // Set a FLOAT value as parameter
+  preparedStatement.setFloat(4, <FLOAT value>);
 
-  // Set a Double value as parameter
-  preparedStatement.setDouble(5, <Double value>);
+  // Set a DOUBLE value as parameter
+  preparedStatement.setDouble(5, <DOUBLE value>);
 
-  // Set a Text value as parameter
-  preparedStatement.setString(7, "<Text value>");
+  // Set a TEXT value as parameter
+  preparedStatement.setString(7, "<TEXT value>");
 
-  // Set a Blob value as parameter
-  preparedStatement.setBytes(8, <Blob value>);
+  // Set a BLOB value as parameter
+  preparedStatement.setBytes(8, <BLOB value>);
 
   preparedStatement.execute();
 }
