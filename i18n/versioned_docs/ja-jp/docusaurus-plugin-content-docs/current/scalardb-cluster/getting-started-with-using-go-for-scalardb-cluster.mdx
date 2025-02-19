@@ -1,0 +1,444 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Cluster での Go をはじめよう
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+import WarningLicenseKeyContact from '/src/components/ja-jp/_warning-license-key-contact.mdx';
+
+<TranslationBanner />
+
+このドキュメントでは、Go を使用して ScalarDB Cluster の gRPC クライアントコードを記述する方法について説明します。
+
+## 前提条件
+
+- [Go](https://go.dev/dl/) (最新の3つのメジャーリリースのいずれか)
+- Kubernetes クラスターで実行されている ScalarDB Cluster
+  - [ScalarDB Cluster をローカルにデプロイする方法](setup-scalardb-cluster-on-kubernetes-by-using-helm-chart.mdx)の手順に従ってデプロイした Kubernetes クラスターで ScalarDB Cluster が実行されていることを前提としています。
+
+<WarningLicenseKeyContact product="ScalarDB Cluster" />
+
+## サンプルアプリケーション
+
+このチュートリアルでは、口座間で送金できる電子マネーアプリケーションを作成するプロセスについて説明します。
+
+## ステップ 1. `schema.json` を作成する
+
+以下は簡単なサンプルスキーマです。
+
+`schema.json` を作成し、ファイルに次の内容を追加します。
+
+```json
+{
+  "emoney.account": {
+    "transaction": true,
+    "partition-key": [
+      "id"
+    ],
+    "clustering-key": [],
+    "columns": {
+      "id": "TEXT",
+      "balance": "INT"
+    }
+  }
+}
+```
+
+## ステップ 2. `database.properties` を作成する
+
+ScalarDB Cluster の Schema Loader 用に `database.properties` を作成する必要があります。ただし、まず `LoadBalancer` サービス (`scalardb-cluster-envoy`) のサービスリソースの `EXTERNAL-IP` アドレスを取得する必要があります。
+
+`EXTERNAL-IP` アドレスを確認するには、次のコマンドを実行します。
+
+```console
+kubectl get svc scalardb-cluster-envoy
+NAME                     TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)           AGE
+scalardb-cluster-envoy   LoadBalancer   10.105.121.51   localhost     60053:30641/TCP   16h
+```
+
+この場合、`EXTERNAL-IP` アドレスは `localhost` です。
+
+次に、`database.properties` を作成し、ファイルに次の内容を追加します。
+
+```properties
+scalar.db.transaction_manager=cluster
+scalar.db.contact_points=indirect:localhost
+```
+
+ScalarDB Cluster に接続するには、`scalar.db.transaction_manager` プロパティに `cluster` を指定する必要があります。また、このチュートリアルでは `indirect` クライアントモードを使用して Envoy のサービスリソースに接続します。クライアントモードの詳細については、[Java API を使用した ScalarDB Cluster の開発者ガイド](developer-guide-for-scalardb-cluster-with-java-api.mdx)を参照してください。
+
+## ステップ 3. スキーマをロードする
+
+ScalarDB Cluster 経由でスキーマをロードするには、専用の ScalarDB Cluster 用 Schema Loader (Schema Loader for Cluster) を使用する必要があります。Schema Loader for Cluster の使用方法は、JAR ファイルの名前が異なることを除いて、[Schema Loader for ScalarDB](../schema-loader.mdx) の使用方法と基本的に同じです。Schema Loader for Cluster は、[ScalarDB リリース](https://github.com/scalar-labs/scalardb/releases/tag/v3.15.1)からダウンロードできます。JAR ファイルをダウンロードしたら、次のコマンドで Schema Loader for Cluster を実行できます。
+
+```console
+java -jar scalardb-cluster-schema-loader-3.15.1-all.jar --config database.properties -f schema.json --coordinator
+```
+
+## ステップ 4. Go 環境をセットアップする
+
+gRPC クイックスタートドキュメントの [Prerequisites](https://grpc.io/docs/languages/go/quickstart/#prerequisites) セクションに従って、次のコンポーネントをインストールします。
+
+- Go
+- プロトコルバッファコンパイラ、`protoc`、バージョン3.15以降
+- プロトコルコンパイラ用の Go プラグイン
+
+## ステップ 5. ScalarDB Cluster gRPC のスタブコードを生成する
+
+ScalarDB Cluster の gRPC サーバーと通信するには、proto ファイルからスタブコードを生成する必要があります。
+
+まず、新しい作業ディレクトリに、次のコマンドを実行して、gRPC コードの生成に使用する `scalardb-cluster` という名前のディレクトリを作成します。
+
+```console
+mkdir scalardb-cluster
+```
+
+次に、`scalardb-cluster.proto` ファイルをダウンロードし、作成したディレクトリに保存します。商用ライセンスをお持ちの ScalarDB Cluster ユーザーで、`scalardb-cluster.proto` ファイルが必要な場合は、[お問い合わせ](https://www.scalar-labs.com/support)ください。
+
+次のコマンドを実行して gRPC コードを生成します。
+
+```console
+protoc --go_out=. --go_opt=paths=source_relative \
+  --go_opt=Mscalardb-cluster/scalardb-cluster.proto=example.com/scalardb-cluster \
+  --go-grpc_out=. --go-grpc_opt=paths=source_relative \
+  --go-grpc_opt=Mscalardb-cluster/scalardb-cluster.proto=example.com/scalardb-cluster \
+  scalardb-cluster/scalardb-cluster.proto
+```
+
+コマンドを実行すると、`scalardb-cluster` サブディレクトリに `scalardb-cluster.pb.go` と `scalardb-cluster_grpc.pb.go` という2つのファイルが表示されます。
+
+## ステップ 6. サンプルアプリケーションの作成
+
+以下は、gRPC コードを使用するプログラムです。これを作業ディレクトリに `main.go` として保存します。このプログラムは、[ScalarDB をはじめよう](https://scalardb.scalar-labs.com/docs/latest/getting-started-with-scalardb/)の `ElectronicMoney.java` プログラムと同じことを行います。環境内の ScalarDB Cluster `LoadBalancer` サービスの `EXTERNAL-IP` 値に基づいて `SERVER_ADDRESS` の値を更新する必要があることに注意してください。
+
+```go
+package main
+
+import (
+	"context"
+	"errors"
+	"flag"
+	"fmt"
+	"log"
+	"os"
+	"time"
+
+	pb "emoney/scalardb-cluster"
+
+	"google.golang.org/grpc"
+	"google.golang.org/grpc/credentials/insecure"
+)
+
+const (
+	SERVER_ADDRESS = "localhost:60053"
+	NAMESPACE      = "emoney"
+	TABLENAME      = "account"
+	ID             = "id"
+	BALANCE        = "balance"
+)
+
+var requestHeader = pb.RequestHeader{HopLimit: 10}
+
+type TxFn func(ctx context.Context, client pb.DistributedTransactionClient, transactionId string) error
+
+func withTransaction(fn TxFn) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	// Set up a connection to the server.
+	conn, err := grpc.Dial(SERVER_ADDRESS, grpc.WithTransportCredentials(insecure.NewCredentials()))
+	if err != nil {
+		return err
+	}
+	defer conn.Close()
+
+	client := pb.NewDistributedTransactionClient(conn)
+
+	// Begin a transaction
+	beginResponse, err := client.Begin(ctx, &pb.BeginRequest{RequestHeader: &requestHeader})
+	if err != nil {
+		return err
+	}
+	transactionId := beginResponse.TransactionId
+
+	// Execute the function
+	err = fn(ctx, client, transactionId)
+	if err != nil {
+		// Rollback the transaction if there is an error
+		client.Rollback(ctx, &pb.RollbackRequest{TransactionId: transactionId})
+		return err
+	}
+
+	// Commit the transaction
+	_, err = client.Commit(ctx, &pb.CommitRequest{RequestHeader: &requestHeader, TransactionId: transactionId})
+	return err
+}
+
+func charge(ctx context.Context, client pb.DistributedTransactionClient, transactionId string, id string, amount int) error {
+	partitionKey := pb.Key{Columns: []*pb.Column{{Name: ID, Value: &pb.Column_TextValue_{TextValue: &pb.Column_TextValue{Value: &id}}}}}
+
+	// Retrieve the current balance for id
+	get := pb.Get{
+		NamespaceName: NAMESPACE, TableName: TABLENAME,
+		PartitionKey: &partitionKey, ClusteringKey: nil,
+		GetType: pb.Get_GET_TYPE_GET,
+	}
+	getResponse, err := client.Get(ctx, &pb.GetRequest{RequestHeader: &requestHeader, TransactionId: transactionId, Get: &get})
+	if err != nil {
+		return err
+	}
+
+	// Calculate the balance
+	balance := int32(amount)
+	if result := getResponse.GetResult(); result != nil {
+		for _, column := range result.GetColumns() {
+			if column.Name == BALANCE {
+				balance += column.GetIntValue().GetValue()
+				break
+			}
+		}
+	}
+
+	// Update the balance
+	put := pb.Put{
+		NamespaceName: NAMESPACE, TableName: TABLENAME,
+		PartitionKey: &partitionKey, ClusteringKey: nil,
+		Columns: []*pb.Column{
+			{Name: BALANCE, Value: &pb.Column_IntValue_{IntValue: &pb.Column_IntValue{Value: &balance}}},
+		},
+	}
+	_, err = client.Put(ctx, &pb.PutRequest{RequestHeader: &requestHeader, TransactionId: transactionId, Puts: []*pb.Put{&put}})
+	return err
+}
+
+func pay(ctx context.Context, client pb.DistributedTransactionClient, transactionId string, fromId string, toId string, amount int) error {
+	fromPartitionKey := pb.Key{Columns: []*pb.Column{{Name: ID, Value: &pb.Column_TextValue_{TextValue: &pb.Column_TextValue{Value: &fromId}}}}}
+	toPartitionKey := pb.Key{Columns: []*pb.Column{{Name: ID, Value: &pb.Column_TextValue_{TextValue: &pb.Column_TextValue{Value: &toId}}}}}
+
+	// Retrieve the current balances for ids
+	fromGet := pb.Get{
+		NamespaceName: NAMESPACE, TableName: TABLENAME,
+		PartitionKey: &fromPartitionKey, ClusteringKey: nil,
+		GetType: pb.Get_GET_TYPE_GET,
+	}
+	fromGetResponse, err := client.Get(ctx, &pb.GetRequest{RequestHeader: &requestHeader, TransactionId: transactionId, Get: &fromGet})
+	if err != nil {
+		return err
+	}
+	toGet := pb.Get{
+		NamespaceName: NAMESPACE, TableName: TABLENAME,
+		PartitionKey: &toPartitionKey, ClusteringKey: nil,
+		GetType: pb.Get_GET_TYPE_GET,
+	}
+	toGetResponse, err := client.Get(ctx, &pb.GetRequest{RequestHeader: &requestHeader, TransactionId: transactionId, Get: &toGet})
+	if err != nil {
+		return err
+	}
+
+	// Calculate the balances (it assumes that both accounts exist)
+	var (
+		fromBalance int32
+		toBalance   int32
+	)
+	for _, column := range fromGetResponse.GetResult().GetColumns() {
+		if column.Name == BALANCE {
+			fromBalance = column.GetIntValue().GetValue()
+			break
+		}
+	}
+	for _, column := range toGetResponse.GetResult().GetColumns() {
+		if column.Name == BALANCE {
+			toBalance = column.GetIntValue().GetValue()
+			break
+		}
+	}
+	newFromBalance := fromBalance - int32(amount)
+	newToBalance := toBalance + int32(amount)
+
+	if newFromBalance < 0 {
+		return errors.New(fromId + " doesn't have enough balance.")
+	}
+
+	// Update the balances
+	fromPut := pb.Put{
+		NamespaceName: NAMESPACE, TableName: TABLENAME,
+		PartitionKey: &fromPartitionKey, ClusteringKey: nil,
+		Columns: []*pb.Column{
+			{Name: BALANCE, Value: &pb.Column_IntValue_{IntValue: &pb.Column_IntValue{Value: &newFromBalance}}},
+		},
+	}
+	toPut := pb.Put{
+		NamespaceName: NAMESPACE, TableName: TABLENAME,
+		PartitionKey: &toPartitionKey, ClusteringKey: nil,
+		Columns: []*pb.Column{
+			{Name: BALANCE, Value: &pb.Column_IntValue_{IntValue: &pb.Column_IntValue{Value: &newToBalance}}},
+		},
+	}
+	_, err = client.Put(ctx, &pb.PutRequest{RequestHeader: &requestHeader, TransactionId: transactionId, Puts: []*pb.Put{&fromPut, &toPut}})
+	return err
+}
+
+func getBalance(ctx context.Context, client pb.DistributedTransactionClient, transactionId string, id string) (int, error) {
+	// Retrieve the current balance for id
+	get := pb.Get{
+		NamespaceName: NAMESPACE, TableName: TABLENAME,
+		PartitionKey:  &pb.Key{Columns: []*pb.Column{{Name: ID, Value: &pb.Column_TextValue_{TextValue: &pb.Column_TextValue{Value: &id}}}}},
+		ClusteringKey: nil,
+		GetType:       pb.Get_GET_TYPE_GET,
+	}
+	getResponse, err := client.Get(ctx, &pb.GetRequest{RequestHeader: &requestHeader, TransactionId: transactionId, Get: &get})
+	if err != nil {
+		return 0, err
+	}
+	if getResponse.GetResult() == nil || len(getResponse.GetResult().GetColumns()) == 0 {
+		return 0, errors.New("Account " + id + " doesn't exist.")
+	}
+
+	var balance int
+	for _, column := range getResponse.GetResult().GetColumns() {
+		if column.Name == BALANCE {
+			balance = int(column.GetIntValue().GetValue())
+			break
+		}
+	}
+	return balance, nil
+}
+
+func main() {
+	var (
+		action = flag.String("action", "", "Action to perform: charge / pay / getBalance")
+		fromId = flag.String("from", "", "From account (needed for pay)")
+		toId   = flag.String("to", "", "To account (needed for charge and pay)")
+		id     = flag.String("id", "", "Account id (needed for getBalance)")
+	)
+	var amount int
+	flag.IntVar(&amount, "amount", 0, "Amount to transfer (needed for charge and pay)")
+	flag.Parse()
+
+	if *action == "charge" {
+		if *toId == "" || amount < 0 {
+			printUsageAndExit()
+		}
+		err := withTransaction(func(ctx context.Context, client pb.DistributedTransactionClient, txId string) error {
+			return charge(ctx, client, txId, *toId, amount)
+		})
+		if err != nil {
+			log.Fatalf("error: %v", err)
+		}
+	} else if *action == "pay" {
+		if *toId == "" || *fromId == "" || amount < 0 {
+			printUsageAndExit()
+		}
+		err := withTransaction(func(ctx context.Context, client pb.DistributedTransactionClient, txId string) error {
+			return pay(ctx, client, txId, *fromId, *toId, amount)
+		})
+		if err != nil {
+			log.Fatalf("error: %v", err)
+		}
+	} else if *action == "getBalance" {
+		if *id == "" {
+			printUsageAndExit()
+		}
+		var balance int
+		err := withTransaction(func(ctx context.Context, client pb.DistributedTransactionClient, txId string) error {
+			var err error
+			balance, err = getBalance(ctx, client, txId, *id)
+			return err
+		})
+		if err != nil {
+			log.Fatalf("error: %v", err)
+		}
+		fmt.Println(balance)
+	} else {
+		fmt.Fprintln(os.Stderr, "Unknown action "+*action)
+		printUsageAndExit()
+	}
+}
+
+func printUsageAndExit() {
+	flag.Usage()
+	os.Exit(1)
+}
+```
+
+`main.go` ファイルを作成した後、次のコマンドを実行して `go.mod` ファイルを作成する必要があります。
+
+```console
+go mod init emoney
+go mod tidy
+```
+
+これで、ディレクトリ構造は次のようになります。
+
+```text
+.
+├── go.mod
+├── go.sum
+├── main.go
+└── scalardb-cluster
+    ├── scalardb-cluster.pb.go
+    ├── scalardb-cluster.proto
+    └── scalardb-cluster_grpc.pb.go
+```
+
+その後、次のようにプログラムを実行できます:
+
+- `user1` に `1000` を請求します:
+
+    ```console
+    go run main.go -action charge -amount 1000 -to user1
+    ```
+
+- `merchant1` に `0` を請求します (`merchant1` のアカウントを作成するだけです):
+
+   ```console
+   go run main.go -action charge -amount 0 -to merchant1
+   ```
+
+- `user1` から `merchant1` に `100` を支払います:
+
+   ```console
+   go run main.go -action pay -amount 100 -from user1 -to merchant1
+   ```
+
+- `user1` の残高を取得します。
+
+   ```console
+   go run main.go -action getBalance -id user1
+   ```
+
+- `merchant1` の残高を取得します。
+
+   ```console
+   go run main.go -action getBalance -id merchant1
+   ```
+
+`go build` を使用してバイナリを取得してから実行することもできます。
+
+```console
+go build
+./emoney -action getBalance -id user1
+```
+
+## 参照
+
+その他の ScalarDB Cluster チュートリアルについては、以下を参照してください。
+
+- [ScalarDB Cluster をはじめよう](getting-started-with-scalardb-cluster.mdx)
+- [ScalarDB Cluster GraphQL をはじめよう](getting-started-with-scalardb-cluster-graphql.mdx)
+- [JDBC 経由の ScalarDB Cluster SQL をはじめよう](getting-started-with-scalardb-cluster-sql-jdbc.mdx)
+- [Spring Data JDBC for ScalarDB を使用した ScalarDB Cluster SQL をはじめよう](getting-started-with-scalardb-cluster-sql-spring-data-jdbc.mdx)
+- [ScalarDB Cluster での Python をはじめよう](getting-started-with-using-python-for-scalardb-cluster.mdx)
+
+Java API で ScalarDB Cluster を使用するアプリケーションの開発の詳細については、以下を参照してください。
+
+- [Java API を使用した ScalarDB Cluster の開発者ガイド](developer-guide-for-scalardb-cluster-with-java-api.mdx)
+
+ScalarDB Cluster gRPC API の詳細については、以下を参照してください。
+
+- [ScalarDB Cluster gRPC API ガイド](scalardb-cluster-grpc-api-guide.mdx)
+- [ScalarDB Cluster SQL gRPC API ガイド](scalardb-cluster-sql-grpc-api-guide.mdx)

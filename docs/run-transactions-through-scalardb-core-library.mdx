@@ -1,0 +1,219 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsEnglish
+---
+
+# Run Transactions Through the ScalarDB Core Library
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+This guide explains how to configure your ScalarDB properties file and create schemas to run transactions through a one-phase or a two-phase commit interface by using the ScalarDB Core library.
+
+## Preparation
+
+For the purpose of this guide, you will set up a database and ScalarDB by using a sample in the ScalarDB samples repository.
+
+### Clone the ScalarDB samples repository
+
+Open **Terminal**, then clone the ScalarDB samples repository by running the following command:
+
+```console
+git clone https://github.com/scalar-labs/scalardb-samples
+```
+
+Then, go to the directory that contains the necessary files by running the following command:
+
+```console
+cd scalardb-samples/scalardb-sample
+```
+
+## Set up a database
+
+Select your database, and follow the instructions to configure it for ScalarDB.
+
+For a list of databases that ScalarDB supports, see [Databases](requirements.mdx#databases).
+
+<Tabs groupId="databases" queryString>
+  <TabItem value="MySQL" label="MySQL" default>
+    <h3>Run MySQL locally</h3>
+
+    You can run MySQL in Docker Compose by using the `docker-compose.yml` file in the `scalardb-samples/scalardb-sample` directory.
+
+    To start MySQL, run the following command:
+
+    ```console
+    docker compose up -d mysql
+    ```
+
+    <h3>Configure ScalarDB</h3>
+
+    The **database.properties** file in the `scalardb-samples/scalardb-sample` directory contains database configurations for ScalarDB. Please uncomment the properties for MySQL in the **database.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For MySQL
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:mysql://localhost:3306/
+    scalar.db.username=root
+    scalar.db.password=mysql
+    ```
+  </TabItem>
+  <TabItem value="PostgreSQL" label="PostgreSQL" default>
+    <h3>Run PostgreSQL locally</h3>
+
+    You can run PostgreSQL in Docker Compose by using the `docker-compose.yml` file in the `scalardb-samples/scalardb-sample` directory.
+
+    To start PostgreSQL, run the following command:
+
+    ```console
+    docker compose up -d postgres
+    ```
+
+    <h3>Configure ScalarDB</h3>
+
+    The **database.properties** file in the `scalardb-samples/scalardb-sample` directory contains database configurations for ScalarDB. Please uncomment the properties for PostgreSQL in the **database.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For PostgreSQL
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:postgresql://localhost:5432/
+    scalar.db.username=postgres
+    scalar.db.password=postgres
+    ```
+  </TabItem>
+  <TabItem value="Oracle Database" label="Oracle Database" default>
+    <h3>Run Oracle Database locally</h3>
+
+    You can run Oracle Database in Docker Compose by using the `docker-compose.yml` file in the `scalardb-samples/scalardb-sample` directory.
+
+    To start Oracle Database, run the following command:
+
+    ```console
+    docker compose up -d oracle
+    ```
+
+    <h3>Configure ScalarDB</h3>
+
+    The **database.properties** file in the `scalardb-samples/scalardb-sample` directory contains database configurations for ScalarDB. Please uncomment the properties for Oracle Database in the **database.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For Oracle
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:oracle:thin:@//localhost:1521/FREEPDB1
+    scalar.db.username=SYSTEM
+    scalar.db.password=Oracle
+    ```
+  </TabItem>
+  <TabItem value="SQL Server" label="SQL Server" default>
+    <h3>Run SQL Server locally</h3>
+
+    You can run SQL Server in Docker Compose by using the `docker-compose.yml` file in the `scalardb-samples/scalardb-sample` directory.
+
+    To start SQL Server, run the following command:
+
+    ```console
+    docker compose up -d sqlserver
+    ```
+
+    <h3>Configure ScalarDB</h3>
+
+    The **database.properties** file in the `scalardb-samples/scalardb-sample` directory contains database configurations for ScalarDB. Please uncomment the properties for SQL Server in the **database.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For SQL Server
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:sqlserver://localhost:1433;encrypt=true;trustServerCertificate=true
+    scalar.db.username=sa
+    scalar.db.password=SqlServer22
+    ```
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    <h3>Run Amazon DynamoDB Local</h3>
+
+    You can run Amazon DynamoDB Local in Docker Compose by using the `docker-compose.yml` file in the `scalardb-samples/scalardb-sample` directory.
+
+    To start Amazon DynamoDB Local, run the following command:
+
+    ```console
+    docker compose up -d dynamodb
+    ```
+
+    <h3>Configure ScalarDB</h3>
+
+    The **database.properties** file in the `scalardb-samples/scalardb-sample` directory contains database configurations for ScalarDB. Please uncomment the properties for Amazon DynamoDB Local in the **database.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For DynamoDB Local
+    scalar.db.storage=dynamo
+    scalar.db.contact_points=sample
+    scalar.db.username=sample
+    scalar.db.password=sample
+    scalar.db.dynamo.endpoint_override=http://localhost:8000
+    ```
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    To use Azure Cosmos DB for NoSQL, you must have an Azure account. If you don't have an Azure account, visit [Create an Azure Cosmos DB account](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-portal#create-account).
+
+    <h3>Configure Cosmos DB for NoSQL</h3>
+
+    Set the **default consistency level** to **Strong** according to the official document at [Configure the default consistency level](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-manage-consistency#configure-the-default-consistency-level).
+
+    <h3>Configure ScalarDB</h3>
+
+    The following instructions assume that you have properly installed and configured the JDK in your local environment and properly configured your Cosmos DB for NoSQL account in Azure.
+
+    The **database.properties** file in the `scalardb-samples/scalardb-sample` directory contains database configurations for ScalarDB. Be sure to change the values for `scalar.db.contact_points` and `scalar.db.password` as described.
+
+    ```properties
+    # For Cosmos DB
+    scalar.db.storage=cosmos
+    scalar.db.contact_points=<COSMOS_DB_FOR_NOSQL_URI>
+    scalar.db.password=<COSMOS_DB_FOR_NOSQL_KEY>
+    ```
+
+:::note
+
+You can use the primary key or the secondary key in your Azure Cosmos DB account as the value for `scalar.db.password`.
+
+:::
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    <h3>Run Cassandra locally</h3>
+
+    You can run Apache Cassandra in Docker Compose by using the `docker-compose.yml` file in the `scalardb-samples/scalardb-sample` directory.
+
+    To start Apache Cassandra, run the following command:
+    ```console
+    docker compose up -d cassandra
+    ```
+
+    <h3>Configure ScalarDB</h3>
+
+    The **database.properties** file in the `scalardb-samples/scalardb-sample` directory contains database configurations for ScalarDB. Please uncomment the properties for Cassandra in the **database.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For Cassandra
+    scalar.db.storage=cassandra
+    scalar.db.contact_points=localhost
+    scalar.db.username=cassandra
+    scalar.db.password=cassandra
+    ```
+  </TabItem>
+</Tabs>
+
+For a comprehensive list of configurations for ScalarDB, see [ScalarDB Configurations](configurations.mdx).
+
+## Create or import a schema
+
+ScalarDB has its own data model and schema that maps to the implementation-specific data model and schema.
+
+- **Need to create a database schema?** See [ScalarDB Schema Loader](schema-loader.mdx).
+- **Need to import an existing database?** See [Importing Existing Tables to ScalarDB by Using ScalarDB Schema Loader](schema-loader-import.mdx).
+
+## Run transactions by using Java
+
+- **Want to run transactions by using a one-phase commit interface?** See the [ScalarDB Java API Guide](api-guide.mdx#transactional-api).
+- **Want to run transactions by using a two-phase commit interface?** See [Transactions with a Two-Phase Commit Interface](two-phase-commit-transactions.mdx).

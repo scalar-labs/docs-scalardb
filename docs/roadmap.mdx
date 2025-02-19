@@ -1,0 +1,107 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsEnglish
+---
+
+# ScalarDB Roadmap
+
+This roadmap provides a look into the proposed future of ScalarDB. The purpose of this roadmap is to provide visibility into what changes may be coming so that you can more closely follow progress, learn about key milestones, and give feedback during development. This roadmap will be updated as new versions of ScalarDB are released.
+
+:::warning
+
+During the course of development, this roadmap is subject to change based on user needs and feedback. **Do not schedule your release plans according to the contents of this roadmap.**
+
+If you have a feature request or want to prioritize feature development, please create an issue in [GitHub](https://github.com/scalar-labs/scalardb/issues).
+
+:::
+
+### CY2025 Q1
+
+#### New capabilities
+
+- **Vector store abstraction**
+    - Users will be able to store and search embeddings (vectors) in and from vector stores through a new vector store interface in ScalarDB. With this feature, users can simplify the process of realizing retrieval-augmented generation (RAG) with large language models (LLMs) by reading data from databases through the existing ScalarDB interface, creating embeddings from the data, and storing and searching the embeddings to and from a vector store through the new interface.
+
+#### Security
+
+- **Attributed-based access control (ABAC)**
+    - Users will be able to authorize accesses to the underlying databases in a finer-grained way. In addition to the current simple authorization where ScalarDB checks if a user is authorized to issue particular operations to a table, ScalarDB will check if a user can access particular records based on the attributes of the user and the records.
+
+#### Usability
+
+- **Addition of time-related data types**
+    - Users will be able to use time-related data types, which will make their existing applications easier to migrate.
+
+#### Cloud support
+
+- **Container offering in Azure Marketplace**
+    - Users will be able to deploy ScalarDB Cluster by using the Azure container offering, which enables users to use a pay-as-you-go subscription model.
+- **Google Cloud Platform (GCP) support**
+    - Users will be able to deploy ScalarDB Cluster in Google Kubernetes Engine (GKE) in GCP.
+
+### CY2025 Q2
+
+#### New capabilities
+
+- **Native secondary index**
+    - Users will be able to define flexible secondary indexes. The existing secondary index is limited because it is implemented based on the common capabilities of the supported databases' secondary indexes. Therefore, for example, you cannot define a multi-column index. The new secondary index will be created at the ScalarDB layer so that you can create more flexible indexes, like a multi-column index.
+
+#### Support for additional databases
+
+- **Databricks**
+    - Users will be able to use Databricks as an underlying database through ScalarDB Cluster.
+- **Snowflake**
+    - Users will be able to use Snowflake as an underlying database through ScalarDB Cluster.
+
+#### Usability
+
+- **Addition of decimal data types**
+    - Users will be able to use decimal data types so that users can handle decimal numbers with high precision.
+- **Removal of extra-write strategy**
+    - Users will no longer be able to use the extra-write strategy to make transactions serializable. Although ScalarDB currently provides two strategies (extra-read and extra-write strategies) to make transactions serializable, the extra-write strategy has several limitations. For example, users can't issue write and scan operations in the same transaction. Therefore, the strategy will be removed so that users don't need to worry about such limitations when creating applications.
+- **Better governance in ScalarDB Analytics**
+    - Users will be able to be authenticated and authorized by using the ScalarDB Core features.
+
+#### Performance
+
+- **Removal of WAL-interpreted views in ScalarDB Analytics**
+    - Users will be able to read committed data by using ScalarDB Core instead of WAL-interpreted views, which will increase query performance.
+
+### CY2025 Q3
+
+#### Usability
+
+- **Views**
+  - Users will be able to define views so that they can manage multiple different databases in an easier and simplified way.
+- **Addition of SQL operations for aggregation**
+    - Users will be able to issue aggregation operations in ScalarDB SQL.
+- **Elimination of out-of-memory errors due to large scans**
+    - Users will be able to issue large scans without experiencing out-of-memory errors.
+- **Enabling of read operations during a paused duration**
+    - Users will be able to issue read operations even during a paused duration so that users can still read data while taking backups.
+
+#### Scalability and availability
+
+- **Semi-synchronous replication**
+    - Users will be able to replicate the data of ScalarDB-based applications in a disaster-recoverable manner. For example, assume you provide a primary service in Tokyo and a standby service in Osaka. In case of catastrophic failure in Tokyo, you can switch the primary service to Osaka so that you can continue to provide the service without data loss and extended downtime.
+
+### CY2025 Q4
+
+#### Performance
+
+- **One-phase commit optimization**
+    - Users will experience faster execution for simple transactions that write to a single partition. ScalarDB will omit the prepare-record and commit-state phases without sacrificing correctness if a transaction updates only one partition by exploiting the single-partition linearizable operations of the underlying databases.
+- **Reduction of storage space needed for managing ScalarDB metadata**
+    - Users will likely use less storage space to run ScalarDB. ScalarDB will remove the before image of committed transactions after they are committed. However, whether or not those committed transactions will impact actual storage space depends on the underlying databases.
+- **Removal of coordinator writes for read-only transactions**
+    - Users will experience faster execution for read-only transactions by removing coordinator writes for those transactions.
+
+#### Cloud support
+
+- **Red Hat OpenShift support**
+    - Users will be able to use Red Hat–certified Helm Charts for ScalarDB Cluster in OpenShift environments.
+- **Container offering in Google Cloud Marketplace**
+    - Users will be able to deploy ScalarDB Cluster by using the Google Cloud container offering, which enables users to use a pay-as-you-go subscription model.

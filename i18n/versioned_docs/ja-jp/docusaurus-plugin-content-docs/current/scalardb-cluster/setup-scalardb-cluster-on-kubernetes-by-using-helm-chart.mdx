@@ -1,0 +1,258 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Cluster をローカルにデプロイする方法
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+import WarningLicenseKeyContact from '/src/components/ja-jp/_warning-license-key-contact.mdx';
+
+<TranslationBanner />
+
+このガイドでは、テスト環境向けに特別に設計されたローカル Kubernetes クラスターで Helm Chart を使用して ScalarDB Cluster をデプロイする方法について説明します。
+
+## 前提条件
+
+- [Docker](https://www.docker.com/get-started/) 20.10以降と [Docker Compose](https://docs.docker.com/compose/install/) V2以降
+- Kubernetes クラスター ([minikube](https://minikube.sigs.k8s.io/docs/start/) または [kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation) のいずれか)
+- [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
+- [Helm](https://helm.sh/docs/intro/install/)
+
+<WarningLicenseKeyContact product="ScalarDB Cluster" />
+
+## 作成するもの
+
+以下に示すように、ローカル Kubernetes クラスターに次のコンポーネントをデプロイします。
+
+```
++----------------------------------------------------------------------------------------------------------------------------------------+
+| [Kubernetes クラスター]                                                                                                                  |
+|                                                                                                                                        |
+|                        [ポッド]                                                              [ポッド]                       [ポッド]      |
+|                                                                                                                                        |
+|                       +-------+                                                                                                        |
+|                 +---> | Envoy | ---+                                                                                                   |
+|                 |     +-------+    |                                                                                                   |
+|                 |                  |                                                                                                   |
+|  +---------+    |     +-------+    |           +--------------------+                                                                  |
+|  | サービス | ---+---> | Envoy | ---+---------> |       サービス       | ---+                                                             |
+|  | (Envoy) |    |     +-------+    |           | (ScalarDB Cluster) |    |                                                             |
+|  +---------+    |                  |           +--------------------+    |         +------------------------+                          |
+|                 |     +-------+    |                                     |   +---> | ScalarDB Cluster ノード | ---+                     |
+|                 +---> | Envoy | ---+                                     |   |     +------------------------+    |                     |
+|                       +-------+                                          |   |                                  |                      |
+|                                                                          |   |     +------------------------+    |     +------------+  |
+|                                                                          +---+---> | ScalarDB Cluster ノード | ---+---> | PostgreSQL |  |
+|                                                                          |   |     +------------------------+    |     +------------+  |
+|                                                                          |   |                                  |                      |
+|                                                                          |   |     +------------------------+    |                     |
+|                                                                          |   +---> | ScalarDB Cluster ノード | ---+                     |
+|                                                                          |         +------------------------+                          |
+|                                        +-----------------------------+    |                                                            |
+|                                        |           サービス           | ---+                                                            |
+|                                        | (ScalarDB Cluster GraphQL)  |                                                                 |
+|                                        +-----------------------------+                                                                 |
+|                                                                                                                                        |
++----------------------------------------------------------------------------------------------------------------------------------------+
+```
+
+## ステップ 1. PostgreSQL コンテナを起動する
+
+ScalarDB Cluster は、バックエンドデータベースとして何らかのデータベースシステムを使用する必要があります。このガイドで使用するデータベースは PostgreSQL です。
+
+次のようにして、Kubernetes クラスターに PostgreSQL をデプロイできます。
+
+1. 次のコマンドを実行して、Bitnami Helm リポジトリを追加します。
+
+   ```console
+   helm repo add bitnami https://charts.bitnami.com/bitnami
+   ```
+
+2. 次のコマンドを実行して PostgreSQL をデプロイします。
+
+   ```console
+   helm install postgresql-scalardb-cluster bitnami/postgresql \
+     --set auth.postgresPassword=postgres \
+     --set primary.persistence.enabled=false
+   ```
+
+3. 次のコマンドを実行して、PostgreSQL コンテナが実行されているかどうかを確認します。
+
+   ```console
+   kubectl get pod
+   ```
+
+   次の出力が表示されます。
+
+   ```console
+   NAME                            READY   STATUS    RESTARTS   AGE
+   postgresql-scalardb-cluster-0   1/1     Running   0          17s
+   ```
+
+## ステップ 2. Helm Chart を使用して Kubernetes クラスターに ScalarDB Cluster をデプロイする
+
+1. 次のコマンドを実行して Scalar Helm Charts リポジトリを追加します。
+
+   ```console
+   helm repo add scalar-labs https://scalar-labs.github.io/helm-charts
+   ```
+
+2. ライセンスキーと証明書を環境変数として設定します。ライセンスキーがない場合は、[お問い合わせ](https://www.scalar-labs.com/contact)ください。`<CERT_PEM_FOR_YOUR_LICENSE_KEY>` の値の詳細については、[製品ライセンスキーの設定方法](../scalar-licensing/README.mdx)を参照してください。
+
+   ```console
+   SCALAR_DB_CLUSTER_LICENSE_KEY='<YOUR_LICENSE_KEY>'
+   SCALAR_DB_CLUSTER_LICENSE_CHECK_CERT_PEM='<CERT_PEM_FOR_YOUR_LICENSE_KEY>'
+   ```
+
+3. 次のコマンドを実行して、ScalarDB Cluster のカスタム値ファイル (`scalardb-cluster-custom-values.yaml`) を作成します。
+
+   ```console
+   cat << 'EOF' > scalardb-cluster-custom-values.yaml
+   envoy:
+     enabled: true
+     service:
+       type: "LoadBalancer"
+
+   scalardbCluster:
+
+     image:
+       repository: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium"
+
+     scalardbClusterNodeProperties: |
+       # ScalarDB Cluster configurations
+       scalar.db.cluster.membership.type=KUBERNETES
+       scalar.db.cluster.membership.kubernetes.endpoint.namespace_name=${env:SCALAR_DB_CLUSTER_MEMBERSHIP_KUBERNETES_ENDPOINT_NAMESPACE_NAME}
+       scalar.db.cluster.membership.kubernetes.endpoint.name=${env:SCALAR_DB_CLUSTER_MEMBERSHIP_KUBERNETES_ENDPOINT_NAME}
+
+       # Storage configurations
+       scalar.db.storage=jdbc
+       scalar.db.contact_points=jdbc:postgresql://postgresql-scalardb-cluster.default.svc.cluster.local:5432/postgres
+       scalar.db.username=${env:SCALAR_DB_CLUSTER_POSTGRES_USERNAME}
+       scalar.db.password=${env:SCALAR_DB_CLUSTER_POSTGRES_PASSWORD}
+
+       # For ScalarDB Cluster GraphQL tutorial.
+       scalar.db.graphql.enabled=true
+
+       # For ScalarDB Cluster SQL tutorial.
+       scalar.db.sql.enabled=true
+
+       ### License key configurations
+       scalar.db.cluster.node.licensing.license_key=${env:SCALAR_DB_CLUSTER_LICENSE_KEY}
+       scalar.db.cluster.node.licensing.license_check_cert_pem=${env:SCALAR_DB_CLUSTER_LICENSE_CHECK_CERT_PEM}
+     graphql:
+       enabled: true
+       service:
+         type: "LoadBalancer"
+
+     secretName: "scalardb-credentials-secret"
+   EOF
+   ```
+
+:::note
+
+   このガイドでは、ScalarDB Cluster GraphQL および Envoy のサービスタイプは `LoadBalancer` に設定されています。
+
+:::
+
+4. 資格情報とライセンスキーを含む `scalardb-credentials-secret` という名前のシークレットリソースを作成します。
+
+   ```console
+   kubectl create secret generic scalardb-credentials-secret \
+   --from-literal=SCALAR_DB_CLUSTER_POSTGRES_USERNAME=postgres \
+   --from-literal=SCALAR_DB_CLUSTER_POSTGRES_PASSWORD=postgres \
+   --from-literal=SCALAR_DB_CLUSTER_LICENSE_KEY="${SCALAR_DB_CLUSTER_LICENSE_KEY}" \
+   --from-file=SCALAR_DB_CLUSTER_LICENSE_CHECK_CERT_PEM=<(echo ${SCALAR_DB_CLUSTER_LICENSE_CHECK_CERT_PEM} | sed 's/\\n/\
+   /g') \
+   -n default
+   ```
+
+5. ScalarDB Cluster のチャートバージョンを設定します。
+
+   ```console
+   SCALAR_DB_CLUSTER_VERSION=3.15.1
+   SCALAR_DB_CLUSTER_CHART_VERSION=$(helm search repo scalar-labs/scalardb-cluster -l | grep -F "${SCALAR_DB_CLUSTER_VERSION}" | awk '{print $2}' | sort --version-sort -r | head -n 1)
+   ```
+
+6. ScalarDB Cluster をデプロイします。
+
+   ```console
+   helm install scalardb-cluster scalar-labs/scalardb-cluster -f scalardb-cluster-custom-values.yaml --version ${SCALAR_DB_CLUSTER_CHART_VERSION} -n default
+   ```
+
+7. ScalarDB Cluster ポッドがデプロイされているかどうかを確認します。
+
+   ```console
+   kubectl get pod
+   ```
+
+   次の出力が表示されます。
+
+   ```console
+   NAME                                      READY   STATUS    RESTARTS   AGE
+   postgresql-scalardb-cluster-0             1/1     Running   0          84s
+   scalardb-cluster-envoy-59899dc588-477tg   1/1     Running   0          35s
+   scalardb-cluster-envoy-59899dc588-dpvhx   1/1     Running   0          35s
+   scalardb-cluster-envoy-59899dc588-lv9hx   1/1     Running   0          35s
+   scalardb-cluster-node-866c756c79-5v2tk    1/1     Running   0          35s
+   scalardb-cluster-node-866c756c79-9zhq5    1/1     Running   0          35s
+   scalardb-cluster-node-866c756c79-t6v86    1/1     Running   0          35s
+   ```
+
+   ScalarDB Cluster Node Pod と Envoy Pod が適切にデプロイされている場合、各 Pod の `STATUS` は `Running` になります。
+
+6. 次のコマンドを実行して、ScalarDB Cluster のサービスリソースがデプロイされているかどうかを確認します。
+
+   ```console
+   kubectl get svc
+   ```
+
+   次の出力が表示されます。
+
+   ```console
+   NAME                             TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)           AGE
+   kubernetes                       ClusterIP      10.96.0.1        <none>        443/TCP           260d
+   postgresql-scalardb-cluster      ClusterIP      10.110.97.40     <none>        5432/TCP          86s
+   postgresql-scalardb-cluster-hl   ClusterIP      None             <none>        5432/TCP          86s
+   scalardb-cluster-envoy           LoadBalancer   10.105.121.51    localhost     60053:30641/TCP   49s
+   scalardb-cluster-envoy-metrics   ClusterIP      10.111.131.189   <none>        9001/TCP          49s
+   scalardb-cluster-graphql         LoadBalancer   10.105.74.214    localhost     8080:30514/TCP    49s
+   scalardb-cluster-headless        ClusterIP      None             <none>        60053/TCP         49s
+   scalardb-cluster-metrics         ClusterIP      10.110.132.22    <none>        9080/TCP          49s
+   ```
+
+   ScalarDB Cluster と Envoy のサービスリソースが適切にデプロイされている場合、`CLUSTER-IP` 列にプライベート IP アドレスが表示されます。
+
+   :::note
+
+   `scalardb-cluster-headless` には `CLUSTER-IP` アドレスがありません。
+
+   :::
+
+   また、`TYPE` が `LoadBalancer` に設定されている ScalarDB Cluster GraphQL (`scalardb-cluster-graphql`) のサービスリソースと Envoy (`scalardb-cluster-envoy`) のサービスリソースに割り当てられた `EXTERNAL-IP` アドレスも確認できます。
+
+   また、環境から `LoadBalancer` サービスにアクセスする方法は、Kubernetes ディストリビューションごとに異なります。例:
+
+   - minikube を使用している場合は、[`minikube tunnel` コマンド](https://minikube.sigs.k8s.io/docs/commands/tunnel/)を使用できます。
+   - kind を使用している場合は、[Cloud Provider KIND](https://kind.sigs.k8s.io/docs/user/loadbalancer/) を使用できます。
+
+   `LoadBalancer` サービスにアクセスする方法の詳細については、使用している Kubernetes ディストリビューションの公式ドキュメントを参照してください。
+
+## すべてのリソースを削除する
+
+以下のコマンドを実行すると、このガイドで作成したすべてのリソースを削除できます。
+
+```console
+helm uninstall scalardb-cluster postgresql-scalardb-cluster
+```
+
+## 詳細
+
+ScalarDB Cluster の他のユースケースについて詳しく知るには、次のチュートリアルをお試しください。
+
+- [ScalarDB Cluster をはじめよう](getting-started-with-scalardb-cluster.mdx)
+- [ScalarDB Cluster GraphQL をはじめよう](getting-started-with-scalardb-cluster-graphql.mdx)
+- [JDBC 経由の ScalarDB Cluster SQL をはじめよう](getting-started-with-scalardb-cluster-sql-jdbc.mdx)
+- [Spring Data JDBC for ScalarDB を使用した ScalarDB Cluster SQL をはじめよう](getting-started-with-scalardb-cluster-sql-spring-data-jdbc.mdx)
