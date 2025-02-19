@@ -26,8 +26,8 @@ If you have a feature request or want to prioritize feature development, please 
 
 #### Security
 
-- **Fine-grained access control**
-    - Users will be able to authorize accesses to the underlying databases in a finer-grained way. In addition to the current simple authorization where ScalarDB checks if users are authorized to issue particular operations, ScalarDB will check if users can access particular records.
+- **Attributed-based access control (ABAC)**
+    - Users will be able to authorize accesses to the underlying databases in a finer-grained way. In addition to the current simple authorization where ScalarDB checks if a user is authorized to issue particular operations to a table, ScalarDB will check if a user can access particular records based on the attributes of the user and the records.
 
 #### Usability
 
@@ -67,7 +67,7 @@ If you have a feature request or want to prioritize feature development, please 
 #### Performance
 
 - **Removal of WAL-interpreted views in ScalarDB Analytics**
-    - Users will be able to read committed data by using ScalarDB Core instead of WAL-interpreted views.
+    - Users will be able to read committed data by using ScalarDB Core instead of WAL-interpreted views, which will increase query performance.
 
 ### CY2025 Q3
 
@@ -85,7 +85,7 @@ If you have a feature request or want to prioritize feature development, please 
 #### Scalability and availability
 
 - **Semi-synchronous replication**
-    - Users will be able to provide ScalarDB-based applications in a disaster-recoverable manner. For example, assume you provide a primary service in Tokyo and a standby service in Osaka. In case of catastrophic failure in Tokyo, you can switch the primary service to Osaka so that you can continue to provide the service without data loss and extended downtime.
+    - Users will be able to replicate the data of ScalarDB-based applications in a disaster-recoverable manner. For example, assume you provide a primary service in Tokyo and a standby service in Osaka. In case of catastrophic failure in Tokyo, you can switch the primary service to Osaka so that you can continue to provide the service without data loss and extended downtime.
 
 ### CY2025 Q4
 
