@@ -170,6 +170,11 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'scalardb-cluster/getting-started-with-vector-search',
+              label: 'Use Vector Search in ScalarDB Cluster',
+            },
+            {
+              type: 'doc',
               id: 'scalardb-analytics-postgresql/installation',
               label: 'Install ScalarDB Analytics with PostgreSQL Locally',
             }
@@ -400,6 +405,11 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/encrypt-wire-communications',
               label: 'Encrypt Wire Communications',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/authorize-with-abac',
+              label: 'Control User Access',
             },
             {
               type: 'category',
@@ -860,6 +870,11 @@ const sidebars = {
               id: 'scalardb-cluster/scalardb-auth-status-codes',
               label: 'Authentication and Authorization',
             },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/scalardb-abac-status-codes',
+              label: 'Attributed-Based Access Control',
+            },
           ],
         },
       ],
@@ -1030,9 +1045,14 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'scalardb-cluster/getting-started-with-vector-search',
+              label: 'ScalarDB Cluster でベクトル検索を使用',
+            },
+            {
+              type: 'doc',
               id: 'scalardb-analytics-postgresql/installation',
               label: 'ScalarDB Analytics with PostgreSQL をローカルにインストール',
-            }
+            },
           ],
         },
       ],
@@ -1256,6 +1276,11 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/encrypt-wire-communications',
               label: 'ワイヤ通信を暗号化',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/authorize-with-abac',
+              label: 'ユーザーアクセスを制御',
             },
             {
               type: 'category',
@@ -1715,6 +1740,11 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/scalardb-auth-status-codes',
               label: '認証と認可',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/scalardb-abac-status-codes',
+              label: '属性ベースのアクセス制御',
             },
           ],
         },
