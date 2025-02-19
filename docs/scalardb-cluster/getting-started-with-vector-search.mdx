@@ -1,0 +1,41 @@
+---
+tags:
+  - Enterprise Premium
+  - Private Preview
+displayed_sidebar: docsEnglish
+---
+
+# Getting Started with ScalarDB Cluster for Vector Search
+
+ScalarDB Cluster provides a vector store abstraction to help applications interact with vector stores (embedding stores) in a unified way. This page explains what the feature is and why it is beneficial to users.
+
+## What is the vector store abstraction?
+
+ScalarDB Cluster provides an abstraction for various vector stores, similar to how it abstracts different types of databases, including relational databases, NoSQL databases, and NewSQL databases. With this vector store abstraction, you can develop applications that interact with vector stores in a unified manner, making your applications independent of specific vector store implementations and ensuring their portability. Additionally, since the integration of vector stores is built into ScalarDB Cluster, your applications can take advantage of its scalability.
+
+The current implementation of the vector store abstraction leverages [LangChain4j](https://docs.langchain4j.dev/) and supports the following vector stores and embedding models.
+
+Vector stores:
+- In-memory
+- OpenSearch
+- Azure Cosmos DB NoSQL
+- Azure AI Search
+- pgvector
+
+Embedding models:
+- In-process
+- Amazon Bedrock
+- Azure OpenAI
+- Google Vertex AI
+- OpenAI
+
+## Why use the vector store abstraction?
+
+In the era of generative AI, one of the challenges organizations face when deploying large language models (LLMs) is enabling these models to understand their enterprise data. Retrieval-augmented generation (RAG) is a key technique used to enhance LLMs with specific enterprise knowledge. For example, to ensure that chatbots powered by LLMs provide accurate and relevant responses, companies use RAG to integrate domain-specific information from user manuals and support documents.
+
+RAG relies on vector stores, which are typically created by extracting data from databases, converting that data into vectors, and then loading those vectors. By using vector store and database abstraction in ScalarDB Cluster, you can implement the entire process seamlessly. This approach significantly simplifies the workflow and code, eliminating the need to write complex applications that depend on specific vector stores and databases.
+
+## Additional details
+
+The vector search feature is currently in Private Preview. For more details, please [contact us](https://www.scalar-labs.com/contact) or wait for this feature to become publicly available in a future version.
+

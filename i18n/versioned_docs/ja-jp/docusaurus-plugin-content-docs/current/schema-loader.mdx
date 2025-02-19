@@ -545,24 +545,42 @@ Cosmos DB for NoSQL の自動スケーリングは、このオプションが `4
 
 次の表は、ScalarDB でサポートされているデータ型と、他のデータベースのデータ型へのマッピングを示しています。
 
-| ScalarDB  | Cassandra | Cosmos DB for NoSQL | DynamoDB | MySQL    | PostgreSQL/YugabyteDB | Oracle         | SQL Server      | SQLite  |
-|-----------|-----------|---------------------|----------|----------|-----------------------|----------------|-----------------|---------|
-| BOOLEAN   | boolean   | boolean (JSON)      | BOOL     | boolean  | boolean               | number(1)      | bit             | boolean |
-| INT       | int       | number (JSON)       | N        | int      | int                   | number(10)     | int             | int     |
-| BIGINT    | bigint    | number (JSON)       | N        | bigint   | bigint                | number(19)     | bigint          | bigint  |
-| FLOAT     | float     | number (JSON)       | N        | real     | real                  | binary_float   | float(24)       | float   |
-| DOUBLE    | double    | number (JSON)       | N        | double   | double precision      | binary_double  | float           | double  |
-| TEXT      | text      | string (JSON)       | S        | longtext | text                  | varchar2(4000) | varchar(8000)   | text    |
-| BLOB      | blob      | string (JSON)       | B        | longblob | bytea                 | RAW(2000)      | varbinary(8000) | blob    |
+| ScalarDB    | Cassandra                    | Cosmos DB for NoSQL | DynamoDB | MySQL/MariaDB | PostgreSQL/YugabyteDB    | Oracle                   | SQL Server      | SQLite  |
+|-------------|------------------------------|---------------------|----------|---------------|--------------------------|--------------------------|-----------------|---------|
+| BOOLEAN     | boolean                      | boolean (JSON)      | BOOL     | boolean       | boolean                  | number(1)                | bit             | boolean |
+| INT         | int                          | number (JSON)       | N        | int           | int                      | number(10)               | int             | int     |
+| BIGINT      | bigint                       | number (JSON)       | N        | bigint        | bigint                   | number(19)               | bigint          | bigint  |
+| FLOAT       | float                        | number (JSON)       | N        | real          | real                     | binary_float             | float(24)       | float   |
+| DOUBLE      | double                       | number (JSON)       | N        | double        | double precision         | binary_double            | float           | double  |
+| TEXT        | text                         | string (JSON)       | S        | longtext      | text                     | varchar2(4000)           | varchar(8000)   | text    |
+| BLOB        | blob                         | string (JSON)       | B        | longblob      | bytea                    | RAW(2000)                | varbinary(8000) | blob    |
+| DATE        | date                         | number (JSON)       | N        | date          | date                     | date                     | date            | int     |
+| TIME        | time                         | number (JSON)       | N        | time          | time                     | timestamp                | time            | bigint  |
+| TIMESTAMP   | <em>サポートされていません</em> | number (JSON)       | N        | datetime      | timestamp                | timestamp                | datetime2       | bigint  |
+| TIMESTAMPTZ | timestamp                    | number (JSON)       | N        | datetime      | timestamp with time zone | timestamp with time zone | datetimeoffset  | bigint  |
+
+:::note
+
+TIMESTAMP はタイムゾーン情報のない日付と時刻を表しますが、TIMESTAMPTZ は UTC タイムゾーンの日付と時刻を表します。
+
+:::
 
 ただし、JDBC データベースの次のデータ型は、主キーまたはセカンダリインデックスキーとして使用される場合、異なる方法で変換されます。これは、RDB データ型の制限によるものです。
 
-| ScalarDB | MySQL         | PostgreSQL/YugabyteDB | Oracle       |
-|----------|---------------|-----------------------|--------------|
-| TEXT     | VARCHAR(64)   | VARCHAR(10485760)     | VARCHAR2(64) |
-| BLOB     | VARBINARY(64) |                       | RAW(64)      |
+| ScalarDB | MySQL/MariaDB | PostgreSQL/YugabyteDB | Oracle       |
+|----------|----------------|-----------------------|--------------|
+| TEXT     | VARCHAR(64)    | VARCHAR(10485760)     | VARCHAR2(64) |
+| BLOB     | VARBINARY(64)  |                       | RAW(64)      |
 
-ScalarDB の `BIGINT` の値の範囲は、基になるデータベースに関係なく、-2^53から2^53です。
+次のデータ型には、基盤になるデータベースに関係なく、値の範囲と精度があります。
+
+| データ型      | 最小限                     | 最大限                     | 精度           |
+|--------------|---------------------------|---------------------------|---------------|
+| BIGINT       | -2^53                     | 2^53                      | -             |
+| DATE         | 1000-01-01                | 9999-12-31                | 1 日           |
+| TIME         | 00:00:00.000000           | 23:59:59.999999           | 1 マイクロ秒     |
+| TIMESTAMP    | 1000-01-01 00:00:00.000   | 9999-12-31 23:59:59.999   | 1 ミリ秒        |
+| TIMESTAMPTZ  | 1000-01-01 00:00:00.000 Z | 9999-12-31 23:59:59.999 Z | 1 ミリ秒        |
 
 :::note
 

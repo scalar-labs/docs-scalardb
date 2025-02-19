@@ -15,14 +15,16 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 ## エラーコードのクラスと説明
 
-| クラス        | 説明                       |
-|:-------------|:--------------------------|
-| `AUTH-1xxxx` | ユーザーエラーカテゴリのエラー |
-| `AUTH-3xxxx` | 内部エラーカテゴリのエラー    |
+| クラス           | 説明                       |
+|:----------------|:--------------------------|
+| `DB-AUTH-1xxxx` | ユーザーエラーカテゴリのエラー |
+| `DB-AUTH-3xxxx` | 内部エラーカテゴリのエラー    |
 
-## `AUTH-1xxxx` ステータスコード
+## `DB-AUTH-1xxxx` ステータスコード
 
-### `AUTH-10000`
+以下は、ユーザーエラーカテゴリのステータスコードとメッセージです。
+
+### `DB-AUTH-10000`
 
 **メッセージ**
 
@@ -30,7 +32,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 The user already exists. Username: %s
 ```
 
-### `AUTH-10001`
+### `DB-AUTH-10001`
 
 **メッセージ**
 
@@ -38,7 +40,7 @@ The user already exists. Username: %s
 The user does not exist. Username: %s
 ```
 
-### `AUTH-10003`
+### `DB-AUTH-10003`
 
 **メッセージ**
 
@@ -46,7 +48,7 @@ The user does not exist. Username: %s
 The namespace does not exist. Namespace: %s
 ```
 
-### `AUTH-10004`
+### `DB-AUTH-10004`
 
 **メッセージ**
 
@@ -54,7 +56,7 @@ The namespace does not exist. Namespace: %s
 The table does not exist. Table: %s
 ```
 
-### `AUTH-10005`
+### `DB-AUTH-10005`
 
 **メッセージ**
 
@@ -62,7 +64,7 @@ The table does not exist. Table: %s
 Invalid username or password
 ```
 
-### `AUTH-10006`
+### `DB-AUTH-10006`
 
 **メッセージ**
 
@@ -70,7 +72,7 @@ Invalid username or password
 Access denied: Invalid auth token
 ```
 
-### `AUTH-10007`
+### `DB-AUTH-10007`
 
 **メッセージ**
 
@@ -78,7 +80,7 @@ Access denied: Invalid auth token
 Access denied: You need the %s privilege on the namespace %s to execute this operation
 ```
 
-### `AUTH-10008`
+### `DB-AUTH-10008`
 
 **メッセージ**
 
@@ -86,15 +88,15 @@ Access denied: You need the %s privilege on the namespace %s to execute this ope
 Access denied: You need the %s privilege on the table %s to execute this operation
 ```
 
-### `AUTH-10009`
+### `DB-AUTH-10009`
 
 **メッセージ**
 
 ```markdown
-Access denied: You can't grant the %s privilege because you don't have the same privilege on the table %s
+Access denied: You must be a superuser to execute this operation
 ```
 
-### `AUTH-10010`
+### `DB-AUTH-10010`
 
 **メッセージ**
 
@@ -102,7 +104,7 @@ Access denied: You can't grant the %s privilege because you don't have the same 
 Access denied: You can't access information about the user %s
 ```
 
-### `AUTH-10011`
+### `DB-AUTH-10011`
 
 **メッセージ**
 
@@ -110,7 +112,7 @@ Access denied: You can't access information about the user %s
 Access denied: You can't alter the user %s
 ```
 
-### `AUTH-10012`
+### `DB-AUTH-10012`
 
 **メッセージ**
 
@@ -118,7 +120,7 @@ Access denied: You can't alter the user %s
 Access denied: You must be a superuser to change the SUPERUSER attribute
 ```
 
-### `AUTH-10013`
+### `DB-AUTH-10013`
 
 **メッセージ**
 
@@ -126,7 +128,7 @@ Access denied: You must be a superuser to change the SUPERUSER attribute
 You can't change the SUPERUSER attribute for the current user %s
 ```
 
-### `AUTH-10014`
+### `DB-AUTH-10014`
 
 **メッセージ**
 
@@ -134,15 +136,15 @@ You can't change the SUPERUSER attribute for the current user %s
 You can't drop the current user %s
 ```
 
-### `AUTH-10015`
+### `DB-AUTH-10015`
 
 **メッセージ**
 
 ```markdown
-Access denied: You can't grant the %s privilege because you don't have the same privilege for the table %s
+Access denied: You can't grant the %s privilege because you don't have the same privilege on the table %s
 ```
 
-### `AUTH-10016`
+### `DB-AUTH-10016`
 
 **メッセージ**
 
@@ -150,7 +152,7 @@ Access denied: You can't grant the %s privilege because you don't have the same 
 Access denied: You can't grant the %s privilege because you don't have the same privilege on the namespace %s
 ```
 
-### `AUTH-10017`
+### `DB-AUTH-10017`
 
 **メッセージ**
 
@@ -158,7 +160,7 @@ Access denied: You can't grant the %s privilege because you don't have the same 
 Access denied: You can't revoke the %s privilege because you don't have the same privilege on the table %s
 ```
 
-### `AUTH-10018`
+### `DB-AUTH-10018`
 
 **メッセージ**
 
@@ -166,7 +168,7 @@ Access denied: You can't revoke the %s privilege because you don't have the same
 Access denied: You can't revoke the %s privilege because you don't have the same privilege on the namespace %s
 ```
 
-### `AUTH-10019`
+### `DB-AUTH-10019`
 
 **メッセージ**
 
@@ -174,9 +176,11 @@ Access denied: You can't revoke the %s privilege because you don't have the same
 The operation does not have the target namespace or table name. Operation: %s
 ```
 
-## `AUTH-3xxxx` ステータスコード
+## `DB-AUTH-3xxxx` ステータスコード
 
-### `AUTH-30000`
+以下は、内部エラーカテゴリのステータスコードとメッセージです。
+
+### `DB-AUTH-30000`
 
 **メッセージ**
 
@@ -184,7 +188,7 @@ The operation does not have the target namespace or table name. Operation: %s
 Getting auth token information failed
 ```
 
-### `AUTH-30001`
+### `DB-AUTH-30001`
 
 **メッセージ**
 
@@ -192,7 +196,7 @@ Getting auth token information failed
 Getting the user failed. Username: %s
 ```
 
-### `AUTH-30002`
+### `DB-AUTH-30002`
 
 **メッセージ**
 
@@ -200,7 +204,7 @@ Getting the user failed. Username: %s
 Creating a user failed. Username: %s
 ```
 
-### `AUTH-30003`
+### `DB-AUTH-30003`
 
 **メッセージ**
 
@@ -208,7 +212,7 @@ Creating a user failed. Username: %s
 Altering the user failed. Username: %s
 ```
 
-### `AUTH-30004`
+### `DB-AUTH-30004`
 
 **メッセージ**
 
@@ -216,7 +220,7 @@ Altering the user failed. Username: %s
 Dropping the user failed. Username: %s
 ```
 
-### `AUTH-30005`
+### `DB-AUTH-30005`
 
 **メッセージ**
 
@@ -224,7 +228,7 @@ Dropping the user failed. Username: %s
 Granting privileges failed. Username: %s; Namespace: %s; Privileges: %s
 ```
 
-### `AUTH-30006`
+### `DB-AUTH-30006`
 
 **メッセージ**
 
@@ -232,7 +236,7 @@ Granting privileges failed. Username: %s; Namespace: %s; Privileges: %s
 Granting privileges failed. Username: %s; Table: %s; Privileges: %s
 ```
 
-### `AUTH-30007`
+### `DB-AUTH-30007`
 
 **メッセージ**
 
@@ -240,7 +244,7 @@ Granting privileges failed. Username: %s; Table: %s; Privileges: %s
 Revoking privileges failed. Username: %s; Namespace: %s; Privileges: %s
 ```
 
-### `AUTH-30008`
+### `DB-AUTH-30008`
 
 **メッセージ**
 
@@ -248,7 +252,7 @@ Revoking privileges failed. Username: %s; Namespace: %s; Privileges: %s
 Revoking privileges failed. Username: %s; Table: %s; Privileges: %s
 ```
 
-### `AUTH-30009`
+### `DB-AUTH-30009`
 
 **メッセージ**
 
@@ -256,7 +260,7 @@ Revoking privileges failed. Username: %s; Table: %s; Privileges: %s
 Getting users failed
 ```
 
-### `AUTH-30010`
+### `DB-AUTH-30010`
 
 **メッセージ**
 
@@ -264,7 +268,7 @@ Getting users failed
 Getting privileges failed. Username: %s; Namespace: %s
 ```
 
-### `AUTH-30011`
+### `DB-AUTH-30011`
 
 **メッセージ**
 
@@ -272,7 +276,7 @@ Getting privileges failed. Username: %s; Namespace: %s
 Getting privileges failed. Username: %s; Table: %s
 ```
 
-### `AUTH-30012`
+### `DB-AUTH-30012`
 
 **メッセージ**
 
@@ -280,7 +284,7 @@ Getting privileges failed. Username: %s; Table: %s
 Deleting privileges failed. Namespace: %s
 ```
 
-### `AUTH-30013`
+### `DB-AUTH-30013`
 
 **メッセージ**
 
@@ -288,7 +292,7 @@ Deleting privileges failed. Namespace: %s
 Deleting privileges failed. Table: %s
 ```
 
-### `AUTH-30014`
+### `DB-AUTH-30014`
 
 **メッセージ**
 
@@ -296,7 +300,7 @@ Deleting privileges failed. Table: %s
 Logging in failed. Username: %s
 ```
 
-### `AUTH-30015`
+### `DB-AUTH-30015`
 
 **メッセージ**
 

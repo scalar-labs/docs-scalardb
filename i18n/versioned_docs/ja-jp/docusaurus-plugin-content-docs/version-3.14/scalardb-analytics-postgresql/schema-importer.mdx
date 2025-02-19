@@ -1,0 +1,69 @@
+---
+tags:
+  - Community
+displayed_sidebar: docsJapanese
+---
+
+# Schema Importer
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+Schema Importer は、PostgreSQL を自動的に設定するための CLI ツールです。このツールを使用すると、PostgreSQL データベースに、ScalarDB インスタンスと同じデータベースオブジェクト (名前空間やテーブルなど) を持たせることができます。
+
+Schema Importer は、ScalarDB 設定ファイルを読み取り、ScalarDB で定義されているテーブルのスキーマを取得し、対応する外部データラッパーの外部テーブルとビューをこの順序で作成します。詳細については、[ScalarDB Analytics with PostgreSQL をはじめよう](getting-started.mdx)を参照してください。
+
+## Schema Importer のビルド
+
+[Gradle](https://gradle.org/) を使用して Schema Importer をビルドできます。Schema Importer をビルドするには、次のコマンドを実行します。
+
+```console
+./gradlew build
+```
+
+`java -jar` を使用して Schema Importer を起動できるように、Fat JAR ファイルを作成する必要があります。Fat JAR を作成するには、次のコマンドを実行します。
+
+   ```console
+   ./gradlew shadowJar
+   ```
+
+fat JAR をビルドすると、`app/build/libs/` ディレクトリに fat JAR ファイルが作成されます。
+
+## Schema Importer を実行する
+
+fat JAR ファイルを使用して Schema Importer を実行するには、次のコマンドを実行します。
+
+```console
+java -jar <PATH_TO_FAT_JAR_FILE>
+```
+利用可能なオプションは次のとおりです。
+
+| 名前                         | 必須     | 説明                                                                                                   | デフォルト                        |
+| --------------------------- | -------- | ----------------------------------------------------------------------------------------------------- | ------------------------------- |
+| `--config`                  | **はい** | ScalarDB 設定ファイルへのパス                                                                             |                                 |
+| `--config-on-postgres-host` | No      | PostgreSQL を実行しているホスト上の ScalarDB 設定ファイルへのパス                                              | `--config` と同じ値が使用されます。 |
+| `--namespace`, `-n`         | **はい** | 分析インスタンスにインポートする名前空間。2つ以上の名前空間がある場合は、`--namespace` オプションを複数回指定できます。 |                                 |
+| `--host`                    | いいえ   | PostgreSQL ホスト                                                                                       | localhost                       |
+| `--port`                    | いいえ   | PostgreSQL ポート                                                                                       | 5432                            |
+| `--database`                | いいえ   | PostgreSQL ポート                                                                                       | postgres                        |
+| `--user`                    | いいえ   | PostgreSQL ユーザー                                                                                      | postgres                        |
+| `--password`                | いいえ   | PostgreSQL パスワード                                                                                    |                                 |
+| `--debug`                   | いいえ   | デバッグモードを有効にする                                                                                  |                                 |
+
+
+## Schema Importer のテスト
+
+Schema Importer をテストするには、次のコマンドを実行します。
+
+```console
+./gradlew test
+```
+
+## Schema Importer の Docker イメージをビルドする
+
+Schema Importer の Docker イメージをビルドするには、次のコマンドを実行します。`<TAG>` は、使用する Schema Importer のタグバージョンに置き換えます。
+
+```console
+docker build -t ghcr.io/scalar-labs/scalardb-analytics-postgresql-schema-importer:<TAG> -f ./app/Dockerfile .
+```

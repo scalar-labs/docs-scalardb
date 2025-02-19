@@ -16,16 +16,18 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 ## エラーコードのクラスと説明
 
-| クラス        | 説明                                           |
-|:-------------|:----------------------------------------------|
-| `CORE-1xxxx` | ユーザーエラーカテゴリのエラー                     |
-| `CORE-2xxxx` | 同時実行エラーカテゴリのエラー                     |
-| `CORE-3xxxx` | 内部エラーカテゴリのエラー                        |
-| `CORE-4xxxx` | 不明なトランザクションステータスエラーカテゴリのエラー |
+| クラス           | 説明                                           |
+|:----------------|:----------------------------------------------|
+| `DB-CORE-1xxxx` | ユーザーエラーカテゴリのエラー                     |
+| `DB-CORE-2xxxx` | 同時実行エラーカテゴリのエラー                     |
+| `DB-CORE-3xxxx` | 内部エラーカテゴリのエラー                        |
+| `DB-CORE-4xxxx` | 不明なトランザクションステータスエラーカテゴリのエラー |
 
-## `CORE-1xxxx` ステータスコード
+## `DB-CORE-1xxxx` ステータスコード
 
-### `CORE-10000`
+以下は、ユーザーエラーカテゴリのステータスコードとメッセージです。
+
+### `DB-CORE-10000`
 
 **メッセージ**
 
@@ -33,7 +35,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 Only a single-column index is supported. Operation: %s
 ```
 
-### `CORE-10001`
+### `DB-CORE-10001`
 
 **メッセージ**
 
@@ -41,7 +43,7 @@ Only a single-column index is supported. Operation: %s
 The column of the specified index key is not indexed. Operation: %s
 ```
 
-### `CORE-10002`
+### `DB-CORE-10002`
 
 **メッセージ**
 
@@ -49,7 +51,7 @@ The column of the specified index key is not indexed. Operation: %s
 The index key is not properly specified. Operation: %s
 ```
 
-### `CORE-10003`
+### `DB-CORE-10003`
 
 **メッセージ**
 
@@ -57,7 +59,7 @@ The index key is not properly specified. Operation: %s
 Clustering keys cannot be specified when using an index. Operation: %s
 ```
 
-### `CORE-10004`
+### `DB-CORE-10004`
 
 **メッセージ**
 
@@ -65,7 +67,7 @@ Clustering keys cannot be specified when using an index. Operation: %s
 Orderings cannot be specified when using an index. Operation: %s
 ```
 
-### `CORE-10005`
+### `DB-CORE-10005`
 
 **メッセージ**
 
@@ -73,7 +75,7 @@ Orderings cannot be specified when using an index. Operation: %s
 The limit cannot be negative. Operation: %s
 ```
 
-### `CORE-10006`
+### `DB-CORE-10006`
 
 **メッセージ**
 
@@ -81,7 +83,7 @@ The limit cannot be negative. Operation: %s
 Cross-partition scan is not enabled. Operation: %s
 ```
 
-### `CORE-10007`
+### `DB-CORE-10007`
 
 **メッセージ**
 
@@ -89,7 +91,7 @@ Cross-partition scan is not enabled. Operation: %s
 Cross-partition scan ordering is not enabled. Operation: %s
 ```
 
-### `CORE-10008`
+### `DB-CORE-10008`
 
 **メッセージ**
 
@@ -97,7 +99,7 @@ Cross-partition scan ordering is not enabled. Operation: %s
 Cross-partition scan filtering is not enabled. Operation: %s
 ```
 
-### `CORE-10009`
+### `DB-CORE-10009`
 
 **メッセージ**
 
@@ -105,7 +107,7 @@ Cross-partition scan filtering is not enabled. Operation: %s
 The specified projection is not found. Projection: %s, Operation: %s
 ```
 
-### `CORE-10010`
+### `DB-CORE-10010`
 
 **メッセージ**
 
@@ -113,7 +115,7 @@ The specified projection is not found. Projection: %s, Operation: %s
 The clustering key boundary is not properly specified. Operation: %s
 ```
 
-### `CORE-10011`
+### `DB-CORE-10011`
 
 **メッセージ**
 
@@ -121,7 +123,7 @@ The clustering key boundary is not properly specified. Operation: %s
 The start clustering key is not properly specified. Operation: %s
 ```
 
-### `CORE-10012`
+### `DB-CORE-10012`
 
 **メッセージ**
 
@@ -129,7 +131,7 @@ The start clustering key is not properly specified. Operation: %s
 The end clustering key is not properly specified. Operation: %s
 ```
 
-### `CORE-10013`
+### `DB-CORE-10013`
 
 **メッセージ**
 
@@ -137,7 +139,7 @@ The end clustering key is not properly specified. Operation: %s
 Orderings are not properly specified. Operation: %s
 ```
 
-### `CORE-10014`
+### `DB-CORE-10014`
 
 **メッセージ**
 
@@ -145,7 +147,7 @@ Orderings are not properly specified. Operation: %s
 The specified ordering column is not found. Ordering: %s, Operation: %s
 ```
 
-### `CORE-10015`
+### `DB-CORE-10015`
 
 **メッセージ**
 
@@ -153,7 +155,7 @@ The specified ordering column is not found. Ordering: %s, Operation: %s
 The condition is not properly specified. Operation: %s
 ```
 
-### `CORE-10016`
+### `DB-CORE-10016`
 
 **メッセージ**
 
@@ -161,7 +163,7 @@ The condition is not properly specified. Operation: %s
 The table does not exist. Table: %s
 ```
 
-### `CORE-10017`
+### `DB-CORE-10017`
 
 **メッセージ**
 
@@ -169,7 +171,7 @@ The table does not exist. Table: %s
 The column value is not properly specified. Column: %s, Operation: %s
 ```
 
-### `CORE-10018`
+### `DB-CORE-10018`
 
 **メッセージ**
 
@@ -177,7 +179,7 @@ The column value is not properly specified. Column: %s, Operation: %s
 The mutations are empty
 ```
 
-### `CORE-10019`
+### `DB-CORE-10019`
 
 **メッセージ**
 
@@ -185,7 +187,7 @@ The mutations are empty
 Mutations that span multiple partitions are not supported. Mutations: %s
 ```
 
-### `CORE-10020`
+### `DB-CORE-10020`
 
 **メッセージ**
 
@@ -193,7 +195,7 @@ Mutations that span multiple partitions are not supported. Mutations: %s
 The partition key is not properly specified. Operation: %s
 ```
 
-### `CORE-10021`
+### `DB-CORE-10021`
 
 **メッセージ**
 
@@ -201,7 +203,7 @@ The partition key is not properly specified. Operation: %s
 The clustering key is not properly specified. Operation: %s
 ```
 
-### `CORE-10022`
+### `DB-CORE-10022`
 
 **メッセージ**
 
@@ -209,7 +211,7 @@ The clustering key is not properly specified. Operation: %s
 The authentication and authorization feature is not enabled. To use this feature, you must enable it. Note that this feature is supported only in the ScalarDB Enterprise edition
 ```
 
-### `CORE-10023`
+### `DB-CORE-10023`
 
 **メッセージ**
 
@@ -217,7 +219,7 @@ The authentication and authorization feature is not enabled. To use this feature
 This condition is not allowed for the PutIf operation. Condition: %s
 ```
 
-### `CORE-10024`
+### `DB-CORE-10024`
 
 **メッセージ**
 
@@ -225,7 +227,7 @@ This condition is not allowed for the PutIf operation. Condition: %s
 This condition is not allowed for the DeleteIf operation. Condition: %s
 ```
 
-### `CORE-10025`
+### `DB-CORE-10025`
 
 **メッセージ**
 
@@ -233,7 +235,7 @@ This condition is not allowed for the DeleteIf operation. Condition: %s
 Operator must be LIKE or NOT_LIKE. Operator: %s
 ```
 
-### `CORE-10026`
+### `DB-CORE-10026`
 
 **メッセージ**
 
@@ -241,7 +243,7 @@ Operator must be LIKE or NOT_LIKE. Operator: %s
 An escape character must be a string of a single character or an empty string
 ```
 
-### `CORE-10027`
+### `DB-CORE-10027`
 
 **メッセージ**
 
@@ -249,7 +251,7 @@ An escape character must be a string of a single character or an empty string
 The LIKE pattern must not be null
 ```
 
-### `CORE-10028`
+### `DB-CORE-10028`
 
 **メッセージ**
 
@@ -257,7 +259,7 @@ The LIKE pattern must not be null
 The LIKE pattern must not include only an escape character
 ```
 
-### `CORE-10029`
+### `DB-CORE-10029`
 
 **メッセージ**
 
@@ -265,7 +267,7 @@ The LIKE pattern must not include only an escape character
 The LIKE pattern must not end with an escape character
 ```
 
-### `CORE-10030`
+### `DB-CORE-10030`
 
 **メッセージ**
 
@@ -273,7 +275,7 @@ The LIKE pattern must not end with an escape character
 The column %s does not exist
 ```
 
-### `CORE-10031`
+### `DB-CORE-10031`
 
 **メッセージ**
 
@@ -281,7 +283,7 @@ The column %s does not exist
 This operation is not supported when getting records of a database without using an index
 ```
 
-### `CORE-10032`
+### `DB-CORE-10032`
 
 **メッセージ**
 
@@ -289,7 +291,7 @@ This operation is not supported when getting records of a database without using
 This operation is not supported when getting records of a database by using an index
 ```
 
-### `CORE-10033`
+### `DB-CORE-10033`
 
 **メッセージ**
 
@@ -297,7 +299,7 @@ This operation is not supported when getting records of a database by using an i
 This operation is not supported when scanning all the records of a database or scanning records of a database by using an index
 ```
 
-### `CORE-10034`
+### `DB-CORE-10034`
 
 **メッセージ**
 
@@ -305,7 +307,7 @@ This operation is not supported when scanning all the records of a database or s
 This operation is supported only when scanning records of a database by using an index
 ```
 
-### `CORE-10035`
+### `DB-CORE-10035`
 
 **メッセージ**
 
@@ -313,7 +315,7 @@ This operation is supported only when scanning records of a database by using an
 This operation is not supported when scanning records of a database by using an index
 ```
 
-### `CORE-10037`
+### `DB-CORE-10037`
 
 **メッセージ**
 
@@ -321,7 +323,7 @@ This operation is not supported when scanning records of a database by using an 
 This operation is supported only when no conditions are specified. If you want to modify a condition, please use clearConditions() to remove all existing conditions first
 ```
 
-### `CORE-10038`
+### `DB-CORE-10038`
 
 **メッセージ**
 
@@ -329,7 +331,7 @@ This operation is supported only when no conditions are specified. If you want t
 One or more columns must be specified.
 ```
 
-### `CORE-10039`
+### `DB-CORE-10039`
 
 **メッセージ**
 
@@ -337,7 +339,7 @@ One or more columns must be specified.
 One or more partition keys must be specified.
 ```
 
-### `CORE-10040`
+### `DB-CORE-10040`
 
 **メッセージ**
 
@@ -345,7 +347,7 @@ One or more partition keys must be specified.
 The column definition must be specified since %s is specified as a partition key
 ```
 
-### `CORE-10041`
+### `DB-CORE-10041`
 
 **メッセージ**
 
@@ -353,7 +355,7 @@ The column definition must be specified since %s is specified as a partition key
 The column definition must be specified since %s is specified as a clustering key
 ```
 
-### `CORE-10042`
+### `DB-CORE-10042`
 
 **メッセージ**
 
@@ -361,7 +363,7 @@ The column definition must be specified since %s is specified as a clustering ke
 Invalid ID specified. ID: %d
 ```
 
-### `CORE-10043`
+### `DB-CORE-10043`
 
 **メッセージ**
 
@@ -369,7 +371,7 @@ Invalid ID specified. ID: %d
 The transaction is not active. Status: %s
 ```
 
-### `CORE-10044`
+### `DB-CORE-10044`
 
 **メッセージ**
 
@@ -377,7 +379,7 @@ The transaction is not active. Status: %s
 The transaction has already been committed or rolled back. Status: %s
 ```
 
-### `CORE-10045`
+### `DB-CORE-10045`
 
 **メッセージ**
 
@@ -385,7 +387,7 @@ The transaction has already been committed or rolled back. Status: %s
 The transaction has not been prepared. Status: %s
 ```
 
-### `CORE-10046`
+### `DB-CORE-10046`
 
 **メッセージ**
 
@@ -393,7 +395,7 @@ The transaction has not been prepared. Status: %s
 The transaction has not been prepared or validated. Status: %s
 ```
 
-### `CORE-10047`
+### `DB-CORE-10047`
 
 **メッセージ**
 
@@ -401,7 +403,7 @@ The transaction has not been prepared or validated. Status: %s
 The transaction already exists
 ```
 
-### `CORE-10048`
+### `DB-CORE-10048`
 
 **メッセージ**
 
@@ -409,7 +411,7 @@ The transaction already exists
 A transaction associated with the specified transaction ID is not found. The transaction might have expired
 ```
 
-### `CORE-10049`
+### `DB-CORE-10049`
 
 **メッセージ**
 
@@ -417,7 +419,7 @@ A transaction associated with the specified transaction ID is not found. The tra
 %s is the system namespace name
 ```
 
-### `CORE-10050`
+### `DB-CORE-10050`
 
 **メッセージ**
 
@@ -425,7 +427,7 @@ A transaction associated with the specified transaction ID is not found. The tra
 The namespace already exists. Namespace: %s
 ```
 
-### `CORE-10051`
+### `DB-CORE-10051`
 
 **メッセージ**
 
@@ -433,7 +435,7 @@ The namespace already exists. Namespace: %s
 The namespace does not exist. Namespace: %s
 ```
 
-### `CORE-10052`
+### `DB-CORE-10052`
 
 **メッセージ**
 
@@ -441,7 +443,7 @@ The namespace does not exist. Namespace: %s
 The table already exists. Table: %s
 ```
 
-### `CORE-10053`
+### `DB-CORE-10053`
 
 **メッセージ**
 
@@ -449,7 +451,7 @@ The table already exists. Table: %s
 The namespace is not empty. Namespace: %s; Tables in the namespace: %s
 ```
 
-### `CORE-10054`
+### `DB-CORE-10054`
 
 **メッセージ**
 
@@ -457,7 +459,7 @@ The namespace is not empty. Namespace: %s; Tables in the namespace: %s
 The column does not exist. Table: %s; Column: %s
 ```
 
-### `CORE-10055`
+### `DB-CORE-10055`
 
 **メッセージ**
 
@@ -465,7 +467,7 @@ The column does not exist. Table: %s; Column: %s
 The index already exists. Table: %s; Column: %s
 ```
 
-### `CORE-10056`
+### `DB-CORE-10056`
 
 **メッセージ**
 
@@ -473,7 +475,7 @@ The index already exists. Table: %s; Column: %s
 The index does not exist. Table: %s; Column: %s
 ```
 
-### `CORE-10057`
+### `DB-CORE-10057`
 
 **メッセージ**
 
@@ -481,7 +483,7 @@ The index does not exist. Table: %s; Column: %s
 The column already exists. Table: %s; Column: %s
 ```
 
-### `CORE-10058`
+### `DB-CORE-10058`
 
 **メッセージ**
 
@@ -489,7 +491,7 @@ The column already exists. Table: %s; Column: %s
 The operation does not have the target namespace or table name. Operation: %s
 ```
 
-### `CORE-10059`
+### `DB-CORE-10059`
 
 **メッセージ**
 
@@ -497,7 +499,7 @@ The operation does not have the target namespace or table name. Operation: %s
 The specified value of the property '%s' is not a number. Value: %s
 ```
 
-### `CORE-10060`
+### `DB-CORE-10060`
 
 **メッセージ**
 
@@ -505,7 +507,7 @@ The specified value of the property '%s' is not a number. Value: %s
 The specified value of the property '%s' is not a boolean. Value: %s
 ```
 
-### `CORE-10061`
+### `DB-CORE-10061`
 
 **メッセージ**
 
@@ -513,7 +515,7 @@ The specified value of the property '%s' is not a boolean. Value: %s
 Reading the file failed. File: %s
 ```
 
-### `CORE-10062`
+### `DB-CORE-10062`
 
 **メッセージ**
 
@@ -521,7 +523,7 @@ Reading the file failed. File: %s
 The property 'scalar.db.cross_partition_scan.enabled' must be set to true to use cross-partition scan with filtering or ordering
 ```
 
-### `CORE-10063`
+### `DB-CORE-10063`
 
 **メッセージ**
 
@@ -529,7 +531,7 @@ The property 'scalar.db.cross_partition_scan.enabled' must be set to true to use
 This column value is out of range for BigInt. Value: %s
 ```
 
-### `CORE-10064`
+### `DB-CORE-10064`
 
 **メッセージ**
 
@@ -537,7 +539,7 @@ This column value is out of range for BigInt. Value: %s
 This type is not supported. Name: %s, Type: %s
 ```
 
-### `CORE-10065`
+### `DB-CORE-10065`
 
 **メッセージ**
 
@@ -545,7 +547,7 @@ This type is not supported. Name: %s, Type: %s
 Storage '%s' is not found
 ```
 
-### `CORE-10066`
+### `DB-CORE-10066`
 
 **メッセージ**
 
@@ -553,7 +555,7 @@ Storage '%s' is not found
 Transaction manager '%s' is not found
 ```
 
-### `CORE-10068`
+### `DB-CORE-10068`
 
 **メッセージ**
 
@@ -561,7 +563,7 @@ Transaction manager '%s' is not found
 Please use scan() for non-exact match selection. Operation: %s
 ```
 
-### `CORE-10069`
+### `DB-CORE-10069`
 
 **メッセージ**
 
@@ -569,7 +571,7 @@ Please use scan() for non-exact match selection. Operation: %s
 Import-related functionality is not supported in Cassandra
 ```
 
-### `CORE-10070`
+### `DB-CORE-10070`
 
 **メッセージ**
 
@@ -577,7 +579,7 @@ Import-related functionality is not supported in Cassandra
 The %s network strategy does not exist
 ```
 
-### `CORE-10071`
+### `DB-CORE-10071`
 
 **メッセージ**
 
@@ -585,7 +587,7 @@ The %s network strategy does not exist
 The property 'scalar.db.contact_port' must be greater than or equal to zero
 ```
 
-### `CORE-10073`
+### `DB-CORE-10073`
 
 **メッセージ**
 
@@ -593,7 +595,7 @@ The property 'scalar.db.contact_port' must be greater than or equal to zero
 The BLOB type is not supported for clustering keys in Cosmos DB. Column: %s
 ```
 
-### `CORE-10074`
+### `DB-CORE-10074`
 
 **メッセージ**
 
@@ -601,7 +603,7 @@ The BLOB type is not supported for clustering keys in Cosmos DB. Column: %s
 Import-related functionality is not supported in Cosmos DB
 ```
 
-### `CORE-10075`
+### `DB-CORE-10075`
 
 **メッセージ**
 
@@ -609,7 +611,7 @@ Import-related functionality is not supported in Cosmos DB
 The property 'scalar.db.contact_points' must not be empty
 ```
 
-### `CORE-10076`
+### `DB-CORE-10076`
 
 **メッセージ**
 
@@ -617,7 +619,7 @@ The property 'scalar.db.contact_points' must not be empty
 Cosmos DB supports only EQ, NE, IS_NULL, and IS_NOT_NULL operations for the BLOB type in conditions. Mutation: %s
 ```
 
-### `CORE-10077`
+### `DB-CORE-10077`
 
 **メッセージ**
 
@@ -625,7 +627,7 @@ Cosmos DB supports only EQ, NE, IS_NULL, and IS_NOT_NULL operations for the BLOB
 The specified consistency level is not supported. Consistency level: %s
 ```
 
-### `CORE-10078`
+### `DB-CORE-10078`
 
 **メッセージ**
 
@@ -633,7 +635,7 @@ The specified consistency level is not supported. Consistency level: %s
 0x00 bytes are not accepted in BLOB values in DESC order
 ```
 
-### `CORE-10079`
+### `DB-CORE-10079`
 
 **メッセージ**
 
@@ -641,7 +643,7 @@ The specified consistency level is not supported. Consistency level: %s
 Cannot encode a Text value that contains '\u0000'
 ```
 
-### `CORE-10081`
+### `DB-CORE-10081`
 
 **メッセージ**
 
@@ -649,7 +651,7 @@ Cannot encode a Text value that contains '\u0000'
 An index column cannot be set to null or an empty value for Text or Blob in DynamoDB. Operation: %s
 ```
 
-### `CORE-10082`
+### `DB-CORE-10082`
 
 **メッセージ**
 
@@ -657,7 +659,7 @@ An index column cannot be set to null or an empty value for Text or Blob in Dyna
 DynamoDB supports only EQ, NE, IS_NULL, and IS_NOT_NULL operations for the BOOLEAN type in conditions. Mutation: %s
 ```
 
-### `CORE-10083`
+### `DB-CORE-10083`
 
 **メッセージ**
 
@@ -665,7 +667,7 @@ DynamoDB supports only EQ, NE, IS_NULL, and IS_NOT_NULL operations for the BOOLE
 Nested multi-storage definitions are not supported. Storage: %s
 ```
 
-### `CORE-10084`
+### `DB-CORE-10084`
 
 **メッセージ**
 
@@ -673,7 +675,7 @@ Nested multi-storage definitions are not supported. Storage: %s
 Storage not found. Storage: %s
 ```
 
-### `CORE-10085`
+### `DB-CORE-10085`
 
 **メッセージ**
 
@@ -681,7 +683,7 @@ Storage not found. Storage: %s
 The namespace name is not acceptable. Namespace: %s
 ```
 
-### `CORE-10086`
+### `DB-CORE-10086`
 
 **メッセージ**
 
@@ -689,7 +691,7 @@ The namespace name is not acceptable. Namespace: %s
 The table name is not acceptable. Table: %s
 ```
 
-### `CORE-10087`
+### `DB-CORE-10087`
 
 **メッセージ**
 
@@ -697,7 +699,7 @@ The table name is not acceptable. Table: %s
 Importing tables is not allowed in the RDB engine. RDB engine: %s
 ```
 
-### `CORE-10088`
+### `DB-CORE-10088`
 
 **メッセージ**
 
@@ -705,7 +707,7 @@ Importing tables is not allowed in the RDB engine. RDB engine: %s
 The %s table must have a primary key
 ```
 
-### `CORE-10089`
+### `DB-CORE-10089`
 
 **メッセージ**
 
@@ -713,7 +715,7 @@ The %s table must have a primary key
 The RDB engine is not supported. JDBC connection URL: %s
 ```
 
-### `CORE-10090`
+### `DB-CORE-10090`
 
 **メッセージ**
 
@@ -721,7 +723,7 @@ The RDB engine is not supported. JDBC connection URL: %s
 Data type %s(%d) is not supported: %s
 ```
 
-### `CORE-10091`
+### `DB-CORE-10091`
 
 **メッセージ**
 
@@ -729,7 +731,7 @@ Data type %s(%d) is not supported: %s
 Data type %s is not supported: %s
 ```
 
-### `CORE-10092`
+### `DB-CORE-10092`
 
 **メッセージ**
 
@@ -737,7 +739,7 @@ Data type %s is not supported: %s
 Getting a transaction state is not supported in JDBC transactions
 ```
 
-### `CORE-10093`
+### `DB-CORE-10093`
 
 **メッセージ**
 
@@ -745,7 +747,7 @@ Getting a transaction state is not supported in JDBC transactions
 Rolling back a transaction is not supported in JDBC transactions
 ```
 
-### `CORE-10094`
+### `DB-CORE-10094`
 
 **メッセージ**
 
@@ -753,7 +755,7 @@ Rolling back a transaction is not supported in JDBC transactions
 Coordinator tables already exist
 ```
 
-### `CORE-10095`
+### `DB-CORE-10095`
 
 **メッセージ**
 
@@ -761,7 +763,7 @@ Coordinator tables already exist
 Coordinator tables do not exist
 ```
 
-### `CORE-10096`
+### `DB-CORE-10096`
 
 **メッセージ**
 
@@ -769,7 +771,7 @@ Coordinator tables do not exist
 The namespace %s is reserved. Any operations on this namespace are not allowed
 ```
 
-### `CORE-10097`
+### `DB-CORE-10097`
 
 **メッセージ**
 
@@ -777,7 +779,7 @@ The namespace %s is reserved. Any operations on this namespace are not allowed
 Mutating transaction metadata columns is not allowed. Table: %s; Column: %s
 ```
 
-### `CORE-10098`
+### `DB-CORE-10098`
 
 **メッセージ**
 
@@ -785,7 +787,7 @@ Mutating transaction metadata columns is not allowed. Table: %s; Column: %s
 A %s condition is not allowed on Put operations
 ```
 
-### `CORE-10099`
+### `DB-CORE-10099`
 
 **メッセージ**
 
@@ -793,7 +795,7 @@ A %s condition is not allowed on Put operations
 A %s condition is not allowed on Delete operations
 ```
 
-### `CORE-10100`
+### `DB-CORE-10100`
 
 **メッセージ**
 
@@ -801,7 +803,7 @@ A %s condition is not allowed on Delete operations
 The condition is not allowed to target transaction metadata columns. Column: %s
 ```
 
-### `CORE-10101`
+### `DB-CORE-10101`
 
 **メッセージ**
 
@@ -809,7 +811,7 @@ The condition is not allowed to target transaction metadata columns. Column: %s
 The column '%s' is reserved as transaction metadata
 ```
 
-### `CORE-10102`
+### `DB-CORE-10102`
 
 **メッセージ**
 
@@ -817,7 +819,7 @@ The column '%s' is reserved as transaction metadata
 Non-primary key columns with the 'before_' prefix, '%s', are reserved as transaction metadata
 ```
 
-### `CORE-10103`
+### `DB-CORE-10103`
 
 **メッセージ**
 
@@ -825,7 +827,7 @@ Non-primary key columns with the 'before_' prefix, '%s', are reserved as transac
 Put cannot have a condition when the target record is unread and implicit pre-read is disabled. Please read the target record beforehand or enable implicit pre-read: %s
 ```
 
-### `CORE-10104`
+### `DB-CORE-10104`
 
 **メッセージ**
 
@@ -833,7 +835,7 @@ Put cannot have a condition when the target record is unread and implicit pre-re
 Writing already-deleted data is not allowed
 ```
 
-### `CORE-10105`
+### `DB-CORE-10105`
 
 **メッセージ**
 
@@ -841,7 +843,7 @@ Writing already-deleted data is not allowed
 Getting data neither in the read set nor the delete set is not allowed
 ```
 
-### `CORE-10106`
+### `DB-CORE-10106`
 
 **メッセージ**
 
@@ -849,7 +851,7 @@ Getting data neither in the read set nor the delete set is not allowed
 Reading already-written data is not allowed
 ```
 
-### `CORE-10107`
+### `DB-CORE-10107`
 
 **メッセージ**
 
@@ -857,7 +859,7 @@ Reading already-written data is not allowed
 The transaction is not validated. When using the EXTRA_READ serializable strategy, you need to call validate() before calling commit()
 ```
 
-### `CORE-10108`
+### `DB-CORE-10108`
 
 **メッセージ**
 
@@ -865,7 +867,7 @@ The transaction is not validated. When using the EXTRA_READ serializable strateg
 DynamoDB cannot batch more than 100 mutations at once
 ```
 
-### `CORE-10109`
+### `DB-CORE-10109`
 
 **メッセージ**
 
@@ -873,7 +875,7 @@ DynamoDB cannot batch more than 100 mutations at once
 The partition keys of the table %s.%s were modified, but altering partition keys is not supported
 ```
 
-### `CORE-10110`
+### `DB-CORE-10110`
 
 **メッセージ**
 
@@ -881,7 +883,7 @@ The partition keys of the table %s.%s were modified, but altering partition keys
 The clustering keys of the table %s.%s were modified, but altering clustering keys is not supported
 ```
 
-### `CORE-10111`
+### `DB-CORE-10111`
 
 **メッセージ**
 
@@ -889,7 +891,7 @@ The clustering keys of the table %s.%s were modified, but altering clustering ke
 The clustering ordering of the table %s.%s were modified, but altering clustering ordering is not supported
 ```
 
-### `CORE-10112`
+### `DB-CORE-10112`
 
 **メッセージ**
 
@@ -897,7 +899,7 @@ The clustering ordering of the table %s.%s were modified, but altering clusterin
 The column %s of the table %s.%s has been deleted. Column deletion is not supported when altering a table
 ```
 
-### `CORE-10113`
+### `DB-CORE-10113`
 
 **メッセージ**
 
@@ -905,7 +907,7 @@ The column %s of the table %s.%s has been deleted. Column deletion is not suppor
 The data type of the column %s of the table %s.%s was modified, but altering data types is not supported
 ```
 
-### `CORE-10114`
+### `DB-CORE-10114`
 
 **メッセージ**
 
@@ -913,7 +915,7 @@ The data type of the column %s of the table %s.%s was modified, but altering dat
 Specifying the '--schema-file' option is required when using the '--repair-all' option
 ```
 
-### `CORE-10115`
+### `DB-CORE-10115`
 
 **メッセージ**
 
@@ -921,7 +923,7 @@ Specifying the '--schema-file' option is required when using the '--repair-all' 
 Specifying the '--schema-file' option is required when using the '--alter' option
 ```
 
-### `CORE-10116`
+### `DB-CORE-10116`
 
 **メッセージ**
 
@@ -929,7 +931,7 @@ Specifying the '--schema-file' option is required when using the '--alter' optio
 Specifying the '--schema-file' option is required when using the '--import' option
 ```
 
-### `CORE-10117`
+### `DB-CORE-10117`
 
 **メッセージ**
 
@@ -937,7 +939,7 @@ Specifying the '--schema-file' option is required when using the '--import' opti
 Specifying the '--coordinator' option with the '--import' option is not allowed. Create Coordinator tables separately
 ```
 
-### `CORE-10118`
+### `DB-CORE-10118`
 
 **メッセージ**
 
@@ -945,7 +947,7 @@ Specifying the '--coordinator' option with the '--import' option is not allowed.
 Reading the configuration file failed. File: %s
 ```
 
-### `CORE-10119`
+### `DB-CORE-10119`
 
 **メッセージ**
 
@@ -953,7 +955,7 @@ Reading the configuration file failed. File: %s
 Reading the schema file failed. File: %s
 ```
 
-### `CORE-10120`
+### `DB-CORE-10120`
 
 **メッセージ**
 
@@ -961,7 +963,7 @@ Reading the schema file failed. File: %s
 Parsing the schema JSON failed. Details: %s
 ```
 
-### `CORE-10121`
+### `DB-CORE-10121`
 
 **メッセージ**
 
@@ -969,7 +971,7 @@ Parsing the schema JSON failed. Details: %s
 The table name must contain the namespace and the table. Table: %s
 ```
 
-### `CORE-10122`
+### `DB-CORE-10122`
 
 **メッセージ**
 
@@ -977,7 +979,7 @@ The table name must contain the namespace and the table. Table: %s
 The partition key must be specified. Table: %s
 ```
 
-### `CORE-10123`
+### `DB-CORE-10123`
 
 **メッセージ**
 
@@ -985,7 +987,7 @@ The partition key must be specified. Table: %s
 Invalid clustering-key format. The clustering key must be in the format of 'column_name' or 'column_name ASC/DESC'. Table: %s; Clustering key: %s
 ```
 
-### `CORE-10124`
+### `DB-CORE-10124`
 
 **メッセージ**
 
@@ -993,7 +995,7 @@ Invalid clustering-key format. The clustering key must be in the format of 'colu
 Columns must be specified. Table: %s
 ```
 
-### `CORE-10125`
+### `DB-CORE-10125`
 
 **メッセージ**
 
@@ -1001,7 +1003,7 @@ Columns must be specified. Table: %s
 Invalid column type. Table: %s; Column: %s; Type: %s
 ```
 
-### `CORE-10126`
+### `DB-CORE-10126`
 
 **メッセージ**
 
@@ -1009,7 +1011,7 @@ Invalid column type. Table: %s; Column: %s; Type: %s
 The mutation type is not supported. Only the Put or Delete type is supported. Mutation: %s
 ```
 
-### `CORE-10127`
+### `DB-CORE-10127`
 
 **メッセージ**
 
@@ -1017,7 +1019,7 @@ The mutation type is not supported. Only the Put or Delete type is supported. Mu
 This condition is not allowed for the UpdateIf operation. Condition: %s
 ```
 
-### `CORE-10128`
+### `DB-CORE-10128`
 
 **メッセージ**
 
@@ -1025,7 +1027,7 @@ This condition is not allowed for the UpdateIf operation. Condition: %s
 Cross-partition scan with ordering is not supported in Cassandra
 ```
 
-### `CORE-10129`
+### `DB-CORE-10129`
 
 **メッセージ**
 
@@ -1033,7 +1035,7 @@ Cross-partition scan with ordering is not supported in Cassandra
 Cross-partition scan with ordering is not supported in Cosmos DB
 ```
 
-### `CORE-10130`
+### `DB-CORE-10130`
 
 **メッセージ**
 
@@ -1041,7 +1043,7 @@ Cross-partition scan with ordering is not supported in Cosmos DB
 Cross-partition scan with ordering is not supported in DynamoDB
 ```
 
-### `CORE-10131`
+### `DB-CORE-10131`
 
 **メッセージ**
 
@@ -1049,7 +1051,7 @@ Cross-partition scan with ordering is not supported in DynamoDB
 The directory '%s' does not have write permissions. Please ensure that the current user has write access to the directory.
 ```
 
-### `CORE-10132`
+### `DB-CORE-10132`
 
 **メッセージ**
 
@@ -1057,7 +1059,7 @@ The directory '%s' does not have write permissions. Please ensure that the curre
 Failed to create the directory '%s'. Please check if you have sufficient permissions and if there are any file system restrictions. Details: %s
 ```
 
-### `CORE-10133`
+### `DB-CORE-10133`
 
 **メッセージ**
 
@@ -1065,7 +1067,7 @@ Failed to create the directory '%s'. Please check if you have sufficient permiss
 Directory path cannot be null or empty.
 ```
 
-### `CORE-10134`
+### `DB-CORE-10134`
 
 **メッセージ**
 
@@ -1073,7 +1075,7 @@ Directory path cannot be null or empty.
 No file extension was found on the provided file name %s.
 ```
 
-### `CORE-10135`
+### `DB-CORE-10135`
 
 **メッセージ**
 
@@ -1081,7 +1083,7 @@ No file extension was found on the provided file name %s.
 Invalid file extension: %s. Allowed extensions are: %s
 ```
 
-### `CORE-10136`
+### `DB-CORE-10136`
 
 **メッセージ**
 
@@ -1089,7 +1091,7 @@ Invalid file extension: %s. Allowed extensions are: %s
 Getting a transaction state is not supported in single CRUD operation transactions
 ```
 
-### `CORE-10137`
+### `DB-CORE-10137`
 
 **メッセージ**
 
@@ -1097,7 +1099,7 @@ Getting a transaction state is not supported in single CRUD operation transactio
 Rolling back a transaction is not supported in single CRUD operation transactions
 ```
 
-### `CORE-10138`
+### `DB-CORE-10138`
 
 **メッセージ**
 
@@ -1105,7 +1107,7 @@ Rolling back a transaction is not supported in single CRUD operation transaction
 Multiple mutations are not supported in single CRUD operation transactions
 ```
 
-### `CORE-10139`
+### `DB-CORE-10139`
 
 **メッセージ**
 
@@ -1113,7 +1115,7 @@ Multiple mutations are not supported in single CRUD operation transactions
 Beginning a transaction is not allowed in single CRUD operation transactions
 ```
 
-### `CORE-10140`
+### `DB-CORE-10140`
 
 **メッセージ**
 
@@ -1121,7 +1123,7 @@ Beginning a transaction is not allowed in single CRUD operation transactions
 Resuming a transaction is not allowed in single CRUD operation transactions
 ```
 
-### `CORE-10141`
+### `DB-CORE-10141`
 
 **メッセージ**
 
@@ -1129,7 +1131,7 @@ Resuming a transaction is not allowed in single CRUD operation transactions
 Using the group commit feature on the Coordinator table with a two-phase commit interface is not allowed
 ```
 
-### `CORE-10142`
+### `DB-CORE-10142`
 
 **メッセージ**
 
@@ -1137,7 +1139,7 @@ Using the group commit feature on the Coordinator table with a two-phase commit 
 This operation is supported only when no conditions are specified. If you want to modify a condition, please use clearConditions() to remove all existing conditions first
 ```
 
-### `CORE-10143`
+### `DB-CORE-10143`
 
 **メッセージ**
 
@@ -1145,7 +1147,7 @@ This operation is supported only when no conditions are specified. If you want t
 The encryption feature is not enabled. To encrypt data at rest, you must enable this feature. Note that this feature is supported only in the ScalarDB Enterprise edition
 ```
 
-### `CORE-10144`
+### `DB-CORE-10144`
 
 **メッセージ**
 
@@ -1153,7 +1155,7 @@ The encryption feature is not enabled. To encrypt data at rest, you must enable 
 The variable key column size must be greater than or equal to 64
 ```
 
-### `CORE-10145`
+### `DB-CORE-10145`
 
 **メッセージ**
 
@@ -1161,7 +1163,7 @@ The variable key column size must be greater than or equal to 64
 The value of the column %s in the primary key contains an illegal character. Primary-key columns must not contain any of the following characters in Cosmos DB: ':', '/', '\', '#', '?'. Value: %s
 ```
 
-### `CORE-10146`
+### `DB-CORE-10146`
 
 **メッセージ**
 
@@ -1169,7 +1171,7 @@ The value of the column %s in the primary key contains an illegal character. Pri
 Inserting already-written data is not allowed
 ```
 
-### `CORE-10147`
+### `DB-CORE-10147`
 
 **メッセージ**
 
@@ -1177,7 +1179,7 @@ Inserting already-written data is not allowed
 Deleting already-inserted data is not allowed
 ```
 
-### `CORE-10148`
+### `DB-CORE-10148`
 
 **メッセージ**
 
@@ -1185,7 +1187,7 @@ Deleting already-inserted data is not allowed
 Invalid key: Column %s does not exist in the table %s in namespace %s.
 ```
 
-### `CORE-10149`
+### `DB-CORE-10149`
 
 **メッセージ**
 
@@ -1193,7 +1195,7 @@ Invalid key: Column %s does not exist in the table %s in namespace %s.
 Invalid base64 encoding for blob value for column %s in table %s in namespace %s
 ```
 
-### `CORE-10150`
+### `DB-CORE-10150`
 
 **メッセージ**
 
@@ -1201,7 +1203,7 @@ Invalid base64 encoding for blob value for column %s in table %s in namespace %s
 Invalid number specified for column %s in table %s in namespace %s
 ```
 
-### `CORE-10151`
+### `DB-CORE-10151`
 
 **メッセージ**
 
@@ -1209,9 +1211,211 @@ Invalid number specified for column %s in table %s in namespace %s
 Method null argument not allowed
 ```
 
-## `CORE-2xxxx` ステータスコード
+### `DB-CORE-10152`
 
-### `CORE-20000`
+**メッセージ**
+
+```markdown
+The attribute-based access control feature is not enabled. To use this feature, you must enable it. Note that this feature is supported only in the ScalarDB Enterprise edition
+```
+
+### `DB-CORE-10153`
+
+**メッセージ**
+
+```markdown
+The provided clustering key %s was not found
+```
+
+### `DB-CORE-10154`
+
+**メッセージ**
+
+```markdown
+The column '%s' was not found
+```
+
+### `DB-CORE-10155`
+
+**メッセージ**
+
+```markdown
+The provided partition key is incomplete. Required key: %s
+```
+
+### `DB-CORE-10156`
+
+**メッセージ**
+
+```markdown
+The provided clustering key order does not match the table schema. Required order: %s
+```
+
+### `DB-CORE-10157`
+
+**メッセージ**
+
+```markdown
+The provided partition key order does not match the table schema. Required order: %s
+```
+
+### `DB-CORE-10158`
+
+**メッセージ**
+
+```markdown
+This DATE column value is out of the valid range. It must be between 1000-01-01 and 9999-12-12. Value: %s
+```
+
+### `DB-CORE-10159`
+
+**メッセージ**
+
+```markdown
+This TIME column value precision cannot be shorter than one microsecond. Value: %s
+```
+
+### `DB-CORE-10160`
+
+**メッセージ**
+
+```markdown
+This TIMESTAMP column value is out of the valid range. It must be between 1000-01-01T00:00:00.000 and 9999-12-31T23:59:59.999. Value: %s
+```
+
+### `DB-CORE-10161`
+
+**メッセージ**
+
+```markdown
+This TIMESTAMP column value precision cannot be shorter than one millisecond. Value: %s
+```
+
+### `DB-CORE-10162`
+
+**メッセージ**
+
+```markdown
+This TIMESTAMPTZ column value is out of the valid range. It must be between 1000-01-01T00:00:00.000Z to 9999-12-31T23:59:59.999Z. Value: %s
+```
+
+### `DB-CORE-10163`
+
+**メッセージ**
+
+```markdown
+This TIMESTAMPTZ column value precision cannot be shorter than one millisecond. Value: %s
+```
+
+### `DB-CORE-10164`
+
+**メッセージ**
+
+```markdown
+The underlying-storage data type %s is not supported as the ScalarDB %s data type: %s
+```
+
+### `DB-CORE-10165`
+
+**メッセージ**
+
+```markdown
+Missing namespace or table: %s, %s
+```
+
+### `DB-CORE-10166`
+
+**メッセージ**
+
+```markdown
+Failed to retrieve table metadata. Details: %s
+```
+
+### `DB-CORE-10167`
+
+**メッセージ**
+
+```markdown
+Duplicate data mappings found for table '%s' in the control file
+```
+
+### `DB-CORE-10168`
+
+**メッセージ**
+
+```markdown
+No mapping found for column '%s' in table '%s' in the control file. Control file validation set at 'FULL'. All columns need to be mapped.
+```
+
+### `DB-CORE-10169`
+
+**メッセージ**
+
+```markdown
+The control file is missing data mappings
+```
+
+### `DB-CORE-10170`
+
+**メッセージ**
+
+```markdown
+The target column '%s' for source field '%s' could not be found in table '%s'
+```
+
+### `DB-CORE-10171`
+
+**メッセージ**
+
+```markdown
+The required partition key '%s' is missing in the control file mapping for table '%s'
+```
+
+### `DB-CORE-10172`
+
+**メッセージ**
+
+```markdown
+The required clustering key '%s' is missing in the control file mapping for table '%s'
+```
+
+### `DB-CORE-10173`
+
+**メッセージ**
+
+```markdown
+Duplicated data mappings found for column '%s' in table '%s'
+```
+
+### `DB-CORE-10174`
+
+**メッセージ**
+
+```markdown
+Missing required field or column mapping for clustering key %s
+```
+
+### `DB-CORE-10175`
+
+**メッセージ**
+
+```markdown
+Missing required field or column mapping for partition key %s
+```
+
+### `DB-CORE-10176`
+
+**メッセージ**
+
+```markdown
+Missing field or column mapping for %s
+```
+
+## `DB-CORE-2xxxx` ステータスコード
+
+以下は、同時実行エラーカテゴリのステータスコードとメッセージです。
+
+### `DB-CORE-20000`
 
 **メッセージ**
 
@@ -1219,7 +1423,7 @@ Method null argument not allowed
 No mutation was applied
 ```
 
-### `CORE-20001`
+### `DB-CORE-20001`
 
 **メッセージ**
 
@@ -1227,7 +1431,7 @@ No mutation was applied
 Logging failed in the batch
 ```
 
-### `CORE-20002`
+### `DB-CORE-20002`
 
 **メッセージ**
 
@@ -1235,7 +1439,7 @@ Logging failed in the batch
 The operation failed in the batch with type %s
 ```
 
-### `CORE-20003`
+### `DB-CORE-20003`
 
 **メッセージ**
 
@@ -1243,7 +1447,7 @@ The operation failed in the batch with type %s
 An error occurred in the batch. Details: %s
 ```
 
-### `CORE-20004`
+### `DB-CORE-20004`
 
 **メッセージ**
 
@@ -1251,7 +1455,7 @@ An error occurred in the batch. Details: %s
 A Paxos phase in the CAS operation failed
 ```
 
-### `CORE-20005`
+### `DB-CORE-20005`
 
 **メッセージ**
 
@@ -1259,7 +1463,7 @@ A Paxos phase in the CAS operation failed
 The learn phase in the CAS operation failed
 ```
 
-### `CORE-20006`
+### `DB-CORE-20006`
 
 **メッセージ**
 
@@ -1267,7 +1471,7 @@ The learn phase in the CAS operation failed
 A simple write operation failed
 ```
 
-### `CORE-20007`
+### `DB-CORE-20007`
 
 **メッセージ**
 
@@ -1275,7 +1479,7 @@ A simple write operation failed
 An error occurred in the mutation. Details: %s
 ```
 
-### `CORE-20008`
+### `DB-CORE-20008`
 
 **メッセージ**
 
@@ -1283,7 +1487,7 @@ An error occurred in the mutation. Details: %s
 A RetryWith error occurred in the mutation. Details: %s
 ```
 
-### `CORE-20009`
+### `DB-CORE-20009`
 
 **メッセージ**
 
@@ -1291,7 +1495,7 @@ A RetryWith error occurred in the mutation. Details: %s
 A transaction conflict occurred in the mutation. Details: %s
 ```
 
-### `CORE-20010`
+### `DB-CORE-20010`
 
 **メッセージ**
 
@@ -1299,7 +1503,7 @@ A transaction conflict occurred in the mutation. Details: %s
 A transaction conflict occurred in the mutation. Details: %s
 ```
 
-### `CORE-20011`
+### `DB-CORE-20011`
 
 **メッセージ**
 
@@ -1307,7 +1511,7 @@ A transaction conflict occurred in the mutation. Details: %s
 A conflict occurred. Please try restarting the transaction. Details: %s
 ```
 
-### `CORE-20012`
+### `DB-CORE-20012`
 
 **メッセージ**
 
@@ -1315,7 +1519,7 @@ A conflict occurred. Please try restarting the transaction. Details: %s
 The %s condition of the %s operation is not satisfied. Targeting column(s): %s
 ```
 
-### `CORE-20013`
+### `DB-CORE-20013`
 
 **メッセージ**
 
@@ -1323,7 +1527,7 @@ The %s condition of the %s operation is not satisfied. Targeting column(s): %s
 The record being prepared already exists
 ```
 
-### `CORE-20014`
+### `DB-CORE-20014`
 
 **メッセージ**
 
@@ -1331,7 +1535,7 @@ The record being prepared already exists
 A conflict occurred when preparing records
 ```
 
-### `CORE-20015`
+### `DB-CORE-20015`
 
 **メッセージ**
 
@@ -1339,7 +1543,7 @@ A conflict occurred when preparing records
 The committing state in the coordinator failed. The transaction has been aborted
 ```
 
-### `CORE-20016`
+### `DB-CORE-20016`
 
 **メッセージ**
 
@@ -1347,7 +1551,7 @@ The committing state in the coordinator failed. The transaction has been aborted
 A conflict occurred during implicit pre-read
 ```
 
-### `CORE-20017`
+### `DB-CORE-20017`
 
 **メッセージ**
 
@@ -1355,7 +1559,7 @@ A conflict occurred during implicit pre-read
 This record needs to be recovered
 ```
 
-### `CORE-20018`
+### `DB-CORE-20018`
 
 **メッセージ**
 
@@ -1363,7 +1567,7 @@ This record needs to be recovered
 The record does not exist, so the %s condition is not satisfied
 ```
 
-### `CORE-20019`
+### `DB-CORE-20019`
 
 **メッセージ**
 
@@ -1371,7 +1575,7 @@ The record does not exist, so the %s condition is not satisfied
 The record exists, so the %s condition is not satisfied
 ```
 
-### `CORE-20020`
+### `DB-CORE-20020`
 
 **メッセージ**
 
@@ -1379,7 +1583,7 @@ The record exists, so the %s condition is not satisfied
 The condition on the column '%s' is not satisfied
 ```
 
-### `CORE-20021`
+### `DB-CORE-20021`
 
 **メッセージ**
 
@@ -1387,7 +1591,7 @@ The condition on the column '%s' is not satisfied
 Reading empty records might cause a write skew anomaly, so the transaction has been aborted for safety purposes
 ```
 
-### `CORE-20022`
+### `DB-CORE-20022`
 
 **メッセージ**
 
@@ -1395,7 +1599,7 @@ Reading empty records might cause a write skew anomaly, so the transaction has b
 An anti-dependency was found. The transaction has been aborted
 ```
 
-### `CORE-20023`
+### `DB-CORE-20023`
 
 **メッセージ**
 
@@ -1403,7 +1607,7 @@ An anti-dependency was found. The transaction has been aborted
 A transaction conflict occurred in the Insert operation
 ```
 
-### `CORE-20024`
+### `DB-CORE-20024`
 
 **メッセージ**
 
@@ -1411,7 +1615,7 @@ A transaction conflict occurred in the Insert operation
 The %s condition of the %s operation is not satisfied. Targeting column(s): %s
 ```
 
-### `CORE-20025`
+### `DB-CORE-20025`
 
 **メッセージ**
 
@@ -1419,9 +1623,11 @@ The %s condition of the %s operation is not satisfied. Targeting column(s): %s
 A transaction conflict occurred in the Insert operation
 ```
 
-## `CORE-3xxxx` ステータスコード
+## `DB-CORE-3xxxx` ステータスコード
 
-### `CORE-30000`
+以下は、内部エラーカテゴリのステータスコードとメッセージです。
+
+### `DB-CORE-30000`
 
 **メッセージ**
 
@@ -1429,7 +1635,7 @@ A transaction conflict occurred in the Insert operation
 Creating the namespace failed. Namespace: %s
 ```
 
-### `CORE-30001`
+### `DB-CORE-30001`
 
 **メッセージ**
 
@@ -1437,7 +1643,7 @@ Creating the namespace failed. Namespace: %s
 Dropping the namespace failed. Namespace: %s
 ```
 
-### `CORE-30002`
+### `DB-CORE-30002`
 
 **メッセージ**
 
@@ -1445,7 +1651,7 @@ Dropping the namespace failed. Namespace: %s
 Creating the table failed. Table: %s
 ```
 
-### `CORE-30003`
+### `DB-CORE-30003`
 
 **メッセージ**
 
@@ -1453,7 +1659,7 @@ Creating the table failed. Table: %s
 Dropping the table failed. Table: %s
 ```
 
-### `CORE-30004`
+### `DB-CORE-30004`
 
 **メッセージ**
 
@@ -1461,7 +1667,7 @@ Dropping the table failed. Table: %s
 Truncating the table failed. Table: %s
 ```
 
-### `CORE-30005`
+### `DB-CORE-30005`
 
 **メッセージ**
 
@@ -1469,7 +1675,7 @@ Truncating the table failed. Table: %s
 Creating the index failed. Table: %s, Column: %s
 ```
 
-### `CORE-30006`
+### `DB-CORE-30006`
 
 **メッセージ**
 
@@ -1477,7 +1683,7 @@ Creating the index failed. Table: %s, Column: %s
 Dropping the index failed. Table: %s, Column: %s
 ```
 
-### `CORE-30007`
+### `DB-CORE-30007`
 
 **メッセージ**
 
@@ -1485,7 +1691,7 @@ Dropping the index failed. Table: %s, Column: %s
 Getting the table metadata failed. Table: %s
 ```
 
-### `CORE-30008`
+### `DB-CORE-30008`
 
 **メッセージ**
 
@@ -1493,7 +1699,7 @@ Getting the table metadata failed. Table: %s
 Getting the table names in the namespace failed. Namespace: %s
 ```
 
-### `CORE-30009`
+### `DB-CORE-30009`
 
 **メッセージ**
 
@@ -1501,7 +1707,7 @@ Getting the table names in the namespace failed. Namespace: %s
 Checking the namespace existence failed. Namespace: %s
 ```
 
-### `CORE-30010`
+### `DB-CORE-30010`
 
 **メッセージ**
 
@@ -1509,7 +1715,7 @@ Checking the namespace existence failed. Namespace: %s
 Checking the table existence failed. Table: %s
 ```
 
-### `CORE-30011`
+### `DB-CORE-30011`
 
 **メッセージ**
 
@@ -1517,7 +1723,7 @@ Checking the table existence failed. Table: %s
 Checking the index existence failed. Table: %s; Column: %s
 ```
 
-### `CORE-30012`
+### `DB-CORE-30012`
 
 **メッセージ**
 
@@ -1525,7 +1731,7 @@ Checking the index existence failed. Table: %s; Column: %s
 Repairing the namespace failed. Namespace: %s
 ```
 
-### `CORE-30013`
+### `DB-CORE-30013`
 
 **メッセージ**
 
@@ -1533,7 +1739,7 @@ Repairing the namespace failed. Namespace: %s
 Repairing the table failed. Table: %s
 ```
 
-### `CORE-30014`
+### `DB-CORE-30014`
 
 **メッセージ**
 
@@ -1541,7 +1747,7 @@ Repairing the table failed. Table: %s
 Adding a new column to the table failed. Table: %s; Column: %s; ColumnType: %s
 ```
 
-### `CORE-30015`
+### `DB-CORE-30015`
 
 **メッセージ**
 
@@ -1549,7 +1755,7 @@ Adding a new column to the table failed. Table: %s; Column: %s; ColumnType: %s
 Getting the namespace names failed
 ```
 
-### `CORE-30016`
+### `DB-CORE-30016`
 
 **メッセージ**
 
@@ -1557,7 +1763,7 @@ Getting the namespace names failed
 Getting the table metadata of the table being imported failed. Table: %s
 ```
 
-### `CORE-30017`
+### `DB-CORE-30017`
 
 **メッセージ**
 
@@ -1565,7 +1771,7 @@ Getting the table metadata of the table being imported failed. Table: %s
 Importing the table failed. Table: %s
 ```
 
-### `CORE-30018`
+### `DB-CORE-30018`
 
 **メッセージ**
 
@@ -1573,7 +1779,7 @@ Importing the table failed. Table: %s
 Adding the raw column to the table failed. Table: %s; Column: %s; ColumnType: %s
 ```
 
-### `CORE-30019`
+### `DB-CORE-30019`
 
 **メッセージ**
 
@@ -1581,7 +1787,7 @@ Adding the raw column to the table failed. Table: %s; Column: %s; ColumnType: %s
 Upgrading the ScalarDB environment failed
 ```
 
-### `CORE-30020`
+### `DB-CORE-30020`
 
 **メッセージ**
 
@@ -1589,7 +1795,7 @@ Upgrading the ScalarDB environment failed
 Something wrong because WriteType is neither CAS nor SIMPLE
 ```
 
-### `CORE-30021`
+### `DB-CORE-30021`
 
 **メッセージ**
 
@@ -1597,7 +1803,7 @@ Something wrong because WriteType is neither CAS nor SIMPLE
 An error occurred in the selection. Details: %s
 ```
 
-### `CORE-30022`
+### `DB-CORE-30022`
 
 **メッセージ**
 
@@ -1605,7 +1811,7 @@ An error occurred in the selection. Details: %s
 An error occurred in the mutation. Details: %s
 ```
 
-### `CORE-30023`
+### `DB-CORE-30023`
 
 **メッセージ**
 
@@ -1613,7 +1819,7 @@ An error occurred in the mutation. Details: %s
 An error occurred in the selection. Details: %s
 ```
 
-### `CORE-30024`
+### `DB-CORE-30024`
 
 **メッセージ**
 
@@ -1621,7 +1827,7 @@ An error occurred in the selection. Details: %s
 An error occurred in the mutation. Details: %s
 ```
 
-### `CORE-30025`
+### `DB-CORE-30025`
 
 **メッセージ**
 
@@ -1629,7 +1835,7 @@ An error occurred in the mutation. Details: %s
 An error occurred in the selection. Details: %s
 ```
 
-### `CORE-30026`
+### `DB-CORE-30026`
 
 **メッセージ**
 
@@ -1637,7 +1843,7 @@ An error occurred in the selection. Details: %s
 An error occurred in the mutation. Details: %s
 ```
 
-### `CORE-30027`
+### `DB-CORE-30027`
 
 **メッセージ**
 
@@ -1645,7 +1851,7 @@ An error occurred in the mutation. Details: %s
 An error occurred in the selection. Details: %s
 ```
 
-### `CORE-30028`
+### `DB-CORE-30028`
 
 **メッセージ**
 
@@ -1653,7 +1859,7 @@ An error occurred in the selection. Details: %s
 Fetching the next result failed
 ```
 
-### `CORE-30029`
+### `DB-CORE-30029`
 
 **メッセージ**
 
@@ -1661,7 +1867,7 @@ Fetching the next result failed
 Rolling back the transaction failed. Details: %s
 ```
 
-### `CORE-30030`
+### `DB-CORE-30030`
 
 **メッセージ**
 
@@ -1669,7 +1875,7 @@ Rolling back the transaction failed. Details: %s
 Committing the transaction failed. Details: %s
 ```
 
-### `CORE-30031`
+### `DB-CORE-30031`
 
 **メッセージ**
 
@@ -1677,7 +1883,7 @@ Committing the transaction failed. Details: %s
 The Get operation failed. Details: %s
 ```
 
-### `CORE-30032`
+### `DB-CORE-30032`
 
 **メッセージ**
 
@@ -1685,7 +1891,7 @@ The Get operation failed. Details: %s
 The Scan operation failed. Details: %s
 ```
 
-### `CORE-30033`
+### `DB-CORE-30033`
 
 **メッセージ**
 
@@ -1693,7 +1899,7 @@ The Scan operation failed. Details: %s
 The Put operation failed. Details: %s
 ```
 
-### `CORE-30034`
+### `DB-CORE-30034`
 
 **メッセージ**
 
@@ -1701,7 +1907,7 @@ The Put operation failed. Details: %s
 The Delete operation failed. Details: %s
 ```
 
-### `CORE-30035`
+### `DB-CORE-30035`
 
 **メッセージ**
 
@@ -1709,7 +1915,7 @@ The Delete operation failed. Details: %s
 Beginning a transaction failed. Details: %s
 ```
 
-### `CORE-30036`
+### `DB-CORE-30036`
 
 **メッセージ**
 
@@ -1717,7 +1923,7 @@ Beginning a transaction failed. Details: %s
 Preparing records failed
 ```
 
-### `CORE-30037`
+### `DB-CORE-30037`
 
 **メッセージ**
 
@@ -1725,7 +1931,7 @@ Preparing records failed
 Validation failed
 ```
 
-### `CORE-30038`
+### `DB-CORE-30038`
 
 **メッセージ**
 
@@ -1733,7 +1939,7 @@ Validation failed
 Executing implicit pre-read failed
 ```
 
-### `CORE-30039`
+### `DB-CORE-30039`
 
 **メッセージ**
 
@@ -1741,7 +1947,7 @@ Executing implicit pre-read failed
 Reading a record from the underlying storage failed
 ```
 
-### `CORE-30040`
+### `DB-CORE-30040`
 
 **メッセージ**
 
@@ -1749,7 +1955,7 @@ Reading a record from the underlying storage failed
 Scanning records from the underlying storage failed
 ```
 
-### `CORE-30041`
+### `DB-CORE-30041`
 
 **メッセージ**
 
@@ -1757,7 +1963,7 @@ Scanning records from the underlying storage failed
 Rollback failed because the transaction has already been committed
 ```
 
-### `CORE-30042`
+### `DB-CORE-30042`
 
 **メッセージ**
 
@@ -1765,7 +1971,7 @@ Rollback failed because the transaction has already been committed
 Rollback failed
 ```
 
-### `CORE-30043`
+### `DB-CORE-30043`
 
 **メッセージ**
 
@@ -1773,7 +1979,7 @@ Rollback failed
 The Insert operation failed. Details: %s
 ```
 
-### `CORE-30044`
+### `DB-CORE-30044`
 
 **メッセージ**
 
@@ -1781,7 +1987,7 @@ The Insert operation failed. Details: %s
 The Upsert operation failed. Details: %s
 ```
 
-### `CORE-30045`
+### `DB-CORE-30045`
 
 **メッセージ**
 
@@ -1789,9 +1995,35 @@ The Upsert operation failed. Details: %s
 The Update operation failed. Details: %s
 ```
 
-## `CORE-4xxxx` ステータスコード
+### `DB-CORE-30046`
 
-### `CORE-40000`
+**メッセージ**
+
+```markdown
+Handling the before-preparation snapshot hook failed. Details: %s
+```
+
+### `DB-CORE-30047`
+
+**メッセージ**
+
+```markdown
+Something went wrong while trying to save the data. Details: %s
+```
+
+### `DB-CORE-30048`
+
+**メッセージ**
+
+```markdown
+Something went wrong while scanning. Are you sure you are running in the correct transaction mode? Details: %s
+```
+
+## `DB-CORE-4xxxx` ステータスコード
+
+以下は、不明なトランザクションステータスエラーカテゴリのステータスコードとメッセージです。
+
+### `DB-CORE-40000`
 
 **メッセージ**
 
@@ -1799,7 +2031,7 @@ The Update operation failed. Details: %s
 Rolling back the transaction failed. Details: %s
 ```
 
-### `CORE-40001`
+### `DB-CORE-40001`
 
 **メッセージ**
 
@@ -1807,7 +2039,7 @@ Rolling back the transaction failed. Details: %s
 Committing state failed with NoMutationException, but the coordinator status does not exist
 ```
 
-### `CORE-40002`
+### `DB-CORE-40002`
 
 **メッセージ**
 
@@ -1815,7 +2047,7 @@ Committing state failed with NoMutationException, but the coordinator status doe
 The state cannot be retrieved
 ```
 
-### `CORE-40003`
+### `DB-CORE-40003`
 
 **メッセージ**
 
@@ -1823,7 +2055,7 @@ The state cannot be retrieved
 The coordinator status is unknown
 ```
 
-### `CORE-40004`
+### `DB-CORE-40004`
 
 **メッセージ**
 

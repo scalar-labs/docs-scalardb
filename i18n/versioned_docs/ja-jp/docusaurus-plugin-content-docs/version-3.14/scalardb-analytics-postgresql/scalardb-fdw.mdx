@@ -1,0 +1,184 @@
+---
+tags:
+  - Community
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB FDW
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+ScalarDB FDW は、[ScalarDB](https://www.scalar-labs.com/scalardb/) の外部データラッパー (FDW) を実装する PostgreSQL 拡張機能です。
+
+ScalarDB FDW は、Java Native Interface を使用して、FDW 内のライブラリとして ScalarDB を直接利用し、ScalarDB のスキャン操作を介して外部データベースからデータを読み取ります。
+
+## 前提条件
+
+環境に次の前提条件が設定されている必要があります。
+
+### JDK
+
+ScalarDB と互換性のあるバージョンの Java Development Kit (JDK) をインストールする必要があります。さらに、JDK インストールディレクトリを指す `JAVA_HOME` 環境変数を設定する必要があります。
+
+これらの拡張機能は内部で Java Native Interface (JNI) を使用するため、ライブラリ検索パスに `libjvm.so` などの Java 仮想マシン (JVM) の動的ライブラリを含める必要があることに注意してください。
+
+### PostgreSQL
+
+この拡張機能は PostgreSQL 13以降をサポートしています。PostgreSQL のインストール方法の詳細については、[サーバー管理](https://www.postgresql.org/docs/current/admin.html)の公式ドキュメントを参照してください。
+
+## ビルドとインストール
+
+以下のコマンドを実行すると、この拡張機能をビルドしてインストールできます。
+
+```console
+make install
+```
+
+### 一般的なビルドエラー
+
+このセクションでは、発生する可能性のある一般的なビルドエラーについて説明します。
+
+#### ld: -ljvm のライブラリが見つかりません
+
+通常、ビルドスクリプトは `libjvm.so` のパスを見つけ、それをライブラリ検索パスとして適切に設定しています。ただし、`ld: library not found for -ljvm` というエラーが発生した場合は、`libjvm.so` ファイルをデフォルトのライブラリ検索パスにコピーしてください。例:
+
+```console
+ln -s /<PATH_TO_YOUR_LIBJVM_FILE>/libjvm.so /usr/lib64/libjvm.so
+```
+
+## 使用方法
+
+このセクションでは、ScalarDB の FDW の使用例と利用可能なオプションについて説明します。
+
+### 例
+
+次の例では、必要なコンポーネントをインストールして作成し、FDW 拡張機能を使用してクエリを実行する方法を示します。
+
+#### 1. 拡張機能をインストールする
+
+拡張機能のインストール方法の詳細については、[ビルドとインストール](#ビルドとインストール)セクションを参照してください。
+
+#### 2. 拡張機能を作成する
+
+拡張機能を作成するには、次のコマンドを実行します。
+
+```sql
+CREATE EXTENSION scalardb_fdw;
+```
+
+#### 3. 外部サーバーを作成する
+
+外部サーバーを作成するには、次のコマンドを実行します。
+
+```sql
+CREATE SERVER scalardb FOREIGN DATA WRAPPER scalardb_fdw OPTIONS (
+    config_file_path '/path/to/scalardb.properties'
+);
+```
+
+#### 4. ユーザーマッピングを作成する
+
+ユーザーマッピングを作成するには、次のコマンドを実行します。
+
+```sql
+CREATE USER MAPPING FOR PUBLIC SERVER scalardb;
+```
+
+#### 5. 外部テーブルを作成する
+
+外部テーブルを作成するには、次のコマンドを実行します。
+
+```sql
+CREATE FOREIGN TABLE sample_table (
+    pk int,
+    ck1 int,
+    ck2 int,
+    boolean_col boolean,
+    bigint_col bigint,
+    float_col double precision,
+    double_col double precision,
+    text_col text,
+    blob_col bytea
+) SERVER scalardb OPTIONS (
+    namespace 'ns',
+    table_name 'sample_table'
+);
+```
+
+#### 6. クエリを実行する
+
+クエリを実行するには、次のコマンドを実行します。
+
+```sql
+select * from sample_table;
+```
+
+### 使用可能なオプション
+
+ScalarDB FDW オブジェクトには次のオプションを設定できます。
+
+#### `CREATE SERVER`
+
+ScalarDB 外部サーバーオブジェクトには次のオプションを設定できます。
+
+| 名前                | 必須     | タイプ    | 説明                                        |
+| ------------------ | ------- | -------- | ------------------------------------------- |
+| `config_file_path` | **はい** | `string` | ScalarDB 設定ファイルへのパス。                 |
+| `max_heap_size`    | いいえ   | `string` | JVM の最大ヒープサイズ。形式は `-Xmx` と同じです。 |
+
+#### `CREATE USER MAPPING`
+
+現在、`CREATE USER MAPPING` のオプションはありません。
+
+#### `CREATE FOREIGN SERVER`
+
+ScalarDB 外部テーブルオブジェクトには次のオプションを設定できます。
+
+| 名前          | 必須     | タイプ    | 説明                                         |
+| ------------ | ------- | -------- | -------------------------------------------- |
+| `namespace`  | **はい** | `string` | ScalarDB インスタンス内のテーブルの名前空間の名前。 |
+| `table_name` | **はい** | `string` | ScalarDB インスタンス内のテーブルの名前。         |
+
+### データ型のマッピング
+
+| ScalarDB | PostgreSQL       |
+| -------- | ---------------- |
+| BOOLEAN  | boolean          |
+| INT      | int              |
+| BIGINT   | bigint           |
+| FLOAT    | float            |
+| DOUBLE   | double precision |
+| TEXT     | text             |
+| BLOB     | bytea            |
+
+## テスト
+
+このセクションでは、ScalarDB の FDW をテストする方法について説明します。
+
+### テスト用の ScalarDB インスタンスの設定
+
+ScalarDB の FDW をテストする前に、テストデータを含む実行中の ScalarDB インスタンスが必要です。次のコマンドを実行して、インスタンスを設定し、テストデータをロードできます。
+
+```console
+./test/setup.sh
+```
+
+インスタンスをリセットする場合は、次のコマンドを実行してから、上記のセットアップコマンドを再度実行します。
+
+```console
+./test/cleanup.sh
+```
+
+### 回帰テストを実行する
+
+FDW 拡張機能をインストールした後、次のコマンドを実行すると、回帰テストを実行できます。
+
+```console
+make installcheck
+```
+
+## 制限事項
+
+- この拡張機能は、ScalarDB 管理データベースでの分析クエリ処理を可能にすることを目的としています。したがって、この拡張機能は ScalarDB からのデータの読み取りのみをサポートします。

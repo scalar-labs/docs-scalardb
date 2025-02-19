@@ -1,0 +1,167 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Cluster .NET Client SDK リファレンス
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このリファレンスでは、ScalarDB Cluster .NET Client SDK の動作について詳しく説明します。
+
+## クライアント設定
+
+クライアントは、次のものを使用して設定できます。
+
+- 設定ファイル (`appsettings.json` など) またはカスタム JSON ファイル
+- 環境変数
+- `ScalarDbOptions` オブジェクト
+
+ASP.NET Core で SDK を使用する場合は、アプリをさまざまな方法で設定できます。詳細については、[ASP.NET Core の構成](https://learn.microsoft.com/ja-jp/aspnet/core/fundamentals/configuration/?view=aspnetcore-8.0)を参照してください。
+
+設定できるオプションの一覧については、[使用可能なオプション](#使用可能なオプション)を参照してください。
+
+### 設定ファイルの使用
+
+SDK は、標準の `appsettings.json` とカスタム JSON 設定ファイルの両方をサポートしています。 JSON ファイルでクライアントを設定するには、`ScalarDbOptions` セクションを追加し、必要なオプションを設定します。例:
+
+```json
+{
+  "ScalarDbOptions": {
+    "Address": "http://localhost:60053",
+    "HopLimit": 10
+  }
+}
+```
+
+次に、次のように設定された `TransactionFactory` オブジェクトを作成します。
+
+```c#
+// If appsettings.json is used, call the Create() method without parameters.
+var factory = TransactionFactory.Create();
+
+// Or, if a custom file is used, call the Create() method that is passed in the path to the custom file as a parameter.
+factory = TransactionFactory.Create("scalardb-options.json");
+```
+
+ASP.NET Core で SDK を使用する場合、登録されたトランザクションマネージャーや `ScalarDbContext` が作成されると、`appsettings.json` の設定が自動的に適用されます。カスタム JSON ファイルを使用する場合は、次のように設定フレームワークに追加します。
+
+```c#
+var builder = WebApplication.CreateBuilder(args);
+
+// ...
+
+builder.Configuration.AddJsonFile("scalardb-options.json");
+```
+
+:::warning
+
+カスタム JSON ファイルはすべての標準設定プロバイダーの後に適用されるため、カスタムファイルの値が他のソースの値を上書きします。
+
+:::
+
+### 環境変数の使用
+
+クライアントが環境変数を使用するように設定するには、プレフィックス `ScalarDbOptions__` を使用します。例:
+
+```console
+export ScalarDbOptions__Address="http://localhost:60053"
+export ScalarDbOptions__HopLimit=10
+```
+
+:::warning
+
+環境変数の値は設定ファイルの値を上書きします。
+
+:::
+
+### `ScalarDbOptions` オブジェクトの使用
+
+次のように `ScalarDbOptions` オブジェクトを使用して、実行時にクライアントを設定できます。
+
+```c#
+var options = new ScalarDbOptions()
+{
+    Address = "http://localhost:60053",
+    HopLimit = 10
+};
+
+var factory = TransactionFactory.Create(options);
+```
+
+また、次のように、JSON ファイルや環境変数の値を使用して `ScalarDbOptions` オブジェクトを初期化し、残りの値を実行時に設定することもできます。
+
+```c#
+// If appsettings.json is used, call the Load() method without parameters.
+var options = ScalarDbOptions.Load();
+
+// Or, if a custom file is used, call the Load() method that is passed in the path to the custom file as a parameter.
+options = ScalarDbOptions.Load("scalardb-options.json");
+
+options.HopLimit = 10;
+
+var factory = TransactionFactory.Create(options);
+```
+
+ASP.NET Core で SDK を使用する場合は、次のように `AddScalarDb` および `AddScalarDbContext` のラムダ式を使用できます。
+
+```c#
+var builder = WebApplication.CreateBuilder(args);
+
+//...
+
+builder.Services.AddScalarDb(options =>
+{
+    options.Address = "http://localhost:60053";
+    options.HopLimit = 10;
+});
+
+builder.Services.AddScalarDbContext<MyDbContext>(options =>
+{
+    options.Address = "http://localhost:60053";
+    options.HopLimit = 10;
+});
+```
+
+この構成を使用すると、ラムダ式に渡される `ScalarDbOptions` オブジェクト (上記の例では `options` という名前) が、JSON ファイル、環境変数、およびその他のソースからの値で初期化されます。
+
+### 使用可能なオプション
+
+利用可能なオプションは次のとおりです。
+
+| 名前                          | 説明                                                                                                                                                                                                                                    | デフォルト                                       |
+|-----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------------------|
+| `Address`                   | **必須:** クラスターのアドレス。形式は `<PROTOCOL>://<HOSTNAME_OR_IP_ADDRESS>:<PORT>` です。`<PROTOCOL>`: ワイヤ暗号化 (TLS) が有効な場合は `https`、それ以外の場合は `http` です。`<HOSTNAME_OR_IP_ADDRESS>`: クラスターの FQDN または IP アドレスです。`<PORT>`: クラスターのポート番号 (デフォルトでは `60053`)。 | -                                           |
+| `HopLimit`                  | クラスターへのリクエストのホップ数。`HopLimit` の目的は、クラスター内での無限ループを防ぐことです。リクエストが別のクラスターノードに転送されるたびに、`HopLimit` は1ずつ減少します。`HopLimit` が0に達すると、リクエストは拒否されます。                                                                                            | `3`                                         |
+| `RetryCount`                | クラスターが利用できない場合にクライアントがクラスターへの接続を試行できる回数。                                                                                                                                                                                              | `10`                                        |
+| `AuthEnabled`               | 認証と認可が有効かどうか。                                                                                                                                                                                                                         | `false`                                     |
+| `Username`                  | 認証/認可のためのユーザー名。                                                                                                                                                                                                                       |                                             |
+| `Password`                  | 認証用のパスワード。設定されていない場合は、パスワードなしで認証が行われます。                                                                                                                                                                                               |                                             |
+| `AuthTokenExpirationTime`   | 認証トークンを更新するまでの時間。`AuthTokenExpirationTime` に設定された時間がクラスターの有効期限よりも長い場合、認証エラーを受信すると認証トークンが更新されます。認証トークンが正常に更新されると、認証エラーはクライアントコードに伝播されません。代わりに、認証エラーで失敗した操作が自動的に再試行されます。複数の操作が並行して実行されている場合、認証トークンが更新される前に、これらすべての操作が認証エラーで一度失敗します。     | `00:00:00` (クラスターから受信した認証トークンの有効期限が使用されます。) |
+| `TlsRootCertPem`            | TLS 通信用のカスタム CA ルート証明書 (PEM データ)。                                                                                                                                                                                                     |                                             |
+| `TlsRootCertPath`           | TLS 通信用のカスタム CA ルート証明書へのファイルパス。                                                                                                                                                                                                       |                                             |
+| `TlsOverrideAuthority`      | TLS 通信のカスタム認証局。これは、実際に接続しているホストを変更するものではありません。これは主にテストを目的としています。たとえば、クラスターの証明書 (クラスターの `scalar.db.cluster.node.tls.cert_chain_path` パラメータ) に記載されているホスト名を指定できます。クラスターの証明書に複数のホスト名がある場合は、最初のホスト名のみがチェックされます。                            |                                             |
+| `LogSensitiveData`          | `true` に設定すると、gRPC リクエストとレスポンスをログに記録するときに、ユーザー名、パスワード、認証トークンなどの情報がマスクされずにそのままログに記録されます。                                                                                                                                               | `false`                                     |
+| `GrpcRequestTimeout`        | gRPC リクエストのタイムアウト。内部的には、タイムアウトの値はクラスターへの各 gRPC リクエストのデッドラインを計算して設定するために使用されます。設定されたデッドラインを超えると、リクエストはキャンセルされ、`DeadlineExceededException` がスローされます。タイムアウトが `0` に設定されている場合、デッドラインは設定されません。                                              | `00:01:00`                                  |
+| `GrpcMaxReceiveMessageSize` | クライアントが受信できる最大メッセージサイズ (バイト単位)。`0` に設定すると、メッセージサイズは無制限になります。                                                                                                                                                                        | `4 MB`                                      |
+| `GrpcMaxSendMessageSize`    | クライアントから送信できる最大メッセージサイズ (バイト単位)。`0` に設定すると、メッセージサイズは無制限になります。                                                                                                                                                                       | `0` (無制限)                                   |
+
+## ScalarDB 列型と .NET 型間の変換方法
+
+[LINQ](getting-started-with-linq.mdx#クラスを設定する) または [Transactional API](getting-started-with-scalardb-tables-as-csharp-classes.mdx#すべての-scalardb-テーブルのクラスを作成する)、[SQL API](getting-started-with-distributed-sql-transactions.mdx#sql-クエリを実行する)、または [Administrative API](getting-started-with-scalardb-tables-as-csharp-classes.mdx#administrative-api-を使用する) の拡張メソッドを使用すると、クラスターから受信した列の値は、対応する .NET 型に自動的に変換されます。同様に、オブジェクトがクラスターに保存されるときに、.NET プロパティの値は対応するクラスターの型に自動的に変換されます。
+
+次の表に、型がどのように変換されるかを示します。
+
+| ScalarDB 型 | .NET 型                    | C# エイリアス |
+|------------|----------------------------|-------------|
+| TEXT       | System.String              | string      |
+| INT        | System.Int32               | int         |
+| BIGINT     | System.Int64               | long        |
+| FLOAT      | System.Single              | float       |
+| DOUBLE     | System.Double              | double      |
+| BOOLEAN    | System.Boolean             | bool        |
+| BLOB       | Google.Protobuf.ByteString |             |

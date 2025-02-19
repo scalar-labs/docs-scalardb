@@ -48,6 +48,10 @@ displayed_sidebar: docsEnglish
   - [RESUME](#resume)
   - [SHOW USERS](#show-users)
   - [SHOW GRANTS](#show-grants)
+- Literal
+  - [Text](#text)
+  - [Numeric](#numeric)
+  - [Date and time](#date-and-time)
 
 ## DDL
 
@@ -116,7 +120,7 @@ CREATE TABLE [IF NOT EXISTS] [<namespace name>.]<table name> (
   ...
 ) [WITH creation_options]
 
-data_type: BOOLEAN | INT | BIGINT | FLOAT | DOUBLE | TEXT | BLOB
+data_type: BOOLEAN | INT | BIGINT | FLOAT | DOUBLE | TEXT | BLOB | DATE | TIME | TIMESTAMP | TIMESTAMPTZ
 creation_options: <option name>=<option value> [AND <option name>=<option value>] ...
 ```
 
@@ -544,7 +548,7 @@ The `ALTER TABLE` command alters a table (ex. adding a column).
 ```sql
 ALTER TABLE [<namespace name>.]<table name> ADD [COLUMN] <column name> data_type [ENCRYPTED]
 
-data_type: BOOLEAN | INT | BIGINT | FLOAT | DOUBLE | TEXT | BLOB
+data_type: BOOLEAN | INT | BIGINT | FLOAT | DOUBLE | TEXT | BLOB | DATE | TIME | TIMESTAMP | TIMESTAMPTZ
 ```
 
 - You can specify `ENCRYPTED` for the column to encrypt the data in that column.
@@ -581,7 +585,7 @@ The `SELECT` command retrieves records from the database. ScalarDB SQL creates a
 
 1. If you fully specify the primary-key columns in the `WHERE` clause, the `SELECT` command will use a `Get` operation for a single record in a single partition.
 2. If you fully specify the partition key and properly specify the clustering key and order in the `WHERE` and `ORDER BY` clauses, the `SELECT` command will use a `Scan` operation for records in a single partition. For more details, see the [Examples of partition scans and index scans](#examples-of-partition-scans-and-index-scans).
-3. If you specify the indexed column value with the `equal to` (`=`) operator in the `WHERE` clause without the `ORDER BY` clause, the `SELECT` command will use an index `Scan` operation.
+3. If you specify the indexed column value literal with the `equal to` (`=`) operator in the `WHERE` clause without the `ORDER BY` clause, the `SELECT` command will use an index `Scan` operation.
 4. For other cases, the `SELECT` command will be converted to a cross-partition `Scan` operation.
 
 You need to enable the cross-partition scan option and the cross-partition scan with filtering and ordering options if you want to flexibly retrieve records across partitions with arbitrary conditions and orderings. Currently, the ordering option is available only for JDBC databases. For details about configurations, see [Cross-partition scan configurations](../configurations.mdx#cross-partition-scan-configurations) and [ScalarDB Cluster SQL configurations](../scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-client-configurations).
@@ -606,7 +610,7 @@ join_specification: [INNER] JOIN [<namespace name>.]<table name> [AS <alias>] ON
 join_predicate: identifier = identifier
 and_predicates: predicate | (predicate [AND predicate ...])
 or_predicates: predicate | (predicate [OR predicate ...])
-predicate: identifier operator <column value> | identifier BETWEEN <column value> AND <column value> | identifier [NOT] LIKE <pattern> [ESCAPE <escape character>] | identifier IS [NOT] NULL
+predicate: identifier operator <literal> | identifier BETWEEN <literal> AND <literal> | identifier [NOT] LIKE <pattern> [ESCAPE <escape character>] | identifier IS [NOT] NULL
 identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
 operator: = | <> | != | > | >= | < | <=
 order: ASC | DESC
@@ -629,7 +633,7 @@ order: ASC | DESC
 - You can use arbitrary predicates for any columns in the `WHERE` clause.
 - In the `WHERE` clause, predicates must be an OR-wise of `and_predicates` (known as disjunctive normal form) or an AND-wise of `or_predicates` (known as conjunctive normal form).
 - When connecting multiple `and_predicates` or `or_predicates`, which have more than one predicate, you need to put parentheses around `and_predicates` and `or_predicates`.
-- You can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
+- You can specify `<literal>` to a bind marker (positional `?` and named `:<name>`). See the [Literal](#literal) section for the literal syntax.
 - You cannot specify encrypted columns in the `WHERE` clause.
 
 `LIKE` predicate:
@@ -1079,11 +1083,11 @@ This command returns the following column:
 
 ```sql
 INSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ...)]
-  VALUES (<column value> [, <column value>] ...) [, (<column value> [, <column value>] ...)] ...
+  VALUES (<literal> [, <literal>] ...) [, (<literal> [, <literal>] ...)] ...
 ```
 
 - You must specify a full primary key in `INSERT`.
-- You can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
+- You can specify `<literal>` to a bind marker (positional `?` and named `:<name>`). See the [Literal](#literal) section for the literal syntax.
 
 #### Examples
 
@@ -1149,11 +1153,11 @@ This command returns the following column:
 
 ```sql
 UPSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ...)]
-  VALUES (<column value> [, <column value>] ...) [, (<column value> [, <column value>] ...)] ...
+  VALUES (<literal> [, <literal>] ...) [, (<literal> [, <literal>] ...)] ...
 ```
 
 - You must specify a full primary key in `UPSERT`.
-- You can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
+- You can specify `<literal>` to a bind marker (positional `?` and named `:<name>`). See the [Literal](#literal) section for the literal syntax.
 
 #### Examples
 
@@ -1227,13 +1231,13 @@ This command returns the following column:
 
 ```sql
 UPDATE [<namespace name>.]<table name> [AS <alias>]
-  SET <column identifier> = <column value> [, <column identifier> = <column value>] ...
+  SET <column identifier> = <literal> [, <column identifier> = <literal>] ...
   [WHERE and_predicates [OR and_predicates ...] | or_predicates [AND or_predicates ...]]
 
 identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
 and_predicates: predicate | (predicate [AND predicate ...])
 or_predicates: predicate | (predicate [OR predicate ...])
-predicate: <identifier> operator <column value> | <identifier> BETWEEN <column value> AND <column value> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
+predicate: <identifier> operator <literal> | <identifier> BETWEEN <literal> AND <literal> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
 operator: = | <> | != | > | >= | < | <=
 ```
 
@@ -1244,7 +1248,7 @@ operator: = | <> | != | > | >= | < | <=
 - You can use arbitrary predicates for any columns in the `WHERE` clause.
 - In the `WHERE` clause, predicates must be an OR-wise of `and_predicates` (known as disjunctive normal form) or an AND-wise of `or_predicates` (known as conjunctive normal form).
 - When connecting multiple `and_predicates` or `or_predicates`, which have more than one predicate, you need to put parentheses around `and_predicates` and `or_predicates`.
-- You can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
+- You can specify `<literal>` to a bind marker (positional `?` and named `:<name>`). See the [Literal](#literal) section for the literal syntax.
 - You cannot specify encrypted columns in the `WHERE` clause.
 
 `LIKE` predicate:
@@ -1460,7 +1464,7 @@ DELETE FROM [<namespace name>.]<table name> [AS <alias>]
 identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
 and_predicates: predicate | (predicate [AND predicate ...])
 or_predicates: predicate | (predicate [OR predicate ...])
-predicate: <identifier> operator <column value> | <identifier> BETWEEN <column value> AND <column value> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
+predicate: <identifier> operator <literal> | <identifier> BETWEEN <literal> AND <literal> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
 operator: = | <> | != | > | >= | < | <=
 ```
 
@@ -1471,7 +1475,7 @@ operator: = | <> | != | > | >= | < | <=
 - You can use arbitrary predicates for any columns in the `WHERE` clause.
 - In the `WHERE` clause, predicates must be an OR-wise of `and_predicates` (known as disjunctive normal form) or an AND-wise of `or_predicates` (known as conjunctive normal form).
 - When connecting multiple `and_predicates` or `or_predicates`, which have more than one predicate, you need to put parentheses around `and_predicates` and `or_predicates`.
-- You can specify `<column value>` to a bind marker (positional `?` and named `:<name>`).
+- You can specify `<literal>` to a bind marker (positional `?` and named `:<name>`). See the [Literal](#literal) section for the literal syntax.
 - You cannot specify encrypted columns in the `WHERE` clause.
 
 `LIKE` predicate:
@@ -2350,3 +2354,30 @@ ShowGrantsStatement statement1 = StatementBuilder.showGrants().build();
 // Show privileges granted to user1
 ShowGrantsStatement statement2 = StatementBuilder.showGrants().forUser("user1").build();
 ```
+
+## Literal
+
+Literal and column values are synonymous and refer to a fixed data value used when writing SQL statements. For example, `1`, `'abc'`, `1.23`, and `'2024-05-19'` are literals.
+
+### Text
+
+A text literal is a sequence of characters enclosed in single quotes `'`, such as `'abc'` and `'abc def'`.
+
+### Numeric
+
+Numeric literals include exact-value (INTEGER and BIGINT) and approximate-value (FLOAT and DOUBLE) literals.
+
+An exact-value literal is a sequence of digits, such as `123` and `-5`.
+
+An approximate-value literal is a sequence of digits with a decimal point, such as `4.754` and `-1.2`. 
+
+### Date and time
+
+Date and time literals are text literals that follow a specific format to represents DATE, TIME, TIMESTAMP, and TIMESTAMPTZ values. 
+
+| ScalarDB type | Format                              | Note                                                             | Example                                                                          |
+|---------------|-------------------------------------|------------------------------------------------------------------|----------------------------------------------------------------------------------|
+| DATE          | **'YYYY-MM-DD'**                    |                                                                  | `'2024-05-19'`                                                                   |
+| TIME          | **'HH:MM:[SS[.FFFFFF]]'**           | Second and fractional second (up to 1 microsecond) are optional. | `'12:34'`, `'12:34:56'`, `'12:34:56.789123'`                                     |
+| TIMESTAMP     | **'YYYY-MM-DD HH:MM:[SS[.FFF]]'**   | Second and fractional second (up to 1 millisecond) are optional. | `'2024-05-19 12:34'`, `'2024-05-19 12:34:56'`, `'2024-05-19 12:34:56.789'`       |
+| TIMESTAMPTZ   | **'YYYY-MM-DD HH:MM:[SS[.FFF]] Z'** | Second and fractional second (up to 1 millisecond) are optional. | '`2024-05-19 12:34 Z'`, `'2024-05-19 12:34:56 Z'`, `'2024-05-19 12:34:56.789 Z'` |
