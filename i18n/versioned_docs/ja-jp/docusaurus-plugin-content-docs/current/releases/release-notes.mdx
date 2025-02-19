@@ -1,0 +1,42 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB 3.15 リリースノート
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このページには、ScalarDB 3.15 のリリースノートのリストが含まれています。
+
+## v3.15.1
+
+**発売日:** 2025年02月20日
+
+### まとめ
+
+このリリースには、多数の機能強化、改善、バグ修正が含まれています。[3.15.0 リリース](https://github.com/scalar-labs/scalardb/releases/tag/v3.15.0)は破棄され、これが 3.15 の最初の公式リリースとなります。
+
+### 機能強化
+
+- 操作属性が導入され、操作に追加のキー値情報を含める機能が提供されました。([#2333](https://github.com/scalar-labs/scalardb/pull/2333))
+- 新しい時間関連のデータ型 DATE、TIME、TIMESTAMP、および TIMESTAMPTZ が追加されました。 ([#2468](https://github.com/scalar-labs/scalardb/pull/2468) [#2491](https://github.com/scalar-labs/scalardb/pull/2491))
+
+### 改善点
+
+- ScalarDB は、MySQL 8.4、8.0、PostgreSQL 17、16、15、14、13、Amazon Aurora PostgreSQL 16、15、14、13 をサポートするようになりました。 Amazon Aurora MySQL 3、および 2。([#2302](https://github.com/scalar-labs/scalardb/pull/2302))
+- `jdbc:mariadb` で始まる接続 URL には MariaDB Connector/J JDBC ドライバーを使用します。([#2391](https://github.com/scalar-labs/scalardb/pull/2391))
+- Cassandra および Cosmos DB のステートメントハンドラーで不要なログ記録を削除しました。([#2469](https://github.com/scalar-labs/scalardb/pull/2469))
+
+### バグの修正
+
+- スキャン結果が 1 MB を超え、DynamoDB への複数のリクエストが必要な場合に、制限付きスキャンが正しく機能しないバグを修正しました。 ([#2291](https://github.com/scalar-labs/scalardb/pull/2291))
+- Cosmos DB アダプタの主キー列の検証を追加しました。検証により、主キー列のテキスト値に不正な文字 (`:`、`/`、`\`、`#`、`?`) が含まれていないことが保証されます。([#2292](https://github.com/scalar-labs/scalardb/pull/2292))
+- Consensus Commit のトランザクションで同じレコードに対して複数のミューテーションが発生する動作を修正しました。([#2340](https://github.com/scalar-labs/scalardb/pull/2340))
+- Cosmos アダプタで存在しないレコードを削除するときの動作を修正しました。 ([#2341](https://github.com/scalar-labs/scalardb/pull/2341))
+- GetBuilder と ScanBuilder のバグを修正しました。([#2352](https://github.com/scalar-labs/scalardb/pull/2352))
