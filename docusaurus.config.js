@@ -73,8 +73,14 @@ const config = {
               },
               */
               current: { // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
-                label: '3.14',
+                label: '3.15',
                 path: 'latest', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
+                banner: 'none',
+                className: '3.15.1',
+              },
+              "3.14": { // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
+                label: '3.14',
+                path: '3.14', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
                 banner: 'none',
                 className: '3.14.1',
               },
@@ -155,7 +161,7 @@ const config = {
 
   // The following versions have Japanese docs, so the language dropdown should be displayed only when visitors are reading these versions of docs.
   customFields: {
-    allowedLanguageDropdownVersions: ["current", "latest", "3.13"],
+    allowedLanguageDropdownVersions: ["current", "latest", "3.14", "3.13"],
   },
 
   plugins: [
