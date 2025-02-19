@@ -6,17 +6,23 @@ displayed_sidebar: docsJapanese
 
 # ScalarDB SQL エラーコード
 
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
 このページでは、ScalarDB SQL のエラーコードの一覧を示します。
 
 ## エラーコードのクラスと説明
 
-| クラス       | 説明                       |
-|:------------|:--------------------------|
-| `SQL-1xxxx` | ユーザーエラーカテゴリのエラー |
+| クラス          | 説明                       |
+|:---------------|:--------------------------|
+| `DB-SQL-1xxxx` | ユーザーエラーカテゴリのエラー |
 
-## `SQL-1xxxx` ステータスコード
+## `DB-SQL-1xxxx` ステータスコード
 
-### `SQL-10000`
+以下は、ユーザーエラーカテゴリのステータスコードとメッセージです。
+
+### `DB-SQL-10000`
 
 **メッセージ**
 
@@ -24,7 +30,7 @@ displayed_sidebar: docsJapanese
 The namespace does not exist. Namespace: %s
 ```
 
-### `SQL-10001`
+### `DB-SQL-10001`
 
 **メッセージ**
 
@@ -32,7 +38,7 @@ The namespace does not exist. Namespace: %s
 The table does not exist. Table: %s
 ```
 
-### `SQL-10002`
+### `DB-SQL-10002`
 
 **メッセージ**
 
@@ -40,7 +46,7 @@ The table does not exist. Table: %s
 The column %s does not exist
 ```
 
-### `SQL-10003`
+### `DB-SQL-10003`
 
 **メッセージ**
 
@@ -48,7 +54,7 @@ The column %s does not exist
 The column does not exist. Table: %s; Column: %s
 ```
 
-### `SQL-10004`
+### `DB-SQL-10004`
 
 **メッセージ**
 
@@ -56,7 +62,7 @@ The column does not exist. Table: %s; Column: %s
 The column index is out of bounds. Index: %d; Size: %d
 ```
 
-### `SQL-10005`
+### `DB-SQL-10005`
 
 **メッセージ**
 
@@ -64,7 +70,7 @@ The column index is out of bounds. Index: %d; Size: %d
 A positional bind marker is not allowed when binding named values
 ```
 
-### `SQL-10006`
+### `DB-SQL-10006`
 
 **メッセージ**
 
@@ -72,7 +78,7 @@ A positional bind marker is not allowed when binding named values
 A named bind marker is not allowed when binding positional values
 ```
 
-### `SQL-10007`
+### `DB-SQL-10007`
 
 **メッセージ**
 
@@ -80,7 +86,7 @@ A named bind marker is not allowed when binding positional values
 Cannot convert BLOB values to SQL. Please use a bind marker for a BLOB value and bind it separately
 ```
 
-### `SQL-10008`
+### `DB-SQL-10008`
 
 **メッセージ**
 
@@ -88,7 +94,7 @@ Cannot convert BLOB values to SQL. Please use a bind marker for a BLOB value and
 No namespace name has been specified. Set a default namespace name, or explicitly specify a namespace name
 ```
 
-### `SQL-10009`
+### `DB-SQL-10009`
 
 **メッセージ**
 
@@ -96,7 +102,7 @@ No namespace name has been specified. Set a default namespace name, or explicitl
 Zero bytes may not occur in string parameters
 ```
 
-### `SQL-10010`
+### `DB-SQL-10010`
 
 **メッセージ**
 
@@ -104,7 +110,7 @@ Zero bytes may not occur in string parameters
 Mixing positional values and named values is not allowed
 ```
 
-### `SQL-10011`
+### `DB-SQL-10011`
 
 **メッセージ**
 
@@ -112,7 +118,7 @@ Mixing positional values and named values is not allowed
 Preparing a transaction is supported only in two-phase commit transaction mode
 ```
 
-### `SQL-10012`
+### `DB-SQL-10012`
 
 **メッセージ**
 
@@ -120,7 +126,7 @@ Preparing a transaction is supported only in two-phase commit transaction mode
 Validating a transaction is supported only in two-phase commit transaction mode
 ```
 
-### `SQL-10013`
+### `DB-SQL-10013`
 
 **メッセージ**
 
@@ -128,7 +134,7 @@ Validating a transaction is supported only in two-phase commit transaction mode
 The previous transaction is still in progress. Commit, roll back, or suspend the previous transaction first
 ```
 
-### `SQL-10014`
+### `DB-SQL-10014`
 
 **メッセージ**
 
@@ -136,7 +142,7 @@ The previous transaction is still in progress. Commit, roll back, or suspend the
 This SQL session has already been closed
 ```
 
-### `SQL-10015`
+### `DB-SQL-10015`
 
 **メッセージ**
 
@@ -144,7 +150,7 @@ This SQL session has already been closed
 A transaction has not begun
 ```
 
-### `SQL-10016`
+### `DB-SQL-10016`
 
 **メッセージ**
 
@@ -152,7 +158,7 @@ A transaction has not begun
 The type %s is not supported
 ```
 
-### `SQL-10017`
+### `DB-SQL-10017`
 
 **メッセージ**
 
@@ -160,7 +166,7 @@ The type %s is not supported
 No connection mode implementations are found. Please add a connection mode implementation to the classpath
 ```
 
-### `SQL-10018`
+### `DB-SQL-10018`
 
 **メッセージ**
 
@@ -168,7 +174,7 @@ No connection mode implementations are found. Please add a connection mode imple
 The connection mode is not specified, but multiple connection mode implementations are found. Specify one of the following connection modes: %s
 ```
 
-### `SQL-10019`
+### `DB-SQL-10019`
 
 **メッセージ**
 
@@ -176,7 +182,7 @@ The connection mode is not specified, but multiple connection mode implementatio
 The connection mode '%s' is not found. Specify one of the following connection modes: %s
 ```
 
-### `SQL-10020`
+### `DB-SQL-10020`
 
 **メッセージ**
 
@@ -184,7 +190,7 @@ The connection mode '%s' is not found. Specify one of the following connection m
 Access denied: You need the %s privilege on the namespace %s to execute this operation
 ```
 
-### `SQL-10021`
+### `DB-SQL-10021`
 
 **メッセージ**
 
@@ -192,7 +198,7 @@ Access denied: You need the %s privilege on the namespace %s to execute this ope
 Access denied: You need the %s privilege on the table %s to execute this operation
 ```
 
-### `SQL-10022`
+### `DB-SQL-10022`
 
 **メッセージ**
 
@@ -200,7 +206,7 @@ Access denied: You need the %s privilege on the table %s to execute this operati
 Access denied: You can't grant the %s privilege because you don't have the same privilege on the table %s
 ```
 
-### `SQL-10023`
+### `DB-SQL-10023`
 
 **メッセージ**
 
@@ -208,15 +214,15 @@ Access denied: You can't grant the %s privilege because you don't have the same 
 Access denied: You can't grant the %s privilege because you don't have the same privilege on the namespace %s
 ```
 
-### `SQL-10024`
+### `DB-SQL-10024`
 
 **メッセージ**
 
 ```markdown
-Access denied: You can't revoke the %s privilege because you don't have the same privilege for the table %s
+Access denied: You can't revoke the %s privilege because you don't have the same privilege on the table %s
 ```
 
-### `SQL-10025`
+### `DB-SQL-10025`
 
 **メッセージ**
 
@@ -224,7 +230,7 @@ Access denied: You can't revoke the %s privilege because you don't have the same
 Access denied: You can't revoke the %s privilege because you don't have the same privilege on the namespace %s
 ```
 
-### `SQL-10026`
+### `DB-SQL-10026`
 
 **メッセージ**
 
@@ -232,7 +238,7 @@ Access denied: You can't revoke the %s privilege because you don't have the same
 Syntax error. Line %d:%d %s
 ```
 
-### `SQL-10027`
+### `DB-SQL-10027`
 
 **メッセージ**
 
@@ -240,7 +246,7 @@ Syntax error. Line %d:%d %s
 Syntax error. Multiple PRIMARY KEYs specified (exactly one required)
 ```
 
-### `SQL-10028`
+### `DB-SQL-10028`
 
 **メッセージ**
 
@@ -248,7 +254,7 @@ Syntax error. Multiple PRIMARY KEYs specified (exactly one required)
 Cannot grant the INSERT privilege if the user doesn't have the UPDATE privilege
 ```
 
-### `SQL-10029`
+### `DB-SQL-10029`
 
 **メッセージ**
 
@@ -256,7 +262,7 @@ Cannot grant the INSERT privilege if the user doesn't have the UPDATE privilege
 Cannot grant the UPDATE privilege if the user doesn't have the INSERT privilege
 ```
 
-### `SQL-10030`
+### `DB-SQL-10030`
 
 **メッセージ**
 
@@ -264,7 +270,7 @@ Cannot grant the UPDATE privilege if the user doesn't have the INSERT privilege
 Cannot grant the UPDATE privilege if the user doesn't have the SELECT privilege
 ```
 
-### `SQL-10031`
+### `DB-SQL-10031`
 
 **メッセージ**
 
@@ -272,7 +278,7 @@ Cannot grant the UPDATE privilege if the user doesn't have the SELECT privilege
 Cannot grant the DELETE privilege if the user doesn't have the SELECT privilege
 ```
 
-### `SQL-10032`
+### `DB-SQL-10032`
 
 **メッセージ**
 
@@ -280,7 +286,7 @@ Cannot grant the DELETE privilege if the user doesn't have the SELECT privilege
 Cannot revoke the SELECT privilege if the user has the UPDATE privilege
 ```
 
-### `SQL-10033`
+### `DB-SQL-10033`
 
 **メッセージ**
 
@@ -288,7 +294,7 @@ Cannot revoke the SELECT privilege if the user has the UPDATE privilege
 Cannot revoke the SELECT privilege if the user has the DELETE privilege
 ```
 
-### `SQL-10034`
+### `DB-SQL-10034`
 
 **メッセージ**
 
@@ -296,7 +302,7 @@ Cannot revoke the SELECT privilege if the user has the DELETE privilege
 Cannot revoke the INSERT privilege if the user has the UPDATE privilege
 ```
 
-### `SQL-10035`
+### `DB-SQL-10035`
 
 **メッセージ**
 
@@ -304,7 +310,7 @@ Cannot revoke the INSERT privilege if the user has the UPDATE privilege
 Cannot revoke the UPDATE privilege if the user has the INSERT privilege
 ```
 
-### `SQL-10036`
+### `DB-SQL-10036`
 
 **メッセージ**
 
@@ -312,7 +318,7 @@ Cannot revoke the UPDATE privilege if the user has the INSERT privilege
 A non-clustering-key column is specified in the CLUSTERING ORDER directive. Column: %s
 ```
 
-### `SQL-10037`
+### `DB-SQL-10037`
 
 **メッセージ**
 
@@ -320,7 +326,7 @@ A non-clustering-key column is specified in the CLUSTERING ORDER directive. Colu
 The order of the columns in the CLUSTERING ORDER directive must match the order for the clustering key (%s must appear before %s)
 ```
 
-### `SQL-10038`
+### `DB-SQL-10038`
 
 **メッセージ**
 
@@ -328,7 +334,7 @@ The order of the columns in the CLUSTERING ORDER directive must match the order 
 The CLUSTERING ORDER is missing for the column %s
 ```
 
-### `SQL-10039`
+### `DB-SQL-10039`
 
 **メッセージ**
 
@@ -336,7 +342,7 @@ The CLUSTERING ORDER is missing for the column %s
 Empty SQL is specified
 ```
 
-### `SQL-10040`
+### `DB-SQL-10040`
 
 **メッセージ**
 
@@ -344,7 +350,7 @@ Empty SQL is specified
 Multiple SQLs are not allowed
 ```
 
-### `SQL-10041`
+### `DB-SQL-10041`
 
 **メッセージ**
 
@@ -352,7 +358,7 @@ Multiple SQLs are not allowed
 The column %s is ambiguous
 ```
 
-### `SQL-10042`
+### `DB-SQL-10042`
 
 **メッセージ**
 
@@ -360,7 +366,7 @@ The column %s is ambiguous
 The column %s cannot be specified in the %s clause. Only the columns in the table %s can be specified in the %s clause
 ```
 
-### `SQL-10043`
+### `DB-SQL-10043`
 
 **メッセージ**
 
@@ -368,7 +374,7 @@ The column %s cannot be specified in the %s clause. Only the columns in the tabl
 An unbound bind marker is still in the escape character of the LIKE predicate for the column %s
 ```
 
-### `SQL-10044`
+### `DB-SQL-10044`
 
 **メッセージ**
 
@@ -376,7 +382,7 @@ An unbound bind marker is still in the escape character of the LIKE predicate fo
 The escape character must be a TEXT value for the LIKE predicate for the column %s
 ```
 
-### `SQL-10045`
+### `DB-SQL-10045`
 
 **メッセージ**
 
@@ -384,7 +390,7 @@ The escape character must be a TEXT value for the LIKE predicate for the column 
 The value of the predicate must not be null unless the operator is 'IS NULL' or 'IS NOT NULL'. Predicate: %s
 ```
 
-### `SQL-10046`
+### `DB-SQL-10046`
 
 **メッセージ**
 
@@ -392,7 +398,7 @@ The value of the predicate must not be null unless the operator is 'IS NULL' or 
 An unbound bind marker is still in the LIMIT clause
 ```
 
-### `SQL-10047`
+### `DB-SQL-10047`
 
 **メッセージ**
 
@@ -400,7 +406,7 @@ An unbound bind marker is still in the LIMIT clause
 The LIMIT must be an INT value
 ```
 
-### `SQL-10048`
+### `DB-SQL-10048`
 
 **メッセージ**
 
@@ -408,7 +414,7 @@ The LIMIT must be an INT value
 Unmatched column names or values
 ```
 
-### `SQL-10049`
+### `DB-SQL-10049`
 
 **メッセージ**
 
@@ -416,7 +422,7 @@ Unmatched column names or values
 The column %s is specified twice
 ```
 
-### `SQL-10050`
+### `DB-SQL-10050`
 
 **メッセージ**
 
@@ -424,7 +430,7 @@ The column %s is specified twice
 All primary key columns must be specified in the INSERT or UPSERT statement
 ```
 
-### `SQL-10051`
+### `DB-SQL-10051`
 
 **メッセージ**
 
@@ -432,7 +438,7 @@ All primary key columns must be specified in the INSERT or UPSERT statement
 An unbound bind marker is still in the value of the column %s
 ```
 
-### `SQL-10052`
+### `DB-SQL-10052`
 
 **メッセージ**
 
@@ -440,7 +446,7 @@ An unbound bind marker is still in the value of the column %s
 Unmatched column type. The type of the column %s should be %s, but a boolean value (BOOLEAN) is specified
 ```
 
-### `SQL-10053`
+### `DB-SQL-10053`
 
 **メッセージ**
 
@@ -448,7 +454,7 @@ Unmatched column type. The type of the column %s should be %s, but a boolean val
 Unmatched column type. The type of the column %s should be %s, but a decimal number (INT or BIGINT) is specified
 ```
 
-### `SQL-10054`
+### `DB-SQL-10054`
 
 **メッセージ**
 
@@ -456,15 +462,15 @@ Unmatched column type. The type of the column %s should be %s, but a decimal num
 Unmatched column type. The type of the column %s should be %s, but a floating point number (FLOAT or DOUBLE) is specified
 ```
 
-### `SQL-10055`
+### `DB-SQL-10055`
 
 **メッセージ**
 
 ```markdown
-Unmatched column type. The type of the column %s should be %s, but a string (TEXT) is specified
+Unmatched column type. The type of the column %s should be %s, but a string (TEXT, DATE, TIME, TIMESTAMP, or TIMESTAMPTZ) is specified
 ```
 
-### `SQL-10056`
+### `DB-SQL-10056`
 
 **メッセージ**
 
@@ -472,7 +478,7 @@ Unmatched column type. The type of the column %s should be %s, but a string (TEX
 Unmatched column type. The type of the column %s should be %s, but a BOOLEAN value is specified
 ```
 
-### `SQL-10057`
+### `DB-SQL-10057`
 
 **メッセージ**
 
@@ -480,7 +486,7 @@ Unmatched column type. The type of the column %s should be %s, but a BOOLEAN val
 Unmatched column type. The type of the column %s should be %s, but an INT value is specified
 ```
 
-### `SQL-10058`
+### `DB-SQL-10058`
 
 **メッセージ**
 
@@ -488,7 +494,7 @@ Unmatched column type. The type of the column %s should be %s, but an INT value 
 Unmatched column type. The type of the column %s should be %s, but a BIGINT value is specified
 ```
 
-### `SQL-10059`
+### `DB-SQL-10059`
 
 **メッセージ**
 
@@ -496,7 +502,7 @@ Unmatched column type. The type of the column %s should be %s, but a BIGINT valu
 Unmatched column type. The type of the column %s should be %s, but a FLOAT value is specified
 ```
 
-### `SQL-10060`
+### `DB-SQL-10060`
 
 **メッセージ**
 
@@ -504,7 +510,7 @@ Unmatched column type. The type of the column %s should be %s, but a FLOAT value
 Unmatched column type. The type of the column %s should be %s, but a DOUBLE value is specified
 ```
 
-### `SQL-10061`
+### `DB-SQL-10061`
 
 **メッセージ**
 
@@ -512,7 +518,7 @@ Unmatched column type. The type of the column %s should be %s, but a DOUBLE valu
 Unmatched column type. The type of the column %s should be %s, but a TEXT value is specified
 ```
 
-### `SQL-10062`
+### `DB-SQL-10062`
 
 **メッセージ**
 
@@ -520,7 +526,7 @@ Unmatched column type. The type of the column %s should be %s, but a TEXT value 
 Unmatched column type. The type of the column %s should be %s, but a BLOB value is specified
 ```
 
-### `SQL-10063`
+### `DB-SQL-10063`
 
 **メッセージ**
 
@@ -528,7 +534,7 @@ Unmatched column type. The type of the column %s should be %s, but a BLOB value 
 RIGHT OUTER JOIN can only be specified as the first join
 ```
 
-### `SQL-10064`
+### `DB-SQL-10064`
 
 **メッセージ**
 
@@ -536,7 +542,7 @@ RIGHT OUTER JOIN can only be specified as the first join
 The JOIN predicate is not specified properly. Predicate: %s
 ```
 
-### `SQL-10065`
+### `DB-SQL-10065`
 
 **メッセージ**
 
@@ -544,7 +550,7 @@ The JOIN predicate is not specified properly. Predicate: %s
 The data types of the columns in the JOIN predicate do not match. Predicate: %s
 ```
 
-### `SQL-10066`
+### `DB-SQL-10066`
 
 **メッセージ**
 
@@ -552,7 +558,7 @@ The data types of the columns in the JOIN predicate do not match. Predicate: %s
 The column %s is specified twice in the JOIN predicates. Predicates: %s
 ```
 
-### `SQL-10067`
+### `DB-SQL-10067`
 
 **メッセージ**
 
@@ -560,7 +566,7 @@ The column %s is specified twice in the JOIN predicates. Predicates: %s
 Either all primary key columns or an indexed column for the table %s must be specified in the JOIN predicates. Predicates: %s
 ```
 
-### `SQL-10068`
+### `DB-SQL-10068`
 
 **メッセージ**
 
@@ -568,7 +574,7 @@ Either all primary key columns or an indexed column for the table %s must be spe
 Cannot issue mutation DML SQLs such as INSERT, UPDATE or DELETE with executeQuery()
 ```
 
-### `SQL-10069`
+### `DB-SQL-10069`
 
 **メッセージ**
 
@@ -576,7 +582,7 @@ Cannot issue mutation DML SQLs such as INSERT, UPDATE or DELETE with executeQuer
 Cannot issue SELECT SQLs with executeUpdate()
 ```
 
-### `SQL-10070`
+### `DB-SQL-10070`
 
 **メッセージ**
 
@@ -584,7 +590,7 @@ Cannot issue SELECT SQLs with executeUpdate()
 The TWO_PHASE_COMMIT_TRANSACTION mode is not supported in the current transaction manager
 ```
 
-### `SQL-10071`
+### `DB-SQL-10071`
 
 **メッセージ**
 
@@ -592,10 +598,50 @@ The TWO_PHASE_COMMIT_TRANSACTION mode is not supported in the current transactio
 The encrypted column %s is not allowed in the %s clause
 ```
 
-### `SQL-10072`
+### `DB-SQL-10072`
 
 **メッセージ**
 
 ```markdown
 The user %s does not exist
+```
+
+### `DB-SQL-10073`
+
+**メッセージ**
+
+```markdown
+Unmatched column type. The type of the column %s should be %s, but a DATE value is specified
+```
+
+### `DB-SQL-10074`
+
+**メッセージ**
+
+```markdown
+Unmatched column type. The type of the column %s should be %s, but a TIME value is specified
+```
+
+### `DB-SQL-10075`
+
+**メッセージ**
+
+```markdown
+Unmatched column type. The type of the column %s should be %s, but a TIMESTAMP value is specified
+```
+
+### `DB-SQL-10076`
+
+**メッセージ**
+
+```markdown
+Unmatched column type. The type of the column %s should be %s, but a TIMESTAMPTZ value is specified
+```
+
+### `DB-SQL-10077`
+
+**メッセージ**
+
+```markdown
+The policy %s does not exist
 ```

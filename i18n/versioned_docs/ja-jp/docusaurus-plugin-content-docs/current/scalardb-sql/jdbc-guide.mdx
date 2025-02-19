@@ -82,15 +82,19 @@ ScalarDB は JDBC で定義されているすべてのデータ型をサポー�
 
 ScalarDB と JDBC 間のデータ型マッピングは次のとおりです。
 
-| ScalarDB タイプ | JDBC (Java) タイプ     |
-|--------------|-----------------------|
-| BOOLEAN      | boolean または Boolean |
-| INT          | int または Integer     |
-| BIGINT       | long または Long       |
-| FLOAT        | float または Float     |
-| DOUBLE       | double または Double   |
-| TEXT         | String                |
-| BLOB         | byte[]                |
+| ScalarDB タイプ | JDBC (Java) タイプ         |
+|--------------|-------------------------|
+| BOOLEAN      | boolean または Boolean     |
+| INT          | int または Integer         |
+| BIGINT       | long または Long           |
+| FLOAT        | float または Float         |
+| DOUBLE       | double または Double       |
+| TEXT         | String                  |
+| BLOB         | byte[]                  |
+| DATE         | java.time.LocalDate     |
+| TIME         | java.time.LocalTime     |
+| TIMESTAMP    | java.time.LocalDateTime |
+| TIMESTAMPTZ  | java.time.Instant       |
 
 各データ型の `java.sql.ResultSet` オブジェクトからデータを取得する方法は次のとおりです。
 
@@ -118,6 +122,18 @@ try (ResultSet resultSet = ...) {
 
   // Get a BLOB value of a column
   byte[] blobValue = resultSet.getBytes("<column name>");
+  
+    // Get a DATE value of a column
+  LocalDate dateValue = resultSet.getObject("<column name>", LocalDate.class);
+
+  // Get a TIME value of a column
+  LocalTime timeValue = resultSet.getObject("<column name>", LocalTime.class);
+
+  // Get a TIMESTAMP value of a column
+  LocalDateTime timestampValue = resultSet.getObject("<column name>", LocalDateTime.class);
+
+  // Get a TIMESTAMPTZ value of a column
+  Instant timestampTZValue = resultSet.getObject("<column name>", Instant.class);
 }
 ```
 
@@ -145,6 +161,17 @@ try (PreparedStatement preparedStatement = ...) {
 
   // Set a BLOB value as parameter
   preparedStatement.setBytes(8, <BLOB value>);
+  //Set a DATE value as parameter
+  preparedStatement.setObject(9, <LocalDate value>);
+
+  //Set a TIME value as parameter
+  preparedStatement.setObject(10, <LocalTime value>);
+
+  //Set a TIMESTAMP value as parameter
+  preparedStatement.setObject(11, <LocalDateTime value>);
+
+  //Set a TIMESTAMPTZ value as parameter
+  preparedStatement.setObject(12, <Instant value>);
 
   preparedStatement.execute();
 }
@@ -192,4 +219,4 @@ try {
 
 - [Java JDBC API](https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/)
 - [ScalarDB SQL API ガイド](sql-api-guide.mdx)
-- [Javadoc for ScalarDB JDBC](https://javadoc.io/doc/com.scalar-labs/scalardb-sql-jdbc/3.14.1/index.html)
+- [Javadoc for ScalarDB JDBC](https://javadoc.io/doc/com.scalar-labs/scalardb-sql-jdbc/3.15.1/index.html)

@@ -1,0 +1,78 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsEnglish
+---
+
+# Getting Started with ASP.NET Core and Dependency Injection in the ScalarDB Cluster .NET Client SDK
+
+The ScalarDB Cluster .NET Client SDK supports Dependency Injection in frameworks like ASP.NET Core.
+
+## Install the SDK
+
+Install the same major and minor version of the [SDK](https://www.nuget.org/packages/ScalarDB.Client) as ScalarDB Cluster into the .NET project. You can do this by using the built-in NuGet package manager, replacing `<MAJOR>.<MINOR>` with the version that you're using:
+
+```console
+dotnet add package ScalarDB.Client --version '<MAJOR>.<MINOR>.*'
+```
+
+## Add client settings
+
+Add the `ScalarDbOptions` section to the `appsettings.json` file of your ASP.NET Core app, replacing `<HOSTNAME_OR_IP_ADDRESS>` with the FQDN or the IP address, and `<PORT>` with the port number (`60053` by default) of your cluster:
+
+```json
+{
+  "ScalarDbOptions": {
+    "Address": "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
+    "HopLimit": 10
+  }
+}
+```
+
+For details about settings files and other ways to configure the client, see [Client configuration](common-reference.mdx#client-configuration).
+
+## Set up the transaction managers
+
+You can register the ScalarDB transaction managers as services in `IServiceCollection` as follows:
+
+```c#
+using ScalarDB.Client.Extensions;
+
+//...
+
+var builder = WebApplication.CreateBuilder(args);
+
+//...
+
+builder.Services.AddScalarDb();
+```
+
+After registering the transaction managers, they can be injected into the controller's constructor as follows:
+
+```c#
+[ApiController]
+public class OrderController: ControllerBase
+{
+    private readonly IDistributedTransactionManager _manager;
+    private readonly ISqlTransactionManager _sqlManager;
+    private readonly ITwoPhaseCommitTransactionManager _twoPhaseManager;
+    private readonly ISqlTwoPhaseCommitTransactionManager _sqlTwoPhaseManager;
+    private readonly IDistributedTransactionAdmin _admin;
+
+    public OrderController(IDistributedTransactionManager manager,
+                           ISqlTransactionManager sqlManager,
+                           ITwoPhaseCommitTransactionManager twoPhaseManager,
+                           ISqlTwoPhaseCommitTransactionManager sqlTwoPhaseManager,
+                           IDistributedTransactionAdmin admin)
+    {
+        _manager = manager;
+        _sqlManager = sqlManager;
+        _twoPhaseManager = twoPhaseManager;
+        _sqlTwoPhaseManager = sqlTwoPhaseManager;
+        _admin = admin;
+    }
+}
+```
+
+Although these examples are for WebApi projects, the examples will work in a similar way in GrpcService projects.

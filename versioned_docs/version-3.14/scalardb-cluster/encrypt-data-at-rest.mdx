@@ -1,0 +1,314 @@
+---
+tags:
+  - Enterprise Premium
+displayed_sidebar: docsEnglish
+---
+
+# Encrypt Data at Rest
+
+import WarningLicenseKeyContact from '/src/components/en-us/_warning-license-key-contact.mdx';
+
+This document explains how to encrypt data at rest in ScalarDB.
+
+## Overview
+
+ScalarDB can encrypt data stored through it. The encryption feature is similar to transparent data encryption (TDE) in major database systems; therefore, it is transparent to applications. ScalarDB encrypts data before writing it to the backend databases and decrypts it when reading from them.
+
+Currently, ScalarDB supports column-level encryption, allowing specific columns in a table to be encrypted.
+
+## Configurations
+
+To enable the encryption feature, you need to configure `scalar.db.cluster.encryption.enabled` to `true` in the ScalarDB Cluster node configuration file.
+
+| Name                                   | Description                             | Default |
+|----------------------------------------|-----------------------------------------|---------|
+| `scalar.db.cluster.encryption.enabled` | Whether ScalarDB encrypts data at rest. | `false` |
+
+:::note
+
+Since encryption is transparent to the client, you don't need to change the client configuration.
+
+:::
+
+:::note
+
+If you enable the encryption feature, you will also need to set `scalar.db.cross_partition_scan.enabled` to `true` for the system namespace (`scalardb` by default) because it performs cross-partition scans internally.
+
+:::
+
+The other configurations depend on the encryption implementation you choose. Currently, ScalarDB supports the following encryption implementations:
+
+- HashiCorp Vault encryption
+- Self-encryption
+
+The following sections explain how to configure each encryption implementation.
+
+### HashiCorp Vault encryption
+
+In HashiCorp Vault encryption, ScalarDB uses the [encryption as a service](https://developer.hashicorp.com/vault/tutorials/encryption-as-a-service/eaas-transit) of HashiCorp Vault to encrypt and decrypt data. In this implementation, ScalarDB delegates the management of encryption keys, as well as the encryption and decryption of data, to HashiCorp Vault.
+
+To use HashiCorp Vault encryption, you need to set the property `scalar.db.cluster.encryption.type` to `vault` in the ScalarDB Cluster node configuration file:
+
+| Name                                | Description                                                 | Default |
+|-------------------------------------|-------------------------------------------------------------|---------|
+| `scalar.db.cluster.encryption.type` | Should be set to `vault` to use HashiCorp Vault encryption. |         |
+
+You also need to configure the following properties:
+
+| Name                                                             | Description                                                                                                                                                                                                             | Default        |
+|------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------|
+| `scalar.db.cluster.encryption.vault.key_type`                    | The key type. Currently, `aes128-gcm96`, `aes256-gcm96`, and `chacha20-poly1305` are supported. For details about the key types, see [Key types](https://developer.hashicorp.com/vault/docs/secrets/transit#key-types). | `aes128-gcm96` |
+| `scalar.db.cluster.encryption.vault.associated_data_required`    | Whether associated data is required for AEAD encryption.                                                                                                                                                                | `false`        |
+| `scalar.db.cluster.encryption.vault.address`                     | The address of the HashiCorp Vault server.                                                                                                                                                                              |                |
+| `scalar.db.cluster.encryption.vault.token`                       | The token to authenticate with HashiCorp Vault.                                                                                                                                                                         |                |
+| `scalar.db.cluster.encryption.vault.namespace`                   | The namespace of the HashiCorp Vault. This configuration is optional.                                                                                                                                                   |                |
+| `scalar.db.cluster.encryption.vault.transit_secrets_engine_path` | The path of the transit secrets engine.                                                                                                                                                                                 | `transit`      |
+| `scalar.db.cluster.encryption.vault.column_batch_size`           | The number of columns to be included in a single request to the HashiCorp Vault server.                                                                                                                                 | `64`           |
+
+### Self-encryption
+
+In self-encryption, ScalarDB manages data encryption keys (DEKs) and performs encryption and decryption. ScalarDB generates a DEK for each table when creating the table and stores it in Kubernetes Secrets.
+
+To use self-encryption, you need to set the property `scalar.db.cluster.encryption.type` to `self` in the ScalarDB Cluster node configuration file:
+
+| Name                                | Description                                     | Default |
+|-------------------------------------|-------------------------------------------------|---------|
+| `scalar.db.cluster.encryption.type` | Should be set to `self` to use self-encryption. |         |
+
+You also need to configure the following properties:
+
+| Name                                                                          | Description                                                                                                                                                                                                                                                                                                            | Default              |
+|-------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------|
+| `scalar.db.cluster.encryption.self.key_type`                                  | The key type. Currently, `AES128_GCM`, `AES256_GCM`, `AES128_EAX`, `AES256_EAX`, `AES128_CTR_HMAC_SHA256`, `AES256_CTR_HMAC_SHA256`, `CHACHA20_POLY1305`, and `XCHACHA20_POLY1305` are supported. For details about the key types, see [Choose a key type](https://developers.google.com/tink/aead#choose_a_key_type). | `AES128_GCM`         |
+| `scalar.db.cluster.encryption.self.associated_data_required`                  | Whether associated data is required for AEAD encryption.                                                                                                                                                                                                                                                               | `false`              |
+| `scalar.db.cluster.encryption.self.kubernetes.secret.namespace_name`          | The namespace name of the Kubernetes Secrets.                                                                                                                                                                                                                                                                          | `default`            |
+| `scalar.db.cluster.encryption.self.data_encryption_key_cache_expiration_time` | The expiration time of the DEK cache in milliseconds.                                                                                                                                                                                                                                                                  | `60000` (60 seconds) |
+
+### Delete the DEK when dropping a table
+
+By default, ScalarDB does not delete the data encryption key (DEK) associated with a table when the table is dropped. However, you can configure ScalarDB to delete the DEK when dropping a table. To enable this, set the property `scalar.db.cluster.encryption.delete_data_encryption_key_on_drop_table.enabled` to `true` in the ScalarDB Cluster node configuration file:
+
+| Name                                                                            | Description                                                      | Default |
+|---------------------------------------------------------------------------------|------------------------------------------------------------------|---------|
+| `scalar.db.cluster.encryption.delete_data_encryption_key_on_drop_table.enabled` | Whether to delete the DEK when dropping a table.                 | `false` |
+
+## Limitations
+
+There are some limitations to the encryption feature:
+
+- Primary-key columns (partition-key columns and clustering-key columns) cannot be encrypted.
+- Secondary-index columns cannot be encrypted.
+- Encrypted columns cannot be specified in the WHERE clauses or ORDER BY clauses.
+- Encrypted columns are stored in the underlying database as the BLOB type, so encrypted columns that are larger than the maximum size of the BLOB type cannot be stored. For the maximum size of the BLOB type, see [Data-type mapping between ScalarDB and other databases](../schema-loader.mdx#data-type-mapping-between-scalardb-and-other-databases).
+
+## Wire encryption
+
+If you enable the encryption feature, enabling wire encryption to protect your data is strongly recommended, especially in production environments. For details about wire encryption, see [Encrypt Wire Communications](encrypt-wire-communications.mdx).
+
+## Tutorial - Encrypt data by configuring HashiCorp Vault encryption
+
+This tutorial explains how to encrypt data stored through ScalarDB by using HashiCorp Vault encryption.
+
+<WarningLicenseKeyContact product="ScalarDB Cluster" />
+
+### Step 1. Install HashiCorp Vault
+
+Install HashiCorp Vault by referring to the official HashiCorp documentation, [Install Vault](https://developer.hashicorp.com/vault/tutorials/getting-started/getting-started-install).
+
+### Step 2. Create the ScalarDB Cluster configuration file
+
+Create the following configuration file as `scalardb-cluster-node.properties`, replacing `<YOUR_LICENSE_KEY>` and `<LICENSE_CHECK_CERT_PEM>` with your ScalarDB license key and license check certificate values. For more information about the license key and certificate, see [How to Configure a Product License Key](../scalar-licensing/README.mdx).
+
+```properties
+scalar.db.storage=jdbc
+scalar.db.contact_points=jdbc:postgresql://postgresql:5432/postgres
+scalar.db.username=postgres
+scalar.db.password=postgres
+scalar.db.cluster.node.standalone_mode.enabled=true
+scalar.db.cross_partition_scan.enabled=true
+scalar.db.sql.enabled=true
+
+# Encryption configurations
+scalar.db.cluster.encryption.enabled=true
+scalar.db.cluster.encryption.type=vault
+scalar.db.cluster.encryption.vault.address=http://vault:8200
+scalar.db.cluster.encryption.vault.token=root
+
+# License key configurations
+scalar.db.cluster.node.licensing.license_key=<YOUR_LICENSE_KEY>
+scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
+```
+
+### Step 3. Create the Docker Compose configuration file
+
+Create the following configuration file as `docker-compose.yaml`.
+
+```yaml
+services:
+  vault:
+    container_name: "vault"
+    image: "hashicorp/vault:1.17.3"
+    ports:
+      - 8200:8200
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=root
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+    cap_add:
+      - IPC_LOCK
+
+  postgresql:
+    container_name: "postgresql"
+    image: "postgres:15"
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+      start_period: 30s
+
+  scalardb-cluster-standalone:
+    container_name: "scalardb-cluser-node"
+    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:3.14.1"
+    ports:
+      - 60053:60053
+      - 9080:9080
+    volumes:
+      - ./scalardb-cluster-node.properties:/scalardb-cluster/node/scalardb-cluster-node.properties
+    depends_on:
+      postgresql:
+        condition: service_healthy
+```
+
+### Step 4. Start the HashiCorp Vault server
+
+Run the following command to start the HashiCorp Vault server in development mode.
+
+```console
+docker compose up vault -d
+```
+
+Once the HashiCorp Vault server is running, set its environment variables by running the following commands.
+
+```console
+export VAULT_ADDR="http://127.0.0.1:8200"
+export VAULT_TOKEN=root
+```
+
+### Step 5. Enable the transit secrets engine on the HashiCorp Vault server
+
+Run the following command to enable the transit secrets engine on the HashiCorp Vault server.
+
+```console
+vault secrets enable transit
+```
+
+### Step 6. Start PostgreSQL and ScalarDB Cluster
+
+Run the following command to start PostgreSQL and ScalarDB Cluster in standalone mode.
+
+```console
+docker compose up postgresql scalardb-cluster-standalone -d
+```
+
+It may take a few minutes for ScalarDB Cluster to fully start.
+
+### Step 7. Connect to ScalarDB Cluster
+
+To connect to ScalarDB Cluster, this tutorial uses the SQL CLI, a tool for connecting to ScalarDB Cluster and executing SQL queries. You can download the SQL CLI from the [ScalarDB releases page](https://github.com/scalar-labs/scalardb/releases).
+
+Create a configuration file named `scalardb-cluster-sql-cli.properties`. This file will be used to connect to ScalarDB Cluster by using the SQL CLI.
+
+```properties
+scalar.db.sql.connection_mode=cluster
+scalar.db.sql.cluster_mode.contact_points=indirect:localhost
+```
+
+Then, start the SQL CLI by running the following command.
+
+```console
+java -jar scalardb-cluster-sql-cli-3.14.1-all.jar --config scalardb-cluster-sql-cli.properties
+```
+
+To begin, create the Coordinator tables required for ScalarDB transaction execution.
+
+```sql
+CREATE COORDINATOR TABLES IF NOT EXISTS;
+```
+
+Now you're ready to use the database with the encryption feature enabled in ScalarDB Cluster.
+
+### Step 8. Create a table
+
+Before creating a table, you need to create a namespace.
+
+```sql
+CREATE NAMESPACE ns;
+```
+
+Next, create a table.
+
+```sql
+CREATE TABLE ns.tbl (
+    id INT PRIMARY KEY,
+    col1 TEXT ENCRYPTED,
+    col2 INT ENCRYPTED,
+    col3 INT);
+```
+
+By using the `ENCRYPTED` keyword, the data in the specified columns will be encrypted. In this example, the data in `col1` and `col2` will be encrypted.
+
+### Step 9. Insert data into the table
+
+To insert data into the table, execute the following SQL query.
+
+```sql
+INSERT INTO ns.tbl (id, col1, col2, col3) VALUES (1, 'data1', 123, 456);
+```
+
+To verify the inserted data, run the following SQL query.
+
+```sql
+SELECT * FROM ns.tbl;
+```
+
+```console
++----+-------+------+------+
+| id | col1  | col2 | col3 |
++----+-------+------+------+
+|  1 | data1 |  123 |  456 |
++----+-------+------+------+
+```
+
+### Step 10. Verify data encryption
+
+To verify that the data is encrypted, connect directly to PostgreSQL and check the data.
+
+:::warning
+
+Reading or writing data from the backend database directly is not supported in ScalarDB. In such a case, ScalarDB cannot guarantee data consistency. This guide accesses the backend database directly for testing purposes, however, you cannot do this in a production environment.
+
+:::
+
+Run the following command to connect to PostgreSQL.
+
+```console
+docker exec -it postgresql psql -U postgres
+```
+
+Next, execute the following SQL query to check the data in the table.
+
+```sql
+SELECT id, col1, col2, col3 FROM ns.tbl;
+```
+
+You should see a similar output as below, which confirms that the data in `col1` and `col2` are encrypted.
+
+```console
+ id |                                                     col1                                                     |                                                     col2                                                     | col3
+----+--------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------+------
+  1 | \x7661756c743a76313a6b6f76455062316a676e6a4a596b643743765539315a49714d625564545a61697152666c7967367837336e66 | \x7661756c743a76313a4b6244543162764678676d44424b526d7037794f5176423569616e615635304c473079664354514b3866513d |  456
+```

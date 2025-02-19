@@ -14,13 +14,15 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 ## エラーコードのクラスと説明
 
-| クラス           | 説明                       |
-|:----------------|:--------------------------|
-| `GRAPHQL-1xxxx` | ユーザーエラーカテゴリのエラー |
+| クラス              | 説明                       |
+|:-------------------|:--------------------------|
+| `DB-GRAPHQL-1xxxx` | ユーザーエラーカテゴリのエラー |
 
-## `GRAPHQL-1xxxx` ステータスコード
+## `DB-GRAPHQL-1xxxx` ステータスコード
 
-### `GRAPHQL-10000`
+以下は、ユーザーエラーカテゴリのステータスコードとメッセージです。
+
+### `DB-GRAPHQL-10000`
 
 **メッセージ**
 
@@ -28,7 +30,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 A long value was expected
 ```
 
-### `GRAPHQL-10001`
+### `DB-GRAPHQL-10001`
 
 **メッセージ**
 
@@ -36,7 +38,7 @@ A long value was expected
 The value is out of range for BigIntValue
 ```
 
-### `GRAPHQL-10002`
+### `DB-GRAPHQL-10002`
 
 **メッセージ**
 
@@ -44,7 +46,7 @@ The value is out of range for BigIntValue
 A long, integer, or string value was expected
 ```
 
-### `GRAPHQL-10003`
+### `DB-GRAPHQL-10003`
 
 **メッセージ**
 
@@ -52,7 +54,7 @@ A long, integer, or string value was expected
 The AST type `IntValue` was expected
 ```
 
-### `GRAPHQL-10004`
+### `DB-GRAPHQL-10004`
 
 **メッセージ**
 
@@ -60,7 +62,7 @@ The AST type `IntValue` was expected
 A float value was expected
 ```
 
-### `GRAPHQL-10005`
+### `DB-GRAPHQL-10005`
 
 **メッセージ**
 
@@ -68,7 +70,7 @@ A float value was expected
 An integer or float value was expected
 ```
 
-### `GRAPHQL-10006`
+### `DB-GRAPHQL-10006`
 
 **メッセージ**
 
@@ -76,7 +78,7 @@ An integer or float value was expected
 The AST type `IntValue` or `FloatValue` was expected
 ```
 
-### `GRAPHQL-10007`
+### `DB-GRAPHQL-10007`
 
 **メッセージ**
 
@@ -84,7 +86,7 @@ The AST type `IntValue` or `FloatValue` was expected
 The type is not supported. Type: %s
 ```
 
-### `GRAPHQL-10008`
+### `DB-GRAPHQL-10008`
 
 **メッセージ**
 
@@ -92,7 +94,7 @@ The type is not supported. Type: %s
 The field `%s` requires a `@transaction` or `@twoPhaseCommit` directive with proper arguments
 ```
 
-### `GRAPHQL-10009`
+### `DB-GRAPHQL-10009`
 
 **メッセージ**
 
@@ -100,7 +102,7 @@ The field `%s` requires a `@transaction` or `@twoPhaseCommit` directive with pro
 The field `%s` cannot be used together with other fields
 ```
 
-### `GRAPHQL-10010`
+### `DB-GRAPHQL-10010`
 
 **メッセージ**
 
@@ -108,7 +110,7 @@ The field `%s` cannot be used together with other fields
 The `@twoPhaseCommit` directive with the `id` argument is required to `%s` the transaction
 ```
 
-### `GRAPHQL-10011`
+### `DB-GRAPHQL-10011`
 
 **メッセージ**
 
@@ -116,7 +118,7 @@ The `@twoPhaseCommit` directive with the `id` argument is required to `%s` the t
 `%s` and `prepare` cannot be run simultaneously
 ```
 
-### `GRAPHQL-10012`
+### `DB-GRAPHQL-10012`
 
 **メッセージ**
 
@@ -124,7 +126,7 @@ The `@twoPhaseCommit` directive with the `id` argument is required to `%s` the t
 `%s` and `join` cannot be run simultaneously
 ```
 
-### `GRAPHQL-10013`
+### `DB-GRAPHQL-10013`
 
 **メッセージ**
 
@@ -132,7 +134,7 @@ The `@twoPhaseCommit` directive with the `id` argument is required to `%s` the t
 The `@transaction` directive with the `id` argument is required to `%s` the transaction
 ```
 
-### `GRAPHQL-10014`
+### `DB-GRAPHQL-10014`
 
 **メッセージ**
 
@@ -140,7 +142,7 @@ The `@transaction` directive with the `id` argument is required to `%s` the tran
 `%s` and `commit` cannot be run simultaneously
 ```
 
-### `GRAPHQL-10015`
+### `DB-GRAPHQL-10015`
 
 **メッセージ**
 
@@ -148,7 +150,7 @@ The `@transaction` directive with the `id` argument is required to `%s` the tran
 An object cannot be annotated with both `@transaction` and `@twoPhaseCommit` directives
 ```
 
-### `GRAPHQL-10016`
+### `DB-GRAPHQL-10016`
 
 **メッセージ**
 
@@ -156,7 +158,7 @@ An object cannot be annotated with both `@transaction` and `@twoPhaseCommit` dir
 The `join` argument of the `@twoPhaseCommit` directive requires a transaction `id` argument
 ```
 
-### `GRAPHQL-10017`
+### `DB-GRAPHQL-10017`
 
 **メッセージ**
 
@@ -164,7 +166,7 @@ The `join` argument of the `@twoPhaseCommit` directive requires a transaction `i
 `%s` requires the mutation object to be annotated with a `@twoPhaseCommit` directive
 ```
 
-### `GRAPHQL-10018`
+### `DB-GRAPHQL-10018`
 
 **メッセージ**
 
@@ -172,7 +174,7 @@ The `join` argument of the `@twoPhaseCommit` directive requires a transaction `i
 The `%s` clustering key must have only one of the following: %s
 ```
 
-### `GRAPHQL-10019`
+### `DB-GRAPHQL-10019`
 
 **メッセージ**
 
@@ -180,7 +182,7 @@ The `%s` clustering key must have only one of the following: %s
 A string variable is expected but got %s
 ```
 
-### `GRAPHQL-10020`
+### `DB-GRAPHQL-10020`
 
 **メッセージ**
 
@@ -188,7 +190,7 @@ A string variable is expected but got %s
 Unexpected value of id: %s
 ```
 
-### `GRAPHQL-10021`
+### `DB-GRAPHQL-10021`
 
 **メッセージ**
 
@@ -196,7 +198,7 @@ Unexpected value of id: %s
 A Boolean variable is expected but got %s
 ```
 
-### `GRAPHQL-10022`
+### `DB-GRAPHQL-10022`
 
 **メッセージ**
 
@@ -204,7 +206,7 @@ A Boolean variable is expected but got %s
 Unexpected value of %s: %s
 ```
 
-### `GRAPHQL-10023`
+### `DB-GRAPHQL-10023`
 
 **メッセージ**
 
@@ -212,7 +214,7 @@ Unexpected value of %s: %s
 Invalid column. Column: %s; Type: %s
 ```
 
-### `GRAPHQL-10024`
+### `DB-GRAPHQL-10024`
 
 **メッセージ**
 
@@ -220,7 +222,7 @@ Invalid column. Column: %s; Type: %s
 Unexpected value of type: %s
 ```
 
-### `GRAPHQL-10025`
+### `DB-GRAPHQL-10025`
 
 **メッセージ**
 
@@ -228,7 +230,7 @@ Unexpected value of type: %s
 Only one of the following can be specified: %s
 ```
 
-### `GRAPHQL-10026`
+### `DB-GRAPHQL-10026`
 
 **メッセージ**
 
@@ -236,7 +238,7 @@ Only one of the following can be specified: %s
 Unexpected mutation field: %s
 ```
 
-### `GRAPHQL-10027`
+### `DB-GRAPHQL-10027`
 
 **メッセージ**
 

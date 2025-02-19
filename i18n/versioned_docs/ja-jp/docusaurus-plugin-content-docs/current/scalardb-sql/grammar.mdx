@@ -48,6 +48,10 @@ displayed_sidebar: docsJapanese
   - [RESUME](#resume)
   - [SHOW USERS](#show-users)
   - [SHOW GRANTS](#show-grants)
+- リテラル 
+  - [テキスト](#テキスト)
+  - [数字](#数値)
+  - [日付と時刻](#日付と時刻)
 
 ## DDL
 
@@ -116,7 +120,7 @@ CREATE TABLE [IF NOT EXISTS] [<namespace name>.]<table name> (
   ...
 ) [WITH creation_options]
 
-data_type: BOOLEAN | INT | BIGINT | FLOAT | DOUBLE | TEXT | BLOB
+data_type: BOOLEAN | INT | BIGINT | FLOAT | DOUBLE | TEXT | BLOB | DATE | TIME | TIMESTAMP | TIMESTAMPTZ
 creation_options: <option name>=<option value> [AND <option name>=<option value>] ...
 ```
 
@@ -546,7 +550,7 @@ DropCoordinatorTablesStatement statement2 =
 ```sql
 ALTER TABLE [<namespace name>.]<table name> ADD [COLUMN] <column name> data_type [ENCRYPTED]
 
-data_type: BOOLEAN | INT | BIGINT | FLOAT | DOUBLE | TEXT | BLOB
+data_type: BOOLEAN | INT | BIGINT | FLOAT | DOUBLE | TEXT | BLOB | DATE | TIME | TIMESTAMP | TIMESTAMPTZ
 ```
 
 - 列に `ENCRYPTED` を指定して、その列のデータを暗号化できます。
@@ -608,7 +612,7 @@ join_specification: [INNER] JOIN [<namespace name>.]<table name> [AS <alias>] ON
 join_predicate: identifier = identifier
 and_predicates: predicate | (predicate [AND predicate ...])
 or_predicates: predicate | (predicate [OR predicate ...])
-predicate: identifier operator <column value> | identifier BETWEEN <column value> AND <column value> | identifier [NOT] LIKE <pattern> [ESCAPE <escape character>] | identifier IS [NOT] NULL
+predicate: identifier operator <literal> | identifier BETWEEN <literal> AND <literal> | identifier [NOT] LIKE <pattern> [ESCAPE <escape character>] | identifier IS [NOT] NULL
 identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
 operator: = | <> | != | > | >= | < | <=
 order: ASC | DESC
@@ -631,7 +635,7 @@ order: ASC | DESC
 - `WHERE` 句の任意の列に任意の述語を使用できます。
 - `WHERE` 句では、述語は `and_predicates` の OR 形式 (論理和標準形と呼ばれます) または `or_predicates` の AND 形式 (論理積標準形と呼ばれます) である必要があります。
 - 複数の述語を持つ複数の `and_predicates` または `or_predicates` を接続する場合は、`and_predicates` と `or_predicates` を括弧で囲む必要があります。
-- バインドマーカー (位置指定 `?` および名前指定 `:<name>`) に `<column value>` を指定できます。
+- バインドマーカー (位置指定 `?` および名前指定 `:<name>`) に `<literal>` を指定できます。リテラル文法については、[リテラル](#リテラル)セクションを参照してください。
 - `WHERE` 句で暗号化された列を指定することはできません。
 
 `LIKE` 述語:
@@ -1082,11 +1086,11 @@ SelectStatement statement13 =
 
 ```sql
 INSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ...)]
-  VALUES (<column value> [, <column value>] ...) [, (<column value> [, <column value>] ...)] ...
+  VALUES (<literal> [, <literal>] ...) [, (<literal> [, <literal>] ...)] ...
 ```
 
 - `INSERT` では完全な主キーを指定する必要があります。
-- バインドマーカー (位置 `?` および名前 `:<name>`) に `<column value>` を指定できます。
+- バインドマーカー (位置 `?` および名前 `:<name>`) に `<literal>` を指定できます。リテラル文法については、[リテラル](#リテラル)セクションを参照してください。
 
 #### 例
 
@@ -1152,11 +1156,11 @@ InsertStatement statement4 = StatementBuilder.insertInto("ns", "tbl")
 
 ```sql
 UPSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ...)]
-  VALUES (<column value> [, <column value>] ...) [, (<column value> [, <column value>] ...)] ...
+  VALUES (<literal> [, <literal>] ...) [, (<literal> [, <literal>] ...)] ...
 ```
 
 - `INSERT` では完全な主キーを指定する必要があります。
-- バインドマーカー (位置 `?` および名前 `:<name>`) に `<column value>` を指定できます。
+- バインドマーカー (位置 `?` および名前 `:<name>`) に `<literal>` を指定できます。リテラル文法については、[リテラル](#リテラル)セクションを参照してください。
 
 #### 例
 
@@ -1230,13 +1234,13 @@ UpsertStatement statement4 = StatementBuilder.upsertInto("ns", "tbl")
 
 ```sql
 UPDATE [<namespace name>.]<table name> [AS <alias>]
-  SET <column identifier> = <column value> [, <column identifier> = <column value>] ...
+  SET <column identifier> = <literal> [, <column identifier> = <literal>] ...
   [WHERE and_predicates [OR and_predicates ...] | or_predicates [AND or_predicates ...]]
 
 identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
 and_predicates: predicate | (predicate [AND predicate ...])
 or_predicates: predicate | (predicate [OR predicate ...])
-predicate: <identifier> operator <column value> | <identifier> BETWEEN <column value> AND <column value> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
+predicate: <identifier> operator <literal> | <identifier> BETWEEN <literal> AND <literal> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
 operator: = | <> | != | > | >= | < | <=
 ```
 
@@ -1247,7 +1251,7 @@ operator: = | <> | != | > | >= | < | <=
 - `WHERE` 句の任意の列に任意の述語を使用できます。
 - `WHERE` 句では、述語は `and_predicates` の OR 形式 (論理和標準形と呼ばれます) または `or_predicates` の AND 形式 (論理積標準形と呼ばれます) である必要があります。
 - 複数の述語を持つ複数の `and_predicates` または `or_predicates` を接続する場合は、`and_predicates` と `or_predicates` を括弧で囲む必要があります。
-- バインドマーカー (位置 `?` および名前 `:<name>`) に `<column value>` を指定できます。
+- バインドマーカー (位置 `?` および名前 `:<name>`) に `<literal>` を指定できます。リテラル文法については、[リテラル](#リテラル)セクションを参照してください。
 - `WHERE` 句で暗号化された列を指定することはできません。
 
 `LIKE` 述語:
@@ -1463,7 +1467,7 @@ DELETE FROM [<namespace name>.]<table name> [AS <alias>]
 identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
 and_predicates: predicate | (predicate [AND predicate ...])
 or_predicates: predicate | (predicate [OR predicate ...])
-predicate: <identifier> operator <column value> | <identifier> BETWEEN <column value> AND <column value> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
+predicate: <identifier> operator <literal> | <identifier> BETWEEN <literal> AND <literal> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
 operator: = | <> | != | > | >= | < | <=
 ```
 
@@ -1474,7 +1478,7 @@ operator: = | <> | != | > | >= | < | <=
 - `WHERE` 句の任意の列に任意の述語を使用できます。
 - `WHERE` 句では、述語は `and_predicates` の OR 形式 (論理和標準形と呼ばれます) または `or_predicates` の AND 形式 (論理積標準形と呼ばれます) である必要があります。
 - 複数の述語を持つ複数の `and_predicates` または `or_predicates` を接続する場合は、`and_predicates` と `or_predicates` を括弧で囲む必要があります。
-- バインドマーカー (位置 `?` および名前 `:<name>`) に `<column value>` を指定できます。
+- バインドマーカー (位置 `?` および名前 `:<name>`) に `<literal>` を指定できます。リテラル文法については、[リテラル](#リテラル)セクションを参照してください。
 - `WHERE` 句で暗号化された列を指定することはできません。
 
 `LIKE` 述語:
@@ -2345,3 +2349,30 @@ ShowGrantsStatement statement1 = StatementBuilder.showGrants().build();
 // Show privileges granted to user1
 ShowGrantsStatement statement2 = StatementBuilder.showGrants().forUser("user1").build();
 ```
+
+## リテラル
+
+リテラルと列の値は同義であり、SQL ステートメントを記述するときに使用される固定データ値を参照します。たとえば、`1`、`'abc'`、`1.23`、および `'2024-05-19'` はリテラルです。
+
+### テキスト
+
+テキストリテラルは、`'abc'` や `'abc def'` など、一重引用符 `'` で囲まれた文字のシーケンスです。
+
+### 数値
+
+数値リテラルには、正確な値 (INTEGER および BIGINT) と近似値 (FLOAT および DOUBLE) のリテラルが含まれます。
+
+正確な値リテラルは、`123` や `-5` などの数字のシーケンスです。
+
+近似値リテラルは、`4.754` や `-1.2` などの小数点付きの数字のシーケンスです。
+
+### 日付と時刻
+
+日付と時刻リテラルは、DATE、TIME、TIMESTAMP、および TIMESTAMPTZ 値を表す特定の形式に従うテキストリテラルです。
+
+| ScalarDBでータ型 | 形式                                  | 注記                                       | 例                                                                              |
+|-----------------|-------------------------------------|----------------------------------------------|--------------------------------------------------------------------------------|
+| DATE            | **'YYYY-MM-DD'**                    |                                              | `'2024-05-19'`                                                                 |
+| TIME            | **'HH:MM:[SS[.FFFFFF]]'**           | 秒と小数秒 (最大1マイクロ秒) はオプションです。    |  `'12:34'`、`'12:34:56'`、`'12:34:56.789123'`                                    |
+| TIMESTAMP       | **'YYYY-MM-DD HH:MM:[SS[.FFF]]'**   | 秒と小数秒 (最大1ミリ秒) はオプションです。        | `'2024-05-19 12:34'`、`'2024-05-19 12:34:56'`、`'2024-05-19 12:34:56.789'`       |
+| TIMESTAMPTZ     | **'YYYY-MM-DD HH:MM:[SS[.FFF]] Z'** | 秒と小数秒 (最大1ミリ秒) はオプションです。        | ''2024-05-19 12:34 Z''、''2024-05-19 12:34:56 Z''、''2024-05-19 12:34:56.789 Z'' |

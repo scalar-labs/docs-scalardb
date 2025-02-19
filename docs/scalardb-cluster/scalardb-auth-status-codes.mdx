@@ -11,14 +11,16 @@ This page provides a list of error codes related to authentication and authoriza
 
 ## Error code classes and descriptions
 
-| Class        | Description                            |
-|:-------------|:---------------------------------------|
-| `AUTH-1xxxx` | Errors for the user error category     |
-| `AUTH-3xxxx` | Errors for the internal error category |
+| Class           | Description                            |
+|:----------------|:---------------------------------------|
+| `DB-AUTH-1xxxx` | Errors for the user error category     |
+| `DB-AUTH-3xxxx` | Errors for the internal error category |
 
-## `AUTH-1xxxx` status codes
+## `DB-AUTH-1xxxx` status codes
 
-### `AUTH-10000`
+The following are status codes and messages for the user error category.
+
+### `DB-AUTH-10000`
 
 **Message**
 
@@ -26,7 +28,7 @@ This page provides a list of error codes related to authentication and authoriza
 The user already exists. Username: %s
 ```
 
-### `AUTH-10001`
+### `DB-AUTH-10001`
 
 **Message**
 
@@ -34,7 +36,7 @@ The user already exists. Username: %s
 The user does not exist. Username: %s
 ```
 
-### `AUTH-10003`
+### `DB-AUTH-10003`
 
 **Message**
 
@@ -42,7 +44,7 @@ The user does not exist. Username: %s
 The namespace does not exist. Namespace: %s
 ```
 
-### `AUTH-10004`
+### `DB-AUTH-10004`
 
 **Message**
 
@@ -50,7 +52,7 @@ The namespace does not exist. Namespace: %s
 The table does not exist. Table: %s
 ```
 
-### `AUTH-10005`
+### `DB-AUTH-10005`
 
 **Message**
 
@@ -58,7 +60,7 @@ The table does not exist. Table: %s
 Invalid username or password
 ```
 
-### `AUTH-10006`
+### `DB-AUTH-10006`
 
 **Message**
 
@@ -66,7 +68,7 @@ Invalid username or password
 Access denied: Invalid auth token
 ```
 
-### `AUTH-10007`
+### `DB-AUTH-10007`
 
 **Message**
 
@@ -74,7 +76,7 @@ Access denied: Invalid auth token
 Access denied: You need the %s privilege on the namespace %s to execute this operation
 ```
 
-### `AUTH-10008`
+### `DB-AUTH-10008`
 
 **Message**
 
@@ -82,7 +84,7 @@ Access denied: You need the %s privilege on the namespace %s to execute this ope
 Access denied: You need the %s privilege on the table %s to execute this operation
 ```
 
-### `AUTH-10009`
+### `DB-AUTH-10009`
 
 **Message**
 
@@ -90,7 +92,7 @@ Access denied: You need the %s privilege on the table %s to execute this operati
 Access denied: You must be a superuser to execute this operation
 ```
 
-### `AUTH-10010`
+### `DB-AUTH-10010`
 
 **Message**
 
@@ -98,7 +100,7 @@ Access denied: You must be a superuser to execute this operation
 Access denied: You can't access information about the user %s
 ```
 
-### `AUTH-10011`
+### `DB-AUTH-10011`
 
 **Message**
 
@@ -106,7 +108,7 @@ Access denied: You can't access information about the user %s
 Access denied: You can't alter the user %s
 ```
 
-### `AUTH-10012`
+### `DB-AUTH-10012`
 
 **Message**
 
@@ -114,7 +116,7 @@ Access denied: You can't alter the user %s
 Access denied: You must be a superuser to change the SUPERUSER attribute
 ```
 
-### `AUTH-10013`
+### `DB-AUTH-10013`
 
 **Message**
 
@@ -122,7 +124,7 @@ Access denied: You must be a superuser to change the SUPERUSER attribute
 You can't change the SUPERUSER attribute for the current user %s
 ```
 
-### `AUTH-10014`
+### `DB-AUTH-10014`
 
 **Message**
 
@@ -130,7 +132,7 @@ You can't change the SUPERUSER attribute for the current user %s
 You can't drop the current user %s
 ```
 
-### `AUTH-10015`
+### `DB-AUTH-10015`
 
 **Message**
 
@@ -138,7 +140,7 @@ You can't drop the current user %s
 Access denied: You can't grant the %s privilege because you don't have the same privilege on the table %s
 ```
 
-### `AUTH-10016`
+### `DB-AUTH-10016`
 
 **Message**
 
@@ -146,7 +148,7 @@ Access denied: You can't grant the %s privilege because you don't have the same 
 Access denied: You can't grant the %s privilege because you don't have the same privilege on the namespace %s
 ```
 
-### `AUTH-10017`
+### `DB-AUTH-10017`
 
 **Message**
 
@@ -154,7 +156,7 @@ Access denied: You can't grant the %s privilege because you don't have the same 
 Access denied: You can't revoke the %s privilege because you don't have the same privilege on the table %s
 ```
 
-### `AUTH-10018`
+### `DB-AUTH-10018`
 
 **Message**
 
@@ -162,7 +164,7 @@ Access denied: You can't revoke the %s privilege because you don't have the same
 Access denied: You can't revoke the %s privilege because you don't have the same privilege on the namespace %s
 ```
 
-### `AUTH-10019`
+### `DB-AUTH-10019`
 
 **Message**
 
@@ -170,9 +172,11 @@ Access denied: You can't revoke the %s privilege because you don't have the same
 The operation does not have the target namespace or table name. Operation: %s
 ```
 
-## `AUTH-3xxxx` status codes
+## `DB-AUTH-3xxxx` status codes
 
-### `AUTH-30000`
+The following are status codes and messages for the internal error category.
+
+### `DB-AUTH-30000`
 
 **Message**
 
@@ -180,7 +184,7 @@ The operation does not have the target namespace or table name. Operation: %s
 Getting auth token information failed
 ```
 
-### `AUTH-30001`
+### `DB-AUTH-30001`
 
 **Message**
 
@@ -188,7 +192,7 @@ Getting auth token information failed
 Getting the user failed. Username: %s
 ```
 
-### `AUTH-30002`
+### `DB-AUTH-30002`
 
 **Message**
 
@@ -196,7 +200,7 @@ Getting the user failed. Username: %s
 Creating a user failed. Username: %s
 ```
 
-### `AUTH-30003`
+### `DB-AUTH-30003`
 
 **Message**
 
@@ -204,7 +208,7 @@ Creating a user failed. Username: %s
 Altering the user failed. Username: %s
 ```
 
-### `AUTH-30004`
+### `DB-AUTH-30004`
 
 **Message**
 
@@ -212,7 +216,7 @@ Altering the user failed. Username: %s
 Dropping the user failed. Username: %s
 ```
 
-### `AUTH-30005`
+### `DB-AUTH-30005`
 
 **Message**
 
@@ -220,7 +224,7 @@ Dropping the user failed. Username: %s
 Granting privileges failed. Username: %s; Namespace: %s; Privileges: %s
 ```
 
-### `AUTH-30006`
+### `DB-AUTH-30006`
 
 **Message**
 
@@ -228,7 +232,7 @@ Granting privileges failed. Username: %s; Namespace: %s; Privileges: %s
 Granting privileges failed. Username: %s; Table: %s; Privileges: %s
 ```
 
-### `AUTH-30007`
+### `DB-AUTH-30007`
 
 **Message**
 
@@ -236,7 +240,7 @@ Granting privileges failed. Username: %s; Table: %s; Privileges: %s
 Revoking privileges failed. Username: %s; Namespace: %s; Privileges: %s
 ```
 
-### `AUTH-30008`
+### `DB-AUTH-30008`
 
 **Message**
 
@@ -244,7 +248,7 @@ Revoking privileges failed. Username: %s; Namespace: %s; Privileges: %s
 Revoking privileges failed. Username: %s; Table: %s; Privileges: %s
 ```
 
-### `AUTH-30009`
+### `DB-AUTH-30009`
 
 **Message**
 
@@ -252,7 +256,7 @@ Revoking privileges failed. Username: %s; Table: %s; Privileges: %s
 Getting users failed
 ```
 
-### `AUTH-30010`
+### `DB-AUTH-30010`
 
 **Message**
 
@@ -260,7 +264,7 @@ Getting users failed
 Getting privileges failed. Username: %s; Namespace: %s
 ```
 
-### `AUTH-30011`
+### `DB-AUTH-30011`
 
 **Message**
 
@@ -268,7 +272,7 @@ Getting privileges failed. Username: %s; Namespace: %s
 Getting privileges failed. Username: %s; Table: %s
 ```
 
-### `AUTH-30012`
+### `DB-AUTH-30012`
 
 **Message**
 
@@ -276,7 +280,7 @@ Getting privileges failed. Username: %s; Table: %s
 Deleting privileges failed. Namespace: %s
 ```
 
-### `AUTH-30013`
+### `DB-AUTH-30013`
 
 **Message**
 
@@ -284,7 +288,7 @@ Deleting privileges failed. Namespace: %s
 Deleting privileges failed. Table: %s
 ```
 
-### `AUTH-30014`
+### `DB-AUTH-30014`
 
 **Message**
 
@@ -292,7 +296,7 @@ Deleting privileges failed. Table: %s
 Logging in failed. Username: %s
 ```
 
-### `AUTH-30015`
+### `DB-AUTH-30015`
 
 **Message**
 
