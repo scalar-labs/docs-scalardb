@@ -154,6 +154,11 @@ const sidebars = {
           ],
         },
         {
+          type: 'doc',
+          id: 'scalardb-cluster/getting-started-with-vector-search',
+          label: 'Try Running Vector Search Through ScalarDB Cluster',
+        },
+        {
           type: 'category',
           label: 'Reference',
           collapsible: true,
@@ -167,11 +172,6 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/getting-started-with-using-python-for-scalardb-cluster',
               label: 'Use Python for ScalarDB Cluster',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/getting-started-with-vector-search',
-              label: 'Use Vector Search in ScalarDB Cluster',
             },
             {
               type: 'doc',
@@ -236,6 +236,21 @@ const sidebars = {
                   type: 'doc',
                   id: 'scalardb-cluster/scalardb-auth-with-sql',
                   label: 'Authenticate and Authorize Users by Using SQL',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-cluster/authorize-with-abac',
+                  label: 'Control User Access in a Fine-Grained Manner',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-cluster/encrypt-data-at-rest',
+                  label: 'Encrypt Data at Rest',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-cluster/encrypt-wire-communications',
+                  label: 'Encrypt Wire Communications',
                 },
                 {
                   type: 'doc',
@@ -395,21 +410,6 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/scalardb-cluster-grpc-api-guide',
               label: 'ScalarDB Cluster gRPC API Guide',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/encrypt-data-at-rest',
-              label: 'Encrypt Data at Rest',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/encrypt-wire-communications',
-              label: 'Encrypt Wire Communications',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/authorize-with-abac',
-              label: 'Control User Access',
             },
             {
               type: 'category',
@@ -1029,6 +1029,11 @@ const sidebars = {
           ],
         },
         {
+          type: 'doc',
+          id: 'scalardb-cluster/getting-started-with-vector-search',
+          label: 'ScalarDB Cluster を使用してベクトル検索を実行',
+        },
+        {
           type: 'category',
           label: '関連情報',
           collapsible: true,
@@ -1042,11 +1047,6 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/getting-started-with-using-python-for-scalardb-cluster',
               label: 'Python から ScalarDB Cluster を使用',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/getting-started-with-vector-search',
-              label: 'ScalarDB Cluster でベクトル検索を使用',
             },
             {
               type: 'doc',
@@ -1111,6 +1111,21 @@ const sidebars = {
                   type: 'doc',
                   id: 'scalardb-cluster/scalardb-auth-with-sql',
                   label: 'SQL を使用してユーザーを認証および承認',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-cluster/authorize-with-abac',
+                  label: 'ユーザアクセスを細かく制御',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-cluster/encrypt-data-at-rest',
+                  label: '保存データを暗号化',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-cluster/encrypt-wire-communications',
+                  label: 'ワイヤ通信を暗号化',
                 },
                 {
                   type: 'doc',
@@ -1266,21 +1281,6 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/scalardb-cluster-grpc-api-guide',
               label: 'ScalarDB Cluster gRPC API ガイド',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/encrypt-data-at-rest',
-              label: '保存データを暗号化',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/encrypt-wire-communications',
-              label: 'ワイヤ通信を暗号化',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/authorize-with-abac',
-              label: 'ユーザーアクセスを制御',
             },
             {
               type: 'category',
