@@ -18,21 +18,52 @@ This page includes a list of release notes for ScalarDB 3.15.
 
 This release includes numerous enhancements, improvements, and bug fixes. The [3.15.0 release](https://github.com/scalar-labs/scalardb/releases/tag/v3.15.0) has been discarded, making this the first official release for 3.15.
 
-### Enhancements
+### Community edition
+
+#### Enhancements
 
 - Introduced operation attributes, providing the capability to include additional key-value information in operations. ([#2333](https://github.com/scalar-labs/scalardb/pull/2333))
 - Add the new time-related data types DATE, TIME, TIMESTAMP, and TIMESTAMPTZ. ([#2468](https://github.com/scalar-labs/scalardb/pull/2468) [#2491](https://github.com/scalar-labs/scalardb/pull/2491))
 
-### Improvements
+#### Improvements
 
 - ScalarDB now supports MySQL 8.4, 8.0; PostgreSQL 17, 16, 15, 14, and 13; Amazon Aurora PostgreSQL 16, 15, 14, and 13; Amazon Aurora MySQL 3, and 2. ([#2302](https://github.com/scalar-labs/scalardb/pull/2302))
 - Use the MariaDB Connector/J JDBC driver for any connection URL starting with `jdbc:mariadb` ([#2391](https://github.com/scalar-labs/scalardb/pull/2391))
 - Removed unnecessary loggings in the statement handlers for Cassandra and Cosmos DB. ([#2469](https://github.com/scalar-labs/scalardb/pull/2469))
 
-### Bug fixes
+#### Bug fixes
 
-- Fixed a bug where the scan with a limit doesn't work correctly when the scan results exceed 1 MB and require multiple requests to DynamoDB. ([#2291](https://github.com/scalar-labs/scalardb/pull/2291))
 - Added validation for primary key columns in the Cosmos DB adapter. The validation ensures that the text values of the primary key columns do not contain illegal characters (`:`, `/`, `\`, `#`, and `?`). ([#2292](https://github.com/scalar-labs/scalardb/pull/2292))
 - Fixed the behavior of multiple mutations for the same record in a transaction in Consensus Commit. ([#2340](https://github.com/scalar-labs/scalardb/pull/2340))
 - Fixed the behavior when deleting a non-existing record in the Cosmos adapter. ([#2341](https://github.com/scalar-labs/scalardb/pull/2341))
 - Fixed bugs in GetBuilder and ScanBuilder. ([#2352](https://github.com/scalar-labs/scalardb/pull/2352))
+
+### Enterprise edition
+
+#### Enhancements
+
+##### ScalarDB Cluster
+
+- Added support for operation attributes introduced in [#2333](https://github.com/scalar-labs/scalardb/pull/2333) to ScalarDB Cluster.
+- Added the attribute-based access control feature.
+- Added support for the time-related types introduced in [#2468](https://github.com/scalar-labs/scalardb/pull/2468) to ScalarDB Cluster.
+- Added support for the metadata API for ABAC introduced in [scalar-labs/scalardb-sql#708](https://github.com/scalar-labs/scalardb-sql/pull/708).
+- Added vector search capability to ScalarDB Cluster by integrating LangChain4j.
+
+##### ScalarDB SQL
+
+- Added support for operation attributes to DMLs. Also added support for read tags and write tags in ABAC to DMSs.
+- Support the time-related types DATE, TIME, TIMESTAMP, and TIMESTAMPTZ.
+- Added metadata API for ABAC.
+- Added SQL statements for ABAC.
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Upgraded `grpc_health_probe` to fix security issues. [CVE-2024-45337](https://github.com/advisories/GHSA-v778-237x-gjrc "CVE-2024-45337") [CVE-2024-45338](https://github.com/advisories/GHSA-w32m-9786-jp63 "CVE-2024-45338")
+
+##### ScalarDB SQL
+
+- [Spring Data JDBC For ScalarDB] Fixed a bug `existsById()` API not working
+- Fix an issue causing the SQL statement parser to reject negative numeric literal for columns of type INT and BIGINT.
