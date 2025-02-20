@@ -239,6 +239,11 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
+                  id: 'scalardb-cluster/authorize-with-abac',
+                  label: 'Control User Access in a Fine-Grained Manner',
+                },
+                {
+                  type: 'doc',
                   id: 'scalardb-benchmarks/README',
                   label: 'Run Benchmarks',
                 },
@@ -405,11 +410,6 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/encrypt-wire-communications',
               label: 'Encrypt Wire Communications',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/authorize-with-abac',
-              label: 'Control User Access',
             },
             {
               type: 'category',
@@ -1114,6 +1114,11 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
+                  id: 'scalardb-cluster/authorize-with-abac',
+                  label: 'ユーザアクセスを細かく制御',
+                },
+                {
+                  type: 'doc',
                   id: 'scalardb-benchmarks/README',
                   label: 'ベンチマークを実行',
                 },
@@ -1276,11 +1281,6 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/encrypt-wire-communications',
               label: 'ワイヤ通信を暗号化',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/authorize-with-abac',
-              label: 'ユーザーアクセスを制御',
             },
             {
               type: 'category',
