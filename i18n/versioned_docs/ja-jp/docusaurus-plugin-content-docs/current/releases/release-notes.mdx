@@ -22,21 +22,52 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 このリリースには、多数の機能強化、改善、バグ修正が含まれています。[3.15.0 リリース](https://github.com/scalar-labs/scalardb/releases/tag/v3.15.0)は破棄され、これが 3.15 の最初の公式リリースとなります。
 
-### 機能強化
+### Community edition
+
+#### 機能強化
 
 - 操作属性が導入され、操作に追加のキー値情報を含める機能が提供されました。([#2333](https://github.com/scalar-labs/scalardb/pull/2333))
 - 新しい時間関連のデータ型 DATE、TIME、TIMESTAMP、および TIMESTAMPTZ が追加されました。 ([#2468](https://github.com/scalar-labs/scalardb/pull/2468) [#2491](https://github.com/scalar-labs/scalardb/pull/2491))
 
-### 改善点
+#### 改善点
 
 - ScalarDB は、MySQL 8.4、8.0、PostgreSQL 17、16、15、14、13、Amazon Aurora PostgreSQL 16、15、14、13 をサポートするようになりました。 Amazon Aurora MySQL 3、および 2。([#2302](https://github.com/scalar-labs/scalardb/pull/2302))
 - `jdbc:mariadb` で始まる接続 URL には MariaDB Connector/J JDBC ドライバーを使用します。([#2391](https://github.com/scalar-labs/scalardb/pull/2391))
 - Cassandra および Cosmos DB のステートメントハンドラーで不要なログ記録を削除しました。([#2469](https://github.com/scalar-labs/scalardb/pull/2469))
 
-### バグの修正
+#### バグの修正
 
-- スキャン結果が 1 MB を超え、DynamoDB への複数のリクエストが必要な場合に、制限付きスキャンが正しく機能しないバグを修正しました。 ([#2291](https://github.com/scalar-labs/scalardb/pull/2291))
-- Cosmos DB アダプタの主キー列の検証を追加しました。検証により、主キー列のテキスト値に不正な文字 (`:`、`/`、`\`、`#`、`?`) が含まれていないことが保証されます。([#2292](https://github.com/scalar-labs/scalardb/pull/2292))
+- Cosmos DB アダプターの主キー列の検証を追加しました。検証により、主キー列のテキスト値に不正な文字 (`:`、`/`、`\`、`#`、および `?`) が含まれていないことが保証されます。 ([#2292](https://github.com/scalar-labs/scalardb/pull/2292))
 - Consensus Commit のトランザクションで同じレコードに対して複数のミューテーションが発生する動作を修正しました。([#2340](https://github.com/scalar-labs/scalardb/pull/2340))
-- Cosmos アダプタで存在しないレコードを削除するときの動作を修正しました。 ([#2341](https://github.com/scalar-labs/scalardb/pull/2341))
+- Cosmos アダプターで存在しないレコードを削除するときの動作を修正しました。([#2341](https://github.com/scalar-labs/scalardb/pull/2341))
 - GetBuilder と ScanBuilder のバグを修正しました。([#2352](https://github.com/scalar-labs/scalardb/pull/2352))
+
+### Enterprise edition
+
+#### 機能強化
+
+##### ScalarDB Cluster
+
+- [#2333](https://github.com/scalar-labs/scalardb/pull/2333) で導入された操作属性のサポートを ScalarDB Cluster に追加しました。
+- 属性ベースのアクセス制御機能を追加しました。
+- [#2468](https://github.com/scalar-labs/scalardb/pull/2468) で導入された時間関連の型のサポートを ScalarDB Cluster に追加しました。
+- [scalar-labs/scalardb-sql#708](https://github.com/scalar-labs/scalardb-sql/pull/708) で導入された ABAC のメタデータ API のサポートを追加しました。
+- LangChain4j を統合することで、ScalarDB Cluster にベクトル検索機能を追加しました。
+
+##### ScalarDB SQL
+
+- DML に操作属性のサポートを追加しました。また、ABAC の読み取りタグと書き込みタグを DMS にサポートしました。
+- 時間関連の型である DATE、TIME、TIMESTAMP、および TIMESTAMPTZ をサポートします。
+- ABAC のメタデータ API を追加しました。
+- ABAC の SQL ステートメントを追加しました。
+
+#### バグの修正
+
+##### ScalarDB Cluster
+
+- セキュリティ問題を修正するために `grpc_health_probe` をアップグレードしました。 [CVE-2024-45337](https://github.com/advisories/GHSA-v778-237x-gjrc "CVE-2024-45337") [CVE-2024-45338](https://github.com/advisories/GHSA-w32m-9786-jp63 "CVE-2024-45338")
+
+##### ScalarDB SQL
+
+- [Spring Data JDBC For ScalarDB] `existsById()` API が動作しないバグを修正しました
+- SQL ステートメントパーサーが INT 型および BIGINT 型の列の負の数値リテラルを拒否する問題を修正しました。
