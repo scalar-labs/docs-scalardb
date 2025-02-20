@@ -154,6 +154,11 @@ const sidebars = {
           ],
         },
         {
+          type: 'doc',
+          id: 'scalardb-cluster/getting-started-with-vector-search',
+          label: 'Try Running Vector Search Through ScalarDB Cluster',
+        },
+        {
           type: 'category',
           label: 'Reference',
           collapsible: true,
@@ -167,11 +172,6 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/getting-started-with-using-python-for-scalardb-cluster',
               label: 'Use Python for ScalarDB Cluster',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/getting-started-with-vector-search',
-              label: 'Use Vector Search in ScalarDB Cluster',
             },
             {
               type: 'doc',
@@ -1029,6 +1029,11 @@ const sidebars = {
           ],
         },
         {
+          type: 'doc',
+          id: 'scalardb-cluster/getting-started-with-vector-search',
+          label: 'ScalarDB Cluster を使用してベクトル検索を実行',
+        },
+        {
           type: 'category',
           label: '関連情報',
           collapsible: true,
@@ -1042,11 +1047,6 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/getting-started-with-using-python-for-scalardb-cluster',
               label: 'Python から ScalarDB Cluster を使用',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/getting-started-with-vector-search',
-              label: 'ScalarDB Cluster でベクトル検索を使用',
             },
             {
               type: 'doc',
