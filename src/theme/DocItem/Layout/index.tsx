@@ -12,6 +12,7 @@ import DocItemContent from '@theme/DocItem/Content';
 import DocBreadcrumbs from '@theme/DocBreadcrumbs';
 import ContentVisibility from '@theme/ContentVisibility';
 import type {Props} from '@theme/DocItem/Layout';
+import SupportDropdownMenu from '@site/src/components/Support/SupportDropdownMenu'; // Import the support dropdown component.
 
 import styles from './styles.module.css';
 
@@ -58,7 +59,13 @@ export default function DocItemLayout({children}: Props): JSX.Element {
           <DocItemPaginator />
         </div>
       </div>
-      {docTOC.desktop && <div className="col col--3">{docTOC.desktop}</div>}
+      {docTOC.desktop && <div className="col col--3">
+        <div style={{ display: 'flex', justifyContent: 'flex-start', padding: '0px 17px', right: '0' }}> {/* Add the support dropdown above the TOC on desktop. */}
+          <SupportDropdownMenu />
+        </div>
+        {docTOC.desktop}
+        </div>
+      }
     </div>
   );
 }
