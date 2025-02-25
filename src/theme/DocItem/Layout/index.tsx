@@ -59,13 +59,16 @@ export default function DocItemLayout({children}: Props): JSX.Element {
           <DocItemPaginator />
         </div>
       </div>
-      {docTOC.desktop && <div className="col col--3">
-        <div style={{ display: 'flex', justifyContent: 'flex-start', padding: '0px 17px', right: '0' }}> {/* Add the support dropdown above the TOC on desktop. */}
+
+      {/* Ensure the right column always exists, even if there is no TOC */}
+      <div className="col col--3">
+        {/* Add the support dropdown above the TOC on desktop. */}
+        <div style={{ display: 'flex', justifyContent: 'flex-start', padding: '0px 17px', right: '0' }}>
           <SupportDropdownMenu />
         </div>
+        {/* Render TOC if available */}
         {docTOC.desktop}
-        </div>
-      }
+      </div>
     </div>
   );
 }
