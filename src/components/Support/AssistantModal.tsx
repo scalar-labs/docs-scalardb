@@ -4,6 +4,9 @@ import { Standard } from "@typebot.io/react";
 function AssistantModal({ isOpen, onClose }) {
   if (!isOpen) return null; // Prevent modal from rendering when isOpen is false.
 
+  // Get the current page URL.
+  const currentUrl = window.location.href;
+
   return (
     <div className="modal" style={styles.modal}>
       <div className="modal-content" style={styles.modalContent}>
@@ -14,6 +17,9 @@ function AssistantModal({ isOpen, onClose }) {
         <Standard
           typebot="test-authentication-scalar-db-scalar-dl-ai-chatbot-i98jxsg"
           style={{ width: "100%", height: "600px" }}
+          prefilledVariables={{
+            "Current page URL": `${currentUrl}`, // Pass page URL as a query parameter.
+          }}
         />
       </div>
     </div>
