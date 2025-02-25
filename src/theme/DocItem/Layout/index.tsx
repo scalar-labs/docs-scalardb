@@ -17,7 +17,7 @@ import SupportDropdownMenu from '@site/src/components/Support/SupportDropdownMen
 import styles from './styles.module.css';
 
 /**
- * Decide if the toc should be rendered, on mobile or desktop viewports
+ * Decide if the ToC should be rendered, on mobile or desktop viewports.
  */
 function useDocTOC() {
   const {frontMatter, toc} = useDoc();
@@ -42,9 +42,9 @@ function useDocTOC() {
 
 export default function DocItemLayout({children}: Props): JSX.Element {
   const docTOC = useDocTOC();
-  const {metadata, frontMatter} = useDoc(); // Get frontMatter to check for hide_table_of_contents
-  const hideTOC = frontMatter.hide_table_of_contents; // Check if TOC is hidden
-  const windowSize = useWindowSize(); // Get current window size
+  const {metadata, frontMatter} = useDoc(); // Get the front-matter metadata to check for the `hide_table_of_contents` configuration.
+  const hideTOC = frontMatter.hide_table_of_contents; // Check if the ToC is hidden.
+  const windowSize = useWindowSize(); // Get the current window size.
 
   return (
     <div className="row">
@@ -55,7 +55,7 @@ export default function DocItemLayout({children}: Props): JSX.Element {
           <article>
             <DocBreadcrumbs />
             <DocVersionBadge />
-            {/* Show Support button on mobile */}
+            {/* Show the Support button on mobile. */}
             {windowSize === 'mobile' && (
               <div style={{ display: 'flex', justifyContent: 'left', marginBottom: '1rem' }}>
                 <SupportDropdownMenu />
@@ -69,16 +69,16 @@ export default function DocItemLayout({children}: Props): JSX.Element {
         </div>
       </div>
 
-      {/* Ensure the right column always exists, even if there is no TOC */}
+      {/* Ensure the right column always exists, even if there is no ToC. */}
       {!hideTOC && windowSize !== 'mobile' && (
         <div className="col col--3" style={{ position: "relative" }}>
-          {/* Add a wrapper div to make the support dropdown and TOC sticky */}
+          {/* Add a wrapper div to make the support dropdown and ToC sticky. */}
           <div style={{ position: "sticky", top: "80px", zIndex: 1 }}>
-            {/* Add the support dropdown above the TOC on desktop */}
+            {/* Add the support dropdown above the ToC on desktop. */}
             <div style={{ display: 'flex', justifyContent: 'flex-start', padding: '0px 17px', right: '0' }}>
               <SupportDropdownMenu />
             </div>
-            {/* Render TOC if available */}
+            {/* Render the ToC if one is available. */}
             {docTOC.desktop}
           </div>
         </div>

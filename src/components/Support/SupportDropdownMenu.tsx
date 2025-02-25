@@ -10,7 +10,7 @@ const DropdownMenu: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // For modal visibility
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Detect the language based on the URL path
+  // Detect the language based on the URL path.
   const isJapanese = window.location.pathname.startsWith("/ja-jp");
 
   const toggleDropdown = () => {
@@ -27,7 +27,7 @@ const DropdownMenu: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  // Close dropdown if clicking outside
+  // Close the dropdown when clicking outside of the content container.
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {

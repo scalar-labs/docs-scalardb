@@ -5,7 +5,7 @@ const ContactSupportLink: React.FC = () => {
   const location = useLocation();
   const [storedUrl, setStoredUrl] = useState<string | null>(null);
 
-  // Detect the language based on the URL path
+  // Detect the language based on the URL path.
   const isJapanese = location.pathname.startsWith("/ja-jp");
 
   useEffect(() => {
