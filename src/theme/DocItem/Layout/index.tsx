@@ -42,7 +42,9 @@ function useDocTOC() {
 
 export default function DocItemLayout({children}: Props): JSX.Element {
   const docTOC = useDocTOC();
-  const {metadata} = useDoc();
+  const {metadata, frontMatter} = useDoc(); // Get frontMatter to check for hide_table_of_contents
+  const hideTOC = frontMatter.hide_table_of_contents; // Check if TOC is hidden
+
   return (
     <div className="row">
       <div className={clsx('col', !docTOC.hidden && styles.docItemCol)}>
@@ -61,17 +63,19 @@ export default function DocItemLayout({children}: Props): JSX.Element {
       </div>
 
       {/* Ensure the right column always exists, even if there is no TOC */}
-      <div className="col col--3" style={{ position: "relative" }}>
-        {/* Add a wrapper div to make the support dropdown and TOC sticky */}
-        <div style={{ position: "sticky", top: "80px", zIndex: 1000 }}>
-        {/* Add the support dropdown above the TOC on desktop. */}
-          <div style={{ display: 'flex', justifyContent: 'flex-start', padding: '0px 17px', right: '0', }}>
-            <SupportDropdownMenu />
+      {!hideTOC && (
+        <div className="col col--3" style={{ position: "relative" }}>
+          {/* Add a wrapper div to make the support dropdown and TOC sticky */}
+          <div style={{ position: "sticky", top: "80px", zIndex: 1000 }}>
+            {/* Add the support dropdown above the TOC on desktop */}
+            <div style={{ display: 'flex', justifyContent: 'flex-start', padding: '0px 17px', right: '0' }}>
+              <SupportDropdownMenu />
+            </div>
+            {/* Render TOC if available */}
+            {docTOC.desktop}
           </div>
-        {/* Render TOC if available */}
-        {docTOC.desktop}
         </div>
-      </div>
+      )}
     </div>
   );
 }
