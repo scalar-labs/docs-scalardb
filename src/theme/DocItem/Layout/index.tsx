@@ -73,7 +73,7 @@ export default function DocItemLayout({children}: Props): JSX.Element {
       {!hideTOC && windowSize !== 'mobile' && (
         <div className="col col--3" style={{ position: "relative" }}>
           {/* Add a wrapper div to make the support dropdown and TOC sticky */}
-          <div style={{ position: "sticky", top: "80px", zIndex: 1000 }}>
+          <div style={{ position: "sticky", top: "80px", zIndex: 1 }}>
             {/* Add the support dropdown above the TOC on desktop */}
             <div style={{ display: 'flex', justifyContent: 'flex-start', padding: '0px 17px', right: '0' }}>
               <SupportDropdownMenu />
