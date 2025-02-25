@@ -10,6 +10,9 @@ const DropdownMenu: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState(false); // For modal visibility
   const dropdownRef = useRef<HTMLDivElement>(null);
 
+  // Detect the language based on the URL path
+  const isJapanese = window.location.pathname.startsWith("/ja-jp");
+
   const toggleDropdown = () => {
     setIsOpen((prev) => !prev);
   };
@@ -44,17 +47,18 @@ const DropdownMenu: React.FC = () => {
   return (
     <div className={styles.supportDropdown} ref={dropdownRef}>
       <button className={styles.supportDropBtn} onClick={toggleDropdown}>
-        Support <FontAwesomeIcon icon={faChevronDown} fontSize={12} />
+        {isJapanese ? "サポート" : "Support"} <FontAwesomeIcon icon={faChevronDown} fontSize={12} />
       </button>
 
       {isOpen && (
         <div className={styles.supportDropdownContent}>
           <ContactSupportLink />
           <a href="https://stackoverflow.com/questions/tagged/scalardb" target="_blank">
-            <b>Stack Overflow</b><br />For Community users
+            <b>Stack Overflow</b><br />{isJapanese ? "コミュニティ向けの質問" : "For questions to the community"}
           </a>
           <a href="#" onClick={openModal}>
-            <b>AI assistant (experimental)</b><br />For Scalar Membership Program members
+            <b>{isJapanese ? "AI アシスタント（実験的）" : "AI assistant (experimental)"}</b><br />
+            {isJapanese ? "Scalar メンバーシッププログラム向け" : "For Scalar Membership Program members"}
           </a>
         </div>
       )}

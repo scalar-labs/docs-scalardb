@@ -5,6 +5,9 @@ const ContactSupportLink: React.FC = () => {
   const location = useLocation();
   const [storedUrl, setStoredUrl] = useState<string | null>(null);
 
+  // Detect the language based on the URL path
+  const isJapanese = location.pathname.startsWith("/ja-jp");
+
   useEffect(() => {
     // Store the current URL in localStorage when the component first mounts.
     const currentUrl = `https://scalardb.scalar-labs.com${location.pathname}`;
@@ -29,7 +32,8 @@ const ContactSupportLink: React.FC = () => {
   return (
     <div>
       <a href="#" onClick={handleSupportClick} rel="noopener noreferrer">
-        <b>Contact technical support</b><br />For Enterprise customers
+        <b>{isJapanese ? "テクニカルサポートに問い合わせる" : "Contact technical support"}</b><br />
+        {isJapanese ? "エンタープライズのお客様向け" : "For Enterprise customers"}
       </a>
     </div>
   );
