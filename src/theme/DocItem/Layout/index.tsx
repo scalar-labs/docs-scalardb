@@ -44,6 +44,7 @@ export default function DocItemLayout({children}: Props): JSX.Element {
   const docTOC = useDocTOC();
   const {metadata, frontMatter} = useDoc(); // Get frontMatter to check for hide_table_of_contents
   const hideTOC = frontMatter.hide_table_of_contents; // Check if TOC is hidden
+  const windowSize = useWindowSize(); // Get current window size
 
   return (
     <div className="row">
@@ -54,6 +55,12 @@ export default function DocItemLayout({children}: Props): JSX.Element {
           <article>
             <DocBreadcrumbs />
             <DocVersionBadge />
+            {/* Show Support button on mobile */}
+            {windowSize === 'mobile' && (
+              <div style={{ display: 'flex', justifyContent: 'left', marginBottom: '1rem' }}>
+                <SupportDropdownMenu />
+              </div>
+            )}
             {docTOC.mobile}
             <DocItemContent>{children}</DocItemContent>
             <DocItemFooter />
@@ -63,7 +70,7 @@ export default function DocItemLayout({children}: Props): JSX.Element {
       </div>
 
       {/* Ensure the right column always exists, even if there is no TOC */}
-      {!hideTOC && (
+      {!hideTOC && windowSize !== 'mobile' && (
         <div className="col col--3" style={{ position: "relative" }}>
           {/* Add a wrapper div to make the support dropdown and TOC sticky */}
           <div style={{ position: "sticky", top: "80px", zIndex: 1000 }}>
