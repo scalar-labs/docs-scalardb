@@ -61,13 +61,16 @@ export default function DocItemLayout({children}: Props): JSX.Element {
       </div>
 
       {/* Ensure the right column always exists, even if there is no TOC */}
-      <div className="col col--3">
+      <div className="col col--3" style={{ position: "relative" }}>
+        {/* Add a wrapper div to make the support dropdown and TOC sticky */}
+        <div style={{ position: "sticky", top: "80px", zIndex: 1000 }}>
         {/* Add the support dropdown above the TOC on desktop. */}
-        <div style={{ display: 'flex', justifyContent: 'flex-start', padding: '0px 17px', right: '0' }}>
-          <SupportDropdownMenu />
-        </div>
+          <div style={{ display: 'flex', justifyContent: 'flex-start', padding: '0px 17px', right: '0', }}>
+            <SupportDropdownMenu />
+          </div>
         {/* Render TOC if available */}
         {docTOC.desktop}
+        </div>
       </div>
     </div>
   );
