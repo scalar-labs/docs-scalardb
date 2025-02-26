@@ -532,24 +532,42 @@ Auto-scaling for Cosmos DB for NoSQL is enabled only when this option is set to 
 
 The following table shows the supported data types in ScalarDB and their mapping to the data types of other databases.
 
-| ScalarDB  | Cassandra | Cosmos DB for NoSQL | DynamoDB | MySQL    | PostgreSQL/YugabyteDB | Oracle         | SQL Server      | SQLite  |
-|-----------|-----------|---------------------|----------|----------|-----------------------|----------------|-----------------|---------|
-| BOOLEAN   | boolean   | boolean (JSON)      | BOOL     | boolean  | boolean               | number(1)      | bit             | boolean |
-| INT       | int       | number (JSON)       | N        | int      | int                   | number(10)     | int             | int     |
-| BIGINT    | bigint    | number (JSON)       | N        | bigint   | bigint                | number(19)     | bigint          | bigint  |
-| FLOAT     | float     | number (JSON)       | N        | real     | real                  | binary_float   | float(24)       | float   |
-| DOUBLE    | double    | number (JSON)       | N        | double   | double precision      | binary_double  | float           | double  |
-| TEXT      | text      | string (JSON)       | S        | longtext | text                  | varchar2(4000) | varchar(8000)   | text    |
-| BLOB      | blob      | string (JSON)       | B        | longblob | bytea                 | RAW(2000)      | varbinary(8000) | blob    |
+| ScalarDB    | Cassandra            | Cosmos DB for NoSQL | DynamoDB | MySQL/MariaDB | PostgreSQL/YugabyteDB    | Oracle                   | SQL Server      | SQLite  |
+|-------------|----------------------|---------------------|----------|---------------|--------------------------|--------------------------|-----------------|---------|
+| BOOLEAN     | boolean              | boolean (JSON)      | BOOL     | boolean       | boolean                  | number(1)                | bit             | boolean |
+| INT         | int                  | number (JSON)       | N        | int           | int                      | number(10)               | int             | int     |
+| BIGINT      | bigint               | number (JSON)       | N        | bigint        | bigint                   | number(19)               | bigint          | bigint  |
+| FLOAT       | float                | number (JSON)       | N        | real          | real                     | binary_float             | float(24)       | float   |
+| DOUBLE      | double               | number (JSON)       | N        | double        | double precision         | binary_double            | float           | double  |
+| TEXT        | text                 | string (JSON)       | S        | longtext      | text                     | varchar2(4000)           | varchar(8000)   | text    |
+| BLOB        | blob                 | string (JSON)       | B        | longblob      | bytea                    | RAW(2000)                | varbinary(8000) | blob    |
+| DATE        | date                 | number (JSON)       | N        | date          | date                     | date                     | date            | int     |
+| TIME        | time                 | number (JSON)       | N        | time          | time                     | timestamp                | time            | bigint  |
+| TIMESTAMP   | <em>Unsupported</em> | number (JSON)       | N        | datetime      | timestamp                | timestamp                | datetime2       | bigint  |
+| TIMESTAMPTZ | timestamp            | number (JSON)       | N        | datetime      | timestamp with time zone | timestamp with time zone | datetimeoffset  | bigint  |
+
+:::note
+
+TIMESTAMP represents a date-time without time zone information, while TIMESTAMPTZ represents a date-time on the UTC time zone.  
+
+:::
 
 However, the following data types in JDBC databases are converted differently when they are used as a primary key or a secondary index key. This is due to the limitations of RDB data types.
 
-| ScalarDB | MySQL         | PostgreSQL/YugabyteDB | Oracle       |
+| ScalarDB | MySQL/MariaDB | PostgreSQL/YugabyteDB | Oracle       |
 |----------|---------------|-----------------------|--------------|
 | TEXT     | VARCHAR(64)   | VARCHAR(10485760)     | VARCHAR2(64) |
 | BLOB     | VARBINARY(64) |                       | RAW(64)      |
 
-The value range of `BIGINT` in ScalarDB is from -2^53 to 2^53, regardless of the underlying database.
+The following data types have a value range and precision regardless of the underlying database.
+
+| Type        | Minimum                   | Maximum                   | Precision     |
+|-------------|---------------------------|---------------------------|---------------|
+| BIGINT      | -2^53                     | 2^53                      | -             |
+| DATE        | 1000-01-01                | 9999-12-31                | 1 day         |
+| TIME        | 00:00:00.000000           | 23:59:59.999999           | 1 microsecond |
+| TIMESTAMP   | 1000-01-01 00:00:00.000   | 9999-12-31 23:59:59.999   | 1 millisecond |
+| TIMESTAMPTZ | 1000-01-01 00:00:00.000 Z | 9999-12-31 23:59:59.999 Z | 1 millisecond |
 
 :::note
 

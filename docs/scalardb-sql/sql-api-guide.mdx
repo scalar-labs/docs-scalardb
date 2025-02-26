@@ -111,7 +111,7 @@ ResultSet resultSet = sqlSession.execute(statement);
 ```
 
 `Statement` objects can be built by `StatementBuilder` that has factory methods for corresponding SQLs.
-Please see [the Javadoc of `StatementBuilder`](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.14.1/com/scalar/db/sql/statement/builder/StatementBuilder.html) and [ScalarDB SQL Grammar](grammar.mdx) for more details.
+Please see [the Javadoc of `StatementBuilder`](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.15.1/com/scalar/db/sql/statement/builder/StatementBuilder.html) and [ScalarDB SQL Grammar](grammar.mdx) for more details.
 
 ### Handle ResultSet objects
 
@@ -142,7 +142,7 @@ If you want to get the metadata of the `ResultSet` object, you can use the `getC
 ColumnDefinitions columnDefinitions = resultSet.getColumnDefinitions();
 ```
 
-Please see [the Javadoc of `ColumnDefinitions`](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.14.1/com/scalar/db/sql/ColumnDefinition.html) for more details.
+Please see [the Javadoc of `ColumnDefinitions`](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.15.1/com/scalar/db/sql/ColumnDefinition.html) for more details.
 
 ### Handle Record objects
 
@@ -151,37 +151,53 @@ As mentioned, a `ResultSet` object returns `Record` objects that represent recor
 You can get a column value of a result with `getXXX("<column name>")` or `getXXX(<column index>)` methods (XXX is a type name) as follows:
 
 ```java
-// Get a Boolean value of a column
+// Get a BOOLEAN value of a column
 boolean booleanValueGottenByName = record.getBoolean("<column name>");
 boolean booleanValueGottenByIndex = record.getBoolean(<column index>);
 
-// Get an Int value of a column
+// Get an INT value of a column
 int intValueGottenByName = record.getInt("<column name>");
 int intValueGottenByIndex = record.getInt(<column index>);
 
-// Get a BigInt value of a column
+// Get a BIGINT value of a column
 long bigIntValueGottenByName = record.getBigInt("<column name>");
 long bigIntValueGottenByIndex = record.getBigInt(<column index>);
 
-// Get a Float value of a column
+// Get a FLOAT value of a column
 float floatValueGottenByName = record.getFloat("<column name>");
 float floatValueGottenByIndex = record.getFloat(<column index>);
 
-// Get a Double value of a column
+// Get a DOUBLE value of a column
 double doubleValueGottenByName = record.getDouble("<column name>");
 double doubleValueGottenByIndex = record.getDouble(<column index>);
 
-// Get a Text value of a column
+// Get a TEXT value of a column
 String textValueGottenByName = record.getText("<column name>");
 String textValueGottenByIndex = record.getText(<column index>);
 
-// Get a Blob value of a column (as a ByteBuffer)
+// Get a BLOB value of a column (as a ByteBuffer)
 ByteBuffer blobValueGottenByName = record.getBlob("<column name>");
 ByteBuffer blobValueGottenByIndex = record.getBlob(<column index>);
 
-// Get a Blob value of a column as a byte array
+// Get a BLOB value of a column as a byte array
 byte[] blobValueAsBytesGottenByName = record.getBlobAsBytes("<column name>");
 byte[] blobValueAsBytesGottenByIndex = record.getBlobAsBytes(<column index>);
+
+// Get a DATE value of a column as a LocalDate
+LocalDate dateValueGottenByName = record.getDate("<column name>");
+LocalDate dateValueGottenByName = record.getDate(<column index>);
+
+// Get a TIME value of a column as a LocalTime
+LocalTime timeValueGottenByName = record.getTime("<column name>");
+LocalTime timeValueGottenByName = record.getTime(<column index>);
+
+// Get a TIMESTAMP value of a column as a LocalDateTime
+LocalDateTime timestampValueGottenByName = record.getTimestamp("<column name>");
+LocalDateTime timestampValueGottenByName = record.getTimestamp(<column index>);
+
+// Get a TIMESTAMPTZ value of a column as an Instant
+Instant timestampTZValueGottenByName = record.getTimestampTZ("<column name>");
+Instant timestampTZValueGottenByName = record.getTimestampTZ(<column index>);
 ```
 
 And if you need to check if a value of a column is null, you can use the `isNull("<column name>")` or `isNull(<column index>)` method.
@@ -192,7 +208,7 @@ boolean isNullGottenByName = record.isNull("<column name>");
 boolean isNullGottenByIndex = record.isNull(<column index>);
 ```
 
-Please see also [the Javadoc of `Record`](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.14.1/com/scalar/db/sql/Record.html) for more details.
+Please see also [the Javadoc of `Record`](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.15.1/com/scalar/db/sql/Record.html) for more details.
 
 ### Prepared Statements
 
@@ -237,7 +253,7 @@ preparedStatement2
     .execute();
 ```
 
-Please see also [the Javadoc of `PreparedStatement`](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.14.1/com/scalar/db/sql/PreparedStatement.html) for more details.
+Please see also [the Javadoc of `PreparedStatement`](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.15.1/com/scalar/db/sql/PreparedStatement.html) for more details.
 
 ## Execute transactions
 
@@ -351,10 +367,10 @@ You can get metadata with the `SqlSession.getMetadata()` method as follows:
 Metadata metadata = sqlSession.getMetadata();
 ```
 
-Please see [the Javadoc of `Metadata`](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.14.1/com/scalar/db/sql/metadata/Metadata.html) for the details.
+Please see [the Javadoc of `Metadata`](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.15.1/com/scalar/db/sql/metadata/Metadata.html) for the details.
 
 ## References
 
 - [ScalarDB SQL Grammar](grammar.mdx)
 - [Two-phase Commit Transactions](../two-phase-commit-transactions.mdx)
-- [Javadoc for ScalarDB SQL](https://javadoc.io/doc/com.scalar-labs/scalardb-sql/3.14.1/index.html)
+- [Javadoc for ScalarDB SQL](https://javadoc.io/doc/com.scalar-labs/scalardb-sql/3.15.1/index.html)

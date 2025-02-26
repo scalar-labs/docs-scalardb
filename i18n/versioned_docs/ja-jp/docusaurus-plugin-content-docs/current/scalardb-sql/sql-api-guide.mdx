@@ -113,7 +113,7 @@ ResultSet resultSet = sqlSession.execute(statement);
 ```
 
 `Statement` オブジェクトは、対応する SQL のファクトリメソッドを持つ `StatementBuilder` によって構築できます。
-詳細については、[`StatementBuilder` の Javadoc](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.14.1/com/scalar/db/sql/statement/builder/StatementBuilder.html) および [ScalarDB SQL 文法](grammar.mdx)を参照してください。
+詳細については、[`StatementBuilder` の Javadoc](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.15.1/com/scalar/db/sql/statement/builder/StatementBuilder.html) および [ScalarDB SQL 文法](grammar.mdx)を参照してください。
 
 ### ResultSet オブジェクトの処理
 
@@ -145,7 +145,7 @@ for (Record record : resultSet) {
 ColumnDefinitions columnDefinitions = resultSet.getColumnDefinitions();
 ```
 
-詳細については、[`ColumnDefinitions` の Javadoc](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.14.1/com/scalar/db/sql/ColumnDefinition.html) を参照してください。
+詳細については、[`ColumnDefinitions` の Javadoc](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.15.1/com/scalar/db/sql/ColumnDefinition.html) を参照してください。
 
 ### Record オブジェクトの処理
 
@@ -154,37 +154,53 @@ ColumnDefinitions columnDefinitions = resultSet.getColumnDefinitions();
 次のように、`getXXX("<column name>")` メソッドまたは `getXXX(<column index>)` メソッド (XXX は型名) を使用して結果の列値を取得できます。
 
 ```java
-// Get a Boolean value of a column
+// Get a BOOLEAN value of a column
 boolean booleanValueGottenByName = record.getBoolean("<column name>");
 boolean booleanValueGottenByIndex = record.getBoolean(<column index>);
 
-// Get an Int value of a column
+// Get an INT value of a column
 int intValueGottenByName = record.getInt("<column name>");
 int intValueGottenByIndex = record.getInt(<column index>);
 
-// Get a BigInt value of a column
+// Get a BIGINT value of a column
 long bigIntValueGottenByName = record.getBigInt("<column name>");
 long bigIntValueGottenByIndex = record.getBigInt(<column index>);
 
-// Get a Float value of a column
+// Get a FLOAT value of a column
 float floatValueGottenByName = record.getFloat("<column name>");
 float floatValueGottenByIndex = record.getFloat(<column index>);
 
-// Get a Double value of a column
+// Get a DOUBLE value of a column
 double doubleValueGottenByName = record.getDouble("<column name>");
 double doubleValueGottenByIndex = record.getDouble(<column index>);
 
-// Get a Text value of a column
+// Get a TEXT value of a column
 String textValueGottenByName = record.getText("<column name>");
 String textValueGottenByIndex = record.getText(<column index>);
 
-// Get a Blob value of a column (as a ByteBuffer)
+// Get a BLOB value of a column (as a ByteBuffer)
 ByteBuffer blobValueGottenByName = record.getBlob("<column name>");
 ByteBuffer blobValueGottenByIndex = record.getBlob(<column index>);
 
-// Get a Blob value of a column as a byte array
+// Get a BLOB value of a column as a byte array
 byte[] blobValueAsBytesGottenByName = record.getBlobAsBytes("<column name>");
 byte[] blobValueAsBytesGottenByIndex = record.getBlobAsBytes(<column index>);
+
+// Get a DATE value of a column as a LocalDate
+LocalDate dateValueGottenByName = record.getDate("<column name>");
+LocalDate dateValueGottenByName = record.getDate(<column index>);
+
+// Get a TIME value of a column as a LocalTime
+LocalTime timeValueGottenByName = record.getTime("<column name>");
+LocalTime timeValueGottenByName = record.getTime(<column index>);
+
+// Get a TIMESTAMP value of a column as a LocalDateTime
+LocalDateTime timestampValueGottenByName = record.getTimestamp("<column name>");
+LocalDateTime timestampValueGottenByName = record.getTimestamp(<column index>);
+
+// Get a TIMESTAMPTZ value of a column as an Instant
+Instant timestampTZValueGottenByName = record.getTimestampTZ("<column name>");
+Instant timestampTZValueGottenByName = record.getTimestampTZ(<column index>);
 ```
 
 列の値が null かどうかを確認する必要がある場合は、`isNull("<列名>")` または `isNull(<列インデックス>)` メソッドを使用できます。
@@ -195,7 +211,7 @@ boolean isNullGottenByName = record.isNull("<column name>");
 boolean isNullGottenByIndex = record.isNull(<column index>);
 ```
 
-詳細については、[`Record` の Javadoc](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.14.1/com/scalar/db/sql/Record.html) も参照してください。
+詳細については、[`Record` の Javadoc](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.15.1/com/scalar/db/sql/Record.html) も参照してください。
 
 ### 準備済みステートメント
 
@@ -240,7 +256,7 @@ preparedStatement2
     .execute();
 ```
 
-詳細については、[`PreparedStatement` の Javadoc](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.14.1/com/scalar/db/sql/PreparedStatement.html) も参照してください。
+詳細については、[`PreparedStatement` の Javadoc](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.15.1/com/scalar/db/sql/PreparedStatement.html) も参照してください。
 
 ## トランザクションの実行
 
@@ -356,10 +372,10 @@ try {
 Metadata metadata = sqlSession.getMetadata();
 ```
 
-詳細については、[`Metadata` の Javadoc](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.14.1/com/scalar/db/sql/metadata/Metadata.html) を参照してください。
+詳細については、[`Metadata` の Javadoc](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.15.1/com/scalar/db/sql/metadata/Metadata.html) を参照してください。
 
 ## 参考文献
 
 - [ScalarDB SQL 文法](grammar.mdx)
 - [2フェーズコミットトランザクション](../two-phase-commit-transactions.mdx)
-- [Javadoc for ScalarDB SQL](https://javadoc.io/doc/com.scalar-labs/scalardb-sql/3.14.1/index.html)
+- [Javadoc for ScalarDB SQL](https://javadoc.io/doc/com.scalar-labs/scalardb-sql/3.15.1/index.html)

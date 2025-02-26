@@ -313,7 +313,7 @@ You can import an existing table to ScalarDB as follows:
 ```java
 // Import the table "ns.tbl". If the table is already managed by ScalarDB, the target table does not
 // exist, or the table does not meet the requirements of the ScalarDB table, an exception will be thrown.
-admin.importTable("ns", "tbl", options);
+admin.importTable("ns", "tbl", options, overrideColumnsType);
 ```
 
 :::warning
@@ -572,6 +572,18 @@ ByteBuffer blobValue = result.getBlob("<COLUMN_NAME>");
 
 // Get the BLOB value of a column as a `byte` array.
 byte[] blobValueAsBytes = result.getBlobAsBytes("<COLUMN_NAME>");
+
+// Get the DATE value of a column as a `LocalDate`.
+LocalDate dateValue = result.getDate("<COLUMN_NAME>");
+
+// Get the TIME value of a column as a `LocalTime`.
+LocalTime timeValue = result.getTime("<COLUMN_NAME>");
+
+// Get the TIMESTAMP value of a column as a `LocalDateTime`.
+LocalDateTime timestampValue = result.getTimestamp("<COLUMN_NAME>");
+
+// Get the TIMESTAMPTZ value of a column as a `Instant`.
+Instant timestampTZValue = result.getTimestampTZ("<COLUMN_NAME>");
 ```
 
 And if you need to check if a value of a column is null, you can use the `isNull("<COLUMN_NAME>")` method.
@@ -581,7 +593,7 @@ And if you need to check if a value of a column is null, you can use the `isNull
 boolean isNull = result.isNull("<COLUMN_NAME>");
 ```
 
-For more details, see the `Result` page in the [Javadoc](https://javadoc.io/doc/com.scalar-labs/scalardb/3.14.1/index.html) of the version of ScalarDB that you're using.
+For more details, see the `Result` page in the [Javadoc](https://javadoc.io/doc/com.scalar-labs/scalardb/3.15.1/index.html) of the version of ScalarDB that you're using.
 
 ###### Execute `Get` by using a secondary index
 

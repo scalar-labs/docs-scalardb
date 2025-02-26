@@ -154,6 +154,11 @@ const sidebars = {
           ],
         },
         {
+          type: 'doc',
+          id: 'scalardb-cluster/getting-started-with-vector-search',
+          label: 'Try Running Vector Search Through ScalarDB Cluster',
+        },
+        {
           type: 'category',
           label: 'Reference',
           collapsible: true,
@@ -231,6 +236,21 @@ const sidebars = {
                   type: 'doc',
                   id: 'scalardb-cluster/scalardb-auth-with-sql',
                   label: 'Authenticate and Authorize Users by Using SQL',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-cluster/authorize-with-abac',
+                  label: 'Control User Access in a Fine-Grained Manner',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-cluster/encrypt-data-at-rest',
+                  label: 'Encrypt Data at Rest',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-cluster/encrypt-wire-communications',
+                  label: 'Encrypt Wire Communications',
                 },
                 {
                   type: 'doc',
@@ -390,16 +410,6 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/scalardb-cluster-grpc-api-guide',
               label: 'ScalarDB Cluster gRPC API Guide',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/encrypt-data-at-rest',
-              label: 'Encrypt Data at Rest',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/encrypt-wire-communications',
-              label: 'Encrypt Wire Communications',
             },
             {
               type: 'category',
@@ -860,6 +870,11 @@ const sidebars = {
               id: 'scalardb-cluster/scalardb-auth-status-codes',
               label: 'Authentication and Authorization',
             },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/scalardb-abac-status-codes',
+              label: 'Attributed-Based Access Control',
+            },
           ],
         },
       ],
@@ -1014,6 +1029,11 @@ const sidebars = {
           ],
         },
         {
+          type: 'doc',
+          id: 'scalardb-cluster/getting-started-with-vector-search',
+          label: 'ScalarDB Cluster を使用してベクトル検索を実行',
+        },
+        {
           type: 'category',
           label: '関連情報',
           collapsible: true,
@@ -1032,7 +1052,7 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-analytics-postgresql/installation',
               label: 'ScalarDB Analytics with PostgreSQL をローカルにインストール',
-            }
+            },
           ],
         },
       ],
@@ -1091,6 +1111,21 @@ const sidebars = {
                   type: 'doc',
                   id: 'scalardb-cluster/scalardb-auth-with-sql',
                   label: 'SQL を使用してユーザーを認証および承認',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-cluster/authorize-with-abac',
+                  label: 'ユーザアクセスを細かく制御',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-cluster/encrypt-data-at-rest',
+                  label: '保存データを暗号化',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-cluster/encrypt-wire-communications',
+                  label: 'ワイヤ通信を暗号化',
                 },
                 {
                   type: 'doc',
@@ -1246,16 +1281,6 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/scalardb-cluster-grpc-api-guide',
               label: 'ScalarDB Cluster gRPC API ガイド',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/encrypt-data-at-rest',
-              label: '保存データを暗号化',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/encrypt-wire-communications',
-              label: 'ワイヤ通信を暗号化',
             },
             {
               type: 'category',
@@ -1715,6 +1740,11 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/scalardb-auth-status-codes',
               label: '認証と認可',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/scalardb-abac-status-codes',
+              label: '属性ベースのアクセス制御',
             },
           ],
         },
