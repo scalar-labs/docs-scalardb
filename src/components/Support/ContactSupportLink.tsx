@@ -32,7 +32,7 @@ const ContactSupportLink: React.FC = () => {
   return (
     <div>
       <a href="#" onClick={handleSupportClick} rel="noopener noreferrer">
-        <b>{isJapanese ? "テクニカルサポートに問い合わせる" : "Contact technical support"}</b><br />
+        <b>{isJapanese ? "テクニカルサポートに問い合わせ" : "Contact technical support"}</b><br />
         {isJapanese ? "エンタープライズのお客様向け" : "For Enterprise customers"}
       </a>
     </div>
