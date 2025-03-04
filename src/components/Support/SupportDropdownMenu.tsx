@@ -101,11 +101,12 @@ If applicable, add screenshots to help explain your problem.
   }, [isOpen]);
 
   return (
-      <button className={styles.supportDropBtn} onClick={toggleDropdown}>
-        {isJapanese ? "サポート" : "Support"} <FontAwesomeIcon icon={faChevronDown} fontSize={12} />
+    <div className="supportDropdown" ref={dropdownRef}>
+      <button className="supportDropBtn" onClick={toggleDropdown}>
       </button>
 
       {isOpen && (
+        <div className="supportDropdownContent">
           <ContactSupportLink />
           <hr />
           <a href="https://stackoverflow.com/questions/tagged/scalardb" target="_blank">
