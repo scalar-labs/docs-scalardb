@@ -12,7 +12,7 @@ import DocItemContent from '@theme/DocItem/Content';
 import DocBreadcrumbs from '@theme/DocBreadcrumbs';
 import ContentVisibility from '@theme/ContentVisibility';
 import type {Props} from '@theme/DocItem/Layout';
-import SupportDropdownMenu from '@site/src/components/Support/SupportDropdownMenu'; // Import the support dropdown component.
+import SupportDropdownMenu from '../../../components/Support/SupportDropdownMenu'; // Import the support dropdown component.
 
 import styles from './styles.module.css';
 
