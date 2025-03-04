@@ -103,6 +103,7 @@ If applicable, add screenshots to help explain your problem.
   return (
     <div className="supportDropdown" ref={dropdownRef}>
       <button className="supportDropBtn" onClick={toggleDropdown}>
+        {isJapanese ? "何かお困りですか?" : "Need help?"} <FontAwesomeIcon icon={faChevronDown} fontSize={12} />
       </button>
 
       {isOpen && (
@@ -110,9 +111,12 @@ If applicable, add screenshots to help explain your problem.
           <ContactSupportLink />
           <hr />
           <a href="https://stackoverflow.com/questions/tagged/scalardb" target="_blank">
+            <b>{isJapanese ? "Stack Overflow をチェック" : "Check Stack Overflow"}</b><br />
+            {isJapanese ? "コミュニティ向けの質問" : "For questions to the community"}
           </a>
           <hr />
           <a href="#" onClick={openModal}>
+            <b>{isJapanese ? "AI に聞く (実験的)" : "Ask AI (experimental)"}</b><br />
             {isJapanese ? "Scalar メンバーシッププログラム向け" : "For Scalar Membership Program members"}
           </a>
           <hr />
