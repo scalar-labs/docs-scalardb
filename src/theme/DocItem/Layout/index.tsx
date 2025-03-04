@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {type ReactNode} from 'react';
 import clsx from 'clsx';
 import {useWindowSize} from '@docusaurus/theme-common';
 import {useDoc} from '@docusaurus/plugin-content-docs/client';
@@ -40,7 +40,7 @@ function useDocTOC() {
   };
 }
 
-export default function DocItemLayout({children}: Props): JSX.Element {
+export default function DocItemLayout({children}: Props): ReactNode {
   const docTOC = useDocTOC();
   const {metadata, frontMatter} = useDoc(); // Get the front-matter metadata to check for the `hide_table_of_contents` configuration.
   const hideTOC = frontMatter.hide_table_of_contents; // Check if the ToC is hidden.
