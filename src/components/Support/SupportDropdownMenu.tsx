@@ -130,23 +130,23 @@ If applicable, add screenshots to help explain your problem.
           <div>
             <a href="#" onClick={handleSupportClick} rel="noopener noreferrer">
               <b>{isJapanese ? "テクニカルサポートに問い合わせ" : "Contact technical support"}</b><br />
-              {isJapanese ? "エンタープライズのお客様向け" : "For Enterprise customers"}
+              {isJapanese ? "商用ライセンスをご契約のお客様のみご利用いただけます。" : "Available only to customers with a commercial license."}
             </a>
           </div>
           <hr />
           <a href="https://stackoverflow.com/questions/tagged/scalardb" target="_blank">
             <b>{isJapanese ? "Stack Overflow をチェック" : "Check Stack Overflow"}</b><br />
-            {isJapanese ? "コミュニティ向けの質問" : "For questions to the community"}
+            {isJapanese ? "すべてのユーザーがご利用いただけます。" : "Available to all users."}
           </a>
           <hr />
           <a href="#" onClick={openModal}>
-            <b>{isJapanese ? "AI に聞く (実験的)" : "Ask AI (experimental)"}</b><br />
-            {isJapanese ? "Scalar メンバーシッププログラム向け" : "For Scalar Membership Program members"}
+            <b>{isJapanese ? "AI に聞く (試験運用中)" : "Ask AI (experimental)"}</b><br />
+            {isJapanese ? "Scalar Membership Programにご参加の方のみご利用いただけます。" : "Available only to members of the Scalar Membership Program."}
           </a>
           <hr />
           <a href={githubIssueUrl} target="_blank" rel="noopener noreferrer">
             <b>{isJapanese ? "ドキュメントの問題を報告" : "Report doc issue"}</b><br />
-            {isJapanese ? "このページに関する問題を報告" : "For reporting an issue on this page"}
+            {isJapanese ? "このページについて何かお気づきの点がありましたら、こちらから報告いただけます。" : "If you have any feedback about this page, please submit an issue."}
           </a>
         </div>
       )}
