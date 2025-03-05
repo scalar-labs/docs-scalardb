@@ -122,7 +122,7 @@ If applicable, add screenshots to help explain your problem.
   return (
     <div className="supportDropdown" ref={dropdownRef}>
       <button className="supportDropBtn" onClick={toggleDropdown}>
-        {isJapanese ? "何かお困りですか?" : "Need help?"} <FontAwesomeIcon icon={faChevronDown} fontSize={12} />
+        {isJapanese ? "何かお困りですか?" : "Need help?"} <FontAwesomeIcon icon={faChevronDown} />
       </button>
 
       {isOpen && (
@@ -134,7 +134,7 @@ If applicable, add screenshots to help explain your problem.
             </a>
           </div>
           <hr />
-          <a href="https://stackoverflow.com/questions/tagged/scalardb" target="_blank">
+          <a href="https://stackoverflow.com/questions/tagged/scalardb" target="_blank" rel="noopener noreferrer">
             <b>{isJapanese ? "Stack Overflow をチェック" : "Check Stack Overflow"}</b><br />
             {isJapanese ? "すべてのユーザーがご利用いただけます。" : "Available to all users."}
           </a>
