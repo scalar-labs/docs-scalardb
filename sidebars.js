@@ -305,6 +305,11 @@ const sidebars = {
           ],
         },
         {
+          type: 'doc',
+          id: 'scalardb-analytics/development',
+          label: 'Run Analytical Queries',
+        },
+        {
           type: 'category',
           label: 'Run Sample Applications',
           collapsible: true,
@@ -550,6 +555,11 @@ const sidebars = {
           type: 'doc',
           id: 'scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS',
           label: 'Deploy ScalarDB Cluster on Amazon EKS',
+        },
+        {
+          type: 'doc',
+          id: 'scalardb-analytics/deployment',
+          label: 'Deploy ScalarDB Analytics in Public Cloud Environments',
         },
         {
           type: 'category',
