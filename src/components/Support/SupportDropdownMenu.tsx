@@ -124,7 +124,7 @@ If applicable, add screenshots to help explain your problem.
   return (
     <div className="supportDropdown" ref={dropdownRef}>
       <button className="supportDropBtn" onMouseOver={toggleDropdown}>
-        {isJapanese ? "何かお困りですか?" : "Need help?"}<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m12 16l-6-6h12z"/></svg>
+        {isJapanese ? "何かお困りですか?" : "Need some help?"}<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="m12 16l-6-6h12z"/></svg>
       </button>
 
         <div className="supportDropdownContent">
