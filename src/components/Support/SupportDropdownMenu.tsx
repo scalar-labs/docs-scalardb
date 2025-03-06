@@ -1,33 +1,35 @@
-import React, { useState, useEffect, useRef } from 'react';
-import AssistantModal from './AssistantModal'; // Import the AssistantModal component for the chatbot.
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; // Import the FontAwesomeIcon component.
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons'; // Import the icon.
+import React, { useState, useEffect, useRef, lazy, Suspense, MouseEvent } from 'react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { useDoc } from '@docusaurus/plugin-content-docs/client';
-import { useLocation } from "@docusaurus/router"; // Import for location detection.
+import { useLocation } from "@docusaurus/router";
+
+// Lazy-load AssistantModal
+const AssistantModal = lazy(() => import('./AssistantModal'));
 
 const SupportDropdownMenu: React.FC = () => {
-  const [isOpen, setIsOpen] = useState(false); // For dropdown visibility
-  const [isModalOpen, setIsModalOpen] = useState(false); // For modal visibility
-  const [storedUrl, setStoredUrl] = useState<string | null>(null); // For storing the URL
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [storedUrl, setStoredUrl] = useState<string | null>(null);
+  const dropdownRef = useRef<HTMLDivElement | null>(null);
   const location = useLocation();
 
   // Get document metadata from Docusaurus.
   const { metadata } = useDoc();
-  const docTitle = metadata?.title || "Issue with documentation page"; // Use document title or fallback.
+  const docTitle: string = metadata?.title || "Issue with documentation page";
 
   // Detect the language based on the URL path.
-  const isJapanese = location.pathname.startsWith("/ja-jp");
+  const isJapanese: boolean = location.pathname.startsWith("/ja-jp");
 
   useEffect(() => {
-    // Store the current URL in localStorage when the component first mounts.
-    const currentUrl = `https://scalardb.scalar-labs.com${location.pathname}`;
-    localStorage.setItem("currentUrl", currentUrl);
+    if (typeof window !== "undefined") {
+      const currentUrl = `https://scalardb.scalar-labs.com${location.pathname}`;
+      localStorage.setItem("currentUrl", currentUrl);
 
-    // Retrieve stored URL (if available).
-    const savedUrl = localStorage.getItem("currentUrl");
-    if (savedUrl) {
-      setStoredUrl(savedUrl);
+      const savedUrl = localStorage.getItem("currentUrl");
+      if (savedUrl) {
+        setStoredUrl(savedUrl);
+      }
     }
   }, [location]);
 
@@ -35,8 +37,8 @@ const SupportDropdownMenu: React.FC = () => {
     setIsOpen((prev) => !prev);
   };
 
-  const openModal = (event: React.MouseEvent) => {
-    event.preventDefault(); // Prevent default anchor behavior.
+  const openModal = (event: MouseEvent<HTMLAnchorElement>) => {
+    event.preventDefault();
     setIsModalOpen(true);
     setIsOpen(false);
   };
@@ -46,23 +48,23 @@ const SupportDropdownMenu: React.FC = () => {
   };
 
   const handleSupportClick = () => {
-    // Get the stored URL or fall back to the current URL.
-    const finalUrl = storedUrl || `https://scalardb.scalar-labs.com${location.pathname}`;
-    const reportUrl = `https://support.scalar-labs.com/hc/ja/requests/new?ticket_form_id=8641483507983&tf_11847415366927=${encodeURIComponent(finalUrl)}`;
+    if (typeof window !== "undefined") {
+      const finalUrl = storedUrl || `https://scalardb.scalar-labs.com${location.pathname}`;
+      const reportUrl = `https://support.scalar-labs.com/hc/ja/requests/new?ticket_form_id=8641483507983&tf_11847415366927=${encodeURIComponent(finalUrl)}`;
 
-    // Open the support link in a new tab.
-    window.open(reportUrl, "_blank");
+      window.open(reportUrl, "_blank");
+    }
   };
 
-  // Generate GitHub issue URL dynamically.
-  const repoUrl = "https://github.com/scalar-labs/docs-scalardb/issues/new";
-  const issueTitle = encodeURIComponent(
-    isJapanese ? `フィードバック: \`${docTitle}\` ページ` : `Feedback: \`${docTitle}\` page`
-  );
+  const githubIssueUrl: string = typeof window !== "undefined" ? (() => {
+    const repoUrl = "https://github.com/scalar-labs/docs-scalardb/issues/new";
+    const issueTitle = encodeURIComponent(
+      isJapanese ? `フィードバック: \`${docTitle}\` ページ` : `Feedback: \`${docTitle}\` page`
+    );
 
-  const issueBody = encodeURIComponent(
-    isJapanese
-      ? `**ドキュメントページの URL:** ${window.location.href.replace(/#.*$/, '')}
+    const issueBody = encodeURIComponent(
+      isJapanese
+        ? `**ドキュメントページの URL:** ${window.location.href.replace(/#.*$/, '')}
 
 ## 期待される動作
 
@@ -80,7 +82,7 @@ const SupportDropdownMenu: React.FC = () => {
 
 該当する場合は、スクリーンショットを添付してください。
 `
-      : `**Documentation page URL:** ${window.location.href.replace(/#.*$/, '')}
+        : `**Documentation page URL:** ${window.location.href.replace(/#.*$/, '')}
 
 ## Expected behavior
 
@@ -98,13 +100,13 @@ If the issue is reproducible, please list the steps to reproduce it.
 
 If applicable, add screenshots to help explain your problem.
 `
-  );
+    );
 
-  const githubIssueUrl = `${repoUrl}?title=${issueTitle}&body=${issueBody}&labels=documentation`;
+    return `${repoUrl}?title=${issueTitle}&body=${issueBody}&labels=documentation`;
+  })() : "#";
 
-  // Close dropdown when clicking outside of it.
   useEffect(() => {
-    function handleClickOutside(event: MouseEvent) {
+    function handleClickOutside(event: MouseEvent | Event) {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
@@ -151,7 +153,11 @@ If applicable, add screenshots to help explain your problem.
         </div>
       )}
 
-      {isModalOpen && <AssistantModal isOpen={isModalOpen} onClose={closeModal} />}
+      {isModalOpen && (
+        <Suspense fallback={<div>Loading...</div>}>
+          <AssistantModal isOpen={isModalOpen} onClose={closeModal} />
+        </Suspense>
+      )}
     </div>
   );
 };
