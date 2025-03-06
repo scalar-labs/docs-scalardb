@@ -1,0 +1,23 @@
+---
+tags:
+  - Enterprise Option
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Analytics with Spark
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+import WarningLicenseKeyContact from '/src/components/ja-jp/_warning-license-key-contact.mdx';
+
+<TranslationBanner />
+
+**ScalarDB Analytics** は、ScalarDB の分析コンポーネントです。ScalarDB と同様に、PostgreSQL や MySQL などの RDBMS から Cassandra や DynamoDB などの NoSQL データベースに至るまで、さまざまなデータソースを 1 つの論理データベースに統合します。ScalarDB は複数のデータベース間でトランザクションの一貫性が強い運用ワークロードに重点を置いているのに対し、ScalarDB Analytics は分析ワークロード向けに最適化されています。複雑な結合、集計、ウィンドウ関数など、幅広いクエリをサポートしています。ScalarDB Analytics は、ScalarDB 管理のデータソースと非 ScalarDB 管理のデータソースの両方でシームレスに動作し、さまざまなデータセットにわたる高度な分析クエリを可能にします。
+
+現在のバージョンの ScalarDB Analytics は、**Apache Spark** を実行エンジンとして活用しています。Spark カスタムカタログを使用することで、ScalarDB 管理下のデータソースと ScalarDB 管理外のデータソースの統合ビューを提供します。ScalarDB Analytics を使用すると、これらのデータソースのテーブルをネイティブの Spark テーブルとして扱うことができ、Spark SQL クエリをシームレスに実行できます。たとえば、Cassandra に保存されているテーブルを PostgreSQL のテーブルと結合して、複数のデータソースにまたがる分析を簡単に実行できます。
+
+<WarningLicenseKeyContact product="ScalarDB Analytics with Spark" />
+
+## 参考資料
+
+* サンプルデータセットとアプリケーションを使用して ScalarDB Analytics を使用する方法に関するチュートリアルについては、[ScalarDB Analytics をはじめよう](../scalardb-samples/scalardb-analytics-spark-sample/README.mdx)を参照してください。
+* サポートされている Spark および Scala のバージョンについては、[ScalarDB Analytics with Spark のバージョン互換性](version-compatibility.mdx)を参照してください。
