@@ -261,22 +261,6 @@ const sidebars = {
             },
           ],
         },
-        // {
-        //   type: 'category',
-        //   label: 'Run Analytical Queries',
-        //   collapsible: true,
-        //   link: {
-        //     type: 'doc',
-        //     id: 'develop-run-analytical-queries-overview',
-        //   },
-        //   items: [
-        //     {
-        //       type: 'doc',
-        //       id: '<PATH_TO_FILE>',
-        //       label: '<LABEL>',
-        //     }
-        //   ],
-        // },
         {
           type: 'category',
           label: 'Run Non-Transactional Storage Operations',
