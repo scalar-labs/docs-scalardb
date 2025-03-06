@@ -175,6 +175,11 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'scalardb-analytics/design',
+              label: 'ScalarDB Analytics Design',
+            },
+            {
+              type: 'doc',
               id: 'scalardb-analytics-postgresql/installation',
               label: 'Install ScalarDB Analytics with PostgreSQL Locally',
             }
