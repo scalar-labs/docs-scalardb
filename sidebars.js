@@ -464,11 +464,6 @@ const sidebars = {
                   id: 'scalardb-analytics-postgresql/schema-importer',
                   label: 'PostgreSQL Schema Importer for PostgreSQL',
                 },
-                {
-                  type: 'doc',
-                  id: 'scalardb-analytics-spark/version-compatibility',
-                  label: 'Version Compatibility for Spark',
-                },
               ],
             },
             {
@@ -1339,11 +1334,6 @@ const sidebars = {
                   type: 'doc',
                   id: 'scalardb-analytics-postgresql/schema-importer',
                   label: 'PostgreSQL 用 Schema Importer',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-analytics-spark/version-compatibility',
-                  label: 'Spark のバージョン互換性',
                 },
               ],
             },
