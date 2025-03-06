@@ -183,6 +183,10 @@ const config = {
             from: '/docs/latest/scalardb-analytics-spark/version-compatibility',
           },
           {
+            to: '/docs/3.14/scalardb-analytics/development#version-compatibility',
+            from: '/docs/3.14/scalardb-analytics-spark/version-compatibility',
+          },
+          {
             to: '/docs/3.13/run-non-transactional-storage-operations-through-primitive-crud-interface',
             from: '/docs/3.13/storage-abstraction',
           },
