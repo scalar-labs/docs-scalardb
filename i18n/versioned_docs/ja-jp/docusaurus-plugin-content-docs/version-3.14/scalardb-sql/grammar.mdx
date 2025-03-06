@@ -1799,24 +1799,24 @@ GRANT ALL ON NAMESPACE ns TO user1 WITH GRANT OPTION;
 ```java
 // Grant the SELECT privilege on a table to a user.
 GrantStatement statement1 =
-    StatementBuilder.grant(Privilege.SELECT).on("ns", "tbl").to("user1").build();
+    StatementBuilder.grant(Privilege.SELECT).onTable("ns", "tbl").toUser("user1").build();
 
 // Grant the SELECT privilege on tables to users.
 GrantStatement statement2 =
     StatementBuilder.grant(Privilege.SELECT)
-        .on("ns", "tbl1", "ns", "tbl2")
-        .to("user1", "user2")
+        .onTable("ns", "tbl1", "ns", "tbl2")
+        .toUser("user1", "user2")
         .build();
 
 // Grant the SELECT privilege on all tables in a namespace to a user.
 GrantStatement statement3 =
-    StatementBuilder.grant(Privilege.SELECT).onNamespace("ns").to("user1").build();
+    StatementBuilder.grant(Privilege.SELECT).onNamespace("ns").toUser("user1").build();
 
 // Grant all privileges and GRANT OPTION on a table to a user.
 GrantStatement statement4 =
     StatementBuilder.grant(Privilege.values())
-        .on("ns", "tbl")
-        .to("user1")
+        .onTable("ns", "tbl")
+        .toUser("user1")
         .withGrantOption()
         .build();
 
@@ -1824,7 +1824,7 @@ GrantStatement statement4 =
 GrantStatement statement5 =
     StatementBuilder.grant(Privilege.values())
         .onNamespace("ns")
-        .to("user1")
+        .toUser("user1")
         .withGrantOption()
         .build();
 ```
@@ -1873,31 +1873,31 @@ REVOKE ALL, GRANT OPTION ON NAMESPACE ns FROM user1;
 ```java
 // Revoke the SELECT privilege on a table from a user.
 RevokeStatement statement1 =
-    StatementBuilder.revoke(Privilege.SELECT).on("ns", "tbl").from("user1").build();
+    StatementBuilder.revoke(Privilege.SELECT).onTable("ns", "tbl").fromUser("user1").build();
 
 // Revoke the SELECT privilege on tables from users.
 RevokeStatement statement2 =
     StatementBuilder.revoke(Privilege.SELECT)
-        .on("ns", "tbl1", "ns", "tbl2")
-        .from("user1", "user2")
+        .onTable("ns", "tbl1", "ns", "tbl2")
+        .fromUser("user1", "user2")
         .build();
 
 // Revoke the SELECT privilege on all tables in a namespace from a user.
 RevokeStatement statement3 =
-    StatementBuilder.revoke(Privilege.SELECT).onNamespace("ns").from("user1").build();
+    StatementBuilder.revoke(Privilege.SELECT).onNamespace("ns").fromUser("user1").build();
 
 // Revoke all privileges and GRANT OPTION on a table from a user.
 RevokeStatement statement4 =
     StatementBuilder.revoke(Privilege.values())
-        .on("ns", "tbl")
-        .from("user1")
+        .onTable("ns", "tbl")
+        .fromUser("user1")
         .build();
 
 // Revoke all privileges and GRANT OPTION on all tables in a namespace from a user.
 RevokeStatement statement5 =
     StatementBuilder.revoke(Privilege.values())
         .onNamespace("ns")
-        .from("user1")
+        .fromUser("user1")
         .build();
 ```
 
