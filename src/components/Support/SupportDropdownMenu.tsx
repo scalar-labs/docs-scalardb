@@ -123,11 +123,10 @@ If applicable, add screenshots to help explain your problem.
 
   return (
     <div className="supportDropdown" ref={dropdownRef}>
-      <button className="supportDropBtn" onClick={toggleDropdown}>
         {isJapanese ? "何かお困りですか?" : "Need help?"} <FontAwesomeIcon icon={faChevronDown} />
+      <button className="supportDropBtn" onMouseOver={toggleDropdown}>
       </button>
 
-      {isOpen && (
         <div className="supportDropdownContent">
           <div>
             <a href="#" onClick={handleSupportClick} rel="noopener noreferrer">
@@ -140,7 +139,7 @@ If applicable, add screenshots to help explain your problem.
             <b>{isJapanese ? "Stack Overflow をチェック" : "Check Stack Overflow"}</b><br />
             {isJapanese ? "すべてのユーザーがご利用いただけます。" : "Available to all users."}
           </a>
-          <hr />
+          <hr /> */}
           <a href="#" onClick={openModal}>
             <b>{isJapanese ? "AI に聞く (試験運用中)" : "Ask AI (experimental)"}</b><br />
             {isJapanese ? "Scalar Membership Programにご参加の方のみご利用いただけます。" : "Available only to members of the Scalar Membership Program."}
@@ -151,7 +150,6 @@ If applicable, add screenshots to help explain your problem.
             {isJapanese ? "このページについて何かお気づきの点がありましたら、こちらから報告いただけます。" : "If you have any feedback about this page, please submit an issue."}
           </a>
         </div>
-      )}
 
       {isModalOpen && (
         <Suspense fallback={<div>Loading...</div>}>
