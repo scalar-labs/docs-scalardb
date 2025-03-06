@@ -179,6 +179,10 @@ const config = {
             from: '/docs/releases/release-support-policy',
           },
           {
+            to: '/docs/latest/scalardb-analytics/development#version-compatibility',
+            from: '/docs/latest/scalardb-analytics-spark/version-compatibility',
+          },
+          {
             to: '/docs/3.14/scalardb-analytics/development#version-compatibility',
             from: '/docs/3.14/scalardb-analytics-spark/version-compatibility',
           },
