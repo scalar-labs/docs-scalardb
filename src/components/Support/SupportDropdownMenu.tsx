@@ -136,7 +136,7 @@ If applicable, add screenshots to help explain your problem.
             </a>
           </div>
           <hr />
-          <a href="https://stackoverflow.com/questions/tagged/scalardb" target="_blank" rel="noopener noreferrer">
+          {/* <a href="https://stackoverflow.com/questions/tagged/scalardb" target="_blank" rel="noopener noreferrer">
             <b>{isJapanese ? "Stack Overflow をチェック" : "Check Stack Overflow"}</b><br />
             {isJapanese ? "すべてのユーザーがご利用いただけます。" : "Available to all users."}
           </a>
