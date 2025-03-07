@@ -606,6 +606,7 @@ SELECT projection [, projection] ...
   [WHERE and_predicates [OR and_predicates ...] | or_predicates [AND or_predicates ...]]
   [ORDER BY identifier [order] [, identifier [order]] ...]
   [LIMIT <limit>]
+  [WITH operation_attributes]
 
 projection: * | identifier [AS <alias>]
 join_specification: [INNER] JOIN [<namespace name>.]<table name> [AS <alias>] ON join_predicate [AND join_predicate] ... | {LEFT|RIGHT} [OUTER] JOIN [<namespace name>.]<table name> [AS <alias>] ON join_predicate [AND join_predicate] ...
@@ -616,6 +617,7 @@ predicate: identifier operator <literal> | identifier BETWEEN <literal> AND <lit
 identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
 operator: = | <> | != | > | >= | < | <=
 order: ASC | DESC
+operation_attributes: <operation attribute name>=<operation attribute value> [AND <operation attribute name>=<operation attribute value>] ...
 ```
 
 ##### 注記
@@ -1087,6 +1089,9 @@ SelectStatement statement13 =
 ```sql
 INSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ...)]
   VALUES (<literal> [, <literal>] ...) [, (<literal> [, <literal>] ...)] ...
+  [WITH operation_attributes]
+
+operation_attributes: <operation attribute name>=<operation attribute value> [AND <operation attribute name>=<operation attribute value>] ...
 ```
 
 - `INSERT` では完全な主キーを指定する必要があります。
@@ -1157,6 +1162,9 @@ InsertStatement statement4 = StatementBuilder.insertInto("ns", "tbl")
 ```sql
 UPSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ...)]
   VALUES (<literal> [, <literal>] ...) [, (<literal> [, <literal>] ...)] ...
+  [WITH operation_attributes]
+
+operation_attributes: <operation attribute name>=<operation attribute value> [AND <operation attribute name>=<operation attribute value>] ...
 ```
 
 - `INSERT` では完全な主キーを指定する必要があります。
@@ -1236,12 +1244,14 @@ UpsertStatement statement4 = StatementBuilder.upsertInto("ns", "tbl")
 UPDATE [<namespace name>.]<table name> [AS <alias>]
   SET <column identifier> = <literal> [, <column identifier> = <literal>] ...
   [WHERE and_predicates [OR and_predicates ...] | or_predicates [AND or_predicates ...]]
+  [WITH operation_attributes]
 
 identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
 and_predicates: predicate | (predicate [AND predicate ...])
 or_predicates: predicate | (predicate [OR predicate ...])
 predicate: <identifier> operator <literal> | <identifier> BETWEEN <literal> AND <literal> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
 operator: = | <> | != | > | >= | < | <=
+operation_attributes: <operation attribute name>=<operation attribute value> [AND <operation attribute name>=<operation attribute value>] ...
 ```
 
 ##### 注記
@@ -1463,12 +1473,14 @@ UpdateStatement statement9 =
 ```sql
 DELETE FROM [<namespace name>.]<table name> [AS <alias>]
   [WHERE and_predicates [OR and_predicates ...] | or_predicates [AND or_predicates ...]]
+  [WITH operation_attributes]
 
 identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
 and_predicates: predicate | (predicate [AND predicate ...])
 or_predicates: predicate | (predicate [OR predicate ...])
 predicate: <identifier> operator <literal> | <identifier> BETWEEN <literal> AND <literal> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
 operator: = | <> | != | > | >= | < | <=
+operation_attributes: <operation attribute name>=<operation attribute value> [AND <operation attribute name>=<operation attribute value>] ...
 ```
 
 ##### 注記
