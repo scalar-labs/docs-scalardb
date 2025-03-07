@@ -1171,6 +1171,84 @@ Scan scanUsingSpecifiedNamespace =
         .build();
 ```
 
+##### オペレーション属性
+
+オペレーション属性は、オペレーションに関する追加情報を保持するためのキーと値のペアです。以下のように、オペレーションビルダーの`attribute()`メソッドや`attributes()`メソッドを使って設定できます。
+
+```java
+// Set operation attributes in the `Get` operation.
+Get get = Get.newBuilder()
+    .namespace("ns")
+    .table("tbl")
+    .partitionKey(partitionKey)
+    .clusteringKey(clusteringKey)
+    .attribute("attribute1", "value1")
+    .attributes(ImmutableMap.of("attribute2", "value2", "attribute3", "value3"))
+    .build();
+
+// Set operation attributes in the `Scan` operation.
+Scan scan = Scan.newBuilder()
+    .namespace("ns")
+    .table("tbl")
+    .partitionKey(partitionKey)
+    .projections("c1", "c2", "c3", "c4")
+    .attribute("attribute1", "value1")
+    .attributes(ImmutableMap.of("attribute2", "value2", "attribute3", "value3"))
+    .build();
+
+// Set operation attributes in the `Insert` operation.
+Insert insert = Insert.newBuilder()
+    .namespace("ns")
+    .table("tbl")
+    .partitionKey(partitionKey)
+    .clusteringKey(clusteringKey)
+    .floatValue("c4", 1.23F)
+    .doubleValue("c5", 4.56)
+    .attribute("attribute1", "value1")
+    .attributes(ImmutableMap.of("attribute2", "value2", "attribute3", "value3"))
+    .build();
+
+// Set operation attributes in the `Upsert` operation.
+Upsert upsert = Upsert.newBuilder()
+    .namespace("ns")
+    .table("tbl")
+    .partitionKey(partitionKey)
+    .clusteringKey(clusteringKey)
+    .floatValue("c4", 1.23F)
+    .doubleValue("c5", 4.56)
+    .attribute("attribute1", "value1")
+    .attributes(ImmutableMap.of("attribute2", "value2", "attribute3", "value3"))
+    .build();
+
+// Set operation attributes in the `Update` operation.
+Update update = Update.newBuilder()
+    .namespace("ns")
+    .table("tbl")
+    .partitionKey(partitionKey)
+    .clusteringKey(clusteringKey)
+    .floatValue("c4", 1.23F)
+    .doubleValue("c5", 4.56)
+    .attribute("attribute1", "value1")
+    .attributes(ImmutableMap.of("attribute2", "value2", "attribute3", "value3"))
+    .build();
+
+// Set operation attributes in the `Delete` operation.
+Delete delete = Delete.newBuilder()
+    .namespace("ns")
+    .table("tbl")
+    .partitionKey(partitionKey)
+    .clusteringKey(clusteringKey)
+    .attribute("attribute1", "value1")
+    .attributes(ImmutableMap.of("attribute2", "value2", "attribute3", "value3"))
+    .build();
+```
+
+:::note
+
+ScalarDB では現在、利用可能なオペレーション属性はありません。
+
+:::
+
 #### トランザクションをコミットする
 
 CRUD 操作を実行した後、トランザクションをコミットして終了する必要があります。
