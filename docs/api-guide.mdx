@@ -1150,6 +1150,84 @@ Scan scanUsingSpecifiedNamespace =
         .build();
 ```
 
+##### Operation attributes
+
+The operation attribute is a key-value pair that can be used to store additional information about an operation. You can set operation attributes by using the `attribute()` or `attributes()` method in the operation builder, as shown below:
+
+```java
+// Set operation attributes in the `Get` operation.
+Get get = Get.newBuilder()
+    .namespace("ns")
+    .table("tbl")
+    .partitionKey(partitionKey)
+    .clusteringKey(clusteringKey)
+    .attribute("attribute1", "value1")
+    .attributes(ImmutableMap.of("attribute2", "value2", "attribute3", "value3"))
+    .build();
+
+// Set operation attributes in the `Scan` operation.
+Scan scan = Scan.newBuilder()
+    .namespace("ns")
+    .table("tbl")
+    .partitionKey(partitionKey)
+    .projections("c1", "c2", "c3", "c4")
+    .attribute("attribute1", "value1")
+    .attributes(ImmutableMap.of("attribute2", "value2", "attribute3", "value3"))
+    .build();
+
+// Set operation attributes in the `Insert` operation.
+Insert insert = Insert.newBuilder()
+    .namespace("ns")
+    .table("tbl")
+    .partitionKey(partitionKey)
+    .clusteringKey(clusteringKey)
+    .floatValue("c4", 1.23F)
+    .doubleValue("c5", 4.56)
+    .attribute("attribute1", "value1")
+    .attributes(ImmutableMap.of("attribute2", "value2", "attribute3", "value3"))
+    .build();
+
+// Set operation attributes in the `Upsert` operation.
+Upsert upsert = Upsert.newBuilder()
+    .namespace("ns")
+    .table("tbl")
+    .partitionKey(partitionKey)
+    .clusteringKey(clusteringKey)
+    .floatValue("c4", 1.23F)
+    .doubleValue("c5", 4.56)
+    .attribute("attribute1", "value1")
+    .attributes(ImmutableMap.of("attribute2", "value2", "attribute3", "value3"))
+    .build();
+
+// Set operation attributes in the `Update` operation.
+Update update = Update.newBuilder()
+    .namespace("ns")
+    .table("tbl")
+    .partitionKey(partitionKey)
+    .clusteringKey(clusteringKey)
+    .floatValue("c4", 1.23F)
+    .doubleValue("c5", 4.56)
+    .attribute("attribute1", "value1")
+    .attributes(ImmutableMap.of("attribute2", "value2", "attribute3", "value3"))
+    .build();
+
+// Set operation attributes in the `Delete` operation.
+Delete delete = Delete.newBuilder()
+    .namespace("ns")
+    .table("tbl")
+    .partitionKey(partitionKey)
+    .clusteringKey(clusteringKey)
+    .attribute("attribute1", "value1")
+    .attributes(ImmutableMap.of("attribute2", "value2", "attribute3", "value3"))
+    .build();
+```
+
+:::note
+
+ScalarDB currently has no available operation attributes.
+
+:::
+
 #### Commit a transaction
 
 After executing CRUD operations, you need to commit a transaction to finish it.
