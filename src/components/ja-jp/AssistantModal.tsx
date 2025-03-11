@@ -15,7 +15,7 @@ function AssistantModal({ isOpen, onClose }) {
           &times;
         </span>
         <Standard
-          typebot="test-authentication-scalar-db-scalar-dl-ai-chatbot-i98jxsg"
+          typebot="ja-jp-scalar-docs-ai-assistant-for-scalar-membership-program-members-201712"
           style={{ width: "100%", height: "600px" }}
           prefilledVariables={{
             "Current page URL": `${currentUrl}`, // Pass page URL as a query parameter.
