@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef, lazy, Suspense, MouseEvent } from '
 import { useDoc } from '@docusaurus/plugin-content-docs/client';
 import { useLocation } from "@docusaurus/router";
 
-// Lazy-load AssistantModal
+// Lazy-load AssistantModal.
 const AssistantModal = lazy(() => import('./AssistantModal'));
 
 const SupportDropdownMenu: React.FC = () => {
