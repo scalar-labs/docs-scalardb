@@ -10,7 +10,7 @@ import TabItem from '@theme/TabItem';
 
 # Run Analytical Queries Through ScalarDB Analytics
 
-This guide explains how to develop ScalarDB Analytics applications. For details on the architecture and design, see [ScalarDB Analytics Design](design.mdx)
+This guide explains how to develop ScalarDB Analytics applications. For details on the architecture and design, see [ScalarDB Analytics Design](./design.mdx)
 
 ScalarDB Analytics currently uses Spark as an execution engine and provides a Spark custom catalog plugin to provide a unified view of ScalarDB-managed and non-ScalarDB-managed data sources as Spark tables. This allows you to execute arbitrary Spark SQL queries seamlessly.
 
@@ -42,7 +42,7 @@ For example configurations in a practical scenario, see [the sample application 
 
 | Configuration Key | Required | Description |
 |:-----------------|:---------|:------------|
-| `spark.jars.packages` | No | A comma-separated list of Maven coordinates for the required dependencies. User need to include the ScalarDB Analytics package you are using, otherwise, specify it as the command line argument when running the Spark application. For the details about the Maven coordinates of ScalarDB Analytics, refer to [Add ScalarDB Analytics dependency](#add-scalardb-analytics-dependency). |
+| `spark.jars.packages` | No | A comma-separated list of Maven coordinates for the required dependencies. User need to include the ScalarDB Analytics package you are using, otherwise, specify it as the command line argument when running the Spark application. For details about the Maven coordinates of ScalarDB Analytics, refer to [Add ScalarDB Analytics dependency](#add-the-scalardb-analytics-dependency). |
 | `spark.sql.extensions` | Yes | Must be set to `com.scalar.db.analytics.spark.Extensions` |
 | `spark.sql.catalog.<CATALOG_NAME>` | Yes | Must be set to `com.scalar.db.analytics.spark.ScalarCatalog` |
 
@@ -226,11 +226,11 @@ There are three ways to develop Spark applications with ScalarDB Analytics:
 
 :::note
 
-Depending on your environment, you may not be able to use all of the methods mentioned above. For details about supported features and deployment options, refer to [Supported managed Spark services and their application types](deployment.mdx#supported-managed-spark-services-and-their-application-types).
+Depending on your environment, you may not be able to use all the methods mentioned above. For details about supported features and deployment options, refer to [Supported managed Spark services and their application types](./deployment.mdx#supported-managed-spark-services-and-their-application-types).
 
 :::
 
-With all of these methods, you can refer to tables in ScalarDB Analytics using the same table identifier format. For details about how ScalarDB Analytics maps catalog information from data sources, refer to [Catalog information mappings by data source](design.mdx#catalog-information-mappings-by-data-source).
+With all these methods, you can refer to tables in ScalarDB Analytics using the same table identifier format. For details about how ScalarDB Analytics maps catalog information from data sources, refer to [Catalog information mappings by data source](./design.mdx#catalog-information-mappings-by-data-source).
 
 <Tabs groupId="spark-application-type" queryString>
   <TabItem value="spark-driver" label="Spark Driver application">
@@ -340,7 +340,7 @@ For details about how you can use Spark Connect, refer to the [Spark Connect doc
   </TabItem>
   <TabItem value="jdbc" label="JDBC">
 
-Unfortunately, Spark Thrift JDBC server does not support the Spark features that are necessary for ScalarDB Analytics, so you cannot use JDBC to read data from ScalarDB Analytics in your Apache Spark environment. JDBC application is referred to here because some managed Spark services provide different ways to interact with a Spark cluster via the JDBC interface. For more details, refer to [Supported application types](deployment.mdx#supported-managed-spark-services-and-their-application-types).
+Unfortunately, Spark Thrift JDBC server does not support the Spark features that are necessary for ScalarDB Analytics, so you cannot use JDBC to read data from ScalarDB Analytics in your Apache Spark environment. JDBC application is referred to here because some managed Spark services provide different ways to interact with a Spark cluster via the JDBC interface. For more details, refer to [Supported application types](./deployment.mdx#supported-managed-spark-services-and-their-application-types).
 
   </TabItem>
 </Tabs>
@@ -349,7 +349,7 @@ Unfortunately, Spark Thrift JDBC server does not support the Spark features that
 
 ScalarDB Analytics manages its own catalog, containing data sources, namespaces, tables, and columns. That information is automatically mapped to the Spark catalog. In this section, you will learn how ScalarDB Analytics maps its catalog information to the Spark catalog.
 
-For details about how information in the raw data sources is mapped to the ScalarDB Analytics catalog, refer to [Catalog information mappings by data source](design.mdx#catalog-information-mappings-by-data-source).
+For details about how information in the raw data sources is mapped to the ScalarDB Analytics catalog, refer to [Catalog information mappings by data source](./design.mdx#catalog-information-mappings-by-data-source).
 
 ### Catalog level mapping
 
@@ -396,7 +396,7 @@ For example, if you have a ScalarDB catalog named `my_catalog` and a view namesp
 
 ##### WAL-interpreted views
 
-As explained in [ScalarDB Analytics Design](design.mdx), ScalarDB Analytics provides a functionality called WAL-interpreted views, which is a special type of views. These views are automatically created for tables of ScalarDB data sources to provide a user-friendly view of the data by interpreting WAL-metadata in the tables.
+As explained in [ScalarDB Analytics Design](./design.mdx), ScalarDB Analytics provides a functionality called WAL-interpreted views, which is a special type of views. These views are automatically created for tables of ScalarDB data sources to provide a user-friendly view of the data by interpreting WAL-metadata in the tables.
 
 Since the data source name and the namespace names of the original ScalarDB tables are used as the view namespace names for WAL-interpreted views, if you have a ScalarDB table named `my_table` in a namespace named `my_namespace` of a data source named `my_data_source`, you can refer to the WAL-interpreted view of the table as `my_catalog.view.my_data_source.my_namespace.my_table`.
 
