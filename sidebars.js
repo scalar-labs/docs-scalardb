@@ -306,7 +306,7 @@ const sidebars = {
         },
         {
           type: 'doc',
-          id: 'scalardb-analytics/development',
+          id: 'scalardb-analytics/run-analytical-queries',
           label: 'Run Analytical Queries',
         },
         {
