@@ -1,6 +1,4 @@
 import React, { useState, useEffect, useRef, lazy, Suspense, MouseEvent } from 'react';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 import { useDoc } from '@docusaurus/plugin-content-docs/client';
 import { useLocation } from "@docusaurus/router";
 
