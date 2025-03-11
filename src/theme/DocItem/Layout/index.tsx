@@ -1,4 +1,4 @@
-import SupportDropdownMenu from '../../../components/SupportDropdownMenu';
+import SupportDropdownMenu from '../../../components/Support/SupportDropdownMenu';
 import React from 'react';
 import clsx from 'clsx';
 import { useWindowSize } from '@docusaurus/theme-common';
