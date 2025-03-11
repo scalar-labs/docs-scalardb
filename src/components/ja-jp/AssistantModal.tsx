@@ -7,6 +7,9 @@ function AssistantModal({ isOpen, onClose }) {
   // Get the current page URL.
   const currentUrl = window.location.href;
 
+  // Check if the user is on the Japanese documentation page.
+  const isJapanese = currentUrl.includes("/ja-jp");
+
   return (
     <div className="modal" style={styles.modal}>
       <div className="modal-content" style={styles.modalContent}>
@@ -14,8 +17,13 @@ function AssistantModal({ isOpen, onClose }) {
         <span className="close" onClick={onClose} style={styles.closeButton}>
           &times;
         </span>
+
+        {/* Conditionally render the Typebot based on language. */}
         <Standard
-          typebot="ja-jp-scalar-docs-ai-assistant-for-scalar-membership-program-members-201712"
+          typebot={isJapanese
+            ? "ja-jp-scalar-docs-ai-assistant-for-scalar-membership-program-members-201712"
+            : "en-us-scalar-docs-ai-assistant-for-scalar-membership-program-members-201712"
+          }
           style={{ width: "100%", height: "600px" }}
           prefilledVariables={{
             "Current page URL": `${currentUrl}`, // Pass page URL as a query parameter.
