@@ -80,7 +80,7 @@ const SupportDropdownMenu: React.FC = () => {
 
 該当する場合は、スクリーンショットを添付してください。
 `
-        : `**Documentation page URL:** ${window.location.href.replace(/#.*$/, '')}
+    : `**Documentation page URL:** ${window.location.href.replace(/#.*$/, '')}
 
 ## Expected behavior
 
@@ -100,7 +100,11 @@ If applicable, add screenshots to help explain your problem.
 `
     );
 
-    return `${repoUrl}?title=${issueTitle}&body=${issueBody}&labels=documentation`;
+    const issueUrl = `${repoUrl}?title=${issueTitle}&body=${issueBody}&labels=documentation`;
+
+    console.log("GitHub Issue URL: ", issueUrl);  // Debugging line
+
+    return issueUrl;
   })() : "#";
 
   useEffect(() => {
