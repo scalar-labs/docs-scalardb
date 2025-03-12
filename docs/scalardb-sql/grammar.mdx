@@ -604,6 +604,7 @@ SELECT projection [, projection] ...
   [WHERE and_predicates [OR and_predicates ...] | or_predicates [AND or_predicates ...]]
   [ORDER BY identifier [order] [, identifier [order]] ...]
   [LIMIT <limit>]
+  [WITH operation_attributes]
 
 projection: * | identifier [AS <alias>]
 join_specification: [INNER] JOIN [<namespace name>.]<table name> [AS <alias>] ON join_predicate [AND join_predicate] ... | {LEFT|RIGHT} [OUTER] JOIN [<namespace name>.]<table name> [AS <alias>] ON join_predicate [AND join_predicate] ...
@@ -614,6 +615,7 @@ predicate: identifier operator <literal> | identifier BETWEEN <literal> AND <lit
 identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
 operator: = | <> | != | > | >= | < | <=
 order: ASC | DESC
+operation_attributes: <operation attribute name>=<operation attribute value> [AND <operation attribute name>=<operation attribute value>] ...
 ```
 
 ##### Note
@@ -1084,6 +1086,9 @@ This command returns the following column:
 ```sql
 INSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ...)]
   VALUES (<literal> [, <literal>] ...) [, (<literal> [, <literal>] ...)] ...
+  [WITH operation_attributes]
+
+operation_attributes: <operation attribute name>=<operation attribute value> [AND <operation attribute name>=<operation attribute value>] ...
 ```
 
 - You must specify a full primary key in `INSERT`.
@@ -1154,6 +1159,9 @@ This command returns the following column:
 ```sql
 UPSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ...)]
   VALUES (<literal> [, <literal>] ...) [, (<literal> [, <literal>] ...)] ...
+  [WITH operation_attributes]
+
+operation_attributes: <operation attribute name>=<operation attribute value> [AND <operation attribute name>=<operation attribute value>] ...
 ```
 
 - You must specify a full primary key in `UPSERT`.
@@ -1233,12 +1241,14 @@ This command returns the following column:
 UPDATE [<namespace name>.]<table name> [AS <alias>]
   SET <column identifier> = <literal> [, <column identifier> = <literal>] ...
   [WHERE and_predicates [OR and_predicates ...] | or_predicates [AND or_predicates ...]]
+  [WITH operation_attributes]
 
 identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
 and_predicates: predicate | (predicate [AND predicate ...])
 or_predicates: predicate | (predicate [OR predicate ...])
 predicate: <identifier> operator <literal> | <identifier> BETWEEN <literal> AND <literal> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
 operator: = | <> | != | > | >= | < | <=
+operation_attributes: <operation attribute name>=<operation attribute value> [AND <operation attribute name>=<operation attribute value>] ...
 ```
 
 ##### Note
@@ -1460,12 +1470,14 @@ This command returns the following column:
 ```sql
 DELETE FROM [<namespace name>.]<table name> [AS <alias>]
   [WHERE and_predicates [OR and_predicates ...] | or_predicates [AND or_predicates ...]]
+  [WITH operation_attributes]
 
 identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
 and_predicates: predicate | (predicate [AND predicate ...])
 or_predicates: predicate | (predicate [OR predicate ...])
 predicate: <identifier> operator <literal> | <identifier> BETWEEN <literal> AND <literal> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
 operator: = | <> | != | > | >= | < | <=
+operation_attributes: <operation attribute name>=<operation attribute value> [AND <operation attribute name>=<operation attribute value>] ...
 ```
 
 ##### Note
@@ -1800,24 +1812,24 @@ Examples of building statement objects for `GRANT` are as follows:
 ```java
 // Grant the SELECT privilege on a table to a user.
 GrantStatement statement1 =
-    StatementBuilder.grant(Privilege.SELECT).on("ns", "tbl").to("user1").build();
+    StatementBuilder.grant(Privilege.SELECT).onTable("ns", "tbl").toUser("user1").build();
 
 // Grant the SELECT privilege on tables to users.
 GrantStatement statement2 =
     StatementBuilder.grant(Privilege.SELECT)
-        .on("ns", "tbl1", "ns", "tbl2")
-        .to("user1", "user2")
+        .onTable("ns", "tbl1", "ns", "tbl2")
+        .toUser("user1", "user2")
         .build();
 
 // Grant the SELECT privilege on all tables in a namespace to a user.
 GrantStatement statement3 =
-    StatementBuilder.grant(Privilege.SELECT).onNamespace("ns").to("user1").build();
+    StatementBuilder.grant(Privilege.SELECT).onNamespace("ns").toUser("user1").build();
 
 // Grant all privileges and GRANT OPTION on a table to a user.
 GrantStatement statement4 =
     StatementBuilder.grant(Privilege.values())
-        .on("ns", "tbl")
-        .to("user1")
+        .onTable("ns", "tbl")
+        .toUser("user1")
         .withGrantOption()
         .build();
 
@@ -1825,7 +1837,7 @@ GrantStatement statement4 =
 GrantStatement statement5 =
     StatementBuilder.grant(Privilege.values())
         .onNamespace("ns")
-        .to("user1")
+        .toUser("user1")
         .withGrantOption()
         .build();
 ```
@@ -1874,31 +1886,31 @@ Examples of building statement objects for `REVOKE` are as follows:
 ```java
 // Revoke the SELECT privilege on a table from a user.
 RevokeStatement statement1 =
-    StatementBuilder.revoke(Privilege.SELECT).on("ns", "tbl").from("user1").build();
+    StatementBuilder.revoke(Privilege.SELECT).onTable("ns", "tbl").fromUser("user1").build();
 
 // Revoke the SELECT privilege on tables from users.
 RevokeStatement statement2 =
     StatementBuilder.revoke(Privilege.SELECT)
-        .on("ns", "tbl1", "ns", "tbl2")
-        .from("user1", "user2")
+        .onTable("ns", "tbl1", "ns", "tbl2")
+        .fromUser("user1", "user2")
         .build();
 
 // Revoke the SELECT privilege on all tables in a namespace from a user.
 RevokeStatement statement3 =
-    StatementBuilder.revoke(Privilege.SELECT).onNamespace("ns").from("user1").build();
+    StatementBuilder.revoke(Privilege.SELECT).onNamespace("ns").fromUser("user1").build();
 
 // Revoke all privileges and GRANT OPTION on a table from a user.
 RevokeStatement statement4 =
     StatementBuilder.revoke(Privilege.values())
-        .on("ns", "tbl")
-        .from("user1")
+        .onTable("ns", "tbl")
+        .fromUser("user1")
         .build();
 
 // Revoke all privileges and GRANT OPTION on all tables in a namespace from a user.
 RevokeStatement statement5 =
     StatementBuilder.revoke(Privilege.values())
         .onNamespace("ns")
-        .from("user1")
+        .fromUser("user1")
         .build();
 ```
 

@@ -175,6 +175,11 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'scalardb-analytics/design',
+              label: 'ScalarDB Analytics Design',
+            },
+            {
+              type: 'doc',
               id: 'scalardb-analytics-postgresql/installation',
               label: 'Install ScalarDB Analytics with PostgreSQL Locally',
             }
@@ -261,22 +266,6 @@ const sidebars = {
             },
           ],
         },
-        // {
-        //   type: 'category',
-        //   label: 'Run Analytical Queries',
-        //   collapsible: true,
-        //   link: {
-        //     type: 'doc',
-        //     id: 'develop-run-analytical-queries-overview',
-        //   },
-        //   items: [
-        //     {
-        //       type: 'doc',
-        //       id: '<PATH_TO_FILE>',
-        //       label: '<LABEL>',
-        //     }
-        //   ],
-        // },
         {
           type: 'category',
           label: 'Run Non-Transactional Storage Operations',
@@ -314,6 +303,11 @@ const sidebars = {
               label: 'Run Through the Primitive CRUD Interface',
             },
           ],
+        },
+        {
+          type: 'doc',
+          id: 'scalardb-analytics/run-analytical-queries',
+          label: 'Run Analytical Queries',
         },
         {
           type: 'category',
@@ -470,11 +464,6 @@ const sidebars = {
                   id: 'scalardb-analytics-postgresql/schema-importer',
                   label: 'PostgreSQL Schema Importer for PostgreSQL',
                 },
-                {
-                  type: 'doc',
-                  id: 'scalardb-analytics-spark/version-compatibility',
-                  label: 'Version Compatibility for Spark',
-                },
               ],
             },
             {
@@ -561,6 +550,11 @@ const sidebars = {
           type: 'doc',
           id: 'scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS',
           label: 'Deploy ScalarDB Cluster on Amazon EKS',
+        },
+        {
+          type: 'doc',
+          id: 'scalardb-analytics/deployment',
+          label: 'Deploy ScalarDB Analytics in Public Cloud Environments',
         },
         {
           type: 'category',
@@ -1340,11 +1334,6 @@ const sidebars = {
                   type: 'doc',
                   id: 'scalardb-analytics-postgresql/schema-importer',
                   label: 'PostgreSQL 用 Schema Importer',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-analytics-spark/version-compatibility',
-                  label: 'Spark のバージョン互換性',
                 },
               ],
             },
