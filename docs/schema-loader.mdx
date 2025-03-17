@@ -552,12 +552,12 @@ TIMESTAMP represents a date-time without time zone information, while TIMESTAMPT
 
 :::
 
-However, the following data types in JDBC databases are converted differently when they are used as a primary key or a secondary index key. This is due to the limitations of RDB data types.
+However, the following data types in JDBC databases are converted differently when they are used as a primary key or a secondary index key. This is due to the limitations of RDB data types. For MySQL and Oracle, you can change the column size (minimum 64 bytes) as long as it meets the limitation of the total size of key columns. For details, see [Underlying storage or database configurations](configurations.mdx#underlying-storage-or-database-configurations).
 
-| ScalarDB | MySQL/MariaDB | PostgreSQL/YugabyteDB | Oracle       |
-|----------|---------------|-----------------------|--------------|
-| TEXT     | VARCHAR(64)   | VARCHAR(10485760)     | VARCHAR2(64) |
-| BLOB     | VARBINARY(64) |                       | RAW(64)      |
+| ScalarDB | MySQL/MariaDB  | PostgreSQL/YugabyteDB | Oracle        |
+|----------|----------------|-----------------------|---------------|
+| TEXT     | VARCHAR(128)   | VARCHAR(10485760)     | VARCHAR2(128) |
+| BLOB     | VARBINARY(128) |                       | RAW(128)      |
 
 The following data types have a value range and precision regardless of the underlying database.
 
