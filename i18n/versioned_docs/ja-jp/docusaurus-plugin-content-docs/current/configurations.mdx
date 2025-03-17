@@ -96,6 +96,8 @@ Consensus Commit にはストレージ抽象化レイヤーがあり、複数の
     | `scalar.db.jdbc.admin.connection_pool.min_idle`           | 管理者の接続プール内のアイドル接続の最小数。                                                                                                                                                                                   | `5`              |
     | `scalar.db.jdbc.admin.connection_pool.max_idle`           | 管理者の接続プール内でアイドル状態のままにできる接続の最大数。                                                                                                                                                                    | `10`             |
     | `scalar.db.jdbc.admin.connection_pool.max_total`          | 管理者の接続プールで同時にアクティブにできるアイドル接続と借用接続の最大合計数。制限がない場合は負の値を使用します。                                                                                                                       | `25`             |
+    | `scalar.db.jdbc.mysql.variable_key_column_size`           | MySQL で主キーまたはセカンダリキーとして使用される場合の TEXT 列と BLOB 列の列サイズ。最小 64 バイト。                                                                                                                               | `128`            |
+    | `scalar.db.jdbc.oracle.variable_key_column_size`          | Oracle で主キーまたはセカンダリキーとして使用される場合の TEXT 列と BLOB 列の列サイズ。最小 64 バイト。                                                                                                                              | `128`            |
     | `scalar.db.jdbc.oracle.time_column.default_date_component` | Oracle で `TIME` データを格納するために使用される日付コンポーネントの値。Oracle には日付コンポーネントなしで時間のみを格納するデータ型がないため、ScalarDB は比較と並べ替えを容易にするために、同じ日付コンポーネント値を持つ `TIME` データを保存します。 | `1970-01-01`      |
 
 :::note
