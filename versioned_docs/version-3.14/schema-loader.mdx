@@ -542,12 +542,12 @@ The following table shows the supported data types in ScalarDB and their mapping
 | TEXT      | text      | string (JSON)       | S        | longtext | text                  | varchar2(4000) | varchar(8000)   | text    |
 | BLOB      | blob      | string (JSON)       | B        | longblob | bytea                 | RAW(2000)      | varbinary(8000) | blob    |
 
-However, the following data types in JDBC databases are converted differently when they are used as a primary key or a secondary index key. This is due to the limitations of RDB data types.
+However, the following data types in JDBC databases are converted differently when they are used as a primary key or a secondary index key. This is due to the limitations of RDB data types. For MySQL and Oracle, you can change the column size (minimum 64 bytes) as long as it meets the limitation of the total size of key columns. For details, see [Underlying storage or database configurations](configurations.mdx#underlying-storage-or-database-configurations).
 
-| ScalarDB | MySQL         | PostgreSQL/YugabyteDB | Oracle       |
-|----------|---------------|-----------------------|--------------|
-| TEXT     | VARCHAR(64)   | VARCHAR(10485760)     | VARCHAR2(64) |
-| BLOB     | VARBINARY(64) |                       | RAW(64)      |
+| ScalarDB | MySQL/MariaDB  | PostgreSQL/YugabyteDB | Oracle        |
+|----------|----------------|-----------------------|---------------|
+| TEXT     | VARCHAR(128)   | VARCHAR(10485760)     | VARCHAR2(128) |
+| BLOB     | VARBINARY(128) |                       | RAW(128)      |
 
 The value range of `BIGINT` in ScalarDB is from -2^53 to 2^53, regardless of the underlying database.
 
