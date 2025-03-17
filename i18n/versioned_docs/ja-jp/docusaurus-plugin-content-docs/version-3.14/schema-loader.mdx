@@ -555,12 +555,12 @@ Cosmos DB for NoSQL の自動スケーリングは、このオプションが `4
 | TEXT      | text      | string (JSON)       | S        | longtext | text                  | varchar2(4000) | varchar(8000)   | text    |
 | BLOB      | blob      | string (JSON)       | B        | longblob | bytea                 | RAW(2000)      | varbinary(8000) | blob    |
 
-ただし、JDBC データベースの次のデータ型は、主キーまたはセカンダリインデックスキーとして使用される場合、異なる方法で変換されます。これは、RDB データ型の制限によるものです。
+ただし、JDBC データベースの次のデータ型は、主キーまたはセカンダリインデックスキーとして使用される場合、異なる方法で変換されます。これは、RDB データ型の制限によるものです。MySQL および Oracle の場合、キー列の合計サイズの制限を満たす限り、列サイズ (最小 64 バイト) を変更できます。詳細については、[基盤となるストレージまたはデータベースの設定](configurations.mdx#基盤となるストレージまたはデータベースの設定) を参照してください。
 
-| ScalarDB | MySQL         | PostgreSQL/YugabyteDB | Oracle       |
-|----------|---------------|-----------------------|--------------|
-| TEXT     | VARCHAR(64)   | VARCHAR(10485760)     | VARCHAR2(64) |
-| BLOB     | VARBINARY(64) |                       | RAW(64)      |
+| ScalarDB | MySQL/MariaDB  | PostgreSQL/YugabyteDB | Oracle        |
+|----------|----------------|-----------------------|---------------|
+| TEXT     | VARCHAR(128)   | VARCHAR(10485760)     | VARCHAR2(128) |
+| BLOB     | VARBINARY(128) |                       | RAW(128)      |
 
 ScalarDB の `BIGINT` の値の範囲は、基になるデータベースに関係なく、-2^53から2^53です。
 
