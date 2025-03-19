@@ -343,7 +343,7 @@ const config = {
         },
       },
       // Replace with your project's social card
-      image: 'img/scalardb-logo.png',
+      image: 'img/scalardb-social-card-preview.png',
       navbar: {
         title: '',
         logo: {
