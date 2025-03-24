@@ -61,17 +61,17 @@ The following describes what you should change the content in the angle brackets
 - `<YOUR_LICENSE_CERT_PEM>`: The PEM encoded license certificate.
 - `<YOUR_LICENSE_KEY>`: The license key.
 
-For more details, refer to [Set up ScalarDB Analytics in the Spark configuration](development.mdx#set-up-scalardb-analytics-in-the-spark-configuration).
+For more details, refer to [Set up ScalarDB Analytics in the Spark configuration](./run-analytical-queries.mdx#set-up-scalardb-analytics-in-the-spark-configuration).
 
 <h4>Run analytical queries via the Spark driver</h4>
 
-After the EMR Spark cluster has launched, you can use ssh to connect to the primary node of the EMR cluster and run your Spark application. For details on how to create a Spark Driver application, refer to [Spark Driver application](development.mdx?spark-application-type=spark-driver#spark-driver-application).
+After the EMR Spark cluster has launched, you can use ssh to connect to the primary node of the EMR cluster and run your Spark application. For details on how to create a Spark Driver application, refer to [Spark Driver application](./run-analytical-queries.mdx?spark-application-type=spark-driver#spark-driver-application).
 
 <h4>Run analytical queries via Spark Connect</h4>
 
 You can use Spark Connect to run your Spark application remotely by using the EMR cluster that you launched.
 
-You first need to configure the Software setting in the same way as the [Spark Driver application](development.mdx?spark-application-type=spark-driver#spark-driver-application). You also need to set the following configuration to enable Spark Connect.
+You first need to configure the Software setting in the same way as the [Spark Driver application](./run-analytical-queries.mdx?spark-application-type=spark-driver#spark-driver-application). You also need to set the following configuration to enable Spark Connect.
 
 <h5>Allow inbound traffic for a Spark Connect server</h5>
 
@@ -108,7 +108,7 @@ The following describes what you should change the content in the angle brackets
 
 You can run your Spark application via Spark Connect from anywhere by using the remote URL of the Spark Connect server, which is `sc://<PRIMARY_NODE_PUBLIC_HOSTNAME>:15001`.
 
-For details on how to create a Spark application by using Spark Connect, refer to [Spark Connect application](development.mdx?spark-application-type=spark-connect#spark-connect-application).
+For details on how to create a Spark application by using Spark Connect, refer to [Spark Connect application](./run-analytical-queries.mdx?spark-application-type=spark-connect#spark-connect-application).
 
   </TabItem>
   <TabItem value="databricks" label="Databricks">
@@ -153,7 +153,7 @@ spark.sql.catalog.<CATALOG_NAME>.license.cert_pem {{secrets/scalardb-analytics-s
 
 :::note
 
-You also need to configure the data source. For details, refer to [Set up ScalarDB Analytics in the Spark configuration](development.mdx#set-up-scalardb-analytics-in-the-spark-configuration).
+You also need to configure the data source. For details, refer to [Set up ScalarDB Analytics in the Spark configuration](./run-analytical-queries.mdx#set-up-scalardb-analytics-in-the-spark-configuration).
 
 :::
 
