@@ -14,6 +14,37 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 このページには、ScalarDB 3.13 のリリースノートのリストが含まれています。
 
+## v3.13.3
+
+**発売日:** 2025年03月24日
+
+### まとめ
+
+このリリースには、いくつかの改善とバグ修正が含まれています。
+
+### Community edition
+
+#### 改善点
+
+- ScalarDB BIGINT データ型が Oracle の NUMBER(16) にマッピングされるようになりました。([#2566](https://github.com/scalar-labs/scalardb/pull/2566))
+
+#### バグの修正
+
+- セキュリティ問題を修正するために Netty ライブラリをアップグレードしました。 [CVE-2025-24970](https://github.com/advisories/GHSA-4g8c-wm8x-jfhw "CVE-2025-24970") ([#2552](https://github.com/scalar-labs/scalardb/pull/2552))
+
+### Enterprise edition
+
+#### バグの修正
+
+##### ScalarDB Cluster
+
+- セキュリティ問題を修正するために `grpc_health_probe` をアップグレードしました。 [CVE-2024-45337](https://github.com/advisories/GHSA-v778-237x-gjrc "CVE-2024-45337") [CVE-2024-45338](https://github.com/advisories/GHSA-w32m-9786-jp63 "CVE-2024-45338")
+- SQL インターフェースで auth を使用する場合のメタデータキャッシュの動作に関連するバグを修正しました。
+
+##### ScalarDB SQL
+
+- SQL ステートメントパーサーが INT 型および BIGINT 型の列の負の数値リテラルを拒否する問題を修正しました。
+
 ## v3.13.2
 
 **発売日:** 2025年01月23日

@@ -10,6 +10,41 @@ displayed_sidebar: docsEnglish
 
 This page includes a list of release notes for ScalarDB 3.15.
 
+## v3.15.2
+
+**Release date:** March 24, 2025
+
+### Summary
+
+This release has several improvements and bug fixes.
+
+### Community edition
+
+#### Improvements
+
+- ScalarDB BIGINT datatype will now be mapped to Oracle's NUMBER(16). ([#2566](https://github.com/scalar-labs/scalardb/pull/2566))
+
+#### Bug fixes
+
+- Upgraded the Netty library to fix a security issue. [CVE-2025-24970](https://github.com/advisories/GHSA-4g8c-wm8x-jfhw "CVE-2025-24970") ([#2552](https://github.com/scalar-labs/scalardb/pull/2552))
+
+### Enterprise edition
+
+#### Enhancements
+
+##### ScalarDB Cluster
+
+- Added a configuration option (`scalar.db.transaction.enabled`) to enable or disable the transaction feature in ScalarDB Cluster. The default value is `true`.
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Fixed a bug related to the metadata cache behavior when using auth in the SQL interface.
+- Fixed configurations for the embedding feature.
+- Fixed a bug that allowed superusers to execute ABAC administrative operations for non-existing users.
+- Fixed a bug a table-not-found error occurs when dropping empty ABAC system tables.
+
 ## v3.15.1
 
 **Release date:** February 20, 2025
