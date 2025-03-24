@@ -81,8 +81,8 @@ ScalarDB Analytics supports a wide range of data types across different data sou
 - `BOOLEAN`
 - `DATE`
 - `TIME`
-- `DATETIME`
 - `TIMESTAMP`
+- `TIMESTAMPTZ`
 - `DURATION`
 - `INTERVAL`
 
@@ -246,7 +246,6 @@ The native data types of the underlying data sources are mapped to the data type
     | `BLOB`                        | `BLOB`                           |
     | `DATE`                        | `DATE`                           |
     | `TIME`                        | `TIME`                           |
-    | `DATETIME`                    | `DATETIME`                       |
     | `TIMESTAMP`                   | `TIMESTAMP`                      |
     | `TIMESTAMPTZ`                 | `TIMESTAMPTZ`                    |
   </TabItem>
@@ -270,9 +269,9 @@ The native data types of the underlying data sources are mapped to the data type
     | `time`                        | `TIME`                           |
     | `time with time zone`         | `TIME`                           |
     | `time without time zone`      | `TIME`                           |
-    | `timestamp`                   | `DATETIME`                       |
-    | `timestamp with time zone`    | `TIMESTAMP`                      |
-    | `timestamp without time zone` | `DATETIME`                       |
+    | `timestamp`                   | `TIMESTAMP`                      |
+    | `timestamp with time zone`    | `TIMESTAMPTZ`                      |
+    | `timestamp without time zone` | `TIMESTAMP`                      |
   </TabItem>
   <TabItem value="mysql" label="MySQL">
     | **MySQL Data Type**    | **ScalarDB Analytics Data Type** |
@@ -301,8 +300,8 @@ The native data types of the underlying data sources are mapped to the data type
     | `blob`                 | `BLOB`                           |
     | `date`                 | `DATE`                           |
     | `time`                 | `TIME`                           |
-    | `datetime`             | `DATETIME`                       |
-    | `timestamp`            | `TIMESTAMP`                      |
+    | `datetime`             | `TIMESTAMP`                      |
+    | `timestamp`            | `TIMESTAMPTZ`                      |
   </TabItem>
   <TabItem value="oracle" label="Oracle">
     | **Oracle Data Type**               | **ScalarDB Analytics Data Type** |
@@ -321,9 +320,9 @@ The native data types of the underlying data sources are mapped to the data type
     | `BLOB`                             | `BLOB`                           |
     | `BOOLEAN`                          | `BOOLEAN`                        |
     | `DATE`                             | `DATE`                           |
-    | `TIMESTAMP`                        | `TIMESTAMP`                      |
-    | `TIMESTAMP WITH TIME ZONE`         | `TIMESTAMP`                      |
-    | `TIMESTAMP WITH LOCAL TIME ZONE`   | `DATETIME`                       |
+    | `TIMESTAMP`                        | `TIMESTAMPTZ`                      |
+    | `TIMESTAMP WITH TIME ZONE`         | `TIMESTAMPTZ`                      |
+    | `TIMESTAMP WITH LOCAL TIME ZONE`   | `TIMESTAMP`                      |
     | `RAW`                              | `BLOB`                           |
   </TabItem>
   <TabItem value="sql-server" label="SQL Server">
@@ -348,10 +347,10 @@ The native data types of the underlying data sources are mapped to the data type
     | `text`                     | `TEXT`                           |
     | `date`                     | `DATE`                           |
     | `time`                     | `TIME`                           |
-    | `datetime`                 | `DATETIME`                       |
-    | `datetime2`                | `DATETIME`                       |
-    | `smalldatetime`            | `DATETIME`                       |
-    | `datetimeoffset`           | `TIMESTAMP`                      |
+    | `datetime`                 | `TIMESTAMP`                      |
+    | `datetime2`                | `TIMESTAMP`                      |
+    | `smalldatetime`            | `TIMESTAMP`                      |
+    | `datetimeoffset`           | `TIMESTAMPTZ`                      |
   </TabItem>
   <TabItem value="dynamodb" label="DynamoDB">
     | **DynamoDB Data Type**   | **ScalarDB Analytics Data Type** |
