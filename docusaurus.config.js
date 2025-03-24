@@ -179,14 +179,6 @@ const config = {
             from: '/docs/releases/release-support-policy',
           },
           {
-            to: '/docs/latest/scalardb-analytics/run-analytical-queries',
-            from: '/docs/latest/scalardb-analytics/development',
-          },
-          {
-            to: '/docs/3.14/scalardb-analytics/run-analytical-queries',
-            from: '/docs/3.14/scalardb-analytics/development',
-          },
-          {
             to: '/docs/latest/scalardb-analytics/run-analytical-queries#version-compatibility',
             from: '/docs/latest/scalardb-analytics-spark/version-compatibility',
           },
