@@ -179,6 +179,14 @@ const config = {
             from: '/docs/releases/release-support-policy',
           },
           {
+            to: '/docs/latest/scalardb-analytics/run-analytical-queries',
+            from: '/docs/latest/scalardb-analytics/deployment/development?spark-application-type=spark-driver#spark-driver-application',
+          },
+          {
+            to: '/docs/3.14/scalardb-analytics/run-analytical-queries',
+            from: '/docs/3.14/scalardb-analytics/deployment/development?spark-application-type=spark-driver#spark-driver-application',
+          },
+          {
             to: '/docs/latest/scalardb-analytics/run-analytical-queries#version-compatibility',
             from: '/docs/latest/scalardb-analytics-spark/version-compatibility',
           },
