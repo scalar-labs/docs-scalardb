@@ -10,6 +10,37 @@ displayed_sidebar: docsEnglish
 
 This page includes a list of release notes for ScalarDB 3.14.
 
+## v3.14.2
+
+**Release date:** March 24, 2025
+
+### Summary
+
+This release has several improvements and bug fixes.
+
+### Community edition
+
+#### Improvements
+
+- ScalarDB BIGINT datatype will now be mapped to Oracle's NUMBER(16). ([#2566](https://github.com/scalar-labs/scalardb/pull/2566))
+
+#### Bug fixes
+
+- Upgraded the Netty library to fix a security issue. [CVE-2025-24970](https://github.com/advisories/GHSA-4g8c-wm8x-jfhw "CVE-2025-24970") ([#2552](https://github.com/scalar-labs/scalardb/pull/2552))
+
+### Enterprise edition
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Upgraded `grpc_health_probe` to fix security issues. [CVE-2024-45337](https://github.com/advisories/GHSA-v778-237x-gjrc "CVE-2024-45337") [CVE-2024-45338](https://github.com/advisories/GHSA-w32m-9786-jp63 "CVE-2024-45338")
+- Fixed a bug related to the metadata cache behavior when using auth in the SQL interface.
+
+##### ScalarDB SQL
+
+- Fix an issue causing the SQL statement parser to reject negative numeric literal for columns of type INT and BIGINT.
+
 ## v3.14.1
 
 **Release date:** January 23, 2025
