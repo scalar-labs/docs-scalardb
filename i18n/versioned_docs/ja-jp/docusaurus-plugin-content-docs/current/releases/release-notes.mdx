@@ -14,6 +14,41 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 このページには、ScalarDB 3.15 のリリースノートのリストが含まれています。
 
+## v3.15.2
+
+**発売日:** 2025年03月24日
+
+### まとめ
+
+このリリースには、いくつかの改善とバグ修正が含まれています。
+
+### Community edition
+
+#### 改善点
+
+- ScalarDB BIGINT データ型が Oracle の NUMBER(16) にマッピングされるようになりました。([#2566](https://github.com/scalar-labs/scalardb/pull/2566))
+
+#### バグの修正
+
+- セキュリティ問題を修正するために Netty ライブラリをアップグレードしました。 [CVE-2025-24970](https://github.com/advisories/GHSA-4g8c-wm8x-jfhw "CVE-2025-24970") ([#2552](https://github.com/scalar-labs/scalardb/pull/2552))
+
+### Enterprise edition
+
+#### 機能強化
+
+##### ScalarDB Cluster
+
+- ScalarDB Cluster のトランザクション機能を有効または無効にする設定オプション (`scalar.db.transaction.enabled`) を追加しました。デフォルト値は `true` です。
+
+#### バグ修正
+
+##### ScalarDB Cluster
+
+- SQL インターフェースで認証を使用する場合のメタデータキャッシュの動作に関連するバグを修正しました。
+- 埋め込み機能の設定を修正しました。
+- スーパーユーザーが存在しないユーザーに対して ABAC 管理操作を実行できるバグを修正しました。
+- 空の ABAC システムテーブルを削除するときにテーブルが見つからないというエラーが発生するバグを修正しました。
+
 ## v3.15.1
 
 **発売日:** 2025年02月20日
