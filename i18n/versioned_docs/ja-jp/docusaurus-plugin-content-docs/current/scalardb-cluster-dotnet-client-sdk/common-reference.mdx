@@ -156,12 +156,43 @@ builder.Services.AddScalarDbContext<MyDbContext>(options =>
 
 次の表に、型がどのように変換されるかを示します。
 
-| ScalarDB 型 | .NET 型                    | C# エイリアス |
-|------------|----------------------------|-------------|
-| TEXT       | System.String              | string      |
-| INT        | System.Int32               | int         |
-| BIGINT     | System.Int64               | long        |
-| FLOAT      | System.Single              | float       |
-| DOUBLE     | System.Double              | double      |
-| BOOLEAN    | System.Boolean             | bool        |
-| BLOB       | Google.Protobuf.ByteString |             |
+| ScalarDB 型  | .NET 型                     | C# エイリアス |
+|-------------|----------------------------|----------|
+| TEXT        | System.String              | string   |
+| INT         | System.Int32               | int      |
+| BIGINT      | System.Int64               | long     |
+| FLOAT       | System.Single              | float    |
+| DOUBLE      | System.Double              | double   |
+| BOOLEAN     | System.Boolean             | bool     |
+| BLOB        | Google.Protobuf.ByteString |          |
+| DATE        | NodaTime.LocalDate         |          |
+| TIME        | NodaTime.LocalTime         |          |
+| TIMESTAMP   | NodaTime.LocalDateTime     |          |
+| TIMESTAMPTZ | NodaTime.Instant           |          |
+
+:::note
+
+ScalarDB Cluster .NET Client SDK は、`BLOB` 型には [Google.Protobuf](https://www.nuget.org/packages/Google.Protobuf) を使用し、時間関連の型には [NodaTime](https://www.nuget.org/packages/NodaTime) を使用します。
+
+:::
+
+:::warning
+
+.NET の時間関連型の精度は、ScalarDB でサポートされている精度よりも高くなります。そのため、外部ソースから受信した時間関連の値を保存するときは注意が必要です。ScalarDB Cluster .NET Client SDK には、次の方法で時間関連の値の精度を下げるために使用できる `WithScalarDbPrecision` 拡張メソッドが含まれています:
+
+```c#
+using ScalarDB.Client.Extensions;
+
+// ...
+
+var updatedAt = Instant.FromDateTimeUtc(DateTime.UtcNow)
+                       .WithScalarDbPrecision();
+
+// using NodaTime to get current instant
+updatedAt = clockInstance.GetCurrentInstant()
+                         .WithScalarDbPrecision();
+```
+
+ScalarDB の値の範囲と精度の詳細については、[ScalarDB と他のデータベース間のデータ型マッピング](../schema-loader.mdx#scalardb-と他のデータベース間のデータ型マッピング)を参照してください。
+
+:::
