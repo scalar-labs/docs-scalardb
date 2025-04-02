@@ -161,4 +161,34 @@ In the following table, you can find how types are converted:
 | DOUBLE        | System.Double              | double   |
 | BOOLEAN       | System.Boolean             | bool     |
 | BLOB          | Google.Protobuf.ByteString |          |
+| DATE          | NodaTime.LocalDate         |          |
+| TIME          | NodaTime.LocalTime         |          |
+| TIMESTAMP     | NodaTime.LocalDateTime     |          |
+| TIMESTAMPTZ   | NodaTime.Instant           |          |
 
+:::note
+
+The ScalarDB Cluster .NET Client SDK uses [Google.Protobuf](https://www.nuget.org/packages/Google.Protobuf) for `BLOB` type and [NodaTime](https://www.nuget.org/packages/NodaTime) for time-related types.
+
+:::
+
+:::warning
+
+The precision of time-related types in .NET is greater than supported by ScalarDB. Therefore, you should be careful when saving time-related values received from external sources. The ScalarDB Cluster .NET Client SDK includes `WithScalarDbPrecision` extension methods that you can use to lower the precision of time-related values in the following manner:
+
+```c#
+using ScalarDB.Client.Extensions;
+
+// ...
+
+var updatedAt = Instant.FromDateTimeUtc(DateTime.UtcNow)
+                       .WithScalarDbPrecision();
+
+// using NodaTime to get current instant
+updatedAt = clockInstance.GetCurrentInstant()
+                         .WithScalarDbPrecision();
+```
+
+For details about value ranges and precision in ScalarDB, see [Data-type mapping between ScalarDB and other databases](../schema-loader.mdx#data-type-mapping-between-scalardb-and-other-databases).
+
+:::
