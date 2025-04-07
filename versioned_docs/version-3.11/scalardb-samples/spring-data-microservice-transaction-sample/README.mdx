@@ -107,10 +107,6 @@ scalar.db.consensus_commit.isolation_level=SERIALIZABLE
 
 scalar.db.cluster.node.standalone_mode.enabled=true
 scalar.db.sql.enabled=true
-
-# License key configurations
-scalar.db.cluster.node.licensing.license_key=
-scalar.db.cluster.node.licensing.license_check_cert_pem=
 ```
 
 - `scalar.db.sql.connection_mode`: This configuration decides how to connect to ScalarDB.
@@ -136,10 +132,6 @@ scalar.db.consensus_commit.isolation_level=SERIALIZABLE
 
 scalar.db.cluster.node.standalone_mode.enabled=true
 scalar.db.sql.enabled=true
-
-# License key configurations
-scalar.db.cluster.node.licensing.license_key=
-scalar.db.cluster.node.licensing.license_check_cert_pem=
 ```
 
 - `scalar.db.storage`: `cassandra` is specified since this servcise uses only Cassandra as an underlying database.
@@ -151,8 +143,6 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=
 - `scalar.db.consensus_commit.isolation_level`: This configuration decides the isolation level used for ConsensusCommit.
 
 In this sample application, the ScalarDB Clusters are running in standalone mode (`scalar.db.cluster.node.standalone_mode.enabled=true`).
-
-Also, you need to set the license key (trial license or commercial license) for the ScalarDB Clusters in the configuration file. For details, see [How to Configure a Product License Key](../../scalar-licensing/README.mdx).
 
 ## Setup
 
@@ -169,10 +159,6 @@ Then, go to the directory with this sample by running the following command:
 ```console
 cd scalardb-samples/spring-data-microservice-transaction-sample
 ```
-
-### Set the license key
-
-Set the license key (trial license or commercial license) for the ScalarDB Clusters in the configuration files [`scalardb-cluster-node-for-customer-service.properties`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/scalardb-cluster-node-for-customer-service.properties) and [`scalardb-cluster-node-for-order-service.properties`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/scalardb-cluster-node-for-order-service.properties). For details, see [How to Configure a Product License Key](../../scalar-licensing/README.mdx).
 
 ### Start Cassandra, MySQL, and ScalarDB Clusters
 
