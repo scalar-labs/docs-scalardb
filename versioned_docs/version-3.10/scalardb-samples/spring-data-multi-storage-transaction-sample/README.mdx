@@ -124,10 +124,6 @@ scalar.db.multi_storage.default_storage=cassandra
 
 scalar.db.cluster.node.standalone_mode.enabled=true
 scalar.db.sql.enabled=true
-
-# License key configurations
-scalar.db.cluster.node.licensing.license_key=
-scalar.db.cluster.node.licensing.license_check_cert_pem=
 ```
 
 - `scalar.db.storage`: Specifying `multi-storage` is necessary to use Multi-storage Transactions in ScalarDB.
@@ -140,8 +136,6 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=
 For details, see [Multi-Storage Transactions](../../multi-storage-transactions.mdx).
 
 In this sample application, ScalarDB Cluster is running in standalone mode (`scalar.db.cluster.node.standalone_mode.enabled=true`).
-
-Also, you need to set the license key (trial license or commercial license) for ScalarDB Cluster in the configuration file. For details, see [How to Configure a Product License Key](../../scalar-licensing/README.mdx).
 
 ## Client Configuration
 
@@ -167,10 +161,6 @@ Then, go to the directory with this sample by running the following command:
 ```console
 cd scalardb-samples/spring-data-multi-storage-transaction-sample
 ```
-
-### Set the license key
-
-Set the license key (trial license or commercial license) for the ScalarDB Clusters in the configuration file [`scalardb-cluster-node.properties`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-multi-storage-transaction-sample/scalardb-cluster-node.properties). For details, see [How to Configure a Product License Key](../../scalar-licensing/README.mdx).
 
 ### Start Cassandra, MySQL, and ScalarDB Cluster
 
