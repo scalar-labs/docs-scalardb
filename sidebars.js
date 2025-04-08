@@ -130,6 +130,11 @@ const sidebars = {
               id: 'scalardb-cluster/getting-started-with-scalardb-cluster-graphql',
               label: 'Use GraphQL',
             },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/getting-started-with-scalardb-cluster-dotnet',
+              label: 'Use .NET',
+            },
           ],
         },
         {
