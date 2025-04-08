@@ -34,6 +34,7 @@ import TabItem from '@theme/TabItem';
 | `scalar.db.metadata.cache_expiration_time_secs`                   | ScalarDB には、データベースへのリクエスト数を減らすためのメタデータキャッシュがあります。この設定では、キャッシュの有効期限を秒単位で指定します。`-1`を指定した場合は、キャッシュは期限切れになりません。                                             | `60`           |
 | `scalar.db.active_transaction_management.expiration_time_millis`  | ScalarDB Cluster ノードは進行中のトランザクションを維持し、トランザクション ID を使用して再開できます。この構成では、このトランザクション管理機能の有効期限をミリ秒単位で指定します。                                                   | `60000` (60秒) |
 | `scalar.db.system_namespace_name`                                 | 指定された名前空間名は ScalarDB によって内部的に使用されます。                                                                                                                    | `scalardb`     |
+| `scalar.db.transaction.enabled`                                   | トランザクション機能が有効かどうか。例えば、Embedding 機能のみを使用する場合、このプロパティをfalseに設定できます。                                                       | `true`                 |
 
 ## トランザクションマネージャーの構成
 
