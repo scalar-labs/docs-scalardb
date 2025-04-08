@@ -32,6 +32,7 @@ The basic configurations for a cluster node are as follows:
 | `scalar.db.metadata.cache_expiration_time_secs`                   | ScalarDB has a metadata cache to reduce the number of requests to the database. This setting specifies the expiration time of the cache in seconds. If you specify `-1`, the cache will never expire.          | `60`                   |
 | `scalar.db.active_transaction_management.expiration_time_millis`  | ScalarDB Cluster nodes maintain ongoing transactions, which can be resumed by using a transaction ID. This configuration specifies the expiration time of this transaction management feature in milliseconds. | `60000` (60 seconds)   |
 | `scalar.db.system_namespace_name`                                 | The given namespace name will be used by ScalarDB internally.                                                                                                                                                  | `scalardb`             |
+| `scalar.db.transaction.enabled`                                   | Whether the transaction feature is enabled. For example, if you use only the embedding feature, you can set this property to `false`.                                                                          | `true`                 |
 
 ## Transaction manager configurations
 
