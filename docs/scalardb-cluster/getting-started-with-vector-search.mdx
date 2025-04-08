@@ -61,11 +61,7 @@ This tutorial has been tested with OpenJDK from Eclipse Temurin. ScalarDB itself
 Create the following configuration file as `scalardb-cluster-node.properties`, replacing `<YOUR_LICENSE_KEY>` and `<LICENSE_CHECK_CERT_PEM>` with your ScalarDB license key and license check certificate values. For more information about the license key and certificate, see [How to Configure a Product License Key](../scalar-licensing/README.mdx).
 
 ```yaml
-# Storage configurations
-scalar.db.storage=jdbc
-scalar.db.contact_points=jdbc:postgresql://postgresql:5432/postgres
-scalar.db.username=postgres
-scalar.db.password=postgres
+scalar.db.transaction.enabled=false
 
 # Enable the standalone mode
 scalar.db.cluster.node.standalone_mode.enabled=true
@@ -333,20 +329,6 @@ Create the following configuration file as `docker-compose.yaml`.
 
 ```yaml
 services:
-  postgresql:
-    container_name: "postgresql"
-    image: "postgres:15"
-    ports:
-      - 5432:5432
-    environment:
-      - POSTGRES_PASSWORD=postgres
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready || exit 1"]
-      interval: 1s
-      timeout: 10s
-      retries: 60
-      start_period: 30s
-
   scalardb-cluster-standalone:
     container_name: "scalardb-cluster-node"
     image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:3.15.2"
@@ -355,14 +337,11 @@ services:
       - 9080:9080
     volumes:
       - ./scalardb-cluster-node.properties:/scalardb-cluster/node/scalardb-cluster-node.properties
-    depends_on:
-      postgresql:
-        condition: service_healthy
 ```
 
-### 3. Start PostgreSQL and ScalarDB Cluster
+### 3. Start ScalarDB Cluster
 
-Run the following command to start PostgreSQL and ScalarDB Cluster in standalone mode.
+Run the following command to start ScalarDB Cluster in standalone mode.
 
 ```console
 docker compose up -d
