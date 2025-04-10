@@ -6,6 +6,7 @@ displayed_sidebar: docsJapanese
 
 # ScalarDB Cluster GraphQL をはじめよう
 
+import JavadocLink from '/src/theme/JavadocLink.js';
 import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 <TranslationBanner />
@@ -184,9 +185,7 @@ query GetUser1 {
 
 ### GraphQL API と ScalarDB Java API 間のマッピング
 
-自動的に生成された GraphQL スキーマは、クエリ、ミューテーション、および入出力のオブジェクトタイプを定義し、ターゲット名前空間内のすべてのテーブルに対して CRUD 操作を実行できるようにします。
-
-これらの操作は、[`DistributedTransaction`](https://javadoc.io/doc/com.scalar-labs/scalardb/3.15.1/com/scalar/db/api/DistributedTransaction.html) インターフェースで定義されている ScalarDB API と一致するように設計されています。
+自動的に生成された GraphQL スキーマは、クエリ、ミューテーション、および入出力のオブジェクトタイプを定義し、ターゲット名前空間内のすべてのテーブルに対して CRUD 操作を実行できるようにします。これらの操作は、<JavadocLink packageName="scalardb" path="com/scalar/db/api" className="DistributedTransaction" /> インターフェースで定義されている ScalarDB API と一致するように設計されています。
 
 名前空間に `account` テーブルがあると仮定すると、次のクエリとミューテーションが生成されます。
 
