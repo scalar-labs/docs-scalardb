@@ -95,7 +95,7 @@ public class Item
 
 プロパティに使用する型の詳細については、[ScalarDB 列型と .NET 型間の変換方法](common-reference.mdx#scalardb-列型と-net-型間の変換方法) を参照してください。
 
-使用するすべてのテーブルのプロパティを持つコンテキストクラスを作成します。例:
+すべてのクラスが作成されたら、作成されたコンテキストを依存性注入コンテナに登録する必要があります。例:
 
 ```c#
     public class MyDbContext: ScalarDbContext
@@ -104,6 +104,12 @@ public class Item
         public ScalarDbSet<Item> Items { get; set; }
     }
 ```
+
+:::note
+
+コンテキストクラスは一時的なサービスとして登録されます。サービス有効期間の詳細については、[.NET の依存関係の挿入 - サービスの有効期間](https://learn.microsoft.com/ja-jp/dotnet/core/extensions/dependency-injection#service-lifetimes)を参照してください。
+
+:::
 
 すべてのクラスが作成されたら、作成されたコンテキストを依存性注入に追加する必要があります。例:
 
