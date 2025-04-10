@@ -135,6 +135,16 @@ const sidebars = {
               id: 'scalardb-cluster/getting-started-with-scalardb-cluster-dotnet',
               label: 'Use .NET',
             },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/getting-started-with-scalardb-cluster-sql-dotnet',
+              label: 'Use SQL via .NET',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/getting-started-with-scalardb-cluster-sql-linq',
+              label: 'Use SQL via .NET and LINQ',
+            },
           ],
         },
         {
