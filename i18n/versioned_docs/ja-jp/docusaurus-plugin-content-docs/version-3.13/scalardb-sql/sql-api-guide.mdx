@@ -6,6 +6,9 @@ displayed_sidebar: docsJapanese
 
 # ScalarDB SQL API ガイド
 
+import JavadocLink from '/src/theme/JavadocLink.js';
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
 このガイドでは、ScalarDB SQL API の使用方法について説明します。
 
 ## プロジェクトに ScalarDB SQL API を追加する
@@ -112,8 +115,7 @@ Statement statement = StatementBuilder.<factory method>...;
 ResultSet resultSet = sqlSession.execute(statement);
 ```
 
-`Statement` オブジェクトは、対応する SQL のファクトリメソッドを持つ `StatementBuilder` によって構築できます。
-詳細については、[`StatementBuilder` の Javadoc](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.13.2/com/scalar/db/sql/statement/builder/StatementBuilder.html) および [ScalarDB SQL 文法](grammar.mdx)を参照してください。
+`Statement` オブジェクトは、対応する SQL のファクトリメソッドを持つ `StatementBuilder` によって構築できます。詳細については、Javadoc の <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql/statement/builder" className="StatementBuilder" /> ページおよび [ScalarDB SQL 文法](grammar.mdx)を参照してください。
 
 ### ResultSet オブジェクトの処理
 
@@ -145,7 +147,7 @@ for (Record record : resultSet) {
 ColumnDefinitions columnDefinitions = resultSet.getColumnDefinitions();
 ```
 
-詳細については、[`ColumnDefinitions` の Javadoc](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.13.2/com/scalar/db/sql/ColumnDefinition.html) を参照してください。
+詳細については、Javadoc の <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="ColumnDefinition" /> ページを参照してください。
 
 ### Record オブジェクトの処理
 
@@ -195,7 +197,7 @@ boolean isNullGottenByName = record.isNull("<column name>");
 boolean isNullGottenByIndex = record.isNull(<column index>);
 ```
 
-詳細については、[`Record` の Javadoc](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.13.2/com/scalar/db/sql/Record.html) も参照してください。
+詳細については、Javadoc の <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="Record" /> ページを参照してください。
 
 ### 準備済みステートメント
 
@@ -240,7 +242,7 @@ preparedStatement2
     .execute();
 ```
 
-詳細については、[`PreparedStatement` の Javadoc](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.13.2/com/scalar/db/sql/PreparedStatement.html) も参照してください。
+詳細については、Javadoc の <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="PreparedStatement" /> ページを参照してください。
 
 ## トランザクションの実行
 
@@ -356,7 +358,7 @@ try {
 Metadata metadata = sqlSession.getMetadata();
 ```
 
-詳細については、[`Metadata` の Javadoc](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.13.2/com/scalar/db/sql/metadata/Metadata.html) を参照してください。
+詳細については、Javadoc の <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql/metadata" className="Metadata" /> ページを参照してください。
 
 ## 参考文献
 
