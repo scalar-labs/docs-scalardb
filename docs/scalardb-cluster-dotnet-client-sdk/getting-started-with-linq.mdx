@@ -101,7 +101,7 @@ Create a context class that has properties for all the tables you want to use. F
     }
 ```
 
-After all the classes are created, you need to add the created context to the Dependency Injection. For example:
+After all the classes are created, you need to register the created context in the dependency injection container. For example:
 
 ```c#
 using ScalarDB.Client.Extensions;
@@ -114,6 +114,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScalarDbContext<MyDbContext>();
 ```
+
+:::note
+
+The context class will be registered as a transient service. For details about service lifetimes, see [.NET dependency injection - Service lifetimes](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection#service-lifetimes).
+
+:::
 
 The context can be injected into the controller's constructor as follows:
 
