@@ -6,6 +6,8 @@ displayed_sidebar: docsEnglish
 
 # ScalarDB SQL API Guide
 
+import JavadocLink from '/src/theme/JavadocLink.js';
+
 This guide describes how to use ScalarDB SQL API.
 
 ## Add ScalarDB SQL API to your project
@@ -110,8 +112,7 @@ Statement statement = StatementBuilder.<factory method>...;
 ResultSet resultSet = sqlSession.execute(statement);
 ```
 
-`Statement` objects can be built by `StatementBuilder` that has factory methods for corresponding SQLs.
-Please see [the Javadoc of `StatementBuilder`](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.13.2/com/scalar/db/sql/statement/builder/StatementBuilder.html) and [ScalarDB SQL Grammar](grammar.mdx) for more details.
+`Statement` objects can be built by `StatementBuilder` that has factory methods for corresponding SQLs. For more details, see the <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql/statement/builder" className="StatementBuilder" /> page in the Javadoc and [ScalarDB SQL Grammar](grammar.mdx).
 
 ### Handle ResultSet objects
 
@@ -142,7 +143,7 @@ If you want to get the metadata of the `ResultSet` object, you can use the `getC
 ColumnDefinitions columnDefinitions = resultSet.getColumnDefinitions();
 ```
 
-Please see [the Javadoc of `ColumnDefinitions`](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.13.2/com/scalar/db/sql/ColumnDefinition.html) for more details.
+For more details, see the <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="ColumnDefinition" /> page in the Javadoc.
 
 ### Handle Record objects
 
@@ -192,7 +193,7 @@ boolean isNullGottenByName = record.isNull("<column name>");
 boolean isNullGottenByIndex = record.isNull(<column index>);
 ```
 
-Please see also [the Javadoc of `Record`](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.13.2/com/scalar/db/sql/Record.html) for more details.
+For more details, see the <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="Record" /> page of the Javadoc.
 
 ### Prepared Statements
 
@@ -237,7 +238,7 @@ preparedStatement2
     .execute();
 ```
 
-Please see also [the Javadoc of `PreparedStatement`](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.13.2/com/scalar/db/sql/PreparedStatement.html) for more details.
+For more details, see the <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="PreparedStatement" /> page of the Javadoc.
 
 ## Execute transactions
 
@@ -351,7 +352,7 @@ You can get metadata with the `SqlSession.getMetadata()` method as follows:
 Metadata metadata = sqlSession.getMetadata();
 ```
 
-Please see [the Javadoc of `Metadata`](https://javadoc.io/static/com.scalar-labs/scalardb-sql/3.13.2/com/scalar/db/sql/metadata/Metadata.html) for the details.
+For more details, see the <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql/metadata" className="Metadata" /> page of the Javadoc.
 
 ## References
 
