@@ -11,7 +11,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 <TranslationBanner />
 
-ScalarDB Cluster .NET Client SDK は、ASP.NET Core などのフレームワークでの依存性注入をサポートしています。
+ScalarDB Cluster .NET Client SDK は、ASP.NET Core などのフレームワークでの依存性注入 (DI) をサポートしています。
 
 ## SDK をインストールする
 
@@ -38,7 +38,7 @@ ASP.NET Core アプリの `appsettings.json` ファイルに `ScalarDbOptions` �
 
 ## トランザクションマネージャーをセットアップする
 
-次のように、ScalarDB トランザクションマネージャーを `IServiceCollection` のサービスとして登録できます。
+次のようにして、DI コンテナーに ScalarDB トランザクションマネージャーを登録できます。
 
 ```c#
 using ScalarDB.Client.Extensions;
@@ -51,6 +51,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScalarDb();
 ```
+
+:::note
+
+ScalarDB トランザクションマネージャーは、一時的なサービスとして登録されます。サービス有効期間の詳細については、 [.NET の依存関係の挿入 - サービスの有効期間](https://learn.microsoft.com/ja-jp/dotnet/core/extensions/dependency-injection#service-lifetimes)を参照してください。
+
+:::
 
 トランザクションマネージャーを登録したら、次のようにコントローラーのコンストラクターに挿入できます。
 
