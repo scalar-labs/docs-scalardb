@@ -7,7 +7,7 @@ displayed_sidebar: docsEnglish
 
 # Getting Started with ASP.NET Core and Dependency Injection in the ScalarDB Cluster .NET Client SDK
 
-The ScalarDB Cluster .NET Client SDK supports Dependency Injection in frameworks like ASP.NET Core.
+The ScalarDB Cluster .NET Client SDK supports dependency injection (DI) in frameworks like ASP.NET Core.
 
 ## Install the SDK
 
@@ -34,7 +34,7 @@ For details about settings files and other ways to configure the client, see [Cl
 
 ## Set up the transaction managers
 
-You can register the ScalarDB transaction managers as services in `IServiceCollection` as follows:
+You can register the ScalarDB transaction managers in the DI container as follows:
 
 ```c#
 using ScalarDB.Client.Extensions;
@@ -47,6 +47,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddScalarDb();
 ```
+
+:::note
+
+The ScalarDB transaction managers will be registered as transient services. For details about service lifetimes, see [.NET dependency injection - Service lifetimes](https://learn.microsoft.com/en-us/dotnet/core/extensions/dependency-injection#service-lifetimes).
+
+:::
 
 After registering the transaction managers, they can be injected into the controller's constructor as follows:
 
