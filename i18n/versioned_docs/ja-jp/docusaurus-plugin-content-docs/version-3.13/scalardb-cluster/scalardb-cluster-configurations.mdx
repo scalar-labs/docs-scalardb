@@ -5,7 +5,7 @@ tags:
 displayed_sidebar: docsJapanese
 ---
 
-# ScalarDB Cluster の構成
+# ScalarDB Cluster の設定
 
 import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 import Tabs from '@theme/Tabs';
@@ -13,31 +13,31 @@ import TabItem from '@theme/TabItem';
 
 <TranslationBanner />
 
-このドキュメントでは、ScalarDB Cluster の構成について説明します。ScalarDB Cluster は複数のクラスターノードで構成されており、各クラスターノードを構成する必要があります。
+このドキュメントでは、ScalarDB Cluster の設定について説明します。ScalarDB Cluster は複数のクラスターノードで構成されており、各クラスターノードを設定する必要があります。
 
-## 基本構成
+## 基本設定
 
-クラスターノードの基本構成は次のとおりです。
+クラスターノードの基本設定は次のとおりです。
 
 | 名前                                                              | 説明                                                                                                                                                                                                    | デフォルト                |
 |-------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------|
 | `scalar.db.cluster.membership.type`                               | メンバーシップの種類。現在、`KUBERNETES` のみ指定できます。                                                                                                                                                | `KUBERNETES`           |
-| `scalar.db.cluster.membership.kubernetes.endpoint.namespace_name` | この構成は、`KUBERNETES` メンバーシップタイプ用です。[endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) の名前空間名。                            | `default`              |
-| `scalar.db.cluster.membership.kubernetes.endpoint.name`           | この構成は、`KUBERNETES` メンバーシップタイプ用です。メンバーシップ情報を取得するための [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) の名前。            |                        |
+| `scalar.db.cluster.membership.kubernetes.endpoint.namespace_name` | この設定は、`KUBERNETES` メンバーシップタイプ用です。[endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) の名前空間名。                            | `default`              |
+| `scalar.db.cluster.membership.kubernetes.endpoint.name`           | この設定は、`KUBERNETES` メンバーシップタイプ用です。メンバーシップ情報を取得するための [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) の名前。            |                        |
 | `scalar.db.cluster.node.decommissioning_duration_secs`            | 廃止期間（秒単位）。                                                                                                                                                                           | `30`                   |
 | `scalar.db.cluster.node.grpc.max_inbound_message_size`            | 受信可能な最大メッセージサイズ。                                                                                                                                                                   | gRPC のデフォルト値 |
 | `scalar.db.cluster.node.grpc.max_inbound_metadata_size`           | 受信できるメタデータの最大サイズ。                                                                                                                                                               | gRPC のデフォルト値 |
 | `scalar.db.cluster.node.port`                                     | ScalarDB Cluster ノードのポート番号。                                                                                                                                                                      | `60053`                |
 | `scalar.db.cluster.node.prometheus_exporter_port`                 | Prometheus エクスポーターのポート番号。                                                                                                                                                                        | `9080`                 |
 | `scalar.db.cluster.grpc.deadline_duration_millis`                 | gRPC の期限期間（ミリ秒単位）。                                                                                                                                                                    | `60000` (60秒)   |
-| `scalar.db.cluster.node.standalone_mode.enabled`                  | スタンドアロンモードが有効かどうか。スタンドアロンモードが有効になっている場合、メンバーシップ構成 (`scalar.db.cluster.membership.*`) は無視されることに注意してください。                                                 | `false`                |
+| `scalar.db.cluster.node.standalone_mode.enabled`                  | スタンドアロンモードが有効かどうか。スタンドアロンモードが有効になっている場合、メンバーシップ設定 (`scalar.db.cluster.membership.*`) は無視されることに注意してください。                                                 | `false`                |
 | `scalar.db.metadata.cache_expiration_time_secs`                   | ScalarDB には、データベースへのリクエスト数を減らすためのメタデータキャッシュがあります。この設定では、キャッシュの有効期限を秒単位で指定します。                                                            | `-1` (有効期限なし)   |
-| `scalar.db.active_transaction_management.expiration_time_millis`  | ScalarDB Cluster ノードは進行中のトランザクションを維持し、トランザクション ID を使用して再開できます。この構成では、このトランザクション管理機能の有効期限をミリ秒単位で指定します。 | `60000` (60秒)   |
+| `scalar.db.active_transaction_management.expiration_time_millis`  | ScalarDB Cluster ノードは進行中のトランザクションを維持し、トランザクション ID を使用して再開できます。この設定では、このトランザクション管理機能の有効期限をミリ秒単位で指定します。 | `60000` (60秒)   |
 | `scalar.db.system_namespace_name`                                 | 指定された名前空間名は ScalarDB によって内部的に使用されます。                                                                                                                                                  | `scalardb`             |
 
-## トランザクションマネージャーの構成
+## トランザクションマネージャーの設定
 
-このセクションでは、トランザクションマネージャーの構成について説明します。ScalarDB は、Consensus Commit を使用してトランザクションを実行する方法と、非トランザクションストレージ操作を実行する方法を提供します。
+このセクションでは、トランザクションマネージャーの設定について説明します。ScalarDB は、Consensus Commit を使用してトランザクションを実行する方法と、非トランザクションストレージ操作を実行する方法を提供します。
 
 ### Consensus Commit を使用してトランザクションを実行する
 
@@ -61,13 +61,13 @@ Consensus Commit トランザクションマネージャーでは、次の基本
 |-------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
 | `scalar.db.transaction_manager`                       | `consensus-commit` を指定する必要があります。                                                                                                                                                                                                                                                                                                                                                                      | -             |
 | `scalar.db.consensus_commit.isolation_level`          | Consensus Commit に使用される分離レベル。`SNAPSHOT` または `SERIALIZABLE` のいずれかを指定できます。                                                                                                                                                                                                                                                                                                             | `SNAPSHOT`    |
-| `scalar.db.consensus_commit.serializable_strategy`    | Consensus Commit に使用されるシリアル化可能な戦略。`EXTRA_READ` または `EXTRA_WRITE` のいずれかを指定できます。`scalar.db.consensus_commit.isolation_level` プロパティで `SNAPSHOT` が指定されている場合、この構成は無視されます。                                                                                                                                                                         | `EXTRA_READ`  |
+| `scalar.db.consensus_commit.serializable_strategy`    | Consensus Commit に使用されるシリアル化可能な戦略。`EXTRA_READ` または `EXTRA_WRITE` のいずれかを指定できます。`scalar.db.consensus_commit.isolation_level` プロパティで `SNAPSHOT` が指定されている場合、この設定は無視されます。                                                                                                                                                                         | `EXTRA_READ`  |
 | `scalar.db.consensus_commit.coordinator.namespace`    | Coordinator テーブルの名前空間名。                                                                                                                                                                                                                                                                                                                                                                        | `coordinator` |
-| `scalar.db.consensus_commit.include_metadata.enabled` | `true` に設定すると、`Get` および `Scan` 操作の結果にトランザクションメタデータが含まれます。特定のテーブルのトランザクションメタデータ列の詳細を表示するには、`DistributedTransactionAdmin.getTableMetadata()` メソッドを使用します。このメソッドは、トランザクションメタデータ列が追加されたテーブルメタデータを返します。この構成を使用すると、トランザクション関連の問題を調査するのに役立ちます。 | `false`       |
+| `scalar.db.consensus_commit.include_metadata.enabled` | `true` に設定すると、`Get` および `Scan` 操作の結果にトランザクションメタデータが含まれます。特定のテーブルのトランザクションメタデータ列の詳細を表示するには、`DistributedTransactionAdmin.getTableMetadata()` メソッドを使用します。このメソッドは、トランザクションメタデータ列が追加されたテーブルメタデータを返します。この設定を使用すると、トランザクション関連の問題を調査するのに役立ちます。 | `false`       |
 
-#### パフォーマンス関連の構成
+#### パフォーマンス関連の設定
 
-Consensus Commit トランザクションマネージャーでは、次のパフォーマンス関連の構成が利用できます。
+Consensus Commit トランザクションマネージャーでは、次のパフォーマンス関連の設定が利用できます。
 
 | 名前                                                              | 説明                                                                                                                                                                                                    | デフォルト                |
 |----------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------|
@@ -87,15 +87,15 @@ Consensus Commit トランザクションマネージャーでは、次のパフ
 | `scalar.db.consensus_commit.coordinator.group_commit.timeout_check_interval_millis`    | グループコミット関連のタイムアウトをチェックする間隔。                                                                                                                                                                                                                                  | `20`                                                              |
 | `scalar.db.consensus_commit.coordinator.group_commit.metrics_monitor_log_enabled`      | グループコミットのメトリックが定期的にログに記録されるかどうか。                                                                                                                                                                                                                   | `false`                                                           |
 
-#### 基盤となるストレージまたはデータベースの構成
+#### 基盤となるストレージまたはデータベースの設定
 
 Consensus Commit にはストレージ抽象化レイヤーがあり、複数の基盤となるストレージをサポートしています。`scalar.db.storage` プロパティを使用してストレージ実装を指定できます。
 
-データベースを選択して、各ストレージで使用可能な構成を確認します。
+データベースを選択して、各ストレージで使用可能な設定を確認します。
 
 <Tabs groupId="databases" queryString>
   <TabItem value="JDBC_databases" label="JDBC databases" default>
-    JDBC データベースでは次の構成を使用できます。
+    JDBC データベースでは次の設定を使用できます。
 
     | 名前                                                      | 説明                                                                                                                                                                  | デフォルト                      |
     |-----------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------|
@@ -129,7 +129,7 @@ scalar.db.contact_points=jdbc:sqlite:<SQLITE_DB_FILE_PATH>?busy_timeout=10000
 :::
 </TabItem>
 <TabItem value="DynamoDB" label="DynamoDB">
-DynamoDB では次の構成が利用可能です。
+DynamoDB では次の設定が利用可能です。
 
     | 名前                                  | 説明                                                                                                                                                                                                                                                 | デフォルト    |
     |---------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|
@@ -141,7 +141,7 @@ DynamoDB では次の構成が利用可能です。
     | `scalar.db.dynamo.namespace.prefix`   | ユーザー名前空間とメタデータ名前空間名のプレフィックス。AWS では単一の AWS リージョン内で一意のテーブル名を持つ必要があるため、単一の AWS リージョン内で複数の ScalarDB 環境 (開発、本番など) を使用する場合に便利です。 |            |
   </TabItem>
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
-    CosmosDB for NoSQL では次の構成が利用可能です。
+    CosmosDB for NoSQL では次の設定が利用可能です。
 
     | 名前                                 | 説明                                                                                              | デフォルト  |
     |--------------------------------------|----------------------------------------------------------------------------------------------------------|----------|
@@ -151,7 +151,7 @@ DynamoDB では次の構成が利用可能です。
     | `scalar.db.cosmos.consistency_level` | Cosmos DB 操作に使用される一貫性レベル。`STRONG` または `BOUNDED_STALENESS` を指定できます。       | `STRONG` |
   </TabItem>
   <TabItem value="Cassandra" label="Cassandra">
-    Cassandra では次の構成が利用可能です。
+    Cassandra では次の設定が利用可能です。
 
     | 名前                                    | 説明                                                           | デフォルト    |
     |-----------------------------------------|-----------------------------------------------------------------------|------------|
@@ -169,7 +169,7 @@ ScalarDB は、複数のストレージ実装を同時に使用することを�
 
 複数のストレージの使用の詳細については、[マルチストレージトランザクション](../multi-storage-transactions.mdx)を参照してください。
 
-##### パーティション間スキャン構成
+##### パーティション間スキャン設定
 
 以下で説明するようにパーティション間スキャンオプションを有効にすると、`Scan` 操作でパーティション全体のすべてのレコードを取得できます。さらに、`cross_partition_scan.filtering` と `cross_partition_scan.ordering` をそれぞれ有効にすることで、パーティション間 `Scan` 操作で任意の条件と順序を指定できます。現在、順序付けオプション付きのパーティション間スキャンは、JDBC データベースでのみ使用できます。フィルタリングと順序付けを有効にするには、`scalar.db.cross_partition_scan.enabled` を `true` に設定する必要があります。
 
@@ -195,11 +195,11 @@ ScalarDB は、複数のストレージ実装を同時に使用することを�
 scalar.db.transaction_manager=single-crud-operation
 ```
 
-また、[基盤となるストレージまたはデータベースの構成](#基盤となるストレージまたはデータベースの構成)の説明に従って、基盤となるストレージまたはデータベースを構成する必要があります。
+また、[基盤となるストレージまたはデータベースの設定](#基盤となるストレージまたはデータベースの設定)の説明に従って、基盤となるストレージまたはデータベースを設定する必要があります。
 
-## ScalarDB Cluster GraphQL 構成
+## ScalarDB Cluster GraphQL 設定
 
-ScalarDB Cluster GraphQL の構成は次のとおりです。
+ScalarDB Cluster GraphQL の設定は次のとおりです。
 
 | 名前                                                | 説明                                                                                                                                                                                              | デフォルト              |
 |-----------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------|
@@ -216,7 +216,7 @@ GraphQL スキーマはサーバーの起動時に静的に構築されるため
 
 #### 定期的なチェックを実行する
 
-サーバーは、ScalarDB スキーマに変更が発生したかどうかを定期的にチェックし、必要に応じて対応する GraphQL スキーマを再構築します。デフォルトでは、チェックは30秒ごとに行われますが、間隔は `scalar.db.graphql.schema_checking_interval_millis` プロパティを使用して構成できます。
+サーバーは、ScalarDB スキーマに変更が発生したかどうかを定期的にチェックし、必要に応じて対応する GraphQL スキーマを再構築します。デフォルトでは、チェックは30秒ごとに行われますが、間隔は `scalar.db.graphql.schema_checking_interval_millis` プロパティを使用して設定できます。
 
 定期的なチェックを実行する必要がない場合は、プロパティ値を `-1` に設定して無効にすることができます。
 
@@ -230,9 +230,9 @@ GraphQL スキーマはサーバーの起動時に静的に構築されるため
 curl -X POST http://localhost:8080/graphql/update-graphql-schema
 ```
 
-## ScalarDB Cluster SQL 構成
+## ScalarDB Cluster SQL 設定
 
-ScalarDB Cluster SQL の構成は次のとおりです。
+ScalarDB Cluster SQL の設定は次のとおりです。
 
 | 名前                                     | 説明                                                                                              | デフォルト       |
 |------------------------------------------|----------------------------------------------------------------------------------------------------------|---------------|
