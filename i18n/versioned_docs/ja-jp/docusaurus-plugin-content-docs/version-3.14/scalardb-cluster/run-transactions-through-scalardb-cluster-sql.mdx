@@ -12,7 +12,7 @@ import TabItem from '@theme/TabItem';
 
 <TranslationBanner />
 
-このガイドでは、ScalarDB プロパティファイルを構成する方法と、ScalarDB Cluster SQL を使用して1フェーズまたは2フェーズのコミットインターフェイスを介してトランザクションを実行するためのスキーマを作成する方法について説明します。
+このガイドでは、ScalarDB プロパティファイルを設定する方法と、ScalarDB Cluster SQL を使用して1フェーズまたは2フェーズのコミットインターフェイスを介してトランザクションを実行するためのスキーマを作成する方法について説明します。
 
 :::warning
 
@@ -62,9 +62,9 @@ ScalarDB がサポートするデータベースの一覧については、[デ�
     docker compose up -d mysql
     ```
 
-    <h3>ScalarDB Cluster を構成する</h3>
+    <h3>ScalarDB Cluster を設定する</h3>
 
-    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース構成が含まれています。**scalardb-cluster-node.properties** ファイル内の MySQL のプロパティのコメントを解除して、構成が次のようになるようにしてください。
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース設定が含まれています。**scalardb-cluster-node.properties** ファイル内の MySQL のプロパティのコメントを解除して、設定が次のようになるようにしてください。
 
     ```properties
     # For MySQL
@@ -85,9 +85,9 @@ ScalarDB がサポートするデータベースの一覧については、[デ�
     docker compose up -d postgres
     ```
 
-    <h3>ScalarDB Cluster を構成する</h3>
+    <h3>ScalarDB Cluster を設定する</h3>
 
-    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース構成が含まれています。**scalardb-cluster-node.properties** ファイル内の PostgreSQL のプロパティのコメントを解除して、構成が次のようになるようにしてください。
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース設定が含まれています。**scalardb-cluster-node.properties** ファイル内の PostgreSQL のプロパティのコメントを解除して、設定が次のようになるようにしてください。
 
     ```properties
     # For PostgreSQL
@@ -108,9 +108,9 @@ ScalarDB がサポートするデータベースの一覧については、[デ�
     docker compose up -d oracle
     ```
 
-    <h3>ScalarDB Cluster を構成する</h3>
+    <h3>ScalarDB Cluster を設定する</h3>
 
-    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース構成が含まれています。**scalardb-cluster-node.properties** ファイル内の Oracle データベースのプロパティのコメントを解除して、構成が次のようになるようにしてください。
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース設定が含まれています。**scalardb-cluster-node.properties** ファイル内の Oracle データベースのプロパティのコメントを解除して、設定が次のようになるようにしてください。
 
     ```properties
     # For Oracle
@@ -131,9 +131,9 @@ ScalarDB がサポートするデータベースの一覧については、[デ�
     docker compose up -d sqlserver
     ```
 
-    <h3>ScalarDB Cluster を構成する</h3>
+    <h3>ScalarDB Cluster を設定する</h3>
 
-    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース構成が含まれています。**scalardb-cluster-node.properties** ファイル内の SQL Server のプロパティのコメントを解除して、構成が次のようになるようにしてください。
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース設定が含まれています。**scalardb-cluster-node.properties** ファイル内の SQL Server のプロパティのコメントを解除して、設定が次のようになるようにしてください。
 
     ```properties
     # For SQL Server
@@ -154,9 +154,9 @@ ScalarDB がサポートするデータベースの一覧については、[デ�
     docker compose up -d dynamodb
     ```
 
-    <h3>ScalarDB Cluster を構成する</h3>
+    <h3>ScalarDB Cluster を設定する</h3>
 
-    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース構成が含まれています。**scalardb-cluster-node.properties** ファイル内の Amazon DynamoDB Local のプロパティのコメントを解除して、構成が次のようになるようにしてください。
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース設定が含まれています。**scalardb-cluster-node.properties** ファイル内の Amazon DynamoDB Local のプロパティのコメントを解除して、設定が次のようになるようにしてください。
 
     ```properties
     # For DynamoDB Local
@@ -170,15 +170,15 @@ ScalarDB がサポートするデータベースの一覧については、[デ�
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     Azure Cosmos DB for NoSQL を使用するには、Azure アカウントが必要です。Azure アカウントがない場合は、[Azure Cosmos DB アカウントを作成する](https://learn.microsoft.com/ja-jp/azure/cosmos-db/nosql/quickstart-portal#create-account)にアクセスしてください。
 
-    <h3>Cosmos DB for NoSQL を構成する</h3>
+    <h3>Cosmos DB for NoSQL を設定する</h3>
 
     [既定の整合性レベルを構成する](https://learn.microsoft.com/ja-jp/azure/cosmos-db/nosql/how-to-manage-consistency#configure-the-default-consistency-level)の公式ドキュメントに従って、**既定の整合性レベル** を **強力** に設定します。
 
-    <h3>ScalarDB Cluster を構成する</h3>
+    <h3>ScalarDB Cluster を設定する</h3>
 
-    次の手順では、ローカル環境に JDK が適切にインストールおよび構成されており、Azure で Cosmos DB for NoSQL アカウントが適切に構成されていることを前提としています。
+    次の手順では、ローカル環境に JDK が適切にインストールおよび設定されており、Azure で Cosmos DB for NoSQL アカウントが適切に設定されていることを前提としています。
 
-    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース構成が含まれています。説明に従って、`scalar.db.contact_points` と `scalar.db.password` の値を必ず変更してください。
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース設定が含まれています。説明に従って、`scalar.db.contact_points` と `scalar.db.password` の値を必ず変更してください。
 
     ```properties
     # For Cosmos DB
@@ -204,9 +204,9 @@ Azure Cosmos DB アカウントの主キーまたはセカンダリキーを `sc
     docker compose up -d cassandra
     ```
 
-    <h3>ScalarDB Cluster を構成する</h3>
+    <h3>ScalarDB Cluster を設定する</h3>
 
-    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース構成が含まれています。**scalardb-cluster-node.properties** ファイル内の Cassandra のプロパティのコメントを解除して、構成が次のようになるようにしてください。
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース設定が含まれています。**scalardb-cluster-node.properties** ファイル内の Cassandra のプロパティのコメントを解除して、設定が次のようになるようにしてください。
 
     ```properties
     # For Cassandra
@@ -218,7 +218,7 @@ Azure Cosmos DB アカウントの主キーまたはセカンダリキーを `sc
   </TabItem>
 </Tabs>
 
-ScalarDB Cluster SQL の構成の包括的なリストについては、[ScalarDB Cluster SQL クライアント構成](developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-クライアント構成)を参照してください。
+ScalarDB Cluster SQL の設定の包括的なリストについては、[ScalarDB Cluster SQL クライアント設定](developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-クライアント設定)を参照してください。
 
 ## スタンドアロンモードで ScalarDB Cluster を設定する
 
