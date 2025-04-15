@@ -18,43 +18,20 @@ If you have a feature request or want to prioritize feature development, please 
 
 :::
 
-### CY2025 Q1
-
-#### New capabilities
-
-- **Vector store abstraction**
-    - Users will be able to store and search embeddings (vectors) in and from vector stores through a new vector store interface in ScalarDB. With this feature, users can simplify the process of realizing retrieval-augmented generation (RAG) with large language models (LLMs) by reading data from databases through the existing ScalarDB interface, creating embeddings from the data, and storing and searching the embeddings to and from a vector store through the new interface.
-
-#### Security
-
-- **Attributed-based access control (ABAC)**
-    - Users will be able to authorize accesses to the underlying databases in a finer-grained way. In addition to the current simple authorization where ScalarDB checks if a user is authorized to issue particular operations to a table, ScalarDB will check if a user can access particular records based on the attributes of the user and the records.
-
-#### Usability
-
-- **Addition of time-related data types**
-    - Users will be able to use time-related data types, which will make their existing applications easier to migrate.
-
-#### Cloud support
-
-- **Container offering in Azure Marketplace**
-    - Users will be able to deploy ScalarDB Cluster by using the Azure container offering, which enables users to use a pay-as-you-go subscription model.
-- **Google Cloud Platform (GCP) support**
-    - Users will be able to deploy ScalarDB Cluster in Google Kubernetes Engine (GKE) in GCP.
 
 ### CY2025 Q2
 
-#### New capabilities
-
-- **Native secondary index**
-    - Users will be able to define flexible secondary indexes. The existing secondary index is limited because it is implemented based on the common capabilities of the supported databases' secondary indexes. Therefore, for example, you cannot define a multi-column index. The new secondary index will be created at the ScalarDB layer so that you can create more flexible indexes, like a multi-column index.
 
 #### Support for additional databases
 
+- **IBM Db2**
+    - Users will be able to use IBM Db2 as an underlying database through ScalarDB Cluster.
+- **TiDB**
+    - Users will be able to use TiDB as an underlying database through ScalarDB Cluster.
 - **Databricks**
-    - Users will be able to use Databricks as an underlying database through ScalarDB Cluster.
+    - Users will be able to use Databricks as an underlying database through ScalarDB Cluster and ScalarDB Analytics.
 - **Snowflake**
-    - Users will be able to use Snowflake as an underlying database through ScalarDB Cluster.
+    - Users will be able to use Snowflake as an underlying database through ScalarDB Cluster and ScalarDB Analytics.
 
 #### Usability
 
@@ -67,10 +44,32 @@ If you have a feature request or want to prioritize feature development, please 
 
 #### Performance
 
+- **Addition of read-committed isolation**
+    - Users will be able to run transactions with a read-committed isolation to achieve better performance for applications that do not require strong correctness.
+- **One-phase commit optimization for a single relational database**
+    - Users will be able to run a transaction more efficiently by using one-phase commit if the operations of the transaction are all applied to a single database or a single partition.
+- **Optimization for multiple write operations per database**
+    - Users will be able to run transactions more efficiently with a batch preparation and commitment if there are multiple write operations for a database.
+- **Optimization for read-only transactions**
+    - Users will be able to run transactions more efficiently by avoiding coordinator writes when committing transactions.
 - **Removal of WAL-interpreted views in ScalarDB Analytics**
     - Users will be able to read committed data by using ScalarDB Core instead of WAL-interpreted views, which will increase query performance.
 
+#### Cloud support
+
+- **Container offering in Azure Marketplace for ScalarDB Cluster**
+    - Users will be able to deploy ScalarDB Cluster by using the Azure container offering, which enables users to use a pay-as-you-go subscription model.
+- **Google Cloud Platform (GCP) support for ScalarDB Cluster**
+    - Users will be able to deploy ScalarDB Cluster in Google Kubernetes Engine (GKE) in GCP.
+- **Container offering in Amazon Marketplace for ScalarDB Analytics**
+    - Users will be able to deploy ScalarDB Analytics by using the container offering, which enables users to use a pay-as-you-go subscription model.
+
 ### CY2025 Q3
+
+#### New capabilities
+
+- **Decoupled metadata management**
+    - Users will be able to start using ScalarDB Cluster without migrating or changing the schemas of existing applications by managing the transaction metadata of ScalarDB in a separate location.
 
 #### Usability
 
@@ -83,6 +82,11 @@ If you have a feature request or want to prioritize feature development, please 
 - **Enabling of read operations during a paused duration**
     - Users will be able to issue read operations even during a paused duration so that users can still read data while taking backups.
 
+#### Performance
+
+- **One-phase commit optimization**
+    - Users will experience faster execution for simple transactions that write to a single partition. ScalarDB will omit the prepare-record and commit-state phases without sacrificing correctness if a transaction updates only one partition by exploiting the single-partition linearizable operations of the underlying databases.
+
 #### Scalability and availability
 
 - **Semi-synchronous replication**
@@ -90,14 +94,26 @@ If you have a feature request or want to prioritize feature development, please 
 
 ### CY2025 Q4
 
+#### New capabilities
+
+- **Native secondary index**
+    - Users will be able to define flexible secondary indexes. The existing secondary index is limited because it is implemented based on the common capabilities of the supported databases' secondary indexes. Therefore, for example, you cannot define a multi-column index. The new secondary index will be created at the ScalarDB layer so that you can create more flexible indexes, like a multi-column index.
+- **Better catalog management**
+    - Users will be able to manage a data catalog across diverse databases in a unified manner.
+
+#### Support for additional databases (object storage)
+
+- **Azure Blob Storage**
+    - Users will be able to use Azure Blob Storage as an underlying database through ScalarDB Cluster.
+- **Amazon S3**
+    - Users will be able to use Amazon S3 as an underlying database through ScalarDB Cluster.
+- **Google Cloud Storage**
+    - Users will be able to use Google Cloud Storage as an underlying database through ScalarDB Cluster and ScalarDB Analytics.
+
 #### Performance
 
-- **One-phase commit optimization**
-    - Users will experience faster execution for simple transactions that write to a single partition. ScalarDB will omit the prepare-record and commit-state phases without sacrificing correctness if a transaction updates only one partition by exploiting the single-partition linearizable operations of the underlying databases.
 - **Reduction of storage space needed for managing ScalarDB metadata**
     - Users will likely use less storage space to run ScalarDB. ScalarDB will remove the before image of committed transactions after they are committed. However, whether or not those committed transactions will impact actual storage space depends on the underlying databases.
-- **Removal of coordinator writes for read-only transactions**
-    - Users will experience faster execution for read-only transactions by removing coordinator writes for those transactions.
 
 #### Cloud support
 
