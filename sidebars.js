@@ -1254,7 +1254,7 @@ const sidebars = {
             {
               type: 'doc',
               id: 'two-phase-commit-transactions',
-              label: '2 フェーズコミットトランザクション',
+              label: '2フェーズコミットトランザクション',
             },
             {
               type: 'doc',
@@ -1331,7 +1331,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalardb-graphql/how-to-run-two-phase-commit-transaction',
-                  label: '2 フェーズコミットトランザクション',
+                  label: '2フェーズコミットトランザクション',
                 },
               ],
             },
@@ -1395,7 +1395,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-two-phase-commit-transactions',
-                  label: '2 フェーズコミットトランザクション',
+                  label: '2フェーズコミットトランザクション',
                 },
                 {
                   type: 'doc',
