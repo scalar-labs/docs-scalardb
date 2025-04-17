@@ -397,6 +397,11 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'scalardb-cluster/index',
+              label: 'ScalarDB Cluster',
+            },
+            {
+              type: 'doc',
               id: 'scalardb-cluster/compatibility',
               label: 'ScalarDB Cluster Compatibility Matrix',
             },
@@ -469,6 +474,11 @@ const sidebars = {
               label: 'Analytics',
               collapsible: true,
               items: [
+                {
+                  type: 'doc',
+                  id: 'scalardb-analytics/README',
+                  label: 'Overview',
+                },
                 {
                   type: 'doc',
                   id: 'scalardb-analytics-postgresql/scalardb-fdw',
@@ -1059,6 +1069,11 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'scalardb-analytics/design',
+              label: 'ScalarDB Analytics の設計',
+            },
+            {
+              type: 'doc',
               id: 'scalardb-analytics-postgresql/installation',
               label: 'ScalarDB Analytics with PostgreSQL をローカルにインストール',
             },
@@ -1196,6 +1211,11 @@ const sidebars = {
           ],
         },
         {
+          type: 'doc',
+          id: 'scalardb-analytics/run-analytical-queries',
+          label: 'ScalarDB Analytics を通じた分析クエリの実行',
+        },
+        {
           type: 'category',
           label: 'サンプルアプリケーションを実行',
           collapsible: true,
@@ -1254,7 +1274,7 @@ const sidebars = {
             {
               type: 'doc',
               id: 'two-phase-commit-transactions',
-              label: '2 フェーズコミットトランザクション',
+              label: '2フェーズコミットトランザクション',
             },
             {
               type: 'doc',
@@ -1265,6 +1285,11 @@ const sidebars = {
               type: 'doc',
               id: 'schema-loader',
               label: 'Schema Loader',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/index',
+              label: 'ScalarDB Cluster',
             },
             {
               type: 'doc',
@@ -1331,7 +1356,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalardb-graphql/how-to-run-two-phase-commit-transaction',
-                  label: '2 フェーズコミットトランザクション',
+                  label: '2フェーズコミットトランザクション',
                 },
               ],
             },
@@ -1340,6 +1365,11 @@ const sidebars = {
               label: '分析',
               collapsible: true,
               items: [
+                {
+                  type: 'doc',
+                  id: 'scalardb-analytics/README',
+                  label: '概要',
+                },
                 {
                   type: 'doc',
                   id: 'scalardb-analytics-postgresql/scalardb-fdw',
@@ -1395,7 +1425,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-two-phase-commit-transactions',
-                  label: '2 フェーズコミットトランザクション',
+                  label: '2フェーズコミットトランザクション',
                 },
                 {
                   type: 'doc',
@@ -1436,6 +1466,11 @@ const sidebars = {
           type: 'doc',
           id: 'scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS',
           label: 'Amazon EKS に ScalarDB Cluster をデプロイ',
+        },
+        {
+          type: 'doc',
+          id: 'scalardb-analytics/deployment',
+          label: 'パブリッククラウド環境への ScalarDB Analytics のデプロイ',
         },
         {
           type: 'category',
