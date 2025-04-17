@@ -476,6 +476,11 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
+                  id: 'scalardb-analytics/README',
+                  label: 'Overview',
+                },
+                {
+                  type: 'doc',
                   id: 'scalardb-analytics-postgresql/scalardb-fdw',
                   label: 'ScalarDB FDW for PostgreSQL',
                 },
@@ -1064,6 +1069,11 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'scalardb-analytics/design',
+              label: 'ScalarDB Analytics の設計',
+            },
+            {
+              type: 'doc',
               id: 'scalardb-analytics-postgresql/installation',
               label: 'ScalarDB Analytics with PostgreSQL をローカルにインストール',
             },
@@ -1199,6 +1209,11 @@ const sidebars = {
               label: 'プリミティブ CRUD インターフェースを使用して実行',
             },
           ],
+        },
+        {
+          type: 'doc',
+          id: 'scalardb-analytics/run-analytical-queries',
+          label: 'ScalarDB Analytics を通じた分析クエリの実行',
         },
         {
           type: 'category',
@@ -1352,6 +1367,11 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
+                  id: 'scalardb-analytics/README',
+                  label: '概要',
+                },
+                {
+                  type: 'doc',
                   id: 'scalardb-analytics-postgresql/scalardb-fdw',
                   label: 'PostgreSQL 用 ScalarDB FDW',
                 },
@@ -1446,6 +1466,11 @@ const sidebars = {
           type: 'doc',
           id: 'scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS',
           label: 'Amazon EKS に ScalarDB Cluster をデプロイ',
+        },
+        {
+          type: 'doc',
+          id: 'scalardb-analytics/deployment',
+          label: 'パブリッククラウド環境への ScalarDB Analytics のデプロイ',
         },
         {
           type: 'category',
