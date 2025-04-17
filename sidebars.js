@@ -397,6 +397,11 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'scalardb-cluster/index',
+              label: 'ScalarDB Cluster',
+            },
+            {
+              type: 'doc',
               id: 'scalardb-cluster/compatibility',
               label: 'ScalarDB Cluster Compatibility Matrix',
             },
@@ -1265,6 +1270,11 @@ const sidebars = {
               type: 'doc',
               id: 'schema-loader',
               label: 'Schema Loader',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/index',
+              label: 'ScalarDB Cluster',
             },
             {
               type: 'doc',
