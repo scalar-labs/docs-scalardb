@@ -214,7 +214,7 @@ Select the embedding model that you want to use, and follow the instructions to 
 
 <Tabs groupId="embedding-model" queryString>
   <TabItem value="in-process" label="In-process" default>
-    The in-process embedding model is a local embedding model powered by <a href="https://onnxruntime.ai/docs/get-started/with-java.html">ONNX runtime</a> and is running in the ScalarDB Cluster process. This embedding model is useful for fast prototyping and simple use cases.
+    The in-process embedding model is a local embedding model powered by [ONNX runtime](https://onnxruntime.ai/docs/get-started/with-java.html) and is running in the ScalarDB Cluster process. This embedding model is useful for fast prototyping and simple use cases.
 
     To use the in-process embedding model, add the following property to the configuration file:
 
@@ -396,11 +396,11 @@ try (ScalarDbEmbeddingClientFactory scalarDbEmbeddingClientFactory =
   TextSegment segment1 = TextSegment.from("I like football.");
   Embedding embedding1 = scalarDbEmbeddingModel.embed(segment1).content();
         scalarDbEmbeddingStore.add(embedding1, segment1);
-  
+
   TextSegment segment2 = TextSegment.from("The weather is good today.");
   Embedding embedding2 = scalarDbEmbeddingModel.embed(segment2).content();
         scalarDbEmbeddingStore.add(embedding2, segment2);
-  
+
   // Search for embeddings.
   Embedding queryEmbedding =
       scalarDbEmbeddingModel.embed("What is your favourite sport?").content();
@@ -410,7 +410,7 @@ try (ScalarDbEmbeddingClientFactory scalarDbEmbeddingClientFactory =
               .queryEmbedding(queryEmbedding)
               .maxResults(1)
               .build());
-  
+
   // Print the search result.
   List<EmbeddingMatch<TextSegment>> matches = result.matches();
   EmbeddingMatch<TextSegment> embeddingMatch = matches.get(0);
