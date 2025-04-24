@@ -30,6 +30,27 @@ displayed_sidebar: docsJapanese
   - [DROP USER](#drop-user)
   - [GRANT](#grant)
   - [REVOKE](#revoke)
+  - [CREATE ABAC_POLICY](#create-abac_policy)
+  - [ENABLE ABAC_POLICY](#enable-abac_policy)
+  - [DISABLE ABAC_POLICY](#disable-abac_policy)
+  - [CREATE ABAC_LEVEL](#create-abac_level)
+  - [DROP ABAC_LEVEL](#drop-abac_level)
+  - [CREATE ABAC_COMPARTMENT](#create-abac_compartment)
+  - [DROP ABAC_COMPARTMENT](#drop-abac_compartment)
+  - [CREATE ABAC_GROUP](#create-abac_group)
+  - [DROP ABAC_GROUP](#drop-abac_group)
+  - [SET ABAC_LEVEL](#set-abac_level)
+  - [ADD ABAC_COMPARTMENT](#add-abac_compartment)
+  - [REMOVE ABAC_COMPARTMENT](#remove-abac_compartment)
+  - [ADD ABAC_GROUP](#add-abac_group)
+  - [REMOVE ABAC_GROUP](#remove-abac_group)
+  - [DROP ABAC_USER_TAG_INFO](#drop-abac_user_tag_info)
+  - [CREATE ABAC_NAMESPACE_POLICY](#create-abac_namespace_policy)
+  - [ENABLE ABAC_NAMESPACE_POLICY](#enable-abac_namespace_policy)
+  - [DISABLE ABAC_NAMESPACE_POLICY](#disable-abac_namespace_policy)
+  - [CREATE ABAC_TABLE_POLICY](#create-abac_table_policy)
+  - [ENABLE ABAC_TABLE_POLICY](#enable-abac_table_policy)
+  - [DISABLE ABAC_TABLE_POLICY](#disable-abac_table_policy)
 - Others
   - [USE](#use)
   - [BEGIN](#begin)
@@ -48,6 +69,19 @@ displayed_sidebar: docsJapanese
   - [RESUME](#resume)
   - [SHOW USERS](#show-users)
   - [SHOW GRANTS](#show-grants)
+  - [SHOW ABAC_POLICY](#show-abac_policy)
+  - [SHOW ABAC_POLICIES](#show-abac_policies)
+  - [SHOW ABAC_LEVEL](#show-abac_level)
+  - [SHOW ABAC_LEVELS](#show-abac_levels)
+  - [SHOW ABAC_COMPARTMENT](#show-abac_compartment)
+  - [SHOW ABAC_COMPARTMENTS](#show-abac_compartments)
+  - [SHOW ABAC_GROUP](#show-abac_group)
+  - [SHOW ABAC_GROUPS](#show-abac_groups)
+  - [SHOW ABAC_USER_TAG_INFO](#show-abac_user_tag_info)
+  - [SHOW ABAC_NAMESPACE_POLICY](#show-abac_namespace_policy)
+  - [SHOW ABAC_NAMESPACE_POLICIES](#show-abac_namespace_policies)
+  - [SHOW ABAC_TABLE_POLICY](#show-abac_table_policy)
+  - [SHOW ABAC_TABLE_POLICIES](#show-abac_table_policies)
 - リテラル 
   - [テキスト](#テキスト)
   - [数字](#数値)
@@ -606,7 +640,7 @@ SELECT projection [, projection] ...
   [WHERE and_predicates [OR and_predicates ...] | or_predicates [AND or_predicates ...]]
   [ORDER BY identifier [order] [, identifier [order]] ...]
   [LIMIT <limit>]
-  [WITH operation_attributes]
+  [WITH operation_attributes_or_abac_read_tags]
 
 projection: * | identifier [AS <alias>]
 join_specification: [INNER] JOIN [<namespace name>.]<table name> [AS <alias>] ON join_predicate [AND join_predicate] ... | {LEFT|RIGHT} [OUTER] JOIN [<namespace name>.]<table name> [AS <alias>] ON join_predicate [AND join_predicate] ...
@@ -617,7 +651,10 @@ predicate: identifier operator <literal> | identifier BETWEEN <literal> AND <lit
 identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
 operator: = | <> | != | > | >= | < | <=
 order: ASC | DESC
-operation_attributes: <operation attribute name>=<operation attribute value> [AND <operation attribute name>=<operation attribute value>] ...
+operation_attributes_or_abac_read_tags: operation_attribute_or_abac_read_tag [AND operation_attribute_or_abac_read_tag] ...
+operation_attribute_or_abac_read_tag: operation_attribute | abac_read_tag
+operation_attribute: <operation attribute name>=<operation attribute value>
+abac_read_tag: ABAC_READ_TAG <abac read tag> FOR [POLICY] <abac policy name>
 ```
 
 ##### 注記
@@ -709,6 +746,15 @@ SELECT c1, c2, c3, c4 FROM ns.tbl WHERE c4 = 100 LIMIT 10;
 
 -- With positional bind markers
 SELECT * FROM ns.tbl WHERE c1 = ? AND c2 > ? AND c2 <= ? ORDER BY c2 ASC, c3 DESC LIMIT ?;
+
+-- With operations attributes
+SELECT * FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
+
+-- With an ABAC read tag
+SELECT * FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH ABAC_READ_TAG 'read_tag1' FOR POLICY policy1;
+
+-- With operations attributes and an ABAC read tag
+SELECT * FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2' AND ABAC_READ_TAG 'read_tag1' FOR POLICY policy1;
 ```
 
 `SELECT` のステートメントオブジェクトを構築する例は次のとおりです。
@@ -811,6 +857,39 @@ SelectStatement statement7 =
         .and(Predicate.column("c2").isLessThanOrEqualTo(BindMarker.positional()))
         .orderBy(Ordering.column("c2").asc(), Ordering.column("c3").desc())
         .limit(BindMarker.positional())
+        .build();
+
+// With operations attributes
+SelectStatement statement8 =
+    StatementBuilder.select()
+        .from("ns", "tbl")
+        .where(Predicate.column("c1").isEqualTo(Value.of(10)))
+        .and(Predicate.column("c2").isEqualTo(Value.of("aaa")))
+        .and(Predicate.column("c3").isEqualTo(Value.of(1.23F)))
+        .withAttribute("attribute1", "value1")
+        .withAttribute("attribute2", "value2")
+        .build();
+
+// With an ABAC read tag
+SelectStatement statement9 =
+    StatementBuilder.select()
+        .from("ns", "tbl")
+        .where(Predicate.column("c1").isEqualTo(Value.of(10)))
+        .and(Predicate.column("c2").isEqualTo(Value.of("aaa")))
+        .and(Predicate.column("c3").isEqualTo(Value.of(1.23F)))
+        .withAbacReadTag("read_tag1", "policy1")
+        .build();
+
+// With operations attributes and an ABAC read tag
+SelectStatement statement10 =
+    StatementBuilder.select()
+        .from("ns", "tbl")
+        .where(Predicate.column("c1").isEqualTo(Value.of(10)))
+        .and(Predicate.column("c2").isEqualTo(Value.of("aaa")))
+        .and(Predicate.column("c3").isEqualTo(Value.of(1.23F)))
+        .withAttribute("attribute1", "value1")
+        .withAttribute("attribute2", "value2")
+        .withAbacReadTag("read_tag1", "policy1")
         .build();
 ```
 
@@ -1089,9 +1168,13 @@ SelectStatement statement13 =
 ```sql
 INSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ...)]
   VALUES (<literal> [, <literal>] ...) [, (<literal> [, <literal>] ...)] ...
-  [WITH operation_attributes]
+  [WITH operation_attributes_or_abac_read_tags_or_abac_write_tags]
 
-operation_attributes: <operation attribute name>=<operation attribute value> [AND <operation attribute name>=<operation attribute value>] ...
+operation_attributes_or_abac_read_tags_or_abac_write_tags: operation_attribute_or_abac_read_tag_or_abac_write_tag [AND operation_attribute_or_abac_read_tag_or_abac_write_tag] ...
+operation_attribute_or_abac_read_tag_or_abac_write_tag: operation_attribute | abac_read_tag | abac_write_tag
+operation_attribute: <operation attribute name>=<operation attribute value>
+abac_read_tag: ABAC_READ_TAG <abac read tag> FOR [POLICY] <abac policy name>
+abac_write_tag: ABAC_WRITE_TAG <abac write tag> FOR [POLICY] <abac policy name>
 ```
 
 - `INSERT` では完全な主キーを指定する必要があります。
@@ -1186,21 +1269,42 @@ UPSERT INTO tbl VALUES (?, ?, ?, ?, ?);
 
 -- Upsert multiple records.
 UPSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100), (20, 'bbb', 4.56, 200);
+
+-- With operations attributes
+UPSERT INTO ns.tbl VALUES (10, 'aaa', 1.23, 100, true) WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
+
+-- With an ABAC read tag and an ABAC write tag
+UPSERT INTO ns.tbl VALUES (10, 'aaa', 1.23, 100, true) WITH ABAC_READ_TAG 'read_tag1' FOR POLICY policy1 AND ABAC_WRITE_TAG 'write_tag1' FOR POLICY policy1;
+
+-- With operations attributes and ABAC read and write tags
+UPSERT INTO ns.tbl VALUES (10, 'aaa', 1.23, 100, true) WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2' AND ABAC_READ_TAG 'read_tag1' FOR POLICY policy1 AND ABAC_WRITE_TAG 'write_tag1' FOR POLICY policy1;
 ```
 
 `UPSERT` のステートメントオブジェクトを構築する例は次のとおりです。
 
 ```java
 // Upsert a record without specifying column names.
-UpsertStatement statement1 = StatementBuilder.upsertInto("ns", "tbl")
-    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
-    .build();
+UpsertStatement statement1 =
+    StatementBuilder.upsertInto("ns", "tbl")
+        .values(
+            Value.ofInt(10),
+            Value.ofText("aaa"),
+            Value.of(1.23F),
+            Value.of(100L),
+            Value.of(true))
+        .build();
 
 // Upsert a record with column names.
-UpsertStatement statement2 = StatementBuilder.upsertInto("ns", "tbl")
-    .columns("c1", "c2", "c3", "c4", "c5")
-    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
-    .build();
+UpsertStatement statement2 =
+    StatementBuilder.upsertInto("ns", "tbl")
+        .columns("c1", "c2", "c3", "c4", "c5")
+        .values(
+            Value.ofInt(10),
+            Value.ofText("aaa"),
+            Value.of(1.23F),
+            Value.of(100L),
+            Value.of(true))
+        .build();
 
 // With positional bind markers
 UpsertStatement statement3 =
@@ -1215,11 +1319,63 @@ UpsertStatement statement3 =
         .build();
 
 // Upsert multiple records.
-UpsertStatement statement4 = StatementBuilder.upsertInto("ns", "tbl")
-    .columns("c1", "c2", "c3", "c4", "c5")
-    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
-    .values(Value.ofInt(20), Value.ofText("bbb"), Value.of(2.46F), Value.of(200L), Value.of(false))
-    .build();
+UpsertStatement statement4 =
+    StatementBuilder.upsertInto("ns", "tbl")
+        .columns("c1", "c2", "c3", "c4", "c5")
+        .values(
+            Value.ofInt(10),
+            Value.ofText("aaa"),
+            Value.of(1.23F),
+            Value.of(100L),
+            Value.of(true))
+        .values(
+            Value.ofInt(20),
+            Value.ofText("bbb"),
+            Value.of(2.46F),
+            Value.of(200L),
+            Value.of(false))
+        .build();
+
+// With operations attributes
+UpsertStatement statement5 =
+    StatementBuilder.upsertInto("ns", "tbl")
+        .values(
+            Value.ofInt(10),
+            Value.ofText("aaa"),
+            Value.of(1.23F),
+            Value.of(100L),
+            Value.of(true))
+        .withAttribute("attribute1", "value1")
+        .withAttribute("attribute2", "value2")
+        .build();
+
+// With an ABAC read tag and an ABAC write tag
+UpsertStatement statement6 =
+    StatementBuilder.upsertInto("ns", "tbl")
+        .values(
+            Value.ofInt(10),
+            Value.ofText("aaa"),
+            Value.of(1.23F),
+            Value.of(100L),
+            Value.of(true))
+        .withAbacReadTag("read_tag1", "policy1")
+        .withAbacWriteTag("write_tag1", "policy1")
+        .build();
+
+// With operations attributes and ABAC read and write tags
+UpsertStatement statement7 =
+    StatementBuilder.upsertInto("ns", "tbl")
+        .values(
+            Value.ofInt(10),
+            Value.ofText("aaa"),
+            Value.of(1.23F),
+            Value.of(100L),
+            Value.of(true))
+        .withAttribute("attribute1", "value1")
+        .withAttribute("attribute2", "value2")
+        .withAbacReadTag("read_tag1", "policy1")
+        .withAbacWriteTag("write_tag1", "policy1")
+        .build();
 ```
 
 ### UPDATE
@@ -1244,14 +1400,18 @@ UpsertStatement statement4 = StatementBuilder.upsertInto("ns", "tbl")
 UPDATE [<namespace name>.]<table name> [AS <alias>]
   SET <column identifier> = <literal> [, <column identifier> = <literal>] ...
   [WHERE and_predicates [OR and_predicates ...] | or_predicates [AND or_predicates ...]]
-  [WITH operation_attributes]
+  [WITH operation_attributes_or_abac_read_tags_or_abac_write_tags]
 
 identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
 and_predicates: predicate | (predicate [AND predicate ...])
 or_predicates: predicate | (predicate [OR predicate ...])
 predicate: <identifier> operator <literal> | <identifier> BETWEEN <literal> AND <literal> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
 operator: = | <> | != | > | >= | < | <=
-operation_attributes: <operation attribute name>=<operation attribute value> [AND <operation attribute name>=<operation attribute value>] ...
+operation_attributes_or_abac_read_tags_or_abac_write_tags: operation_attribute_or_abac_read_tag_or_abac_write_tag [AND operation_attribute_or_abac_read_tag_or_abac_write_tag] ...
+operation_attribute_or_abac_read_tag_or_abac_write_tag: operation_attribute | abac_read_tag | abac_write_tag
+operation_attribute: <operation attribute name>=<operation attribute value>
+abac_read_tag: ABAC_READ_TAG <abac read tag> FOR [POLICY] <abac policy name>
+abac_write_tag: ABAC_WRITE_TAG <abac write tag> FOR [POLICY] <abac policy name>
 ```
 
 ##### 注記
@@ -1295,6 +1455,15 @@ UPDATE ns.tbl SET c4 = 200, c5 = false WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.2
 
 -- With positional bind markers
 UPDATE ns.tbl SET c4 = ?, c5 = ? WHERE c1 = ? AND c2 = ? AND c3 = ?;
+
+-- With operations attributes
+UPDATE ns.tbl SET c4 = 200, c5 = false WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
+
+-- With an ABAC read tag and an ABAC write tag
+UPDATE ns.tbl SET c4 = 200, c5 = false WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH ABAC_READ_TAG 'read_tag1' FOR POLICY policy1 AND ABAC_WRITE_TAG 'write_tag1' FOR POLICY policy1;
+
+-- With operations attributes and ABAC read and write tags
+UPDATE ns.tbl SET c4 = 200, c5 = false WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2' AND ABAC_READ_TAG 'read_tag1' FOR POLICY policy1 AND ABAC_WRITE_TAG 'write_tag1' FOR POLICY policy1;
 ```
 
 `UPDATE` のステートメントオブジェクトを構築する例は次のとおりです。
@@ -1320,6 +1489,47 @@ UpdateStatement statement2 =
         .where(Predicate.column("c1").isEqualTo(BindMarker.positional()))
         .and(Predicate.column("c2").isEqualTo(BindMarker.positional()))
         .and(Predicate.column("c3").isEqualTo(BindMarker.positional()))
+        .build();
+
+// With operations attributes
+UpdateStatement statement3 =
+    StatementBuilder.update("ns", "tbl")
+        .set(
+            Assignment.column("c4").value(Value.of(200L)),
+            Assignment.column("c5").value(Value.of(false)))
+        .where(Predicate.column("c1").isEqualTo(Value.of(10)))
+        .and(Predicate.column("c2").isEqualTo(Value.of("aaa")))
+        .and(Predicate.column("c3").isEqualTo(Value.of(1.23F)))
+        .withAttribute("attribute1", "value1")
+        .withAttribute("attribute2", "value2")
+        .build();
+
+// With an ABAC read tag and an ABAC write tag
+UpdateStatement statement4 =
+    StatementBuilder.update("ns", "tbl")
+        .set(
+            Assignment.column("c4").value(Value.of(200L)),
+            Assignment.column("c5").value(Value.of(false)))
+        .where(Predicate.column("c1").isEqualTo(Value.of(10)))
+        .and(Predicate.column("c2").isEqualTo(Value.of("aaa")))
+        .and(Predicate.column("c3").isEqualTo(Value.of(1.23F)))
+        .withAbacReadTag("read_tag1", "policy1")
+        .withAbacWriteTag("write_tag1", "policy1")
+        .build();
+
+// With operations attributes and ABAC read and write tags
+UpdateStatement statement5 =
+    StatementBuilder.update("ns", "tbl")
+        .set(
+            Assignment.column("c4").value(Value.of(200L)),
+            Assignment.column("c5").value(Value.of(false)))
+        .where(Predicate.column("c1").isEqualTo(Value.of(10)))
+        .and(Predicate.column("c2").isEqualTo(Value.of("aaa")))
+        .and(Predicate.column("c3").isEqualTo(Value.of(1.23F)))
+        .withAttribute("attribute1", "value1")
+        .withAttribute("attribute2", "value2")
+        .withAbacReadTag("read_tag1", "policy1")
+        .withAbacWriteTag("write_tag1", "policy1")
         .build();
 ```
 
@@ -1473,14 +1683,18 @@ UpdateStatement statement9 =
 ```sql
 DELETE FROM [<namespace name>.]<table name> [AS <alias>]
   [WHERE and_predicates [OR and_predicates ...] | or_predicates [AND or_predicates ...]]
-  [WITH operation_attributes]
+  [WITH operation_attributes_or_abac_read_tags_or_abac_write_tags]
 
 identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
 and_predicates: predicate | (predicate [AND predicate ...])
 or_predicates: predicate | (predicate [OR predicate ...])
 predicate: <identifier> operator <literal> | <identifier> BETWEEN <literal> AND <literal> | <identifier> [NOT] LIKE <pattern> [ESCAPE <escape character>] | <identifier> IS [NOT] NULL
 operator: = | <> | != | > | >= | < | <=
-operation_attributes: <operation attribute name>=<operation attribute value> [AND <operation attribute name>=<operation attribute value>] ...
+operation_attributes_or_abac_read_tags_or_abac_write_tags: operation_attribute_or_abac_read_tag_or_abac_write_tag [AND operation_attribute_or_abac_read_tag_or_abac_write_tag] ...
+operation_attribute_or_abac_read_tag_or_abac_write_tag: operation_attribute | abac_read_tag | abac_write_tag
+operation_attribute: <operation attribute name>=<operation attribute value>
+abac_read_tag: ABAC_READ_TAG <abac read tag> FOR [POLICY] <abac policy name>
+abac_write_tag: ABAC_WRITE_TAG <abac write tag> FOR [POLICY] <abac policy name>
 ```
 
 ##### 注記
@@ -1524,6 +1738,15 @@ DELETE FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23;
 
 -- With positional bind markers
 DELETE FROM tbl WHERE c1 = ? AND c2 = ? AND c3 = ?;
+
+-- With operations attributes
+DELETE FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
+
+-- With an ABAC read tag and an ABAC write tag
+DELETE FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH ABAC_READ_TAG 'read_tag1' FOR POLICY policy1 AND ABAC_WRITE_TAG 'write_tag1' FOR POLICY policy1;
+
+-- With operations attributes and ABAC read and write tags
+DELETE FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2' AND ABAC_READ_TAG 'read_tag1' FOR POLICY policy1 AND ABAC_WRITE_TAG 'write_tag1' FOR POLICY policy1;
 ```
 
 `DELETE` のステートメントオブジェクトを構築する例は次のとおりです。
@@ -1543,6 +1766,38 @@ DeleteStatement statement2 =
         .where(Predicate.column("c1").isEqualTo(BindMarker.positional()))
         .and(Predicate.column("c2").isEqualTo(BindMarker.positional()))
         .and(Predicate.column("c3").isEqualTo(BindMarker.positional()))
+        .build();
+
+// With operations attributes
+DeleteStatement statement3 =
+    StatementBuilder.deleteFrom("ns", "tbl")
+        .where(Predicate.column("c1").isEqualTo(Value.of(10)))
+        .and(Predicate.column("c2").isEqualTo(Value.of("aaa")))
+        .and(Predicate.column("c3").isEqualTo(Value.of(1.23F)))
+        .withAttribute("attribute1", "value1")
+        .withAttribute("attribute2", "value2")
+        .build();
+
+// With an ABAC read tag and an ABAC write tag
+DeleteStatement statement4 =
+    StatementBuilder.deleteFrom("ns", "tbl")
+        .where(Predicate.column("c1").isEqualTo(Value.of(10)))
+        .and(Predicate.column("c2").isEqualTo(Value.of("aaa")))
+        .and(Predicate.column("c3").isEqualTo(Value.of(1.23F)))
+        .withAbacReadTag("read_tag1", "policy1")
+        .withAbacWriteTag("write_tag1", "policy1")
+        .build();
+
+// With operations attributes and ABAC read and write tags
+DeleteStatement statement5 =
+    StatementBuilder.deleteFrom("ns", "tbl")
+        .where(Predicate.column("c1").isEqualTo(Value.of(10)))
+        .and(Predicate.column("c2").isEqualTo(Value.of("aaa")))
+        .and(Predicate.column("c3").isEqualTo(Value.of(1.23F)))
+        .withAttribute("attribute1", "value1")
+        .withAttribute("attribute2", "value2")
+        .withAbacReadTag("read_tag1", "policy1")
+        .withAbacWriteTag("write_tag1", "policy1")
         .build();
 ```
 
@@ -1779,8 +2034,8 @@ DropUserStatement statement = StatementBuilder.dropUser("user1").build();
 #### 文法
 
 ```sql
-GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON [TABLE] <table name> [, <table name>] ... TO <username> [, <username>] ... [WITH GRANT OPTION]
-GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON NAMESPACE <namespace name> [, <namespace name>] ... TO <username> [, <username>] ... [WITH GRANT OPTION]
+GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON [TABLE] <table name> [, <table name>] ... TO [USER] <username> [, <username>] ... [WITH GRANT OPTION]
+GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON NAMESPACE <namespace name> [, <namespace name>] ... TO [USER] <username> [, <username>] ... [WITH GRANT OPTION]
 
 privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER
 ```
@@ -1852,10 +2107,10 @@ GrantStatement statement5 =
 #### 文法
 
 ```sql
-REVOKE {privilege [, privilege] ... | ALL [PRIVILEGES]} [, GRANT OPTION] ON [TABLE] <table name> [, <table name>] ... FROM <username> [, <username>] ...
-REVOKE GRANT OPTION ON [TABLE] <table name> [, <table name>] ... FROM <username> [, <username>] ...
-REVOKE {privilege [, privilege] ... | ALL [PRIVILEGES]} [, GRANT OPTION] ON NAMESPACE <namespace name> [, <namespace name>] ... FROM <username> [, <username>] ...
-REVOKE GRANT OPTION ON NAMESPACE <namespace name> [, <namespace name>] ... FROM <username> [, <username>] ...
+REVOKE {privilege [, privilege] ... | ALL [PRIVILEGES]} [, GRANT OPTION] ON [TABLE] <table name> [, <table name>] ... FROM [USER] <username> [, <username>] ...
+REVOKE GRANT OPTION ON [TABLE] <table name> [, <table name>] ... FROM [USER] <username> [, <username>] ...
+REVOKE {privilege [, privilege] ... | ALL [PRIVILEGES]} [, GRANT OPTION] ON NAMESPACE <namespace name> [, <namespace name>] ... FROM [USER] <username> [, <username>] ...
+REVOKE GRANT OPTION ON NAMESPACE <namespace name> [, <namespace name>] ... FROM [USER] <username> [, <username>] ...
 
 privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER
 ```
@@ -1915,6 +2170,715 @@ RevokeStatement statement5 =
         .onNamespace("ns")
         .fromUser("user1")
         .build();
+```
+
+### CREATE ABAC_POLICY
+
+`CREATE ABAC_POLICY` コマンドは、指定されたポリシー名とデータタグ列名を使用して新しい ABAC ポリシーを作成します。新しく追加されたポリシーはデフォルトで有効になります。
+
+#### 文法
+
+```sql
+CREATE ABAC_POLICY <POLICY_NAME> [WITH [DATA_TAG_COLUMN] <DATA_TAG_COLUMN_NAME>];
+```
+
+- データタグ列名を指定しない場合、デフォルトのデータタグ列名は `<POLICY_NAME>_data_tag` になります。
+
+#### 例
+
+`CREATE ABAC_POLICY` の例は次のとおりです。
+
+```sql
+-- Create an ABAC policy with the default data tag column name.
+CREATE ABAC_POLICY policy1;
+
+-- Create an ABAC policy with a custom data tag column name.
+CREATE ABAC_POLICY policy2 WITH DATA_TAG_COLUMN data_tag;
+```
+
+`CREATE ABAC_POLICY` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Create an ABAC policy with the default data tag column name.
+CreateAbacPolicyStatement statement1 = StatementBuilder.createAbacPolicy("policy1").build();
+
+// Create an ABAC policy with a custom data tag column name.
+CreateAbacPolicyStatement statement2 =
+    StatementBuilder.createAbacPolicy("policy1")
+        .withDataTagColumn("data_tag")
+        .build();
+```
+
+### ENABLE ABAC_POLICY
+
+`ENABLE ABAC_POLICY` コマンドは、指定された ABAC ポリシーを有効にします。
+
+#### 文法
+
+```sql
+ENABLE ABAC_POLICY <POLICY_NAME>;
+```
+
+#### 例
+
+`ENABLE ABAC_POLICY` の例は次のとおりです。
+
+```sql
+-- Enable an ABAC policy.
+ENABLE ABAC_POLICY policy1;
+```
+
+`ENABLE ABAC_POLICY` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Enable an ABAC policy.
+EnableAbacPolicyStatement statement = StatementBuilder.enableAbacPolicy("policy1").build();
+```
+
+### DISABLE ABAC_POLICY
+
+`DISABLE ABAC_POLICY` コマンドは、指定された ABAC ポリシーを無効にします。このコマンドは、指定されたポリシーに関連付けられたすべての名前空間およびテーブルの ABAC 機能を実質的に無効にします。
+
+#### 文法
+
+```sql
+DISABLE ABAC_POLICY <POLICY_NAME>;
+```
+
+#### 例
+
+`DISABLE ABAC_POLICY` の例は次のとおりです。
+
+```sql
+-- Disable an ABAC policy.
+DISABLE ABAC_POLICY policy1;
+```
+
+`DISABLE ABAC_POLICY` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Disable an ABAC policy.
+DisableAbacPolicyStatement statement = StatementBuilder.disableAbacPolicy("policy1").build();
+```
+
+### CREATE ABAC_LEVEL
+
+`CREATE ABAC_LEVEL` コマンドは、指定されたポリシー内で指定されたレベルの短縮名、長い名前、およびレベル番号を使用して新しい ABAC レベルを作成します。
+
+#### 文法
+
+```sql
+CREATE ABAC_LEVEL <LEVEL_SHORT_NAME> WITH [LONG_NAME] <LEVEL_LONG_NAME> AND [LEVEL_NUMBER] <LEVEL_NUMBER> IN [POLICY] <POLICY_NAME>;
+```
+
+#### 例
+
+`CREATE ABAC_LEVEL` の例は次のとおりです。
+
+```sql
+-- Create an ABAC level.
+CREATE ABAC_LEVEL l1 WITH LONG_NAME level1 AND LEVEL_NUMBER 10 IN POLICY policy1;
+```
+
+`CREATE ABAC_LEVEL` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Create an ABAC level.
+CreateAbacLevelStatement statement =
+    StatementBuilder.createAbacLevel("l1")
+        .withLongName("level1")
+        .andLevelNumber(10)
+        .inPolicy("policy1")
+        .build();
+```
+
+### DROP ABAC_LEVEL
+
+`DROP ABAC_LEVEL` コマンドは、指定されたポリシー内の指定された ABAC レベルを削除します。
+
+#### 文法
+
+```sql
+DROP ABAC_LEVEL <LEVEL_SHORT_NAME> IN [POLICY] <POLICY_NAME>;
+```
+
+#### 例
+
+`DROP ABAC_LEVEL` の例は次のとおりです。
+
+```sql
+-- Drop an ABAC level.
+DROP ABAC_LEVEL l1 IN POLICY policy1;
+```
+
+`DROP ABAC_LEVEL` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Drop an ABAC level.
+DropAbacLevelStatement statement =
+    StatementBuilder.dropAbacLevel("l1").inPolicy("policy1").build();
+```
+
+### CREATE ABAC_COMPARTMENT
+
+`CREATE ABAC_COMPARTMENT` コマンドは、指定されたポリシー内で指定されたコンパートメントの短縮名と長い名前を使用して新しい ABAC コンパートメントを作成します。
+
+#### 文法
+
+```sql
+CREATE ABAC_COMPARTMENT <COMPARTMENT_SHORT_NAME> WITH [LONG_NAME] <COMPARTMENT_LONG_NAME> IN [POLICY] <POLICY_NAME>;
+```
+
+#### 例
+
+`CREATE ABAC_COMPARTMENT` の例は次のとおりです。
+
+```sql
+-- Create an ABAC compartment.
+CREATE ABAC_COMPARTMENT c1 WITH LONG_NAME compartment1 IN POLICY policy1;
+```
+
+`CREATE ABAC_COMPARTMENT` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Create an ABAC compartment.
+CreateAbacCompartmentStatement statement =
+    StatementBuilder.createAbacCompartment("c1")
+        .withLongName("compartment1")
+        .inPolicy("policy1")
+        .build();
+```
+
+### DROP ABAC_COMPARTMENT
+
+`DROP ABAC_COMPARTMENT` コマンドは、指定されたポリシー内の指定された ABAC コンパートメントを削除します。
+
+#### 文法
+
+```sql
+DROP ABAC_COMPARTMENT <COMPARTMENT_SHORT_NAME> IN [POLICY] <POLICY_NAME>;
+```
+
+#### 例
+
+`DROP ABAC_COMPARTMENT` の例は次のとおりです。
+
+```sql
+-- Drop an ABAC compartment.
+DROP ABAC_COMPARTMENT c1 IN POLICY policy1;
+```
+
+`DROP ABAC_COMPARTMENT` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Drop an ABAC compartment.
+DropAbacCompartmentStatement statement =
+    StatementBuilder.dropAbacCompartment("c1").inPolicy("policy1").build();
+```
+
+### CREATE ABAC_GROUP
+
+`CREATE ABAC_GROUP` コマンドは、指定されたポリシー内で指定された短縮名、長い名前、およびオプションで親グループを使用して新しい ABAC グループを作成します。
+
+#### 文法
+
+```sql
+CREATE ABAC_GROUP <GROUP_SHORT_NAME> WITH [LONG_NAME] <GROUP_LONG_NAME> [AND [PARENT_GROUP] <PARENT_GROUP_SHORT_NAME>] IN [POLICY] <POLICY_NAME>;
+```
+
+#### 例
+
+`CREATE ABAC_GROUP` の例は次のとおりです。
+
+```sql
+-- Create an ABAC group with a parent group.
+CREATE ABAC_GROUP g1 WITH LONG_NAME group1 AND PARENT_GROUP g0 IN POLICY policy1;
+
+-- Create an ABAC group without a parent group.
+CREATE ABAC_GROUP g2 WITH LONG_NAME group2 IN POLICY policy1;
+```
+
+`CREATE ABAC_GROUP` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Create an ABAC group with a parent group.
+CreateAbacGroupStatement statement1 =
+    StatementBuilder.createAbacGroup("g1")
+        .withLongName("group1")
+        .andParentGroup("g0")
+        .inPolicy("policy1")
+        .build();
+
+// Create an ABAC group without a parent group.
+CreateAbacGroupStatement statement2 =
+    StatementBuilder.createAbacGroup("g2").withLongName("group2").inPolicy("policy1").build();
+```
+
+### DROP ABAC_GROUP
+
+`DROP ABAC_GROUP` コマンドは、指定されたポリシー内の指定された ABAC グループを削除します。
+
+#### 文法
+
+```sql
+DROP ABAC_GROUP <GROUP_SHORT_NAME> IN [POLICY] <POLICY_NAME>;
+```
+
+#### 例
+
+`DROP ABAC_GROUP` の例は次のとおりです。
+
+```sql
+-- Drop an ABAC group.
+DROP ABAC_GROUP g1 IN POLICY policy1;
+```
+
+`DROP ABAC_GROUP` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Drop an ABAC group.
+DropAbacGroupStatement statement =
+    StatementBuilder.dropAbacGroup("g1").inPolicy("policy1").build();
+```
+
+### SET ABAC_LEVEL
+
+`SET ABAC_LEVEL` コマンドは、指定されたポリシー内の指定されたユーザーに対して指定された ABAC レベルを設定します。
+
+#### 文法
+
+```sql
+SET ABAC_LEVEL <LEVEL_SHORT_NAME> [AND [DEFAULT_LEVEL] <DEFAULT_LEVEL_SHORT_NAME>] [AND [ROW_LEVEL] <ROW_LEVEL_SHORT_NAME>] FOR [USER] <USER_NAME> IN [POLICY] <POLICY_NAME>;
+```
+
+- デフォルトレベルを省略すると、`<LEVEL_SHORT_NAME>` で指定されたレベルがデフォルトレベルとして使用されます。
+- 行レベルを省略すると、デフォルトレベルが行レベルとして使用されます。
+
+#### 例
+
+`SET ABAC_LEVEL` の例は次のとおりです。
+
+```sql
+-- Set the levels for a user.
+SET ABAC_LEVEL l1 AND DEFAULT_LEVEL l2 AND ROW_LEVEL l3 FOR USER user1 IN POLICY policy1;
+
+-- Set the levels for a user without a row level.
+SET ABAC_LEVEL l1 AND DEFAULT_LEVEL l2 FOR USER user1 IN POLICY policy1;
+
+-- Set the levels for a user without a default level and a row level.
+SET ABAC_LEVEL l1 FOR USER user1 IN POLICY policy1;
+```
+
+`SET ABAC_LEVEL` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Set the levels for a user.
+SetAbacLevelsForUserStatement statement1 =
+    StatementBuilder.setAbacLevel("l1")
+        .andDefaultLevel("l2")
+        .andRowLevel("l3")
+        .forUser("user1")
+        .inPolicy("policy1")
+        .build();
+
+// Set the levels for a user without a row level.
+SetAbacLevelsForUserStatement statement2 =
+    StatementBuilder.setAbacLevel("l1")
+        .andDefaultLevel("l2")
+        .forUser("user1")
+        .inPolicy("policy1")
+        .build();
+
+// Set the levels for a user without a default level and a row level.
+SetAbacLevelsForUserStatement statement3 =
+    StatementBuilder.setAbacLevel("l1").forUser("user1").inPolicy("policy1").build();
+```
+
+### ADD ABAC_COMPARTMENT
+
+`ADD ABAC_COMPARTMENT` コマンドは、指定されたポリシー内の指定されたユーザーに指定された ABAC コンパートメントを追加します。
+
+#### 文法
+
+```sql
+ADD ABAC_COMPARTMENT <COMPARTMENT_SHORT_NAME> TO [USER] <USER_NAME> [WITH {accessMode [AND default] [AND row] | default [AND row] | row}] IN [POLICY] <POLICY_NAME>;
+
+accessMode: READ_ONLY_ACCESS | READ_WRITE_ACCESS
+default: DEFAULT [= {TRUE | FALSE}]
+row: ROW [= {TRUE | FALSE}]
+```
+
+- アクセスモードを省略すると、デフォルトのアクセスモードは `READ_ONLY_ACCESS` になります。
+- デフォルト部分を省略すると、コンパートメントはデフォルトのコンパートメントに含まれます。
+- 行部分を省略すると、コンパートメントは行コンパートメントに含まれません。
+- `default` または `row` のブーリアンリテラルを省略すると、`default` または `row` の値は `TRUE` に設定されます。
+
+#### 例
+
+`ADD ABAC_COMPARTMENT` の例は次のとおりです。
+
+```sql
+-- Add a compartment to a user without specifying the access mode, default, and row.
+ADD ABAC_COMPARTMENT c1 TO USER user1 IN POLICY policy1;
+
+-- Add a compartment to a user with the READ_WRITE_ACCESS access mode.
+ADD ABAC_COMPARTMENT c1 TO USER user1 WITH READ_WRITE_ACCESS IN POLICY policy1;
+
+-- Add a compartment to a user with specifying the default.
+ADD ABAC_COMPARTMENT c1 TO USER user1 WITH DEFAULT IN POLICY policy1;
+
+-- Add a compartment to a user with specifying the row to TRUE.
+ADD ABAC_COMPARTMENT c1 TO USER user1 WITH ROW = TRUE IN POLICY policy1;
+```
+
+`ADD ABAC_COMPARTMENT` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Add a compartment to a user without specifying the access mode, default, and row.
+AddAbacCompartmentToUserStatement statement1 =
+    StatementBuilder.addAbacCompartment("c1").toUser("user1").inPolicy("policy1").build();
+
+// Add a compartment to a user with the READ_WRITE_ACCESS access mode.
+AddAbacCompartmentToUserStatement statement2 =
+    StatementBuilder.addAbacCompartment("c1")
+        .toUser("user1")
+        .withReadWriteAccess()
+        .inPolicy("policy1")
+        .build();
+
+// Add a compartment to a user with specifying the default.
+AddAbacCompartmentToUserStatement statement3 =
+    StatementBuilder.addAbacCompartment("c1")
+        .toUser("user1")
+        .withDefault()
+        .inPolicy("policy1")
+        .build();
+
+// Add a compartment to a user with specifying the row to TRUE.
+AddAbacCompartmentToUserStatement statement4 =
+    StatementBuilder.addAbacCompartment("c1")
+        .toUser("user1")
+        .withRow(true)
+        .inPolicy("policy1")
+        .build();
+```
+
+### REMOVE ABAC_COMPARTMENT
+
+`REMOVE ABAC_COMPARTMENT` コマンドは、指定されたポリシー内の指定されたユーザーから指定されたコンパートメントを削除します。
+
+#### 文法
+
+```sql
+REMOVE ABAC_COMPARTMENT <COMPARTMENT_SHORT_NAME> FROM [USER] <USER_NAME> IN [POLICY] <POLICY_NAME>;
+```
+
+#### 例
+
+`REMOVE ABAC_COMPARTMENT` の例は次のとおりです。
+
+```sql
+-- Remove a compartment from a user.
+REMOVE ABAC_COMPARTMENT c1 FROM USER user1 IN POLICY policy1;
+```
+
+`REMOVE ABAC_COMPARTMENT` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Remove a compartment from a user.
+RemoveAbacCompartmentFromUserStatement statement =
+    StatementBuilder.removeAbacCompartment("c1").fromUser("user1").inPolicy("policy1").build();
+```
+
+### ADD ABAC_GROUP
+
+`ADD ABAC_GROUP` コマンドは、指定されたポリシー内の指定されたユーザーに指定された ABAC グループを追加します。
+
+#### 文法
+
+```sql
+ADD ABAC_GROUP <GROUP_SHORT_NAME> TO [USER] <USER_NAME> [WITH {accessMode [AND default] [AND row] | default [AND row] | row}] IN [POLICY] <POLICY_NAME>;
+
+accessMode: READ_ONLY_ACCESS | READ_WRITE_ACCESS
+default: DEFAULT [= {TRUE | FALSE}]
+row: ROW [=  {TRUE | FALSE}]
+```
+
+- アクセスモードを省略すると、デフォルトのアクセスモードは `READ_ONLY_ACCESS` になります。
+- デフォルト部分を省略すると、グループはデフォルトのコンパートメントに含まれます。
+- 行部分を省略すると、グループは行コンパートメントに含まれません。
+- `default` または `row` のブーリアンリテラルを省略すると、`default` または `row` の値は `TRUE` に設定されます。
+
+#### 例
+
+`ADD ABAC_GROUP` の例は次のとおりです。
+
+```sql
+-- Add a group to a user without specifying the access mode, default, and row.
+ADD ABAC_GROUP g1 TO USER user1 IN POLICY policy1;
+
+-- Add a group to a user with the READ_WRITE_ACCESS access mode.
+ADD ABAC_GROUP g1 TO USER user1 WITH READ_WRITE_ACCESS IN POLICY policy1;
+
+-- Add a group to a user with specifying the default.
+ADD ABAC_GROUP g1 TO USER user1 WITH DEFAULT IN POLICY policy1;
+
+-- Add a group to a user with specifying the row to TRUE.
+ADD ABAC_GROUP g1 TO USER user1 WITH ROW = TRUE IN POLICY policy1;
+```
+
+`ADD ABAC_GROUP` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Add a group to a user without specifying the access mode, default, and row.
+AddAbacGroupToUserStatement statement1 =
+    StatementBuilder.addAbacGroup("g1").toUser("user1").inPolicy("policy1").build();
+
+// Add a group to a user with the READ_WRITE_ACCESS access mode.
+AddAbacGroupToUserStatement statement2 =
+    StatementBuilder.addAbacGroup("g1")
+        .toUser("user1")
+        .withReadWriteAccess()
+        .inPolicy("policy1")
+        .build();
+
+// Add a group to a user with specifying the default.
+AddAbacGroupToUserStatement statement3 =
+    StatementBuilder.addAbacGroup("g1")
+        .toUser("user1")
+        .withDefault()
+        .inPolicy("policy1")
+        .build();
+
+// Add a group to a user with specifying the row to TRUE.
+AddAbacGroupToUserStatement statement4 =
+    StatementBuilder.addAbacGroup("g1")
+        .toUser("user1")
+        .withRow(true)
+        .inPolicy("policy1")
+        .build();
+```
+
+### REMOVE ABAC_GROUP
+
+`REMOVE ABAC_GROUP` コマンドは、指定されたポリシー内の指定されたユーザーから指定された ABAC グループを削除します。
+
+#### 文法
+
+```sql
+REMOVE ABAC_GROUP <GROUP_SHORT_NAME> FROM [USER] <USER_NAME> IN [POLICY] <POLICY_NAME>;
+```
+
+#### 例
+
+`REMOVE ABAC_GROUP` の例は次のとおりです。
+
+```sql
+-- Remove a group from a user.
+REMOVE ABAC_GROUP g1 FROM USER user1 IN POLICY policy1;
+```
+
+`REMOVE ABAC_GROUP` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Remove a group from a user.
+RemoveAbacGroupFromUserStatement statement =
+    StatementBuilder.removeAbacGroup("g1").fromUser("user1").inPolicy("policy1").build();
+```
+
+### DROP ABAC_USER_TAG_INFO
+
+`DROP ABAC_USER_TAG_INFO` コマンドは、指定されたポリシー内の指定されたユーザーから指定された ABAC ユーザータグ情報を削除します。
+
+#### 文法
+
+```sql
+DROP ABAC_USER_TAG_INFO FROM [USER] <USER_NAME> IN [POLICY] <POLICY_NAME>;
+```
+
+#### 例
+
+`DROP ABAC_USER_TAG_INFO` の例は次のとおりです。
+
+```sql
+-- Drop user tag information from a user.
+DROP ABAC_USER_TAG_INFO FROM USER user1 IN POLICY policy1;
+```
+
+`DROP ABAC_USER_TAG_INFO` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Drop user tag information from a user.
+DropAbacUserTagInfoFromUserStatement statement =
+    StatementBuilder.dropAbacUserTagInfoFromUser("user1").inPolicy("policy1").build();
+```
+
+### CREATE ABAC_NAMESPACE_POLICY
+
+`CREATE ABAC_NAMESPACE_POLICY` コマンドは、指定されたポリシーと名前空間を使用して、指定された名前空間ポリシー名で新しい ABAC 名前空間ポリシーを作成します。このコマンドは、ポリシーを指定された名前空間に適用するために使用されます。新しく追加された名前空間ポリシーはデフォルトで有効になります。
+
+#### 文法
+
+```sql
+CREATE ABAC_NAMESPACE_POLICY <NAMESPACE POLICY_NAME> USING [POLICY] <POLICY_NAME> AND [NAMESPACE] <NAMESPACE_NAME>;
+```
+
+#### 例
+
+`CREATE ABAC_NAMESPACE_POLICY` の例は次のとおりです。
+
+```sql
+-- Create an ABAC namespace policy.
+CREATE ABAC_NAMESPACE_POLICY ns_policy1 USING POLICY policy1 AND NAMESPACE ns;
+```
+
+`CREATE ABAC_NAMESPACE_POLICY` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Create an ABAC namespace policy.
+CreateAbacNamespacePolicyStatement statement =
+    StatementBuilder.createAbacNamespacePolicy("ns_policy1")
+        .usingPolicy("policy1")
+        .andNamespace("ns")
+        .build();
+```
+
+### ENABLE ABAC_NAMESPACE_POLICY
+
+`ENABLE ABAC_NAMESPACE_POLICY` コマンドは、指定された ABAC 名前空間ポリシーを有効にします。
+
+#### 文法
+
+```sql
+ENABLE ABAC_NAMESPACE_POLICY <NAMESPACE POLICY_NAME>;
+```
+
+#### 例
+
+`ENABLE ABAC_NAMESPACE_POLICY` の例は次のとおりです。
+
+```sql
+-- Enable an ABAC namespace policy.
+ENABLE ABAC_NAMESPACE_POLICY ns_policy1;
+```
+
+`ENABLE ABAC_NAMESPACE_POLICY` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Enable an ABAC namespace policy.
+EnableAbacNamespacePolicyStatement statement =
+    StatementBuilder.enableAbacNamespacePolicy("ns_policy1").build();
+```
+
+### DISABLE ABAC_NAMESPACE_POLICY
+
+`DISABLE ABAC_NAMESPACE_POLICY` コマンドは、指定された ABAC 名前空間ポリシーを無効にします。このコマンドは、指定された名前空間ポリシーに関連付けられた名前空間の ABAC 機能を実質的に無効にします。
+
+#### 文法
+
+```sql
+DISABLE ABAC_NAMESPACE_POLICY <NAMESPACE POLICY_NAME>;
+```
+
+#### 例
+
+`DISABLE ABAC_NAMESPACE_POLICY` の例は次のとおりです。
+
+```sql
+-- Disable an ABAC namespace policy.
+DISABLE ABAC_NAMESPACE_POLICY ns_policy1;
+```
+
+`DISABLE ABAC_NAMESPACE_POLICY` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Disable an ABAC namespace policy.
+DisableAbacNamespacePolicyStatement statement =
+    StatementBuilder.disableAbacNamespacePolicy("ns_policy1").build();
+```
+
+### CREATE ABAC_TABLE_POLICY
+
+`CREATE ABAC_TABLE_POLICY` コマンドは、指定されたポリシーとテーブルを使用して、指定されたテーブルポリシー名で新しい ABAC テーブルポリシーを作成します。このコマンドは、ポリシーを指定されたテーブルに適用するために使用されます。新しく追加されたテーブルポリシーはデフォルトで有効になります。
+
+#### 文法
+
+```sql
+CREATE ABAC_TABLE_POLICY <TABLE_POLICY_NAME> USING [POLICY] <POLICY_NAME> AND [TABLE] <NAMESPACE_NAME>.<TABLE_NAME>;
+```
+
+#### 例
+
+`CREATE ABAC_TABLE_POLICY` の例は次のとおりです。
+
+```sql
+-- Create an ABAC table policy.
+CREATE ABAC_TABLE_POLICY tbl_policy1 USING POLICY policy1 AND TABLE ns.tbl;
+```
+
+`CREATE ABAC_TABLE_POLICY` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Create an ABAC table policy.
+CreateAbacTablePolicyStatement statement =
+    StatementBuilder.createAbacTablePolicy("tbl_policy1")
+        .usingPolicy("policy1")
+        .andTable("ns", "tbl")
+        .build();
+```
+
+### ENABLE ABAC_TABLE_POLICY
+
+`ENABLE ABAC_TABLE_POLICY` コマンドは、指定された ABAC テーブルポリシーを有効にします。
+
+#### 文法
+
+```sql
+ENABLE ABAC_TABLE_POLICY <TABLE_POLICY_NAME>;
+```
+
+#### 例
+
+`ENABLE ABAC_TABLE_POLICY` の例は次のとおりです。
+
+```sql
+-- Enable an ABAC table policy.
+ENABLE ABAC_TABLE_POLICY tbl_policy1;
+```
+
+`ENABLE ABAC_TABLE_POLICY` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Enable an ABAC table policy.
+EnableAbacTablePolicyStatement statement =
+    StatementBuilder.enableAbacTablePolicy("tbl_policy1").build();
+```
+
+### DISABLE ABAC_TABLE_POLICY
+
+`DISABLE ABAC_TABLE_POLICY` コマンドは、指定された ABAC テーブルポリシーを無効にします。このコマンドは、指定されたテーブルポリシーに関連付けられたテーブルの ABAC 機能を実質的に無効にします。
+
+#### 文法
+
+```sql
+DISABLE ABAC_TABLE_POLICY <TABLE_POLICY_NAME>;
+```
+
+#### 例
+
+`DISABLE ABAC_TABLE_POLICY` の例は次のとおりです。
+
+```sql
+-- Disable an ABAC table policy.
+DISABLE ABAC_TABLE_POLICY tbl_policy1;
+```
+
+`DISABLE ABAC_TABLE_POLICY` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Disable an ABAC table policy.
+DisableAbacTablePolicyStatement statement =
+    StatementBuilder.disableAbacTablePolicy("tbl_policy1").build();
 ```
 
 ## その他
@@ -2337,7 +3301,7 @@ ShowUsersStatement statement = StatementBuilder.showUsers().build();
 SHOW GRANTS
 
 -- Show privileges granted to the specified user
-SHOW GRANTS FOR <username>
+SHOW GRANTS FOR [USER] <username>
 ```
 
 #### 例
@@ -2362,6 +3326,452 @@ ShowGrantsStatement statement1 = StatementBuilder.showGrants().build();
 ShowGrantsStatement statement2 = StatementBuilder.showGrants().forUser("user1").build();
 ```
 
+### SHOW ABAC_POLICY
+
+`SHOW ABAC_POLICY` コマンドは、指定された ABAC ポリシーを表示します。
+
+このコマンドは次の列を返します:
+
+- `name`: `TEXT` - ポリシー名
+- `dataTagColumnName`: `TEXT` - データタグ列名
+- `state`: `TEXT` - ポリシーの状態 (`ENABLED` または `DISABLED`)
+
+#### 文法
+
+```sql
+SHOW ABAC_POLICY <POLICY_NAME>;
+```
+
+#### 例
+
+`SHOW ABAC_POLICY` の例は次のとおりです。
+
+```sql
+-- Show the specified ABAC policy
+SHOW ABAC_POLICY policy1;
+```
+
+`SHOW ABAC_POLICY` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Show the specified ABAC policy
+ShowAbacPolicyStatement statement = StatementBuilder.showAbacPolicy("policy1").build();
+```
+
+### SHOW ABAC_POLICIES
+
+`SHOW ABAC_POLICIES` コマンドは、すべての ABAC ポリシーを表示します。
+
+このコマンドは次の列を返します:
+
+- `name`: `TEXT` - ポリシー名
+- `dataTagColumnName`: `TEXT` - データタグ列名
+- `state`: `TEXT` - ポリシーの状態 (`ENABLED` または `DISABLED`)
+
+#### 文法
+
+```sql
+SHOW ABAC_POLICIES;
+```
+
+#### 例
+
+`SHOW ABAC_POLICIES` の例は次のとおりです。
+
+```sql
+-- Show all ABAC policies
+SHOW ABAC_POLICIES;
+```
+
+`SHOW ABAC_POLICIES` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Show all ABAC policies
+ShowAbacPoliciesStatement statement = StatementBuilder.showAbacPolicies().build();
+```
+
+### SHOW ABAC_LEVEL
+
+`SHOW ABAC_LEVEL` コマンドは、指定されたポリシー内の指定された ABAC レベルを表示します。
+
+このコマンドは次の列を返します:
+
+- `policyName`: `TEXT` - ポリシー名
+- `shortName`: `TEXT` - レベルの短縮名
+- `longName`: `TEXT` - レベルの長い名前
+- `levelNumber`: `INTEGER` - レベルのレベル番号
+
+#### 文法
+
+```sql
+SHOW ABAC_LEVEL <LEVEL_SHORT_NAME> IN [POLICY] <POLICY_NAME>;
+```
+
+#### 例
+
+`SHOW ABAC_LEVEL` の例は次のとおりです。
+
+```sql
+-- Show the specified ABAC level in the specified policy
+SHOW ABAC_LEVEL l1 IN POLICY policy1;
+```
+
+`SHOW ABAC_LEVEL` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Show the specified ABAC level in the specified policy
+ShowAbacLevelStatement statement = StatementBuilder.showAbacLevel("l1").inPolicy("policy1").build();
+```
+
+### SHOW ABAC_LEVELS
+
+`SHOW ABAC_LEVELS` コマンドは、指定されたポリシー内のすべての ABAC レベルを表示します。
+
+このコマンドは次の列を返します:
+
+- `policyName`: `TEXT` - ポリシー名
+- `shortName`: `TEXT` - レベルの短縮名
+- `longName`: `TEXT` - レベルの長い名前
+- `levelNumber`: `INTEGER` - レベルのレベル番号
+
+#### 文法
+
+```sql
+SHOW ABAC_LEVELS IN [POLICY] <POLICY_NAME>;
+```
+
+#### 例
+
+`SHOW ABAC_LEVELS` の例は次のとおりです。
+
+```sql
+-- Show all ABAC levels in the specified policy
+SHOW ABAC_LEVELS IN POLICY policy1;
+```
+
+`SHOW ABAC_LEVELS` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Show all ABAC levels in the specified policy
+ShowAbacLevelsStatement statement = StatementBuilder.showAbacLevelsInPolicy("policy1").build();
+```
+
+### SHOW ABAC_COMPARTMENT
+
+`SHOW ABAC_COMPARTMENT` コマンドは、指定されたポリシー内の指定された ABAC コンパートメントを表示します。
+
+このコマンドは次の列を返します:
+
+- `policyName`: `TEXT` - ポリシー名
+- `shortName`: `TEXT` - コンパートメントの短縮名
+- `longName`: `TEXT` - コンパートメントの長い名前
+
+#### 文法
+
+```sql
+SHOW ABAC_COMPARTMENT <COMPARTMENT_SHORT_NAME> IN [POLICY] <POLICY_NAME>;
+```
+
+#### 例
+
+`SHOW ABAC_COMPARTMENT` の例は次のとおりです。
+
+```sql
+-- Show the specified ABAC compartment in the specified policy
+SHOW ABAC_COMPARTMENT c1 IN POLICY policy1;
+```
+
+`SHOW ABAC_COMPARTMENT` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Show the specified ABAC compartment in the specified policy
+ShowAbacCompartmentStatement statement =
+    StatementBuilder.showAbacCompartment("c1").inPolicy("policy1").build();
+```
+
+### SHOW ABAC_COMPARTMENTS
+
+`SHOW ABAC_COMPARTMENTS` コマンドは、指定されたポリシー内のすべての ABAC コンパートメントを表示します。
+
+このコマンドは次の列を返します:
+
+- `policyName`: `TEXT` - ポリシー名
+- `shortName`: `TEXT` - コンパートメントの短縮名
+- `longName`: `TEXT` - コンパートメントの長い名前
+
+#### 文法
+
+```sql
+SHOW ABAC_COMPARTMENTS IN [POLICY] <POLICY_NAME>;
+```
+
+#### 例
+
+`SHOW ABAC_COMPARTMENTS` の例は次のとおりです。
+
+```sql
+-- Show all ABAC compartments in the specified policy
+SHOW ABAC_COMPARTMENTS IN POLICY policy1;
+```
+
+`SHOW ABAC_COMPARTMENTS` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Show all ABAC compartments in the specified policy
+ShowAbacCompartmentsStatement statement =
+    StatementBuilder.showAbacCompartmentsInPolicy("policy1").build();
+```
+
+### SHOW ABAC_GROUP
+
+`SHOW ABAC_GROUP` コマンドは、指定されたポリシー内の指定された ABAC グループを表示します。
+
+このコマンドは次の列を返します:
+
+- `policyName`: `TEXT` - ポリシー名
+- `shortName`: `TEXT` - グループの短縮名
+- `longName`: `TEXT` - グループの長い名前
+- `parentGroupShortName`: `TEXT` - 親グループの短縮名。グループに親グループがない場合、この列は `null` になります。
+
+#### 文法
+
+```sql
+SHOW ABAC_GROUP <GROUP_SHORT_NAME> IN [POLICY] <POLICY_NAME>;
+```
+
+#### 例
+
+`SHOW ABAC_GROUP` の例は次のとおりです。
+
+```sql
+-- Show the specified ABAC group in the specified policy
+SHOW ABAC_GROUP g1 IN POLICY policy1;
+```
+
+`SHOW ABAC_GROUP` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Show the specified ABAC group in the specified policy
+ShowAbacGroupStatement statement =
+    StatementBuilder.showAbacGroup("g1").inPolicy("policy1").build();
+```
+
+### SHOW ABAC_GROUPS
+
+`SHOW ABAC_GROUPS` コマンドは、指定されたポリシー内のすべての ABAC グループを表示します。
+
+このコマンドは次の列を返します:
+
+- `policyName`: `TEXT` - ポリシー名
+- `shortName`: `TEXT` - グループの短縮名
+- `longName`: `TEXT` - グループの長い名前
+- `parentGroupShortName`: `TEXT` - 親グループの短縮名。グループに親グループがない場合、この列は `null` になります。
+
+#### 文法
+
+```sql
+SHOW ABAC_GROUPS IN [POLICY] <POLICY_NAME>;
+```
+
+#### 例
+
+`SHOW ABAC_GROUPS` の例は次のとおりです。
+
+```sql
+-- Show all ABAC groups in the specified policy
+SHOW ABAC_GROUPS IN POLICY policy1;
+```
+
+`SHOW ABAC_GROUPS` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Show all ABAC groups in the specified policy
+ShowAbacGroupsStatement statement = StatementBuilder.showAbacGroupsInPolicy("policy1").build();
+```
+
+### SHOW ABAC_USER_TAG_INFO
+
+`SHOW ABAC_USER_TAG_INFO` コマンドは、指定されたポリシー内の指定されたユーザーの ABAC ユーザータグ情報を表示します。
+
+このコマンドは次の列を返します:
+
+- `policyName`: `TEXT` - ポリシー名
+- `username`: `TEXT` - ユーザー名
+- `readTag`: `TEXT` - 読み取りタグ
+- `writeTag`: `TEXT` - 書き込みタグ
+- `defaultReadTag`: `TEXT` - デフォルトの読み取りタグ
+- `defaultWriteTag`: `TEXT` - デフォルトの書き込みタグ
+- `rowTag`: `TEXT` - 行タグ
+
+#### 文法
+
+```sql
+SHOW ABAC_USER_TAG_INFO [FOR USER <USER_NAME>] IN [POLICY] <POLICY_NAME>;
+```
+
+- ユーザーを省略すると、現在のユーザーのユーザータグ情報が表示されます。
+
+#### 例
+
+`SHOW ABAC_USER_TAG_INFO` の例は次のとおりです。
+
+```sql
+-- Show the ABAC user tag information for the current user in the specified policy
+SHOW ABAC_USER_TAG_INFO IN POLICY policy1;
+
+-- Show the ABAC user tag information for user1 in the specified policy
+SHOW ABAC_USER_TAG_INFO FOR USER user1 IN POLICY policy1;
+```
+
+`SHOW ABAC_USER_TAG_INFO` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Show the ABAC user tag information for the current user in the specified policy
+ShowAbacUserTagInfoStatement statement1 =
+    StatementBuilder.showAbacUserTagInfo().inPolicy("policy1").build();
+
+// Show the ABAC user tag information for user1 in the specified policy
+ShowAbacUserTagInfoStatement statement2 =
+    StatementBuilder.showAbacUserTagInfo().forUser("user1").inPolicy("policy1").build();
+```
+
+### SHOW ABAC_NAMESPACE_POLICY
+
+`SHOW ABAC_NAMESPACE_POLICY` コマンドは、指定された ABAC 名前空間ポリシーを表示します。
+
+このコマンドは次の列を返します:
+
+- `name`: `TEXT` - 名前空間ポリシーの名前
+- `policyName`: `TEXT` - ポリシー名
+- `namespaceName`: `TEXT` - 名前空間名
+- `state`: `TEXT` - ポリシーの状態 (`ENABLED` または `DISABLED`)
+
+#### 文法
+
+```sql
+SHOW ABAC_NAMESPACE_POLICY <NAMESPACE_POLICY_NAME>;
+```
+
+#### 例
+
+`SHOW ABAC_NAMESPACE_POLICY` の例は次のとおりです。
+
+```sql
+-- Show the specified ABAC namespace policy
+SHOW ABAC_NAMESPACE_POLICY ns_policy1;
+```
+
+`SHOW ABAC_NAMESPACE_POLICY` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Show the specified ABAC namespace policy
+ShowAbacNamespacePolicyStatement statement =
+    StatementBuilder.showAbacNamespacePolicy("ns_policy1").build();
+```
+
+### SHOW ABAC_NAMESPACE_POLICIES
+
+`SHOW ABAC_NAMESPACE_POLICIES` コマンドは、すべての ABAC 名前空間ポリシーを表示します。
+
+このコマンドは次の列を返します:
+
+- `name`: `TEXT` - 名前空間ポリシーの名前
+- `policyName`: `TEXT` - ポリシー名
+- `namespaceName`: `TEXT` - 名前空間名
+- `state`: `TEXT` - ポリシーの状態 (`ENABLED` または `DISABLED`)
+
+#### 文法
+
+```sql
+SHOW ABAC_NAMESPACE_POLICIES
+```
+
+#### 例
+
+`SHOW ABAC_NAMESPACE_POLICIES` の例は次のとおりです。
+
+```sql
+-- Show all ABAC namespace policies
+SHOW ABAC_NAMESPACE_POLICIES;
+```
+
+`SHOW ABAC_NAMESPACE_POLICIES` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Show all ABAC namespace policies
+ShowAbacNamespacePoliciesStatement statement =
+    StatementBuilder.showAbacNamespacePolicies().build();
+```
+
+### SHOW ABAC_TABLE_POLICY
+
+`SHOW ABAC_TABLE_POLICY` コマンドは、指定された ABAC テーブルポリシーを表示します。
+
+このコマンドは次の列を返します:
+
+- `name`: `TEXT` - テーブルポリシーの名前
+- `policyName`: `TEXT` - ポリシー名
+- `namespaceName`: `TEXT` - 名前空間名
+- `tableName`: `TEXT` - テーブル名
+- `state`: `TEXT` - ポリシーの状態 (`ENABLED` または `DISABLED`)
+
+#### 文法
+
+```sql
+SHOW ABAC_TABLE_POLICY <TABLE_POLICY_NAME>;
+```
+
+#### 例
+
+`SHOW ABAC_TABLE_POLICY` の例は次のとおりです。
+
+```sql
+-- Show the specified ABAC table policy
+SHOW ABAC_TABLE_POLICY tbl_policy1;
+```
+
+`SHOW ABAC_TABLE_POLICY` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Show the specified ABAC table policy
+ShowAbacTablePolicyStatement statement =
+    StatementBuilder.showAbacTablePolicy("tbl_policy1").build();
+```
+
+### SHOW ABAC_TABLE_POLICIES
+
+`SHOW ABAC_TABLE_POLICIES` コマンドは、すべての ABAC テーブルポリシーを表示します。
+
+このコマンドは次の列を返します:
+
+- `name`: `TEXT` - テーブルポリシーの名前
+- `policyName`: `TEXT` - ポリシー名
+- `namespaceName`: `TEXT` - 名前空間名
+- `tableName`: `TEXT` - テーブル名
+- `state`: `TEXT` - ポリシーの状態 (`ENABLED` または `DISABLED`)
+
+#### 文法
+
+```sql
+SHOW ABAC_TABLE_POLICIES;
+```
+
+#### 例
+
+`SHOW ABAC_TABLE_POLICIES` の例は次のとおりです。
+
+```sql
+-- Show all ABAC table policies
+SHOW ABAC_TABLE_POLICIES;
+```
+
+`SHOW ABAC_TABLE_POLICIES` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Show all ABAC table policies
+ShowAbacTablePoliciesStatement statement = StatementBuilder.showAbacTablePolicies().build();
+```
+
 ## リテラル
 
 リテラルと列の値は同義であり、SQL ステートメントを記述するときに使用される固定データ値を参照します。たとえば、`1`、`'abc'`、`1.23`、および `'2024-05-19'` はリテラルです。
@@ -2382,9 +3792,9 @@ ShowGrantsStatement statement2 = StatementBuilder.showGrants().forUser("user1").
 
 日付と時刻リテラルは、DATE、TIME、TIMESTAMP、および TIMESTAMPTZ 値を表す特定の形式に従うテキストリテラルです。
 
-| ScalarDB データ型 | 形式                                  | 注記                                       | 例                                                                             |
-|--------------|-------------------------------------|----------------------------------------------|-------------------------------------------------------------------------------|
-| DATE         | **'YYYY-MM-DD'**                    |                                              | `'2024-05-19'`                                                                |
-| TIME         | **'HH:MM:[SS[.FFFFFF]]'**           | 秒と小数秒 (最大1マイクロ秒) はオプションです。    | `'12:34'`、`'12:34:56'`、`'12:34:56.789123'`                                    |
-| TIMESTAMP    | **'YYYY-MM-DD HH:MM:[SS[.FFF]]'**   | 秒と小数秒 (最大1ミリ秒) はオプションです。        | `'2024-05-19 12:34'`、`'2024-05-19 12:34:56'`、`'2024-05-19 12:34:56.789'`      |
-| TIMESTAMPTZ  | **'YYYY-MM-DD HH:MM:[SS[.FFF]] Z'** | 秒と小数秒 (最大1ミリ秒) はオプションです。        | `'2024-05-19 12:34 Z'`、`'2024-05-19 12:34:56 Z'`、`'2024-05-19 12:34:56.789 Z'` |
+| ScalarDB データ型 | 形式                                  | 注記                                     | 例                                                                               |
+|-----------------|---------------------------------------|-----------------------------------------|----------------------------------------------------------------------------------|
+| DATE            | **'YYYY-MM-DD'**                      |                                         | `'2024-05-19'`                                                                   |
+| TIME            | **'HH:MM:[SS[.FFFFFF]]'**             | 秒と小数秒 (最大1マイクロ秒) はオプションです。 | `'12:34'`、`'12:34:56'`、`'12:34:56.789123'`                                     |
+| TIMESTAMP       | **'YYYY-MM-DD HH:MM:[SS[.FFF]]'**     | 秒と小数秒 (最大1ミリ秒) はオプションです。    | `'2024-05-19 12:34'`、`'2024-05-19 12:34:56'`、`'2024-05-19 12:34:56.789'`       |
+| TIMESTAMPTZ     | **'YYYY-MM-DD HH:MM:[SS[.FFF]] Z'**   | 秒と小数秒 (最大1ミリ秒) はオプションです。    | `'2024-05-19 12:34 Z'`、`'2024-05-19 12:34:56 Z'`、`'2024-05-19 12:34:56.789 Z'` |
