@@ -39,7 +39,7 @@ For each level, the superuser defines the following attributes:
 |--------------|------------------------------------------------------------------------------|
 | Short name   | A short identifier for the level. This name can contain up to 30 characters. |
 | Long name    | A longer, descriptive name for the level.                                    |
-| Level number | A numeric value representing the level’s rank.                               | 
+| Level number | A numeric value representing the level's rank.                               | 
 g
 :::note
 
@@ -189,7 +189,7 @@ ABAC automatically computes several user tags based on the user tag information.
 
 ### Data tags
 
-The data tag is assigned to each row and indicates the row’s sensitivity level, along with any compartments and groups a user must be authorized for to access that row. When new data is inserted, the row tag is used as the data tag. You can also update the data tag for existing rows. For more information, see [Update data tags](#update-data-tags).
+The data tag is assigned to each row and indicates the row's sensitivity level, along with any compartments and groups a user must be authorized for to access that row. When new data is inserted, the row tag is used as the data tag. You can also update the data tag for existing rows. For more information, see [Update data tags](#update-data-tags).
 
 ### Matching algorithms
 
@@ -306,7 +306,7 @@ When you perform a read operation on the table with the read tag `S:HR,FIN:EU`, 
 
 When you perform a write operation on the table with the write tag `C:HR:NA`, you can write rows `4` and `7`. The following explains why:
 
-- Since your write tag includes the `C` level, you can write data with the levels `C` and `P`. You cannot write data with the levels `S` and `HS` because they are lower than your authorized level. Therefore, you cannot write the rows `1`, and `3`.
+- Since your write tag includes the `C` level, you can write data with the levels `C` and `P`. You cannot write data with the levels `S` and `HS` because they are higher than your authorized level. Therefore, you cannot write the rows `1`, and `3`.
 - Since your write tag includes the `HR` compartment, you can write data that has the compartment. Therefore, you cannot write the rows `2`, `3`, `5`, and `6` which have the compartments `FIN` and `LEG`.
 - Since your write tag includes the `NA` group, you can write data that belongs to the `NA` group or its child group `US`. Therefore, you cannot write the rows `1`, `2`, `3`, `5`, and `6` which have the groups `EU`, `FRA`, and `ITA`.
 
@@ -434,7 +434,7 @@ To enable the ABAC feature, you need to configure `scalar.db.cluster.abac.enable
 |----------------------------------|--------------------------------------|---------|
 | `scalar.db.cluster.abac.enabled` | Whether the ABAC feature is enabled. | `false` |
 
-:::important
+:::warning
 
 If you enable the ABAC feature, you will also need to do the following:
 
