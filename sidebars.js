@@ -1029,6 +1029,16 @@ const sidebars = {
               id: 'scalardb-cluster/getting-started-with-scalardb-cluster-dotnet',
               label: '.NET を使用',
             },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/getting-started-with-scalardb-cluster-dotnet',
+              label: '.NET 経由で SQL を使用',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/getting-started-with-scalardb-cluster-dotnet',
+              label: '.NET と LINQ 経由で SQL を使用',
+            },
           ],
         },
         {
