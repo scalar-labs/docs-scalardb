@@ -1024,6 +1024,11 @@ const sidebars = {
               id: 'scalardb-cluster/getting-started-with-scalardb-cluster-graphql',
               label: 'GraphQL を使用',
             },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/getting-started-with-scalardb-cluster-dotnet',
+              label: '.NET を使用',
+            },
           ],
         },
         {
