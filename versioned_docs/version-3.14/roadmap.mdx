@@ -46,7 +46,7 @@ If you have a feature request or want to prioritize feature development, please 
 
 - **Addition of read-committed isolation**
     - Users will be able to run transactions with a read-committed isolation to achieve better performance for applications that do not require strong correctness.
-- **One-phase commit optimization for a single relational database**
+- **One-phase commit optimization**
     - Users will be able to run a transaction more efficiently by using one-phase commit if the operations of the transaction are all applied to a single database or a single partition.
 - **Optimization for multiple write operations per database**
     - Users will be able to run transactions more efficiently with a batch preparation and commitment if there are multiple write operations for a database.
@@ -81,11 +81,6 @@ If you have a feature request or want to prioritize feature development, please 
     - Users will be able to issue large scans without experiencing out-of-memory errors.
 - **Enabling of read operations during a paused duration**
     - Users will be able to issue read operations even during a paused duration so that users can still read data while taking backups.
-
-#### Performance
-
-- **One-phase commit optimization**
-    - Users will experience faster execution for simple transactions that write to a single partition. ScalarDB will omit the prepare-record and commit-state phases without sacrificing correctness if a transaction updates only one partition by exploiting the single-partition linearizable operations of the underlying databases.
 
 #### Scalability and availability
 
