@@ -3,31 +3,34 @@
 const notificationsList = [
   {
     languages: {
-      en: '<NOTIFICATION>',
-      ja: '<通知>'
+      en: 'Discover how to implement vector search capabilities with ScalarDB Cluster',
+      ja: 'ScalarDB Cluster でベクトル検索機能を実装する方法を学ぼう'
+    },
     url: {
-      en: '<URL>',
-      ja: '<URL>'
+      en: 'scalardb-cluster/getting-started-with-vector-search?utm_source=docs-site&utm_medium=notifications',
+      ja: 'scalardb-cluster/getting-started-with-vector-search?utm_source=docs-site&utm_medium=notifications'
     },
     unread: true
   },
   {
     languages: {
-      en: '<NOTIFICATION>',
-      ja: '<通知>'
+      en: 'Explore the exciting new features in ScalarDB 3.15',
+      ja: 'データベースエンジニアリングの最新トレンドとベストプラクティスを学ぶ DBEM #6 のハイライト'
+    },
     url: {
-      en: '<URL>',
-      ja: '<URL>'
+      en: 'https://medium.com/scalar-engineering/scalardb-3-15-has-been-released-b1982718fa46?utm_source=docs-site&utm_medium=notifications',
+      ja: 'https://medium.com/scalar-engineering-ja/database-engineering-meetup-%E7%AC%AC6%E5%9B%9E-dbem-6-%E3%82%92%E9%96%8B%E5%82%AC%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-fccde39d2926?utm_source=docs-site&utm_medium=notifications'
     },
     unread: true
   },
   {
     languages: {
-      en: '<NOTIFICATION>',
-      ja: '<通知>'
+      en: 'Support for ScalarDB 3.10 will end soon: Please consider upgrading for enhanced features and continued support',
+      ja: 'ScalarDB 3.10 のサポートがまもなく終了します: 機能強化と継続的なサポートのため、アップグレードをご検討ください'
+    },
     url: {
-      en: '<URL>',
-      ja: '<URL>'
+      en: 'scalar-kubernetes/HowToUpgradeScalarDB?utm_source=docs-site&utm_medium=notifications',
+      ja: 'scalar-kubernetes/HowToUpgradeScalarDB?utm_source=docs-site&utm_medium=notifications'
     },
     unread: true
   }
