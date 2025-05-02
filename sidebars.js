@@ -226,6 +226,11 @@ const sidebars = {
               label: 'Model Your Data',
             },
             {
+              type: 'doc',
+              id: 'consensus-commit',
+              label: 'Consensus Commit Protocol',
+            },
+            {
               type: 'category',
               label: 'Run Through the CRUD Interface',
               collapsible: true,
