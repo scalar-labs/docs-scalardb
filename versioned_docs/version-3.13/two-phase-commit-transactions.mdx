@@ -198,7 +198,15 @@ When using the [Consensus Commit](configurations.mdx#use-consensus-commit-direct
 
 ### Execute a transaction by using multiple transaction manager instances
 
-By using the APIs described above, you can execute a transaction by using multiple transaction manager instances as follows:
+By using the APIs described above, you can execute a transaction by using multiple transaction manager instances. The following is an example of how that works.
+
+:::warning
+
+The following sample code is a simplified version that solely illustrates how to use the two-phase commit interface and doesn't represent a real-world use case. In actual applications, it is assumed that a transaction manager instance is created per process or service.
+
+For a real-world example, see the [microservice transactions sample tutorial](scalardb-samples/microservice-transaction-sample/README.mdx).
+
+:::
 
 ```java
 TransactionFactory factory1 =
