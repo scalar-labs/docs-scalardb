@@ -36,19 +36,41 @@ const notificationsList = [
   }
 ];
 
-// Update the getNotifications function to handle both single URL and language-specific URLs.
+// Update the getNotifications function to handle both single URL and language-specific URLs, and prepend the correct base URL for relative paths.
 export const getNotifications = (language = 'en') => {
   const totalNotifications = notificationsList.length;
+
+  // Define base URLs for different languages.
+  const baseUrls = {
+    en: '/docs/latest/',
+    ja: '/ja-jp/docs/latest/'
+  };
+  
+  const currentDomain = 'scalardb.scalar-labs.com';
+
   return notificationsList
-    .map((notification, index) => ({
-      id: totalNotifications - index,
-      message: notification.languages[language] || notification.languages.en,
-      // If URL is an object with language keys, use the appropriate one.
-      url: typeof notification.url === 'object' 
+    .map((notification, index) => {
+      // Get the appropriate URL for the language.
+      let url = typeof notification.url === 'object' 
         ? notification.url[language] || notification.url.en 
-        : notification.url,
-      unread: notification.unread
-    }))
+        : notification.url;
+
+      // If the URL is relative (doesn't start with http), prepend the appropriate base URL.
+      if (url && !url.startsWith('http')) {
+        url = baseUrls[language] + url;
+      }
+
+      // Check if the link is external by checking the domain.
+      const isExternal = url.startsWith('http') && !url.includes(currentDomain);
+
+      return {
+        id: totalNotifications - index,
+        message: notification.languages[language] || notification.languages.en,
+        url: url,
+        isExternal: isExternal, // Add this flag for the component to use.
+        unread: notification.unread
+      };
+    })
     .sort((a, b) => b.id - a.id);
 };
 
