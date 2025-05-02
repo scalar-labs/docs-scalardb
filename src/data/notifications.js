@@ -14,8 +14,8 @@ const notificationsList = [
   },
   {
     languages: {
-      en: 'Explore the exciting new features in ScalarDB 3.15',
-      ja: 'データベースエンジニアリングの最新トレンドとベストプラクティスを学ぶ DBEM #6 のハイライト'
+      en: 'Blog post: Explore the exciting new features in ScalarDB 3.15',
+      ja: 'ブログ記事: データベースエンジニアリングの最新トレンドとベストプラクティスを学ぶ DBEM #6 のハイライト'
     },
     url: {
       en: 'https://medium.com/scalar-engineering/scalardb-3-15-has-been-released-b1982718fa46?utm_source=docs-site&utm_medium=notifications',
