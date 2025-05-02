@@ -1,40 +1,49 @@
 // This file contains the notifications data and a function to retrieve it.
-// The notifications are stored in an array of objects, each containing a message in multiple languages and a URL. 
-// Ideal number of notifications: 3 to 5
+// The notifications are stored in an array of objects, each containing a message in multiple languages and URLs for those messages.
 const notificationsList = [
   {
     languages: {
       en: '<NOTIFICATION>',
       ja: '<通知>'
+    url: {
+      en: '<URL>',
+      ja: '<URL>'
     },
-    url: '<URL>',
     unread: true
   },
   {
     languages: {
       en: '<NOTIFICATION>',
       ja: '<通知>'
+    url: {
+      en: '<URL>',
+      ja: '<URL>'
     },
-    url: '<URL>',
     unread: true
   },
   {
     languages: {
       en: '<NOTIFICATION>',
       ja: '<通知>'
+    url: {
+      en: '<URL>',
+      ja: '<URL>'
     },
-    url: '<URL>',
     unread: true
   }
 ];
 
+// Update the getNotifications function to handle both single URL and language-specific URLs.
 export const getNotifications = (language = 'en') => {
   const totalNotifications = notificationsList.length;
   return notificationsList
     .map((notification, index) => ({
-      id: totalNotifications - index, // Auto-increment the ID based on array position.
-      message: notification.languages[language] || notification.languages.en, // Fall back to English if the language is not available.
-      url: notification.url,
+      id: totalNotifications - index,
+      message: notification.languages[language] || notification.languages.en,
+      // If URL is an object with language keys, use the appropriate one.
+      url: typeof notification.url === 'object' 
+        ? notification.url[language] || notification.url.en 
+        : notification.url,
       unread: notification.unread
     }))
     .sort((a, b) => b.id - a.id);
