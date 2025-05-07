@@ -1,0 +1,30 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsEnglish
+---
+
+# ScalarDB Features
+
+This document briefly explains which features are available in which editions of ScalarDB.
+
+|                                                                                                                                                                        | ScalarDB Core (Community) | ScalarDB Cluster (Enterprise Standard) | ScalarDB Cluster (Enterprise Premium)       | ScalarDB Analytics (Enterprise) |
+|------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------|----------------------------------------|---------------------------------------------|---------------------------------|
+| [Transaction processing across databases with primitive interfaces](getting-started-with-scalardb.mdx)                  | ✅       | ✅                     | ✅                          | ❌                               |
+| [Clustering](scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx)          | ❌                         | ✅                     | ✅                          | ❌                                |
+| [Non-transactional storage operations](develop-run-non-transactional-operations-overview.mdx)                                  | ❌                         | ✅ (3.14+)             | ✅ (3.14+)                  | ❌                                |
+| [Authentication/authorization](scalardb-cluster/scalardb-auth-with-sql.mdx)                                                  | ❌                         | ✅                     | ✅                          | ❌                                |
+| [Encryption](scalardb-cluster/encrypt-data-at-rest.mdx)                                                                      | ❌                         | ❌                                       | ✅ (3.14+)                  | ❌                                |
+| [Attribute-based access control](scalardb-cluster/authorize-with-abac.mdx)                                                   | ❌                         | ❌                                       | ✅ (3.15+) (Enterprise Premium Option)* | ❌                                |
+| [SQL interface (SQL API, JDBC, Spring Data JDBC, and LINQ)](scalardb-sql/jdbc-guide.mdx)                                      | ❌                         | ❌                                       | ✅                          | ❌                                |
+| [GraphQL interface](scalardb-graphql/how-to-run-two-phase-commit-transaction.mdx)                                             | ❌                         | ❌                                       | ✅                          | ❌                                |
+| [Vector search interface](https://scalardb.scalar-labs.com/docs/latest/scalardb-cluster/getting-started-with-vector-search/)                                           |                          |                                        | :heavy_check_mark: (3.15+)                  |                                 |
+| [Analytical query processing across ScalarDB-managed data sources](scalardb-samples/scalardb-analytics-spark-sample.mdx)     | ❌                         | ❌                                       | ❌                                            | ✅ (3.14+)      |
+| [Vector search interface](scalardb-cluster/getting-started-with-vector-search.mdx)                                           |                          |                                        | :heavy_check_mark: (3.15+)                  |                                 |
+| [Analytical query processing across ScalarDB-managed data sources](scalardb-samples/scalardb-analytics-spark-sample/README.mdx)     | ❌                         | ❌                                       | ❌                                            | ✅ (3.14+)      |
+| [Analytical query processing across non-ScalarDB-managed data sources](scalardb-samples/scalardb-analytics-spark-sample/README.mdx) | ❌                         | ❌                                       | ❌                                            | ✅ (3.15+)      |
+
+\* This feature is not available in the Enterprise Premium edition. If you want to use this feature, please [contact us](https://www.scalar-labs.com/contact).
+
