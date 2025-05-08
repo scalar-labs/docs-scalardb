@@ -2,7 +2,7 @@
 // The notifications are stored in an array of objects, each containing a message in multiple languages and URLs for those messages.
 const notificationsList = [
   {
-    languages: {
+    message: {
       en: 'Discover how to implement vector search capabilities with ScalarDB Cluster',
       ja: 'ScalarDB Cluster でベクトル検索機能を実装する方法を学ぶ'
     },
@@ -13,7 +13,7 @@ const notificationsList = [
     unread: true
   },
   {
-    languages: {
+    message: {
       en: 'Blog post: Explore the exciting new features in ScalarDB 3.15',
       ja: 'ブログ記事: データベースエンジニアリングの最新トレンドとベストプラクティスを学ぶ DBEM #6 のハイライト'
     },
@@ -24,7 +24,7 @@ const notificationsList = [
     unread: true
   },
   {
-    languages: {
+    message: {
       en: 'Support for ScalarDB 3.10 will end soon: Please consider upgrading for enhanced features and continued support',
       ja: 'ScalarDB 3.10 のサポートがまもなく終了します: 機能強化と継続的なサポートのため、アップグレードをご検討ください'
     },
@@ -65,7 +65,7 @@ export const getNotifications = (language = 'en') => {
 
       return {
         id: totalNotifications - index,
-        message: notification.languages[language] || notification.languages.en,
+        message: notification.message[language] || notification.message.en,
         url: url,
         isExternal: isExternal, // Add this flag for the component to use.
         unread: notification.unread
