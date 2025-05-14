@@ -1816,7 +1816,7 @@ const sidebars = {
       items: [
         {
           type: 'doc',
-          id: 'scalar-licensing/README',
+          id: 'scalar-licensing/index',
           label: '製品ライセンスキーの設定',
         },
       ],
