@@ -10,6 +10,28 @@ displayed_sidebar: docsEnglish
 
 This page includes a list of release notes for ScalarDB 3.14.
 
+## v3.14.3
+
+**Release date:** May 15, 2025
+
+### Summary
+
+This release includes fixes for vulnerabilities and bugs.
+
+### Community edition
+
+#### Bug fixes
+
+- Fixed an issue with `DistributedStorageAdmin.getNamespaceNames()` API when using the DynamoDB storage with the namespace prefix setting `scalar.db.dynamo.namespace.prefix`. The namespace names returned by this method wrongly contained the prefix. ([#2641](https://github.com/scalar-labs/scalardb/pull/2641))
+
+### Enterprise edition
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Upgraded `grpc_health_probe` to fix a security issue. [CVE-2025-22869](https://github.com/advisories/GHSA-hcg3-q754-cr77)
+
 ## v3.14.2
 
 **Release date:** March 24, 2025
