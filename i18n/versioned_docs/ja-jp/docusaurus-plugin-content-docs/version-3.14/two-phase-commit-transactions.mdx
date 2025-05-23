@@ -176,7 +176,7 @@ try {
 
 #### トランザクションを検証する
 
-同時実行制御プロトコルに応じて、以下に示すように、`prepare()` の後、`commit()` の前に、すべての Coordinator および参加者プロセスで `validate()` を呼び出す必要があります。
+並行性制御プロトコルに応じて、以下に示すように、`prepare()` の後、`commit()` の前に、すべての Coordinator および参加者プロセスで `validate()` を呼び出す必要があります。
 
 ```java
 // Prepare phase 1: Prepare the transaction in all the Coordinator and participant processes.
