@@ -1135,6 +1135,11 @@ const sidebars = {
               label: 'データモデリング',
             },
             {
+              type: 'doc',
+              id: 'consensus-commit',
+              label: 'Consensus Commit プロトコル',
+            },
+            {
               type: 'category',
               label: 'CRUD インターフェースを使用して実行',
               collapsible: true,
