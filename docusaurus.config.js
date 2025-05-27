@@ -537,7 +537,7 @@ const config = {
       // announcementBar: {
       //   id: 'new_version',
       //   content:
-      //     // '<b>Announcing the release of ScalarDB X.X!🚀 For details on what\'s included in this new version, see the <a target="_self" rel="noopener noreferrer" href="/docs/latest/releases/release-notes">release notes</a>.<b>',
+      //     // '<b>Announcing the release of ScalarDB X.X!🚀 For details on what\'s included in this new version, see the <a target="_self" rel="noopener noreferrer" href="/docs/latest/releases/release-notes?utm_source=docs-site&utm_medium=announcementbar">release notes</a>.<b>',
       //   backgroundColor: '#2673BB',
       //   textColor: '#FFFFFF',
       //   isCloseable: false,
