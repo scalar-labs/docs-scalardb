@@ -534,15 +534,14 @@ const config = {
         darkTheme: prismThemes.dracula,
         additionalLanguages: ['csharp', 'docker', 'gradle', 'java', 'json', 'log', 'properties', 'python', 'scala', 'shell-session', 'sql', 'toml'],
       },
-      announcementBar: {
-        id: 'new_version',
-        content:
-          '<b>Announcing the release of ScalarDB 3.15!🚀 For details on what\'s included in this new version, see the <a target="_self" href="https://scalardb.scalar-labs.com/docs/latest/releases/release-notes">release notes</a>.',
-          // '<b>Announcing the release of ScalarDB X.X!🚀 For details on what\'s included in this new version, see the <a target="_self" rel="noopener noreferrer" href="/docs/latest/releases/release-notes">release notes</a>.<b>',
-        backgroundColor: '#2673BB',
-        textColor: '#FFFFFF',
-        isCloseable: false,
-      },
+      // announcementBar: {
+      //   id: 'new_version',
+      //   content:
+      //     // '<b>Announcing the release of ScalarDB X.X!🚀 For details on what\'s included in this new version, see the <a target="_self" rel="noopener noreferrer" href="/docs/latest/releases/release-notes?utm_source=docs-site&utm_medium=announcementbar">release notes</a>.<b>',
+      //   backgroundColor: '#2673BB',
+      //   textColor: '#FFFFFF',
+      //   isCloseable: false,
+      // },
       zoom: {
         selector: '.markdown :not(em) > img',
         background: {
