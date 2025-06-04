@@ -11,335 +11,105 @@ import React from 'react';
 import clsx from 'clsx';
 import Translate from '@docusaurus/Translate';
 import Link from '@docusaurus/Link';
+import LiteYouTubeEmbed from 'react-lite-youtube-embed';
+import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-const CardsAbout = [
+const categories = [
   {
-    // name: '',
-    // image: '<LINK_TO>.png',
-    url: {
-      page: 'overview',
-    },
-    description: (
-      <Translate id="home.about.description">
-        Overview
-      </Translate>
-    ),
+    name: 'About',
+    links: ['/about', '/about/team', '/about/contact'],
+    labels: ['Doc 1', 'Doc 2', 'Doc 3'],
   },
   {
-    // name: '',
-    // image: '<LINK_TO>.png',
-    url: {
-      page: 'requirements',
-    },
-    description: (
-      <Translate id="home.about.description">
-        Requirements
-      </Translate>
-    ),
-  },
-]
-
-const CardsQuickstart = [
-  {
-    // name: '',
-    // image: '<LINK_TO>.png',
-    url: {
-      page: 'getting-started-with-scalardb',
-    },
-    description: (
-      <Translate id="home.quickstart.description">
-        Getting started with ScalarDB
-      </Translate>
-    ),
+    name: 'Quickstart',
+    links: ['/quickstart', '/quickstart/tutorials', '/quickstart/examples'],
+    labels: ['Doc 1', 'Doc 2', 'Doc 3'],
   },
   {
-    // name: '',
-    // image: '<LINK_TO>.png',
-    url: {
-      page: 'scalardb-cluster/getting-started-with-scalardb-cluster',
-    },
-    description: (
-      <Translate id="home.quickstart.description">
-        Getting started with ScalarDB Cluster
-      </Translate>
-    ),
-  },
-]
-
-const CardsSamples = [
-  {
-    // name: '',
-    // image: '<LINK_TO>.png',
-    url: {
-      page: 'scalardb-samples/multi-storage-transaction-sample',
-    },
-    description: (
-      <Translate id="home.samples.description">
-        Run a sample application with multi-storage transaction support
-      </Translate>
-    ),
+    name: 'Develop',
+    links: ['/develop', '/develop/example1', '/develop/example2'],
+    labels: ['Doc 1', 'Doc 2', 'Doc 3'],
   },
   {
-    // name: '',
-    // image: '<LINK_TO>.png',
-    url: {
-      page: 'scalardb-samples/microservice-transaction-sample',
-    },
-    description: (
-      <Translate id="home.samples.description">
-        Run a sample application that supports microservice transactions
-      </Translate>
-    ),
-  },
-]
-
-const CardsDevelop = [
-  {
-    // name: '',
-    // image: '<LINK_TO>.png',
-    url: {
-      page: 'add-scalardb-to-your-build',
-    },
-    description: (
-      <Translate id="home.develop.description">
-        Add ScalarDB to your build
-      </Translate>
-    ),
+    name: 'Deploy',
+    links: ['/deploy', '/deploy/tutorials', '/deploy/examples'],
+    labels: ['Doc 1', 'Doc 2', 'Doc 3'],
   },
   {
-    // name: '',
-    // image: '<LINK_TO>.png',
-    url: {
-      page: 'schema-loader',
-    },
-    description: (
-      <Translate id="home.develop.description">
-        ScalarDB Schema Loader
-      </Translate>
-    ),
-  },
-]
-
-const CardsDeploy = [
-  {
-    // name: '',
-    // image: '<LINK_TO>.png',
-    url: {
-      page: 'scalar-kubernetes/ProductionChecklistForScalarDBCluster',
-    },
-    description: (
-      <Translate id="home.deploy.description">
-        See the ScalarDB Cluster production checklist
-      </Translate>
-    ),
+    name: 'Migrate',
+    links: ['/migrate', '/migrate/tutorials', '/migrate/examples'],
+    labels: ['Doc 1', 'Doc 2', 'Doc 3'],
   },
   {
-    // name: '',
-    // image: '<LINK_TO>.png',
-    url: {
-      page: 'scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS',
-    },
-    description: (
-      <Translate id="home.deploy.description">
-        Deploy ScalarDB Cluster on Amazon EKS
-      </Translate>
-    ),
-  },
-]
-
-const CardsMigrate = [
-  {
-    // name: '',
-    // image: '<LINK_TO>.png',
-    url: {
-      page: 'schema-loader-import',
-    },
-    description: (
-      <Translate id="home.migrate.description">
-        Import Existing Tables by Using ScalarDB Schema Loader
-      </Translate>
-    ),
+    name: 'Manage',
+    links: ['/manage', '/manage/tutorials', '/manage/examples'],
+    labels: ['Doc 1', 'Doc 2', 'Doc 3'],
   },
   {
-    // name: '',
-    // image: '<LINK_TO>.png',
-    url: {
-      page: 'scalardb-sql/migration-guide',
-    },
-    description: (
-      <Translate id="home.migrate.description">
-        Migrate Your Applications and Databases
-      </Translate>
-    ),
-  },
-]
-
-const CardsManage = [
-  {
-    // name: '',
-    // image: '<LINK_TO>.png',
-    url: {
-      page: 'scalar-kubernetes/K8sMonitorGuide',
-    },
-    description: (
-      <Translate id="home.manage.description">
-        Monitor ScalarDB in a Kubernetes cluster
-      </Translate>
-    ),
-  },
-  {
-    // name: '',
-    // image: '<LINK_TO>.png',
-    url: {
-      page: 'scalar-kubernetes/BackupNoSQL',
-    },
-    description: (
-      <Translate id="home.manage.description">
-        Back up a NoSQL database in a Kubernetes environment
-      </Translate>
-    ),
-  },
-]
-
-const CardsReference = [
-  {
-    // name: '',
-    // image: '<LINK_TO>.png',
-    url: {
-      page: 'scalardb-core-status-codes',
-    },
-    description: (
-      <Translate id="home.reference.description">
-        ScalarDB Core Error Codes
-      </Translate>
-    ),
-  },
-  {
-    // name: '',
-    // image: '<LINK_TO>.png',
-    url: {
-      page: 'scalar-licensing',
-    },
-    description: (
-      <Translate id="home.reference.description">
-        How to Configure a Product License Key
-      </Translate>
-    ),
+    name: 'Integrate',
+    links: ['/integrate', '/integrate/api', '/integrate/sdks'],
+    labels: ['Doc 1', 'Doc 2', 'Doc 3'],
   },
 ];
 
-interface Props {
-  // name: string;
-  // image: string;
-  url: {
-    page?: string;
-  };
-  description: JSX.Element;
-}
+const new_docs = [
+  {
+    links: ['/about'],
+    labels: ['Doc 1'],
+  },
+  {
+    links: ['/quickstart'],
+    labels: ['Doc 1'],
+  },
+  {
+    links: ['/develop'],
+    labels: ['Doc 1'],
+  },
+];
 
-function Card({ /* name, image,*/ url, description }: Props) {
+const CategoryGrid = () => {
   return (
-    <div className="col col--6 margin-bottom--lg">
-      <div className={clsx('card')}>
-        <div className={clsx('card__image')}>
-          {/* <Link to={url.page}>
-            <img src={image}></img>}
-          </Link> */}
+    <div className="grid-container">
+      {/* Hero Section */}
+      <div className="hero-section">
+        <div className="hero-text">
+        ScalarDB is a universal HTAP engine. It achieves ACID transactions and real-time analytics across diverse databases to simplify the complexity of managing multiple databases.
+          {/* New Docs */}
+          <div className="new-docs-table"><FontAwesomeIcon icon="fas fa-book" /> New Docs</div>
+
+          {new_docs.map((doc, i) => (
+              <React.Fragment key={i}>
+                <div className="new-docs-row"></div>
+                {doc.links.map((link, j) => (
+                  <Link key={j} className="new-docs-cell" to={link}>
+                    {doc.labels[j]}
+                  </Link>
+                ))}
+              </React.Fragment>
+            ))}
+
         </div>
-        <Link to={url.page}>
-          <div className="card__body">
-            {/* <h3>{name}</h3> */}
-            <p>{description}</p>
-          </div>
-        </Link>
-        {/* <div className="card__footer">
-          <div className="button-group button-group--block">
-            <Link className="button button--secondary" to={url.page}>
-              <Translate id="button.readMore">Read more</Translate>
-            </Link>
-          </div>
-        </div> */}
+        <div className="youtube-embed">
+          <LiteYouTubeEmbed id="-i1tqeI3FKs" title="ScalarDB Explainer" poster="maxresdefault" />
+        </div>
+      </div>
+
+      {/* Category Table */}
+      <div className="category-table">
+        {categories.map((cat, i) => (
+          <React.Fragment key={i}>
+            <div className="category-label">{cat.name}</div>
+            {cat.links.map((link, j) => (
+              <Link key={j} className="category-cell" to={link}>
+                {cat.labels[j]}
+              </Link>
+            ))}
+          </React.Fragment>
+        ))}
       </div>
     </div>
   );
-}
+};
 
-export function CardRowAbout(): JSX.Element {
-  return (
-    <div className="row">
-      {CardsAbout.map((special) => (
-        <Card key={special.name} {...special} />
-      ))}
-    </div>
-  );
-}
-
-export function CardRowQuickstart(): JSX.Element {
-  return (
-    <div className="row">
-      {CardsQuickstart.map((special) => (
-        <Card key={special.name} {...special} />
-      ))}
-    </div>
-  );
-}
-
-export function CardRowSamples(): JSX.Element {
-  return (
-    <div className="row">
-      {CardsSamples.map((special) => (
-        <Card key={special.name} {...special} />
-      ))}
-    </div>
-  );
-}
-
-export function CardRowDevelop(): JSX.Element {
-  return (
-    <div className="row">
-      {CardsDevelop.map((special) => (
-        <Card key={special.name} {...special} />
-      ))}
-    </div>
-  );
-}
-
-export function CardRowDeploy(): JSX.Element {
-  return (
-    <div className="row">
-      {CardsDeploy.map((special) => (
-        <Card key={special.name} {...special} />
-      ))}
-    </div>
-  );
-}
-
-export function CardRowMigrate(): JSX.Element {
-  return (
-    <div className="row">
-      {CardsMigrate.map((special) => (
-        <Card key={special.name} {...special} />
-      ))}
-    </div>
-  );
-}
-
-export function CardRowManage(): JSX.Element {
-  return (
-    <div className="row">
-      {CardsManage.map((special) => (
-        <Card key={special.name} {...special} />
-      ))}
-    </div>
-  );
-}
-
-export function CardRowReference(): JSX.Element {
-  return (
-    <div className="row">
-      {CardsReference.map((special) => (
-        <Card key={special.name} {...special} />
-      ))}
-    </div>
-  );
-}
+export default CategoryGrid;
