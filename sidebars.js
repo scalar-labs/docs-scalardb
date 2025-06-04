@@ -442,6 +442,11 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
+                  id: 'scalardb-sql/index',
+                  label: 'Overview',
+                },
+                {
+                  type: 'doc',
                   id: 'scalardb-sql/jdbc-guide',
                   label: 'JDBC Guide',
                 },
@@ -472,6 +477,11 @@ const sidebars = {
               label: 'GraphQL Interface',
               collapsible: true,
               items: [
+                {
+                  type: 'doc',
+                  id: 'scalardb-graphql/index',
+                  label: 'Overview',
+                },
                 {
                   type: 'doc',
                   id: 'scalardb-graphql/how-to-run-two-phase-commit-transaction',
@@ -1135,6 +1145,11 @@ const sidebars = {
               label: 'データモデリング',
             },
             {
+              type: 'doc',
+              id: 'consensus-commit',
+              label: 'Consensus Commit プロトコル',
+            },
+            {
               type: 'category',
               label: 'CRUD インターフェースを使用して実行',
               collapsible: true,
@@ -1353,6 +1368,11 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
+                  id: 'scalardb-sql/index',
+                  label: '概要',
+                },
+                {
+                  type: 'doc',
                   id: 'scalardb-sql/jdbc-guide',
                   label: 'JDBC ガイド',
                 },
@@ -1383,6 +1403,11 @@ const sidebars = {
               label: 'GraphQL インターフェース',
               collapsible: true,
               items: [
+                {
+                  type: 'doc',
+                  id: 'scalardb-graphql/index',
+                  label: '概要',
+                },
                 {
                   type: 'doc',
                   id: 'scalardb-graphql/how-to-run-two-phase-commit-transaction',

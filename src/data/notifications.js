@@ -3,6 +3,17 @@
 const notificationsList = [
   {
     message: {
+      en: 'Check out the release notes for ScalarDB 3.15.3',
+      ja: 'ScalarDB 3.15.3 のリリースノートをご覧ください'
+    },
+    url: {
+      en: 'releases/release-notes#v3153?utm_source=docs-site&utm_medium=notifications',
+      ja: 'releases/release-notes#v3153?utm_source=docs-site&utm_medium=notifications'
+    },
+    unread: true
+  },
+  {
+    message: {
       en: 'Discover how to implement vector search capabilities with ScalarDB Cluster',
       ja: 'ScalarDB Cluster でベクトル検索機能を実装する方法を学ぶ'
     },
