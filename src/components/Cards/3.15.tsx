@@ -82,7 +82,20 @@ const CategoryGrid = () => {
       <div className="category-table">
         {new_docs.map((new_docs, i) => (
           <React.Fragment key={i}>
-            <div className="category-label"><FontAwesomeIcon icon="fas fa-book" className="new-docs-icon" /> {new_docs.name}</div>
+            <div className="category-label">
+              <FontAwesomeIcon
+                icon="fas fa-book fa-1x"
+                className="new-docs-icon"
+                style={{ visibility: 'hidden' }}
+                onLoad={() => {
+                  const iconElement = document.querySelector('.new-docs-icon');
+                  if (iconElement) {
+                    iconElement.style.visibility = 'visible';
+                  }
+                }}
+              />
+              {new_docs.name}
+            </div>
             {new_docs.links.map((link, j) => (
               <Link key={j} className="new-docs-cell" to={link}>
                 {new_docs.labels[j]}

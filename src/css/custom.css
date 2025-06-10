@@ -158,7 +158,11 @@ div[class^='announcementBar'] {
 }
 
 .new-docs-icon {
-  color: #78C740;
+  visibility: hidden; /* Hide icon until font is loaded to eliminate FOUC issue. */
+}
+
+.new-docs-icon-loaded {
+  visibility: visible; /* Show icon once font is loaded to eliminate FOUC issue. */
 }
 
 /* GitHub icon */
