@@ -100,46 +100,23 @@ div[class^='announcementBar'] {
   min-width: 250px;
 }
 
-.youtube-embed {
-  padding: 0 3rem 0 0;
-  flex: 1;
-  min-width: 600px;
-  aspect-ratio: 16 / 9;
-}
-
-.new-docs-table {
+.hero-text-first-sentence {
   font-weight: 600;
-  margin-top: 2rem;
 }
 
-.new-docs-row {
-  align-items: center;
-  display: flex;
-  flex-wrap: wrap;
-  margin-bottom: 0.5rem;
-  padding: 0.4rem;
+.hero-text-additional {
+  display: none;
 }
 
-.new-docs-cell {
-  color: var(--ifm-font-color-base);
-  padding: 0.5rem 0;
-  text-align: center;
-
-  &:hover {
-    color: var(--ifm-font-color-base) !important;
+@media (min-width: 1440px) { /* Hides the second paragraph in the hero text if the page is too narrow. This reduces awkward spacing issues, mostly on larger screens. */
+  .hero-text-additional {
+    display: block;
   }
 }
 
-.new-docs-row ul,
-.new-docs-cell ul {
-  list-style-type: disc;
-  padding-left: 1.5rem;
-  margin: 0;
-}
-
-.new-docs-row li,
-.new-docs-cell li {
-  margin-bottom: 0.3rem;
+.youtube-embed {
+  flex: 1;
+  min-width: 480px;
 }
 
 .link {
@@ -154,37 +131,35 @@ div[class^='announcementBar'] {
 .category-table {
   display: grid;
   grid-template-columns: 0.5fr 1fr 1fr 1fr;
-  gap: 0;
+  gap: 0.75rem 0;
   margin-top: 1rem;
   width: 100%;
-}
-
-.category-row {
-  border: 1px 0 solid var(--ifm-color-emphasis-200);
-  display: contents;
 }
 
 .category-label {
   color: var(--ifm-font-color-base);
   font-weight: 600;
-  padding: 1.5rem 0;
+  padding: 1rem 0;
   text-align: left;
-  vertical-align: middle;
+  vertical-align: top;
   width: 130px;
 }
 
-.category-cell {
+.category-cell, .new-docs-cell {
   background-color: var(--ifm-color-emphasis-200);
   color: var(--ifm-font-color-base);
   font-weight: 500;
-  outline: 1px 0 solid var(--ifm-color-emphasis-200);
-  padding: 1.5rem 2rem;
+  padding: 1rem 1.5rem;
   text-align: left;
   vertical-align: middle;
 
   &:hover {
     color: var(--ifm-font-color-base) !important;
   }
+}
+
+.new-docs-icon {
+  color: #78C740;
 }
 
 /* GitHub icon */

@@ -15,6 +15,14 @@ import LiteYouTubeEmbed from 'react-lite-youtube-embed';
 import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+const new_docs = [
+  {
+    name: 'New docs',
+    links: ['features', 'scalardb-cluster/getting-started-with-vector-search', 'scalardb-cluster/authorize-with-abac'],
+    labels: ['ScalarDB Features', 'Getting Started with ScalarDB Cluster for Vector Search', 'Control User Access in a Fine-Grained Manner'],
+  },
+];
+
 const categories = [
   {
     name: 'About ScalarDB',
@@ -48,54 +56,42 @@ const categories = [
   },
 ];
 
-const new_docs = [
-{
-    links: ['features'],
-    labels: ['ScalarDB Features'],
-  },
-  {
-    links: ['scalardb-cluster/authorize-with-abac'],
-    labels: ['Control User Access in a Fine-Grained Manner'],
-  },
-  {
-    links: ['scalardb-cluster/getting-started-with-vector-search'],
-    labels: ['Getting Started with ScalarDB Cluster for Vector Search'],
-  },
-];
-
 const CategoryGrid = () => {
   return (
     <div className="grid-container">
-      {/* Hero Section */}
+      {/* Hero section */}
       <div className="hero-section">
         <div className="hero-text">
-        ScalarDB is a universal HTAP engine. It achieves ACID transactions and real-time analytics across diverse databases to simplify the complexity of managing multiple databases.
-          {/* New Docs */}
-          <div className="new-docs-table"><FontAwesomeIcon icon="fas fa-book" /> New Docs</div>
+          <p><span className="hero-text-first-sentence">ScalarDB is a universal hybrid transaction/analytical processing (HTAP) engine for diverse databases.</span> It runs as middleware on databases and virtually unifies diverse databases by achieving ACID transactions and real-time analytics across them to simplify the complexity of managing multiple databases or multiple instances of a single database.</p>
 
-          {new_docs.map((doc, i) => (
-              <React.Fragment key={i}>
-                <div className="new-docs-row"></div>
-                <ul>
-                  <li>
-                    {doc.links.map((link, j) => (
-                      <Link key={j} className="new-docs-cell" to={link}>
-                        {doc.labels[j]}
-                      </Link>
-                    ))}
-                  </li>
-                </ul>
-              </React.Fragment>
-            ))}
+          <span className="hero-text-additional">
+            <p>As a versatile solution, ScalarDB supports a range of databases, including:</p>
 
+            <ul>
+              <li>Relational databases that support JDBC, such as MariaDB, Microsoft SQL Server, MySQL, Oracle Database, PostgreSQL, SQLite, and their compatible databases, like Amazon Aurora and YugabyteDB.</li>
+              <li>NoSQL databases like Amazon DynamoDB, Apache Cassandra, and Azure Cosmos DB.</li>
+            </ul>
+          </span>
         </div>
         <div className="youtube-embed">
           <LiteYouTubeEmbed id="-i1tqeI3FKs" title="ScalarDB Explainer" poster="maxresdefault" />
         </div>
       </div>
 
-      {/* Category Table */}
+      {/* New docs table */}
       <div className="category-table">
+        {new_docs.map((new_docs, i) => (
+          <React.Fragment key={i}>
+            <div className="category-label"><FontAwesomeIcon icon="fas fa-book" className="new-docs-icon" /> {new_docs.name}</div>
+            {new_docs.links.map((link, j) => (
+              <Link key={j} className="new-docs-cell" to={link}>
+                {new_docs.labels[j]}
+              </Link>
+            ))}
+          </React.Fragment>
+        ))}
+
+      {/* Category table */}
         {categories.map((cat, i) => (
           <React.Fragment key={i}>
             <div className="category-label">{cat.name}</div>
