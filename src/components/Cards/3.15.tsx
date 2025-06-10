@@ -17,54 +17,49 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const categories = [
   {
-    name: 'About',
-    links: ['/about', '/about/team', '/about/contact'],
-    labels: ['Doc 1', 'Doc 2', 'Doc 3'],
+    name: 'About ScalarDB',
+    links: ['overview', 'design', 'requirements'],
+    labels: ['Overview', 'Design', 'Requirements'],
   },
   {
     name: 'Quickstart',
-    links: ['/quickstart', '/quickstart/tutorials', '/quickstart/examples'],
-    labels: ['Doc 1', 'Doc 2', 'Doc 3'],
+    links: ['getting-started-with-scalardb', 'scalardb-cluster/getting-started-with-scalardb-cluster', 'scalardb-samples/scalardb-analytics-spark-sample'],
+    labels: ['Getting Started with ScalarDB', 'Getting Started with ScalarDB Cluster', 'Getting Started with ScalarDB Analytics'],
   },
   {
     name: 'Develop',
-    links: ['/develop', '/develop/example1', '/develop/example2'],
-    labels: ['Doc 1', 'Doc 2', 'Doc 3'],
+    links: ['data-modeling', 'configurations', 'scalardb-cluster/run-non-transactional-storage-operations-through-scalardb-cluster'],
+    labels: ['Model Your Data', 'Run Transactions Through ScalarDB Cluster', 'Run Non-Transactional Storage Operations Through ScalarDB Cluster'],
   },
   {
     name: 'Deploy',
-    links: ['/deploy', '/deploy/tutorials', '/deploy/examples'],
-    labels: ['Doc 1', 'Doc 2', 'Doc 3'],
+    links: ['scalardb-cluster/setup-scalardb-cluster-on-kubernetes-by-using-helm-chart', 'scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS', 'scalardb-analytics/deployment'],
+    labels: ['Deploy ScalarDB Cluster Locally', 'Deploy ScalarDB Cluster on Amazon Elastic Kubernetes Service (EKS)', 'Deploy ScalarDB Analytics in Public Cloud Environments'],
   },
   {
     name: 'Migrate',
-    links: ['/migrate', '/migrate/tutorials', '/migrate/examples'],
-    labels: ['Doc 1', 'Doc 2', 'Doc 3'],
+    links: ['scalardb-sql/migration-guide', 'scalardb-sql/migration-guide', ''],
+    labels: ['Importing Existing Tables to ScalarDB by Using ScalarDB Schema Loader', 'Migrate Your Applications and Databases into a ScalarDB-Based Environment', ''],
   },
   {
     name: 'Manage',
-    links: ['/manage', '/manage/tutorials', '/manage/examples'],
-    labels: ['Doc 1', 'Doc 2', 'Doc 3'],
-  },
-  {
-    name: 'Integrate',
-    links: ['/integrate', '/integrate/api', '/integrate/sdks'],
-    labels: ['Doc 1', 'Doc 2', 'Doc 3'],
+    links: ['scalar-kubernetes/HowToScaleScalarDB', 'scalar-kubernetes/HowToUpgradeScalarDB', 'backup-restore'],
+    labels: ['Scale ScalarDB', 'Upgrade ScalarDB', 'Back Up and Restore Databases Used Through ScalarDB'],
   },
 ];
 
 const new_docs = [
-  {
-    links: ['/about'],
-    labels: ['Doc 1'],
+{
+    links: ['features'],
+    labels: ['ScalarDB Features'],
   },
   {
-    links: ['/quickstart'],
-    labels: ['Doc 1'],
+    links: ['scalardb-cluster/authorize-with-abac'],
+    labels: ['Control User Access in a Fine-Grained Manner'],
   },
   {
-    links: ['/develop'],
-    labels: ['Doc 1'],
+    links: ['scalardb-cluster/getting-started-with-vector-search'],
+    labels: ['Getting Started with ScalarDB Cluster for Vector Search'],
   },
 ];
 
@@ -81,11 +76,15 @@ const CategoryGrid = () => {
           {new_docs.map((doc, i) => (
               <React.Fragment key={i}>
                 <div className="new-docs-row"></div>
-                {doc.links.map((link, j) => (
-                  <Link key={j} className="new-docs-cell" to={link}>
-                    {doc.labels[j]}
-                  </Link>
-                ))}
+                <ul>
+                  <li>
+                    {doc.links.map((link, j) => (
+                      <Link key={j} className="new-docs-cell" to={link}>
+                        {doc.labels[j]}
+                      </Link>
+                    ))}
+                  </li>
+                </ul>
               </React.Fragment>
             ))}
 
