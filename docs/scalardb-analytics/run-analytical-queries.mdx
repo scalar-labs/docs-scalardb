@@ -42,8 +42,8 @@ For example configurations in a practical scenario, see [the sample application 
 | Configuration Key | Required | Description |
 |:-----------------|:---------|:------------|
 | `spark.jars.packages` | No | A comma-separated list of Maven coordinates for the required dependencies. User need to include the ScalarDB Analytics package you are using, otherwise, specify it as the command line argument when running the Spark application. For details about the Maven coordinates of ScalarDB Analytics, refer to [Add ScalarDB Analytics dependency](#add-the-scalardb-analytics-dependency). |
-| `spark.sql.extensions` | Yes | Must be set to `com.scalar.db.analytics.spark.Extensions` |
-| `spark.sql.catalog.<CATALOG_NAME>` | Yes | Must be set to `com.scalar.db.analytics.spark.ScalarCatalog` |
+| `spark.sql.extensions` | Yes | Must be set to `com.scalar.db.analytics.spark.extension.ScalarDbAnalyticsExtensions`. |
+| `spark.sql.catalog.<CATALOG_NAME>` | Yes | Must be set to `com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog`. |
 
 You can specify any name for `<CATALOG_NAME>`. Be sure to use the same catalog name throughout your configuration.
 
@@ -162,8 +162,8 @@ Below is an example configuration for ScalarDB Analytics that demonstrates how t
 ```conf
 # Spark plugin configurations
 spark.jars.packages com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>
-spark.sql.extensions com.scalar.db.analytics.spark.Extensions
-spark.sql.catalog.scalardb com.scalar.db.analytics.spark.ScalarCatalog
+spark.sql.extensions com.scalar.db.analytics.spark.extension.ScalarDbAnalyticsExtensions
+spark.sql.catalog.scalardb com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog
 
 # License configurations
 spark.sql.catalog.scalardb.license.key <LICENSE_KEY>
