@@ -89,10 +89,29 @@ div[class^='announcementBar'] {
 }
 
 .hero-section {
+  background-repeat: no-repeat;
   display: flex;
-  justify-content: space-between;
   flex-wrap: wrap;
   gap: 2rem;
+  justify-content: space-between;
+  padding: 1rem;
+  position: relative;
+  z-index: 1;
+}
+
+.hero-section::before {
+  background-image: url("/img/home-page-background.avif");
+  background-repeat: no-repeat;
+  background-size: cover;
+  content: "";
+  opacity: 0.25;
+  padding-top: 2em;
+  position: absolute;
+  z-index: -1;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
 }
 
 .hero-text {
