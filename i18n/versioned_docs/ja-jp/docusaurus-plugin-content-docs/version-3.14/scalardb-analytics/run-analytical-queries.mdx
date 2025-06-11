@@ -45,8 +45,8 @@ Apache Spark は Scala 2.12 または Scala 2.13 でビルドされています�
 | 設定キー名                           | 必須   | 説明                                                                                                                                                                                                                                                                                                |
 |:-----------------------------------|:------|:----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `spark.jars.packages`              | いいえ | 必要な依存関係の Maven 座標をカンマ区切りで指定します。使用する ScalarDB Analytics パッケージを含める必要があります。含めない場合は、Spark アプリケーションの実行時にコマンドライン引数として指定します。ScalarDB Analytics の Maven 座標の詳細については、[ScalarDB Analytics 依存関係の追加](#scalardb-analytics-依存関係の追加)を参照してください。 |
-| `spark.sql.extensions`             | はい   | `com.scalar.db.analytics.spark.Extensions` を設定する必要があります。                                                                                                                                                                                                                                    |
-| `spark.sql.catalog.<CATALOG_NAME>` | はい   | `com.scalar.db.analytics.spark.ScalarCatalog` を設定する必要があります。           
+| `spark.sql.extensions`             | はい   | `com.scalar.db.analytics.spark.extension.ScalarDbAnalyticsExtensions` を設定する必要があります。                                                                                                                                                                                                                                    |
+| `spark.sql.catalog.<CATALOG_NAME>` | はい   | `com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog` を設定する必要があります。           
 
 `<CATALOG_NAME>`には任意の名前を指定できます。設定全体で同じカタログ名を使用するようにしてください。
 
@@ -165,8 +165,8 @@ ScalarDB AnalyticsはScalarDBをデータソースとしてサポートしてい
 ```conf
 # Sparkプラグインの設定
 spark.jars.packages com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>
-spark.sql.extensions com.scalar.db.analytics.spark.Extensions
-spark.sql.catalog.scalardb com.scalar.db.analytics.spark.ScalarCatalog
+spark.sql.extensions com.scalar.db.analytics.spark.extension.ScalarDbAnalyticsExtensions
+spark.sql.catalog.scalardb com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog
 
 # ライセンスの設定
 spark.sql.catalog.scalardb.license.key <LICENSE_KEY>
