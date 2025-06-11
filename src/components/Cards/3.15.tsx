@@ -24,15 +24,6 @@ const new_docs = [
   },
 ];
 
-const categoryLinks = {
-  'About ScalarDB': 'overview',
-  'Quickstart': 'quickstart-overview',
-  'Develop': 'develop-overview',
-  'Deploy': 'deploy-overview',
-  'Migrate': 'migrate-overview',
-  'Manage': 'manage-overview',
-};
-
 const categories = [
   {
     name: 'About ScalarDB',
@@ -107,11 +98,7 @@ const CategoryGrid = () => {
       {/* Category table */}
         {categories.map((cat, i) => (
           <React.Fragment key={i}>
-            <div className="category-label">
-              <Link to={categoryLinks[cat.name]} className="category-label-link">
-                {cat.name}
-              </Link>
-            </div>
+            <div className="category-label">{cat.name}</div>
             {cat.links.map((link, j) => (
               <Link key={j} className="category-cell" to={link}>
                 {cat.labels[j]}
