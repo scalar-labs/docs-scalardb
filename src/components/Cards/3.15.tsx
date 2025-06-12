@@ -70,12 +70,12 @@ const categories = [
       },
       {
         cell: 1, // Second cell
-        links: ['scalardb-cluster/getting-started-with-scalardb', ''],
+        links: ['getting-started-with-scalardb'],
         labels: ['Getting Started with ScalarDB']
       },
       {
         cell: 2, // Third cell
-        links: ['getting-started-with-scalardb-cluster', ''],
+        links: ['scalardb-cluster/getting-started-with-scalardb-cluster'],
         labels: ['Getting Started with ScalarDB Cluster']
       }
     ]
