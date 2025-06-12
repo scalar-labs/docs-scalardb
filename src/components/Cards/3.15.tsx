@@ -46,7 +46,7 @@ const categories = [
       {
         cell: 0, // First cell
         links: ['overview', ''],
-        labels: ['Overview', '']
+        labels: ['ScalarDB Overview', '']
       },
       {
         cell: 1, // Second cell
@@ -65,18 +65,18 @@ const categories = [
     categoryLinks: [
       {
         cell: 0, // First cell
-        links: ['quickstart-overview', 'getting-started-with-scalardb'],
-        labels: ['Overview', 'Getting Started with ScalarDB']
+        links: ['quickstart-overview', 'scalardb-samples/scalardb-analytics-spark-sample'],
+        labels: ['Quickstart Overview', 'Getting Started with ScalarDB Analytics']
       },
       {
         cell: 1, // Second cell
-        links: ['scalardb-cluster/getting-started-with-scalardb-cluster', ''],
-        labels: ['Getting Started with ScalarDB Cluster', '']
+        links: ['scalardb-cluster/getting-started-with-scalardb', ''],
+        labels: ['Getting Started with ScalarDB', '']
       },
       {
         cell: 2, // Third cell
-        links: ['scalardb-samples/scalardb-analytics-spark-sample', ''],
-        labels: ['Getting Started with ScalarDB Analytics', '']
+        links: ['getting-started-with-scalardb-cluster', ''],
+        labels: ['Getting Started with ScalarDB Cluster', '']
       }
     ]
   },
@@ -85,18 +85,18 @@ const categories = [
     categoryLinks: [
       {
         cell: 0, // First cell
-        links: ['develop-overview', 'data-modeling'],
-        labels: ['Overview', 'Model Your Data']
+        links: ['develop-overview', 'develop-run-transactions-overview'],
+        labels: ['Develop Overview', 'Run Transactions']
       },
       {
         cell: 1, // Second cell
-        links: ['configurations', 'scalardb-cluster/configurations'],
-        labels: ['ScalarDB Core Configurations', 'ScalarDB Cluster Configurations']
+        links: ['configurations', 'develop-run-non-transactional-operations-overview'],
+        labels: ['ScalarDB Core Configurations', 'Run Non-Transactional Storage Operations']
       },
       {
         cell: 2, // Third cell
-        links: ['scalardb-cluster/run-non-transactional-storage-operations-through-scalardb-cluster', ''],
-        labels: ['Run Non-Transactional Storage Operations Through ScalarDB Cluster', '']
+        links: ['scalardb-cluster/configurations', 'scalardb-analytics/run-analytical-queries'],
+        labels: ['ScalarDB Cluster Configurations', 'Run Analytical Queries Through ScalarDB Analytics']
       }
     ]
   },
@@ -105,18 +105,18 @@ const categories = [
     categoryLinks: [
       {
         cell: 0, // First cell
-        links: ['deploy-overview', 'scalardb-cluster/setup-scalardb-cluster-on-kubernetes-by-using-helm-chart'],
-        labels: ['Overview', 'Deploy ScalarDB Cluster Locally']
+        links: ['deploy-overview', 'scalardb-analytics/deployment'],
+        labels: ['Deploy Overview', 'Deploy ScalarDB Analytics in Public Cloud Environments']
       },
       {
         cell: 1, // Second cell
-        links: ['scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS', ''],
-        labels: ['Deploy ScalarDB Cluster on Amazon EKS', '']
+        links: ['scalardb-cluster/setup-scalardb-cluster-on-kubernetes-by-using-helm-chart', ''],
+        labels: ['Deploy ScalarDB Cluster Locally', '']
       },
       {
         cell: 2, // Third cell
-        links: ['scalardb-analytics/deployment', ''],
-        labels: ['Deploy ScalarDB Analytics in Public Cloud Environments', '']
+        links: ['scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS', ''],
+        labels: ['Deploy ScalarDB Cluster on Amazon EKS', '']
       }
     ]
   },
@@ -126,7 +126,7 @@ const categories = [
       {
         cell: 0, // First cell
         links: ['migrate-overview', ''],
-        labels: ['Overview', '']
+        labels: ['Migrate Overview', '']
       },
       {
         cell: 1, // Second cell
@@ -146,12 +146,12 @@ const categories = [
       {
         cell: 0, // First cell
         links: ['manage-overview', 'backup-restore'],
-        labels: ['Overview', 'Back Up and Restore Databases Used Through ScalarDB']
+        labels: ['Manage Overview', 'Back Up and Restore Databases Used Through ScalarDB']
       },
       {
         cell: 1, // Second cell
-        links: ['scalar-kubernetes/HowToScaleScalarDB', ''],
-        labels: ['Scale ScalarDB', '']
+        links: ['scalar-kubernetes/HowToScaleScalarDB', 'scalar-manager/overview'],
+        labels: ['Scale ScalarDB', 'Scalar Manager']
       },
       {
         cell: 2, // Third cell
