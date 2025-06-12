@@ -22,18 +22,18 @@ const new_docs = [
     categoryLinks: [
       {
         cell: 0, // First cell
-        links: ['features', ''], // To add a link, use the format ['link1', 'link2']
-        labels: ['ScalarDB Features', ''] // To add a label, use the format ['label1', 'label2']
+        links: ['features'], // To add a link, use the format ['link1', 'link2']
+        labels: ['ScalarDB Features'] // To add a label, use the format ['label1', 'label2']
       },
       {
         cell: 1, // Second cell
-        links: ['scalardb-cluster/getting-started-with-vector-search', ''],
-        labels: ['Getting Started with ScalarDB Cluster for Vector Search', '']
+        links: ['scalardb-cluster/getting-started-with-vector-search'],
+        labels: ['Getting Started with ScalarDB Cluster for Vector Search']
       },
       {
         cell: 2, // Third cell
-        links: ['scalardb-cluster/authorize-with-abac', ''],
-        labels: ['Control User Access in a Fine-Grained Manner', '']
+        links: ['scalardb-cluster/authorize-with-abac'],
+        labels: ['Control User Access in a Fine-Grained Manner']
       }
     ]
   }
@@ -45,18 +45,18 @@ const categories = [
     categoryLinks: [
       {
         cell: 0, // First cell
-        links: ['overview', ''], // To add a link, use the format ['link1', 'link2']
-        labels: ['ScalarDB Overview', ''] // To add a label, use the format ['label1', 'label2']
+        links: ['overview'], // To add a link, use the format ['link1', 'link2']
+        labels: ['ScalarDB Overview'] // To add a label, use the format ['label1', 'label2']
       },
       {
         cell: 1, // Second cell
-        links: ['design', ''],
-        labels: ['Design', '']
+        links: ['design'],
+        labels: ['Design']
       },
       {
         cell: 2, // Third cell
-        links: ['requirements', ''],
-        labels: ['Requirements', '']
+        links: ['requirements'],
+        labels: ['Requirements']
       }
     ]
   },
@@ -71,12 +71,12 @@ const categories = [
       {
         cell: 1, // Second cell
         links: ['scalardb-cluster/getting-started-with-scalardb', ''],
-        labels: ['Getting Started with ScalarDB', '']
+        labels: ['Getting Started with ScalarDB']
       },
       {
         cell: 2, // Third cell
         links: ['getting-started-with-scalardb-cluster', ''],
-        labels: ['Getting Started with ScalarDB Cluster', '']
+        labels: ['Getting Started with ScalarDB Cluster']
       }
     ]
   },
@@ -110,13 +110,13 @@ const categories = [
       },
       {
         cell: 1, // Second cell
-        links: ['scalardb-cluster/setup-scalardb-cluster-on-kubernetes-by-using-helm-chart', ''],
-        labels: ['Deploy ScalarDB Cluster Locally', '']
+        links: ['scalardb-cluster/setup-scalardb-cluster-on-kubernetes-by-using-helm-chart'],
+        labels: ['Deploy ScalarDB Cluster Locally']
       },
       {
         cell: 2, // Third cell
-        links: ['scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS', ''],
-        labels: ['Deploy ScalarDB Cluster on Amazon EKS', '']
+        links: ['scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS'],
+        labels: ['Deploy ScalarDB Cluster on Amazon EKS']
       }
     ]
   },
@@ -125,18 +125,18 @@ const categories = [
     categoryLinks: [
       {
         cell: 0, // First cell
-        links: ['migrate-overview', ''], // To add a link, use the format ['link1', 'link2']
-        labels: ['Migrate Overview', ''] // To add a label, use the format ['label1', 'label2']
+        links: ['migrate-overview'], // To add a link, use the format ['link1', 'link2']
+        labels: ['Migrate Overview'] // To add a label, use the format ['label1', 'label2']
       },
       {
         cell: 1, // Second cell
-        links: ['scalardb-sql/migration-guide', ''],
-        labels: ['Importing Tables by Using ScalarDB Schema Loader', '']
+        links: ['scalardb-sql/migration-guide'],
+        labels: ['Importing Tables by Using ScalarDB Schema Loader']
       },
       {
         cell: 2, // Third cell
-        links: ['scalardb-sql/migration-guide', ''],
-        labels: ['Migrate Applications and Databases', '']
+        links: ['scalardb-sql/migration-guide'],
+        labels: ['Migrate Applications and Databases']
       }
     ]
   },
@@ -155,8 +155,8 @@ const categories = [
       },
       {
         cell: 2, // Third cell
-        links: ['scalar-kubernetes/HowToUpgradeScalarDB', ''],
-        labels: ['Upgrade ScalarDB', '']
+        links: ['scalar-kubernetes/HowToUpgradeScalarDB'],
+        labels: ['Upgrade ScalarDB']
       }
     ]
   }
