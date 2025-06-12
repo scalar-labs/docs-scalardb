@@ -158,7 +158,7 @@ div[class^='announcementBar'] {
 .category-label {
   color: var(--ifm-font-color-base);
   font-weight: 600;
-  padding: 1rem 0;
+  padding: 11px 0;
   text-align: left;
   vertical-align: top;
   width: 130px;
@@ -167,7 +167,6 @@ div[class^='announcementBar'] {
 .category-cell, .new-docs-cell {
   background-color: var(--ifm-color-emphasis-200);
   color: var(--ifm-font-color-base);
-  padding: 1rem 1.5rem;
   text-align: left;
   vertical-align: middle;
 
@@ -176,6 +175,92 @@ div[class^='announcementBar'] {
   }
 }
 
+.category-cell-multiple-links {
+  background-color: var(--ifm-color-emphasis-200);
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  height: 100%;
+  grid-column: span 1;
+}
+
+.category-cell-link {
+  color: var(--ifm-font-color-base);
+  display: block;
+  padding: 0.75rem 1.5rem;
+  text-decoration: none;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  &:hover {
+    color: var(--ifm-color-primary);
+    text-decoration: underline;
+  }
+}
+
+.category-cell-link:empty {
+  pointer-events: none;
+  background-color: var(--ifm-color-emphasis-200);
+}
+
+.category-cell-link:empty:hover {
+  background-color: var(--ifm-color-emphasis-200);
+}
+
+
+a[href=""], a:not([href]) { /* Add these styles to prevent hover effects on empty links. */
+  pointer-events: none;
+  cursor: default;
+}
+
+a[href=""]:hover, a:not([href]):hover {
+  background-color: var(--ifm-color-emphasis-200);
+  color: var(--ifm-font-color-base);
+}
+
+.category-cell-multiple-links:has(> a[href=""]),
+.category-cell-multiple-links:has(> span.category-cell) { /* Ensure empty cell containers don't show effects on hover. */
+  pointer-events: none;
+}
+
+.empty-cell {
+  background-color: var(--ifm-color-emphasis-200);
+  height: 100%;
+  cursor: default;
+  pointer-events: none;
+}
+
+@media (max-width: 768px) { /* Responsive design for mobile screens. */
+  .category-table {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .category-label {
+    width: 100%;
+    padding: 0.75rem 0 0.25rem 0;
+    border-top: 1px solid var(--ifm-color-emphasis-300);
+    margin-top: 0.5rem;
+  }
+
+  .category-cell, .new-docs-cell {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
+
+  .multi-link-cell {
+    width: 100%;
+    margin-bottom: 0.5rem;
+    padding: 0.75rem 1.5rem;
+  }
+
+  .cell-with-links {
+    width: 100%;
+    margin-bottom: 0.5rem;
+  }
 }
 
 .new-docs-icon {

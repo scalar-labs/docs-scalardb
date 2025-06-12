@@ -19,42 +19,147 @@ import { faBook } from '@fortawesome/free-solid-svg-icons';
 const new_docs = [
   {
     name: 'New docs',
-    links: ['features', 'scalardb-cluster/getting-started-with-vector-search', 'scalardb-cluster/authorize-with-abac'],
-    labels: ['ScalarDB Features', 'Getting Started with ScalarDB Cluster for Vector Search', 'Control User Access in a Fine-Grained Manner'],
-  },
+    categoryLinks: [
+      {
+        cell: 0, // First cell
+        links: ['features', ''],
+        labels: ['ScalarDB Features', '']
+      },
+      {
+        cell: 1, // Second cell
+        links: ['scalardb-cluster/getting-started-with-vector-search', ''],
+        labels: ['Getting Started with ScalarDB Cluster for Vector Search', '']
+      },
+      {
+        cell: 2, // Third cell
+        links: ['scalardb-cluster/authorize-with-abac', ''],
+        labels: ['Control User Access in a Fine-Grained Manner', '']
+      }
+    ]
+  }
 ];
 
 const categories = [
   {
     name: 'About ScalarDB',
-    links: ['overview', 'design', 'requirements'],
-    labels: ['Overview', 'Design', 'Requirements'],
+    categoryLinks: [
+      {
+        cell: 0, // First cell
+        links: ['overview', ''],
+        labels: ['Overview', '']
+      },
+      {
+        cell: 1, // Second cell
+        links: ['design', ''],
+        labels: ['Design', '']
+      },
+      {
+        cell: 2, // Third cell
+        links: ['requirements', ''],
+        labels: ['Requirements', '']
+      }
+    ]
   },
   {
     name: 'Quickstart',
-    links: ['getting-started-with-scalardb', 'scalardb-cluster/getting-started-with-scalardb-cluster', 'scalardb-samples/scalardb-analytics-spark-sample'],
-    labels: ['Getting Started with ScalarDB', 'Getting Started with ScalarDB Cluster', 'Getting Started with ScalarDB Analytics'],
+    categoryLinks: [
+      {
+        cell: 0, // First cell
+        links: ['quickstart-overview', 'getting-started-with-scalardb'],
+        labels: ['Overview', 'Getting Started with ScalarDB']
+      },
+      {
+        cell: 1, // Second cell
+        links: ['scalardb-cluster/getting-started-with-scalardb-cluster', ''],
+        labels: ['Getting Started with ScalarDB Cluster', '']
+      },
+      {
+        cell: 2, // Third cell
+        links: ['scalardb-samples/scalardb-analytics-spark-sample', ''],
+        labels: ['Getting Started with ScalarDB Analytics', '']
+      }
+    ]
   },
   {
     name: 'Develop',
-    links: ['data-modeling', 'configurations', 'scalardb-cluster/run-non-transactional-storage-operations-through-scalardb-cluster'],
-    labels: ['Model Your Data', 'Run Transactions Through ScalarDB Cluster', 'Run Non-Transactional Storage Operations Through ScalarDB Cluster'],
+    categoryLinks: [
+      {
+        cell: 0, // First cell
+        links: ['develop-overview', 'data-modeling'],
+        labels: ['Overview', 'Model Your Data']
+      },
+      {
+        cell: 1, // Second cell
+        links: ['configurations', 'scalardb-cluster/configurations'],
+        labels: ['ScalarDB Core Configurations', 'ScalarDB Cluster Configurations']
+      },
+      {
+        cell: 2, // Third cell
+        links: ['scalardb-cluster/run-non-transactional-storage-operations-through-scalardb-cluster', ''],
+        labels: ['Run Non-Transactional Storage Operations Through ScalarDB Cluster', '']
+      }
+    ]
   },
   {
     name: 'Deploy',
-    links: ['scalardb-cluster/setup-scalardb-cluster-on-kubernetes-by-using-helm-chart', 'scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS', 'scalardb-analytics/deployment'],
-    labels: ['Deploy ScalarDB Cluster Locally', 'Deploy ScalarDB Cluster on Amazon Elastic Kubernetes Service (EKS)', 'Deploy ScalarDB Analytics in Public Cloud Environments'],
+    categoryLinks: [
+      {
+        cell: 0, // First cell
+        links: ['deploy-overview', 'scalardb-cluster/setup-scalardb-cluster-on-kubernetes-by-using-helm-chart'],
+        labels: ['Overview', 'Deploy ScalarDB Cluster Locally']
+      },
+      {
+        cell: 1, // Second cell
+        links: ['scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS', ''],
+        labels: ['Deploy ScalarDB Cluster on Amazon EKS', '']
+      },
+      {
+        cell: 2, // Third cell
+        links: ['scalardb-analytics/deployment', ''],
+        labels: ['Deploy ScalarDB Analytics in Public Cloud Environments', '']
+      }
+    ]
   },
   {
     name: 'Migrate',
-    links: ['scalardb-sql/migration-guide', 'scalardb-sql/migration-guide', ''],
-    labels: ['Importing Existing Tables to ScalarDB by Using ScalarDB Schema Loader', 'Migrate Your Applications and Databases into a ScalarDB-Based Environment', ''],
+    categoryLinks: [
+      {
+        cell: 0, // First cell
+        links: ['migrate-overview', ''],
+        labels: ['Overview', '']
+      },
+      {
+        cell: 1, // Second cell
+        links: ['scalardb-sql/migration-guide', ''],
+        labels: ['Importing Tables by Using ScalarDB Schema Loader', '']
+      },
+      {
+        cell: 2, // Third cell
+        links: ['scalardb-sql/migration-guide', ''],
+        labels: ['Migrate Applications and Databases', '']
+      }
+    ]
   },
   {
     name: 'Manage',
-    links: ['scalar-kubernetes/HowToScaleScalarDB', 'scalar-kubernetes/HowToUpgradeScalarDB', 'backup-restore'],
-    labels: ['Scale ScalarDB', 'Upgrade ScalarDB', 'Back Up and Restore Databases Used Through ScalarDB'],
-  },
+    categoryLinks: [
+      {
+        cell: 0, // First cell
+        links: ['manage-overview', 'backup-restore'],
+        labels: ['Overview', 'Back Up and Restore Databases Used Through ScalarDB']
+      },
+      {
+        cell: 1, // Second cell
+        links: ['scalar-kubernetes/HowToScaleScalarDB', ''],
+        labels: ['Scale ScalarDB', '']
+      },
+      {
+        cell: 2, // Third cell
+        links: ['scalar-kubernetes/HowToUpgradeScalarDB', ''],
+        labels: ['Upgrade ScalarDB', '']
+      }
+    ]
+  }
 ];
 
 const CategoryGrid = () => {
@@ -81,16 +186,26 @@ const CategoryGrid = () => {
 
       {/* New docs table */}
       <div className="category-table">
-        {new_docs.map((new_docs, i) => (
+        {new_docs.map((doc, i) => (
           <React.Fragment key={i}>
             <div className="category-label">
               <FontAwesomeIcon icon={faBook} className="new-docs-icon" />
-              &nbsp;{new_docs.name}
+              &nbsp;{doc.name}
             </div>
-            {new_docs.links.map((link, j) => (
-              <Link key={j} className="new-docs-cell" to={link}>
-                {new_docs.labels[j]}
-              </Link>
+            {doc.categoryLinks.map((categoryLinkCell, j) => (
+              <div key={j} className="category-cell-multiple-links">
+                {categoryLinkCell.links.map((cellLink, k) => (
+                  cellLink ? (
+                    <Link key={`${j}-${k}`} className="category-cell-link" to={cellLink}>
+                      {categoryLinkCell.labels[k]}
+                    </Link>
+                  ) : (
+                    <span key={`${j}-${k}`} className="new-docs-cell">
+                      {categoryLinkCell.labels[k]}
+                    </span>
+                  )
+                ))}
+              </div>
             ))}
           </React.Fragment>
         ))}
@@ -99,10 +214,20 @@ const CategoryGrid = () => {
         {categories.map((cat, i) => (
           <React.Fragment key={i}>
             <div className="category-label">{cat.name}</div>
-            {cat.links.map((link, j) => (
-              <Link key={j} className="category-cell" to={link}>
-                {cat.labels[j]}
-              </Link>
+            {cat.categoryLinks.map((categoryLinkCell, j) => (
+              <div key={j} className="category-cell-multiple-links">
+                {categoryLinkCell.links.map((cellLink, k) => (
+                  cellLink ? (
+                    <Link key={`${j}-${k}`} className="category-cell-link" to={cellLink}>
+                      {categoryLinkCell.labels[k]}
+                    </Link>
+                  ) : (
+                    <span key={`${j}-${k}`} className="category-cell">
+                      {categoryLinkCell.labels[k]}
+                    </span>
+                  )
+                ))}
+              </div>
             ))}
           </React.Fragment>
         ))}
