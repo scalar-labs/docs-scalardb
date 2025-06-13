@@ -20,10 +20,12 @@ const new_docs = [
   {
     name: 'New docs',
     categoryLinks: [
+      // To add a link, use the format ['link1', 'link2']
+      // To add a label, use the format ['label1', 'label2']
       {
         cell: 0, // First cell
-        links: ['features'], // To add a link, use the format ['link1', 'link2']
-        labels: ['ScalarDB Features'] // To add a label, use the format ['label1', 'label2']
+        links: ['features'],
+        labels: ['ScalarDB Features']
       },
       {
         cell: 1, // Second cell
@@ -43,10 +45,12 @@ const categories = [
   {
     name: 'About ScalarDB',
     categoryLinks: [
+      // To add a link, use the format ['link1', 'link2']
+      // To add a label, use the format ['label1', 'label2']
       {
         cell: 0, // First cell
-        links: ['overview'], // To add a link, use the format ['link1', 'link2']
-        labels: ['ScalarDB Overview'] // To add a label, use the format ['label1', 'label2']
+        links: ['overview'],
+        labels: ['ScalarDB Overview']
       },
       {
         cell: 1, // Second cell
@@ -63,10 +67,12 @@ const categories = [
   {
     name: 'Quickstart',
     categoryLinks: [
+      // To add a link, use the format ['link1', 'link2']
+      // To add a label, use the format ['label1', 'label2']
       {
         cell: 0, // First cell
-        links: ['quickstart-overview', 'scalardb-samples/scalardb-analytics-spark-sample'], // To add a link, use the format ['link1', 'link2']
-        labels: ['Quickstart Overview', 'Getting Started with ScalarDB Analytics'] // To add a label, use the format ['label1', 'label2']
+        links: ['quickstart-overview', 'scalardb-samples/scalardb-analytics-spark-sample'],
+        labels: ['Quickstart Overview', 'Getting Started with ScalarDB Analytics']
       },
       {
         cell: 1, // Second cell
@@ -83,10 +89,12 @@ const categories = [
   {
     name: 'Develop',
     categoryLinks: [
+      // To add a link, use the format ['link1', 'link2']
+      // To add a label, use the format ['label1', 'label2']
       {
         cell: 0, // First cell
-        links: ['develop-overview', 'develop-run-transactions-overview'], // To add a link, use the format ['link1', 'link2']
-        labels: ['Develop Overview', 'Run Transactions'] // To add a label, use the format ['label1', 'label2']
+        links: ['develop-overview', 'develop-run-transactions-overview'],
+        labels: ['Develop Overview', 'Run Transactions']
       },
       {
         cell: 1, // Second cell
@@ -103,10 +111,12 @@ const categories = [
   {
     name: 'Deploy',
     categoryLinks: [
+      // To add a link, use the format ['link1', 'link2']
+      // To add a label, use the format ['label1', 'label2']
       {
         cell: 0, // First cell
-        links: ['deploy-overview', 'scalardb-analytics/deployment'], // To add a link, use the format ['link1', 'link2']
-        labels: ['Deploy Overview', 'Deploy ScalarDB Analytics in Public Cloud Environments'] // To add a label, use the format ['label1', 'label2']
+        links: ['deploy-overview', 'scalardb-analytics/deployment'],
+        labels: ['Deploy Overview', 'Deploy ScalarDB Analytics in Public Cloud Environments']
       },
       {
         cell: 1, // Second cell
@@ -123,10 +133,12 @@ const categories = [
   {
     name: 'Migrate',
     categoryLinks: [
+      // To add a link, use the format ['link1', 'link2']
+      // To add a label, use the format ['label1', 'label2']
       {
         cell: 0, // First cell
-        links: ['migrate-overview'], // To add a link, use the format ['link1', 'link2']
-        labels: ['Migrate Overview'] // To add a label, use the format ['label1', 'label2']
+        links: ['migrate-overview'],
+        labels: ['Migrate Overview']
       },
       {
         cell: 1, // Second cell
@@ -143,10 +155,12 @@ const categories = [
   {
     name: 'Manage',
     categoryLinks: [
+      // To add a link, use the format ['link1', 'link2']
+      // To add a label, use the format ['label1', 'label2']
       {
         cell: 0, // First cell
-        links: ['manage-overview', 'backup-restore'], // To add a link, use the format ['link1', 'link2']
-        labels: ['Manage Overview', 'Back Up and Restore Databases Used Through ScalarDB'] // To add a label, use the format ['label1', 'label2']
+        links: ['manage-overview', 'backup-restore'],
+        labels: ['Manage Overview', 'Back Up and Restore Databases Used Through ScalarDB']
       },
       {
         cell: 1, // Second cell
