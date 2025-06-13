@@ -16,9 +16,9 @@ import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook } from '@fortawesome/free-solid-svg-icons';
 
-const new_docs = [
+const new_content = [
   {
-    name: 'New docs',
+    name: 'New content',
     categoryLinks: [
       // To add a link, use the format ['link1', 'link2']
       // To add a label, use the format ['label1', 'label2']
@@ -198,12 +198,12 @@ const CategoryGrid = () => {
         </div>
       </div>
 
-      {/* New docs table */}
+      {/* New content table */}
       <div className="category-table">
-        {new_docs.map((doc, i) => (
+        {new_content.map((doc, i) => (
           <React.Fragment key={i}>
             <div className="category-label">
-              <FontAwesomeIcon icon={faBook} className="new-docs-icon" />
+              <FontAwesomeIcon icon={faBook} className="new-content-icon" />
               &nbsp;{doc.name}
             </div>
             {doc.categoryLinks.map((categoryLinkCell, j) => (
@@ -214,7 +214,7 @@ const CategoryGrid = () => {
                       {categoryLinkCell.labels[k]}
                     </Link>
                   ) : (
-                    <span key={`${j}-${k}`} className="new-docs-cell">
+                    <span key={`${j}-${k}`} className="new-content-cell">
                       {categoryLinkCell.labels[k]}
                     </span>
                   )
