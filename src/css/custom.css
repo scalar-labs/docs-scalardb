@@ -87,7 +87,23 @@ div[class^='announcementBar'] {
   text-decoration: none;
 }
 
-/* Ensure grid container doesn't cause horizontal scrolling */
+
+/* Fix for horizontal scrolling issue */
+html, body {
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+/* Ensure all elements stay within their containers */
+* {
+  box-sizing: border-box;
+  max-width: 100%;
+}
+
+/* Fix for common elements that might cause overflow */
+table, pre, code, img, iframe {
+  max-width: 100%;
+}
 .grid-container {
   display: flex;
   flex-direction: column;
@@ -97,34 +113,27 @@ div[class^='announcementBar'] {
 }
 
 .hero-section {
+  align-items: center;
+  background-color: #252526;
   background-repeat: no-repeat;
   display: flex;
   flex-wrap: wrap;
-  gap: 2rem;
+  font-size: 0.95rem;
   justify-content: space-between;
-  padding: 1rem;
   position: relative;
   z-index: 1;
 }
 
 .hero-section::before {
-  background-image: url("/img/home-page-background.avif");
-  background-repeat: no-repeat;
-  background-size: cover;
-  content: "";
-  opacity: 0.2;
-  padding-top: 2em;
-  position: absolute;
-  z-index: -1;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  background-color: #252526;
 }
 
 .hero-text {
+  color: white;
   flex: 1;
   min-width: 250px;
+  padding: 2rem;
+  /* padding-right: 35rem; */
 }
 
 .hero-text-first-sentence {
@@ -135,6 +144,7 @@ div[class^='announcementBar'] {
   display: none;
 }
 
+/* This style might come in handy in the future. */
 @media (min-width: 1472px) { /* Hides the second paragraph in the hero text if the page is too narrow. This reduces awkward spacing issues, mostly on larger screens. */
   .hero-text-additional {
     display: block;
@@ -142,8 +152,13 @@ div[class^='announcementBar'] {
 }
 
 .youtube-embed {
+  align-items: center;
+  background-color: #252526;
   flex: 1;
-  min-width: 480px;
+  justify-content: center;
+  max-width: 480px;
+  min-width: 250px;
+  padding: 2rem;
 }
 
 .link {
@@ -157,9 +172,10 @@ div[class^='announcementBar'] {
 
 .category-table {
   display: grid;
+  font-size: 0.95rem;
   grid-template-columns: 0.5fr 1fr 1fr 1fr;
   gap: 0.75rem 0;
-  margin-top: 1rem;
+  margin-top: 2.5rem;
   width: 100%;
 }
 
@@ -167,36 +183,40 @@ div[class^='announcementBar'] {
   align-content: center;
   color: var(--ifm-font-color-base);
   font-weight: 600;
-  padding: 11px 11px 11px 0;
   text-align: left;
   width: 140px;
 }
 
-.category-cell, .new-content-cell {
-  background-color: var(--ifm-color-emphasis-200);
-  color: var(--ifm-font-color-base);
-  text-align: left;
-  vertical-align: middle;
-
-  &:hover {
-    color: var(--ifm-font-color-base) !important;
-  }
-}
-
 .category-cell-multiple-links {
-  background-color: var(--ifm-color-emphasis-200);
+  border-top: 1px solid #E3E8EA;
+  border-bottom: 1px solid #E3E8EA;
+  background-color: #F5F8FA;
   display: flex;
   flex-direction: column;
-  padding: 0;
-  height: 100%;
   grid-column: span 1;
+  height: 100%;
+  justify-content: flex-start;
+  padding: 0.75rem;
+}
+
+/* Target first cell in each row that follows a category-label. */
+.category-label + .category-cell-multiple-links {
+  border-left: 1px solid #E3E8EA;
+}
+
+/* Target the third cell in each functional row (within the 4-column grid). */
+.category-cell-multiple-links:nth-child(4n) {
+  border-right: 1px solid #E3E8EA;
 }
 
 .category-cell-link {
   color: var(--ifm-font-color-base);
-  display: block;
-  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1rem;
   text-decoration: none;
+  height: 100%;
+  box-sizing: border-box;
 
   &:last-child {
     border-bottom: none;
@@ -208,24 +228,19 @@ div[class^='announcementBar'] {
   }
 }
 
-.category-cell-link:empty {
-  pointer-events: none;
-  background-color: var(--ifm-color-emphasis-200);
+/* When there's only one link in a cell, make it take full height */
+.category-cell-multiple-links:has(> a.category-cell-link:only-child) {
+  a.category-cell-link {
+    flex: 1;
+  }
 }
 
-.category-cell-link:empty:hover {
-  background-color: var(--ifm-color-emphasis-200);
-}
-
-
-a[href=""], a:not([href]) { /* Add these styles to prevent hover effects on empty links. */
-  pointer-events: none;
-  cursor: default;
-}
-
-a[href=""]:hover, a:not([href]):hover {
-  background-color: var(--ifm-color-emphasis-200);
-  color: var(--ifm-font-color-base);
+/* When there are multiple links, distribute them evenly */
+.category-cell-multiple-links:has(> a.category-cell-link ~ a.category-cell-link) {
+  a.category-cell-link {
+    flex-basis: 0;
+    flex-grow: 1;
+  }
 }
 
 .category-cell-multiple-links:has(> a[href=""]),
@@ -234,7 +249,7 @@ a[href=""]:hover, a:not([href]):hover {
 }
 
 .empty-cell {
-  background-color: var(--ifm-color-emphasis-200);
+  background-color: #F5F8FA;
   height: 100%;
   cursor: default;
   pointer-events: none;
@@ -259,9 +274,26 @@ a[href=""]:hover, a:not([href]):hover {
     margin-bottom: 0.5rem;
   }
 
+  .category-cell-multiple-links {
+    border-top: 0;
+    border-bottom: 0;
+    padding: 0;
+  }
+
+  /* Target first cell in each row that follows a category-label. */
+  .category-label + .category-cell-multiple-links {
+    border-left: 0;
+  }
+
+  /* Target the third cell in each functional row (within the 4-column grid). */
+  .category-cell-multiple-links:nth-child(4n) {
+    border-right: 0;
+  }
+
   .youtube-embed {
     flex: 1;
     min-width: 100%;
+    padding-top: 0;
   }
 }
 
@@ -274,6 +306,35 @@ a[href=""]:hover, a:not([href]):hover {
   vertical-align: middle;
   font-size: inherit;
   overflow: visible;
+}
+
+html[data-theme="dark"] .category-cell-multiple-links {
+  background-color: #252526;
+  border-top: 1px solid #6a6969;
+  border-bottom: 1px solid #6a6969;
+
+  @media (max-width: 768px) {
+    border-top: 0;
+    border-bottom: 0;
+  }
+}
+
+/* Target first cell in each row that follows a category-label. */
+html[data-theme="dark"] .category-label + .category-cell-multiple-links {
+  border-left: 1px solid #6a6969;
+
+  @media (max-width: 768px) {
+    border-left: 0;
+  }
+}
+
+/* Target the third cell in each functional row (within the 4-column grid). */
+html[data-theme="dark"] .category-cell-multiple-links:nth-child(4n) {
+  border-right: 1px solid #6a6969;
+
+  @media (max-width: 768px) {
+    border-right: 0;
+  }
 }
 
 /* GitHub icon */

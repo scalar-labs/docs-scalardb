@@ -182,16 +182,8 @@ const CategoryGrid = () => {
       {/* Hero section */}
       <div className="hero-section">
         <div className="hero-text">
-          <p><span className="hero-text-first-sentence">ScalarDB is a universal hybrid transaction/analytical processing (HTAP) engine for diverse databases.</span> It runs as middleware on databases and virtually unifies diverse databases by achieving ACID transactions and real-time analytics across them to simplify the complexity of managing multiple databases or multiple instances of a single database.</p>
-
-          <span className="hero-text-additional">
-            <p>As a versatile solution, ScalarDB supports a range of databases, including:</p>
-
-            <ul>
-              <li>Relational databases that support JDBC, such as MariaDB, Microsoft SQL Server, MySQL, Oracle Database, PostgreSQL, SQLite, and their compatible databases, like Amazon Aurora and YugabyteDB.</li>
-              <li>NoSQL databases like Amazon DynamoDB, Apache Cassandra, and Azure Cosmos DB.</li>
-            </ul>
-          </span>
+          <h1>ScalarDB</h1>
+          ScalarDB is a universal hybrid transaction/analytical processing (HTAP) engine for diverse databases. It runs as middleware on databases and virtually unifies diverse databases by achieving ACID transactions and real-time analytics across them to simplify the complexity of managing multiple databases or multiple instances of a single database.
         </div>
         <div className="youtube-embed">
           <LiteYouTubeEmbed id="-i1tqeI3FKs" title="ScalarDB Explainer" poster="maxresdefault" />
@@ -203,8 +195,9 @@ const CategoryGrid = () => {
         {new_content.map((doc, i) => (
           <React.Fragment key={i}>
             <div className="category-label">
-              <FontAwesomeIcon icon={faBook} className="new-content-icon" />
-              &nbsp;{doc.name}
+              {/* <FontAwesomeIcon icon={faBook} className="new-content-icon" />
+              &nbsp;{doc.name}*/}
+              {doc.name}
             </div>
             {doc.categoryLinks.map((categoryLinkCell, j) => (
               <div key={j} className="category-cell-multiple-links">
