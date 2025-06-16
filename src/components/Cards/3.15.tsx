@@ -143,7 +143,7 @@ const categories = [
       {
         cell: 1, // Second cell
         links: ['scalardb-sql/migration-guide'],
-        labels: ['Importing Tables by Using ScalarDB Schema Loader']
+        labels: ['Import Tables by Using Schema Loader']
       },
       {
         cell: 2, // Third cell
