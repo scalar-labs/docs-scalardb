@@ -71,8 +71,8 @@ const categories = [
       // To add a label, use the format ['label1', 'label2']
       {
         cell: 0, // First cell
-        links: ['quickstart-overview', 'scalardb-samples/scalardb-analytics-spark-sample'],
-        labels: ['Quickstart Overview', 'Getting Started with ScalarDB Analytics']
+        links: ['quickstart-overview'],
+        labels: ['Quickstart Overview']
       },
       {
         cell: 1, // Second cell
@@ -93,18 +93,18 @@ const categories = [
       // To add a label, use the format ['label1', 'label2']
       {
         cell: 0, // First cell
-        links: ['develop-overview', 'develop-run-transactions-overview'],
-        labels: ['Develop Overview', 'Run Transactions']
+        links: ['develop-overview'],
+        labels: ['Develop Overview']
       },
       {
         cell: 1, // Second cell
-        links: ['configurations', 'develop-run-non-transactional-operations-overview'],
-        labels: ['ScalarDB Core Configurations', 'Run Non-Transactional Storage Operations']
+        links: ['develop-run-transactions-overview'],
+        labels: ['Run Transactions']
       },
       {
         cell: 2, // Third cell
-        links: ['scalardb-cluster/configurations', 'scalardb-analytics/run-analytical-queries'],
-        labels: ['ScalarDB Cluster Configurations', 'Run Analytical Queries Through ScalarDB Analytics']
+        links: ['develop-run-non-transactional-operations-overview'],
+        labels: ['Run Non-Transactional Storage Operations']
       }
     ]
   },
@@ -115,8 +115,8 @@ const categories = [
       // To add a label, use the format ['label1', 'label2']
       {
         cell: 0, // First cell
-        links: ['deploy-overview', 'scalardb-analytics/deployment'],
-        labels: ['Deploy Overview', 'Deploy ScalarDB Analytics in Public Cloud Environments']
+        links: ['deploy-overview'],
+        labels: ['Deploy Overview']
       },
       {
         cell: 1, // Second cell
@@ -159,13 +159,13 @@ const categories = [
       // To add a label, use the format ['label1', 'label2']
       {
         cell: 0, // First cell
-        links: ['manage-overview', 'backup-restore'],
-        labels: ['Manage Overview', 'Back Up and Restore Databases Used Through ScalarDB']
+        links: ['manage-overview'],
+        labels: ['Manage Overview']
       },
       {
         cell: 1, // Second cell
-        links: ['scalar-kubernetes/HowToScaleScalarDB', 'scalar-manager/overview'],
-        labels: ['Scale ScalarDB', 'Scalar Manager']
+        links: ['scalar-kubernetes/HowToScaleScalarDB'],
+        labels: ['Scale ScalarDB']
       },
       {
         cell: 2, // Third cell
