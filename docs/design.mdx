@@ -36,15 +36,15 @@ ScalarDB Analytics, which is licensed under a commercial license, is a component
 
 ScalarDB manages various types of metadata in the underlying databases to provide its capabilities. The following table summarizes the metadata managed by each component.
 
-| Component | Metadata tables | Purpose | Location |
-| --------- | -------- | --------- | --------- |
-| Core      | `scalardb.metadata` | For database schema information | In all the databases under ScalarDB |
-| Core      | `coordinator.state` | For transaction statuses | In one designated database specified to store the Coordinator table |
-| Core      | Application-managed tables | For WAL information | In all the tables accessed by Consensus Commit |
-| Cluster   | `scalardb.users`, `scalardb.namespace_privileges`, `scalardb.table_privileges`, `scalardb.auth_tokens` | For [authentication and authorization](./scalardb-cluster/scalardb-auth-with-sql.mdx) | In one designated database specified to store the scalardb namespace |
-| Cluster   | `scalardb.encrypted_columns` | For [encryption at rest](./scalardb-cluster/encrypt-data-at-rest.mdx) | In one designated database specified to store the scalardb namespace |
-| Cluster   | `scalardb.abac_*` | For [attribute-based access control](./scalardb-cluster/authorize-with-abac.mdx) | In one designated database specified to store the scalardb namespace |
-| Analytics | All the tables managed by the catalog server | For [data catalog](./scalardb-analytics/design.mdx#universal-data-catalog) | In the catalog server database |
+| Component | Metadata tables                                                                                        | Purpose                                                                               | Location                                                                    |
+| --------- | ------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------- | --------------------------------------------------------------------------- |
+| Core      | `scalardb.metadata`                                                                                    | For database schema information                                                       | In all the databases under ScalarDB                                         |
+| Core      | `coordinator.state`                                                                                    | For transaction statuses                                                              | In one designated database specified to store the Coordinator table         |
+| Core      | Application-managed tables                                                                             | For WAL information                                                                   | In all the tables accessed by Consensus Commit                              |
+| Cluster   | `scalardb.users`, `scalardb.namespace_privileges`, `scalardb.table_privileges`, `scalardb.auth_tokens` | For [authentication and authorization](./scalardb-cluster/scalardb-auth-with-sql.mdx) | In one designated database specified to store the scalardb system namespace |
+| Cluster   | `scalardb.encrypted_columns`                                                                           | For [encryption at rest](./scalardb-cluster/encrypt-data-at-rest.mdx)                 | In one designated database specified to store the scalardb system namespace |
+| Cluster   | `scalardb.abac_*`                                                                                      | For [attribute-based access control](./scalardb-cluster/authorize-with-abac.mdx)      | In one designated database specified to store the scalardb system namespace |
+| Analytics | All the tables managed by the catalog server                                                           | For [data catalog](./scalardb-analytics/design.mdx#universal-data-catalog)            | In the catalog server database                                              |
 
 :::note
 
