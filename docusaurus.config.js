@@ -169,7 +169,7 @@ const config = {
 
   // The following versions have Japanese docs, so the language dropdown should be displayed only when visitors are reading these versions of docs.
   customFields: {
-    allowedLanguageDropdownVersions: ["current", "latest", "3.14", "3.13"],
+    allowedLanguageDropdownVersions: ["current", "latest", "3.15", "3.14", "3.13"],
   },
 
   plugins: [
