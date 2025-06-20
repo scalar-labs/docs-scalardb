@@ -536,14 +536,15 @@ const config = {
         darkTheme: prismThemes.dracula,
         additionalLanguages: ['csharp', 'docker', 'gradle', 'java', 'json', 'log', 'properties', 'python', 'scala', 'shell-session', 'sql', 'toml'],
       },
-      // announcementBar: {
-      //   id: 'new_version',
-      //   content:
-      //     // '<b>Announcing the release of ScalarDB X.X!🚀 For details on what\'s included in this new version, see the <a target="_self" href="/docs/latest/releases/release-notes?utm_source=docs-site&utm_medium=announcementbar">release notes</a>.<b>',
-      //   backgroundColor: '#2673BB',
-      //   textColor: '#FFFFFF',
-      //   isCloseable: false,
-      // },
+      announcementBar: {
+        id: 'new_version',
+        content:
+          'Announcing the release of ScalarDB 3.16!🚀 For details on what\'s included in this new version, see the <a target="_self" href="/docs/latest/releases/release-notes?utm_source=docs-site&utm_medium=announcementbar">release notes</a>',
+          // 'Announcing the release of ScalarDB X.X!🚀 For details on what\'s included in this new version, see the <a target="_self" href="/docs/latest/releases/release-notes?utm_source=docs-site&utm_medium=announcementbar">release notes</a>',
+        backgroundColor: '#2673BB',
+        textColor: '#FFFFFF',
+        isCloseable: false,
+      },
       zoom: {
         selector: '.markdown :not(em) > img',
         background: {
