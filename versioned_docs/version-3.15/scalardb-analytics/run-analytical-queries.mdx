@@ -153,6 +153,23 @@ You can use an arbitrary name for `<DATA_SOURCE_NAME>`.
 :::
 
   </TabItem>
+  <TabItem value="dynamodb" label="DynamoDB">
+
+| Configuration Key                                                          | Required                                  | Description                                                                                                                                                  |
+|:---------------------------------------------------------------------------|:------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.type`     | Yes                                       | Always set to `dynamodb`                                                                                                                                     |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.region`   | Either `region` or `endpoint` must be set | The AWS region of the DynamoDB instance                                                                                                                      |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.endpoint` | Either `region` or `endpoint` must be set | The AWS endpoint of the DynamoDB instance                                                                                                                    |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.schema`   | Yes                                       | A JSON object representing the schema of the catalog. For details on the format, see [Catalog-level mappings](./design.mdx#catalog-level-mappings). |
+
+
+:::tip
+
+You can use an arbitrary name for `<DATA_SOURCE_NAME>`.
+
+:::
+
+  </TabItem>
 </Tabs>
 
 #### Example configuration
