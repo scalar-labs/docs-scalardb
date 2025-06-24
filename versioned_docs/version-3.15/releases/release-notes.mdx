@@ -10,6 +10,31 @@ displayed_sidebar: docsEnglish
 
 This page includes a list of release notes for ScalarDB 3.15.
 
+## v3.15.4
+
+**Release date:** June 21, 2025
+
+### Summary
+
+This release includes fixes for vulnerabilities and bugs.
+
+### Community edition
+
+#### Bug fixes
+
+- Add exception handling for DateTimeParseException on column value conversion. ([#2662](https://github.com/scalar-labs/scalardb/pull/2662))
+- Upgraded the PostgreSQL driver to fix security issues. [CVE-2025-49146](https://github.com/advisories/GHSA-hq9p-pm7w-8p54 "CVE-2025-49146") ([#2772](https://github.com/scalar-labs/scalardb/pull/2772))
+- Fixed potential connection leak when using `jdbc` storage and Scan operation fails because the target table doesn't exist. ([#2766](https://github.com/scalar-labs/scalardb/pull/2766))
+
+### Enterprise edition
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Fixed a memory leak issue when the coordinator group commit feature is enabled.
+- Upgraded the OpenSearch Java client to fix a security issue. [CVE-2025-27820](https://github.com/advisories/GHSA-73m2-qfq3-56cx "CVE-2025-27820")
+
 ## v3.15.3
 
 **Release date:** May 15, 2025

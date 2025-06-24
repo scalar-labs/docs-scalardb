@@ -14,6 +14,31 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 このページには、ScalarDB 3.15 のリリースノートのリストが含まれています。
 
+## v3.15.4
+
+**発売日:** 2025年06月21日
+
+### まとめ
+
+このリリースには脆弱性とバグの修正が含まれています。
+
+### Community edition
+
+#### バグの修正
+
+- カラム値変換におけるDateTimeParseExceptionの例外処理を追加しました。([#2662](https://github.com/scalar-labs/scalardb/pull/2662))
+- セキュリティ問題を修正するためにPostgreSQLドライバーをアップグレードしました。[CVE-2025-49146](https://github.com/advisories/GHSA-hq9p-pm7w-8p54 "CVE-2025-49146") ([#2772](https://github.com/scalar-labs/scalardb/pull/2772))
+- `jdbc`ストレージを使用し、対象テーブルが存在しないためにスキャン操作が失敗した場合の潜在的な接続リークを修正しました。([#2766](https://github.com/scalar-labs/scalardb/pull/2766))
+
+### Enterprise edition
+
+#### バグの修正
+
+##### ScalarDB Cluster
+
+- コーディネーターのグループコミット機能が有効になっている場合のメモリリーク問題を修正しました。
+- セキュリティ問題を修正するためにOpenSearch Javaクライアントをアップグレードしました。[CVE-2025-27820](https://github.com/advisories/GHSA-73m2-qfq3-56cx "CVE-2025-27820")
+
 ## v3.15.3
 
 **発売日:** 2025年05月15日
