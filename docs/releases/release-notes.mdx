@@ -13,3 +13,79 @@ This page includes a list of release notes for ScalarDB 3.16.
 ## v3.16.0
 
 **Release date:** June 20, 2025
+
+### Summary
+
+This release includes many enhancements, improvements, bug fixes, and performance optimizations.
+
+### Community edition
+
+#### Enhancements
+
+- Added support for IBM Db2 LUV 11 and 12. ([#2598](https://github.com/scalar-labs/scalardb/pull/2598))
+- Added a scanner API to the transaction abstraction for iteratively retrieving results. ([#2729](https://github.com/scalar-labs/scalardb/pull/2729))
+- Added support for scan fetch size in the storage adapters. You can control the number of records fetched by the scan API in the storage layer by configuring the `scalar.db.scan_fetch_size` property. ([#2731](https://github.com/scalar-labs/scalardb/pull/2731))
+- Added `replication-tables` option to the Schema Loader. ([#2747](https://github.com/scalar-labs/scalardb/pull/2747))
+- Added support for beginning transactions in read-only mode. ([#2749](https://github.com/scalar-labs/scalardb/pull/2749))
+- Fixed warnings for Javadoc and errorprone. ([#2614](https://github.com/scalar-labs/scalardb/pull/2614))
+- Introduced `StorageInfo`, which provides metadata about the storage. You can obtain a `StorageInfo` instance via the `DistributedStorageAdmin.getStorageInfo()` method. ([#2756](https://github.com/scalar-labs/scalardb/pull/2756))
+- Added Docker support for the ScalarDB Data Loader CLI, enabling containerized deployment of the data loading functionality. ([#2758](https://github.com/scalar-labs/scalardb/pull/2758))
+- Added a CI workflow for the Data Loader CLI build. ([#2761](https://github.com/scalar-labs/scalardb/pull/2761))
+- Added the `READ_COMMITTED` isolation level, which offers better performance, especially for low-contention workloads. ([#2803](https://github.com/scalar-labs/scalardb/pull/2803))
+- Added support for one-phase commit optimization in Consensus Commit, significantly improving performance by skipping prepare-records and commit-state when all mutations can be committed atomically. Enable this optimization with the `scalar.db.consensus_commit.one_phase_commit.enabled` property. ([#2811](https://github.com/scalar-labs/scalardb/pull/2811))
+
+#### Improvements
+
+- Made changes so that the ScalarDB BIGINT data type will now be mapped to Oracle's `NUMBER(16)`. ([#2566](https://github.com/scalar-labs/scalardb/pull/2566))
+- Removed the `EXTRA_WRITE` strategy from Consensus Commit. After this change, if the `EXTRA_WRITE` strategy is specified when using Consensus Commit, the `EXTRA_READ` strategy will be used instead. ([#2597](https://github.com/scalar-labs/scalardb/pull/2597))
+- Changed to disallow scan operations after a delete on the same record in Consensus Commit to prevent inconsistent behavior and align with the existing restriction on scans after writes. ([#2610](https://github.com/scalar-labs/scalardb/pull/2610))
+- Changed to omit commit-state for read-only transactions in Consensus Commit to improve performance. This behavior is enabled by default but can be disabled by setting the property `scalar.db.consensus_commit.coordinator.write_omission_on_read_only.enabled` to `false`. ([#2765](https://github.com/scalar-labs/scalardb/pull/2765))
+- Updated the code to remove before images after committing or rolling back records in Consensus Commit to reduce disk usage. ([#2787](https://github.com/scalar-labs/scalardb/pull/2787))
+- Improved the read algorithm in Consensus Commit to reduce unnecessary retries. ([#2798](https://github.com/scalar-labs/scalardb/pull/2798))
+
+#### Bug fixes
+
+- Upgraded the Netty library to fix a security issue. [CVE-2025-24970](https://github.com/advisories/GHSA-4g8c-wm8x-jfhw "CVE-2025-24970") ([#2552](https://github.com/scalar-labs/scalardb/pull/2552))
+- Fixed a bug in Consensus Commit with `SERIALIZABLE` isolation level where a transaction consistently aborts if a record was inserted into the scan range after executing a scan with a limit. ([#2621](https://github.com/scalar-labs/scalardb/pull/2621))
+- Fixed an issue with `DistributedStorageAdmin.getNamespaceNames()` API when using the DynamoDB storage with the namespace prefix setting `scalar.db.dynamo.namespace.prefix`. The namespace names returned by this method wrongly contained the prefix. ([#2641](https://github.com/scalar-labs/scalardb/pull/2641))
+- Added exception handling for `DateTimeParseException` on column value conversion ([#2662](https://github.com/scalar-labs/scalardb/pull/2662))
+- Fixed an issue where `Get` operations using secondary indexes could throw `IllegalArgumentException` in `SERIALIZABLE` transactions by converting them to `Scan` operations during validation. ([#2683](https://github.com/scalar-labs/scalardb/pull/2683))
+- Fixed a bug that caused unnecessary implicit pre-reads when updating records retrieved by a secondary-index `Get` operation within a transaction. ([#2700](https://github.com/scalar-labs/scalardb/pull/2700))
+- Fixed minor bugs and issues in Data Loader core. ([#2752](https://github.com/scalar-labs/scalardb/pull/2752))
+- Fixed a bug where records could be missed when executing `Get` or `Scan` with conjunctions in Consensus Commit. ([#2786](https://github.com/scalar-labs/scalardb/pull/2786))
+- Fixed an issue in Consensus Commit where reading the same record multiple times from storage could cause anomalies like lost updates. The read set is no longer updated on repeated reads to resolve this issue. ([#2797](https://github.com/scalar-labs/scalardb/pull/2797))
+- Fixed potential connection leak when using `jdbc` storage and `Scan` operation fails because the target table doesn't exist ([#2766](https://github.com/scalar-labs/scalardb/pull/2766))
+
+### Enterprise edition
+
+#### Enhancements
+
+##### ScalarDB Cluster
+
+- Introduced the attribute-based access control (ABAC) feature in ScalarDB Cluster.
+- Added a configuration option (`scalar.db.transaction.enabled`) to enable or disable the transaction feature in ScalarDB Cluster. The default value is `true`.
+- Added support for the scanner API in the transaction abstraction to iteratively retrieve results in ScalarDB Cluster.
+- Added support for beginning transactions in read-only mode in ScalarDB Cluster.
+- Added support for beginning transactions in read-only mode using SQL in ScalarDB Cluster.
+- Added the semi-synchronous replication feature in ScalarDB Cluster.
+
+##### ScalarDB SQL
+
+- Added support for beginning transactions in read-only mode in ScalarDB SQL.
+
+#### Improvements
+
+##### ScalarDB Cluster
+
+- Added support for the Omnistrate service. Now, you can run ScalarDB Cluster in the Omnistrate service.
+- Made changes to prevent pausing of read-only transactions when a pause command is issued to ScalarDB Cluster.
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Fixed a bug related to the metadata cache behavior when using auth in the SQL interface.
+- Fixed configurations for the embedding feature.
+- Fixed a bug that allowed superusers to execute ABAC administrative operations for non-existing users.
+- Fixed a bug a table-not-found error occurs when dropping empty ABAC system tables.
+- Fixed a memory leak issue when the coordinator group commit feature is enabled.
