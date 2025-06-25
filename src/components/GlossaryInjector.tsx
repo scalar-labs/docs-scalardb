@@ -12,11 +12,12 @@ const GlossaryInjector: React.FC<GlossaryInjectorProps> = ({ children }) => {
   useEffect(() => {
     const url = window.location.pathname;
     let glossaryPath = '/docs/glossary.json'; // Use the English version as the default glossary.
+    const isJapaneseSite = url.startsWith('/ja-jp/docs');
 
     if (process.env.NODE_ENV === 'production') { // The glossary tooltip works only in production environments.
-      glossaryPath = url.startsWith('/ja-jp/docs') ? '/ja-jp/glossary.json' : '/docs/glossary.json';
+      glossaryPath = isJapaneseSite ? '/ja-jp/glossary.json' : '/docs/glossary.json';
     } else {
-      glossaryPath = url.startsWith('/ja-jp/docs') ? '/ja-jp/glossary.json' : '/docs/glossary.json';
+      glossaryPath = isJapaneseSite ? '/ja-jp/glossary.json' : '/docs/glossary.json';
     }
 
     fetch(glossaryPath)
@@ -50,7 +51,7 @@ const GlossaryInjector: React.FC<GlossaryInjectorProps> = ({ children }) => {
   useEffect(() => {
     if (Object.keys(glossary).length === 0 || isVersionIndexPage()) return;
 
-    // Sort terms in descending order by length to prioritize multi-word terms.
+    // Sort terms in descending order to prioritize multi-word terms.
     const terms = Object.keys(glossary).sort((a, b) => b.length - a.length);
     const processedTerms = new Set<string>(); // Set to track processed terms.
 
@@ -93,13 +94,24 @@ const GlossaryInjector: React.FC<GlossaryInjectorProps> = ({ children }) => {
           const newNodes: Node[] = [];
           let hasReplacements = false;
 
-          // Create a regex pattern to match both exact terms and their plural forms.
+          // Check if the visitor is on the Japanese version of the site.
+          const isJapaneseSite = window.location.pathname.startsWith('/ja-jp/');
+
+          // Create a regex pattern based on the language.
           const regexPattern = terms.map(term => {
             const escapedTerm = term.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-            // Match exact term or term followed by 's' or 'es' at word boundary.
-            return `(\\b${escapedTerm}(s|es)?\\b)`;
+
+            // For the Japanese version of the site, don't use word boundaries that don't work well with Japanese characters.
+            if (isJapaneseSite) {
+              // For Japanese text, we can't use word boundaries, so just match the exact term.
+              return `(${escapedTerm})`;
+            }
+
+            // For English site, match exact term or term followed by 's' or 'es' at word boundary.
+            return `(\\b${escapedTerm}\\b|\\b${escapedTerm}s\\b|\\b${escapedTerm}es\\b)`;
           }).join('|');
-          const regex = new RegExp(regexPattern, 'gi'); // The 'i' flag is for case-insensitive matching.
+
+          const regex = new RegExp(regexPattern, 'gi'); // Use case-insensitive matching.
 
           let lastIndex = 0;
           let match: RegExpExecArray | null;
@@ -107,12 +119,27 @@ const GlossaryInjector: React.FC<GlossaryInjectorProps> = ({ children }) => {
           while ((match = regex.exec(currentText))) {
             const matchedText = match[0]; // The full matched text (may include plural suffix).
 
-            // Find the base term from the glossary that matches (without plural).
-            const baseTerm = terms.find(term => 
-              matchedText.toLowerCase() === term.toLowerCase() || 
-              matchedText.toLowerCase() === `${term.toLowerCase()}s` || 
-              matchedText.toLowerCase() === `${term.toLowerCase()}es`
-            );
+            // For Japanese, remove any non-word characters that were captured by the regex.
+            const actualMatch = isJapaneseSite 
+              ? matchedText.replace(/^[^\p{L}\p{N}_]+|[^\p{L}\p{N}_]+$/gu, '')
+              : matchedText;
+
+            // Find the base term from the glossary that matches.
+            let baseTerm: string | undefined;
+
+            if (isJapaneseSite) {
+              // For Japanese, look for an exact match only.
+              baseTerm = terms.find(term => 
+                actualMatch === term
+              );
+            } else {
+              // For English, check both singular and plural forms too.
+              baseTerm = terms.find(term => 
+                actualMatch.toLowerCase() === term.toLowerCase() || 
+                actualMatch.toLowerCase() === `${term.toLowerCase()}s` || 
+                actualMatch.toLowerCase() === `${term.toLowerCase()}es`
+              );
+            }
 
             if (!baseTerm) {
               // Skip if no matching base term found.
@@ -138,7 +165,8 @@ const GlossaryInjector: React.FC<GlossaryInjectorProps> = ({ children }) => {
               let textToUnderline = matchedText;
               let suffix = '';
 
-              if (matchedText.toLowerCase() !== baseTerm.toLowerCase()) {
+              // Only apply pluralization logic for the English version of the site.
+              if (!isJapaneseSite && matchedText.toLowerCase() !== baseTerm.toLowerCase()) {
                 // This is a plural form - only underline the base part.
                 const baseTermLength = baseTerm.length;
                 textToUnderline = matchedText.substring(0, baseTermLength);
