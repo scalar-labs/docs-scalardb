@@ -21,7 +21,7 @@ Gradle を使用して ScalarDB Cluster Java Client SDK への依存関係を追
 
 ```gradle
 dependencies {
-    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.13.2'
+    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.13.4'
 }
 ```
 
@@ -31,7 +31,7 @@ Maven を使用して依存関係を追加するには、以下を使用しま�
 <dependency>
   <groupId>com.scalar-labs</groupId>
   <artifactId>scalardb-cluster-java-client-sdk</artifactId>
-  <version>3.13.2</version>
+  <version>3.13.4</version>
 </dependency>
 ```
 
@@ -118,10 +118,10 @@ scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
 
 ### クラスター用 Schema Loader
 
-ScalarDB Cluster 経由でスキーマをロードするには、専用の ScalarDB Cluster 用 Schema Loader (クラスター用 Schema Loader) を使用する必要があります。クラスター用Schema Loader の使用方法は、JAR ファイルの名前が異なることを除いて、[ScalarDB Schema Loader](../schema-loader.mdx) の使用方法と基本的に同じです。クラスター用 Schema Loader は、[ScalarDB リリース](https://github.com/scalar-labs/scalardb/releases/tag/v3.13.2) からダウンロードできます。JAR ファイルをダウンロードしたら、次のコマンドでクラスター用 Schema Loader を実行できます。
+ScalarDB Cluster 経由でスキーマをロードするには、専用の ScalarDB Cluster 用 Schema Loader (クラスター用 Schema Loader) を使用する必要があります。クラスター用Schema Loader の使用方法は、JAR ファイルの名前が異なることを除いて、[ScalarDB Schema Loader](../schema-loader.mdx) の使用方法と基本的に同じです。クラスター用 Schema Loader は、[ScalarDB リリース](https://github.com/scalar-labs/scalardb/releases/tag/v3.13.4) からダウンロードできます。JAR ファイルをダウンロードしたら、次のコマンドでクラスター用 Schema Loader を実行できます。
 
 ```console
-java -jar scalardb-cluster-schema-loader-3.13.2-all.jar --config <PATH_TO_CONFIG_FILE> -f <PATH_TO_SCHEMA_FILE> --coordinator
+java -jar scalardb-cluster-schema-loader-3.13.4-all.jar --config <PATH_TO_CONFIG_FILE> -f <PATH_TO_SCHEMA_FILE> --coordinator
 ```
 
 ## ScalarDB Cluster SQL
@@ -161,8 +161,8 @@ Gradle を使用して ScalarDB Cluster JDBC ドライバーへの依存関係�
 
 ```gradle
 dependencies {
-    implementation 'com.scalar-labs:scalardb-sql-jdbc:3.13.2'
-    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.13.2'
+    implementation 'com.scalar-labs:scalardb-sql-jdbc:3.13.4'
+    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.13.4'
 }
 ```
 
@@ -173,12 +173,12 @@ Maven を使用して依存関係を追加するには、以下を使用しま�
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-sql-jdbc</artifactId>
-        <version>3.13.2</version>
+        <version>3.13.4</version>
     </dependency>
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-cluster-java-client-sdk</artifactId>
-        <version>3.13.2</version>
+        <version>3.13.4</version>
     </dependency>
 </dependencies>
 ```
@@ -195,8 +195,8 @@ Gradle を使用して依存関係を追加するには、以下を使用しま�
 
 ```gradle
 dependencies {
-    implementation 'com.scalar-labs:scalardb-sql-spring-data:3.13.2'
-    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.13.2'
+    implementation 'com.scalar-labs:scalardb-sql-spring-data:3.13.4'
+    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.13.4'
 }
 ```
 
@@ -207,12 +207,12 @@ Maven を使用して依存関係を追加するには、以下を使用しま�
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-sql-spring-data</artifactId>
-        <version>3.13.2</version>
+        <version>3.13.4</version>
     </dependency>
     <dependency>
         <groupId>com.scalar-labs</groupId>
         <artifactId>scalardb-cluster-java-client-sdk</artifactId>
-        <version>3.13.2</version>
+        <version>3.13.4</version>
     </dependency>
 </dependencies>
 ```
@@ -256,10 +256,10 @@ Spring Data JDBC for ScalarDB の設定方法の詳細については、[設定]
 
 他の SQL データベースと同様に、ScalarDB SQL にも、コマンドラインシェルで対話的に SQL ステートメントを発行できる CLI ツールが用意されています。
 
-Cluster 用の SQL CLI は、[ScalarDB リリース](https://github.com/scalar-labs/scalardb/releases/tag/v3.13.2) からダウンロードできます。JAR ファイルをダウンロードしたら、次のコマンドで SQL CLI を実行できます。
+Cluster 用の SQL CLI は、[ScalarDB リリース](https://github.com/scalar-labs/scalardb/releases/tag/v3.13.4) からダウンロードできます。JAR ファイルをダウンロードしたら、次のコマンドで SQL CLI を実行できます。
 
 ```console
-java -jar scalardb-cluster-sql-cli-3.13.2-all.jar --config <PATH_TO_CONFIG_FILE>
+java -jar scalardb-cluster-sql-cli-3.13.4-all.jar --config <PATH_TO_CONFIG_FILE>
 ```
 
 #### 使用方法
@@ -267,7 +267,7 @@ java -jar scalardb-cluster-sql-cli-3.13.2-all.jar --config <PATH_TO_CONFIG_FILE>
 CLI の使用方法は、次のように `-h` オプションを使用して確認できます。
 
 ```console
-java -jar scalardb-cluster-sql-cli-3.13.2-all.jar -h
+java -jar scalardb-cluster-sql-cli-3.13.4-all.jar -h
 Usage: scalardb-sql-cli [-hs] -c=PROPERTIES_FILE [-e=COMMAND] [-f=FILE]
                         [-l=LOG_FILE] [-o=<outputFormat>] [-p=PASSWORD]
                         [-u=USERNAME]
@@ -298,6 +298,6 @@ ScalarDB Cluster gRPC API の詳細については、以下を参照してくだ
 
 Javadocs も利用可能です:
 
-* [ScalarDB Cluster Java Client SDK](https://javadoc.io/doc/com.scalar-labs/scalardb-cluster-java-client-sdk/3.13.2/index.html)
-* [ScalarDB Cluster Common](https://javadoc.io/doc/com.scalar-labs/scalardb-cluster-common/3.13.2/index.html)
-* [ScalarDB Cluster RPC](https://javadoc.io/doc/com.scalar-labs/scalardb-cluster-rpc/3.13.2/index.html)
+* [ScalarDB Cluster Java Client SDK](https://javadoc.io/doc/com.scalar-labs/scalardb-cluster-java-client-sdk/3.13.4/index.html)
+* [ScalarDB Cluster Common](https://javadoc.io/doc/com.scalar-labs/scalardb-cluster-common/3.13.4/index.html)
+* [ScalarDB Cluster RPC](https://javadoc.io/doc/com.scalar-labs/scalardb-cluster-rpc/3.13.4/index.html)
