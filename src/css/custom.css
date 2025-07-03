@@ -67,6 +67,19 @@ div[class^='announcementBar'] {
 
 /* Home page cards */
 
+html, body { /* Fix for horizontal scrolling issue */
+  overflow-x: hidden;
+  max-width: 100%;
+}
+
+* { /* Ensure all elements stay within their containers */
+  box-sizing: border-box;
+}
+
+table, pre, code, img, iframe { /* Fix for common elements that might cause overflow */
+  max-width: 100%;
+}
+
 .card {
   border: 1px solid #ebedf0;
 }
@@ -81,23 +94,6 @@ div[class^='announcementBar'] {
   text-decoration: none;
 }
 
-
-/* Fix for horizontal scrolling issue */
-html, body {
-  overflow-x: hidden;
-  max-width: 100%;
-}
-
-/* Ensure all elements stay within their containers */
-* {
-  box-sizing: border-box;
-  max-width: 100%;
-}
-
-/* Fix for common elements that might cause overflow */
-table, pre, code, img, iframe {
-  max-width: 100%;
-}
 .grid-container {
   display: flex;
   flex-direction: column;
