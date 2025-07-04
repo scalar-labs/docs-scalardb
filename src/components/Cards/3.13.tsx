@@ -103,8 +103,8 @@ const categories = [
       },
       {
         cell: 2, // Third cell
-        links: ['XXX'],
-        labels: ['XXX']
+        links: ['develop-run-non-transactional-operations-overview'],
+        labels: ['Run Non-Transactional Storage Operations']
       }
     ]
   },
