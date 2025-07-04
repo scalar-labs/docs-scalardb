@@ -23,17 +23,17 @@ const new_content = [
       // To add a link, use the format ['link1', 'link2']
       // To add a label, use the format ['label1', 'label2']
       {
-        cell: 0, // Third cell
+        cell: 0, // First cell
         links: ['api-guide#coordinator-テーブルのグループコミット'],
         labels: ['Coordinator テーブルのグループコミット']
       },
       {
-        cell: 1, // First cell
+        cell: 1, // Second cell
         links: ['run-non-transactional-storage-operations-through-library#configure-scalardb-to-run-non-transactional-storage-operations'],
         labels: ['非トランザクショナルストレージ操作を実行するための ScalarDB の設定']
       },
       {
-        cell: 2, // Second cell
+        cell: 2, // Third cell
         links: ['scalardb-cluster/run-non-transactional-storage-operations-through-sql-interface/#configure-scalardb-cluster-to-run-non-transactional-storage-operations'],
         labels: ['非トランザクショナルストレージ操作を実行するための ScalarDB Cluster の設定']
       }
