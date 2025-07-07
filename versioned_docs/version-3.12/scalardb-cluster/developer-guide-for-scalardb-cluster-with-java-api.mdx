@@ -124,7 +124,13 @@ You can download the Schema Loader for Cluster from [ScalarDB Releases](https://
 After downloading the JAR file, you can run Schema Loader for Cluster with the following command:
 
 ```console
-java -jar scalardb-cluster-schema-loader-3.12.7-all.jar --config <PATH_TO_CONFIG_FILE> -f <PATH_TO_SCHEMA_FILE> --coordinator
+java -jar scalardb-cluster-schema-loader-3.12.7-all.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> --schema-file <PATH_TO_SCHEMA_FILE> --coordinator
+```
+
+You can also pull the Docker image from the [Scalar container registry](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-cluster-schema-loader) by running the following command, replacing the contents in the angle brackets as described:
+
+```console
+docker run --rm -v <PATH_TO_YOUR_LOCAL_SCALARDB_PROPERTIES_FILE>:/scalardb.properties -v <PATH_TO_YOUR_LOCAL_SCHEMA_FILE>:/schema.json ghcr.io/scalar-labs/scalardb-cluster-schema-loader:3.12.7 --config /scalardb.properties --schema-file /schema.json --coordinator
 ```
 
 ## ScalarDB Cluster SQL
@@ -264,7 +270,13 @@ Like other SQL databases, ScalarDB SQL also provides a CLI tool where you can is
 You can download the SQL CLI for Cluster from [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases/tag/v3.12.7). After downloading the JAR file, you can run the SQL CLI with the following command:
 
 ```console
-java -jar scalardb-cluster-sql-cli-3.12.7-all.jar --config <PATH_TO_CONFIG_FILE>
+java -jar scalardb-cluster-sql-cli-3.12.7-all.jar --config <PATH_TO_SCALARDB_SQL_PROPERTIES_FILE>
+```
+
+You can also pull the Docker image from the [Scalar container registry](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-cluster-sql-cli) by running the following command, replacing the contents in the angle brackets as described:
+
+```console
+docker run --rm -it -v <PATH_TO_YOUR_LOCAL_SCALARDB_SQL_PROPERTIES_FILE>:/scalardb-sql.properties ghcr.io/scalar-labs/scalardb-cluster-sql-cli:3.12.7 --config /scalardb-sql.properties
 ```
 
 #### Usage
