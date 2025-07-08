@@ -5,44 +5,32 @@ tags:
   - Enterprise Premium
 ---
 
-# ScalarDB Configurations
+# ScalarDB Core Configurations
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-This page describes the available configurations for ScalarDB.
+This page describes the available configurations for ScalarDB Core.
 
-## ScalarDB client configurations
+:::tip
 
-ScalarDB provides its own transaction protocol called Consensus Commit. You can use the Consensus Commit protocol directly through the ScalarDB client library or through [ScalarDB Cluster](scalardb-cluster/index.mdx), which is a component that is available only in the ScalarDB Enterprise edition.
-
-### Use Consensus Commit directly
-
-Consensus Commit is the default transaction manager type in ScalarDB. To use the Consensus Commit transaction manager, add the following to the ScalarDB properties file:
-
-```properties
-scalar.db.transaction_manager=consensus-commit
-```
-
-:::note
-
-If you don't specify the `scalar.db.transaction_manager` property, `consensus-commit` will be the default value.
+If you are using ScalarDB Cluster, please refer to [ScalarDB Cluster Configurations](./scalardb-cluster/scalardb-cluster-configurations.mdx) instead.
 
 :::
 
-#### Basic configurations
+## General configurations
 
-The following basic configurations are available for the Consensus Commit transaction manager:
+The following configurations are available for the Consensus Commit transaction manager:
 
 | Name                                                  | Description                                                                                                                                                                                                                                                                                                                                                                                                  | Default       |
 |-------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
-| `scalar.db.transaction_manager`                       | `consensus-commit` should be specified.                                                                                                                                                                                                                                                                                                                                                                      | -             |
+| `scalar.db.transaction_manager`                       | Transaction manager of ScalarDB. Specify `consensus-commit` to use [Consensus Commit](./consensus-commit.mdx) or `single-crud-operation` to [run non-transactional storage operations](./run-non-transactional-storage-operations-through-library.mdx). Note that the configurations under the `scalar.db.consensus_commit` prefix are ignored if you use `single-crud-operation`.                                                                                                                                                                                                                                                                                                                                                             | `consensus-commit`             |
 | `scalar.db.consensus_commit.isolation_level`          | Isolation level used for Consensus Commit. Either `SNAPSHOT` or `SERIALIZABLE` can be specified.                                                                                                                                                                                                                                                                                                             | `SNAPSHOT`    |
 | `scalar.db.consensus_commit.serializable_strategy`    | Serializable strategy used for Consensus Commit. Either `EXTRA_READ` or `EXTRA_WRITE` can be specified. If `SNAPSHOT` is specified in the property `scalar.db.consensus_commit.isolation_level`, this configuration will be ignored.                                                                                                                                                                         | `EXTRA_READ`  |
 | `scalar.db.consensus_commit.coordinator.namespace`    | Namespace name of Coordinator tables.                                                                                                                                                                                                                                                                                                                                                                        | `coordinator` |
 | `scalar.db.consensus_commit.include_metadata.enabled` | If set to `true`, `Get` and `Scan` operations results will contain transaction metadata. To see the transaction metadata columns details for a given table, you can use the `DistributedTransactionAdmin.getTableMetadata()` method, which will return the table metadata augmented with the transaction metadata columns. Using this configuration can be useful to investigate transaction-related issues. | `false`       |
 
-#### Performance-related configurations
+## Performance-related configurations
 
 The following performance-related configurations are available for the Consensus Commit transaction manager:
 
@@ -57,9 +45,9 @@ The following performance-related configurations are available for the Consensus
 | `scalar.db.consensus_commit.async_rollback.enabled`             | Whether or not the rollback phase is executed asynchronously.                                                                                                                 | The value of `scalar.db.consensus_commit.async_commit.enabled`    |
 | `scalar.db.consensus_commit.parallel_implicit_pre_read.enabled` | Whether or not implicit pre-read is executed in parallel.                                                                                                                     | `true`                                                            |
 
-#### Underlying storage or database configurations
+## Storage-related configurations
 
-Consensus Commit has a storage abstraction layer and supports multiple underlying storages. You can specify the storage implementation by using the `scalar.db.storage` property.
+ScalarDB has a storage (database) abstraction layer that supports multiple storage implementations. You can specify the storage implementation by using the `scalar.db.storage` property.
 
 Select a database to see the configurations available for each storage.
 
@@ -89,14 +77,13 @@ Select a database to see the configurations available for each storage.
 
 :::note
 
-If you use SQLite3 as a JDBC database, you must set `scalar.db.contact_points` as follows.
+If you're using SQLite3 as a JDBC database, you must set `scalar.db.contact_points` as follows:
 
 ```properties
 scalar.db.contact_points=jdbc:sqlite:<SQLITE_DB_FILE_PATH>?busy_timeout=10000
 ```
 
-Unlike other JDBC databases, [SQLite3 does not fully support concurrent access](https://www.sqlite.org/lang_transaction.html).
-To avoid frequent errors caused internally by [`SQLITE_BUSY`](https://www.sqlite.org/rescode.html#busy), we recommend setting a [`busy_timeout`](https://www.sqlite.org/c3ref/busy_timeout.html) parameter.
+Unlike other JDBC databases, [SQLite3 doesn't fully support concurrent access](https://www.sqlite.org/lang_transaction.html). To avoid frequent errors caused internally by [`SQLITE_BUSY`](https://www.sqlite.org/rescode.html#busy), setting a [`busy_timeout`](https://www.sqlite.org/c3ref/busy_timeout.html) parameter is recommended.
 
 :::
   </TabItem>
@@ -143,21 +130,15 @@ ScalarDB supports using multiple storage implementations simultaneously. You can
 
 For details about using multiple storages, see [Multi-Storage Transactions](multi-storage-transactions.mdx).
 
-### Use Consensus Commit through ScalarDB Cluster
+##### Cross-partition scan configurations
 
-[ScalarDB Cluster](scalardb-cluster/index.mdx) is a component that provides a gRPC interface to ScalarDB.
-
-For details about client configurations, see the [ScalarDB Cluster client configurations](scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#client-configurations).
-
-## Cross-partition scan configurations
-
-By enabling the cross-partition scan option below, the `Scan` operation can retrieve all records across partitions. In addition, you can specify arbitrary conditions and orderings in the cross-partition `Scan` operation by enabling `cross_partition_scan.filtering` and `cross_partition_scan.ordering`, respectively. Currently, the cross-partition scan with filtering and ordering is available only for JDBC databases. To enable filtering and ordering, `scalar.db.cross_partition_scan.enabled` must be set to `true`.
+By enabling the cross-partition scan option as described below, the `Scan` operation can retrieve all records across partitions. In addition, you can specify arbitrary conditions and orderings in the cross-partition `Scan` operation by enabling `cross_partition_scan.filtering` and `cross_partition_scan.ordering`, respectively. Currently, the cross-partition scan with ordering option is available only for JDBC databases. To enable filtering and ordering, `scalar.db.cross_partition_scan.enabled` must be set to `true`.
 
 For details on how to use cross-partition scan, see [Scan operation](./api-guide.mdx#scan-operation).
 
 :::warning
 
-For non-JDBC databases, we do not recommend enabling cross-partition scan with the `SERIALIAZABLE` isolation level because transactions could be executed at a lower isolation level (that is, `SNAPSHOT`). When using non-JDBC databases, use cross-partition scan at your own risk only if consistency does not matter for your transactions.
+For non-JDBC databases, transactions could be executed at read-committed snapshot isolation (`SNAPSHOT`), which is a lower isolation level, even if you enable cross-partition scan with the `SERIALIZABLE` isolation level. When using non-JDBC databases, use cross-partition scan only if consistency does not matter for your transactions.
 
 :::
 
@@ -190,11 +171,7 @@ scalar.db.password=${env:SCALAR_DB_PASSWORD}
 
 In this example configuration, ScalarDB reads the username and password from environment variables. If the environment variable `SCALAR_DB_USERNAME` does not exist, ScalarDB uses the default value `admin`.
 
-## Configuration examples
-
-This section provides some configuration examples.
-
-### Configuration example #1 - App and database
+## Configuration example - App and database
 
 ```mermaid
 flowchart LR
@@ -227,34 +204,3 @@ scalar.db.contact_points=<CASSANDRA_HOST>
 scalar.db.username=<USERNAME>
 scalar.db.password=<PASSWORD>
 ```
-
-### Configuration example #2 - App, ScalarDB Cluster, and database
-
-```mermaid
-flowchart LR
-    app["App -<br />ScalarDB library with gRPC"]
-    cluster["ScalarDB Cluster -<br />(ScalarDB library with<br />Consensus Commit)"]
-    db[(Underlying storage or database)]
-    app --> cluster --> db
-```
-
-In this example configuration, the app (ScalarDB library with gRPC) connects to an underlying storage or database (in this case, Cassandra) through ScalarDB Cluster, which is a component that is available only in the ScalarDB Enterprise edition.
-
-:::note
-
-This configuration is acceptable for production use because ScalarDB Cluster implements the [Scalar Admin](https://github.com/scalar-labs/scalar-admin) interface, which enables you to take transactionally consistent backups for ScalarDB by pausing ScalarDB Cluster.
-
-
-:::
-
-The following is an example of the configuration for connecting the app to the underlying database through ScalarDB Cluster:
-
-```properties
-# Transaction manager implementation.
-scalar.db.transaction_manager=cluster
-
-# Contact point of the cluster.
-scalar.db.contact_points=indirect:<SCALARDB_CLUSTER_CONTACT_POINT>
-```
-
-For details about client configurations, see the [ScalarDB Cluster client configurations](scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#client-configurations).
