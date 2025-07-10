@@ -170,7 +170,7 @@ You can deploy PostgreSQL on the Kubernetes cluster as follows.
 5. Set the chart version of ScalarDB Cluster.
 
    ```console
-   SCALAR_DB_CLUSTER_VERSION=3.16.0
+   SCALAR_DB_CLUSTER_VERSION=3.15.4
    SCALAR_DB_CLUSTER_CHART_VERSION=$(helm search repo scalar-labs/scalardb-cluster -l | grep -F "${SCALAR_DB_CLUSTER_VERSION}" | awk '{print $2}' | sort --version-sort -r | head -n 1)
    ```
 

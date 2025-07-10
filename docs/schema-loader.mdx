@@ -532,19 +532,19 @@ Auto-scaling for Cosmos DB for NoSQL is enabled only when this option is set to 
 
 The following table shows the supported data types in ScalarDB and their mapping to the data types of other databases.
 
-| ScalarDB    | Cassandra            | Cosmos DB for NoSQL | Db2              | DynamoDB | MySQL/MariaDB | PostgreSQL/YugabyteDB    | Oracle                   | SQL Server      | SQLite  |
-|-------------|----------------------|---------------------|------------------|----------|---------------|--------------------------|--------------------------|-----------------|---------|
-| BOOLEAN     | boolean              | boolean (JSON)      | BOOLEAN          | BOOL     | boolean       | boolean                  | number(1)                | bit             | boolean |
-| INT         | int                  | number (JSON)       | INT              | N        | int           | int                      | number(10)               | int             | int     |
-| BIGINT      | bigint               | number (JSON)       | BIGINT           | N        | bigint        | bigint                   | number(16)               | bigint          | bigint  |
-| FLOAT       | float                | number (JSON)       | REAL             | N        | real          | real                     | binary_float             | float(24)       | float   |
-| DOUBLE      | double               | number (JSON)       | DOUBLE           | N        | double        | double precision         | binary_double            | float           | double  |
-| TEXT        | text                 | string (JSON)       | VARCHAR(32672)   | S        | longtext      | text                     | varchar2(4000)           | varchar(8000)   | text    |
-| BLOB        | blob                 | string (JSON)       | VARBINARY(32672) | B        | longblob      | bytea                    | RAW(2000)                | varbinary(8000) | blob    |
-| DATE        | date                 | number (JSON)       | DATE             | N        | date          | date                     | date                     | date            | int     |
-| TIME        | time                 | number (JSON)       | TIMESTAMP        | N        | time          | time                     | timestamp                | time            | bigint  |
-| TIMESTAMP   | <em>Unsupported</em> | number (JSON)       | TIMESTAMP        | N        | datetime      | timestamp                | timestamp                | datetime2       | bigint  |
-| TIMESTAMPTZ | timestamp            | number (JSON)       | TIMESTAMP        | N        | datetime      | timestamp with time zone | timestamp with time zone | datetimeoffset  | bigint  |
+| ScalarDB    | Cassandra            | Cosmos DB for NoSQL | DynamoDB | MySQL/MariaDB | PostgreSQL/YugabyteDB    | Oracle                   | SQL Server      | SQLite  |
+|-------------|----------------------|---------------------|----------|---------------|--------------------------|--------------------------|-----------------|---------|
+| BOOLEAN     | boolean              | boolean (JSON)      | BOOL     | boolean       | boolean                  | number(1)                | bit             | boolean |
+| INT         | int                  | number (JSON)       | N        | int           | int                      | number(10)               | int             | int     |
+| BIGINT      | bigint               | number (JSON)       | N        | bigint        | bigint                   | number(16)               | bigint          | bigint  |
+| FLOAT       | float                | number (JSON)       | N        | real          | real                     | binary_float             | float(24)       | float   |
+| DOUBLE      | double               | number (JSON)       | N        | double        | double precision         | binary_double            | float           | double  |
+| TEXT        | text                 | string (JSON)       | S        | longtext      | text                     | varchar2(4000)           | varchar(8000)   | text    |
+| BLOB        | blob                 | string (JSON)       | B        | longblob      | bytea                    | RAW(2000)                | varbinary(8000) | blob    |
+| DATE        | date                 | number (JSON)       | N        | date          | date                     | date                     | date            | int     |
+| TIME        | time                 | number (JSON)       | N        | time          | time                     | timestamp                | time            | bigint  |
+| TIMESTAMP   | <em>Unsupported</em> | number (JSON)       | N        | datetime      | timestamp                | timestamp                | datetime2       | bigint  |
+| TIMESTAMPTZ | timestamp            | number (JSON)       | N        | datetime      | timestamp with time zone | timestamp with time zone | datetimeoffset  | bigint  |
 
 :::note
 
@@ -554,10 +554,10 @@ TIMESTAMP represents a date-time without time zone information, while TIMESTAMPT
 
 However, the following data types in JDBC databases are converted differently when they are used as a primary key or a secondary index key. This is due to the limitations of RDB data types. For MySQL and Oracle, you can change the column size (minimum 64 bytes) as long as it meets the limitation of the total size of key columns. For details, see [Underlying storage or database configurations](configurations.mdx#underlying-storage-or-database-configurations).
 
-| ScalarDB | MySQL/MariaDB  | PostgreSQL/YugabyteDB | Oracle        | Db2            |
-|----------|----------------|-----------------------|---------------|----------------|
-| TEXT     | VARCHAR(128)   | VARCHAR(10485760)     | VARCHAR2(128) | VARCHAR(128)   |
-| BLOB     | VARBINARY(128) |                       | RAW(128)      | VARBINARY(128) |
+| ScalarDB | MySQL/MariaDB  | PostgreSQL/YugabyteDB | Oracle        |
+|----------|----------------|-----------------------|---------------|
+| TEXT     | VARCHAR(128)   | VARCHAR(10485760)     | VARCHAR2(128) |
+| BLOB     | VARBINARY(128) |                       | RAW(128)      |
 
 The following data types have a value range and precision regardless of the underlying database.
 

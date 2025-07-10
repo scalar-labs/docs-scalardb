@@ -569,11 +569,11 @@ Examples of building statement objects for `ALTER TABLE` are as follows:
 
 ```java
 // Add a new column "new_col" to "ns.tbl"
-AlterTableAddColumnStatement statement1 =
+AlterTableAddColumnStatement statement =
     StatementBuilder.alterTable("ns", "tbl").addColumn("new_col", DataType.INT).build();
 
 // Add a new encrypted column "new_col" to "ns.tbl"
-AlterTableAddColumnStatement statement2 =
+AlterTableAddColumnStatement statement =
     StatementBuilder.alterTable("ns", "tbl").addColumn("new_col", DataType.TEXT, true).build();
 ```
 
@@ -2039,26 +2039,16 @@ This command returns the following column:
 #### Grammar
 
 ```sql
-BEGIN [READ ONLY | READ WRITE]
+BEGIN
 ```
-
-- If you specify `READ ONLY`, the transaction will be started in read-only mode.
-- If you specify `READ WRITE`, the transaction will be started in read-write mode.
-- If you omit the `READ ONLY` or `READ WRITE` option, the transaction will be started as a read-write transaction by default.
 
 #### Examples
 
 An example of building statement objects for `BEGIN` is as follows:
 
 ```java
-// Begin a transaction.
-BeginStatement statement1 = StatementBuilder.begin().build();
-
-// Begin a transaction in read-only mode.
-BeginStatement statement2 = StatementBuilder.begin().readOnly().build();
-
-// Begin a transaction in read-write mode.
-BeginStatement statement3 = StatementBuilder.begin().readWrite().build();
+// Begin a transaction
+BeginStatement statement = StatementBuilder.begin().build();
 ```
 
 ### START TRANSACTION
@@ -2072,12 +2062,8 @@ This command returns the following column:
 #### Grammar
 
 ```sql
-START TRANSACTION [READ ONLY | READ WRITE]
+START TRANSACTION
 ```
-
-- If you specify `READ ONLY`, the transaction will be started in read-only mode.
-- If you specify `READ WRITE`, the transaction will be started in read-write mode.
-- If you omit the `READ ONLY` or `READ WRITE` option, the transaction will be started as a read-write transaction by default.
 
 #### Examples
 
@@ -2085,13 +2071,7 @@ An example of building statement objects for `START TRANSACTION` is as follows:
 
 ```java
 // Start a transaction.
-StartTransactionStatement statement1 = StatementBuilder.startTransaction().build();
-
-// Start a transaction in read-only mode.
-StartTransactionStatement statement2 = StatementBuilder.startTransaction().readOnly().build();
-
-// Start a transaction in read-write mode.
-StartTransactionStatement statement3 = StatementBuilder.startTransaction().readWrite().build();
+StartTransactionStatement statement = StatementBuilder.startTransaction().build();
 ```
 
 ### JOIN
