@@ -545,19 +545,19 @@ Cosmos DB for NoSQL の自動スケーリングは、このオプションが `4
 
 次の表は、ScalarDB でサポートされているデータ型と、他のデータベースのデータ型へのマッピングを示しています。
 
-| ScalarDB    | Cassandra                    | Cosmos DB for NoSQL | DynamoDB | MySQL/MariaDB | PostgreSQL/YugabyteDB    | Oracle                   | SQL Server      | SQLite  |
-|-------------|------------------------------|---------------------|----------|---------------|--------------------------|--------------------------|-----------------|---------|
-| BOOLEAN     | boolean                      | boolean (JSON)      | BOOL     | boolean       | boolean                  | number(1)                | bit             | boolean |
-| INT         | int                          | number (JSON)       | N        | int           | int                      | number(10)               | int             | int     |
-| BIGINT      | bigint                       | number (JSON)       | N        | bigint        | bigint                   | number(16)               | bigint          | bigint  |
-| FLOAT       | float                        | number (JSON)       | N        | real          | real                     | binary_float             | float(24)       | float   |
-| DOUBLE      | double                       | number (JSON)       | N        | double        | double precision         | binary_double            | float           | double  |
-| TEXT        | text                         | string (JSON)       | S        | longtext      | text                     | varchar2(4000)           | varchar(8000)   | text    |
-| BLOB        | blob                         | string (JSON)       | B        | longblob      | bytea                    | RAW(2000)                | varbinary(8000) | blob    |
-| DATE        | date                         | number (JSON)       | N        | date          | date                     | date                     | date            | int     |
-| TIME        | time                         | number (JSON)       | N        | time          | time                     | timestamp                | time            | bigint  |
-| TIMESTAMP   | <em>サポートされていません</em> | number (JSON)       | N        | datetime      | timestamp                | timestamp                | datetime2       | bigint  |
-| TIMESTAMPTZ | timestamp                    | number (JSON)       | N        | datetime      | timestamp with time zone | timestamp with time zone | datetimeoffset  | bigint  |
+| ScalarDB    | Cassandra                    | Cosmos DB for NoSQL | Db2                  | DynamoDB | MySQL/MariaDB | PostgreSQL/YugabyteDB    | Oracle                   | SQL Server      | SQLite  |
+|-------------|------------------------------|---------------------|----------------------|----------|---------------|--------------------------|--------------------------|-----------------|---------|
+| BOOLEAN     | boolean                      | boolean (JSON)      | BOOLEAN              | BOOL     | boolean       | boolean                  | number(1)                | bit             | boolean |
+| INT         | int                          | number (JSON)       | INT                  | N        | int           | int                      | number(10)               | int             | int     |
+| BIGINT      | bigint                       | number (JSON)       | BIGINT               | N        | bigint        | bigint                   | number(16)               | bigint          | bigint  |
+| FLOAT       | float                        | number (JSON)       | REAL                 | N        | real          | real                     | binary_float             | float(24)       | float   |
+| DOUBLE      | double                       | number (JSON)       | DOUBLE               | N        | double        | double precision         | binary_double            | float           | double  |
+| TEXT        | text                         | string (JSON)       | VARCHAR(32672)       | S        | longtext      | text                     | varchar2(4000)           | varchar(8000)   | text    |
+| BLOB        | blob                         | string (JSON)       | VARBINARY(32672)     | B        | longblob      | bytea                    | RAW(2000)                | varbinary(8000) | blob    |
+| DATE        | date                         | number (JSON)       | DATE                 | N        | date          | date                     | date                     | date            | int     |
+| TIME        | time                         | number (JSON)       | TIMESTAMP            | N        | time          | time                     | timestamp                | time            | bigint  |
+| TIMESTAMP   | <em>サポートされていません</em>  | number (JSON)       | TIMESTAMP            | N        | datetime      | timestamp                | timestamp                | datetime2       | bigint  |
+| TIMESTAMPTZ | timestamp                    | number (JSON)       | TIMESTAMP            | N        | datetime      | timestamp with time zone | timestamp with time zone | datetimeoffset  | bigint  |
 
 :::note
 
@@ -567,10 +567,10 @@ TIMESTAMP はタイムゾーン情報のない日付と時刻を表しますが�
 
 ただし、JDBC データベースの次のデータ型は、主キーまたはセカンダリインデックスキーとして使用される場合、異なる方法で変換されます。これは、RDB データ型の制限によるものです。MySQL および Oracle の場合、キー列の合計サイズの制限を満たす限り、列サイズ (最小 64 バイト) を変更できます。詳細については、[基盤となるストレージまたはデータベースの設定](configurations.mdx#基盤となるストレージまたはデータベースの設定) を参照してください。
 
-| ScalarDB | MySQL/MariaDB  | PostgreSQL/YugabyteDB | Oracle        |
-|----------|----------------|-----------------------|---------------|
-| TEXT     | VARCHAR(128)   | VARCHAR(10485760)     | VARCHAR2(128) |
-| BLOB     | VARBINARY(128) |                       | RAW(128)      |
+| ScalarDB | MySQL/MariaDB  | PostgreSQL/YugabyteDB | Oracle        | Db2            |
+|----------|----------------|-----------------------|---------------|----------------|
+| TEXT     | VARCHAR(128)   | VARCHAR(10485760)     | VARCHAR2(128) | VARCHAR(128)   |
+| BLOB     | VARBINARY(128) |                       | RAW(128)      | VARBINARY(128) |
 
 次のデータ型には、基盤になるデータベースに関係なく、値の範囲と精度があります。
 
