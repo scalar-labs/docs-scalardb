@@ -1,0 +1,2064 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Core エラーコード
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このページでは、ScalarDB Core のエラーコードの一覧を示します。
+
+## エラーコードのクラスと説明
+
+| クラス           | 説明                                                      |
+|:----------------|:---------------------------------------------------------|
+| `DB-CORE-1xxxx` | ユーザーエラーカテゴリのエラー                                |
+| `DB-CORE-2xxxx` | 同時実行エラーカテゴリのエラー                                |
+| `DB-CORE-3xxxx` | 内部エラーカテゴリのエラー                                   |
+| `DB-CORE-4xxxx` | 不明なトランザクションステータスエラーカテゴリのエラー            |
+
+## `DB-CORE-1xxxx` ステータスコード
+
+以下は、ユーザーエラーカテゴリのステータスコードとメッセージです。
+
+### `DB-CORE-10000`
+
+**メッセージ**
+
+```markdown
+Only a single-column index is supported. Operation: %s
+```
+
+### `DB-CORE-10001`
+
+**メッセージ**
+
+```markdown
+The column of the specified index key is not indexed. Operation: %s
+```
+
+### `DB-CORE-10002`
+
+**メッセージ**
+
+```markdown
+The index key is not properly specified. Operation: %s
+```
+
+### `DB-CORE-10003`
+
+**メッセージ**
+
+```markdown
+Clustering keys cannot be specified when using an index. Operation: %s
+```
+
+### `DB-CORE-10004`
+
+**メッセージ**
+
+```markdown
+Orderings cannot be specified when using an index. Operation: %s
+```
+
+### `DB-CORE-10005`
+
+**メッセージ**
+
+```markdown
+The limit cannot be negative. Operation: %s
+```
+
+### `DB-CORE-10006`
+
+**メッセージ**
+
+```markdown
+Cross-partition scan is not enabled. Operation: %s
+```
+
+### `DB-CORE-10007`
+
+**メッセージ**
+
+```markdown
+Cross-partition scan ordering is not enabled. Operation: %s
+```
+
+### `DB-CORE-10008`
+
+**メッセージ**
+
+```markdown
+Cross-partition scan filtering is not enabled. Operation: %s
+```
+
+### `DB-CORE-10009`
+
+**メッセージ**
+
+```markdown
+The specified projection is not found. Projection: %s, Operation: %s
+```
+
+### `DB-CORE-10010`
+
+**メッセージ**
+
+```markdown
+The clustering key boundary is not properly specified. Operation: %s
+```
+
+### `DB-CORE-10011`
+
+**メッセージ**
+
+```markdown
+The start clustering key is not properly specified. Operation: %s
+```
+
+### `DB-CORE-10012`
+
+**メッセージ**
+
+```markdown
+The end clustering key is not properly specified. Operation: %s
+```
+
+### `DB-CORE-10013`
+
+**メッセージ**
+
+```markdown
+Orderings are not properly specified. Operation: %s
+```
+
+### `DB-CORE-10014`
+
+**メッセージ**
+
+```markdown
+The specified ordering column is not found. Ordering: %s, Operation: %s
+```
+
+### `DB-CORE-10015`
+
+**メッセージ**
+
+```markdown
+The condition is not properly specified. Operation: %s
+```
+
+### `DB-CORE-10016`
+
+**メッセージ**
+
+```markdown
+The table does not exist. Table: %s
+```
+
+### `DB-CORE-10017`
+
+**メッセージ**
+
+```markdown
+The column value is not properly specified. Column: %s, Operation: %s
+```
+
+### `DB-CORE-10018`
+
+**メッセージ**
+
+```markdown
+The mutations are empty
+```
+
+### `DB-CORE-10019`
+
+**メッセージ**
+
+```markdown
+Mutations that span multiple partitions are not supported. Mutations: %s
+```
+
+### `DB-CORE-10020`
+
+**メッセージ**
+
+```markdown
+The partition key is not properly specified. Operation: %s
+```
+
+### `DB-CORE-10021`
+
+**メッセージ**
+
+```markdown
+The clustering key is not properly specified. Operation: %s
+```
+
+### `DB-CORE-10022`
+
+**メッセージ**
+
+```markdown
+The authentication and authorization feature is not enabled. To use this feature, you must enable it. Note that this feature is supported only in the ScalarDB Enterprise edition
+```
+
+### `DB-CORE-10023`
+
+**メッセージ**
+
+```markdown
+This condition is not allowed for the PutIf operation. Condition: %s
+```
+
+### `DB-CORE-10024`
+
+**メッセージ**
+
+```markdown
+This condition is not allowed for the DeleteIf operation. Condition: %s
+```
+
+### `DB-CORE-10025`
+
+**メッセージ**
+
+```markdown
+Operator must be LIKE or NOT_LIKE. Operator: %s
+```
+
+### `DB-CORE-10026`
+
+**メッセージ**
+
+```markdown
+An escape character must be a string of a single character or an empty string
+```
+
+### `DB-CORE-10027`
+
+**メッセージ**
+
+```markdown
+The LIKE pattern must not be null
+```
+
+### `DB-CORE-10028`
+
+**メッセージ**
+
+```markdown
+The LIKE pattern must not include only an escape character
+```
+
+### `DB-CORE-10029`
+
+**メッセージ**
+
+```markdown
+The LIKE pattern must not end with an escape character
+```
+
+### `DB-CORE-10030`
+
+**メッセージ**
+
+```markdown
+The column %s does not exist
+```
+
+### `DB-CORE-10031`
+
+**メッセージ**
+
+```markdown
+This operation is not supported when getting records of a database without using an index
+```
+
+### `DB-CORE-10032`
+
+**メッセージ**
+
+```markdown
+This operation is not supported when getting records of a database by using an index
+```
+
+### `DB-CORE-10033`
+
+**メッセージ**
+
+```markdown
+This operation is not supported when scanning all the records of a database or scanning records of a database by using an index
+```
+
+### `DB-CORE-10034`
+
+**メッセージ**
+
+```markdown
+This operation is supported only when scanning records of a database by using an index
+```
+
+### `DB-CORE-10035`
+
+**メッセージ**
+
+```markdown
+This operation is not supported when scanning records of a database by using an index
+```
+
+### `DB-CORE-10037`
+
+**メッセージ**
+
+```markdown
+This operation is supported only when no conditions are specified. If you want to modify a condition, please use clearConditions() to remove all existing conditions first
+```
+
+### `DB-CORE-10038`
+
+**メッセージ**
+
+```markdown
+One or more columns must be specified.
+```
+
+### `DB-CORE-10039`
+
+**メッセージ**
+
+```markdown
+One or more partition keys must be specified.
+```
+
+### `DB-CORE-10040`
+
+**メッセージ**
+
+```markdown
+The column definition must be specified since %s is specified as a partition key
+```
+
+### `DB-CORE-10041`
+
+**メッセージ**
+
+```markdown
+The column definition must be specified since %s is specified as a clustering key
+```
+
+### `DB-CORE-10042`
+
+**メッセージ**
+
+```markdown
+Invalid ID specified. ID: %d
+```
+
+### `DB-CORE-10043`
+
+**メッセージ**
+
+```markdown
+The transaction is not active. Status: %s
+```
+
+### `DB-CORE-10044`
+
+**メッセージ**
+
+```markdown
+The transaction has already been committed or rolled back. Status: %s
+```
+
+### `DB-CORE-10045`
+
+**メッセージ**
+
+```markdown
+The transaction has not been prepared. Status: %s
+```
+
+### `DB-CORE-10046`
+
+**メッセージ**
+
+```markdown
+The transaction has not been prepared or validated. Status: %s
+```
+
+### `DB-CORE-10047`
+
+**メッセージ**
+
+```markdown
+The transaction already exists
+```
+
+### `DB-CORE-10048`
+
+**メッセージ**
+
+```markdown
+A transaction associated with the specified transaction ID is not found. The transaction might have expired
+```
+
+### `DB-CORE-10049`
+
+**メッセージ**
+
+```markdown
+%s is the system namespace name
+```
+
+### `DB-CORE-10050`
+
+**メッセージ**
+
+```markdown
+The namespace already exists. Namespace: %s
+```
+
+### `DB-CORE-10051`
+
+**メッセージ**
+
+```markdown
+The namespace does not exist. Namespace: %s
+```
+
+### `DB-CORE-10052`
+
+**メッセージ**
+
+```markdown
+The table already exists. Table: %s
+```
+
+### `DB-CORE-10053`
+
+**メッセージ**
+
+```markdown
+The namespace is not empty. Namespace: %s; Tables in the namespace: %s
+```
+
+### `DB-CORE-10054`
+
+**メッセージ**
+
+```markdown
+The column does not exist. Table: %s; Column: %s
+```
+
+### `DB-CORE-10055`
+
+**メッセージ**
+
+```markdown
+The index already exists. Table: %s; Column: %s
+```
+
+### `DB-CORE-10056`
+
+**メッセージ**
+
+```markdown
+The index does not exist. Table: %s; Column: %s
+```
+
+### `DB-CORE-10057`
+
+**メッセージ**
+
+```markdown
+The column already exists. Table: %s; Column: %s
+```
+
+### `DB-CORE-10058`
+
+**メッセージ**
+
+```markdown
+The operation does not have the target namespace or table name. Operation: %s
+```
+
+### `DB-CORE-10059`
+
+**メッセージ**
+
+```markdown
+The specified value of the property '%s' is not a number. Value: %s
+```
+
+### `DB-CORE-10060`
+
+**メッセージ**
+
+```markdown
+The specified value of the property '%s' is not a boolean. Value: %s
+```
+
+### `DB-CORE-10061`
+
+**メッセージ**
+
+```markdown
+Reading the file failed. File: %s
+```
+
+### `DB-CORE-10062`
+
+**メッセージ**
+
+```markdown
+The property 'scalar.db.cross_partition_scan.enabled' must be set to true to use cross-partition scan with filtering or ordering
+```
+
+### `DB-CORE-10063`
+
+**メッセージ**
+
+```markdown
+This column value is out of range for BigInt. Value: %s
+```
+
+### `DB-CORE-10064`
+
+**メッセージ**
+
+```markdown
+This type is not supported. Name: %s, Type: %s
+```
+
+### `DB-CORE-10065`
+
+**メッセージ**
+
+```markdown
+Storage '%s' is not found
+```
+
+### `DB-CORE-10066`
+
+**メッセージ**
+
+```markdown
+Transaction manager '%s' is not found
+```
+
+### `DB-CORE-10068`
+
+**メッセージ**
+
+```markdown
+Please use scan() for non-exact match selection. Operation: %s
+```
+
+### `DB-CORE-10069`
+
+**メッセージ**
+
+```markdown
+Import-related functionality is not supported in Cassandra
+```
+
+### `DB-CORE-10070`
+
+**メッセージ**
+
+```markdown
+The %s network strategy does not exist
+```
+
+### `DB-CORE-10071`
+
+**メッセージ**
+
+```markdown
+The property 'scalar.db.contact_port' must be greater than or equal to zero
+```
+
+### `DB-CORE-10073`
+
+**メッセージ**
+
+```markdown
+The BLOB type is not supported for clustering keys in Cosmos DB. Column: %s
+```
+
+### `DB-CORE-10074`
+
+**メッセージ**
+
+```markdown
+Import-related functionality is not supported in Cosmos DB
+```
+
+### `DB-CORE-10075`
+
+**メッセージ**
+
+```markdown
+The property 'scalar.db.contact_points' must not be empty
+```
+
+### `DB-CORE-10076`
+
+**メッセージ**
+
+```markdown
+Cosmos DB supports only EQ, NE, IS_NULL, and IS_NOT_NULL operations for the BLOB type in conditions. Mutation: %s
+```
+
+### `DB-CORE-10077`
+
+**メッセージ**
+
+```markdown
+The specified consistency level is not supported. Consistency level: %s
+```
+
+### `DB-CORE-10078`
+
+**メッセージ**
+
+```markdown
+0x00 bytes are not accepted in BLOB values in DESC order
+```
+
+### `DB-CORE-10079`
+
+**メッセージ**
+
+```markdown
+Cannot encode a Text value that contains '\u0000'
+```
+
+### `DB-CORE-10081`
+
+**メッセージ**
+
+```markdown
+An index column cannot be set to null or an empty value for Text or Blob in DynamoDB. Operation: %s
+```
+
+### `DB-CORE-10082`
+
+**メッセージ**
+
+```markdown
+DynamoDB supports only EQ, NE, IS_NULL, and IS_NOT_NULL operations for the BOOLEAN type in conditions. Mutation: %s
+```
+
+### `DB-CORE-10083`
+
+**メッセージ**
+
+```markdown
+Nested multi-storage definitions are not supported. Storage: %s
+```
+
+### `DB-CORE-10084`
+
+**メッセージ**
+
+```markdown
+Storage not found. Storage: %s
+```
+
+### `DB-CORE-10085`
+
+**メッセージ**
+
+```markdown
+The namespace name is not acceptable. Namespace: %s
+```
+
+### `DB-CORE-10086`
+
+**メッセージ**
+
+```markdown
+The table name is not acceptable. Table: %s
+```
+
+### `DB-CORE-10087`
+
+**メッセージ**
+
+```markdown
+Importing tables is not allowed in the RDB engine. RDB engine: %s
+```
+
+### `DB-CORE-10088`
+
+**メッセージ**
+
+```markdown
+The %s table must have a primary key
+```
+
+### `DB-CORE-10089`
+
+**メッセージ**
+
+```markdown
+The RDB engine is not supported. JDBC connection URL: %s
+```
+
+### `DB-CORE-10090`
+
+**メッセージ**
+
+```markdown
+Data type %s(%d) is not supported: %s
+```
+
+### `DB-CORE-10091`
+
+**メッセージ**
+
+```markdown
+Data type %s is not supported: %s
+```
+
+### `DB-CORE-10092`
+
+**メッセージ**
+
+```markdown
+Getting a transaction state is not supported in JDBC transactions
+```
+
+### `DB-CORE-10093`
+
+**メッセージ**
+
+```markdown
+Rolling back a transaction is not supported in JDBC transactions
+```
+
+### `DB-CORE-10094`
+
+**メッセージ**
+
+```markdown
+Coordinator tables already exist
+```
+
+### `DB-CORE-10095`
+
+**メッセージ**
+
+```markdown
+Coordinator tables do not exist
+```
+
+### `DB-CORE-10096`
+
+**メッセージ**
+
+```markdown
+The namespace %s is reserved. Any operations on this namespace are not allowed
+```
+
+### `DB-CORE-10097`
+
+**メッセージ**
+
+```markdown
+Mutating transaction metadata columns is not allowed. Table: %s; Column: %s
+```
+
+### `DB-CORE-10098`
+
+**メッセージ**
+
+```markdown
+A %s condition is not allowed on Put operations
+```
+
+### `DB-CORE-10099`
+
+**メッセージ**
+
+```markdown
+A %s condition is not allowed on Delete operations
+```
+
+### `DB-CORE-10100`
+
+**メッセージ**
+
+```markdown
+The condition is not allowed to target transaction metadata columns. Column: %s
+```
+
+### `DB-CORE-10101`
+
+**メッセージ**
+
+```markdown
+The column '%s' is reserved as transaction metadata
+```
+
+### `DB-CORE-10102`
+
+**メッセージ**
+
+```markdown
+Non-primary key columns with the 'before_' prefix, '%s', are reserved as transaction metadata
+```
+
+### `DB-CORE-10103`
+
+**メッセージ**
+
+```markdown
+Put cannot have a condition when the target record is unread and implicit pre-read is disabled. Please read the target record beforehand or enable implicit pre-read: %s
+```
+
+### `DB-CORE-10104`
+
+**メッセージ**
+
+```markdown
+Writing already-deleted data is not allowed
+```
+
+### `DB-CORE-10105`
+
+**メッセージ**
+
+```markdown
+Getting data neither in the read set nor the delete set is not allowed
+```
+
+### `DB-CORE-10106`
+
+**メッセージ**
+
+```markdown
+Reading already-written data is not allowed
+```
+
+### `DB-CORE-10107`
+
+**メッセージ**
+
+```markdown
+The transaction is not validated. When using the EXTRA_READ serializable strategy, you need to call validate() before calling commit()
+```
+
+### `DB-CORE-10108`
+
+**メッセージ**
+
+```markdown
+DynamoDB cannot batch more than 100 mutations at once
+```
+
+### `DB-CORE-10109`
+
+**メッセージ**
+
+```markdown
+The partition keys of the table %s.%s were modified, but altering partition keys is not supported
+```
+
+### `DB-CORE-10110`
+
+**メッセージ**
+
+```markdown
+The clustering keys of the table %s.%s were modified, but altering clustering keys is not supported
+```
+
+### `DB-CORE-10111`
+
+**メッセージ**
+
+```markdown
+The clustering ordering of the table %s.%s were modified, but altering clustering ordering is not supported
+```
+
+### `DB-CORE-10112`
+
+**メッセージ**
+
+```markdown
+The column %s of the table %s.%s has been deleted. Column deletion is not supported when altering a table
+```
+
+### `DB-CORE-10113`
+
+**メッセージ**
+
+```markdown
+The data type of the column %s of the table %s.%s was modified, but altering data types is not supported
+```
+
+### `DB-CORE-10114`
+
+**メッセージ**
+
+```markdown
+Specifying the '--schema-file' option is required when using the '--repair-all' option
+```
+
+### `DB-CORE-10115`
+
+**メッセージ**
+
+```markdown
+Specifying the '--schema-file' option is required when using the '--alter' option
+```
+
+### `DB-CORE-10116`
+
+**メッセージ**
+
+```markdown
+Specifying the '--schema-file' option is required when using the '--import' option
+```
+
+### `DB-CORE-10117`
+
+**メッセージ**
+
+```markdown
+Specifying the '--coordinator' option with the '--import' option is not allowed. Create Coordinator tables separately
+```
+
+### `DB-CORE-10118`
+
+**メッセージ**
+
+```markdown
+Reading the configuration file failed. File: %s
+```
+
+### `DB-CORE-10119`
+
+**メッセージ**
+
+```markdown
+Reading the schema file failed. File: %s
+```
+
+### `DB-CORE-10120`
+
+**メッセージ**
+
+```markdown
+Parsing the schema JSON failed. Details: %s
+```
+
+### `DB-CORE-10121`
+
+**メッセージ**
+
+```markdown
+The table name must contain the namespace and the table. Table: %s
+```
+
+### `DB-CORE-10122`
+
+**メッセージ**
+
+```markdown
+The partition key must be specified. Table: %s
+```
+
+### `DB-CORE-10123`
+
+**メッセージ**
+
+```markdown
+Invalid clustering-key format. The clustering key must be in the format of 'column_name' or 'column_name ASC/DESC'. Table: %s; Clustering key: %s
+```
+
+### `DB-CORE-10124`
+
+**メッセージ**
+
+```markdown
+Columns must be specified. Table: %s
+```
+
+### `DB-CORE-10125`
+
+**メッセージ**
+
+```markdown
+Invalid column type. Table: %s; Column: %s; Type: %s
+```
+
+### `DB-CORE-10126`
+
+**メッセージ**
+
+```markdown
+The mutation type is not supported. Only the Put or Delete type is supported. Mutation: %s
+```
+
+### `DB-CORE-10127`
+
+**メッセージ**
+
+```markdown
+This condition is not allowed for the UpdateIf operation. Condition: %s
+```
+
+### `DB-CORE-10128`
+
+**メッセージ**
+
+```markdown
+Cross-partition scan with ordering is not supported in Cassandra
+```
+
+### `DB-CORE-10129`
+
+**メッセージ**
+
+```markdown
+Cross-partition scan with ordering is not supported in Cosmos DB
+```
+
+### `DB-CORE-10130`
+
+**メッセージ**
+
+```markdown
+Cross-partition scan with ordering is not supported in DynamoDB
+```
+
+### `DB-CORE-10131`
+
+**メッセージ**
+
+```markdown
+The directory '%s' does not have write permissions. Please ensure that the current user has write access to the directory.
+```
+
+### `DB-CORE-10132`
+
+**メッセージ**
+
+```markdown
+Failed to create the directory '%s'. Please check if you have sufficient permissions and if there are any file system restrictions. Details: %s
+```
+
+### `DB-CORE-10133`
+
+**メッセージ**
+
+```markdown
+Directory path cannot be null or empty.
+```
+
+### `DB-CORE-10134`
+
+**メッセージ**
+
+```markdown
+No file extension was found on the provided file name %s.
+```
+
+### `DB-CORE-10135`
+
+**メッセージ**
+
+```markdown
+Invalid file extension: %s. Allowed extensions are: %s
+```
+
+### `DB-CORE-10136`
+
+**メッセージ**
+
+```markdown
+Getting a transaction state is not supported in single CRUD operation transactions
+```
+
+### `DB-CORE-10137`
+
+**メッセージ**
+
+```markdown
+Rolling back a transaction is not supported in single CRUD operation transactions
+```
+
+### `DB-CORE-10138`
+
+**メッセージ**
+
+```markdown
+Multiple mutations are not supported in single CRUD operation transactions
+```
+
+### `DB-CORE-10139`
+
+**メッセージ**
+
+```markdown
+Beginning a transaction is not allowed in single CRUD operation transactions
+```
+
+### `DB-CORE-10140`
+
+**メッセージ**
+
+```markdown
+Resuming a transaction is not allowed in single CRUD operation transactions
+```
+
+### `DB-CORE-10141`
+
+**メッセージ**
+
+```markdown
+Using the group commit feature on the Coordinator table with a two-phase commit interface is not allowed
+```
+
+### `DB-CORE-10142`
+
+**メッセージ**
+
+```markdown
+This operation is supported only when no conditions are specified. If you want to modify a condition, please use clearConditions() to remove all existing conditions first
+```
+
+### `DB-CORE-10143`
+
+**メッセージ**
+
+```markdown
+The encryption feature is not enabled. To encrypt data at rest, you must enable this feature. Note that this feature is supported only in the ScalarDB Enterprise edition
+```
+
+### `DB-CORE-10144`
+
+**メッセージ**
+
+```markdown
+The variable key column size must be greater than or equal to 64
+```
+
+### `DB-CORE-10145`
+
+**メッセージ**
+
+```markdown
+The value of the column %s in the primary key contains an illegal character. Primary-key columns must not contain any of the following characters in Cosmos DB: ':', '/', '\', '#', '?'. Value: %s
+```
+
+### `DB-CORE-10146`
+
+**メッセージ**
+
+```markdown
+Inserting already-written data is not allowed
+```
+
+### `DB-CORE-10147`
+
+**メッセージ**
+
+```markdown
+Deleting already-inserted data is not allowed
+```
+
+### `DB-CORE-10148`
+
+**メッセージ**
+
+```markdown
+Invalid key: Column %s does not exist in the table %s in namespace %s.
+```
+
+### `DB-CORE-10149`
+
+**メッセージ**
+
+```markdown
+Invalid base64 encoding for blob value for column %s in table %s in namespace %s
+```
+
+### `DB-CORE-10150`
+
+**メッセージ**
+
+```markdown
+Invalid number specified for column %s in table %s in namespace %s
+```
+
+### `DB-CORE-10151`
+
+**メッセージ**
+
+```markdown
+Method null argument not allowed
+```
+
+### `DB-CORE-10152`
+
+**メッセージ**
+
+```markdown
+The attribute-based access control feature is not enabled. To use this feature, you must enable it. Note that this feature is supported only in the ScalarDB Enterprise edition
+```
+
+### `DB-CORE-10153`
+
+**メッセージ**
+
+```markdown
+The provided clustering key %s was not found
+```
+
+### `DB-CORE-10154`
+
+**メッセージ**
+
+```markdown
+The column '%s' was not found
+```
+
+### `DB-CORE-10155`
+
+**メッセージ**
+
+```markdown
+The provided partition key is incomplete. Required key: %s
+```
+
+### `DB-CORE-10156`
+
+**メッセージ**
+
+```markdown
+The provided clustering key order does not match the table schema. Required order: %s
+```
+
+### `DB-CORE-10157`
+
+**メッセージ**
+
+```markdown
+The provided partition key order does not match the table schema. Required order: %s
+```
+
+### `DB-CORE-10158`
+
+**メッセージ**
+
+```markdown
+This DATE column value is out of the valid range. It must be between 1000-01-01 and 9999-12-12. Value: %s
+```
+
+### `DB-CORE-10159`
+
+**メッセージ**
+
+```markdown
+This TIME column value precision cannot be shorter than one microsecond. Value: %s
+```
+
+### `DB-CORE-10160`
+
+**メッセージ**
+
+```markdown
+This TIMESTAMP column value is out of the valid range. It must be between 1000-01-01T00:00:00.000 and 9999-12-31T23:59:59.999. Value: %s
+```
+
+### `DB-CORE-10161`
+
+**メッセージ**
+
+```markdown
+This TIMESTAMP column value precision cannot be shorter than one millisecond. Value: %s
+```
+
+### `DB-CORE-10162`
+
+**メッセージ**
+
+```markdown
+This TIMESTAMPTZ column value is out of the valid range. It must be between 1000-01-01T00:00:00.000Z to 9999-12-31T23:59:59.999Z. Value: %s
+```
+
+### `DB-CORE-10163`
+
+**メッセージ**
+
+```markdown
+This TIMESTAMPTZ column value precision cannot be shorter than one millisecond. Value: %s
+```
+
+### `DB-CORE-10164`
+
+**メッセージ**
+
+```markdown
+The underlying-storage data type %s is not supported as the ScalarDB %s data type: %s
+```
+
+### `DB-CORE-10165`
+
+**メッセージ**
+
+```markdown
+Missing namespace or table: %s, %s
+```
+
+### `DB-CORE-10166`
+
+**メッセージ**
+
+```markdown
+Failed to retrieve table metadata. Details: %s
+```
+
+### `DB-CORE-10167`
+
+**メッセージ**
+
+```markdown
+Duplicate data mappings found for table '%s' in the control file
+```
+
+### `DB-CORE-10168`
+
+**メッセージ**
+
+```markdown
+No mapping found for column '%s' in table '%s' in the control file. Control file validation set at 'FULL'. All columns need to be mapped.
+```
+
+### `DB-CORE-10169`
+
+**メッセージ**
+
+```markdown
+The control file is missing data mappings
+```
+
+### `DB-CORE-10170`
+
+**メッセージ**
+
+```markdown
+The target column '%s' for source field '%s' could not be found in table '%s'
+```
+
+### `DB-CORE-10171`
+
+**メッセージ**
+
+```markdown
+The required partition key '%s' is missing in the control file mapping for table '%s'
+```
+
+### `DB-CORE-10172`
+
+**メッセージ**
+
+```markdown
+The required clustering key '%s' is missing in the control file mapping for table '%s'
+```
+
+### `DB-CORE-10173`
+
+**メッセージ**
+
+```markdown
+Duplicated data mappings found for column '%s' in table '%s'
+```
+
+### `DB-CORE-10174`
+
+**メッセージ**
+
+```markdown
+Missing required field or column mapping for clustering key %s
+```
+
+### `DB-CORE-10175`
+
+**メッセージ**
+
+```markdown
+Missing required field or column mapping for partition key %s
+```
+
+### `DB-CORE-10176`
+
+**メッセージ**
+
+```markdown
+Missing field or column mapping for %s
+```
+
+## `DB-CORE-2xxxx` ステータスコード
+
+以下は、同時実行エラーカテゴリのステータスコードとメッセージです。
+
+### `DB-CORE-20000`
+
+**メッセージ**
+
+```markdown
+No mutation was applied
+```
+
+### `DB-CORE-20001`
+
+**メッセージ**
+
+```markdown
+Logging failed in the batch
+```
+
+### `DB-CORE-20002`
+
+**メッセージ**
+
+```markdown
+The operation failed in the batch with type %s
+```
+
+### `DB-CORE-20003`
+
+**メッセージ**
+
+```markdown
+An error occurred in the batch. Details: %s
+```
+
+### `DB-CORE-20004`
+
+**メッセージ**
+
+```markdown
+A Paxos phase in the CAS operation failed
+```
+
+### `DB-CORE-20005`
+
+**メッセージ**
+
+```markdown
+The learn phase in the CAS operation failed
+```
+
+### `DB-CORE-20006`
+
+**メッセージ**
+
+```markdown
+A simple write operation failed
+```
+
+### `DB-CORE-20007`
+
+**メッセージ**
+
+```markdown
+An error occurred in the mutation. Details: %s
+```
+
+### `DB-CORE-20008`
+
+**メッセージ**
+
+```markdown
+A RetryWith error occurred in the mutation. Details: %s
+```
+
+### `DB-CORE-20009`
+
+**メッセージ**
+
+```markdown
+A transaction conflict occurred in the mutation. Details: %s
+```
+
+### `DB-CORE-20010`
+
+**メッセージ**
+
+```markdown
+A transaction conflict occurred in the mutation. Details: %s
+```
+
+### `DB-CORE-20011`
+
+**メッセージ**
+
+```markdown
+A conflict occurred. Please try restarting the transaction. Details: %s
+```
+
+### `DB-CORE-20012`
+
+**メッセージ**
+
+```markdown
+The %s condition of the %s operation is not satisfied. Targeting column(s): %s
+```
+
+### `DB-CORE-20013`
+
+**メッセージ**
+
+```markdown
+The record being prepared already exists
+```
+
+### `DB-CORE-20014`
+
+**メッセージ**
+
+```markdown
+A conflict occurred when preparing records
+```
+
+### `DB-CORE-20015`
+
+**メッセージ**
+
+```markdown
+The committing state in the coordinator failed. The transaction has been aborted
+```
+
+### `DB-CORE-20016`
+
+**メッセージ**
+
+```markdown
+A conflict occurred during implicit pre-read
+```
+
+### `DB-CORE-20017`
+
+**メッセージ**
+
+```markdown
+This record needs to be recovered
+```
+
+### `DB-CORE-20018`
+
+**メッセージ**
+
+```markdown
+The record does not exist, so the %s condition is not satisfied
+```
+
+### `DB-CORE-20019`
+
+**メッセージ**
+
+```markdown
+The record exists, so the %s condition is not satisfied
+```
+
+### `DB-CORE-20020`
+
+**メッセージ**
+
+```markdown
+The condition on the column '%s' is not satisfied
+```
+
+### `DB-CORE-20021`
+
+**メッセージ**
+
+```markdown
+Reading empty records might cause a write skew anomaly, so the transaction has been aborted for safety purposes
+```
+
+### `DB-CORE-20022`
+
+**メッセージ**
+
+```markdown
+An anti-dependency was found. The transaction has been aborted
+```
+
+### `DB-CORE-20023`
+
+**メッセージ**
+
+```markdown
+A transaction conflict occurred in the Insert operation
+```
+
+### `DB-CORE-20024`
+
+**メッセージ**
+
+```markdown
+The %s condition of the %s operation is not satisfied. Targeting column(s): %s
+```
+
+### `DB-CORE-20025`
+
+**メッセージ**
+
+```markdown
+A transaction conflict occurred in the Insert operation
+```
+
+## `DB-CORE-3xxxx` ステータスコード
+
+以下は、内部エラーカテゴリのステータスコードとメッセージです。
+
+### `DB-CORE-30000`
+
+**メッセージ**
+
+```markdown
+Creating the namespace failed. Namespace: %s
+```
+
+### `DB-CORE-30001`
+
+**メッセージ**
+
+```markdown
+Dropping the namespace failed. Namespace: %s
+```
+
+### `DB-CORE-30002`
+
+**メッセージ**
+
+```markdown
+Creating the table failed. Table: %s
+```
+
+### `DB-CORE-30003`
+
+**メッセージ**
+
+```markdown
+Dropping the table failed. Table: %s
+```
+
+### `DB-CORE-30004`
+
+**メッセージ**
+
+```markdown
+Truncating the table failed. Table: %s
+```
+
+### `DB-CORE-30005`
+
+**メッセージ**
+
+```markdown
+Creating the index failed. Table: %s, Column: %s
+```
+
+### `DB-CORE-30006`
+
+**メッセージ**
+
+```markdown
+Dropping the index failed. Table: %s, Column: %s
+```
+
+### `DB-CORE-30007`
+
+**メッセージ**
+
+```markdown
+Getting the table metadata failed. Table: %s
+```
+
+### `DB-CORE-30008`
+
+**メッセージ**
+
+```markdown
+Getting the table names in the namespace failed. Namespace: %s
+```
+
+### `DB-CORE-30009`
+
+**メッセージ**
+
+```markdown
+Checking the namespace existence failed. Namespace: %s
+```
+
+### `DB-CORE-30010`
+
+**メッセージ**
+
+```markdown
+Checking the table existence failed. Table: %s
+```
+
+### `DB-CORE-30011`
+
+**メッセージ**
+
+```markdown
+Checking the index existence failed. Table: %s; Column: %s
+```
+
+### `DB-CORE-30012`
+
+**メッセージ**
+
+```markdown
+Repairing the namespace failed. Namespace: %s
+```
+
+### `DB-CORE-30013`
+
+**メッセージ**
+
+```markdown
+Repairing the table failed. Table: %s
+```
+
+### `DB-CORE-30014`
+
+**メッセージ**
+
+```markdown
+Adding a new column to the table failed. Table: %s; Column: %s; ColumnType: %s
+```
+
+### `DB-CORE-30015`
+
+**メッセージ**
+
+```markdown
+Getting the namespace names failed
+```
+
+### `DB-CORE-30016`
+
+**メッセージ**
+
+```markdown
+Getting the table metadata of the table being imported failed. Table: %s
+```
+
+### `DB-CORE-30017`
+
+**メッセージ**
+
+```markdown
+Importing the table failed. Table: %s
+```
+
+### `DB-CORE-30018`
+
+**メッセージ**
+
+```markdown
+Adding the raw column to the table failed. Table: %s; Column: %s; ColumnType: %s
+```
+
+### `DB-CORE-30019`
+
+**メッセージ**
+
+```markdown
+Upgrading the ScalarDB environment failed
+```
+
+### `DB-CORE-30020`
+
+**メッセージ**
+
+```markdown
+Something wrong because WriteType is neither CAS nor SIMPLE
+```
+
+### `DB-CORE-30021`
+
+**メッセージ**
+
+```markdown
+An error occurred in the selection. Details: %s
+```
+
+### `DB-CORE-30022`
+
+**メッセージ**
+
+```markdown
+An error occurred in the mutation. Details: %s
+```
+
+### `DB-CORE-30023`
+
+**メッセージ**
+
+```markdown
+An error occurred in the selection. Details: %s
+```
+
+### `DB-CORE-30024`
+
+**メッセージ**
+
+```markdown
+An error occurred in the mutation. Details: %s
+```
+
+### `DB-CORE-30025`
+
+**メッセージ**
+
+```markdown
+An error occurred in the selection. Details: %s
+```
+
+### `DB-CORE-30026`
+
+**メッセージ**
+
+```markdown
+An error occurred in the mutation. Details: %s
+```
+
+### `DB-CORE-30027`
+
+**メッセージ**
+
+```markdown
+An error occurred in the selection. Details: %s
+```
+
+### `DB-CORE-30028`
+
+**メッセージ**
+
+```markdown
+Fetching the next result failed
+```
+
+### `DB-CORE-30029`
+
+**メッセージ**
+
+```markdown
+Rolling back the transaction failed. Details: %s
+```
+
+### `DB-CORE-30030`
+
+**メッセージ**
+
+```markdown
+Committing the transaction failed. Details: %s
+```
+
+### `DB-CORE-30031`
+
+**メッセージ**
+
+```markdown
+The Get operation failed. Details: %s
+```
+
+### `DB-CORE-30032`
+
+**メッセージ**
+
+```markdown
+The Scan operation failed. Details: %s
+```
+
+### `DB-CORE-30033`
+
+**メッセージ**
+
+```markdown
+The Put operation failed. Details: %s
+```
+
+### `DB-CORE-30034`
+
+**メッセージ**
+
+```markdown
+The Delete operation failed. Details: %s
+```
+
+### `DB-CORE-30035`
+
+**メッセージ**
+
+```markdown
+Beginning a transaction failed. Details: %s
+```
+
+### `DB-CORE-30036`
+
+**メッセージ**
+
+```markdown
+Preparing records failed
+```
+
+### `DB-CORE-30037`
+
+**メッセージ**
+
+```markdown
+Validation failed
+```
+
+### `DB-CORE-30038`
+
+**メッセージ**
+
+```markdown
+Executing implicit pre-read failed
+```
+
+### `DB-CORE-30039`
+
+**メッセージ**
+
+```markdown
+Reading a record from the underlying storage failed
+```
+
+### `DB-CORE-30040`
+
+**メッセージ**
+
+```markdown
+Scanning records from the underlying storage failed
+```
+
+### `DB-CORE-30041`
+
+**メッセージ**
+
+```markdown
+Rollback failed because the transaction has already been committed
+```
+
+### `DB-CORE-30042`
+
+**メッセージ**
+
+```markdown
+Rollback failed
+```
+
+### `DB-CORE-30043`
+
+**メッセージ**
+
+```markdown
+The Insert operation failed. Details: %s
+```
+
+### `DB-CORE-30044`
+
+**メッセージ**
+
+```markdown
+The Upsert operation failed. Details: %s
+```
+
+### `DB-CORE-30045`
+
+**メッセージ**
+
+```markdown
+The Update operation failed. Details: %s
+```
+
+### `DB-CORE-30046`
+
+**メッセージ**
+
+```markdown
+Handling the before-preparation snapshot hook failed. Details: %s
+```
+
+### `DB-CORE-30047`
+
+**メッセージ**
+
+```markdown
+Something went wrong while trying to save the data. Details: %s
+```
+
+### `DB-CORE-30048`
+
+**メッセージ**
+
+```markdown
+Something went wrong while scanning. Are you sure you are running in the correct transaction mode? Details: %s
+```
+
+## `DB-CORE-4xxxx` ステータスコード
+
+以下は、不明なトランザクションステータスエラーカテゴリのステータスコードとメッセージです。
+
+### `DB-CORE-40000`
+
+**メッセージ**
+
+```markdown
+Rolling back the transaction failed. Details: %s
+```
+
+### `DB-CORE-40001`
+
+**メッセージ**
+
+```markdown
+Committing state failed with NoMutationException, but the coordinator status does not exist
+```
+
+### `DB-CORE-40002`
+
+**メッセージ**
+
+```markdown
+The state cannot be retrieved
+```
+
+### `DB-CORE-40003`
+
+**メッセージ**
+
+```markdown
+The coordinator status is unknown
+```
+
+### `DB-CORE-40004`
+
+**メッセージ**
+
+```markdown
+Aborting state failed with NoMutationException, but the coordinator status does not exist
+```

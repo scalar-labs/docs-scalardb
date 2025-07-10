@@ -254,6 +254,40 @@ The following table shows the supported data types in each JDBC database and the
     - uniqueidentifier
     - xml
   </TabItem>
+  <TabItem value="Db2" label="Db2">
+    | Db2                   | ScalarDB                               | Notes                      |
+    |-----------------------|----------------------------------------|----------------------------|
+    | BIGINT                | BIGINT                                 | See warning [1](#1) below. |
+    | BINARY                | BLOB                                   |                            |
+    | BLOB                  | BLOB                                   |                            |
+    | BOOLEAN               | BOOLEAN                                |                            |
+    | CHAR                  | TEXT                                   |                            |
+    | CHAR FOR BIT DATA     | BLOB                                   |                            |
+    | CLOB                  | TEXT                                   |                            |
+    | DATE                  | DATE                                   |                            |
+    | DOUBLE                | DOUBLE                                 | See warning [2](#2) below. |
+    | FLOAT(p), with p ≤ 24 | FLOAT                                  | See warning [2](#2) below. |
+    | FLOAT(p), with p ≥ 25 | DOUBLE                                 | See warning [2](#2) below. |
+    | GRAPHIC               | TEXT                                   |                            |
+    | INT                   | INT                                    |                            |
+    | NCHAR                 | TEXT                                   |                            |
+    | NCLOB                 | TEXT                                   |                            |
+    | NVARCHAR              | TEXT                                   |                            |
+    | REAL                  | FLOAT                                  | See warning [2](#2) below. |
+    | SMALLINT              | INT                                    |                            |
+    | TIME                  | TIME                                   |                            |
+    | TIMESTAMP             | TIMESTAMP (default), TIME, TIMESTAMPTZ | See warning [6](#6) below. |
+    | VARBINARY             | BLOB                                   |                            |
+    | VARCHAR               | TEXT                                   |                            |
+    | VARCHAR FOR BIT DATA  | BLOB                                   |                            |
+    | VARGRAPHIC            | TEXT                                   |                            |
+
+    Data types not listed above are not supported. The following are some common data types that are not supported:
+
+    - decimal
+    - decfloat
+    - xml
+  </TabItem>
 </Tabs>
 
 :::warning

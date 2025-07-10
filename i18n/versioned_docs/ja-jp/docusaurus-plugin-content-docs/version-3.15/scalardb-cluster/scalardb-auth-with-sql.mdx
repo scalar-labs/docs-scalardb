@@ -1,0 +1,380 @@
+---
+tags:
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ユーザーの認証と認可
+
+import JavadocLink from '/src/theme/JavadocLink.js';
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+import WarningLicenseKeyContact from '/src/components/en-us/_warning-license-key-contact.mdx';
+
+<TranslationBanner />
+
+ScalarDB Cluster には、ユーザーを認証および認可するメカニズムがあります。
+
+このガイドでは、ScalarDB SQL で認証と認可を使用する方法について説明します。
+
+:::tip
+
+プリミティブインターフェースを使用して認証と認可を行うこともできます。詳細については、<JavadocLink packageName="scalardb-cluster-java-client-sdk" path="com/scalar/db/cluster/client" className="ClusterClientTransactionAdmin" />を参照してください。これは <JavadocLink packageName="scalardb" path="com/scalar/db/api" className="AuthAdmin" /> を実装しています。
+
+:::
+
+## 概要
+
+認証と認可を使用することで、ユーザーを作成し、その権限を付与または取り消すことができます。`CREATE USER` コマンドを使用してユーザーを作成し、`GRANT` コマンドまたは `REVOKE` コマンドを使用して、それぞれテーブルまたは名前空間に対する権限を付与または取り消すことができます。このようなデータ制御言語 (DCL) コマンドの詳細については、[DCL](../scalardb-sql/grammar.mdx#dcl) を参照してください。
+
+ユーザーは、必要な権限を持っている場合、ユーザー名とパスワードを使用して ScalarDB Cluster にログインし、SQL ステートメントを実行できます。
+
+認証と認可では、次の2種類のユーザーがサポートされます。
+
+- **スーパーユーザー:** このタイプのユーザーにはすべての権限があります。スーパーユーザーのみが他のユーザーや名前空間を作成または削除できます。
+- **通常のユーザー:** このタイプのユーザーには最初は権限がないため、スーパーユーザーまたは `GRANT` 権限を持つ別のユーザーによって権限を付与する必要があります。
+
+認証と認可を使用する場合、次の権限が利用できます。
+
+- `SELECT`
+- `INSERT`
+- `UPDATE`
+- `DELETE`
+- `CREATE`
+- `DROP`
+- `TRUNCATE`
+- `ALTER`
+- `GRANT`
+
+権限の詳細については、[各タイプの操作に必要な権限](#各タイプの操作に必要な権限)を参照してください。
+
+## 設定
+
+このセクションでは、認証と認可に使用できる設定について説明します。
+
+### ScalarDB Cluster ノードの設定
+
+認証と認可を有効にするには、`scalar.db.cluster.auth.enabled` を `true` に設定する必要があります。
+
+| 名前                              | 説明                         | デフォルト |
+|----------------------------------|-----------------------------|-----------|
+| `scalar.db.cluster.auth.enabled` | 認証と認可が有効かどうか。       | `false`  |
+
+以下を設定することもできます。
+
+| 名前                                                            | 説明                                                                                               | デフォルト       |
+|----------------------------------------------------------------|---------------------------------------------------------------------------------------------------|-----------------|
+| `scalar.db.cluster.auth.cache_expiration_time_millis`          | 認証および認可情報のキャッシュ有効期限（ミリ秒単位）。                                                      | `60000` (1分)  |
+| `scalar.db.cluster.auth.auth_token_expiration_time_minutes`    | 認証および認可トークンの有効期限（分単位）。                                                               | `1440` (1日)  |
+| `scalar.db.cluster.auth.auth_token_gc_thread_interval_minutes` | 認証および認可トークンのガベージコレクション (GC) スレッド間隔 (分単位)。                                    | 360（6時間）    |
+| `scalar.db.cluster.auth.pepper`                                | ハッシュ化の前にパスワードに追加されるシークレットの値。指定しない場合、パスワードはペッパーなしでハッシュ化されます。 |                |
+
+:::note
+
+認証と認可を有効にする場合は、認証と認可によって内部的にパーティション間スキャンが実行されるため、システム名前空間 (デフォルトでは `scalardb`) の `scalar.db.cross_partition_scan.enabled` を `true` に設定する必要もあります。
+
+:::
+
+### ScalarDB Cluster Java Client SDK 設定
+
+クライアント側で認証と認可を有効にするには、`scalar.db.cluster.auth.enabled` を `true` に設定する必要があります。
+
+| 名前                              | 説明                   | デフォルト |
+|----------------------------------|------------------------|----------|
+| `scalar.db.cluster.auth.enabled` | 認証と認可が有効かどうか。 | `false`  |
+
+[ScalarDB Cluster SQL クライアント設定](developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-クライアント設定) セクションの設定に加えて、クライアントのユーザー名とパスワードを指定するために `scalar.db.sql.cluster_mode.username` と `scalar.db.sql.cluster_mode.password` も設定する必要があります。
+
+| 名前                                  | 説明                 | デフォルト |
+|---------------------------------------|-----------------------------|---------|
+| `scalar.db.sql.cluster_mode.username` | クライアントのユーザー名。 |         |
+| `scalar.db.sql.cluster_mode.password` | クライアントのパスワード。 |         |
+
+## 初期ユーザー
+
+認証と認可を有効にすると、初期ユーザー `admin` が作成され、そのユーザーの初期パスワードは `admin` になります。このユーザーはスーパーユーザーであり、すべての権限を持ちます。このユーザーでログインし、必要に応じて他のユーザーを作成できます。
+
+:::warning
+
+セキュリティ上の理由から、特に実稼働環境にデプロイする前に、初期ユーザーのパスワードを必ず変更してください。
+
+:::
+
+## 各タイプの操作に必要な権限
+
+次の表は、各タイプの操作に必要な権限を示しています。
+
+### DDL
+
+| コマンド                        | スーパーユーザーが必要です | 必要な権限           |
+|-------------------------------|-----------------------|---------------------|
+| `CREATE NAMESPACE`            | `true`                |                     |
+| `DROP NAMESPACE`              | `true`                |                     |
+| `CREATE TABLE`                |                       | `CREATE`            |
+| `DROP TABLE`                  |                       | `DROP`              |
+| `CREATE INDEX`                |                       | `CREATE`            |
+| `DROP INDEX`                  |                       | `DROP`              |
+| `TRUNCATE TABLE`              |                       | `TRUNCATE`          |
+| `ALTER TABLE`                 |                       | `ALTER`             |
+| `CREATE COORDINATOR TABLES`   | `true`                |                     |
+| `DROP COORDINATOR TABLES`     | `true`                |                     |
+| `TRUNCATE COORDINATOR TABLES` | `true`                |                     |
+
+### DML
+
+| コマンド   | スーパーユーザーが必要です | 必要な権限             |
+|----------|------------------------|----------------------|
+| `SELECT` |                        | `SELECT`             |
+| `INSERT` |                        | `INSERT`             |
+| `UPSERT` |                        | `INSERT`             |
+| `UPDATE` |                        | `SELECT` と `UPDATE` |
+| `DELETE` |                        | `SELECT` と `DELETE` |
+
+### DCL
+
+| コマンド        | スーパーユーザーが必要です                      | 必要な権限                                                    |
+|---------------|---------------------------------------------|-------------------------------------------------------------|
+| `CREATE USER` | `true`                                      |                                                             |
+| `ALTER USER`  | `true` (ユーザーは自分のパスワードを変更できます。) |                                                             |
+| `DROP USER`   | `true`                                      |                                                             |
+| `GRANT`       |                                             | `GRANT` (ユーザーは自分が持っている権限のみを付与できます。)         |
+| `REVOKE`      |                                             | `GRANT` (ユーザーは自分が持っている権限のみを取り消すことができます。) |
+
+## 制限事項
+
+認証と認可で付与または取り消される権限には、いくつかの制限があります:
+
+- `INSERT` 権限と `UPDATE` 権限は、一緒に付与または取り消す必要があります。
+- ユーザーに `UPDATE` 権限または `DELETE` 権限を付与するには、対象ユーザーに `SELECT` 権限が必要です。
+- 対象ユーザーに `INSERT` 権限または `UPDATE` 権限がある場合、そのユーザーから `SELECT` 権限を取り消すことはできません。
+
+## ワイヤ暗号化
+
+認証と認可を有効にする場合は、ユーザー資格情報を保護するために、本番環境でワイヤ暗号化を有効にすることを強くお勧めします。ワイヤ暗号化の詳細については、[ScalarDB Cluster ワイヤ暗号化](encrypt-wire-communications.mdx)を参照してください。
+
+## チュートリアル - ユーザーの認証と認可
+
+このチュートリアルでは、認証と認可の使用方法を説明します。
+
+## 前提条件
+
+- [Eclipse Temurin](https://adoptium.net/temurin/releases/) の OpenJDK LTS バージョン (8、11、17、または 21)
+- [Docker](https://www.docker.com/get-started/) 20.10以降と [Docker Compose](https://docs.docker.com/compose/install/) V2以降
+
+:::note
+
+このチュートリアルは、Eclipse Temurin の OpenJDK でテストされています。ただし、ScalarDB 自体は、さまざまなベンダーの JDK ディストリビューションでテストされています。互換性のある JDK ディストリビューションを含む ScalarDB の要件の詳細については、[要件](../requirements.mdx)を参照してください。
+
+:::
+
+<WarningLicenseKeyContact product="ScalarDB Cluster" />
+
+### 1. ScalarDB Cluster 設定ファイルを作成する
+
+次の設定ファイルを `scalardb-cluster-node.properties` として作成し、`<YOUR_LICENSE_KEY>` と `<LICENSE_CHECK_CERT_PEM>` を ScalarDB ライセンスキーとライセンスチェック証明書の値に置き換えます。ライセンスキーと証明書の詳細については、[製品ライセンスキーの設定方法](../scalar-licensing/index.mdx)を参照してください。
+
+```properties
+scalar.db.storage=jdbc
+scalar.db.contact_points=jdbc:postgresql://postgresql:5432/postgres
+scalar.db.username=postgres
+scalar.db.password=postgres
+scalar.db.cluster.node.standalone_mode.enabled=true
+scalar.db.cross_partition_scan.enabled=true
+scalar.db.sql.enabled=true
+
+# Enable authentication and authorization
+scalar.db.cluster.auth.enabled=true
+
+# License key configurations
+scalar.db.cluster.node.licensing.license_key=<YOUR_LICENSE_KEY>
+scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
+```
+
+### 2. Docker Compose ファイルを作成する
+
+次の設定ファイルを `docker-compose.yaml` として作成します。
+
+```yaml
+services:
+  postgresql:
+    container_name: "postgresql"
+    image: "postgres:15"
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+      start_period: 30s
+
+  scalardb-cluster-standalone:
+    container_name: "scalardb-cluster-node"
+    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:3.15.4"
+    ports:
+      - 60053:60053
+      - 9080:9080
+    volumes:
+      - ./scalardb-cluster-node.properties:/scalardb-cluster/node/scalardb-cluster-node.properties
+    depends_on:
+      postgresql:
+        condition: service_healthy
+```
+
+### 3. PostgreSQL と ScalarDB Cluster を起動します
+
+次のコマンドを実行して、PostgreSQL と ScalarDB Cluster をスタンドアロンモードで起動します。
+
+```console
+docker compose up -d
+```
+
+### 4. ScalarDB Cluster に接続する
+
+ScalarDB Cluster に接続するために、このチュートリアルでは、ScalarDB Cluster に接続して SQL クエリを実行するツールである SQL CLI を使用します。SQL CLI は、[ScalarDB Releases ページ](https://github.com/scalar-labs/scalardb/releases)からダウンロードできます。
+
+`scalardb-cluster-sql-cli.properties` という名前の設定ファイルを作成します。このファイルは、SQL CLI を使用して ScalarDB Cluster に接続するために使用されます。
+
+```properties
+scalar.db.sql.connection_mode=cluster
+scalar.db.sql.cluster_mode.contact_points=indirect:localhost
+
+# Enable authentication and authorization
+scalar.db.cluster.auth.enabled=true
+```
+
+次に、次のコマンドを実行して SQL CLI を起動します。
+
+```console
+java -jar scalardb-cluster-sql-cli-3.15.4-all.jar --config scalardb-cluster-sql-cli.properties
+```
+
+ユーザー名とパスワードをそれぞれ `admin` と `admin` と入力します。
+
+これで、ScalarDB Cluster で認証と認可を有効にしてデータベースを使用する準備が整いました。
+
+### 5. 名前空間とテーブルを作成する
+
+名前空間を作成します。
+
+```sql
+CREATE NAMESPACE ns1;
+
+CREATE NAMESPACE ns2;
+```
+
+次に、`ns1` 名前空間にテーブルを作成します。
+
+```sql
+CREATE TABLE ns1.tbl (
+  id INT PRIMARY KEY,
+  col1 TEXT,
+  col2 INT);
+```
+
+### 6. ユーザーを作成する
+
+`user1` という名前のユーザーを作成します。
+
+```sql
+CREATE USER user1 WITH PASSWORD 'user1';
+```
+
+ユーザーを確認するには、次のコマンドを実行します。
+
+```sql
+SHOW USERS;
+```
+
+```console
++----------+-------------+
+| username | isSuperuser |
++----------+-------------+
+| user1    | false       |
+| admin    | true        |
++----------+-------------+
+```
+
+`user1` ユーザーが作成されたことがわかります。
+
+### 7. 権限の付与
+
+`ns1.tbl` テーブルで `user1` に `SELECT`、`INSERT`、および `UPDATE` 権限を付与します。
+
+```sql
+GRANT SELECT, INSERT, UPDATE ON ns1.tbl TO user1;
+```
+
+次に、`ns2` 名前空間の `user1` に `SELECT` 権限を付与します。
+
+```sql
+GRANT SELECT ON NAMESPACE ns2 TO user1;
+```
+
+権限を確認するには、次のコマンドを実行します。
+
+```sql
+SHOW GRANTS FOR user1;
+```
+
+```console
++---------+-----------+-----------+
+|  name   |   type    | privilege |
++---------+-----------+-----------+
+| ns2     | NAMESPACE | SELECT    |
+| ns1.tbl | TABLE     | SELECT    |
+| ns1.tbl | TABLE     | INSERT    |
+| ns1.tbl | TABLE     | UPDATE    |
++---------+-----------+-----------+
+```
+
+`user1` に `ns.tbl` テーブルに対する `SELECT`、`INSERT`、`UPDATE` 権限と、`ns2` 名前空間に対する `SELECT` 権限が付与されていることがわかります。
+
+### 8. `user1` としてログインする
+
+`user1` としてログインし、SQL ステートメントを実行します。
+
+```console
+java -jar scalardb-cluster-sql-cli-3.15.4-all.jar --config scalardb-cluster-sql-cli.properties
+```
+
+ユーザー名とパスワードをそれぞれ `user1` と `user1` として入力します。
+
+これで、`user1` として SQL ステートメントを実行できます。
+
+### 9. DML ステートメントを実行する
+
+`user1` として次の `INSERT` ステートメントを実行します。
+
+```sql
+INSERT INTO ns1.tbl VALUES (1, 'a', 1);
+```
+
+次に、`user1` として次の `SELECT` ステートメントを実行します。
+
+```sql
+SELECT * FROM ns1.tbl;
+```
+
+```console
++----+------+------+
+| id | col1 | col2 |
++----+------+------+
+| 1  | a    | 1    |
++----+------+------+
+```
+
+`user1` が `INSERT` および `SELECT` ステートメントを実行できることがわかります。
+
+次に、`user1` として次の `DELETE` ステートメントを実行してみてください。
+
+```sql
+DELETE FROM ns1.tbl WHERE id = 1;
+```
+
+```console
+Error: Authorization error (PERMISSION_DENIED: SQL-10021: Access denied: You need the DELETE privilege on the table ns1.tbl to execute this operation) (state=SDB11,code=9911)
+```
+
+`user1` には `ns1.tbl` テーブルに対する `DELETE` 権限がないため、上記のエラーメッセージが表示されます。

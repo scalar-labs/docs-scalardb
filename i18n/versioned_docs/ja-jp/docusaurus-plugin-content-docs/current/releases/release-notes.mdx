@@ -6,84 +6,59 @@ tags:
 displayed_sidebar: docsJapanese
 ---
 
-# ScalarDB 3.15 リリースノート
+# ScalarDB 3.16 リリースノート
 
 import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 <TranslationBanner />
 
-このページには、ScalarDB 3.15 のリリースノートのリストが含まれています。
+このページには、ScalarDB 3.16 のリリースノートのリストが含まれています。
 
-## v3.15.4
+## v3.16.0
 
-**発売日:** 2025年06月21日
-
-### まとめ
-
-このリリースには脆弱性とバグの修正が含まれています。
-
-### Community edition
-
-#### バグの修正
-
-- カラム値変換におけるDateTimeParseExceptionの例外処理を追加しました。([#2662](https://github.com/scalar-labs/scalardb/pull/2662))
-- セキュリティ問題を修正するためにPostgreSQLドライバーをアップグレードしました。[CVE-2025-49146](https://github.com/advisories/GHSA-hq9p-pm7w-8p54 "CVE-2025-49146") ([#2772](https://github.com/scalar-labs/scalardb/pull/2772))
-- `jdbc`ストレージを使用し、対象テーブルが存在しないためにスキャン操作が失敗した場合の潜在的な接続リークを修正しました。([#2766](https://github.com/scalar-labs/scalardb/pull/2766))
-
-### Enterprise edition
-
-#### バグの修正
-
-##### ScalarDB Cluster
-
-- コーディネーターのグループコミット機能が有効になっている場合のメモリリーク問題を修正しました。
-- セキュリティ問題を修正するためにOpenSearch Javaクライアントをアップグレードしました。[CVE-2025-27820](https://github.com/advisories/GHSA-73m2-qfq3-56cx "CVE-2025-27820")
-
-## v3.15.3
-
-**発売日:** 2025年05月15日
+**発売日:** 2025年06月20日
 
 ### まとめ
 
-このリリースには、脆弱性とバグの修正が含まれており、Omnistrate サービス上で ScalarDB Cluster を実行するためのサポートが追加されています。
+このリリースには、多くの機能強化、改善、バグ修正、およびパフォーマンスの最適化が含まれています。
 
 ### Community edition
 
-#### バグの修正
+#### 機能強化
 
-- 名前空間プレフィックス設定 `scalar.db.dynamo.namespace.prefix` を使用して DynamoDB ストレージを使用する場合の `DistributedStorageAdmin.getNamespaceNames()` API の問題を修正しました。このメソッドによって返される名前空間名に誤ってプレフィックスが含まれていました。([#2641](https://github.com/scalar-labs/scalardb/pull/2641))
-
-### Enterprise edition
+- IBM Db2 LUV 11 および 12 のサポートを追加しました。([#2598](https://github.com/scalar-labs/scalardb/pull/2598))
+- 結果を反復的に取得するためのトランザクション抽象にスキャナー API を追加しました。([#2729](https://github.com/scalar-labs/scalardb/pull/2729))
+- ストレージアダプターにおけるスキャンフェッチサイズのサポートを追加しました。`scalar.db.scan_fetch_size` プロパティを設定することで、ストレージ層でスキャン API によってフェッチされるレコード数を制御できます。([#2731](https://github.com/scalar-labs/scalardb/pull/2731))
+- Schema Loader に `replication-tables` オプションを追加しました。([#2747](https://github.com/scalar-labs/scalardb/pull/2747))
+- 読み取り専用モードでトランザクションを開始するサポートを追加しました。([#2749](https://github.com/scalar-labs/scalardb/pull/2749))
+- Javadoc および errorprone に関する警告を修正しました。([#2614](https://github.com/scalar-labs/scalardb/pull/2614))
+- ストレージに関するメタデータを提供する `StorageInfo` を導入しました。`DistributedStorageAdmin.getStorageInfo()` メソッドを介して `StorageInfo` インスタンスを取得できます。([#2756](https://github.com/scalar-labs/scalardb/pull/2756))
+- ScalarDB Data Loader CLI の Docker サポートを追加し、データロード機能のコンテナ化されたデプロイメントを可能にしました。([#2758](https://github.com/scalar-labs/scalardb/pull/2758))
+- Data Loader CLI ビルドのCIワークフローを追加しました。([#2761](https://github.com/scalar-labs/scalardb/pull/2761))
+- より良いパフォーマンスを提供する `READ_COMMITTED` 分離レベルを追加しました。特に低競合のワークロードに対して効果的です。([#2803](https://github.com/scalar-labs/scalardb/pull/2803))
+- Consensus Commit における1フェーズコミット最適化のサポートを追加し、すべての変更が原子的にコミットできる場合にプレパレコードとコミットステートをスキップすることでパフォーマンスを大幅に向上させます。この最適化は `scalar.db.consensus_commit.one_phase_commit.enabled` プロパティで有効にできます。([#2811](https://github.com/scalar-labs/scalardb/pull/2811))
 
 #### 改善点
 
-##### ScalarDB Cluster
-
-- Omnistrate サービスのサポートを追加しました。これにより、Omnistrate サービス上で ScalarDB Cluster を実行できるようになりました。
-
-#### バグの修正
-
-##### ScalarDB Cluster
-
-- セキュリティの問題を修正するために `grpc_health_probe` をアップグレードしました。[CVE-2025-22869](https://github.com/advisories/GHSA-hcg3-q754-cr77)
-
-## v3.15.2
-
-**発売日:** 2025年03月24日
-
-### まとめ
-
-このリリースには、いくつかの改善とバグ修正が含まれています。
-
-### Community edition
-
-#### 改善点
-
-- ScalarDB BIGINT データ型が Oracle の NUMBER(16) にマッピングされるようになりました。([#2566](https://github.com/scalar-labs/scalardb/pull/2566))
+- ScalarDB BIGINT データ型が Oracle の `NUMBER(16)` にマッピングされるように変更しました。([#2566](https://github.com/scalar-labs/scalardb/pull/2566))
+- Consensus Commit から `EXTRA_WRITE` 戦略を削除しました。この変更により、Consensus Commit を使用する際に `EXTRA_WRITE` 戦略が指定された場合、代わりに `EXTRA_READ` 戦略が使用されます。([#2597](https://github.com/scalar-labs/scalardb/pull/2597))
+- Consensus Commit において、削除後に同じレコードに対してスキャン操作を不許可にするように変更し、一貫性のない動作を防ぎ、書き込み後のスキャンに関する既存の制限と整合させました。([#2610](https://github.com/scalar-labs/scalardb/pull/2610))
+- Consensus Commit において、読み取り専用トランザクションのコミットステートを省略するように変更し、パフォーマンスを向上させました。この動作はデフォルトで有効ですが、`scalar.db.consensus_commit.coordinator.write_omission_on_read_only.enabled` プロパティを `false` に設定することで無効にできます。([#2765](https://github.com/scalar-labs/scalardb/pull/2765))
+- Consensus Commit において、レコードのコミットまたはロールバック後に前の画像を削除するようにコードを更新し、ディスク使用量を削減しました。([#2787](https://github.com/scalar-labs/scalardb/pull/2787))
+- Consensus Commit における読み取りアルゴリズムを改善し、不必要な再試行を減少させました。([#2798](https://github.com/scalar-labs/scalardb/pull/2798))
 
 #### バグの修正
 
 - セキュリティ問題を修正するために Netty ライブラリをアップグレードしました。 [CVE-2025-24970](https://github.com/advisories/GHSA-4g8c-wm8x-jfhw "CVE-2025-24970") ([#2552](https://github.com/scalar-labs/scalardb/pull/2552))
+- スキャンに制限をかけた後にトランザクションが常に中断される `SERIALIZABLE` 分離レベルにおける Consensus Commit のバグを修正しました。([#2621](https://github.com/scalar-labs/scalardb/pull/2621))
+- DynamoDB ストレージを使用している際に、名前空間プレフィックス設定 `scalar.db.dynamo.namespace.prefix` を用いた場合の `DistributedStorageAdmin.getNamespaceNames()` API の問題を修正しました。このメソッドによって返される名前空間名に誤ってプレフィックスが含まれていました。([#2641](https://github.com/scalar-labs/scalardb/pull/2641))
+- 列値変換時の `DateTimeParseException` に対する例外処理を追加しました。([#2662](https://github.com/scalar-labs/scalardb/pull/2662))
+- `SERIALIZABLE` トランザクション内での二次インデックスを使用した `Get` 操作が、検証中に `Scan` 操作に変換されることにより `IllegalArgumentException` をスローする問題を修正しました。([#2683](https://github.com/scalar-labs/scalardb/pull/2683))
+- トランザクション内で二次インデックスの `Get` 操作によって取得されたレコードを更新する際に、不必要な暗黙のプレリードが発生するバグを修正しました。([#2700](https://github.com/scalar-labs/scalardb/pull/2700))
+- データローダーコアのマイナーなバグと問題を修正しました。([#2752](https://github.com/scalar-labs/scalardb/pull/2752))
+- Consensus Commit において、結合を伴う `Get` または `Scan` を実行する際にレコードが見逃されるバグを修正しました。([#2786](https://github.com/scalar-labs/scalardb/pull/2786))
+- Consensus Commit において、ストレージから同じレコードを複数回読み取ることが、更新の喪失などの異常を引き起こす可能性がある問題を修正しました。この問題を解決するために、読み取りセットは繰り返し読み取り時に更新されなくなりました。([#2797](https://github.com/scalar-labs/scalardb/pull/2797))
+- `jdbc` ストレージを使用している際に、ターゲットテーブルが存在しないために `Scan` 操作が失敗した場合の潜在的な接続リークを修正しました。([#2766](https://github.com/scalar-labs/scalardb/pull/2766))
 
 ### Enterprise edition
 
@@ -91,71 +66,29 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 ##### ScalarDB Cluster
 
-- ScalarDB Cluster のトランザクション機能を有効または無効にする設定オプション (`scalar.db.transaction.enabled`) を追加しました。デフォルト値は `true` です。
+- ScalarDB Cluster におけるトランザクション機能の有効または無効を設定するための構成オプション（`scalar.db.transaction.enabled`）を追加しました。デフォルト値は `true` です。
+- ScalarDB Cluster におけるトランザクション抽象にスキャナー API のサポートを追加し、結果を反復的に取得できるようにしました。
+- ScalarDB Cluster において、読み取り専用モードでトランザクションを開始するサポートを追加しました。
+- ScalarDB Cluster において、SQL を使用して読み取り専用モードでトランザクションを開始するサポートを追加しました。
+- ScalarDB Cluster において、セミ同期レプリケーション機能を追加しました。
 
-#### バグ修正
+##### ScalarDB SQL
 
-##### ScalarDB Cluster
-
-- SQL インターフェースで認証を使用する場合のメタデータキャッシュの動作に関連するバグを修正しました。
-- 埋め込み機能の設定を修正しました。
-- スーパーユーザーが存在しないユーザーに対して ABAC 管理操作を実行できるバグを修正しました。
-- 空の ABAC システムテーブルを削除するときにテーブルが見つからないというエラーが発生するバグを修正しました。
-
-## v3.15.1
-
-**発売日:** 2025年02月20日
-
-### まとめ
-
-このリリースには、多数の機能強化、改善、バグ修正が含まれています。[3.15.0 リリース](https://github.com/scalar-labs/scalardb/releases/tag/v3.15.0)は破棄され、これが 3.15 の最初の公式リリースとなります。
-
-### Community edition
-
-#### 機能強化
-
-- 操作属性が導入され、操作に追加のキー値情報を含める機能が提供されました。([#2333](https://github.com/scalar-labs/scalardb/pull/2333))
-- 新しい時間関連のデータ型 DATE、TIME、TIMESTAMP、および TIMESTAMPTZ が追加されました。 ([#2468](https://github.com/scalar-labs/scalardb/pull/2468) [#2491](https://github.com/scalar-labs/scalardb/pull/2491))
+- ScalarDB SQL において、読み取り専用モードでトランザクションを開始するサポートを追加しました。
 
 #### 改善点
 
-- ScalarDB は、MySQL 8.4、8.0、PostgreSQL 17、16、15、14、13、Amazon Aurora PostgreSQL 16、15、14、13 をサポートするようになりました。 Amazon Aurora MySQL 3、および 2。([#2302](https://github.com/scalar-labs/scalardb/pull/2302))
-- `jdbc:mariadb` で始まる接続 URL には MariaDB Connector/J JDBC ドライバーを使用します。([#2391](https://github.com/scalar-labs/scalardb/pull/2391))
-- Cassandra および Cosmos DB のステートメントハンドラーで不要なログ記録を削除しました。([#2469](https://github.com/scalar-labs/scalardb/pull/2469))
-
-#### バグの修正
-
-- Cosmos DB アダプターの主キー列の検証を追加しました。検証により、主キー列のテキスト値に不正な文字 (`:`、`/`、`\`、`#`、および `?`) が含まれていないことが保証されます。 ([#2292](https://github.com/scalar-labs/scalardb/pull/2292))
-- Consensus Commit のトランザクションで同じレコードに対して複数のミューテーションが発生する動作を修正しました。([#2340](https://github.com/scalar-labs/scalardb/pull/2340))
-- Cosmos アダプターで存在しないレコードを削除するときの動作を修正しました。([#2341](https://github.com/scalar-labs/scalardb/pull/2341))
-- GetBuilder と ScanBuilder のバグを修正しました。([#2352](https://github.com/scalar-labs/scalardb/pull/2352))
-
-### Enterprise edition
-
-#### 機能強化
-
 ##### ScalarDB Cluster
 
-- [#2333](https://github.com/scalar-labs/scalardb/pull/2333) で導入された操作属性のサポートを ScalarDB Cluster に追加しました。
-- 属性ベースのアクセス制御機能を追加しました。
-- [#2468](https://github.com/scalar-labs/scalardb/pull/2468) で導入された時間関連の型のサポートを ScalarDB Cluster に追加しました。
-- [scalar-labs/scalardb-sql#708](https://github.com/scalar-labs/scalardb-sql/pull/708) で導入された ABAC のメタデータ API のサポートを追加しました。
-- LangChain4j を統合することで、ScalarDB Cluster にベクトル検索機能を追加しました。
-
-##### ScalarDB SQL
-
-- DML に操作属性のサポートを追加しました。また、ABAC の読み取りタグと書き込みタグを DMS にサポートしました。
-- 時間関連の型である DATE、TIME、TIMESTAMP、および TIMESTAMPTZ をサポートします。
-- ABAC のメタデータ API を追加しました。
-- ABAC の SQL ステートメントを追加しました。
+- Omnistrate サービスのサポートを追加しました。これにより、ScalarDB Cluster を Omnistrate サービス内で実行できるようになりました。
+- ScalarDB Cluster に対してポーズコマンドが発行された際に、読み取り専用トランザクションが一時停止しないように変更しました。
 
 #### バグの修正
 
 ##### ScalarDB Cluster
 
-- セキュリティ問題を修正するために `grpc_health_probe` をアップグレードしました。 [CVE-2024-45337](https://github.com/advisories/GHSA-v778-237x-gjrc "CVE-2024-45337") [CVE-2024-45338](https://github.com/advisories/GHSA-w32m-9786-jp63 "CVE-2024-45338")
-
-##### ScalarDB SQL
-
-- [Spring Data JDBC For ScalarDB] `existsById()` API が動作しないバグを修正しました
-- SQL ステートメントパーサーが INT 型および BIGINT 型の列の負の数値リテラルを拒否する問題を修正しました。
+- SQL インターフェースで認証を使用する際のメタデータキャッシュの動作に関するバグを修正しました。
+- 埋め込み機能の設定を修正しました。
+- スーパーユーザーが存在しないユーザーに対して ABAC 管理操作を実行できるバグを修正しました。
+- 空の ABAC システムテーブルを削除する際にテーブルが見つからないエラーが発生するバグを修正しました。
+- コーディネーターグループコミット機能が有効なときのメモリリークの問題を修正しました。

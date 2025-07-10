@@ -1,14 +1,25 @@
 // This file contains the notifications data and a function to retrieve it.
 // The notifications are stored in an array of objects, each containing a message in multiple languages and URLs for those messages.
 const notificationsList = [
+  // {
+  //   message: {
+  //     en: 'Blog post: Explore the exciting new features in ScalarDB 3.16',
+  //     ja: 'ブログ記事: データベースエンジニアリングの最新トレンドとベストプラクティスを学ぶ DBEM #7 のハイライト'
+  //   },
+  //   url: {
+  //     en: 'XXX_?utm_source=docs-site&utm_medium=notifications',
+  //     ja: 'XXX_?utm_source=docs-site&utm_medium=notifications'
+  //   },
+  //   unread: true
+  // },
   {
     message: {
-      en: 'Check out the release notes for ScalarDB 3.15.4',
-      ja: 'ScalarDB 3.15.4 のリリースノートをご覧ください'
+      en: 'Support for IBM Db2 has been added in ScalarDB 3.16',
+      ja: 'ScalarDB 3.16 で IBM Db2 がサポートされました'
     },
     url: {
-      en: 'releases/release-notes#v3154?utm_source=docs-site&utm_medium=notifications',
-      ja: 'releases/release-notes#v3154?utm_source=docs-site&utm_medium=notifications'
+      en: 'requirements?RDBs=Db2#relational-databases?utm_source=docs-site&utm_medium=notifications',
+      ja: 'requirements?RDBs=Db2#リレーショナルデータベース?utm_source=docs-site&utm_medium=notifications'
     },
     unread: true
   },
@@ -20,17 +31,6 @@ const notificationsList = [
     url: {
       en: 'scalardb-cluster/getting-started-with-vector-search?utm_source=docs-site&utm_medium=notifications',
       ja: 'scalardb-cluster/getting-started-with-vector-search?utm_source=docs-site&utm_medium=notifications'
-    },
-    unread: true
-  },
-  {
-    message: {
-      en: 'Blog post: Explore the exciting new features in ScalarDB 3.15',
-      ja: 'ブログ記事: データベースエンジニアリングの最新トレンドとベストプラクティスを学ぶ DBEM #6 のハイライト'
-    },
-    url: {
-      en: 'https://medium.com/scalar-engineering/scalardb-3-15-has-been-released-b1982718fa46?utm_source=docs-site&utm_medium=notifications',
-      ja: 'https://medium.com/scalar-engineering-ja/database-engineering-meetup-%E7%AC%AC6%E5%9B%9E-dbem-6-%E3%82%92%E9%96%8B%E5%82%AC%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-fccde39d2926?utm_source=docs-site&utm_medium=notifications'
     },
     unread: true
   },

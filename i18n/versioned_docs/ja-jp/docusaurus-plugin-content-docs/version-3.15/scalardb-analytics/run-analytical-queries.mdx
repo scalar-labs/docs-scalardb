@@ -1,0 +1,456 @@
+---
+tags:
+  - Enterprise Option
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Analytics を通じた分析クエリの実行
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このガイドでは、ScalarDB Analytics アプリケーションの開発方法について説明します。アーキテクチャと設計の詳細については、[ScalarDB Analytics の設計](./design.mdx)を参照してください。
+
+ScalarDB Analytics は現在、実行エンジンとして Spark を使用し、Spark カスタムカタログプラグインを提供することによって、ScalarDB で管理されているデータソースと管理されていないデータソースの統合ビューを Spark テーブルとして提供します。これにより、任意の Spark SQL クエリをシームレスに実行できます。
+
+## 準備
+
+このセクションでは、前提条件、ScalarDB Analytics セットアップのための Spark 設定、および ScalarDB Analytics 依存関係の追加について説明します。
+
+### 前提条件
+
+ScalarDB Analytics は Apache Spark 3.4以降で動作します。まだ Spark をインストールしていない場合は、[Apache Spark のウェブサイト](https://spark.apache.org/downloads.html)から Spark ディストリビューションをダウンロードしてください。
+
+:::note
+
+Apache Spark は Scala 2.12 または Scala 2.13 でビルドされています。ScalarDB Analytics は両方のバージョンをサポートしています。後で適切なバージョンの ScalarDB Analytics を選択できるように、使用しているバージョンを確認してください。詳細については、[バージョン互換性](#バージョン互換性)を参照してください。
+
+:::
+
+### ScalarDB Analytics のセットアップのための Spark 設定
+
+以下のセクションでは、ScalarDB Analytics で利用可能なすべての設定オプションについて説明します。
+
+- ScalarDB Analytics の Spark との統合方法
+- データソースの接続とアクセス方法
+- ライセンス情報の提供方法
+
+実践的なシナリオでの設定例については、[サンプルアプリケーション設定](../scalardb-samples/scalardb-analytics-spark-sample/README.mdx#scalardb-analytics-の設定)を参照してください。
+
+#### Spark プラグインの設定
+
+| 設定キー名                           | 必須   | 説明                                                                                                                                                                                                                                                                                                          |
+|:-----------------------------------|:------|:--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `spark.jars.packages`              | いいえ | 必要な依存関係の Maven 座標をカンマ区切りで指定します。使用する ScalarDB Analytics パッケージを含める必要があります。含めない場合は、Spark アプリケーションの実行時にコマンドライン引数として指定します。ScalarDB Analytics の Maven 座標の詳細については、[ScalarDB Analytics 依存関係の追加](#scalardb-analytics-依存関係の追加)を参照してください。 |
+| `spark.sql.extensions`             | はい   | `com.scalar.db.analytics.spark.extension.ScalarDbAnalyticsExtensions` を設定する必要があります。                                                                                                                                                                                                                  |
+| `spark.sql.catalog.<CATALOG_NAME>` | はい   | `com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog` を設定する必要があります。                                                                                                                                                                                                                               |
+
+`<CATALOG_NAME>` には任意の名前を指定できます。設定全体で同じカタログ名を使用するようにしてください。
+
+#### ライセンスの設定
+
+| 設定キー名                                             | 必須 | 説明                                                                                                                     |
+|:-----------------------------------------------------|:-----|:------------------------------------------------------------------------------------------------------------------------|
+| `spark.sql.catalog.<CATALOG_NAME>.license.key`       | はい | ScalarDB Analytics のライセンスキーの JSON 文字列                                                                            |
+| `spark.sql.catalog.<CATALOG_NAME>.license.cert_pem`  | はい | ScalarDB Analytics ライセンスの PEM エンコードされた証明書の文字列。`cert_pem` または `cert_path` のいずれかを設定する必要があります。 |
+| `spark.sql.catalog.<CATALOG_NAME>.license.cert_path` | はい | ScalarDB Analytics ライセンスの PEM エンコードされた証明書へのパス。`cert_pem` または `cert_path` のいずれかを設定する必要があります。 |
+
+#### データソースの設定
+
+ScalarDB Analytics は複数のタイプのデータソースをサポートしています。各タイプには特定の設定パラメータが必要です:
+
+<Tabs groupId="data-source" queryString>
+  <TabItem value="scalardb" label="ScalarDB">
+
+:::note
+
+ScalarDB Analytics は ScalarDB をデータソースとしてサポートしています。この表では、ScalarDB をデータソースとして設定する方法について説明します。
+
+:::
+
+| 設定キー名                                                                      | 必須 | 説明                         |
+|:------------------------------------------------------------------------------|:-----|:----------------------------|
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.type`        | はい | 常に `scalardb` を設定します   |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.config_path` | はい | ScalarDB の設定ファイルへのパス |
+
+:::tip
+
+`<DATA_SOURCE_NAME>` には任意の名前を使用できます。
+
+:::
+
+  </TabItem>
+  <TabItem value="mysql" label="MySQL">
+
+| 設定キー名                                                                   | 必須  | 説明                    |
+|:---------------------------------------------------------------------------|:------|:-----------------------|
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.type`     | はい   | 常に `mysql` を設定します |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.host`     | はい   | MySQL サーバーのホスト名   |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.port`     | はい   | MySQL サーバーのポート番号 |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.username` | はい   | MySQL サーバーのユーザー名 |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.password` | はい   | MySQL サーバーのパスワード |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.database` | いいえ | 接続するデータベースの名前 |
+
+:::tip
+
+`<DATA_SOURCE_NAME>` には任意の名前を使用できます。
+
+:::
+
+  </TabItem>
+  <TabItem value="postgresql" label="PostgreSQL">
+
+| 設定キー名                                                                   | 必須 | 説明                                          |
+|:---------------------------------------------------------------------------|:-----|:---------------------------------------------|
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.type`     | はい | 常に `postgresql` または `postgres` を設定します |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.host`     | はい | PostgreSQL サーバーのホスト名                    |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.port`     | はい | PostgreSQL サーバーのポート番号                  |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.username` | はい | PostgreSQL サーバーのユーザー名                  |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.password` | はい | PostgreSQL サーバーのパスワード                  |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.database` | はい | 接続するデータベースの名前                        |
+
+:::tip
+
+`<DATA_SOURCE_NAME>` には任意の名前を使用できます。
+
+:::
+
+  </TabItem>
+  <TabItem value="oracle" label="Oracle">
+
+| 設定キー名                                                                       | 必須 | 説明                     |
+|:-------------------------------------------------------------------------------|:-----|:------------------------|
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.type`         | はい | 常に `oracle` を設定します |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.host`         | はい | Oracle サーバーのホスト名   |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.port`         | はい | Oracle サーバーのポート番号 |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.username`     | はい | Oracle サーバーのユーザー名 |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.password`     | はい | Oracle サーバーのパスワード |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.service_name` | はい | Oracle サーバーのサービス名 |
+
+:::tip
+
+`<DATA_SOURCE_NAME>` には任意の名前を使用できます。
+
+:::
+
+  </TabItem>
+  <TabItem value="sqlserver" label="SQL Server">
+
+| 設定キー名                                                                   | 必須   | 説明                                                                                         |
+|:---------------------------------------------------------------------------|:-------|:--------------------------------------------------------------------------------------------|
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.type`     | はい   | 常に `sqlserver` または `mssql` を設定します                                                    |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.host`     | はい   | SQL Server のホスト名                                                                         |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.port`     | はい   | SQL Server のポート番号                                                                        |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.username` | はい   | SQL Server のユーザー名                                                                        |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.password` | はい   | SQL Server のパスワード                                                                        |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.database` | いいえ | 接続するデータベースの名前                                                                        |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.secure`   | いいえ | SQL Server への接続にセキュアな接続を使用するかどうか。セキュアな接続を使用する場合は `true` を設定します。 |
+
+:::tip
+
+`<DATA_SOURCE_NAME>` には任意の名前を使用できます。
+
+:::
+
+  </TabItem>
+  <TabItem value="dynamodb" label="DynamoDB">
+
+| 設定キー名                                                                   | 必須                                                    | 説明                                                                                                                                  |
+|:---------------------------------------------------------------------------|:--------------------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------|
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.type`     | はい                                                    | 常に `dynamodb` を設定します                                                                                                            |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.region`   | `region` または `endpoint` のいずれかを設定する必要があります | DynamoDB インスタンスの AWS リージョン                                                                                                    |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.endpoint` | `region` または `endpoint` のいずれかを設定する必要があります | DynamoDB インスタンスの AWS エンドポイント                                                                                                |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.schema`   | はい                                                    | カタログのスキーマを表す JSON オブジェクト。形式の詳細については、[カタログレベルのマッピング](./design.mdx#カタログレベルのマッピング)を参照してください。 |
+
+:::tip
+
+`<DATA_SOURCE_NAME>` には任意の名前を使用できます。
+
+:::
+
+  </TabItem>
+</Tabs>
+
+#### 設定例
+
+以下は、複数のデータソースを持つ `scalardb` という名前のカタログを設定する ScalarDB Analytics の設定例です:
+
+```conf
+# Sparkプラグインの設定
+spark.jars.packages com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>
+spark.sql.extensions com.scalar.db.analytics.spark.extension.ScalarDbAnalyticsExtensions
+spark.sql.catalog.scalardb com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog
+
+# ライセンスの設定
+spark.sql.catalog.scalardb.license.key <LICENSE_KEY>
+spark.sql.catalog.scalardb.license.cert_pem <LICENSE_PEM_ENCODED_CERTIFICATE>
+
+# データソースの設定
+spark.sql.catalog.scalardb.data_source.scalardb.type scalardb
+spark.sql.catalog.scalardb.data_source.scalardb.config_path /path/to/scalardb.properties
+
+spark.sql.catalog.scalardb.data_source.mysql_source.type mysql
+spark.sql.catalog.scalardb.data_source.mysql_source.host localhost
+spark.sql.catalog.scalardb.data_source.mysql_source.port 3306
+spark.sql.catalog.scalardb.data_source.mysql_source.username root
+spark.sql.catalog.scalardb.data_source.mysql_source.password password
+spark.sql.catalog.scalardb.data_source.mysql_source.database mydb
+```
+
+括弧内の内容は以下のように変更する必要があります:
+
+- `<LICENSE_KEY>`: ScalarDB Analytics のライセンスキー
+- `<LICENSE_PEM_ENCODED_CERTIFICATE>`: ScalarDB Analytics ライセンスの PEM エンコードされた証明書
+- `<SPARK_VERSION>`: 使用している Spark のメジャーおよびマイナーバージョン (例: 3.4)
+- `<SCALA_VERSION>`: Spark インストールに対応する Scala のメジャーおよびマイナーバージョン (例: 2.12 または 2.13)
+- `<SCALARDB_ANALYTICS_VERSION>`: ScalarDB Analytics のバージョン
+
+### ScalarDB Analytics 依存関係の追加
+
+ScalarDB Analytics は Maven Central Repository でホストされています。パッケージ名は `scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>` で、以下の通りです:
+
+- `<SPARK_VERSION>`: 使用している Spark のメジャーおよびマイナーバージョン (例: 3.4)
+- `<SCALA_VERSION>`: Spark インストールに対応する Scala のメジャーおよびマイナーバージョン (例: 2.12 または 2.13)
+- `<SCALARDB_ANALYTICS_VERSION>`: ScalarDB Analytics のバージョン
+
+バージョンの互換性の詳細については、[バージョン互換性](#バージョン互換性)を参照してください。
+
+プロジェクトのビルド設定を設定することで、この依存関係をプロジェクトに追加できます。例えば、Gradle を使用している場合は、`build.gradle` ファイルに以下を追加できます:
+
+```groovy
+dependencies {
+    implementation 'com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>'
+}
+```
+
+:::note
+
+Gradle の Shadow プラグインや Maven の Shade プラグインなどを使用して、アプリケーションを単一の fat JAR ファイルにバンドルする場合は、使用しているプラグインに応じて `provided` や `shadow` などの適切な configuration を選択して、fat JAR ファイルから ScalarDB Analytics を除外する必要があります。
+
+:::
+
+## Spark アプリケーションの開発
+
+このセクションでは、Java を使用して ScalarDB Analytics を使用する Spark アプリケーションを開発する方法について説明します。
+
+ScalarDB Analytics を使用した Spark アプリケーションの開発には3つの方法があります:
+
+1. **Spark ドライバーアプリケーション:** クラスター内で実行される従来のSparkアプリケーション
+2. **Spark Connect アプリケーション:** Spark Connectプロトコルを使用するリモートアプリケーション
+3. **JDBC アプリケーション:** JDBCインターフェースを使用するリモートアプリケーション
+
+:::note
+
+環境によっては、上記のすべての方法を使用できない場合があります。サポートされる機能とデプロイメントオプションの詳細については、[サポートされるマネージド Spark サービスとそのアプリケーションタイプ](./deployment.mdx#サポートされるマネージド-spark-サービスとそのアプリケーションタイプ)を参照してください。
+
+:::
+
+これらのすべての方法で、同じテーブル識別子形式を使用して ScalarDB Analytics のテーブルを参照できます。ScalarDB Analytics がデータソースからカタログ情報をマッピングする方法の詳細については、[データソース別のカタログ情報マッピング](./design.mdx#データソース別のカタログ情報マッピング)を参照してください。
+
+<Tabs groupId="spark-application-type" queryString>
+  <TabItem value="spark-driver" label="Spark ドライバーアプリケーション">
+
+ScalarDB Analytics には一般的に使用される `SparkSession` クラスを使用できます。また、YARN、Kubernetes、スタンドアロン、ローカルモードなど、Spark がサポートするあらゆるタイプのクラスターデプロイメントを使用できます。
+
+ScalarDB Analytics のテーブルからデータを読み取るには、通常のSparkテーブルを読み取る場合と同じように `spark.sql` または `spark.read.table` 関数を使用できます。
+
+まず、Java プロジェクトをセットアップする必要があります。例えば、Gradle を使用している場合は、`build.gradle` ファイルに以下を追加できます:
+
+```groovy
+dependencies {
+    implementation 'com.scalar-labs:scalardb-analytics-spark-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>'
+}
+```
+
+以下は Spark ドライバーアプリケーションの例です:
+
+```java
+import org.apache.spark.sql.SparkSession;
+
+public class MyApp {
+    public static void main(String[] args) {
+        // SparkSessionを作成
+        try (SparkSession spark = SparkSession.builder().getOrCreate()) {
+            // ScalarDB Analyticsのテーブルからデータを読み取る
+            spark.sql("SELECT * FROM my_catalog.my_data_source.my_namespace.my_table").show();
+        }
+    }
+}
+```
+
+その後、`spark-submit` コマンドを使用してアプリケーションをビルドして実行できます。
+
+:::note
+
+通常の Spark アプリケーションと同様に、アプリケーションの fat JAR ファイルをビルドする必要がある場合があります。
+
+:::
+
+```console
+spark-submit --class MyApp --master local[*] my-spark-application-all.jar
+```
+
+:::tip
+
+`spark-sql` や `spark-shell` などの Spark が提供する他の CLI ツールを使用して、ScalarDB Analytics のテーブルを操作することもできます。
+
+:::
+
+  </TabItem>
+  <TabItem value="spark-connect" label="Spark Connect アプリケーション">
+
+[Spark Connect](https://spark.apache.org/spark-connect/) を使用して ScalarDB Analytics と対話できます。Spark Connect を使用することで、リモートの Spark クラスターにアクセスし、Spark ドライバーアプリケーションと同じ方法でデータを読み取ることができます。以下では、Spark Connect の使用方法について簡単に説明します。
+
+まず、リモートの Spark クラスターで以下のコマンドを実行して、Spark Connect サーバーを起動する必要があります:
+
+```console
+./sbin/start-connect-server.sh --packages org.apache.spark:spark-connect_<SCALA_VERSION>:<SPARK_FULL_VERSION>,com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>
+```
+
+括弧内の内容は以下のように変更する必要があります:
+
+- `<SCALA_VERSION>`: Spark インストールに対応する Scala のメジャーおよびマイナーバージョン (例: 2.12 または 2.13)
+- `<SPARK_FULL_VERSION>`: 使用している Spark の完全なバージョン (例: 3.5.3)
+- `<SPARK_VERSION>`: 使用している Spark のメジャーおよびマイナーバージョン (例 3.5)
+- `<SCALARDB_ANALYTICS_VERSION>`: ScalarDB Analytics のバージョン
+
+:::note
+
+パッケージのバージョンは、使用している Spark と ScalarDB Analytics のバージョンと一致する必要があります。
+
+:::
+
+また、アプリケーションに Spark Connect クライアントパッケージを含める必要があります。例えば、Gradle を使用している場合は、`build.gradle` ファイルに以下を追加できます:
+
+```kotlin
+implementation("org.apache.spark:spark-connect-client-jvm_2.12:3.5.3")
+```
+
+その後、Spark Connect クライアントアプリケーションを作成してサーバーに接続し、データを読み取ることができます。
+
+```java
+import org.apache.spark.sql.SparkSession;
+
+public class MyApp {
+    public static void main(String[] args) {
+        try (SparkSession spark = SparkSession.builder()
+            .remote("sc://<CONNECT_SERVER_URL>:<CONNECT_SERVER_PORT>")
+            .getOrCreate()) {
+
+            // ScalarDB Analyticsのテーブルからデータを読み取る
+            spark.sql("SELECT * FROM my_catalog.my_data_source.my_namespace.my_table").show();
+        }
+    }
+}
+```
+
+以下のコマンドを実行して、Spark Connect クライアントアプリケーションを通常の Java アプリケーションとして実行できます:
+
+```console
+java -jar my-spark-connect-client.jar
+```
+
+Spark Connect の使用方法の詳細については、[Spark Connect のドキュメント](https://spark.apache.org/docs/latest/spark-connect-overview.html)を参照してください。
+
+  </TabItem>
+  <TabItem value="jdbc" label="JDBC アプリケーション">
+
+残念ながら、Spark Thrift JDBC サーバーは ScalarDB Analytics に必要な Spark の機能をサポートしていないため、Apache Spark 環境でJDBCを使用して ScalarDB Analytics からデータを読み取ることはできません。JDBC アプリケーションについてここで言及しているのは、一部のマネージド Spark サービスが JDBC インターフェースを介して Spark クラスターと対話する異なる方法を提供しているためです。詳細については、[サポートされているマネージド Spark サービスとそのアプリケーションタイプ](./deployment.mdx#サポートされているマネージド-spark-サービスとそのアプリケーションタイプ)を参照してください。
+
+  </TabItem>
+</Tabs>
+
+## カタログ情報のマッピング
+
+ScalarDB Analytics は、データソース、名前空間、テーブル、列を含む独自のカタログを管理します。この情報は自動的に Spark カタログにマッピングされます。このセクションでは、ScalarDB Analytics がカタログ情報を Spark カタログにマッピングする方法について説明します。
+
+データソース内の情報が ScalarDB Analytics カタログにマッピングされる方法の詳細については、[データソース別のカタログ情報マッピング](./design.mdx#データソース別のカタログ情報マッピング)を参照してください。
+
+### カタログレベルのマッピング
+
+ScalarDB Analytics カタログの各カタログレベルオブジェクトは、Spark カタログにマッピングされます。以下の表は、カタログレベルがどのようにマッピングされるかを示しています:
+
+#### データソーステーブル
+
+ScalarDB Analytics カタログのデータソースのテーブルは、Spark テーブルにマッピングされます。ScalarDB Analytics テーブルに対応する Spark テーブルの識別子には以下の形式が使用されます:
+
+```console
+<CATALOG_NAME>.<DATA_SOURCE_NAME>.<NAMESPACE_NAMES>.<TABLE_NAME>
+```
+
+括弧内の内容は以下の通りです:
+
+- `<CATALOG_NAME>`: カタログの名前
+- `<DATA_SOURCE_NAME>`: データソースの名前
+- `<NAMESPACE_NAMES>`: 名前空間の名前。名前空間が複数レベルある場合は、ドット (`.`) で区切って連結されます
+- `<TABLE_NAME>`: テーブルの名前
+
+例えば、`my_catalog` という名前の ScalarDB カタログに、`my_data_source` という名前のデータソースと `my_schema` という名前のスキーマがある場合、そのスキーマ内の `my_table` という名前のテーブルを `my_catalog.my_data_source.my_schema.my_table` として参照できます。
+
+#### ビュー
+
+ScalarDB Analytics のビューは、ビューではなく Spark カタログのテーブルとして提供されます。ScalarDB Analytics ビューに対応する Spark テーブルの識別子には以下の形式が使用されます:
+
+```console
+<CATALOG_NAME>.view.<VIEW_NAMESPACE_NAMES>.<VIEW_NAME>
+```
+
+括弧内の内容は以下の通りです:
+
+- `<CATALOG_NAME>`: カタログの名前
+- `<VIEW_NAMESPACE_NAMES>`: ビュー名前空間の名前。ビュー名前空間が複数レベルある場合は、ドット (`.`) で区切って連結されます
+- `<VIEW_NAME>`: ビューの名前
+
+例えば、`my_catalog` という名前の ScalarDB カタログと `my_view_namespace` という名前のビュー名前空間がある場合、その名前空間内の `my_view` という名前のビューを `my_catalog.view.my_view_namespace.my_view` として参照できます。
+
+:::note
+
+データソーステーブル識別子との競合を避けるため、`view` が接頭辞として付けられます。
+
+:::
+
+##### WAL 解釈ビュー
+
+[ScalarDB Analytics の設計](./design.mdx)で説明されているように、ScalarDB Analytics は WAL 解釈ビューと呼ばれる特別なタイプのビューを提供します。これらのビューは、ScalarDB データソースのテーブルに対して自動的に作成され、テーブル内の WAL メタデータを解釈することでユーザーフレンドリーなビューを提供します。
+
+元の ScalarDB テーブルのデータソース名と名前空間の名前が WAL 解釈ビューのビュー名前空間の名前として使用されるため、`my_data_source` という名前のデータソースの `my_namespace` という名前の名前空間にある `my_table` という名前の ScalarDB テーブルがある場合、そのテーブルの WAL 解釈ビューを `my_catalog.view.my_data_source.my_namespace.my_table` として参照できます。
+
+### データ型マッピング
+
+ScalarDB Analytics は、カタログ内のデータ型を Spark データ型にマッピングします。以下の表は、データ型がどのようにマッピングされるかを示しています:
+
+| ScalarDB データ型 | Spark データ型      |
+|:----------------|:-------------------|
+| `BYTE`          | `Byte`             |
+| `SMALLINT`      | `Short`            |
+| `INT`           | `Integer`          |
+| `BIGINT`        | `Long`             |
+| `FLOAT`         | `Float`            |
+| `DOUBLE`        | `Double`           |
+| `DECIMAL`       | `Decimal`          |
+| `TEXT`          | `String`           |
+| `BLOB`          | `Binary`           |
+| `BOOLEAN`       | `Boolean`          |
+| `DATE`          | `Date`             |
+| `TIME`          | `TimestampNTZ`     |
+| `TIMESTAMP`     | `TimestampNTZ`     |
+| `TIMESTAMPTZ`   | `Timestamp`        |
+| `DURATION`      | `CalendarInterval` |
+| `INTERVAL`      | `CalendarInterval` |
+
+## バージョン互換性
+
+Spark と Scala は異なるマイナーバージョン間で互換性がない場合があるため、ScalarDB Analytics は様々な Spark と Scala バージョン向けに `scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>` という形式で異なるアーティファクトを提供しています。使用している Spark と Scala のバージョンに合わせてアーティファクトを選択してください。例えば、Spark 3.5 と Scala 2.13 を使用している場合は、`scalardb-analytics-spark-all-3.5_2.13` を指定する必要があります。
+
+Java バージョンに関しては、ScalarDB Analytics は Java 8以降をサポートしています。
+
+以下は、ScalarDB Analytics の各バージョンでサポートされている Spark と Scalar のバージョンのリストです。
+
+| ScalarDB Analytics バージョン | ScalarDB バージョン | サポートされている Spark バージョン | サポートされている Scala バージョン | 最小 Java バージョン |
+|:----------------------------|:------------------|:-------------------------------|:-------------------------------|:-------------------|
+| 3.15                        | 3.15              | 3.5, 3.4                       | 2.13, 2.12                     | 8                  |
+| 3.14                        | 3.14              | 3.5, 3.4                       | 2.13, 2.12                     | 8                  |
+| 3.12                        | 3.12              | 3.5, 3.4                       | 2.13, 2.12                     | 8                  |

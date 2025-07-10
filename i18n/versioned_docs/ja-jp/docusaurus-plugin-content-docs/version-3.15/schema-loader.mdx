@@ -1,0 +1,729 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Schema Loader
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+ScalarDB には、実装固有のデータモデルとスキーマにマップされる独自のデータモデルとスキーマがあります。 さらに、ScalarDB は、Consensus Commit トランザクションマネージャーを使用するときにトランザクションログとステータスを管理するために、トランザクション ID、レコードバージョン、トランザクションステータスなどの内部メタデータを保存します。
+
+トランザクションのスキーママッピングとメタデータの管理は難しい場合があるため、スキーママッピングやメタデータに関する詳細な知識を必要としないスキーマ作成ツールである ScalarDB Schema Loader を使用できます。
+
+Schema Loader で一般的な CLI オプションを指定するには、次の2つのオプションがあります。
+
+- ScalarDB プロパティファイルとデータベース固有またはストレージ固有のオプションを渡します。
+- ScalarDB プロパティファイルなしでデータベース固有またはストレージ固有のオプションを渡します。(非推奨)
+
+:::note
+
+このツールは、テーブルの作成、削除、修復、または変更を行うための基本的なオプションのみをサポートしています。データベースの高度な機能を使用する場合は、このツールでテーブルを作成した後、データベース固有のツールを使用してテーブルを変更する必要があります。
+
+:::
+
+## Schema Loader を設定する
+
+希望する方法を選択して Schema Loader を設定し、指示に従います。
+
+<Tabs groupId="schema_loader_setup" queryString>
+  <TabItem value="Fat_JAR" label="Fat JAR" default>
+    Schema Loader のリリースバージョンは、[ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) ページからダウンロードできます。
+  </TabItem>
+  <TabItem value="Docker_container" label="Docker container">
+    次のコマンドを実行し、山括弧内の内容を説明に従って置き換えることで、[Scalar コンテナーレジストリ](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-schema-loader) から Docker イメージをプルできます。
+
+    ```console
+    docker run --rm -v <PATH_TO_YOUR_LOCAL_SCHEMA_FILE>:<PATH_TO_SCHEMA_FILE_DOCKER> [-v <PATH_TO_LOCAL_SCALARDB_PROPERTIES_FILE>:<PATH_TO_SCALARDB_PROPERTIES_FILE_IN_DOCKER>] ghcr.io/scalar-labs/scalardb-schema-loader:<VERSION> <COMMAND_ARGUMENTS>
+    ```
+
+:::note
+
+fat JAR やコンテナを使用する場合でも、同じコマンド引数を指定できます。[利用可能なコマンド](#利用可能なコマンド)セクションでは JAR が使用されていますが、`java -jar scalardb-schema-loader-<VERSION>.jar` を `docker run --rm -v <PATH_TO_YOUR_LOCAL_SCHEMA_FILE>:<PATH_TO_SCHEMA_FILE_DOCKER> [-v <PATH_TO_LOCAL_SCALARDB_PROPERTIES_FILE>:<PATH_TO_SCALARDB_PROPERTIES_FILE_IN_DOCKER>] ghcr.io/scalar-labs/scalardb-schema-loader:<VERSION>` に置き換えることで、コンテナを使用して同様にコマンドを実行できます。
+
+:::
+  </TabItem>
+</Tabs>
+
+## Schema Loader を実行する
+
+このセクションでは、Schema Loader を実行する方法について説明します。
+
+### 利用可能なコマンド
+
+データベースの Schema Loader を設定する方法を選択します。他のデータベース固有の方法は非推奨であるため、プロパティファイルを使用することをお勧めします。
+
+プロパティファイルを使用する場合、次のコマンドを使用できます。
+
+```console
+Usage: java -jar scalardb-schema-loader-<VERSION>.jar [-D] [--coordinator]
+       [--no-backup] [--no-scaling] -c=<configPath>
+       [--compaction-strategy=<compactionStrategy>] [-f=<schemaFile>]
+       [--replication-factor=<replicaFactor>]
+       [--replication-strategy=<replicationStrategy>] [--ru=<ru>]
+Create/Delete schemas in the storage defined in the config file
+  -A, --alter         Alter tables : it will add new columns and create/delete
+                        secondary index for existing tables. It compares the
+                        provided table schema to the existing schema to decide
+                        which columns need to be added and which indexes need
+                        to be created or deleted
+  -c, --config=<configPath>
+                      Path to the config file of ScalarDB
+      --compaction-strategy=<compactionStrategy>
+                      The compaction strategy, must be LCS, STCS or TWCS
+                        (supported in Cassandra)
+      --coordinator   Create/delete/repair Coordinator tables
+  -D, --delete-all    Delete tables
+  -f, --schema-file=<schemaFile>
+  -I, --import        Import tables : it will import existing non-ScalarDB
+                        tables to ScalarDB.
+                      Path to the schema json file
+      --no-backup     Disable continuous backup (supported in DynamoDB)
+      --no-scaling    Disable auto-scaling (supported in DynamoDB, Cosmos DB)
+      --repair-all    Repair namespaces and tables that are in an unknown
+                        state: it re-creates namespaces, tables, secondary
+                        indexes, and their metadata if necessary.
+      --replication-factor=<replicaFactor>
+                      The replication factor (supported in Cassandra)
+      --replication-strategy=<replicationStrategy>
+                      The replication strategy, must be SimpleStrategy or
+                        NetworkTopologyStrategy (supported in Cassandra)
+      --ru=<ru>       Base resource unit (supported in DynamoDB, Cosmos DB)
+      --upgrade       Upgrades the ScalarDB environment to support the latest
+                        version of the ScalarDB API. Typically, as indicated in
+                        the release notes, you will need to run this command
+                        after updating the ScalarDB version that your
+                        application environment uses.
+
+```
+
+サンプルのプロパティファイルについては、[`database.properties`](https://github.com/scalar-labs/scalardb/blob/master/conf/database.properties) を参照してください。
+
+:::note
+
+次のデータベース固有のメソッドは非推奨になりました。代わりに、[プロパティファイルを設定するためのコマンド](#利用可能なコマンド)を使用してください。
+
+<Tabs groupId="databases" queryString>
+  <TabItem value="JDBC_databases" label="JDBC データベース" default>
+    ```console
+    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --jdbc [-D]
+          -f=<schemaFile> -j=<url> -p=<password> -u=<user>
+    Create/Delete JDBC schemas
+      -A, --alter         Alter tables : it will add new columns and create/delete
+                            secondary index for existing tables. It compares the
+                            provided table schema to the existing schema to decide
+                            which columns need to be added and which indexes need
+                            to be created or deleted
+      -D, --delete-all       Delete tables
+      -f, --schema-file=<schemaFile>
+                            Path to the schema json file
+      -j, --jdbc-url=<url>   JDBC URL
+      -p, --password=<password>
+                            JDBC password
+          --repair-all       Repair tables : it repairs the table metadata of
+                              existing tables
+      -u, --user=<user>      JDBC user
+    ```
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    ```console
+    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --dynamo [-D]
+          [--no-backup] [--no-scaling] [--endpoint-override=<endpointOverride>]
+          -f=<schemaFile> -p=<awsSecKey> [-r=<ru>] --region=<awsRegion>
+          -u=<awsKeyId>
+    Create/Delete DynamoDB schemas
+      -A, --alter         Alter tables : it will add new columns and create/delete
+                            secondary index for existing tables. It compares the
+                            provided table schema to the existing schema to decide
+                            which columns need to be added and which indexes need
+                            to be created or deleted
+      -D, --delete-all           Delete tables
+          --endpoint-override=<endpointOverride>
+                                Endpoint with which the DynamoDB SDK should
+                                  communicate
+      -f, --schema-file=<schemaFile>
+                                Path to the schema json file
+          --no-backup            Disable continuous backup for DynamoDB
+          --no-scaling           Disable auto-scaling for DynamoDB
+      -p, --password=<awsSecKey> AWS access secret key
+      -r, --ru=<ru>              Base resource unit
+          --region=<awsRegion>   AWS region
+          --repair-all           Repair tables : it repairs the table metadata of
+                                  existing tables
+      -u, --user=<awsKeyId>      AWS access key ID
+    ```
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    ```console
+    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --cosmos [-D]
+          [--no-scaling] -f=<schemaFile> -h=<uri> -p=<key> [-r=<ru>]
+    Create/Delete Cosmos DB schemas
+      -A, --alter         Alter tables : it will add new columns and create/delete
+                            secondary index for existing tables. It compares the
+                            provided table schema to the existing schema to decide
+                            which columns need to be added and which indexes need
+                            to be created or deleted
+      -D, --delete-all       Delete tables
+      -f, --schema-file=<schemaFile>
+                            Path to the schema json file
+      -h, --host=<uri>       Cosmos DB account URI
+          --no-scaling       Disable auto-scaling for Cosmos DB
+      -p, --password=<key>   Cosmos DB key
+      -r, --ru=<ru>          Base resource unit
+          --repair-all       Repair tables : it repairs the table metadata of
+                              existing tables and repairs stored procedure
+                              attached to each table
+    ```
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    ```console
+    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --cassandra [-D]
+          [-c=<compactionStrategy>] -f=<schemaFile> -h=<hostIp>
+          [-n=<replicationStrategy>] [-p=<password>] [-P=<port>]
+          [-R=<replicationFactor>] [-u=<user>]
+    Create/Delete Cassandra schemas
+      -A, --alter         Alter tables : it will add new columns and create/delete
+                            secondary index for existing tables. It compares the
+                            provided table schema to the existing schema to decide
+                            which columns need to be added and which indexes need
+                            to be created or deleted
+      -c, --compaction-strategy=<compactionStrategy>
+                            Cassandra compaction strategy, must be LCS, STCS or TWCS
+      -D, --delete-all      Delete tables
+      -f, --schema-file=<schemaFile>
+                            Path to the schema json file
+      -h, --host=<hostIp>   Cassandra host IP
+      -n, --network-strategy=<replicationStrategy>
+                            Cassandra network strategy, must be SimpleStrategy or
+                              NetworkTopologyStrategy
+      -p, --password=<password>
+                            Cassandra password
+      -P, --port=<port>     Cassandra Port
+      -R, --replication-factor=<replicationFactor>
+                            Cassandra replication factor
+          --repair-all     Repair tables : it repairs the table metadata of
+                            existing tables
+      -u, --user=<user>     Cassandra user
+    ```
+  </TabItem>
+</Tabs>
+
+:::
+
+### 名前空間とテーブルを作成する
+
+プロパティファイルを使用して名前空間とテーブルを作成するには、山括弧内の内容を説明に従って置き換えて、次のコマンドを実行します。
+
+```console
+java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator]
+```
+
+`--coordinator` が指定されている場合は、[Coordinator テーブル](api-guide.mdx#coordinator-テーブルの操作を指定する)が作成されます。
+
+:::note
+
+次のデータベース固有の CLI 引数は非推奨になりました。代わりに、プロパティファイルを設定するための CLI 引数を使用してください。
+
+<Tabs groupId="databases" queryString>
+  <TabItem value="JDBC_databases" label="JDBC データベース" default>
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE>
+    ```
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> [-r BASE_RESOURCE_UNIT]
+    ```
+
+    - `<REGION>` は、`ap-northeast-1` のような AWS リージョンを指定する文字列である必要があります。
+    - `-r` オプションは、Cosmos DB for NoSQL オプションとほぼ同じです。ただし、単位は DynamoDB の容量単位を意味します。読み取りおよび書き込み容量単位は同じ値に設定されます。
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> [-r BASE_RESOURCE_UNIT]
+    ```
+
+    - `<COSMOS_DB_FOR_NOSQL_KEY>` では、主キーまたはセカンダリキーを使用できます。
+    - `-r BASE_RESOURCE_UNIT` はオプションです。各データベースの RU を指定できます。データベース内のテーブルの最大 RU が設定されます。テーブルの RU を指定しない場合は、このオプションでデータベース RU が設定されます。デフォルトでは400です。
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> [-n <NETWORK_STRATEGY>] [-R <REPLICATION_FACTOR>]
+    ```
+
+    - `-P <CASSANDRA_PORT>` が指定されていない場合、デフォルトで `9042` になります。
+    - `-u <CASSANDRA_USER>` が指定されていない場合、デフォルトで `cassandra` になります。
+    - `-p <CASSANDRA_PASSWORD>` が指定されていない場合、デフォルトで `cassandra` になります。
+    - `<NETWORK_STRATEGY>` は `SimpleStrategy` または `NetworkTopologyStrategy` にする必要があります。
+  </TabItem>
+</Tabs>
+
+:::
+
+### テーブルの変更
+
+コマンドを使用して、既存のテーブルに新しい列を追加したり、セカンダリインデックスを作成または削除したりできます。このコマンドは、指定されたテーブルスキーマを既存のスキーマと比較し、追加する必要がある列と作成または削除する必要があるインデックスを決定します。
+
+既存のテーブルに新しい列を追加したり、セカンダリインデックスを作成または削除したりするには、次のコマンドを実行し、山括弧内の内容を説明に従って置き換えます。
+
+```console
+java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> --alter
+```
+
+:::note
+
+次のデータベース固有の CLI 引数は非推奨になりました。代わりに、プロパティファイルを設定するための CLI 引数を使用してください。
+
+<Tabs groupId="databases" queryString>
+  <TabItem value="JDBC_databases" label="JDBC データベース" default>
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> --alter
+    ```
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> --alter
+    ```
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> --alter
+    ```
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> --alter
+    ```
+  </TabItem>
+</Tabs>
+
+:::
+
+### テーブルの削除
+
+プロパティファイルを使用してテーブルを削除できます。テーブルを削除するには、次のコマンドを実行し、山括弧内の内容を説明に従って置き換えます。
+
+```console
+java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator] -D
+```
+
+`--coordinator` が指定されている場合は、Coordinator テーブルも削除されます。
+
+:::note
+
+次のデータベース固有の CLI 引数は非推奨になりました。代わりに、プロパティファイルを設定するための CLI 引数を使用してください。
+
+<Tabs groupId="databases" queryString>
+  <TabItem value="JDBC_databases" label="JDBC データベース" default>
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> -D
+    ```
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> -D
+    ```
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> -D
+    ```
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> -D
+    ```
+  </TabItem>
+</Tabs>
+
+:::
+
+### 名前空間とテーブルを修復する
+
+プロパティファイルを使用して、名前空間とテーブルを修復できます。名前空間とテーブルを修復する理由は、名前空間またはテーブルが基盤となるストレージに存在するが、その ScalarDB メタデータが存在しない、またはその逆など、それらが不明な状態になる可能性があるためです。名前空間、テーブル、セカンダリインデックス、およびそれらのメタデータを修復するには、必要に応じてそれらを再作成する必要があります。それらを修復するには、次のコマンドを実行し、説明されているように山括弧内の内容を置き換えます。
+
+```console
+java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator] --repair-all
+```
+
+:::warning
+
+このコマンドを実行する前に、スキーマ設定が最後に適用されたものと同じであることを確認する必要があります。
+
+:::
+
+`--coordinator` が指定されている場合は、Coordinator テーブルも修復されます。また、Cosmos DB for NoSQL を使用している場合は、このコマンドを実行すると、各テーブルにアタッチされているストアドプロシージャも修復されます。
+
+:::note
+
+次のデータベース固有の CLI 引数は非推奨になりました。代わりに、プロパティファイルを設定するための CLI 引数を使用してください。
+
+<Tabs groupId="databases" queryString>
+  <TabItem value="JDBC_databases" label="JDBC データベース" default>
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> --repair-all
+    ```
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> [--no-backup] -f <PATH_TO_SCHEMA_FILE> --repair-all
+    ```
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> --repair-all
+    ```
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> --repair-all
+    ```
+  </TabItem>
+</Tabs>
+
+:::
+
+### テーブルのインポート
+
+`--import` オプションとインポート固有のスキーマファイルを使用して、JDBC データベース内の既存のテーブルを ScalarDB にインポートできます。詳細については、[ScalarDB Schema Loader を使用して既存のテーブルを ScalarDB にインポートする](./schema-loader-import.mdx)を参照してください。
+
+### 環境をアップグレードして最新の ScalarDB API をサポートする
+
+ScalarDB 環境をアップグレードして、最新バージョンの ScalarDB API をサポートすることができます。通常、リリースノートに記載されているように、アプリケーション環境で使用する ScalarDB バージョンを更新した後、このコマンドを実行する必要があります。次のコマンドを実行するときは、説明されているように山括弧内の内容を必ず置き換えてください。
+
+```console
+java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> --upgrade
+```
+
+### サンプルスキーマファイル
+
+以下はサンプルスキーマです。サンプルスキーマファイルについては、[`schema_sample.json`](https://github.com/scalar-labs/scalardb/blob/master/schema-loader/sample/schema_sample.json) を参照してください。
+
+```json
+{
+  "sample_db.sample_table": {
+    "transaction": false,
+    "partition-key": [
+      "c1"
+    ],
+    "clustering-key": [
+      "c4 ASC",
+      "c6 DESC"
+    ],
+    "columns": {
+      "c1": "INT",
+      "c2": "TEXT",
+      "c3": "BLOB",
+      "c4": "INT",
+      "c5": "BOOLEAN",
+      "c6": "INT"
+    },
+    "secondary-index": [
+      "c2",
+      "c4"
+    ]
+  },
+
+  "sample_db.sample_table1": {
+    "transaction": true,
+    "partition-key": [
+      "c1"
+    ],
+    "clustering-key": [
+      "c4"
+    ],
+    "columns": {
+      "c1": "INT",
+      "c2": "TEXT",
+      "c3": "INT",
+      "c4": "INT",
+      "c5": "BOOLEAN"
+    }
+  },
+
+  "sample_db.sample_table2": {
+    "transaction": false,
+    "partition-key": [
+      "c1"
+    ],
+    "clustering-key": [
+      "c4",
+      "c3"
+    ],
+    "columns": {
+      "c1": "INT",
+      "c2": "TEXT",
+      "c3": "INT",
+      "c4": "INT",
+      "c5": "BOOLEAN"
+    }
+  }
+}
+```
+
+スキーマには、`columns`、`partition-key`、`clustering-key`、`secondary-index`、および `transaction` フィールドを含むテーブル定義があります。
+
+- `columns` フィールドは、テーブルの列とそのデータ型を定義します。
+- `partition-key` フィールドは、パーティションキーがどの列で設定されているかを定義します。
+- `clustering-key` フィールドは、クラスタリングキーがどの列で設定されているかを定義します。
+- `secondary-index` フィールドは、インデックスが付けられる列を定義します。
+- `transaction` フィールドは、テーブルがトランザクション用かどうかを示します。
+  - `transaction` フィールドを `true` に設定するか、`transaction` フィールドを指定しない場合、このツールは必要に応じてトランザクションメタデータを含むテーブルを作成します。
+  - `transaction` フィールドを `false` に設定すると、このツールはトランザクションメタデータのないテーブルを作成します (つまり、[Storage API](run-non-transactional-storage-operations-through-primitive-crud-interface.mdx) を含むテーブルの場合)。
+
+次のように、テーブル定義でデータベースまたはストレージ固有のオプションを指定することもできます。
+
+```json
+{
+  "sample_db.sample_table3": {
+    "partition-key": [
+      "c1"
+    ],
+    "columns": {
+      "c1": "INT",
+      "c2": "TEXT",
+      "c3": "BLOB"
+    },
+    "compaction-strategy": "LCS",
+    "ru": 5000
+  }
+}
+```
+
+指定できるデータベースまたはストレージ固有のオプションは次のとおりです。
+
+<Tabs groupId="databases" queryString>
+  <TabItem value="JDBC_databases" label="JDBC データベース" default>
+    JDBC データベースには使用できるオプションはありません。
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    `ru` オプションはリクエストユニットを表します。詳細については、[RUs](#rus) を参照してください。
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    `ru` オプションはリクエストユニットを表します。詳細については、[RUs](#rus) を参照してください。
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    `compaction-strategy` オプションは、使用される圧縮戦略です。このオプションは、`STCS` (SizeTieredCompaction)、`LCS` (LeveledCompactionStrategy)、または `TWCS` (TimeWindowCompactionStrategy) である必要があります。
+  </TabItem>
+</Tabs>
+
+## Cosmos DB for NoSQL または DynamoDB を使用する場合のパフォーマンスのスケーリング
+
+Cosmos DB for NoSQL または DynamoDB を使用する場合、リクエストユニット (RU) または自動スケーリングを使用してスケーリングできます。
+
+### RU
+
+`--ru` オプションを指定すると、Cosmos DB for NoSQL および DynamoDB のスループットをスケーリングできます。このオプションを指定すると、スケーリングはすべてのテーブルまたは各テーブルの `ru` パラメータに適用されます。
+
+`--ru` オプションが設定されていない場合、デフォルト値は Cosmos DB for NoSQL の場合は `400`、DynamoDB の場合は `10` になります。
+
+:::note
+
+- Schema Loader は、Cosmos DB for NoSQL の[要求ユニット](https://learn.microsoft.com/ja-jp/azure/cosmos-db/request-units)と DynamoDB の[容量ユニット](https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/capacity-mode.html#HowItWorks.ProvisionedThroughput.Manual)を `RU` で抽象化します。そのため、データベースの実装に応じて適切な値を設定してください。
+- Schema Loader は、DynamoDB の読み取り容量ユニットと書き込み容量ユニットの両方に同じ値を設定することに注意してください。
+
+:::
+
+### 自動スケーリング
+
+デフォルトでは、Schema Loader はすべてのテーブルに対して RU の自動スケーリングを有効にします。RU は、ワークロードに応じて、指定された RU の 10% から 100% の間でスケーリングされます。たとえば、`-r 10000` を指定すると、各テーブルの RU は `1000` から `10000` の間で自動スケーリングされます。
+
+:::note
+
+Cosmos DB for NoSQL の自動スケーリングは、このオプションが `4000` 以上に設定されている場合にのみ有効になります。
+
+:::
+
+## ScalarDB と他のデータベース間のデータ型マッピング
+
+次の表は、ScalarDB でサポートされているデータ型と、他のデータベースのデータ型へのマッピングを示しています。
+
+| ScalarDB    | Cassandra                    | Cosmos DB for NoSQL | DynamoDB | MySQL/MariaDB | PostgreSQL/YugabyteDB    | Oracle                   | SQL Server      | SQLite  |
+|-------------|------------------------------|---------------------|----------|---------------|--------------------------|--------------------------|-----------------|---------|
+| BOOLEAN     | boolean                      | boolean (JSON)      | BOOL     | boolean       | boolean                  | number(1)                | bit             | boolean |
+| INT         | int                          | number (JSON)       | N        | int           | int                      | number(10)               | int             | int     |
+| BIGINT      | bigint                       | number (JSON)       | N        | bigint        | bigint                   | number(16)               | bigint          | bigint  |
+| FLOAT       | float                        | number (JSON)       | N        | real          | real                     | binary_float             | float(24)       | float   |
+| DOUBLE      | double                       | number (JSON)       | N        | double        | double precision         | binary_double            | float           | double  |
+| TEXT        | text                         | string (JSON)       | S        | longtext      | text                     | varchar2(4000)           | varchar(8000)   | text    |
+| BLOB        | blob                         | string (JSON)       | B        | longblob      | bytea                    | RAW(2000)                | varbinary(8000) | blob    |
+| DATE        | date                         | number (JSON)       | N        | date          | date                     | date                     | date            | int     |
+| TIME        | time                         | number (JSON)       | N        | time          | time                     | timestamp                | time            | bigint  |
+| TIMESTAMP   | <em>サポートされていません</em> | number (JSON)       | N        | datetime      | timestamp                | timestamp                | datetime2       | bigint  |
+| TIMESTAMPTZ | timestamp                    | number (JSON)       | N        | datetime      | timestamp with time zone | timestamp with time zone | datetimeoffset  | bigint  |
+
+:::note
+
+TIMESTAMP はタイムゾーン情報のない日付と時刻を表しますが、TIMESTAMPTZ は UTC タイムゾーンの日付と時刻を表します。
+
+:::
+
+ただし、JDBC データベースの次のデータ型は、主キーまたはセカンダリインデックスキーとして使用される場合、異なる方法で変換されます。これは、RDB データ型の制限によるものです。MySQL および Oracle の場合、キー列の合計サイズの制限を満たす限り、列サイズ (最小 64 バイト) を変更できます。詳細については、[基盤となるストレージまたはデータベースの設定](configurations.mdx#基盤となるストレージまたはデータベースの設定) を参照してください。
+
+| ScalarDB | MySQL/MariaDB  | PostgreSQL/YugabyteDB | Oracle        |
+|----------|----------------|-----------------------|---------------|
+| TEXT     | VARCHAR(128)   | VARCHAR(10485760)     | VARCHAR2(128) |
+| BLOB     | VARBINARY(128) |                       | RAW(128)      |
+
+次のデータ型には、基盤になるデータベースに関係なく、値の範囲と精度があります。
+
+| データ型      | 最小限                     | 最大限                     | 精度           |
+|--------------|---------------------------|---------------------------|---------------|
+| BIGINT       | -2^53                     | 2^53                      | -             |
+| DATE         | 1000-01-01                | 9999-12-31                | 1 日           |
+| TIME         | 00:00:00.000000           | 23:59:59.999999           | 1 マイクロ秒     |
+| TIMESTAMP    | 1000-01-01 00:00:00.000   | 9999-12-31 23:59:59.999   | 1 ミリ秒        |
+| TIMESTAMPTZ  | 1000-01-01 00:00:00.000 Z | 9999-12-31 23:59:59.999 Z | 1 ミリ秒        |
+
+:::note
+
+YugabyteDB には、浮動小数点型 (FLOAT および DOUBLE) が主キー、クラスタリングキー、またはセカンダリインデックスキーとして正しく機能しないという制限があります。
+
+:::
+
+このデータ型マッピングがアプリケーションと一致しない場合は、このツールを使用してテーブルを作成した後、テーブルを変更してデータ型を変更してください。
+
+## Consensus Commit の内部メタデータ
+
+Consensus Commit トランザクションマネージャーは、トランザクションを適切に処理するために、実際のレコードとともに保存されるメタデータ (トランザクション ID、レコードバージョン、トランザクションステータスなど) を管理します。
+
+したがって、アプリケーションに必要な列とともに、メタデータ用の追加列をスキーマに定義する必要があります。さらに、Consensus Commit トランザクションマネージャーを使用する場合、このツールはメタデータを含むテーブルを作成します。
+
+## アプリケーションで Schema Loader を使用する
+
+[Maven Central Repository](https://mvnrepository.com/artifact/com.scalar-labs/scalardb-schema-loader) から Schema Loader のバージョンを確認できます。たとえば、Gradle では、`build.gradle` ファイルに次の依存関係を追加し、`<VERSION>` を使用する Schema Loader のバージョンに置き換えます。
+
+```gradle
+dependencies {
+    implementation 'com.scalar-labs:scalardb-schema-loader:<VERSION>'
+}
+```
+
+### 使用例
+
+`SchemaLoader` クラスを使用すると、CLI と同じコマンドを実行できます。
+
+- スキーマで定義されているテーブルを作成、変更、削除、または修復するには、必要に応じて ScalarDB プロパティファイル、スキーマ、および追加のオプションを渡すことができます。
+- 環境をアップグレードするには、必要に応じて ScalarDB プロパティと追加のオプションを渡すことができます。
+
+```java
+public class SchemaLoaderSample {
+  public static int main(String... args) throws SchemaLoaderException {
+    Path configFilePath = Paths.get("database.properties");
+    // "sample_schema.json" and "altered_sample_schema.json" can be found in the "/sample" directory.
+    Path schemaFilePath = Paths.get("sample_schema.json");
+    Path alteredSchemaFilePath = Paths.get("altered_sample_schema.json");
+    boolean createCoordinatorTables = true; // whether to create the Coordinator table or not
+    boolean deleteCoordinatorTables = true; // whether to delete the Coordinator table or not
+    boolean repairCoordinatorTables = true; // whether to repair the Coordinator table or not
+
+    Map<String, String> tableCreationOptions = new HashMap<>();
+
+    tableCreationOptions.put(
+        CassandraAdmin.REPLICATION_STRATEGY, ReplicationStrategy.SIMPLE_STRATEGY.toString());
+    tableCreationOptions.put(CassandraAdmin.COMPACTION_STRATEGY, CompactionStrategy.LCS.toString());
+    tableCreationOptions.put(CassandraAdmin.REPLICATION_FACTOR, "1");
+
+    tableCreationOptions.put(DynamoAdmin.REQUEST_UNIT, "1");
+    tableCreationOptions.put(DynamoAdmin.NO_SCALING, "true");
+    tableCreationOptions.put(DynamoAdmin.NO_BACKUP, "true");
+
+    Map<String, String> indexCreationOptions = new HashMap<>();
+    indexCreationOptions.put(DynamoAdmin.NO_SCALING, "true");
+
+    Map<String, String> reparationOptions = new HashMap<>();
+    reparationOptions.put(DynamoAdmin.NO_BACKUP, "true");
+
+    Map<String, String> upgradeOptions = new HashMap<>(tableCreationOptions);
+
+    // Create tables.
+    SchemaLoader.load(configFilePath, schemaFilePath, tableCreationOptions, createCoordinatorTables);
+
+    // Alter tables.
+    SchemaLoader.alterTables(configFilePath, alteredSchemaFilePath, indexCreationOptions);
+
+    // Repair namespaces and tables.
+    SchemaLoader.repairAll(configFilePath, schemaFilePath, reparationOptions, repairCoordinatorTables);
+
+    // Delete tables.
+    SchemaLoader.unload(configFilePath, schemaFilePath, deleteCoordinatorTables);
+
+    // Upgrade the environment
+    SchemaLoader.upgrade(configFilePath, upgradeOptions);
+
+    return 0;
+  }
+}
+```
+
+次に示すように、シリアル化されたスキーマ JSON 文字列 (スキーマファイルの生のテキスト) を渡すことによって、スキーマを作成、削除、または修復することもできます。
+
+```java
+// Create tables.
+SchemaLoader.load(configFilePath, serializedSchemaJson, tableCreationOptions, createCoordinatorTables);
+
+// Alter tables.
+SchemaLoader.alterTables(configFilePath, serializedAlteredSchemaFilePath, indexCreationOptions);
+
+// Repair namespaces and tables.
+SchemaLoader.repairAll(configFilePath, serializedSchemaJson, reparationOptions, repairCoordinatorTables);
+
+// Delete tables.
+SchemaLoader.unload(configFilePath, serializedSchemaJson, deleteCoordinatorTables);
+```
+
+ScalarDB を設定するときに、次に示すように `Properties` オブジェクトも使用できます。
+
+```java
+// Create tables.
+SchemaLoader.load(properties, serializedSchemaJson, tableCreationOptions, createCoordinatorTables);
+
+// Alter tables.
+SchemaLoader.alterTables(properties, serializedAlteredSchemaFilePath, indexCreationOptions);
+
+// Repair namespaces and tables.
+SchemaLoader.repairAll(properties, serializedSchemaJson, reparationOptions, repairCoordinatorTables);
+
+// Delete tables.
+SchemaLoader.unload(properties, serializedSchemaJson, deleteCoordinatorTables);
+
+// Upgrade the environment
+SchemaLoader.upgrade(properties, upgradeOptions);
+```
+
+### Import tables
+
+[サンプルスキーマファイル](#サンプルスキーマファイル)に示されているのと同様の方法で、`--import` オプションとインポート固有のスキーマファイルを使用して、既存の JDBC データベーステーブルを ScalarDB にインポートできます。詳細については、[ScalarDB Schema Loader を使用して既存のテーブルを ScalarDB にインポートする](./schema-loader-import.mdx)を参照してください。
+
+:::warning
+
+運用環境で ScalarDB にテーブルをインポートする場合は、データベーステーブルと ScalarDB メタデータテーブルにトランザクションメタデータ列が追加されるため、慎重に計画する必要があります。この場合、データベースと ScalarDB の間にはいくつかの違いがあり、いくつかの制限もあります。
+
+:::
+
+以下はインポートのサンプルです。
+
+```java
+public class SchemaLoaderImportSample {
+  public static int main(String... args) throws SchemaLoaderException {
+    Path configFilePath = Paths.get("database.properties");
+    // "import_sample_schema.json" can be found in the "/sample" directory.
+    Path schemaFilePath = Paths.get("import_sample_schema.json");
+    Map<String, String> tableImportOptions = new HashMap<>();
+
+    // Import tables.
+    // You can also use a Properties object instead of configFilePath and a serialized-schema JSON
+    // string instead of schemaFilePath.
+    SchemaLoader.importTables(configFilePath, schemaFilePath, tableImportOptions);
+
+    return 0;
+  }
+}
+```

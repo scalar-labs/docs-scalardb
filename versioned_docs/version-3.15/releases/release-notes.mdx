@@ -1,0 +1,157 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsEnglish
+---
+
+# ScalarDB 3.15 Release Notes
+
+This page includes a list of release notes for ScalarDB 3.15.
+
+## v3.15.4
+
+**Release date:** June 21, 2025
+
+### Summary
+
+This release includes fixes for vulnerabilities and bugs.
+
+### Community edition
+
+#### Bug fixes
+
+- Add exception handling for DateTimeParseException on column value conversion. ([#2662](https://github.com/scalar-labs/scalardb/pull/2662))
+- Upgraded the PostgreSQL driver to fix security issues. [CVE-2025-49146](https://github.com/advisories/GHSA-hq9p-pm7w-8p54 "CVE-2025-49146") ([#2772](https://github.com/scalar-labs/scalardb/pull/2772))
+- Fixed potential connection leak when using `jdbc` storage and Scan operation fails because the target table doesn't exist. ([#2766](https://github.com/scalar-labs/scalardb/pull/2766))
+
+### Enterprise edition
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Fixed a memory leak issue when the coordinator group commit feature is enabled.
+- Upgraded the OpenSearch Java client to fix a security issue. [CVE-2025-27820](https://github.com/advisories/GHSA-73m2-qfq3-56cx "CVE-2025-27820")
+
+## v3.15.3
+
+**Release date:** May 15, 2025
+
+### Summary
+
+This release includes fixes for vulnerabilities and bugs, and adds support for running ScalarDB Cluster on the Omnistrate service.
+
+### Community edition
+
+#### Bug fixes
+
+- Fixed an issue with `DistributedStorageAdmin.getNamespaceNames()` API when using the DynamoDB storage with the namespace prefix setting `scalar.db.dynamo.namespace.prefix`. The namespace names returned by this method wrongly contained the prefix. ([#2641](https://github.com/scalar-labs/scalardb/pull/2641))
+
+### Enterprise edition
+
+#### Improvements
+
+##### ScalarDB Cluster
+
+- Added support for the Omnistrate service. Now, you can run ScalarDB Cluster in the Omnistrate service.
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Upgraded `grpc_health_probe` to fix a security issue. [CVE-2025-22869](https://github.com/advisories/GHSA-hcg3-q754-cr77)
+
+## v3.15.2
+
+**Release date:** March 24, 2025
+
+### Summary
+
+This release has several improvements and bug fixes.
+
+### Community edition
+
+#### Improvements
+
+- ScalarDB BIGINT datatype will now be mapped to Oracle's NUMBER(16). ([#2566](https://github.com/scalar-labs/scalardb/pull/2566))
+
+#### Bug fixes
+
+- Upgraded the Netty library to fix a security issue. [CVE-2025-24970](https://github.com/advisories/GHSA-4g8c-wm8x-jfhw "CVE-2025-24970") ([#2552](https://github.com/scalar-labs/scalardb/pull/2552))
+
+### Enterprise edition
+
+#### Enhancements
+
+##### ScalarDB Cluster
+
+- Added a configuration option (`scalar.db.transaction.enabled`) to enable or disable the transaction feature in ScalarDB Cluster. The default value is `true`.
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Fixed a bug related to the metadata cache behavior when using auth in the SQL interface.
+- Fixed configurations for the embedding feature.
+- Fixed a bug that allowed superusers to execute ABAC administrative operations for non-existing users.
+- Fixed a bug a table-not-found error occurs when dropping empty ABAC system tables.
+
+## v3.15.1
+
+**Release date:** February 20, 2025
+
+### Summary
+
+This release includes numerous enhancements, improvements, and bug fixes. The [3.15.0 release](https://github.com/scalar-labs/scalardb/releases/tag/v3.15.0) has been discarded, making this the first official release for 3.15.
+
+### Community edition
+
+#### Enhancements
+
+- Introduced operation attributes, providing the capability to include additional key-value information in operations. ([#2333](https://github.com/scalar-labs/scalardb/pull/2333))
+- Add the new time-related data types DATE, TIME, TIMESTAMP, and TIMESTAMPTZ. ([#2468](https://github.com/scalar-labs/scalardb/pull/2468) [#2491](https://github.com/scalar-labs/scalardb/pull/2491))
+
+#### Improvements
+
+- ScalarDB now supports MySQL 8.4, 8.0; PostgreSQL 17, 16, 15, 14, and 13; Amazon Aurora PostgreSQL 16, 15, 14, and 13; Amazon Aurora MySQL 3, and 2. ([#2302](https://github.com/scalar-labs/scalardb/pull/2302))
+- Use the MariaDB Connector/J JDBC driver for any connection URL starting with `jdbc:mariadb` ([#2391](https://github.com/scalar-labs/scalardb/pull/2391))
+- Removed unnecessary loggings in the statement handlers for Cassandra and Cosmos DB. ([#2469](https://github.com/scalar-labs/scalardb/pull/2469))
+
+#### Bug fixes
+
+- Added validation for primary key columns in the Cosmos DB adapter. The validation ensures that the text values of the primary key columns do not contain illegal characters (`:`, `/`, `\`, `#`, and `?`). ([#2292](https://github.com/scalar-labs/scalardb/pull/2292))
+- Fixed the behavior of multiple mutations for the same record in a transaction in Consensus Commit. ([#2340](https://github.com/scalar-labs/scalardb/pull/2340))
+- Fixed the behavior when deleting a non-existing record in the Cosmos adapter. ([#2341](https://github.com/scalar-labs/scalardb/pull/2341))
+- Fixed bugs in GetBuilder and ScanBuilder. ([#2352](https://github.com/scalar-labs/scalardb/pull/2352))
+
+### Enterprise edition
+
+#### Enhancements
+
+##### ScalarDB Cluster
+
+- Added support for operation attributes introduced in [#2333](https://github.com/scalar-labs/scalardb/pull/2333) to ScalarDB Cluster.
+- Added the attribute-based access control feature.
+- Added support for the time-related types introduced in [#2468](https://github.com/scalar-labs/scalardb/pull/2468) to ScalarDB Cluster.
+- Added support for the metadata API for ABAC introduced in [scalar-labs/scalardb-sql#708](https://github.com/scalar-labs/scalardb-sql/pull/708).
+- Added vector search capability to ScalarDB Cluster by integrating LangChain4j.
+
+##### ScalarDB SQL
+
+- Added support for operation attributes to DMLs. Also added support for read tags and write tags in ABAC to DMSs.
+- Support the time-related types DATE, TIME, TIMESTAMP, and TIMESTAMPTZ.
+- Added metadata API for ABAC.
+- Added SQL statements for ABAC.
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Upgraded `grpc_health_probe` to fix security issues. [CVE-2024-45337](https://github.com/advisories/GHSA-v778-237x-gjrc "CVE-2024-45337") [CVE-2024-45338](https://github.com/advisories/GHSA-w32m-9786-jp63 "CVE-2024-45338")
+
+##### ScalarDB SQL
+
+- [Spring Data JDBC For ScalarDB] Fixed a bug `existsById()` API not working
+- Fix an issue causing the SQL statement parser to reject negative numeric literal for columns of type INT and BIGINT.

@@ -140,6 +140,29 @@ For a list of databases that ScalarDB supports, see [Databases](../requirements.
     scalar.db.password=SqlServer22
     ```
   </TabItem>
+  <TabItem value="Db2" label="Db2">
+    <h3>Run Db2 locally</h3>
+
+    You can run IBM Db2 in Docker Compose by using the `docker-compose.yml` file in the `scalardb-samples/scalardb-cluster-standalone-mode` directory.
+
+    To start IBM Db2, run the following command:
+    
+    ```console
+    docker compose up -d db2
+    ```
+
+    <h3>Configure ScalarDB Cluster</h3>
+
+    The **scalardb-cluster-node.properties** file in the `scalardb-samples/scalardb-cluster-standalone-mode` directory contains database configurations for ScalarDB Cluster. Please uncomment the properties for Db2 in the **scalardb-cluster-node.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For Db2
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:db2://db2-1:50000/sample
+    scalar.db.username=db2inst1
+    scalar.db.password=db2inst1
+    ```
+  </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     <h3>Run Amazon DynamoDB Local</h3>
 

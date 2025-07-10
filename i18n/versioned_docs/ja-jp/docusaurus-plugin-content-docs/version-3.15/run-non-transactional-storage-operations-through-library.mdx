@@ -1,0 +1,275 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# コアライブラリを通じて非トランザクションストレージ操作を実行する
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このガイドでは、ScalarDB Core ライブラリを通じて非トランザクションストレージ操作を実行する方法について説明します。
+
+## 準備
+
+このガイドでは、ScalarDB サンプルリポジトリのサンプルを使用して、データベースと ScalarDB をセットアップします。
+
+### ScalarDB サンプルリポジトリのクローンを作成する
+
+**Terminal** を開き、次のコマンドを実行して ScalarDB サンプルリポジトリのクローンを作成します。
+
+```console
+git clone https://github.com/scalar-labs/scalardb-samples
+```
+
+次に、次のコマンドを実行して、必要なファイルが含まれているディレクトリに移動します。
+
+```console
+cd scalardb-samples/scalardb-sample
+```
+
+## データベースをセットアップする
+
+データベースを選択し、指示に従って ScalarDB 用に設定します。
+
+ScalarDB がサポートするデータベースの一覧については、[データベース](requirements.mdx#データベース)を参照してください。
+
+<Tabs groupId="databases" queryString>
+  <TabItem value="MySQL" label="MySQL" default>
+    <h3>MySQLをローカルで実行する</h3>
+
+    `scalardb-samples/scalardb-sample` ディレクトリの `docker-compose.yml` ファイルを使用して、Docker Compose で MySQL を実行できます。
+
+    MySQL を起動するには、次のコマンドを実行します。
+
+    ```console
+    docker compose up -d mysql
+    ```
+
+    <h3>ScalarDB を設定する</h3>
+
+    `scalardb-samples/scalardb-sample` ディレクトリの **database.properties** ファイルには、ScalarDB のデータベース設定が含まれています。**database.properties** ファイル内の MySQL のプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For MySQL
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:mysql://localhost:3306/
+    scalar.db.username=root
+    scalar.db.password=mysql
+    ```
+  </TabItem>
+  <TabItem value="PostgreSQL" label="PostgreSQL" default>
+    <h3>PostgreSQL をローカルで実行する</h3>
+
+    `scalardb-samples/scalardb-sample` ディレクトリの `docker-compose.yml` ファイルを使用して、Docker Compose で PostgreSQL を実行できます。
+
+    PostgreSQL を起動するには、次のコマンドを実行します。
+
+    ```console
+    docker compose up -d postgres
+    ```
+
+    <h3>ScalarDB を設定する</h3>
+
+    `scalardb-samples/scalardb-sample` ディレクトリの **database.properties** ファイルには、ScalarDB のデータベース設定が含まれています。**database.properties** ファイル内の PostgreSQL のプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For PostgreSQL
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:postgresql://localhost:5432/
+    scalar.db.username=postgres
+    scalar.db.password=postgres
+    ```
+  </TabItem>
+  <TabItem value="Oracle Database" label="Oracle Database" default>
+    <h3>Oracle Database をローカルで実行する</h3>
+
+    `scalardb-samples/scalardb-sample` ディレクトリの `docker-compose.yml` ファイルを使用して、Docker Compose で Oracle Database を実行できます。
+
+    Oracle Database を起動するには、次のコマンドを実行します。
+
+    ```console
+    docker compose up -d oracle
+    ```
+
+    <h3>ScalarDB を設定する</h3>
+
+    `scalardb-samples/scalardb-sample` ディレクトリの **database.properties** ファイルには、ScalarDB のデータベース設定が含まれています。**database.properties** ファイル内の Oracle データベースのプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For Oracle
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:oracle:thin:@//localhost:1521/FREEPDB1
+    scalar.db.username=SYSTEM
+    scalar.db.password=Oracle
+    ```
+  </TabItem>
+  <TabItem value="SQL Server" label="SQL Server" default>
+    <h3>SQL Server をローカルで実行する</h3>
+
+    `scalardb-samples/scalardb-sample` ディレクトリの `docker-compose.yml` ファイルを使用して、Docker Compose で SQL Server を実行できます。
+
+    SQL Server を起動するには、次のコマンドを実行します。
+
+    ```console
+    docker compose up -d sqlserver
+    ```
+
+    <h3>ScalarDB を設定する</h3>
+
+    `scalardb-samples/scalardb-sample` ディレクトリの **database.properties** ファイルには、ScalarDB のデータベース設定が含まれています。**database.properties** ファイル内の SQL Server のプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For SQL Server
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:sqlserver://localhost:1433;encrypt=true;trustServerCertificate=true
+    scalar.db.username=sa
+    scalar.db.password=SqlServer22
+    ```
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    <h3>Amazon DynamoDB をローカルで実行する</h3>
+
+    `scalardb-samples/scalardb-sample` ディレクトリの `docker-compose.yml` ファイルを使用して、Docker Compose で Amazon DynamoDB Local を実行できます。
+
+    Amazon DynamoDB Local を起動するには、次のコマンドを実行します。
+
+    ```console
+    docker compose up -d dynamodb
+    ```
+
+    <h3>ScalarDB を設定する</h3>
+
+    `scalardb-samples/scalardb-sample` ディレクトリの **database.properties** ファイルには、ScalarDB のデータベース設定が含まれています。**database.properties** ファイル内の Amazon DynamoDB Local のプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For DynamoDB Local
+    scalar.db.storage=dynamo
+    scalar.db.contact_points=sample
+    scalar.db.username=sample
+    scalar.db.password=sample
+    scalar.db.dynamo.endpoint_override=http://localhost:8000
+    ```
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    Azure Cosmos DB for NoSQL を使用するには、Azure アカウントが必要です。Azure アカウントをお持ちでない場合は、[Azure Cosmos DB アカウントを作成する](https://learn.microsoft.com/ja-jp/azure/cosmos-db/nosql/quickstart-portal#create-account)にアクセスしてください。
+
+    <h3>Cosmos DB for NoSQL を設定する</h3>
+
+    [既定の整合性レベルを設定する](https://learn.microsoft.com/ja-jp/azure/cosmos-db/nosql/how-to-manage-consistency#configure-the-default-consistency-level)の公式ドキュメントに従って、**既定の整合性レベル**を**強力**に設定します。
+
+    <h3>ScalarDB を設定する</h3>
+
+    以下の手順では、ローカル環境に JDK が適切にインストールおよび設定されており、Azure で Cosmos DB for NoSQL アカウントが適切に設定されていることを前提としています。
+
+    `scalardb-samples/scalardb-sample` ディレクトリの **database.properties** ファイルには、ScalarDB のデータベース設定が含まれています。`scalar.db.contact_points` と `scalar.db.password` の値は、説明に従って必ず変更してください。
+
+    ```properties
+    # For Cosmos DB
+    scalar.db.storage=cosmos
+    scalar.db.contact_points=<COSMOS_DB_FOR_NOSQL_URI>
+    scalar.db.password=<COSMOS_DB_FOR_NOSQL_KEY>
+    ```
+
+:::note
+
+Azure Cosmos DB アカウントの主キーまたはセカンダリキーを `scalar.db.password` の値として使用できます。
+
+:::
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    <h3>Cassandra をローカルで実行する</h3>
+
+    `scalardb-samples/scalardb-sample` ディレクトリの `docker-compose.yml` ファイルを使用して、Docker Compose で Apache Cassandra を実行できます。
+
+    Apache Cassandra を起動するには、次のコマンドを実行します。
+    ```console
+    docker compose up -d cassandra
+    ```
+
+    <h3>ScalarDB を設定する</h3>
+
+    `scalardb-samples/scalardb-sample` ディレクトリの **database.properties** ファイルには、ScalarDB のデータベース設定が含まれています。**database.properties** ファイル内の Cassandra のプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For Cassandra
+    scalar.db.storage=cassandra
+    scalar.db.contact_points=localhost
+    scalar.db.username=cassandra
+    scalar.db.password=cassandra
+    ```
+  </TabItem>
+</Tabs>
+
+ScalarDB の設定の包括的なリストについては、[ScalarDB 設定](configurations.mdx)を参照してください。
+
+## 非トランザクションストレージ操作を実行するようにScalarDBを設定する
+
+非トランザクションストレージ操作を実行するには、設定ファイル **database.properties** で `scalar.db.transaction_manager` プロパティを `single-crud-operation` に設定する必要があります。
+
+```properties
+scalar.db.transaction_manager=single-crud-operation
+```
+
+## スキーマを作成またはインポートする
+
+ScalarDB には、実装固有のデータモデルとスキーマにマップされる独自のデータモデルとスキーマがあります。
+
+- **データベーススキーマを作成する必要がありますか?** [ScalarDB Schema Loader](schema-loader.mdx) を参照してください。
+- **既存のデータベースをインポートする必要がありますか?** [ScalarDB Schema Loader を使用して既存のテーブルを ScalarDB にインポートする](schema-loader-import.mdx)を参照してください。
+
+## Java アプリケーションを作成する
+
+このセクションでは、ScalarDB Core ライブラリをプロジェクトに追加する方法と、Java を使用して非トランザクションストレージ操作を実行するように設定する方法について説明します。
+
+### ScalarDB をプロジェクトに追加する
+
+ScalarDB ライブラリは、[Maven Central Repository](https://mvnrepository.com/artifact/com.scalar-labs/scalardb) で入手できます。Gradle または Maven を使用して、ライブラリをビルド依存関係としてアプリケーションに追加できます。
+
+ビルドツールを選択し、手順に従って ScalarDB のビルド依存関係をアプリケーションに追加します。
+
+<Tabs groupId="build_tools" queryString>
+  <TabItem value="Gradle" label="Gradle" default>
+    Gradle を使用して ScalarDB のビルド依存関係を追加するには、アプリケーションの `build.gradle` に以下を追加します。
+
+    ```gradle
+    dependencies {
+        implementation 'com.scalar-labs:scalardb:3.15.4'
+    }
+    ```
+  </TabItem>
+  <TabItem value="Maven" label="Maven">
+    Maven を使用して ScalarDB のビルド依存関係を追加するには、アプリケーションの `pom.xml` に以下を追加します。
+
+    ```xml
+    <dependency>
+        <groupId>com.scalar-labs</groupId>
+        <artifactId>scalardb</artifactId>
+        <version>3.15.4</version>
+    </dependency>
+    ```
+  </TabItem>
+</Tabs>
+
+### Java API を使用する
+
+Java API の詳細については、[ScalarDB Java API ガイド](api-guide.mdx)を参照してください。
+
+:::note
+
+非トランザクションストレージ操作には、次の制限が適用されます:
+
+- トランザクションの開始はサポートされていません。詳細については、[トランザクションを開始せずにトランザクションを実行する](api-guide.mdx#トランザクションを開始せずにトランザクションを実行する)を参照してください。
+- 1つのトランザクションで複数のミューテーションを実行することはサポートされていません。
+
+:::
+
+### 詳細はこちら
+
+- [Javadoc](https://javadoc.io/doc/com.scalar-labs/scalardb/3.15.4/index.html)

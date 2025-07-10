@@ -370,20 +370,62 @@ DistributedTransaction transaction = transactionManager.start();
 Alternatively, you can use the `begin` method for a transaction by specifying a transaction ID as follows:
 
 ```java
-// Begin a transaction with specifying a transaction ID.
+// Begin a transaction by specifying a transaction ID.
 DistributedTransaction transaction = transactionManager.begin("<TRANSACTION_ID>");
 ```
 
 Or, you can use the `start` method for a transaction by specifying a transaction ID as follows:
 
 ```java
-// Start a transaction with specifying a transaction ID.
+// Start a transaction by specifying a transaction ID.
 DistributedTransaction transaction = transactionManager.start("<TRANSACTION_ID>");
 ```
 
 :::note
 
 Specifying a transaction ID is useful when you want to link external systems to ScalarDB. Otherwise, you should use the `begin()` method or the `start()` method.
+
+When you specify a transaction ID, make sure you specify a unique ID (for example, UUID v4) throughout the system since ScalarDB depends on the uniqueness of transaction IDs for correctness.
+
+:::
+
+##### Begin or start a transaction in read-only mode
+
+You can also begin or start a transaction in read-only mode. In this case, the transaction will not allow any write operations, and it will be optimized for read operations.
+
+:::note
+
+Using read-only transactions for read-only operations is strongly recommended to improve performance and reduce resource usage.
+
+:::
+
+You can begin or start a transaction in read-only mode as follows:
+
+```java
+// Begin a transaction in read-only mode.
+DistributedTransaction transaction = transactionManager.beginReadOnly();
+```
+
+```java
+// Start a transaction in read-only mode.
+DistributedTransaction transaction = transactionManager.startReadOnly();
+```
+
+Alternatively, you can use the `beginReadOnly` and `startReadOnly` methods by specifying a transaction ID as follows:
+
+```java
+// Begin a transaction in read-only mode by specifying a transaction ID.
+DistributedTransaction transaction = transactionManager.beginReadOnly("<TRANSACTION_ID>");
+```
+
+```java
+// Start a transaction in read-only mode by specifying a transaction ID.
+DistributedTransaction transaction = transactionManager.startReadOnly("<TRANSACTION_ID>");
+```
+
+:::note
+
+Specifying a transaction ID is useful when you want to link external systems to ScalarDB. Otherwise, you should use the `beginReadOnly()` method or the `startReadOnly()` method.
 
 When you specify a transaction ID, make sure you specify a unique ID (for example, UUID v4) throughout the system since ScalarDB depends on the uniqueness of transaction IDs for correctness.
 
@@ -629,9 +671,14 @@ If the result has more than one record, `transaction.get()` will throw an except
 
 ##### `Scan` operation
 
-`Scan` is an operation to retrieve multiple records within a partition. You can specify clustering-key boundaries and orderings for clustering-key columns in `Scan` operations.
+`Scan` is an operation to retrieve multiple records within a partition. You can specify clustering-key boundaries and orderings for clustering-key columns in `Scan` operations. To execute a `Scan` operation, you can use the `transaction.scan()` method or the `transaction.getScanner()` method:
 
-You need to create a `Scan` object first, and then you can execute the object by using the `transaction.scan()` method as follows:
+- `transaction.scan()`:
+  - This method immediately executes the given `Scan` operation and returns a list of all matching records. It is suitable when the result set is expected to be small enough to fit in memory.
+- `transaction.getScanner()`:
+  - This method returns a `Scanner` object that allows you to iterate over the result set lazily. It is useful when the result set may be large, as it avoids loading all records into memory at once.
+
+You need to create a `Scan` object first, and then you can execute the object by using the `transaction.scan()` method or the `transaction.getScanner()` method as follows:
 
 ```java
 // Create a `Scan` operation.
@@ -652,8 +699,17 @@ Scan scan =
         .limit(10)
         .build();
 
-// Execute the `Scan` operation.
+// Execute the `Scan` operation by using the `transaction.scan()` method.
 List<Result> results = transaction.scan(scan);
+
+// Or, execute the `Scan` operation by using the `transaction.getScanner()` method.
+try (TransactionCrudOperable.Scanner scanner = transaction.getScanner(scan)) {
+  // Fetch the next result from the scanner
+  Optional<Result> result = scanner.one();
+
+  // Fetch all remaining results from the scanner
+  List<Result> allResults = scanner.all();
+}
 ```
 
 You can omit the clustering-key boundaries or specify either a `start` boundary or an `end` boundary. If you don't specify `orderings`, you will get results ordered by the clustering order that you defined when creating the table.
@@ -1292,9 +1348,14 @@ For details about the `Get` operation, see [`Get` operation](#get-operation).
 
 #### Execute `Scan` operation
 
-`Scan` is an operation to retrieve multiple records within a partition. You can specify clustering-key boundaries and orderings for clustering-key columns in `Scan` operations.
+`Scan` is an operation to retrieve multiple records within a partition. You can specify clustering-key boundaries and orderings for clustering-key columns in `Scan` operations. To execute a `Scan` operation, you can use the `transactionManager.scan()` method or the `transactionManager.getScanner()` method:
 
-You need to create a `Scan` object first, and then you can execute the object by using the `transactionManager.scan()` method as follows:
+- `transactionManager.scan()`:
+  - This method immediately executes the given `Scan` operation and returns a list of all matching records. It is suitable when the result set is expected to be small enough to fit in memory.
+- `transactionManager.getScanner()`:
+  - This method returns a `Scanner` object that allows you to iterate over the result set lazily. It is useful when the result set may be large, as it avoids loading all records into memory at once.
+
+You need to create a `Scan` object first, and then you can execute the object by using the `transactionManager.scan()` method or the `transactionManager.getScanner()` method as follows:
 
 ```java
 // Create a `Scan` operation.
@@ -1314,8 +1375,17 @@ Scan scan =
         .limit(10)
         .build();
 
-// Execute the `Scan` operation.
+// Execute the `Scan` operation by using the `transactionManager.scan()` method.
 List<Result> results = transactionManager.scan(scan);
+
+// Or, execute the `Scan` operation by using the `transactionManager.getScanner()` method.
+try (TransactionManagerCrudOperable.Scanner scanner = transactionManager.getScanner(scan)) {
+  // Fetch the next result from the scanner
+  Optional<Result> result = scanner.one();
+
+  // Fetch all remaining results from the scanner
+  List<Result> allResults = scanner.all();
+}
 ```
 
 For details about the `Scan` operation, see [`Scan` operation](#scan-operation).

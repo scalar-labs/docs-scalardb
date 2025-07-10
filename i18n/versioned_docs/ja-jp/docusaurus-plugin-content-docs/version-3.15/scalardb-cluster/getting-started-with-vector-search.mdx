@@ -1,0 +1,467 @@
+---
+tags:
+  - Enterprise Premium
+  - Private Preview
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Cluster でベクトル検索をはじめよう
+
+import WarningLicenseKeyContact from '/src/components/ja-jp/_warning-license-key-contact.mdx';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+ScalarDB Cluster は、アプリケーションがベクトルストアと統一された方法で対話できるように、ベクトルストアの抽象化を提供します。このページでは、この機能の概要と、それがユーザーにとってなぜ有益であるかについて説明します。
+
+## ベクトルストアの抽象化とは何ですか?
+
+ScalarDB Cluster は、リレーショナルデータベース、NoSQL データベース、NewSQL データベースを含むさまざまなデータベースを抽象化するのと同様に、さまざまなベクトルストアを抽象化します。このベクトルストアの抽象化を使用すると、特定のベクトルストアの実装に依存せず、移植性を確保しながら、ベクトルストアと統一された方法で対話するアプリケーションを開発できます。さらに、ベクトルストアの統合が ScalarDB Cluster に組み込まれているため、アプリケーションはそのスケーラビリティを活用できます。
+
+ベクトルストアの抽象化の現在の実装は [LangChain4j](https://docs.langchain4j.dev/) を活用し、次のベクトルストアと埋め込みモデルをサポートしています。
+
+ベクトルストア:
+- In-memory
+- OpenSearch
+- Azure Cosmos DB NoSQL
+- Azure AI Search
+- pgvector
+
+埋め込みモデル:
+- In-process
+- Amazon Bedrock
+- Azure OpenAI
+- Google Vertex AI
+- OpenAI
+
+## ベクトルストアの抽象化を使用する理由
+
+生成 AI の時代において、大規模言語モデル (LLM) を導入する際に組織が直面する課題の1つは、これらのモデルが企業データを理解できるようにすることです。検索拡張生成 (RAG) は、特定の企業知識で LLM を強化するために使用される重要な手法です。たとえば、LLM を搭載したチャットボットが正確で適切な応答を提供できるようにするために、企業は RAG を使用してユーザーマニュアルやサポートドキュメントからドメイン固有の情報を統合します。
+
+RAG はベクトルストアに依存しています。ベクトルストアは通常、データベースからデータを抽出し、そのデータをベクトルに変換してから、それらのベクトルをロードすることによって作成されます。ScalarDB Cluster でベクトルストアとデータベースの抽象化を使用すると、プロセス全体をシームレスに実装できます。このアプローチにより、ワークフローとコードが大幅に簡素化され、特定のベクトルストアとデータベースに依存する複雑なアプリケーションを作成する必要がなくなります。
+
+## チュートリアル
+
+このチュートリアルでは、ScalarDB Cluster でベクトル検索を実行する方法を説明します。
+
+### 前提条件
+
+- [Eclipse Temurin](https://adoptium.net/temurin/releases/) の OpenJDK LTS バージョン (8、11、17、または 21)
+- [Docker](https://www.docker.com/get-started/) 20.10 以降と [Docker Compose](https://docs.docker.com/compose/install/) V2 以降
+
+:::note
+
+このチュートリアルは Eclipse Temurin の OpenJDK でテストされています。ただし、ScalarDB 自体はさまざまなベンダーの JDK ディストリビューションでテストされています。ScalarDB の要件、互換性のある JDK ディストリビューションを含む詳細については、[要件](../requirements.mdx) を参照してください。
+
+:::
+
+<WarningLicenseKeyContact product="ScalarDB Cluster" />
+
+### 1. ScalarDB Cluster の設定ファイルを作成する
+
+以下の設定ファイルを `scalardb-cluster-node.properties` として作成し、`<YOUR_LICENSE_KEY>` と `<LICENSE_CHECK_CERT_PEM>` を ScalarDB ライセンスキーとライセンスチェック証明書の値に置き換えてください。ライセンスキーと証明書の詳細については、[製品ライセンスキーの設定方法](../scalar-licensing/index.mdx)を参照してください。
+
+```yaml
+scalar.db.transaction.enabled=false
+
+# Enable the standalone mode
+scalar.db.cluster.node.standalone_mode.enabled=true
+
+# Enable the embedding feature
+scalar.db.embedding.enabled=true
+
+# License key configurations
+scalar.db.cluster.node.licensing.license_key=<YOUR_LICENSE_KEY>
+scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
+```
+
+さらに、使用する埋め込みストアと埋め込みモデルに応じて、設定ファイルにプロパティを追加する必要があります。
+
+使用する埋め込みストアを選択し、それに応じた設定手順に従ってください。
+
+<Tabs groupId="embedding-store" queryString>
+  <TabItem value="in-memory" label="In-memory" default>
+    インメモリ埋め込みストアは基本的なインメモリ実装です。この埋め込みストアは、迅速なプロトタイピングやシンプルなユースケースに役立ちます。
+
+    インメモリ埋め込みストアを使用するには、設定ファイルに次のプロパティを追加します。
+
+    ```properties
+    scalar.db.embedding.store.type=in-memory
+    ```
+  </TabItem>
+  <TabItem value="opensearch" label="OpenSearch">
+    OpenSearch 埋め込みストアは、バックエンドとして OpenSearch を使用する埋め込みストアです。
+
+    OpenSearch の実装がローカルで実行されているか、AWS で実行されているかを選択し、それに応じた設定手順に従ってください。
+
+    <Tabs groupId="environment" queryString>
+      <TabItem value="local" label="Running locally" default>
+        ネットワーク上で到達可能なローカルで実行されている OpenSearch クラスターの場合、設定ファイルに次のプロパティを追加します。
+
+        ```properties
+        scalar.db.embedding.store.type=opensearch
+
+        # OpenSearch Server URL.
+        scalar.db.embedding.store.opensearch.server_url=<SERVER_URL>
+
+        # OpenSearch API key (optional).
+        scalar.db.embedding.store.opensearch.api_key=<API_KEY>
+
+        # OpenSearch username (optional).
+        scalar.db.embedding.store.opensearch.user_name=<USER_NAME>
+
+        # OpenSearch password (optional).
+        scalar.db.embedding.store.opensearch.password=<PASSWORD>
+
+        # OpenSearch index name.
+        scalar.db.embedding.store.opensearch.index_name=<INDEX_NAME>
+        ```
+      </TabItem>
+      <TabItem value="aws" label="Running on AWS">
+        AWS でフルマネージドサービスとして実行されている OpenSearch クラスターの場合、設定ファイルに次のプロパティを追加します。
+
+        ```properties
+        scalar.db.embedding.store.type=opensearch
+
+        # OpenSearch Server URL.
+        scalar.db.embedding.store.opensearch.server_url=<SERVER_URL>
+
+        # The AWS signing service name, one of `es` (Amazon OpenSearch) or `aoss` (Amazon OpenSearch Serverless).
+        scalar.db.embedding.store.opensearch.service_name=<SERVICE_NAME>
+
+        # The AWS region for which requests will be signed. This should typically match the region in `server_url`.
+        scalar.db.embedding.store.opensearch.region=<REGION>
+
+        # The AWS access key ID.
+        scalar.db.embedding.store.opensearch.access_key_id=<ACCESS_KEY_ID>
+
+        # The AWS secret access key.
+        scalar.db.embedding.store.opensearch.secret_access_key=<SECRET_ACCESS_KEY>
+
+        # OpenSearch index name.
+        scalar.db.embedding.store.opensearch.index_name=<INDEX_NAME>
+        ```
+      </TabItem>
+    </Tabs>
+  </TabItem>
+  <TabItem value="azure-cosmos-db-for-nosql" label="Azure Cosmos DB for NoSQL">
+    Azure Cosmos DB for NoSQL 埋め込みストアは、バックエンドとして Azure Cosmos DB を使用する埋め込みストアです。
+
+    Azure Cosmos DB for NoSQL 埋め込みストアを使用するには、設定ファイルに次のプロパティを追加します。
+
+    ```properties
+    scalar.db.embedding.store.type=azure-cosmos-nosql
+
+    # The Azure Cosmos DB endpoint that the SDK will connect to.
+    scalar.db.embedding.store.azure-cosmos-nosql.endpoint=<ENDPOINT>
+
+    # A master key used to perform authentication for accessing resources. A read-only key can also be used only for read-only operations.
+    scalar.db.embedding.store.azure-cosmos-nosql.key=<KEY>
+
+    # The database name to be used.
+    scalar.db.embedding.store.azure-cosmos-nosql.database_name=<DATABASE_NAME>
+
+    # The container name to be used.
+    scalar.db.embedding.store.azure-cosmos-nosql.container_name=<CONTAINER_NAME>
+    ```
+  </TabItem>
+  <TabItem value="azure-ai-search" label="Azure AI Search">
+    Azure AI Search 埋め込みストアは、バックエンドとして Azure AI Search を使用する埋め込みストアです。
+
+    Azure AI Search 埋め込みストアを使用するには、設定ファイルに次のプロパティを追加します。
+
+    ```properties
+    scalar.db.embedding.store.type=azure-ai-search
+    # The Azure AI Search endpoint.
+    scalar.db.embedding.store.azure-ai-search.endpoint=<ENDPOINT>
+
+    # The Azure AI Search API key.
+    scalar.db.embedding.store.azure-ai-search.api_key=<API_KEY>
+
+    # The name of the index to be used. If no index is provided, the name of the default index to be used.
+    scalar.db.embedding.store.azure-ai-search.index_name=<INDEX_NAME>
+    ```
+  </TabItem>
+  <TabItem value="pgvector" label="pgvector">
+    pgvector 埋め込みストアは、バックエンドとしてベクトル類似検索用の Postgres 拡張機能である pgvector を使用する埋め込みストアです。
+
+    pgvector 埋め込みストアを使用するには、設定ファイルに次のプロパティを追加します。
+
+    ```properties
+    scalar.db.embedding.store.type=pgvector
+
+    # The database host.
+    scalar.db.embedding.store.pgvector.host=<HOST>
+
+    # The database port.
+    scalar.db.embedding.store.pgvector.port=<PORT>
+
+    # The database user.
+    scalar.db.embedding.store.pgvector.user=<USER>
+
+    # The database password.
+    scalar.db.embedding.store.pgvector.password=<PASSWORD>
+
+    # The database name.
+    scalar.db.embedding.store.pgvector.database=<DATABASE>
+
+    # The table name.
+    scalar.db.embedding.store.pgvector.table=<TABLE>
+    ```
+  </TabItem>
+</Tabs>
+
+使用する埋め込みモデルを選択し、それに応じた設定手順に従ってください。
+
+<Tabs groupId="embedding-model" queryString>
+  <TabItem value="in-process" label="In-process" default>
+    In-process 埋め込みモデルは、[ONNX runtime](https://onnxruntime.ai/docs/get-started/with-java.html) によって提供され、ScalarDB Cluster プロセス内で実行されるローカル埋め込みモデルです。この埋め込みモデルは、迅速なプロトタイピングやシンプルなユースケースに役立ちます。
+
+    In-process 埋め込みモデルを使用するには、設定ファイルに次のプロパティを追加します。
+
+    ```properties
+    scalar.db.embedding.model.type=in-process
+    ```
+  </TabItem>
+  <TabItem value="amazon-bedrock" label="Amazon Bedrock">
+    Amazon Bedrock 埋め込みモデルは、バックエンドとして Amazon Bedrock を使用する埋め込みモデルです。
+
+    Amazon Bedrock 埋め込みモデルを使用するには、設定ファイルに次のプロパティを追加します。
+
+    ```properties
+    scalar.db.embedding.model.type=bedrock-titan
+
+    # The AWS region for which requests will be signed.
+    scalar.db.embedding.model.bedrock-titan.region=<REGION>
+
+    # The AWS access key ID.
+    scalar.db.embedding.model.bedrock-titan.access_key_id=<ACCESS_KEY_ID>
+
+    # The AWS secret access key.
+    scalar.db.embedding.model.bedrock-titan.secret_access_key=<SECRET_ACCESS_KEY>
+
+    # The model. Either `amazon.titan-embed-text-v1` or `amazon.titan-embed-text-v2:0`.
+    scalar.db.embedding.model.bedrock-titan.model=<MODEL>
+
+    # The dimensions.
+    scalar.db.embedding.model.bedrock-titan.dimensions=<DIMENSIONS>
+    ```
+  </TabItem>
+  <TabItem value="azure-openai" label="Azure OpenAI">
+    Azure OpenAI 埋め込みモデルは、バックエンドとして Azure OpenAI を使用する埋め込みモデルです。
+
+    Azure OpenAI 埋め込みモデルを使用するには、設定ファイルに次のプロパティを追加します。
+
+    ```properties
+    scalar.db.embedding.model.type=azure-open-ai
+
+    # The Azure OpenAI endpoint.
+    scalar.db.embedding.model.azure-open-ai.endpoint=<ENDPOINT>
+
+    # The Azure OpenAI API key.
+    scalar.db.embedding.model.azure-open-ai.api_key=<API_KEY>
+
+    # The deployment name in Azure OpenAI.
+    scalar.db.embedding.model.azure-open-ai.deployment_name=<DEPLOYMENT_NAME>
+
+    # The dimensions.
+    scalar.db.embedding.model.azure-open-ai.dimensions=<DIMENSIONS>
+    ```
+  </TabItem>
+  <TabItem value="google-vertex-ai" label="Google Vertex AI">
+    Google Vertex AI 埋め込みモデルは、バックエンドとして Google Vertex AI を使用する埋め込みモデルです。
+
+    Google Vertex AI 埋め込みモデルを使用するには、設定ファイルに次のプロパティを追加します。
+
+    ```properties
+    scalar.db.embedding.model.type=vertex-ai
+
+    # The Google Cloud project.
+    scalar.db.embedding.model.vertex-ai.project=<PROJECT>
+
+    # The Google Cloud location.
+    scalar.db.embedding.model.vertex-ai.location=<LOCATION>
+
+    # The endpoint.
+    scalar.db.embedding.model.vertex-ai.endpoint=<ENDPOINT>
+
+    # The publisher.
+    scalar.db.embedding.model.vertex-ai.publisher=<PUBLISHER>
+
+    # The model name.
+    scalar.db.embedding.model.vertex-ai.model_name=<MODEL_NAME>
+
+    # The output dimensionality.
+    scalar.db.embedding.model.vertex-ai.output_dimensionality=<OUTPUT_DIMENSIONALITY>
+    ```
+  </TabItem>
+  <TabItem value="openai" label="OpenAI">
+    OpenAI 埋め込みモデルは、バックエンドとして OpenAI を使用する埋め込みモデルです。
+
+    OpenAI 埋め込みモデルを使用するには、設定ファイルに次のプロパティを追加します。
+
+    ```properties
+    scalar.db.embedding.model.type=open-ai
+
+    # The OpenAI API key.
+    scalar.db.embedding.model.open-ai.api_key=<API_KEY>
+
+    # The model name.
+    scalar.db.embedding.model.open-ai.model_name=<MODEL_NAME>
+
+    # The base URL.
+    scalar.db.embedding.model.open-ai.base_url=<BASE_URL>
+
+    # The organization ID.
+    scalar.db.embedding.model.open-ai.organization_id=<ORGANIZATION_ID>
+
+    # The dimensions.
+    scalar.db.embedding.model.open-ai.dimensions=<DIMENSIONS>
+
+    # The user.
+    scalar.db.embedding.model.open-ai.user=<USER>
+    ```
+  </TabItem>
+</Tabs>
+
+### 2. Docker Compose ファイルを作成する
+
+以下の設定ファイルを `docker-compose.yaml` として作成してください。
+
+```yaml
+services:
+
+  scalardb-cluster-standalone:
+    container_name: "scalardb-cluster-node"
+    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:3.15.4"
+    ports:
+      - 60053:60053
+      - 9080:9080
+    volumes:
+      - ./scalardb-cluster-node.properties:/scalardb-cluster/node/scalardb-cluster-node.properties
+```
+
+### 3. ScalarDB Cluster を起動する
+
+以下のコマンドを実行して、スタンドアロンモードで ScalarDB Cluster を起動します。
+
+```console
+docker compose up -d
+```
+
+ScalarDB Cluster が完全に起動するまで数分かかる場合があります。
+
+### 4. 埋め込みストア抽象化用の Java Client SDK をプロジェクトに追加する
+
+ScalarDB Cluster Embedding Java Client SDK ライブラリは [Maven Central Repository](https://mvnrepository.com/artifact/com.scalar-labs/scalardb-cluster-embedding-java-client-sdk) で利用可能です。Gradle または Maven を使用してアプリケーションにライブラリをビルド依存関係として追加できます。
+
+ビルドツールを選択し、ScalarDB Cluster Embedding Java Client SDK をアプリケーションに追加する手順に従ってください。
+
+<Tabs groupId="build_tools" queryString>
+  <TabItem value="gradle" label="Gradle" default>
+    ScalarDB Cluster Embedding Java Client SDK のビルド依存関係を Gradle を使用して追加するには、アプリケーションの `build.gradle` に次の内容を追加します。
+
+    ```gradle
+    dependencies {
+      implementation 'com.scalar-labs:scalardb-cluster-embedding-java-client-sdk:3.15.4'
+    }
+    ```
+  </TabItem>
+  <TabItem value="maven" label="Maven">
+    ScalarDB Cluster Embedding Java Client SDK のビルド依存関係を Maven を使用して追加するには、アプリケーションの `pom.xml` に次の内容を追加します。
+
+    ```xml
+    <dependency>
+      <groupId>com.scalar-labs</groupId>
+      <artifactId>scalardb-cluster-embedding-java-client-sdk</artifactId>
+      <version>3.15.4</version>
+    </dependency>
+    ```
+  </TabItem>
+</Tabs>
+
+### 5. サンプルコードを実行する
+
+新しい Java クラスを作成し、以下のコードを追加してサンプルコードを実行してください。
+
+```java
+try (ScalarDbEmbeddingClientFactory scalarDbEmbeddingClientFactory =
+    ScalarDbEmbeddingClientFactory.builder()
+        .withProperty("scalar.db.embedding.client.contact_points", "indirect:localhost")
+        .build()) {
+  // Create an embedding store and an embedding model.
+  EmbeddingStore<TextSegment> scalarDbEmbeddingStore =
+      scalarDbEmbeddingClientFactory.createEmbeddingStore();
+  EmbeddingModel scalarDbEmbeddingModel = scalarDbEmbeddingClientFactory.createEmbeddingModel();
+
+  // Add embeddings to the embedding store.
+  TextSegment segment1 = TextSegment.from("I like football.");
+  Embedding embedding1 = scalarDbEmbeddingModel.embed(segment1).content();
+        scalarDbEmbeddingStore.add(embedding1, segment1);
+
+  TextSegment segment2 = TextSegment.from("The weather is good today.");
+  Embedding embedding2 = scalarDbEmbeddingModel.embed(segment2).content();
+        scalarDbEmbeddingStore.add(embedding2, segment2);
+
+  // Search for embeddings.
+  Embedding queryEmbedding =
+      scalarDbEmbeddingModel.embed("What is your favourite sport?").content();
+  EmbeddingSearchResult<TextSegment> result =
+      scalarDbEmbeddingStore.search(
+          EmbeddingSearchRequest.builder()
+              .queryEmbedding(queryEmbedding)
+              .maxResults(1)
+              .build());
+
+  // Print the search result.
+  List<EmbeddingMatch<TextSegment>> matches = result.matches();
+  EmbeddingMatch<TextSegment> embeddingMatch = matches.get(0);
+  System.out.println(embeddingMatch.embedded().text());
+  System.out.println(embeddingMatch.score());
+}
+```
+
+このサンプルコードは、埋め込みストアと埋め込みモデルを作成し、埋め込みを埋め込みストアに追加し、埋め込みを検索する方法を示しています。
+
+コードの埋め込みストアと埋め込みモデルを作成する部分を除いて、使用方法は LangChain4j と同じです。LangChain4j の詳細については、以下を参照してください:
+- [LangChain4j](https://docs.langchain4j.dev/)
+- [埋め込みモデル](https://docs.langchain4j.dev/tutorials/rag#embedding-model)
+- [埋め込みストア](https://docs.langchain4j.dev/tutorials/rag#embedding-store)
+
+#### `ScalarDbEmbeddingClientFactory` について
+
+コードスニペットに示されているように、`ScalarDbEmbeddingClientFactory` クラスはファクトリのインスタンスを作成するためのビルダーを提供します。ビルダーを使用すると、ファクトリのプロパティを設定できます。この例では、`withProperty()` メソッドを使用して、以下のようにファクトリの接続ポイントを設定しています:
+
+```java
+ScalarDbEmbeddingClientFactory scalarDbEmbeddingClientFactory = ScalarDbEmbeddingClientFactory.builder()
+  .withProperty("scalar.db.embedding.client.contact_points", "indirect:localhost")
+  .build();
+```
+
+また、`withPropertiesFile()` メソッドを使用してプロパティファイルを設定することもできます。
+
+その後、以下のようにファクトリを使用して埋め込みストアと埋め込みモデルを作成できます:
+
+```java
+EmbeddingStore<TextSegment> scalarDbEmbeddingStore =
+    scalarDbEmbeddingClientFactory.createEmbeddingStore();
+EmbeddingModel scalarDbEmbeddingModel = scalarDbEmbeddingClientFactory.createEmbeddingModel();
+```
+
+これらのクラスのメソッドは内部的に ScalarDB Cluster に接続し、設定で指定された埋め込みストアと埋め込みモデルを使用して対話します。
+
+アプリケーション内でベクトルストアと対話するには、`scalarDbEmbeddingStore` と `scalarDbEmbeddingModel` のインスタンスを再利用する必要があります。
+
+:::note
+
+`ScalarDbEmbeddingClientFactory` インスタンスは、使用後に接続を解放するために閉じる必要があります。
+
+:::
+
+## 追加の詳細
+
+ベクター検索機能は現在、プライベートプレビュー中です。詳細については、[お問い合わせ](https://www.scalar-labs.com/contact)いただくか、この機能が将来のバージョンで一般公開されるまでお待ちください。
+
+- [Javadoc](https://javadoc.io/doc/com.scalar-labs/scalardb-cluster-embedding-java-client-sdk/3.15.4/index.html)
