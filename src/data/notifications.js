@@ -14,12 +14,12 @@ const notificationsList = [
   // },
   {
     message: {
-      en: 'Check out the release notes for ScalarDB 3.15.4',
-      ja: 'ScalarDB 3.15.4 のリリースノートをご覧ください'
+      en: 'Support for IBM Db2 has been added in ScalarDB 3.16',
+      ja: 'ScalarDB 3.16 で IBM Db2 がサポートされました'
     },
     url: {
-      en: 'releases/release-notes#v3154?utm_source=docs-site&utm_medium=notifications',
-      ja: 'releases/release-notes#v3154?utm_source=docs-site&utm_medium=notifications'
+      en: 'requirements#relational-databases?utm_source=docs-site&utm_medium=notifications',
+      ja: 'requirements#リレーショナルデータベース?utm_source=docs-site&utm_medium=notifications'
     },
     unread: true
   },
