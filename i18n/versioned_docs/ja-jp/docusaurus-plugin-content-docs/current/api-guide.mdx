@@ -410,48 +410,6 @@ DistributedTransaction transaction = transactionManager.start("<TRANSACTION_ID>"
 
 :::
 
-##### 読み取り専用モードでトランザクションを開始またはスタートする
-
-読み取り専用モードでトランザクションを開始またはスタートすることもできます。この場合、トランザクションでは書き込み操作は許可されず、読み取り操作に最適化されます。
-
-:::note
-
-パフォーマンスを向上させ、リソース使用量を削減するために、読み取り専用操作には読み取り専用トランザクションを使用することを強く推奨します。
-
-:::
-
-次のように読み取り専用モードでトランザクションを開始またはスタートできます。
-
-```java
-// Begin a transaction in read-only mode.
-DistributedTransaction transaction = transactionManager.beginReadOnly();
-```
-
-```java
-// Start a transaction in read-only mode.
-DistributedTransaction transaction = transactionManager.startReadOnly();
-```
-
-または、次のようにトランザクション ID を指定して、`beginReadOnly` メソッドと `startReadOnly` メソッドを使用することもできます。
-
-```java
-// Begin a transaction in read-only mode by specifying a transaction ID.
-DistributedTransaction transaction = transactionManager.beginReadOnly("<TRANSACTION_ID>");
-```
-
-```java
-// Start a transaction in read-only mode by specifying a transaction ID.
-DistributedTransaction transaction = transactionManager.startReadOnly("<TRANSACTION_ID>");
-```
-
-:::note
-
-トランザクション ID を指定する方法は、外部システムを ScalarDB にリンクしたい場合に利用できます。それ以外の場合は、`beginReadOnly()` メソッドまたは `startReadOnly()` メソッドを使用する必要があります。
-
-トランザクション ID を指定する場合は、ScalarDB の正確性はトランザクション ID の一意性に依存するため、システム全体で一意の ID (UUID v4など) を指定してください。
-
-:::
-
 #### トランザクションに参加する
 
 トランザクションに参加することは、トランザクションが複数のクライアントリクエストにまたがるステートフルアプリケーションで特に便利です。このようなシナリオでは、アプリケーションは最初のクライアントリクエスト中にトランザクションを開始できます。その後、後続のクライアントリクエストで、アプリケーションは `join()` メソッドを使用して進行中のトランザクションに参加できます。
@@ -534,7 +492,7 @@ Key key3 = Key.of("col1", 1, "col2", 100L, "col3", 1.3d, "col4", "value");
 Key key4 = Key.of("col1", 1, "col2", 100L, "col3", 1.3d, "col4", "value", "col5", false);
 ```
 
-5列を超えるキーの場合、ビルダーを使用して次のようにキーを構築できます。
+5列を超えるキーの場合は、ビルダーを使用して次のようにキーを構築できます。
 
 ```java
 // For a key that consists of more than five columns.

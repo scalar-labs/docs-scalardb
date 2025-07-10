@@ -605,11 +605,11 @@ ALTER TABLE ns.tbl ADD COLUMN new_col TEXT ENCRYPTED;
 
 ```java
 // Add a new column "new_col" to "ns.tbl"
-AlterTableAddColumnStatement statement1 =
+AlterTableAddColumnStatement statement =
     StatementBuilder.alterTable("ns", "tbl").addColumn("new_col", DataType.INT).build();
 
 // Add a new encrypted column "new_col" to "ns.tbl"
-AlterTableAddColumnStatement statement2 =
+AlterTableAddColumnStatement statement =
     StatementBuilder.alterTable("ns", "tbl").addColumn("new_col", DataType.TEXT, true).build();
 ```
 
@@ -2920,26 +2920,16 @@ UseStatement statement = StatementBuilder.use("ns").build();
 #### 文法
 
 ```sql
-BEGIN [READ ONLY | READ WRITE]
+BEGIN
 ```
-
-- `READ ONLY` を指定すると、トランザクションは読み取り専用モードで開始されます。
-- `READ WRITE` を指定すると、トランザクションは読み取り書き込みモードで開始されます。
-- `READ ONLY` または `READ WRITE` オプションを省略すると、デフォルトで読み取り書き込みトランザクションとして開始されます。
 
 #### 例
 
 `BEGIN` のステートメントオブジェクトを構築する例は次のとおりです。
 
 ```java
-// Begin a transaction.
-BeginStatement statement1 = StatementBuilder.begin().build();
-
-// Begin a transaction in read-only mode.
-BeginStatement statement2 = StatementBuilder.begin().readOnly().build();
-
-// Begin a transaction in read-write mode.
-BeginStatement statement3 = StatementBuilder.begin().readWrite().build();
+// Begin a transaction
+BeginStatement statement = StatementBuilder.begin().build();
 ```
 
 ### START TRANSACTION
@@ -2953,12 +2943,8 @@ BeginStatement statement3 = StatementBuilder.begin().readWrite().build();
 #### 文法
 
 ```sql
-START TRANSACTION [READ ONLY | READ WRITE]
+START TRANSACTION
 ```
-
-- `READ ONLY` を指定すると、トランザクションは読み取り専用モードで開始されます。
-- `READ WRITE` を指定すると、トランザクションは読み取り書き込みモードで開始されます。
-- `READ ONLY` または `READ WRITE` オプションを省略すると、デフォルトで読み取り書き込みトランザクションとして開始されます。
 
 #### 例
 
@@ -2966,13 +2952,7 @@ START TRANSACTION [READ ONLY | READ WRITE]
 
 ```java
 // Start a transaction.
-StartTransactionStatement statement1 = StatementBuilder.startTransaction().build();
-
-// Start a transaction in read-only mode.
-StartTransactionStatement statement2 = StatementBuilder.startTransaction().readOnly().build();
-
-// Start a transaction in read-write mode.
-StartTransactionStatement statement3 = StatementBuilder.startTransaction().readWrite().build();
+StartTransactionStatement statement = StatementBuilder.startTransaction().build();
 ```
 
 ### JOIN
