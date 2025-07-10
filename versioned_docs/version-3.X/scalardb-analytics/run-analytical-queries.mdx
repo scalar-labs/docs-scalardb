@@ -1,0 +1,453 @@
+---
+tags:
+  - Enterprise Option
+displayed_sidebar: docsEnglish
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# Run Analytical Queries Through ScalarDB Analytics
+
+This guide explains how to develop ScalarDB Analytics applications. For details on the architecture and design, see [ScalarDB Analytics Design](./design.mdx)
+
+ScalarDB Analytics currently uses Spark as an execution engine and provides a Spark custom catalog plugin to provide a unified view of ScalarDB-managed and non-ScalarDB-managed data sources as Spark tables. This allows you to execute arbitrary Spark SQL queries seamlessly.
+
+## Preparation
+
+This section describes the prerequisites, setting up ScalarDB Analytics in the Spark configuration, and adding the ScalarDB Analytics dependency.
+
+### Prerequisites
+
+ScalarDB Analytics works with Apache Spark 3.4 or later. If you don't have Spark installed yet, please download the Spark distribution from [Apache's website](https://spark.apache.org/downloads.html).
+
+:::note
+
+Apache Spark are built with either Scala 2.12 or Scala 2.13. ScalarDB Analytics supports both versions. You need to be sure which version you are using so that you can select the correct version of ScalarDB Analytics later. You can refer to [Version Compatibility](#version-compatibility) for more details.
+
+:::
+
+### Set up ScalarDB Analytics in the Spark configuration
+
+The following sections describe all available configuration options for ScalarDB Analytics. These configurations control:
+
+- How ScalarDB Analytics integrates with Spark
+- How data sources are connected and accessed
+- How license information is provided
+
+For example configurations in a practical scenario, see [the sample application configuration](../scalardb-samples/scalardb-analytics-spark-sample/README.mdx#scalardb-analytics-configuration).
+
+#### Spark plugin configurations
+
+| Configuration Key | Required | Description |
+|:-----------------|:---------|:------------|
+| `spark.jars.packages` | No | A comma-separated list of Maven coordinates for the required dependencies. User need to include the ScalarDB Analytics package you are using, otherwise, specify it as the command line argument when running the Spark application. For details about the Maven coordinates of ScalarDB Analytics, refer to [Add ScalarDB Analytics dependency](#add-the-scalardb-analytics-dependency). |
+| `spark.sql.extensions` | Yes | Must be set to `com.scalar.db.analytics.spark.extension.ScalarDbAnalyticsExtensions`. |
+| `spark.sql.catalog.<CATALOG_NAME>` | Yes | Must be set to `com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog`. |
+
+You can specify any name for `<CATALOG_NAME>`. Be sure to use the same catalog name throughout your configuration.
+
+#### License configurations
+
+| Configuration Key                                    | Required | Description                                                                                                                   |
+| :--------------------------------------------------- | :------- | :---------------------------------------------------------------------------------------------------------------------------- |
+| `spark.sql.catalog.<CATALOG_NAME>.license.key`       | Yes      | JSON string of the license key for ScalarDB Analytics |
+| `spark.sql.catalog.<CATALOG_NAME>.license.cert_pem`  | Yes      | A string of PEM-encoded certificate of ScalarDB Analytics license. Either `cert_pem` or `cert_path` must be set.   |
+| `spark.sql.catalog.<CATALOG_NAME>.license.cert_path` | Yes      | A path to the PEM-encoded certificate of ScalarDB Analytics license. Either `cert_pem` or `cert_path` must be set. |
+
+#### Data source configurations
+
+ScalarDB Analytics supports multiple types of data sources. Each type requires specific configuration parameters:
+
+<Tabs groupId="data-source" queryString>
+  <TabItem value="scalardb" label="ScalarDB">
+
+:::note
+
+ScalarDB Analytics supports ScalarDB as a data source. This table describes how to configure ScalarDB as a data source.
+
+:::
+
+| Configuration Key                                                             | Required | Description                                     |
+| :---------------------------------------------------------------------------- | :------- | :---------------------------------------------- |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.type`        | Yes      | Always set to `scalardb`                        |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.config_path` | Yes      | The path to the configuration file for ScalarDB |
+
+:::tip
+
+You can use an arbitrary name for `<DATA_SOURCE_NAME>`.
+
+:::
+
+  </TabItem>
+  <TabItem value="mysql" label="MySQL">
+
+| Configuration Key                                                          | Required | Description                            |
+| :------------------------------------------------------------------------- | :------- | :------------------------------------- |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.type`     | Yes      | Always set to `mysql`                  |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.host`     | Yes      | The host name of the MySQL server      |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.port`     | Yes      | The port number of the MySQL server    |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.username` | Yes      | The username of the MySQL server       |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.password` | Yes      | The password of the MySQL server       |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.database` | No       | The name of the database to connect to |
+
+:::tip
+
+You can use an arbitrary name for `<DATA_SOURCE_NAME>`.
+
+:::
+
+  </TabItem>
+  <TabItem value="postgresql" label="PostgreSQL">
+
+| Configuration Key                                                          | Required | Description                              |
+| :------------------------------------------------------------------------- | :------- | :--------------------------------------- |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.type`     | Yes      | Always set to `postgresql` or `postgres` |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.host`     | Yes      | The host name of the PostgreSQL server   |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.port`     | Yes      | The port number of the PostgreSQL server |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.username` | Yes      | The username of the PostgreSQL server    |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.password` | Yes      | The password of the PostgreSQL server    |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.database` | Yes      | The name of the database to connect to   |
+
+:::tip
+
+You can use an arbitrary name for `<DATA_SOURCE_NAME>`.
+
+:::
+
+  </TabItem>
+  <TabItem value="oracle" label="Oracle">
+
+| Configuration Key                                                              | Required | Description                           |
+| :----------------------------------------------------------------------------- | :------- | :------------------------------------ |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.type`         | Yes      | Always set to `oracle`                |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.host`         | Yes      | The host name of the Oracle server    |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.port`         | Yes      | The port number of the Oracle server  |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.username`     | Yes      | The username of the Oracle server     |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.password`     | Yes      | The password of the Oracle server     |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.service_name` | Yes      | The service name of the Oracle server |
+
+:::tip
+
+You can use an arbitrary name for `<DATA_SOURCE_NAME>`.
+
+:::
+
+  </TabItem>
+  <TabItem value="sqlserver" label="SQL Server">
+
+| Configuration Key                                                          | Required | Description                                                                                            |
+| :------------------------------------------------------------------------- | :------- | :----------------------------------------------------------------------------------------------------- |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.type`     | Yes      | Always set to `sqlserver` or `mssql`                                                                   |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.host`     | Yes      | The host name of the SQL Server server                                                                 |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.port`     | Yes      | The port number of the SQL Server server                                                               |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.username` | Yes      | The username of the SQL Server server                                                                  |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.password` | Yes      | The password of the SQL Server server                                                                  |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.database` | No       | The name of the database to connect to                                                                 |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.secure`   | No       | Whether to use a secure connection to the SQL Server server. Set to `true` to use a secure connection. |
+
+:::tip
+
+You can use an arbitrary name for `<DATA_SOURCE_NAME>`.
+
+:::
+
+  </TabItem>
+  <TabItem value="dynamodb" label="DynamoDB">
+
+| Configuration Key                                                          | Required                                  | Description                                                                                                                                                  |
+|:---------------------------------------------------------------------------|:------------------------------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.type`     | Yes                                       | Always set to `dynamodb`                                                                                                                                     |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.region`   | Either `region` or `endpoint` must be set | The AWS region of the DynamoDB instance                                                                                                                      |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.endpoint` | Either `region` or `endpoint` must be set | The AWS endpoint of the DynamoDB instance                                                                                                                    |
+| `spark.sql.catalog.<CATALOG_NAME>.data_source.<DATA_SOURCE_NAME>.schema`   | Yes                                       | A JSON object representing the schema of the catalog. For details on the format, see [Catalog-level mappings](./design.mdx#catalog-level-mappings). |
+
+
+:::tip
+
+You can use an arbitrary name for `<DATA_SOURCE_NAME>`.
+
+:::
+
+  </TabItem>
+</Tabs>
+
+#### Example configuration
+
+Below is an example configuration for ScalarDB Analytics that demonstrates how to set up a catalog named `scalardb` with multiple data sources:
+
+```conf
+# Spark plugin configurations
+spark.jars.packages com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>
+spark.sql.extensions com.scalar.db.analytics.spark.extension.ScalarDbAnalyticsExtensions
+spark.sql.catalog.scalardb com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog
+
+# License configurations
+spark.sql.catalog.scalardb.license.key <LICENSE_KEY>
+spark.sql.catalog.scalardb.license.cert_pem <LICENSE_PEM_ENCODED_CERTIFICATE>
+
+# Data source configurations
+spark.sql.catalog.scalardb.data_source.scalardb.type scalardb
+spark.sql.catalog.scalardb.data_source.scalardb.config_path /path/to/scalardb.properties
+
+spark.sql.catalog.scalardb.data_source.mysql_source.type mysql
+spark.sql.catalog.scalardb.data_source.mysql_source.host localhost
+spark.sql.catalog.scalardb.data_source.mysql_source.port 3306
+spark.sql.catalog.scalardb.data_source.mysql_source.username root
+spark.sql.catalog.scalardb.data_source.mysql_source.password password
+spark.sql.catalog.scalardb.data_source.mysql_source.database mydb
+```
+
+The following describes what you should change the content in the angle brackets to:
+
+- `<LICENSE_KEY>`: The license key for ScalarDB Analytics
+- `<LICENSE_PEM_ENCODED_CERTIFICATE>`: The PEM-encoded certificate of ScalarDB Analytics license
+- `<SPARK_VERSION>`: The major and minor version of Spark you are using (such as 3.4)
+- `<SCALA_VERSION>`: The major and minor version of Scala that matches your Spark installation (such as 2.12 or 2.13)
+- `<SCALARDB_ANALYTICS_VERSION>`: The version of ScalarDB Analytics
+
+### Add the ScalarDB Analytics dependency
+
+ScalarDB Analytics is hosted in the Maven Central Repository. The name of the package is `scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>`, where:
+
+- `<SPARK_VERSION>`: The major and minor version of Spark you are using (such as 3.4)
+- `<SCALA_VERSION>`: The major and minor version of Scala that matches your Spark installation (such as 2.12 or 2.13)
+- `<SCALARDB_ANALYTICS_VERSION>`: The version of ScalarDB Analytics
+
+For details about version compatibility, refer to [Version Compatibility](#version-compatibility).
+
+You can add this dependency to your project by configuring the build settings of your project. For example, if you are using Gradle, you can add the following to your `build.gradle` file:
+
+```groovy
+dependencies {
+    implementation 'com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>'
+}
+```
+
+:::note
+
+If you want bundle your application in a single fat JAR file by using plugins like Gradle Shadow plugin or Maven Shade plugin, you need to exclude ScalarDB Analytics from the fat JAR file by choosing the appropriate configuration, such as `provided` or `shadow`, depending on the plugin you are using.
+
+:::
+
+## Develop a Spark application
+
+In this section, you will learn how to develop a Spark application that uses ScalarDB Analytics in Java.
+
+There are three ways to develop Spark applications with ScalarDB Analytics:
+
+1. **Spark driver application**: A traditional Spark application that runs within the cluster
+2. **Spark Connect application**: A remote application that uses the Spark Connect protocol
+3. **JDBC application**: A remote application that uses the JDBC interface
+
+:::note
+
+Depending on your environment, you may not be able to use all the methods mentioned above. For details about supported features and deployment options, refer to [Supported managed Spark services and their application types](./deployment.mdx#supported-managed-spark-services-and-their-application-types).
+
+:::
+
+With all these methods, you can refer to tables in ScalarDB Analytics using the same table identifier format. For details about how ScalarDB Analytics maps catalog information from data sources, refer to [Catalog information mappings by data source](./design.mdx#catalog-information-mappings-by-data-source).
+
+<Tabs groupId="spark-application-type" queryString>
+  <TabItem value="spark-driver" label="Spark Driver application">
+
+You can use a commonly used `SparkSession` class for ScalarDB Analytics. Additionally, you can use any type of cluster deployment that Spark supports, such as YARN, Kubernetes, standalone, or local mode.
+
+To read data from tables in ScalarDB Analytics, you can use the `spark.sql` or `spark.read.table` function in the same way as when reading a normal Spark table.
+
+First, you need to set up your Java project. For example, if you are using Gradle, you can add the following to your `build.gradle` file:
+
+```groovy
+dependencies {
+    implementation 'com.scalar-labs:scalardb-analytics-spark-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>'
+}
+```
+
+Below is an example of a Spark Driver application:
+
+```java
+import org.apache.spark.sql.SparkSession;
+
+public class MyApp {
+    public static void main(String[] args) {
+        // Create a SparkSession
+        try (SparkSession spark = SparkSession.builder().getOrCreate()) {
+            // Read data from a table in ScalarDB Analytics
+            spark.sql("SELECT * FROM my_catalog.my_data_source.my_namespace.my_table").show();
+        }
+    }
+}
+```
+
+Then, you can build and run your application by using the `spark-submit` command.
+
+:::note
+
+You may need to build a fat JAR file for your application, as is usual for normal Spark applications.
+
+:::
+
+```console
+spark-submit --class MyApp --master local[*] my-spark-application-all.jar
+```
+
+:::tip
+
+You can also use other CLI tools that Spark provides, such as `spark-sql` and `spark-shell`, to interact with ScalarDB Analytics tables.
+
+:::
+
+  </TabItem>
+  <TabItem value="spark-connect" label="Spark Connect application">
+
+You can use [Spark Connect](https://spark.apache.org/spark-connect/) to interact with ScalarDB Analytics. By using Spark Connect, you can access a remote Spark cluster and read data in the same way as a Spark Driver application. The following briefly describes how to use Spark Connect.
+
+First, you need to start a Spark Connect server in the remote Spark cluster by running the following command:
+
+```console
+./sbin/start-connect-server.sh --packages org.apache.spark:spark-connect_<SCALA_VERSION>:<SPARK_FULL_VERSION>,com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>
+```
+
+The following describes what you should change the content in the angle brackets to:
+
+- `<SCALA_VERSION>`: The major and minor version of Scala that matches your Spark installation (such as 2.12 or 2.13)
+- `<SPARK_FULL_VERSION>`: The full version of Spark you are using (such as 3.5.3)
+- `<SPARK_VERSION>`: The major and minor version of Spark you are using (such as 3.5)
+- `<SCALARDB_ANALYTICS_VERSION>`: The version of ScalarDB Analytics
+
+:::note
+
+The versions of the packages must match the versions of Spark and ScalarDB Analytics that you are using.
+
+:::
+
+You also need to include the Spark Connect client package in your application. For example, if you are using Gradle, you can add the following to your `build.gradle` file:
+
+```kotlin
+implementation("org.apache.spark:spark-connect-client-jvm_2.12:3.5.3")
+```
+
+Then, you can write a Spark Connect client application to connect to the server and read data.
+
+```java
+import org.apache.spark.sql.SparkSession;
+
+public class MyApp {
+    public static void main(String[] args) {
+        try (SparkSession spark = SparkSession.builder()
+            .remote("sc://<CONNECT_SERVER_URL>:<CONNECT_SERVER_PORT>")
+            .getOrCreate()) {
+
+            // Read data from a table in ScalarDB Analytics
+            spark.sql("SELECT * FROM my_catalog.my_data_source.my_namespace.my_table").show();
+        }
+    }
+}
+```
+
+You can run your Spark Connect client application as a normal Java application by running the following command:
+
+```console
+java -jar my-spark-connect-client.jar
+```
+
+For details about how you can use Spark Connect, refer to the [Spark Connect documentation](https://spark.apache.org/docs/latest/spark-connect-overview.html).
+
+  </TabItem>
+  <TabItem value="jdbc" label="JDBC application">
+
+Unfortunately, Spark Thrift JDBC server does not support the Spark features that are necessary for ScalarDB Analytics, so you cannot use JDBC to read data from ScalarDB Analytics in your Apache Spark environment. JDBC application is referred to here because some managed Spark services provide different ways to interact with a Spark cluster via the JDBC interface. For more details, refer to [Supported application types](./deployment.mdx#supported-managed-spark-services-and-their-application-types).
+
+  </TabItem>
+</Tabs>
+
+## Catalog information mapping
+
+ScalarDB Analytics manages its own catalog, containing data sources, namespaces, tables, and columns. That information is automatically mapped to the Spark catalog. In this section, you will learn how ScalarDB Analytics maps its catalog information to the Spark catalog.
+
+For details about how information in the raw data sources is mapped to the ScalarDB Analytics catalog, refer to [Catalog information mappings by data source](./design.mdx#catalog-information-mappings-by-data-source).
+
+### Catalog level mapping
+
+Each catalog level object in the ScalarDB Analytics catalog is mapped to a Spark catalog. The following table shows how the catalog levels are mapped:
+
+#### Data source tables
+
+Tables from data sources in the ScalarDB Analytics catalog are mapped to Spark tables. The following format is used to represent the identity of the Spark tables that correspond to ScalarDB Analytics tables:
+
+```console
+<CATALOG_NAME>.<DATA_SOURCE_NAME>.<NAMESPACE_NAMES>.<TABLE_NAME>
+```
+
+The following describes what you should change the content in the angle brackets to:
+
+- `<CATALOG_NAME>`: The name of the catalog.
+- `<DATA_SOURCE_NAME>`: The name of the data source.
+- `<NAMESPACE_NAMES>`: The names of the namespaces. If the namespace names are multi-level, they are concatenated with a dot (`.`) as the separator.
+- `<TABLE_NAME>`: The name of the table.
+
+For example, if you have a ScalarDB catalog named `my_catalog` that contains a data source named `my_data_source` and a schema named `my_schema`, you can refer to the table named `my_table` in that schema as `my_catalog.my_data_source.my_schema.my_table`.
+
+#### Views
+
+Views in ScalarDB Analytics are provided as tables in the Spark catalog, not views. The following format is used to represent the identity of the Spark tables that correspond to ScalarDB Analytics views:
+
+```console
+<CATALOG_NAME>.view.<VIEW_NAMESPACE_NAMES>.<VIEW_NAME>
+```
+
+The following describes what you should change the content in the angle brackets to:
+
+- `<CATALOG_NAME>`: The name of the catalog.
+- `<VIEW_NAMESPACE_NAMES>`: The names of the view namespaces. If the view namespace names are multi-level, they are concatenated with a dot (`.`) as the separator.
+- `<VIEW_NAME>`: The name of the view.
+
+For example, if you have a ScalarDB catalog named `my_catalog` and a view namespace named `my_view_namespace`, you can refer to the view named `my_view` in that namespace as `my_catalog.view.my_view_namespace.my_view`.
+
+:::note
+
+`view` is prefixed to avoid conflicts with the data source table identifier.
+
+:::
+
+##### WAL-interpreted views
+
+As explained in [ScalarDB Analytics Design](./design.mdx), ScalarDB Analytics provides a functionality called WAL-interpreted views, which is a special type of views. These views are automatically created for tables of ScalarDB data sources to provide a user-friendly view of the data by interpreting WAL-metadata in the tables.
+
+Since the data source name and the namespace names of the original ScalarDB tables are used as the view namespace names for WAL-interpreted views, if you have a ScalarDB table named `my_table` in a namespace named `my_namespace` of a data source named `my_data_source`, you can refer to the WAL-interpreted view of the table as `my_catalog.view.my_data_source.my_namespace.my_table`.
+
+### Data-type mapping
+
+ScalarDB Analytics maps data types in its catalog to Spark data types. The following table shows how the data types are mapped:
+
+| ScalarDB Data Type | Spark Data Type    |
+| :----------------- | :----------------- |
+| `BYTE`             | `Byte`             |
+| `SMALLINT`         | `Short`            |
+| `INT`              | `Integer`          |
+| `BIGINT`           | `Long`             |
+| `FLOAT`            | `Float`            |
+| `DOUBLE`           | `Double`           |
+| `DECIMAL`          | `Decimal`          |
+| `TEXT`             | `String`           |
+| `BLOB`             | `Binary`           |
+| `BOOLEAN`          | `Boolean`          |
+| `DATE`             | `Date`             |
+| `TIME`             | `TimestampNTZ`     |
+| `TIMESTAMP`        | `TimestampNTZ`     |
+| `TIMESTAMPTZ`      | `Timestamp`        |
+| `DURATION`         | `CalendarInterval` |
+| `INTERVAL`         | `CalendarInterval` |
+
+## Version compatibility
+
+Since Spark and Scala may be incompatible among different minor versions, ScalarDB Analytics offers different artifacts for various Spark and Scala versions, named in the format `scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>`. Make sure that you select the artifact matching the Spark and Scala versions you're using. For example, if you're using Spark 3.5 with Scala 2.13, you must specify `scalardb-analytics-spark-all-3.5_2.13`.
+
+Regarding the Java version, ScalarDB Analytics supports Java 8 or later.
+
+The following is a list of Spark and Scalar versions supported by each version of ScalarDB Analytics.
+
+| ScalarDB Analytics Version | ScalarDB Version | Spark Versions Supported | Scala Versions Supported | Minimum Java Version |
+|:---------------------------|:-----------------|:-------------------------|:-------------------------|:---------------------|
+| 3.16                       | 3.16             | 3.5, 3.4                 | 2.13, 2.12               | 8                    |
+| 3.15                       | 3.15             | 3.5, 3.4                 | 2.13, 2.12               | 8                    |

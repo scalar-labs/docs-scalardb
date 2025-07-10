@@ -1,0 +1,224 @@
+---
+tags:
+  - Enterprise Premium
+displayed_sidebar: docsEnglish
+---
+
+# ScalarDB JDBC Guide
+
+The usage of ScalarDB JDBC basically follows [Java JDBC API](https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/).
+This guide describes several important topics that are specific to ScalarDB JDBC.
+
+## Add ScalarDB JDBC driver to your project
+
+To add the dependencies for the ScalarDB JDBC driver by using Gradle, use the following, replacing `<VERSION>` with the versions of the ScalarDB JDBC driver and the related library, respectively, that you are using:
+
+```gradle
+dependencies {
+    implementation 'com.scalar-labs:scalardb-sql-jdbc:<VERSION>'
+    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:<VERSION>'
+}
+```
+
+To add the dependencies by using Maven, use the following, replacing `...` with the version of the ScalarDB JDBC driver that you are using:
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.scalar-labs</groupId>
+        <artifactId>scalardb-sql-jdbc</artifactId>
+        <version>...</version>
+    </dependency>
+    <dependency>
+        <groupId>com.scalar-labs</groupId>
+        <artifactId>scalardb-cluster-java-client-sdk</artifactId>
+        <version>...</version>
+    </dependency>
+</dependencies>
+```
+
+## JDBC connection URL
+
+The JDBC connection URL format of ScalarDB JDBC is as follows:
+
+```console
+jdbc:scalardb:<configuration file path>?<property name>=<property value>&<property name>=<property value>&...
+```
+
+For example:
+
+Only specify configuration file path:
+
+```console
+jdbc:scalardb:/path/to/database.properties
+```
+
+Only specify properties:
+
+```console
+jdbc:scalardb:?scalar.db.contact_points=localhost&scalar.db.username=cassandra&scalar.db.password=cassandra&scalar.db.storage=cassandra
+```
+
+Specify configuration file path and properties:
+
+```console
+jdbc:scalardb:/path/to/database.properties?scalar.db.metadata.cache_expiration_time_secs=0
+```
+
+## Configurations for ScalarDB JDBC
+
+Please see [ScalarDB Cluster SQL client configurations](../scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-client-configurations) for details on the configurations.
+
+In addition, the ScalarDB JDBC specific configurations are as follows:
+
+| name                                                                | description                                                                 | default |
+|---------------------------------------------------------------------|-----------------------------------------------------------------------------|---------|
+| scalar.db.sql.jdbc.default_auto_commit                              | The default auto-commit mode for connections.                               | true    |
+| scalar.db.sql.jdbc.default_read_only                                | The default read-only state for connections.                                | false   |
+| scalar.db.sql.jdbc.sql_session_factory_cache.expiration_time_millis | The expiration time in milliseconds for the cache of SQL session factories. | 10000   |
+
+## Data type mapping between ScalarDB and JDBC
+
+Since ScalarDB doesn't support all the data types defined in JDBC, the following explains the data type mapping between ScalarDB and JDBC.
+
+The data type mapping between ScalarDB and JDBC is as follows:
+
+| ScalarDB Type | JDBC (Java) Type        |
+|---------------|-------------------------|
+| BOOLEAN       | boolean or Boolean      |
+| INT           | int or Integer          |
+| BIGINT        | long or Long            |
+| FLOAT         | float or Float          |
+| DOUBLE        | double or Double        |
+| TEXT          | String                  |
+| BLOB          | byte[]                  |
+| DATE          | java.time.LocalDate     |
+| TIME          | java.time.LocalTime     |
+| TIMESTAMP     | java.time.LocalDateTime |
+| TIMESTAMPTZ   | java.time.Instant       |
+
+How to get the data from a `java.sql.ResultSet` object for each data type is as follows:
+
+```java
+try (ResultSet resultSet = ...) {
+  resultSet.next();
+
+  // Get a BOOLEAN value of a column
+  boolean booleanValue = resultSet.getBoolean("<column name>");
+
+  // Get an INT value of a column
+  int intValue = resultSet.getInt("<column name>");
+
+  // Get a BIGINT value of a column
+  long bigIntValue = resultSet.getLong("<column name>");
+
+  // Get a FLOAT value of a column
+  float floatValue = resultSet.getFloat("<column name>");
+
+  // Get a DOUBLE value of a column
+  double doubleValue = resultSet.getDouble("<column name>");
+
+  // Get a TEXT value of a column
+  String textValue = resultSet.getString("<column name>");
+
+  // Get a BLOB value of a column
+  byte[] blobValue = resultSet.getBytes("<column name>");
+  
+  // Get a DATE value of a column
+  LocalDate dateValue = resultSet.getObject("<column name>", LocalDate.class);
+  
+  // Get a TIME value of a column
+  LocalTime timeValue = resultSet.getObject("<column name>", LocalTime.class);
+  
+  // Get a TIMESTAMP value of a column
+  LocalDateTime timestampValue = resultSet.getObject("<column name>", LocalDateTime.class);
+  
+  // Get a TIMESTAMPTZ value of a column
+  Instant timestampTZValue = resultSet.getObject("<column name>", Instant.class);
+}
+```
+
+How to set the data as a parameter for each data type for a `java.sql.PreparedStatement` object is as follows:
+
+```java
+try (PreparedStatement preparedStatement = ...) {
+  // Set a BOOLEAN value as parameter
+  preparedStatement.setBoolean(1, <BOOLEAN value>);
+
+  // Set an INT value as parameter
+  preparedStatement.setInt(2, <INT value>);
+
+  // Set a BIGINT value as parameter
+  preparedStatement.setLong(3, <BIGINT value>);
+
+  // Set a FLOAT value as parameter
+  preparedStatement.setFloat(4, <FLOAT value>);
+
+  // Set a DOUBLE value as parameter
+  preparedStatement.setDouble(5, <DOUBLE value>);
+
+  // Set a TEXT value as parameter
+  preparedStatement.setString(7, "<TEXT value>");
+
+  // Set a BLOB value as parameter
+  preparedStatement.setBytes(8, <BLOB value>);
+  
+  //Set a DATE value as parameter
+  preparedStatement.setObject(9, <LocalDate value>);
+  
+  //Set a TIME value as parameter
+  preparedStatement.setObject(10, <LocalTime value>);
+
+  //Set a TIMESTAMP value as parameter
+  preparedStatement.setObject(11, <LocalDateTime value>);
+
+  //Set a TIMESTAMPTZ value as parameter
+  preparedStatement.setObject(12, <Instant value>);
+
+  preparedStatement.execute();
+}
+```
+
+## Handle SQLException
+
+The exception handling is basically the same as ScalarDB SQL API as follows:
+
+```java
+// If you execute multiple statements in a transaction, you need to set auto-commit to false.
+connection.setAutoCommit(false);
+
+try {
+  // Execute statements (SELECT/INSERT/UPDATE/DELETE) in the transaction
+  ...
+
+  // Commit the transaction
+  connection.commit();
+} catch (SQLException e) {
+  if (e.getErrorCode() == 301) {
+    // The error code 301 indicates that you catch `UnknownTransactionStatusException`.
+    // If you catch `UnknownTransactionStatusException`, it indicates that the status of the 
+    // transaction, whether it has succeeded or not, is unknown. In such a case, you need to check
+    // if the transaction is committed successfully or not and retry it if it failed. How to 
+    // identify a transaction status is delegated to users
+  } else {
+    // For other cases, you can try retrying the transaction
+
+    // Rollback the transaction
+    connection.rollback();
+
+    // The cause of the exception can be `TransactionRetryableException` or the other
+    // exceptions. For `TransactionRetryableException`, you can basically retry the transaction.
+    // However, for the other exceptions, the transaction may still fail if the cause of the
+    // exception is nontransient. For such a case, you need to limit the number of retries and
+    // give up retrying
+  }
+}
+```
+
+Please see also [ScalarDB SQL API Guide](sql-api-guide.mdx) for more details on exception handling.
+
+## References
+
+- [Java JDBC API](https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/)
+- [ScalarDB SQL API Guide](sql-api-guide.mdx)
+- [Javadoc for ScalarDB JDBC](https://javadoc.io/doc/com.scalar-labs/scalardb-sql-jdbc/3.16.0/index.html)
