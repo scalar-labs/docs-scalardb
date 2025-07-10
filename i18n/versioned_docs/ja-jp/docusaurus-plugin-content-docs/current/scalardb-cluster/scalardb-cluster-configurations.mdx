@@ -116,6 +116,8 @@ Consensus Commit にはストレージ抽象化レイヤーがあり、複数の
     | `scalar.db.jdbc.admin.connection_pool.min_idle`           | 管理者の接続プール内のアイドル接続の最小数。                                                                                                         | `5`                          |
     | `scalar.db.jdbc.admin.connection_pool.max_idle`           | 管理者の接続プール内でアイドル状態のままにできる接続の最大数。                                                                                         | `10`                         |
     | `scalar.db.jdbc.admin.connection_pool.max_total`          | 管理者の接続プールで同時にアクティブにできるアイドル接続と借用接続の最大合計数。制限がない場合は負の値を使用します。              | `25`                         |
+    | `scalar.db.jdbc.db2.variable_key_column_size`             | IBM Db2 で主キーまたはセカンダリキーとして使用される場合の TEXT 列と BLOB 列の列サイズ。最小 64 バイト。                                                                                                                                | `128`                        |
+    | `scalar.db.jdbc.db2.time_column.default_date_component`   | IBM Db2 で `TIME` データを格納するために使用される日付コンポーネントの値。ScalarDB の `TIME` 型データを格納するために IBM Db2 の TIMESTAMP 型が使用されるため (小数秒の精度を提供するため)、ScalarDB は比較と並べ替えを容易にするために、同じ日付コンポーネント値を持つ `TIME` データを保存します。 | `1970-01-01`                 |
 
 :::note
 

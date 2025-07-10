@@ -258,6 +258,40 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
     - uniqueidentifier
     - xml
   </TabItem>
+  <TabItem value="Db2" label="Db2">
+    | Db2                   | ScalarDB                               | 注意事項                            |
+    |-----------------------|----------------------------------------|------------------------------------|
+    | BIGINT                | BIGINT                                 | 下記の警告 [1](#1) を参照してください。 |
+    | BINARY                | BLOB                                   |                                    |
+    | BLOB                  | BLOB                                   |                                    |
+    | BOOLEAN               | BOOLEAN                                |                                    |
+    | CHAR                  | TEXT                                   |                                    |
+    | CHAR FOR BIT DATA     | BLOB                                   |                                    |
+    | CLOB                  | TEXT                                   |                                    |
+    | DATE                  | DATE                                   |                                    |
+    | DOUBLE                | DOUBLE                                 | 下記の警告 [2](#2) を参照してください。 |
+    | FLOAT(p), with p ≤ 24 | FLOAT                                  | 下記の警告 [2](#2) を参照してください。 |
+    | FLOAT(p), with p ≥ 25 | DOUBLE                                 | 下記の警告 [2](#2) を参照してください。 |
+    | GRAPHIC               | TEXT                                   |                                    |
+    | INT                   | INT                                    |                                    |
+    | NCHAR                 | TEXT                                   |                                    |
+    | NCLOB                 | TEXT                                   |                                    |
+    | NVARCHAR              | TEXT                                   |                                    |
+    | REAL                  | FLOAT                                  | 下記の警告 [2](#2) を参照してください。 |
+    | SMALLINT              | INT                                    |                                    |
+    | TIME                  | TIME                                   |                                    |
+    | TIMESTAMP             | TIMESTAMP (default), TIME, TIMESTAMPTZ | 下記の警告 [6](#6) を参照してください。 |
+    | VARBINARY             | BLOB                                   |                                    |
+    | VARCHAR               | TEXT                                   |                                    |
+    | VARCHAR FOR BIT DATA  | BLOB                                   |                                    |
+    | VARGRAPHIC            | TEXT                                   |                                    |
+
+    上記にリストされていないデータ型はサポートされていません。以下は、サポートされていない一般的なデータ型の例です：
+
+    - decimal
+    - decfloat
+    - xml
+  </TabItem>
 </Tabs>
 
 :::warning

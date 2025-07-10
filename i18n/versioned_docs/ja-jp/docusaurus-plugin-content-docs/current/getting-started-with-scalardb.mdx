@@ -148,6 +148,29 @@ ScalarDB がサポートするデータベースの一覧については、[デ�
     scalar.db.password=SqlServer22
     ```
   </TabItem>
+  <TabItem value="Db2" label="Db2">
+    <h3>Db2 をローカルで実行する</h3>
+
+    `scalardb-samples/scalardb-sample` ディレクトリの `docker-compose.yml` ファイルを使用して、Docker Compose で IBM Db2 を実行できます。
+
+    IBM Db2 を起動するには、次のコマンドを実行します。
+
+    ```console
+    docker compose up -d db2
+    ```
+
+    <h3>ScalarDB を設定する</h3>
+
+    `scalardb-samples/scalardb-sample` ディレクトリの **database.properties** ファイルには、ScalarDB のデータベース設定が含まれています。**database.properties** ファイル内の Db2 のプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For Db2
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:db2://localhost:50000/sample
+    scalar.db.username=db2inst1
+    scalar.db.password=db2inst1
+    ```
+  </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     <h3>Amazon DynamoDB をローカルで実行する</h3>
 
