@@ -121,7 +121,13 @@ scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
 ScalarDB Cluster 経由でスキーマをロードするには、専用の ScalarDB Cluster 用 Schema Loader (クラスター用 Schema Loader) を使用する必要があります。クラスター用Schema Loader の使用方法は、JAR ファイルの名前が異なることを除いて、[ScalarDB Schema Loader](../schema-loader.mdx) の使用方法と基本的に同じです。クラスター用 Schema Loader は、[ScalarDB リリース](https://github.com/scalar-labs/scalardb/releases/tag/v3.13.4) からダウンロードできます。JAR ファイルをダウンロードしたら、次のコマンドでクラスター用 Schema Loader を実行できます。
 
 ```console
-java -jar scalardb-cluster-schema-loader-3.13.4-all.jar --config <PATH_TO_CONFIG_FILE> -f <PATH_TO_SCHEMA_FILE> --coordinator
+java -jar scalardb-cluster-schema-loader-3.13.4-all.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> --schema-file <PATH_TO_SCHEMA_FILE> --coordinator
+```
+
+次のコマンドを実行して、[Scalar コンテナレジストリ](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-cluster-schema-loader) から Docker イメージを取得することもできます。山括弧内の内容は説明に従って置き換えてください:
+
+```console
+docker run --rm -v <PATH_TO_YOUR_LOCAL_SCALARDB_PROPERTIES_FILE>:/scalardb.properties -v <PATH_TO_YOUR_LOCAL_SCHEMA_FILE>:/schema.json ghcr.io/scalar-labs/scalardb-cluster-schema-loader:3.13.4 --config /scalardb.properties --schema-file /schema.json --coordinator
 ```
 
 ## ScalarDB Cluster SQL
@@ -259,7 +265,13 @@ Spring Data JDBC for ScalarDB の設定方法の詳細については、[設定]
 Cluster 用の SQL CLI は、[ScalarDB リリース](https://github.com/scalar-labs/scalardb/releases/tag/v3.13.4) からダウンロードできます。JAR ファイルをダウンロードしたら、次のコマンドで SQL CLI を実行できます。
 
 ```console
-java -jar scalardb-cluster-sql-cli-3.13.4-all.jar --config <PATH_TO_CONFIG_FILE>
+java -jar scalardb-cluster-sql-cli-3.13.4-all.jar --config <PATH_TO_SCALARDB_SQL_PROPERTIES_FILE>
+```
+
+次のコマンドを実行して、[Scalar コンテナレジストリ](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-cluster-sql-cli) から Docker イメージを取得することもできます。山括弧内の内容は説明に従って置き換えてください:
+
+```console
+docker run --rm -it -v <PATH_TO_YOUR_LOCAL_SCALARDB_SQL_PROPERTIES_FILE>:/scalardb-sql.properties ghcr.io/scalar-labs/scalardb-cluster-sql-cli:3.13.4 --config /scalardb-sql.properties
 ```
 
 #### 使用方法
