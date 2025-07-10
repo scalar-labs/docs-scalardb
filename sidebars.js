@@ -906,6 +906,16 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'scalardb-schema-loader-status-codes',
+              label: 'ScalarDB Schema Loader',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-data-loader-status-codes',
+              label: 'ScalarDB Data Loader',
+            },
+            {
+              type: 'doc',
               id: 'scalardb-cluster/scalardb-auth-status-codes',
               label: 'Authentication and Authorization',
             },
@@ -1829,6 +1839,16 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-sql/scalardb-sql-status-codes',
               label: 'ScalarDB SQL',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-schema-loader-status-codes',
+              label: 'ScalarDB Schema Loader',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-data-loader-status-codes',
+              label: 'ScalarDB Data Loader',
             },
             {
               type: 'doc',
