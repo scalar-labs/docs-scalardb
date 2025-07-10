@@ -1,0 +1,301 @@
+---
+tags:
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Cluster SQL を介してトランザクションを実行する
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<TranslationBanner />
+
+このガイドでは、ScalarDB プロパティファイルを設定する方法と、ScalarDB Cluster SQL を使用して1フェーズまたは2フェーズのコミットインターフェイスを介してトランザクションを実行するためのスキーマを作成する方法について説明します。
+
+:::warning
+
+ScalarDB Cluster のライセンスキー (試用ライセンスまたは商用ライセンス) が必要です。ライセンスキーをお持ちでない場合は、[お問い合わせ](https://www.scalar-labs.com/contact)ください。
+
+:::
+
+## 準備
+
+このガイドでは、ScalarDB サンプルリポジトリのサンプルを使用して、データベースと ScalarDB Cluster をスタンドアロンモードでセットアップします。
+
+:::note
+
+スタンドアロンモードの ScalarDB Cluster は、主に開発とテストを目的としています。
+
+:::
+
+### ScalarDB サンプルリポジトリのクローンを作成する
+
+**ターミナル** を開き、次のコマンドを実行して ScalarDB サンプルリポジトリのクローンを作成します。
+
+```console
+git clone https://github.com/scalar-labs/scalardb-samples
+```
+
+次に、次のコマンドを実行して、必要なファイルが含まれているディレクトリに移動します。
+
+```console
+cd scalardb-samples/scalardb-cluster-standalone-mode
+```
+
+## データベースをセットアップする
+
+データベースを選択し、指示に従って ScalarDB Cluster 用に設定します。
+
+ScalarDB がサポートするデータベースの一覧については、[データベース](../requirements.mdx#データベース)を参照してください。
+
+<Tabs groupId="databases" queryString>
+  <TabItem value="MySQL" label="MySQL" default>
+    <h3>MySQL をローカルで実行する</h3>
+
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの `docker-compose.yaml` ファイルを使用して、Docker Compose で MySQL を実行できます。
+
+    MySQL を起動するには、次のコマンドを実行します。
+
+    ```console
+    docker compose up -d mysql
+    ```
+
+    <h3>ScalarDB Cluster を設定する</h3>
+
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース設定が含まれています。**scalardb-cluster-node.properties** ファイル内の MySQL のプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For MySQL
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:mysql://mysql-1:3306/
+    scalar.db.username=root
+    scalar.db.password=mysql
+    ```
+  </TabItem>
+  <TabItem value="PostgreSQL" label="PostgreSQL" default>
+    <h3>PostgreSQL をローカルで実行する</h3>
+
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの `docker-compose.yaml` ファイルを使用して、Docker Compose で PostgreSQL を実行できます。
+
+    PostgreSQL を起動するには、次のコマンドを実行します。
+
+    ```console
+    docker compose up -d postgres
+    ```
+
+    <h3>ScalarDB Cluster を設定する</h3>
+
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース設定が含まれています。**scalardb-cluster-node.properties** ファイル内の PostgreSQL のプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For PostgreSQL
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:postgresql://postgres-1:5432/
+    scalar.db.username=postgres
+    scalar.db.password=postgres
+    ```
+  </TabItem>
+  <TabItem value="Oracle Database" label="Oracle Database" default>
+    <h3>Oracle Database をローカルで実行する</h3>
+
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの `docker-compose.yaml` ファイルを使用して、Docker Compose で Oracle Database を実行できます。
+
+    Oracle Database を起動するには、次のコマンドを実行します。
+
+    ```console
+    docker compose up -d oracle
+    ```
+
+    <h3>ScalarDB Cluster を設定する</h3>
+
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース設定が含まれています。**scalardb-cluster-node.properties** ファイル内の Oracle データベースのプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For Oracle
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:oracle:thin:@//oracle-1:1521/FREEPDB1
+    scalar.db.username=SYSTEM
+    scalar.db.password=Oracle
+    ```
+  </TabItem>
+  <TabItem value="SQL Server" label="SQL Server" default>
+    <h3>SQL Server をローカルで実行する</h3>
+
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの `docker-compose.yaml` ファイルを使用して、Docker Compose で SQL Server を実行できます。
+
+    SQL Server を起動するには、次のコマンドを実行します。
+
+    ```console
+    docker compose up -d sqlserver
+    ```
+
+    <h3>ScalarDB Cluster を設定する</h3>
+
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース設定が含まれています。**scalardb-cluster-node.properties** ファイル内の SQL Server のプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For SQL Server
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:sqlserver://sqlserver-1:1433;encrypt=true;trustServerCertificate=true
+    scalar.db.username=sa
+    scalar.db.password=SqlServer22
+    ```
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    <h3>Amazon DynamoDB Local を実行する</h3>
+
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの `docker-compose.yaml` ファイルを使用して、Docker Compose で Amazon DynamoDB Local を実行できます。
+
+    Amazon DynamoDB Local を起動するには、次のコマンドを実行します。
+
+    ```console
+    docker compose up -d dynamodb
+    ```
+
+    <h3>ScalarDB Cluster を設定する</h3>
+
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース設定が含まれています。**scalardb-cluster-node.properties** ファイル内の Amazon DynamoDB Local のプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For DynamoDB Local
+    scalar.db.storage=dynamo
+    scalar.db.contact_points=sample
+    scalar.db.username=sample
+    scalar.db.password=sample
+    scalar.db.dynamo.endpoint_override=http://dynamodb-1:8000
+    ```
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    Azure Cosmos DB for NoSQL を使用するには、Azure アカウントが必要です。Azure アカウントがない場合は、[Azure Cosmos DB アカウントを作成する](https://learn.microsoft.com/ja-jp/azure/cosmos-db/nosql/quickstart-portal#create-account)にアクセスしてください。
+
+    <h3>Cosmos DB for NoSQL を設定する</h3>
+
+    [既定の整合性レベルを構成する](https://learn.microsoft.com/ja-jp/azure/cosmos-db/nosql/how-to-manage-consistency#configure-the-default-consistency-level)の公式ドキュメントに従って、**既定の整合性レベル** を **強力** に設定します。
+
+    <h3>ScalarDB Cluster を設定する</h3>
+
+    次の手順では、ローカル環境に JDK が適切にインストールおよび設定されており、Azure で Cosmos DB for NoSQL アカウントが適切に設定されていることを前提としています。
+
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース設定が含まれています。説明に従って、`scalar.db.contact_points` と `scalar.db.password` の値を必ず変更してください。
+
+    ```properties
+    # For Cosmos DB
+    scalar.db.storage=cosmos
+    scalar.db.contact_points=<COSMOS_DB_FOR_NOSQL_URI>
+    scalar.db.password=<COSMOS_DB_FOR_NOSQL_KEY>
+    ```
+
+:::note
+
+Azure Cosmos DB アカウントの主キーまたはセカンダリキーを `scalar.db.password` の値として使用できます。
+
+:::
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    <h3>Cassandra をローカルで実行する</h3>
+
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの `docker-compose.yaml` ファイルを使用して、Docker Compose で Apache Cassandra を実行できます。
+
+    Apache Cassandra を起動するには、次のコマンドを実行します。
+
+    ```console
+    docker compose up -d cassandra
+    ```
+
+    <h3>ScalarDB Cluster を設定する</h3>
+
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース設定が含まれています。**scalardb-cluster-node.properties** ファイル内の Cassandra のプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For Cassandra
+    scalar.db.storage=cassandra
+    scalar.db.contact_points=cassandra-1
+    scalar.db.username=cassandra
+    scalar.db.password=cassandra
+    ```
+  </TabItem>
+</Tabs>
+
+ScalarDB Cluster SQL の設定の包括的なリストについては、[ScalarDB Cluster SQL クライアント設定](developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-クライアント設定)を参照してください。
+
+## スタンドアロンモードで ScalarDB Cluster を設定する
+
+スタンドアロンモードで ScalarDB Cluster を設定するには、ライセンスキーを設定してから ScalarDB Cluster を起動する必要があります。
+
+### ライセンスキーの設定
+
+プロパティファイルで ScalarDB Cluster のライセンスキー (試用ライセンスまたは商用ライセンス) を設定します。詳細については、[製品ライセンスキーの設定方法](../scalar-licensing/index.mdx)を参照してください。
+
+### スタンドアロンモードで ScalarDB Cluster を起動
+
+スタンドアロンモードで ScalarDB Cluster を起動するには、次のコマンドを実行します。
+
+:::note
+
+ScalarDB Cluster のその他の設定を変更する場合は、以下のコマンドを実行する前に `scalardb-cluster-node.properties` ファイルを更新してください。
+
+:::
+
+```console
+docker compose up -d scalardb-cluster-node
+```
+
+## スキーマを作成またはインポートする
+
+ScalarDB には、実装固有のデータモデルとスキーマにマップされる独自のデータモデルとスキーマがあります。
+
+- **データベーススキーマを作成する必要がありますか?** [クラスター用 Schema Loader](developer-guide-for-scalardb-cluster-with-java-api.mdx#クラスター用-schema-loader) を参照してください。
+- **既存のデータベースをインポートする必要がありますか?** [ScalarDB Schema Loader を使用して既存のテーブルを ScalarDB にインポートする](../schema-loader-import.mdx)を参照してください。
+
+## トランザクションを実行する
+
+1フェーズまたは2フェーズのコミットインターフェースを使用してトランザクションを実行できます。トランザクションを実行する方法を選択します。
+
+<Tabs groupId="databases" queryString>
+  <TabItem value="JDBC" label="JDBC" default>
+    <h3>1フェーズコミットインターフェース</h3>
+
+    1フェーズコミットインターフェースを使用してトランザクションを実行する方法の詳細については、[ScalarDB SQL JDBC ガイド](../scalardb-sql/jdbc-guide.mdx)を参照してください。
+
+:::note
+
+2フェーズコミットインターフェースでトランザクションを実行する方法に関するドキュメントは近日公開予定です。
+
+:::
+  </TabItem>
+  <TabItem value="Java" label="Java">
+    <h3>1フェーズコミットインターフェース</h3>
+
+    1フェーズコミットインターフェースを使用してトランザクションを実行する方法の詳細については、[ScalarDB SQL API ガイド](../scalardb-sql/sql-api-guide.mdx)を参照してください。
+
+:::note
+
+2フェーズコミットインターフェースでトランザクションを実行する方法に関するドキュメントは近日公開予定です。
+
+:::
+
+    <h3>詳細</h3>
+
+    ScalarDB Cluster SQL を使用してトランザクションを実行する方法の詳細については、以下を参照してください。
+
+    - [ScalarDB Cluster SQL gRPC API ガイド](scalardb-cluster-sql-grpc-api-guide.mdx)
+  </TabItem>
+  <TabItem value="NET_LINQ" label=".NET (LINQ)">
+    <h3>1フェーズまたは2フェーズコミットインターフェイス</h3>
+
+    1フェーズまたは2フェーズコミットインターフェイスを使用してトランザクションを実行する方法の詳細については、[ScalarDB Cluster .NET Client SDK での LINQ をはじめよう](../scalardb-cluster-dotnet-client-sdk/getting-started-with-linq.mdx#トランザクションの管理)を参照してください。
+  </TabItem>
+  <TabItem value="NET_SQL" label=".NET (SQL)">
+    <h3>1フェーズコミットインターフェース</h3>
+
+    1フェーズコミットインターフェイスを使用してトランザクションを実行する方法の詳細については、[ScalarDB Cluster .NET Client SDK での分散 SQL トランザクションをはじめよう](../scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-sql-transactions.mdx)を参照してください。
+
+:::note
+
+2フェーズコミットインターフェースでトランザクションを実行する方法に関するドキュメントは近日公開予定です。今のところは、[ScalarDB Cluster .NET Client SDK の2フェーズコミットインターフェイスを使用した分散トランザクションをはじめよう](../scalardb-cluster-dotnet-client-sdk/getting-started-with-two-phase-commit-transactions.mdx) を参照してください。
+
+:::
+  </TabItem>
+</Tabs>

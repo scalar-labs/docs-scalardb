@@ -1,0 +1,734 @@
+---
+tags:
+  - Enterprise Premium Option
+  - Private Preview
+displayed_sidebar: docsEnglish
+---
+
+# Attribute-Based Access Control Error Codes
+
+This page provides a list of error codes related to attribute-based access control.
+
+## Error code classes and descriptions
+
+| Class           | Description                                   |
+|:----------------|:----------------------------------------------|
+| `DB-ABAC-1xxxx` | Errors for the user error category            |
+| `DB-ABAC-2xxxx` | Errors for the concurrency error category     |
+| `DB-ABAC-3xxxx` | Errors for the internal error category        |
+
+## `DB-ABAC-1xxxx` status codes
+
+The following are status codes and messages for the user error category.
+
+### `DB-ABAC-10000`
+
+**Message**
+
+```markdown
+The put operation is not supported. Use insert, upsert, or update instead
+```
+
+### `DB-ABAC-10001`
+
+**Message**
+
+```markdown
+The default level must be less than or equal to the level. Default-level short name: %s; Default-level number: %d; Level short name: %s; Level number: %d
+```
+
+### `DB-ABAC-10002`
+
+**Message**
+
+```markdown
+The row level must be less than or equal to the level. Row-level short name: %s; Row-level number: %d; Level short name: %s; Level number: %d
+```
+
+### `DB-ABAC-10003`
+
+**Message**
+
+```markdown
+The operation does not have the target namespace or table name. Operation: %s
+```
+
+### `DB-ABAC-10004`
+
+**Message**
+
+```markdown
+The policy does not exist. Policy: %s
+```
+
+### `DB-ABAC-10005`
+
+**Message**
+
+```markdown
+The level does not exist. Policy: %s; Level short name: %s
+```
+
+### `DB-ABAC-10006`
+
+**Message**
+
+```markdown
+The compartment does not exist. Policy: %s; Compartment short name: %s
+```
+
+### `DB-ABAC-10007`
+
+**Message**
+
+```markdown
+The group does not exist. Policy: %s; Group short name: %s
+```
+
+### `DB-ABAC-10008`
+
+**Message**
+
+```markdown
+The policy already exists. Policy: %s
+```
+
+### `DB-ABAC-10009`
+
+**Message**
+
+```markdown
+The data tag column name is already in use in the policy %s. Policy: %s; Data tag column name: %s
+```
+
+### `DB-ABAC-10010`
+
+**Message**
+
+```markdown
+The level already exists. Policy: %s; Level short name: %s
+```
+
+### `DB-ABAC-10011`
+
+**Message**
+
+```markdown
+The compartment already exists. Policy: %s; Compartment short name: %s
+```
+
+### `DB-ABAC-10012`
+
+**Message**
+
+```markdown
+The group already exists. Policy: %s; Group short name: %s
+```
+
+### `DB-ABAC-10013`
+
+**Message**
+
+```markdown
+The parent group does not exist. Policy: %s; Group short name: %s; Parent-group short name: %s
+```
+
+### `DB-ABAC-10014`
+
+**Message**
+
+```markdown
+The parent group is the same as the child group. Policy: %s; Group short name: %s; Parent-group short name: %s
+```
+
+### `DB-ABAC-10015`
+
+**Message**
+
+```markdown
+The group has child groups. Policy: %s; Group short name: %s
+```
+
+### `DB-ABAC-10016`
+
+**Message**
+
+```markdown
+The compartment cannot be a row compartment for read-only access mode. Policy: %s; User: %s; Compartment short name: %s
+```
+
+### `DB-ABAC-10017`
+
+**Message**
+
+```markdown
+The compartment is already assigned to the user. Policy: %s; User: %s; Compartment short name: %s
+```
+
+### `DB-ABAC-10018`
+
+**Message**
+
+```markdown
+The group cannot be a row group for read-only access mode. Policy: %s; User: %s; Group short name: %s
+```
+
+### `DB-ABAC-10019`
+
+**Message**
+
+```markdown
+The group is already assigned to the user. Policy: %s; User: %s; Group short name: %s
+```
+
+### `DB-ABAC-10020`
+
+**Message**
+
+```markdown
+The namespace does not exist. Namespace: %s
+```
+
+### `DB-ABAC-10021`
+
+**Message**
+
+```markdown
+The namespace policy already exists. NamespacePolicy: %s
+```
+
+### `DB-ABAC-10022`
+
+**Message**
+
+```markdown
+The namespace policy does not exist. NamespacePolicy: %s
+```
+
+### `DB-ABAC-10023`
+
+**Message**
+
+```markdown
+The table does not exist. Table: %s
+```
+
+### `DB-ABAC-10024`
+
+**Message**
+
+```markdown
+The table policy already exists. TablePolicy: %s
+```
+
+### `DB-ABAC-10025`
+
+**Message**
+
+```markdown
+The table policy does not exist. TablePolicy: %s
+```
+
+### `DB-ABAC-10026`
+
+**Message**
+
+```markdown
+The short name must not be empty. Short name: %s
+```
+
+### `DB-ABAC-10027`
+
+**Message**
+
+```markdown
+The short name must be 30 characters or less. Short name: %s
+```
+
+### `DB-ABAC-10028`
+
+**Message**
+
+```markdown
+The short name must not contain a colon. Short name: %s
+```
+
+### `DB-ABAC-10029`
+
+**Message**
+
+```markdown
+The short name must not contain a comma. Short name: %s
+```
+
+### `DB-ABAC-10030`
+
+**Message**
+
+```markdown
+The data tag is invalid. Data tag: %s
+```
+
+### `DB-ABAC-10031`
+
+**Message**
+
+```markdown
+The level must be specified in the data tag. Data tag: %s
+```
+
+### `DB-ABAC-10032`
+
+**Message**
+
+```markdown
+The user tag is invalid. User tag: %s
+```
+
+### `DB-ABAC-10033`
+
+**Message**
+
+```markdown
+The level must be specified in the user tag. User tag: %s
+```
+
+### `DB-ABAC-10034`
+
+**Message**
+
+```markdown
+The specified user tag is not allowed. User tag: %s
+```
+
+### `DB-ABAC-10035`
+
+**Message**
+
+```markdown
+The data tag column type should be TEXT. Policy: %s; Data tag column: %s
+```
+
+### `DB-ABAC-10036`
+
+**Message**
+
+```markdown
+The specified data tag is not allowed. Data tag: %s
+```
+
+### `DB-ABAC-10037`
+
+**Message**
+
+```markdown
+The data tag column cannot be used in conditions. Operation: %s; Data tag column: %s
+```
+
+### `DB-ABAC-10038`
+
+**Message**
+
+```markdown
+The operation is not allowed for the policy. Policy: %s; Operation: %s
+```
+
+### `DB-ABAC-10039`
+
+**Message**
+
+```markdown
+Access denied: Invalid auth token
+```
+
+### `DB-ABAC-10040`
+
+**Message**
+
+```markdown
+The authentication and authorization feature must be enabled to use the attribute-based access control feature
+```
+
+### `DB-ABAC-10041`
+
+**Message**
+
+```markdown
+The single CRUD operation transaction manager does not support the attribute-based access control feature
+```
+
+### `DB-ABAC-10042`
+
+**Message**
+
+```markdown
+The data tag column cannot be used in ordering. Operation: %s; Data tag column: %s
+```
+
+### `DB-ABAC-10043`
+
+**Message**
+
+```markdown
+The namespace policy for the policy and namespace already exists. Policy: %s; Namespace: %s
+```
+
+### `DB-ABAC-10044`
+
+**Message**
+
+```markdown
+The table policy for the policy and table already exists. Policy: %s; Table: %s
+```
+
+### `DB-ABAC-10045`
+
+**Message**
+
+```markdown
+The user does not exist. Username: %s
+```
+
+## `DB-ABAC-2xxxx` status codes
+
+The following are status codes and messages for the concurrency error category.
+
+### `DB-ABAC-20000`
+
+**Message**
+
+```markdown
+The record does not exist, so the %s condition is not satisfied
+```
+
+## `DB-ABAC-3xxxx` status codes
+
+The following are status codes and messages for the internal error category.
+
+### `DB-ABAC-30000`
+
+**Message**
+
+```markdown
+Creating a policy failed. Policy: %s; Data tag column: %s
+```
+
+### `DB-ABAC-30001`
+
+**Message**
+
+```markdown
+Enabling the policy failed. Policy: %s
+```
+
+### `DB-ABAC-30002`
+
+**Message**
+
+```markdown
+Disabling the policy failed. Policy: %s
+```
+
+### `DB-ABAC-30003`
+
+**Message**
+
+```markdown
+Getting the policy failed. Policy: %s
+```
+
+### `DB-ABAC-30004`
+
+**Message**
+
+```markdown
+Getting the policies failed
+```
+
+### `DB-ABAC-30005`
+
+**Message**
+
+```markdown
+Creating a level failed. Policy: %s; Level short name: %s; Level long name: %s; Level number: %d
+```
+
+### `DB-ABAC-30006`
+
+**Message**
+
+```markdown
+Dropping the level failed. Policy: %s; Level short name: %s
+```
+
+### `DB-ABAC-30007`
+
+**Message**
+
+```markdown
+Getting the level failed. Policy: %s; Level short name: %s
+```
+
+### `DB-ABAC-30008`
+
+**Message**
+
+```markdown
+Getting the levels failed. Policy: %s
+```
+
+### `DB-ABAC-30009`
+
+**Message**
+
+```markdown
+Creating a compartment failed. Policy: %s; Compartment short name: %s; Compartment long name: %s
+```
+
+### `DB-ABAC-30010`
+
+**Message**
+
+```markdown
+Dropping the compartment failed. Policy: %s; Compartment short name: %s
+```
+
+### `DB-ABAC-30011`
+
+**Message**
+
+```markdown
+Getting the compartment failed. Policy: %s; Compartment short name: %s
+```
+
+### `DB-ABAC-30012`
+
+**Message**
+
+```markdown
+Getting the compartments failed. Policy: %s
+```
+
+### `DB-ABAC-30013`
+
+**Message**
+
+```markdown
+Creating a group failed. Policy: %s; Group short name: %s; Group long name: %s; Parent-group short name: %s
+```
+
+### `DB-ABAC-30014`
+
+**Message**
+
+```markdown
+Dropping the group failed. Policy: %s; Group short name: %s
+```
+
+### `DB-ABAC-30015`
+
+**Message**
+
+```markdown
+Getting the group failed. Policy: %s; Group short name: %s
+```
+
+### `DB-ABAC-30016`
+
+**Message**
+
+```markdown
+Getting groups failed. Policy: %s
+```
+
+### `DB-ABAC-30017`
+
+**Message**
+
+```markdown
+Getting child groups failed. Policy: %s; Parent-group short name: %s
+```
+
+### `DB-ABAC-30018`
+
+**Message**
+
+```markdown
+Setting the levels to the user failed. Policy: %s; User: %s; Level short name: %s; Default-level short name: %s; Row-level short name: %s
+```
+
+### `DB-ABAC-30019`
+
+**Message**
+
+```markdown
+Adding the compartment to the user failed. Policy: %s; User: %s; Compartment short name: %s
+```
+
+### `DB-ABAC-30020`
+
+**Message**
+
+```markdown
+Removing the compartment from the user failed. Policy: %s; User: %s; Compartment short name: %s
+```
+
+### `DB-ABAC-30021`
+
+**Message**
+
+```markdown
+Adding the group to the user failed. Policy: %s; User: %s; Group short name: %s
+```
+
+### `DB-ABAC-30022`
+
+**Message**
+
+```markdown
+Removing the group from the user failed. Policy: %s; User: %s; Group short name: %s
+```
+
+### `DB-ABAC-30023`
+
+**Message**
+
+```markdown
+Dropping the user tag information from the user failed. Policy: %s; User: %s
+```
+
+### `DB-ABAC-30024`
+
+**Message**
+
+```markdown
+Getting the user tag information failed. Policy: %s; User: %s
+```
+
+### `DB-ABAC-30025`
+
+**Message**
+
+```markdown
+Creating a namespace policy failed. NamespacePolicy: %s; Policy: %s; Namespace: %s
+```
+
+### `DB-ABAC-30026`
+
+**Message**
+
+```markdown
+Enabling the namespace policy failed. NamespacePolicy: %s
+```
+
+### `DB-ABAC-30027`
+
+**Message**
+
+```markdown
+Disabling the namespace policy failed. NamespacePolicy: %s
+```
+
+### `DB-ABAC-30028`
+
+**Message**
+
+```markdown
+Removing the namespace policies assigned to the namespace failed. Namespace: %s
+```
+
+### `DB-ABAC-30029`
+
+**Message**
+
+```markdown
+Getting the namespace policies failed
+```
+
+### `DB-ABAC-30030`
+
+**Message**
+
+```markdown
+Creating a table policy failed. TablePolicy: %s; Policy: %s; Table: %s
+```
+
+### `DB-ABAC-30031`
+
+**Message**
+
+```markdown
+Enabling the table policy failed. TablePolicy: %s
+```
+
+### `DB-ABAC-30032`
+
+**Message**
+
+```markdown
+Disabling the table policy failed. TablePolicy: %s
+```
+
+### `DB-ABAC-30033`
+
+**Message**
+
+```markdown
+Removing the table policies assigned to the table failed. Table: %s
+```
+
+### `DB-ABAC-30034`
+
+**Message**
+
+```markdown
+Getting the table policies failed
+```
+
+### `DB-ABAC-30035`
+
+**Message**
+
+```markdown
+Getting the policies assigned to the namespace failed. Namespace: %s
+```
+
+### `DB-ABAC-30036`
+
+**Message**
+
+```markdown
+Getting the policies assigned to the table failed. Table: %s
+```
+
+### `DB-ABAC-30037`
+
+**Message**
+
+```markdown
+Registering the data tag failed. Policy: %s; Data tag: %s
+```
+
+### `DB-ABAC-30038`
+
+**Message**
+
+```markdown
+Getting the data tags failed. Policy: %s
+```
+
+### `DB-ABAC-30039`
+
+**Message**
+
+```markdown
+Getting the namespace policy failed. NamespacePolicy: %s
+```
+
+### `DB-ABAC-30040`
+
+**Message**
+
+```markdown
+Getting the table policy failed. TablePolicy: %s
+```

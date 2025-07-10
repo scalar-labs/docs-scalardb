@@ -1,0 +1,169 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Schema Loader エラーコード
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このページでは、ScalarDB Schema Loader のエラーコードの一覧を示します。
+
+## エラーコードのクラスと説明
+
+| クラス                    | 説明                     |
+|:-------------------------|:------------------------|
+| `DB-SCHEMA-LOADER-1xxxx` | ユーザーエラーカテゴリのエラ |
+
+## `DB-SCHEMA-LOADER-1xxxx` ステータスコード
+
+以下は、ユーザーエラーカテゴリのステータスコードとメッセージです。
+
+### `DB-SCHEMA-LOADER-10000`
+
+**メッセージ**
+
+```markdown
+The table does not exist. Table: %s
+```
+
+### `DB-SCHEMA-LOADER-10001`
+
+**メッセージ**
+
+```markdown
+The partition keys for the table %s.%s were modified, but altering partition keys is not supported
+```
+
+### `DB-SCHEMA-LOADER-10002`
+
+**メッセージ**
+
+```markdown
+The clustering keys for the table %s.%s were modified, but altering clustering keys is not supported
+```
+
+### `DB-SCHEMA-LOADER-10003`
+
+**メッセージ**
+
+```markdown
+The clustering order of the table %s.%s were modified, but altering the clustering order is not supported
+```
+
+### `DB-SCHEMA-LOADER-10004`
+
+**メッセージ**
+
+```markdown
+The column %s in the table %s.%s has been deleted. Column deletion is not supported when altering a table
+```
+
+### `DB-SCHEMA-LOADER-10005`
+
+**メッセージ**
+
+```markdown
+The data type for the column %s in the table %s.%s was modified, but altering data types is not supported
+```
+
+### `DB-SCHEMA-LOADER-10006`
+
+**メッセージ**
+
+```markdown
+Specifying the '--schema-file' option is required when using the '--repair-all' option
+```
+
+### `DB-SCHEMA-LOADER-10007`
+
+**メッセージ**
+
+```markdown
+Specifying the '--schema-file' option is required when using the '--alter' option
+```
+
+### `DB-SCHEMA-LOADER-10008`
+
+**メッセージ**
+
+```markdown
+Specifying the '--schema-file' option is required when using the '--import' option
+```
+
+### `DB-SCHEMA-LOADER-10009`
+
+**メッセージ**
+
+```markdown
+Specifying the '--coordinator' option with the '--import' option is not allowed. Create Coordinator tables separately
+```
+
+### `DB-SCHEMA-LOADER-10010`
+
+**メッセージ**
+
+```markdown
+Reading the configuration file failed. File: %s
+```
+
+### `DB-SCHEMA-LOADER-10011`
+
+**メッセージ**
+
+```markdown
+Reading the schema file failed. File: %s
+```
+
+### `DB-SCHEMA-LOADER-10012`
+
+**メッセージ**
+
+```markdown
+Parsing the schema JSON failed. Details: %s
+```
+
+### `DB-SCHEMA-LOADER-10013`
+
+**メッセージ**
+
+```markdown
+The table name must contain the namespace and the table. Table: %s
+```
+
+### `DB-SCHEMA-LOADER-10014`
+
+**メッセージ**
+
+```markdown
+The partition key must be specified. Table: %s
+```
+
+### `DB-SCHEMA-LOADER-10015`
+
+**メッセージ**
+
+```markdown
+Invalid clustering-key format. The clustering key must be in the format of 'column_name' or 'column_name ASC/DESC'. Table: %s; Clustering key: %s
+```
+
+### `DB-SCHEMA-LOADER-10016`
+
+**メッセージ**
+
+```markdown
+Columns must be specified. Table: %s
+```
+
+### `DB-SCHEMA-LOADER-10017`
+
+**メッセージ**
+
+```markdown
+Invalid column type. Table: %s; Column: %s; Type: %s
+```

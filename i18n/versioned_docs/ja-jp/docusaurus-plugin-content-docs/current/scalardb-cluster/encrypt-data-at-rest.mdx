@@ -1,0 +1,328 @@
+---
+tags:
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# 保存データの暗号化
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+import WarningLicenseKeyContact from '/src/components/ja-jp/_warning-license-key-contact.mdx';
+
+<TranslationBanner />
+
+このドキュメントでは、ScalarDB に保存されているデータを暗号化する方法について説明します。
+
+## 概要
+
+ScalarDB は、それを介して保存されたデータを暗号化できます。暗号化機能は、主要なデータベースシステムの透過的データ暗号化 (TDE) に似ているため、アプリケーションに対して透過的です。ScalarDB は、バックエンドデータベースに書き込む前にデータを暗号化し、そこから読み取るときに復号します。
+
+現在、ScalarDB は列レベルの暗号化をサポートしており、テーブル内の特定の列を暗号化できます。
+
+## 設定
+
+暗号化機能を有効にするには、ScalarDB Cluster ノード設定ファイルで `scalar.db.cluster.encryption.enabled` を `true` に設定する必要があります。
+
+| 名前                                   | 説明                             | デフォルト |
+|----------------------------------------|-----------------------------------------|---------|
+| `scalar.db.cluster.encryption.enabled` | ScalarDB が保存データを暗号化するかどうか。 | `false` |
+
+:::note
+
+暗号化はクライアントに対して透過的であるため、クライアントの設定を変更する必要はありません。
+
+:::
+
+:::note
+
+暗号化機能を有効にする場合は、内部的にパーティション間スキャンを実行するため、システム名前空間 (デフォルトでは `scalardb`) の `scalar.db.cross_partition_scan.enabled` を `true` に設定する必要もあります。
+
+:::
+
+その他の設定は、選択した暗号化実装によって異なります。現在、ScalarDB は次の暗号化実装をサポートしています。
+
+- HashiCorp Vault 暗号化
+- 自己暗号化
+
+次のセクションでは、各暗号化実装の設定方法について説明します。
+
+### HashiCorp Vault 暗号化
+
+HashiCorp Vault 暗号化では、ScalarDB は HashiCorp Vault の [encryption as a service](https://developer.hashicorp.com/vault/tutorials/encryption-as-a-service/eaas-transit) を使用してデータを暗号化および復号します。この実装では、ScalarDB は暗号化キーの管理とデータの暗号化および復号を HashiCorp Vault に委任します。
+
+HashiCorp Vault 暗号化を使用するには、ScalarDB Cluster ノード設定ファイルでプロパティ `scalar.db.cluster.encryption.type` を `vault` に設定する必要があります。
+
+| 名前                                   | 説明                             | デフォルト |
+|-------------------------------------|-------------------------------------------------------------|---------|
+| `scalar.db.cluster.encryption.type` | HashiCorp Vault 暗号化を使用するには、`vault` に設定する必要があります。 |         |
+
+次のプロパティも設定する必要があります。
+
+| 名前                                   | 説明                             | デフォルト        |
+|------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------|
+| `scalar.db.cluster.encryption.vault.key_type`                    | キーの種類。現在、`aes128-gcm96`、`aes256-gcm96`、`chacha20-poly1305` がサポートされています。キーの種類の詳細については、[Key types](https://developer.hashicorp.com/vault/docs/secrets/transit#key-types) を参照してください。 | `aes128-gcm96` |
+| `scalar.db.cluster.encryption.vault.associated_data_required`    | AEAD 暗号化に関連データが必要かどうか。                                                                                                                                                                | `false`        |
+| `scalar.db.cluster.encryption.vault.address`                     | HashiCorp Vault サーバーのアドレス。                                                                                                                                                                              |                |
+| `scalar.db.cluster.encryption.vault.token`                       | HashiCorp Vault で認証するためのトークン。                                                                                                                                                                         |                |
+| `scalar.db.cluster.encryption.vault.namespace`                   | HashiCorp Vault の名前空間。この設定はオプションです。                                                                                                                                                   |                |
+| `scalar.db.cluster.encryption.vault.transit_secrets_engine_path` | トランジットシークレットエンジンのパス。                                                                                                                                                                                 | `transit`      |
+| `scalar.db.cluster.encryption.vault.column_batch_size`           | HashiCorp Vault サーバーへの単一のリクエストに含まれる列の数。                                                                                                                                                          | `64`           |
+
+### 自己暗号化
+
+自己暗号化では、ScalarDB がデータ暗号化キー (DEK) を管理し、暗号化と復号を実行します。ScalarDB はテーブルの作成時にテーブルごとに DEK を生成し、Kubernetes Secrets に保存します。
+
+自己暗号化を使用するには、ScalarDB Cluster ノード設定ファイルでプロパティ `scalar.db.cluster.encryption.type` を `self` に設定する必要があります。
+
+| 名前                                   | 説明                             | デフォルト |
+|-------------------------------------|-------------------------------------------------|---------|
+| `scalar.db.cluster.encryption.type` | 自己暗号化を使用するには `self` に設定する必要があります。 |         |
+
+次のプロパティも設定する必要があります。
+
+| 名前                                   | 説明                             | デフォルト              |
+|-------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------|
+| `scalar.db.cluster.encryption.self.key_type`                                  | キーの種類。現在、`AES128_GCM`、`AES256_GCM`、`AES128_EAX`、`AES256_EAX`、`AES128_CTR_HMAC_SHA256`、`AES256_CTR_HMAC_SHA256`、`CHACHA20_POLY1305`、および `XCHACHA20_POLY1305` がサポートされています。キーの種類の詳細については、[キータイプの選択](https://developers.google.com/tink/aead?hl=ja#choose_a_key_type)を参照してください。 | `AES128_GCM`         |
+| `scalar.db.cluster.encryption.self.associated_data_required`                  | AEAD 暗号化に関連データが必要かどうか。                                                                                                                                                                                                                                                               | `false`              |
+| `scalar.db.cluster.encryption.self.kubernetes.secret.namespace_name`          | Kubernetes Secrets の名前空間名。                                                                                                                                                                                                                                                                          | `default`            |
+| `scalar.db.cluster.encryption.self.data_encryption_key_cache_expiration_time` | DEK キャッシュの有効期限（ミリ秒単位）。                                                                                                                                                                                                                                                                  | `60000` (60秒) |
+
+### テーブルを削除するときに DEK を削除する
+
+デフォルトでは、ScalarDB はテーブルを削除しても、テーブルに関連付けられたデータ暗号化キー (DEK) を削除しません。ただし、テーブルを削除するときに DEK を削除するように ScalarDB を設定できます。これを有効にするには、ScalarDB Cluster ノード設定ファイルでプロパティ `scalar.db.cluster.encryption.delete_data_encryption_key_on_drop_table.enabled` を `true` に設定します。
+
+| 名前                                                                             | 説明                                      | デフォルト |
+|---------------------------------------------------------------------------------|-------------------------------------------|----------|
+| `scalar.db.cluster.encryption.delete_data_encryption_key_on_drop_table.enabled` | テーブルを削除するときに DEK を削除するかどうか。 | `false`  |
+
+## 制限事項
+
+暗号化機能にはいくつかの制限事項があります:
+
+- 主キー列 (パーティションキー列とクラスタリングキー列) は暗号化できません。
+- セカンダリインデックス列は暗号化できません。
+- 暗号化された列は WHERE 句または ORDER BY 句で指定できません。
+- 暗号化された列は、基になるデータベースに BLOB 型として保存されるため、BLOB 型の最大サイズより大きい暗号化された列は保存できません。BLOB 型の最大サイズについては、[ScalarDB と他のデータベース間のデータ型マッピング](../schema-loader.mdx#scalardb-と他のデータベース間のデータ型マッピング)を参照してください。
+
+## ワイヤ暗号化
+
+暗号化機能を有効にする場合は、データを保護するために本番環境でワイヤ暗号化を有効にすることを強くお勧めします。ワイヤ暗号化の詳細については、[ScalarDB Cluster ワイヤ暗号化](encrypt-wire-communications.mdx)を参照してください。
+
+## チュートリアル - HashiCorp Vault 暗号化を設定してデータを暗号化する
+
+このチュートリアルでは、HashiCorp Vault 暗号化を使用して ScalarDB で保存されたデータを暗号化する方法について説明します。
+
+## 前提条件
+
+- [Eclipse Temurin](https://adoptium.net/temurin/releases/) の OpenJDK LTS バージョン (8、11、17、または 21)
+- [Docker](https://www.docker.com/get-started/) 20.10以降と [Docker Compose](https://docs.docker.com/compose/install/) V2以降
+
+:::note
+
+このチュートリアルは、Eclipse Temurin の OpenJDK でテストされています。ただし、ScalarDB 自体は、さまざまなベンダーの JDK ディストリビューションでテストされています。互換性のある JDK ディストリビューションを含む ScalarDB の要件の詳細については、[要件](../requirements.mdx)を参照してください。
+
+:::
+
+<WarningLicenseKeyContact product="ScalarDB Cluster" />
+
+### ステップ 1. HashiCorp Vault をインストールします
+
+HashiCorp の公式ドキュメント [Install Vault](https://developer.hashicorp.com/vault/tutorials/getting-started/getting-started-install) を参照して、HashiCorp Vault をインストールします。
+
+### ステップ 2. ScalarDB Cluster 設定ファイルを作成します
+
+次の設定ファイルを `scalardb-cluster-node.properties` として作成し、`<YOUR_LICENSE_KEY>` と `<LICENSE_CHECK_CERT_PEM>` を ScalarDB ライセンスキーとライセンスチェック証明書の値に置き換えます。ライセンスキーと証明書の詳細については、[製品ライセンスキーの設定方法](../scalar-licensing/index.mdx)を参照してください。
+
+```properties
+scalar.db.storage=jdbc
+scalar.db.contact_points=jdbc:postgresql://postgresql:5432/postgres
+scalar.db.username=postgres
+scalar.db.password=postgres
+scalar.db.cluster.node.standalone_mode.enabled=true
+scalar.db.cross_partition_scan.enabled=true
+scalar.db.sql.enabled=true
+
+# Encryption configurations
+scalar.db.cluster.encryption.enabled=true
+scalar.db.cluster.encryption.type=vault
+scalar.db.cluster.encryption.vault.address=http://vault:8200
+scalar.db.cluster.encryption.vault.token=root
+
+# License key configurations
+scalar.db.cluster.node.licensing.license_key=<YOUR_LICENSE_KEY>
+scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
+```
+
+### ステップ 3. Docker Compose 設定ファイルを作成する
+
+次の設定ファイルを `docker-compose.yaml` として作成します。
+
+```yaml
+services:
+  vault:
+    container_name: "vault"
+    image: "hashicorp/vault:1.17.3"
+    ports:
+      - 8200:8200
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=root
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+    cap_add:
+      - IPC_LOCK
+
+  postgresql:
+    container_name: "postgresql"
+    image: "postgres:15"
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_PASSWORD=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready || exit 1"]
+      interval: 1s
+      timeout: 10s
+      retries: 60
+      start_period: 30s
+
+  scalardb-cluster-standalone:
+    container_name: "scalardb-cluster-node"
+    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:3.16.0"
+    ports:
+      - 60053:60053
+      - 9080:9080
+    volumes:
+      - ./scalardb-cluster-node.properties:/scalardb-cluster/node/scalardb-cluster-node.properties
+    depends_on:
+      postgresql:
+        condition: service_healthy
+```
+
+### ステップ 4. HashiCorp Vault サーバーを起動します
+
+次のコマンドを実行して、HashiCorp Vault サーバーを開発モードで起動します。
+
+```console
+docker compose up vault -d
+```
+
+HashiCorp Vault サーバーが実行したら、次のコマンドを実行して環境変数を設定します。
+
+```console
+export VAULT_ADDR="http://127.0.0.1:8200"
+export VAULT_TOKEN=root
+```
+
+### ステップ 5. HashiCorp Vault サーバーでトランジットシークレットエンジンを有効にする
+
+次のコマンドを実行して、HashiCorp Vault サーバーでトランジットシークレットエンジンを有効にします。
+
+```console
+vault secrets enable transit
+```
+
+### ステップ 6. PostgreSQL と ScalarDB Cluster を起動する
+
+次のコマンドを実行して、PostgreSQL と ScalarDB Cluster をスタンドアロンモードで起動します。
+
+```console
+docker compose up postgresql scalardb-cluster-standalone -d
+```
+
+ScalarDB Cluster が完全に起動するまでに数分かかる場合があります。
+
+### ステップ 7. ScalarDB Cluster に接続する
+
+ScalarDB Cluster に接続するために、このチュートリアルでは、ScalarDB Cluster に接続して SQL クエリを実行するツールである SQL CLI を使用します。SQL CLI は、[ScalarDB Releases ページ](https://github.com/scalar-labs/scalardb/releases)からダウンロードできます。
+
+`scalardb-cluster-sql-cli.properties` という名前の設定ファイルを作成します。このファイルは、SQL CLI を使用して ScalarDB Cluster に接続するために使用されます。
+
+```properties
+scalar.db.sql.connection_mode=cluster
+scalar.db.sql.cluster_mode.contact_points=indirect:localhost
+```
+
+次に、次のコマンドを実行して SQL CLI を起動します。
+
+```console
+java -jar scalardb-cluster-sql-cli-3.16.0-all.jar --config scalardb-cluster-sql-cli.properties
+```
+
+まず、ScalarDB トランザクション実行に必要な Coordinator テーブルを作成します。
+
+```sql
+CREATE COORDINATOR TABLES IF NOT EXISTS;
+```
+
+これで、ScalarDB Cluster で暗号化機能を有効にしたデータベースを使用する準備が整いました。
+
+### ステップ 8. テーブルを作成する
+
+テーブルを作成する前に、名前空間を作成する必要があります。
+
+```sql
+CREATE NAMESPACE ns;
+```
+
+次に、テーブルを作成します。
+
+```sql
+CREATE TABLE ns.tbl (
+    id INT PRIMARY KEY,
+    col1 TEXT ENCRYPTED,
+    col2 INT ENCRYPTED,
+    col3 INT);
+```
+
+`ENCRYPTED` キーワードを使用すると、指定された列のデータが暗号化されます。この例では、`col1` と `col2` のデータが暗号化されます。
+
+### ステップ 9. テーブルにデータを挿入する
+
+テーブルにデータを挿入するには、次の SQL クエリを実行します。
+
+```sql
+INSERT INTO ns.tbl (id, col1, col2, col3) VALUES (1, 'data1', 123, 456);
+```
+
+挿入されたデータを確認するには、次の SQL クエリを実行します。
+
+```sql
+SELECT * FROM ns.tbl;
+```
+
+```console
++----+-------+------+------+
+| id | col1  | col2 | col3 |
++----+-------+------+------+
+|  1 | data1 |  123 |  456 |
++----+-------+------+------+
+```
+
+### ステップ 10. データの暗号化を確認する
+
+データが暗号化されていることを確認するには、PostgreSQL に直接接続してデータをチェックします。
+
+:::warning
+
+ScalarDB では、バックエンドデータベースからのデータの直接読み取りまたは書き込みはサポートされていません。このような場合、ScalarDB はデータの一貫性を保証できません。このガイドでは、テスト目的でバックエンドデータベースに直接アクセスしますが、実稼働環境ではこれを行うことはできません。
+
+:::
+
+PostgreSQL に接続するには、次のコマンドを実行します。
+
+```console
+docker exec -it postgresql psql -U postgres
+```
+
+次に、次の SQL クエリを実行してテーブル内のデータを確認します。
+
+```sql
+SELECT id, col1, col2, col3 FROM ns.tbl;
+```
+
+以下のような出力が表示され、`col1` と `col2` のデータが暗号化されていることが確認されます。
+
+```console
+ id |                                                     col1                                                     |                                                     col2                                                     | col3
+----+--------------------------------------------------------------------------------------------------------------+--------------------------------------------------------------------------------------------------------------+------
+  1 | \x7661756c743a76313a6b6f76455062316a676e6a4a596b643743765539315a49714d625564545a61697152666c7967367837336e66 | \x7661756c743a76313a4b6244543162764678676d44424b526d7037794f5176423569616e615635304c473079664354514b3866513d |  456
+```

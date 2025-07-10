@@ -1,0 +1,222 @@
+---
+tags:
+  - Enterprise Option
+displayed_sidebar: docsJapanese
+---
+
+# パブリッククラウド環境への ScalarDB Analytics のデプロイ
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このガイドでは、パブリッククラウド環境に ScalarDB Analytics をデプロイする方法について説明します。ScalarDB Analytics は現在、実行エンジンとして Apache Spark を使用しており、Amazon EMR や Databricks などのパブリッククラウドプロバイダーが提供するマネージド Spark サービスをサポートしています。
+
+## サポートされているマネージド Spark サービスとそのアプリケーションタイプ
+
+ScalarDB Analytics は以下のマネージド Spark サービスとアプリケーションタイプをサポートしています。
+
+| パブリッククラウドサービス     | Spark Driver | Spark Connect | JDBC |
+| -------------------------- | ------------ | ------------- | ---- |
+| Amazon EMR (EMR on EC2)    | ✅           | ✅            | ❌   |
+| Databricks                 | ✅           | ❌            | ✅   |
+
+## 設定とデプロイ
+
+パブリッククラウド環境を選択し、指示に従って ScalarDB Analytics を設定およびデプロイしてください。
+
+<Tabs groupId="cloud-service" queryString>
+  <TabItem value="emr" label="Amazon EMR">
+
+<h3>Amazon EMR の使用</h3>
+
+ScalarDB Analytics を通じて分析クエリを実行するために Amazon EMR（EMR on EC2）を使用できます。EMR クラスターを起動する基本については、[AWS EMR on EC2 ドキュメント](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-plan.html)を参照してください。
+
+<h4>ScalarDB Analytics の設定</h4>
+
+ScalarDB Analytics を有効にするには、EMR クラスターを起動するときにソフトウェア設定に次の構成を追加する必要があります。括弧内の内容を必ず置き換えてください：
+
+```json
+[
+  {
+    "Classification": "spark-defaults",
+    "Properties": {
+      "spark.jars.packages": "com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>",
+      "spark.sql.catalog.<CATALOG_NAME>": "com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog",
+      "spark.sql.extensions": "com.scalar.db.analytics.spark.extension.ScalarDbAnalyticsExtensions",
+      "spark.sql.catalog.<CATALOG_NAME>.license.cert_pem": "<YOUR_LICENSE_CERT_PEM>",
+      "spark.sql.catalog.<CATALOG_NAME>.license.key": "<YOUR_LICENSE_KEY>",
+
+      // 以下にデータソースの設定を続けてください
+    }
+  }
+]
+```
+
+括弧内の内容は以下のように変更してください：
+
+- `<SPARK_VERSION>`: Spark のバージョン
+- `<SCALA_VERSION>`: Spark のビルドに使用される Scala のバージョン
+- `<SCALARDB_ANALYTICS_VERSION>`: ScalarDB Analytics のバージョン
+- `<CATALOG_NAME>`: カタログの名前
+- `<YOUR_LICENSE_CERT_PEM>`: PEM エンコードされたライセンス証明書
+- `<YOUR_LICENSE_KEY>`: ライセンスキー
+
+詳細については、[ScalarDB Analytics のセットアップのための Spark 設定](./run-analytical-queries.mdx#scalardb-analytics-のセットアップのための-spark-設定)を参照してください。
+
+<h4>Spark Driver を介した分析クエリの実行</h4>
+
+EMR Spark クラスターが起動した後、ssh を使用して EMR クラスターのプライマリノードに接続し、Spark アプリケーションを実行できます。Spark Driver アプリケーションの作成方法の詳細については、[Spark Driver アプリケーション](./run-analytical-queries.mdx?spark-application-type=spark-driver#spark-アプリケーションの開発)を参照してください。
+
+<h4>Spark Connect を介した分析クエリの実行</h4>
+
+Spark Connect を使用して、起動した EMR クラスターを使用して Spark アプリケーションをリモートで実行できます。
+
+まず、[Spark Driver アプリケーション](./run-analytical-queries.mdx?spark-application-type=spark-driver#spark-アプリケーションの開発)と同じようにソフトウェア設定を構成する必要があります。また、Spark Connect を有効にするために次の設定も行う必要があります。
+
+<h5>Spark Connect サーバーのインバウンドトラフィックを許可する</h5>
+
+1. Spark Connect サーバーのインバウンドトラフィックを許可するセキュリティグループを作成します（デフォルトはポート15001）。
+2. 「Amazon EMR サービスロール」のロールがセキュリティグループを EMR クラスターのプライマリノードにアタッチできるようにします。
+3. EMR クラスターを起動するときに、「追加のセキュリティグループ」としてセキュリティグループを EMR クラスターのプライマリノードに追加します。
+
+<h5>ブートストラップアクションを介した Spark Connect サーバーの起動</h5>
+
+1. 次のように Spark Connect サーバーを起動するためのスクリプトファイルを作成します：
+
+```bash
+#!/usr/bin/env bash
+
+set -eu -o pipefail
+
+cd /var/lib/spark
+
+sudo -u spark /usr/lib/spark/sbin/start-connect-server.sh --packages org.apache.spark:spark-connect_<SCALA_VERSION>:<SPARK_FULL_VERSION>,com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>
+```
+
+括弧内の内容は以下のように変更してください：
+
+- `<SCALA_VERSION>`: Spark インストールに合わせた Scala のメジャーおよびマイナーバージョン（2.12 や 2.13 など）
+- `<SPARK_FULL_VERSION>`: 使用している Spark の完全なバージョン（3.5.3 など）
+- `<SPARK_VERSION>`: 使用している Spark のメジャーおよびマイナーバージョン（3.5 など）
+- `<SCALARDB_ANALYTICS_VERSION>`: ScalarDB Analytics のバージョン
+
+2. スクリプトファイルを S3 にアップロードします。
+3. 「Amazon の EMR 用 EC2 インスタンスプロファイル」のロールがS3にアップロードされたスクリプトファイルにアクセスできるようにします。
+4. EMR クラスターを起動するときに、アップロードされたスクリプトファイルを「ブートストラップアクション」に追加します。
+
+<h5>分析クエリの実行</h5>
+
+Spark Connect サーバーのリモート URL（`sc://<PRIMARY_NODE_PUBLIC_HOSTNAME>:15001`）を使用して、どこからでも Spark Connect を介して Spark アプリケーションを実行できます。
+
+Spark Connect を使用した Spark アプリケーションの作成方法の詳細については、[Spark Connect アプリケーション](./run-analytical-queries.mdx?spark-application-type=spark-connect#spark-アプリケーションの開発)を参照してください。
+
+  </TabItem>
+  <TabItem value="databricks" label="Databricks">
+<h3>Databricks の使用</h3>
+
+ScalarDB Analytics を通じて分析クエリを実行するために Databricks を使用できます。
+
+:::note
+
+Databricks は Apache Spark の修正版を提供しており、オリジナルの Apache Spark とは異なる動作をすることに注意してください。
+
+:::
+
+<h4>Databricks クラスターの起動</h4>
+
+ScalarDB Analytics は Databricks の汎用クラスターとジョブコンピュートクラスターで動作します。クラスターを起動するとき、ScalarDB Analytics を有効にするために以下のようにクラスターを設定する必要があります：
+
+1. Databricks CLI を使用して、ライセンス証明書とライセンスキーをクラスターに保存します。
+
+```console
+databricks secrets create-scope scalardb-analytics-secret # 任意のシークレットスコープ名を使用できます
+cat license_key.json | databricks secrets put-secret scalardb-analytics-secret license-key
+cat license_cert.pem | databricks secrets put-secret scalardb-analytics-secret license-cert
+```
+
+:::note
+
+Databricks CLI のインストールと使用方法の詳細については、[Databricks CLI ドキュメント](https://docs.databricks.com/en/dev-tools/cli/index.html)を参照してください。
+
+:::
+
+2. クラスターモードに「No isolation shared」を選択します。（これは必須です。ScalarDB Analytics はこのクラスターモードでのみ動作します。）
+3. Spark 3.4以降をサポートする適切な Databricks ランタイムバージョンを選択します。
+4. 「詳細オプション」>「Spark 設定」を以下のように設定します。`<CATALOG_NAME>` を使用したいカタログの名前に置き換えてください：
+
+```
+spark.sql.catalog.<CATALOG_NAME> com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog
+spark.sql.extensions com.scalar.db.analytics.spark.extension.ScalarDbAnalyticsExtensions
+spark.sql.catalog.<CATALOG_NAME>.license.key {{secrets/scalardb-analytics-secret/license-key}}
+spark.sql.catalog.<CATALOG_NAME>.license.cert_pem {{secrets/scalardb-analytics-secret/license-pem}}
+```
+
+:::note
+
+データソースも設定する必要があります。詳細については、[ScalarDB Analytics のセットアップのための Spark 設定](./run-analytical-queries.mdx#scalardb-analytics-のセットアップのための-spark-設定)を参照してください。
+
+:::
+
+:::note
+
+前のステップで異なるシークレット名を指定した場合は、上記の設定でシークレット名を必ず置き換えてください。
+
+:::
+
+5. Maven 依存関係として、起動したクラスターに ScalarDB Analytics のライブラリを追加します。ライブラリの追加方法の詳細については、[Databricks クラスターライブラリドキュメント](https://docs.databricks.com/en/libraries/cluster-libraries.html)を参照してください。
+
+<h4>Spark Driver を介した分析クエリの実行</h4>
+
+適切に設定された Databricks クラスターで Spark アプリケーションを Databricks Notebook または Databricks Jobs で実行して、ScalarDB Analytics 内のテーブルにアクセスできます。Spark アプリケーションを実行するには、Pyspark、Scala、または Spark SQL アプリケーションを Databricks Notebook に移行するか、Databricks Jobs を使用して Spark アプリケーションを実行できます。ScalarDB Analytics は Notebook、Python、JAR、および SQL のタスクタイプで動作します。
+
+Databricks Jobs の使用方法の詳細については、[Databricks Jobs ドキュメント](https://docs.databricks.com/en/jobs/index.html)を参照してください。
+
+<h4>JDBC ドライバーを介した分析クエリの実行</h4>
+
+Databricks はクラスター上で SQL ジョブを実行するための JDBC をサポートしています。以下のような追加設定を行うことで、ScalarDB Analytics で SQL を使用して Spark アプリケーションを実行できます：
+
+1. Maven リポジトリから ScalarDB Analytics ライブラリの JAR ファイルをダウンロードします。
+2. JAR ファイルを Databricks ワークスペースにアップロードします。
+3. Maven 依存関係の代わりに、ライブラリとして JAR ファイルをクラスターに追加します。
+4. 以下のように初期化スクリプトを作成します。`<PATH_TO_YOUR_JAR_FILE_IN_WORKSPACE>` を Databricks ワークスペース内の JAR ファイルのパスに置き換えてください：
+
+```bash
+#!/bin/bash
+
+# Target directories
+TARGET_DIRECTORIES=("/databricks/jars" "/databricks/hive_metastore_jars")
+JAR_PATH="<PATH_TO_YOUR_JAR_FILE_IN_WORKSPACE>
+
+# Copy the JAR file to the target directories
+for TARGET_DIR in "${TARGET_DIRECTORIES[@]}"; do
+  mkdir -p "$TARGET_DIR"
+  cp "$JAR_PATH" "$TARGET_DIR/"
+done
+```
+
+5. 初期化スクリプトを Databricks ワークスペースにアップロードします。
+6. クラスターを起動するときに、「詳細オプション」>「初期化スクリプト」にスクリプトを追加します。
+
+クラスターが起動した後、クラスター詳細ページの「詳細オプション」>「JDBC/ODBC」タブでクラスターの JDBC URL を取得できます。
+
+JDBC を使用して Databricks クラスターに接続するには、アプリケーションの依存関係に Databricks JDBC ドライバーを追加する必要があります。例えば、Gradle を使用している場合は、`build.gradle` ファイルに次の依存関係を追加できます：
+
+```groovy
+implementation("com.databricks:databricks-jdbc:0.9.6-oss")
+```
+
+その後、JDBC アプリケーションで一般的なように、JDBC URL（`<YOUR_CLUSTERS_JDBC_URL>`）を使用して JDBC で Databricks クラスターに接続できます。
+
+```java
+Class.forName("com.databricks.client.jdbc.Driver");
+String url = "<YOUR_CLUSTERS_JDBC_URL>";
+Connection conn = DriverManager.getConnection(url)
+```
+
+Databricks で JDBC を使用する方法の詳細については、[Databricks JDBC ドライバードキュメント](https://docs.databricks.com/en/integrations/jdbc/index.html)を参照してください。
+
+  </TabItem>
+</Tabs>
