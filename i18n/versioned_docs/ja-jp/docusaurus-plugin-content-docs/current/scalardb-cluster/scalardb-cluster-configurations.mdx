@@ -19,22 +19,24 @@ import TabItem from '@theme/TabItem';
 
 クラスターノードの基本設定は次のとおりです。
 
-| 名前                                                                | 説明                                                                                                                                                      | デフォルト          |
-|-------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|----------------|
-| `scalar.db.cluster.membership.type`                               | メンバーシップの種類。現在、`KUBERNETES` のみ指定できます。                                                                                                                    | `KUBERNETES`   |
-| `scalar.db.cluster.membership.kubernetes.endpoint.namespace_name` | この設定は、`KUBERNETES` メンバーシップタイプ用です。[endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) の名前空間名。                | `default`      |
-| `scalar.db.cluster.membership.kubernetes.endpoint.name`           | この設定は、`KUBERNETES` メンバーシップタイプ用です。メンバーシップ情報を取得するための [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) の名前。 |                |
-| `scalar.db.cluster.node.decommissioning_duration_secs`            | 廃止期間（秒単位）。                                                                                                                                              | `30`           |
-| `scalar.db.cluster.node.grpc.max_inbound_message_size`            | 受信可能な最大メッセージサイズ。                                                                                                                                        | gRPCのデフォルト値    |
-| `scalar.db.cluster.node.grpc.max_inbound_metadata_size`           | 受信できるメタデータの最大サイズ。                                                                                                                                       | gRPCのデフォルト値    |
-| `scalar.db.cluster.node.port`                                     | ScalarDB Cluster ノードのポート番号。                                                                                                                             | `60053`        |
-| `scalar.db.cluster.node.prometheus_exporter_port`                 | Prometheus エクスポーターのポート番号。                                                                                                                               | `9080`         |
-| `scalar.db.cluster.grpc.deadline_duration_millis`                 | gRPC の期限期間（ミリ秒単位）。                                                                                                                                      | `60000` (60秒) |
-| `scalar.db.cluster.node.standalone_mode.enabled`                  | スタンドアロンモードが有効かどうか。スタンドアロンモードが有効になっている場合、メンバーシップ設定 (`scalar.db.cluster.membership.*`) は無視されることに注意してください。                                                 | `false`        |
-| `scalar.db.metadata.cache_expiration_time_secs`                   | ScalarDB には、データベースへのリクエスト数を減らすためのメタデータキャッシュがあります。この設定では、キャッシュの有効期限を秒単位で指定します。`-1`を指定した場合は、キャッシュは期限切れになりません。                                             | `60`           |
-| `scalar.db.active_transaction_management.expiration_time_millis`  | ScalarDB Cluster ノードは進行中のトランザクションを維持し、トランザクション ID を使用して再開できます。この設定では、このトランザクション管理機能の有効期限をミリ秒単位で指定します。                                                   | `60000` (60秒) |
-| `scalar.db.system_namespace_name`                                 | 指定された名前空間名は ScalarDB によって内部的に使用されます。                                                                                                                    | `scalardb`     |
-| `scalar.db.transaction.enabled`                                   | トランザクション機能が有効かどうか。例えば、Embedding 機能のみを使用する場合、このプロパティをfalseに設定できます。                                                       | `true`                 |
+| 名前                                                                | 説明                                                                                                                                                                                                                                              | デフォルト        |
+|--------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-----------------|
+| `scalar.db.cluster.membership.type`                                | メンバーシップの種類。現在、`KUBERNETES` のみ指定できます。                                                                                                                                                                                               | `KUBERNETES`    |
+| `scalar.db.cluster.membership.kubernetes.endpoint.namespace_name`  | この設定は、`KUBERNETES` メンバーシップタイプ用です。[endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) の名前空間名。                                                                                        | `default`       |
+| `scalar.db.cluster.membership.kubernetes.endpoint.name`            | この設定は、`KUBERNETES` メンバーシップタイプ用です。メンバーシップ情報を取得するための [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) の名前。                                                                |                 |
+| `scalar.db.cluster.node.decommissioning_duration_secs`             | 廃止期間（秒単位）。                                                                                                                                                                                                                                  | `30`            |
+| `scalar.db.cluster.node.grpc.max_inbound_message_size`             | 受信可能な最大メッセージサイズ。                                                                                                                                                                                                                       | gRPCのデフォルト値 |
+| `scalar.db.cluster.node.grpc.max_inbound_metadata_size`            | 受信できるメタデータの最大サイズ。                                                                                                                                                                                                                     | gRPCのデフォルト値 |
+| `scalar.db.cluster.client.scan_fetch_size`                         | `Scanner` がクラスタからデータを取得するために使用するフェッチサイズ。これは、`Scanner` がクラスタから一度に取得するレコードの数です。大きな値を指定すると、クラスタへのアクセスの往復回数が減るためパフォーマンスが向上する可能性がありますが、メモリ使用量が増加する可能性もあります。               | `10`            |
+| `scalar.db.cluster.node.port`                                      | ScalarDB Cluster ノードのポート番号。                                                                                                                                                                                                                | `60053`         |
+| `scalar.db.cluster.node.prometheus_exporter_port`                  | Prometheus エクスポーターのポート番号。                                                                                                                                                                                                                | `9080`           |
+| `scalar.db.cluster.grpc.deadline_duration_millis`                  | gRPC の期限期間（ミリ秒単位）。                                                                                                                                                                                                                        | `60000` (60秒)   |
+| `scalar.db.cluster.node.standalone_mode.enabled`                   | スタンドアロンモードが有効かどうか。スタンドアロンモードが有効になっている場合、メンバーシップ設定 (`scalar.db.cluster.membership.*`) は無視されることに注意してください。                                                                                               | `false`          |
+| `scalar.db.metadata.cache_expiration_time_secs`                    | ScalarDB には、データベースへのリクエスト数を減らすためのメタデータキャッシュがあります。この設定では、キャッシュの有効期限を秒単位で指定します。`-1`を指定した場合は、キャッシュは期限切れになりません。                                                                          | `60`             |
+| `scalar.db.active_transaction_management.expiration_time_millis`   | ScalarDB Cluster ノードは進行中のトランザクションを管理しており、トランザクション IDを使用して再開できます。このプロセスでは、リソースリークを防ぐために長時間アイドル状態のトランザクションを期限切れにします。この設定では、このトランザクション管理機能の有効期限 (ミリ秒単位) を指定します。 | `60000` (60秒)   |
+| `scalar.db.system_namespace_name`                                  | 指定された名前空間名は ScalarDB によって内部的に使用されます。                                                                                                                                                                                            | `scalardb`       |
+| `scalar.db.transaction.enabled`                                    | トランザクション機能が有効かどうか。例えば、Embedding 機能のみを使用する場合、このプロパティを `false` に設定できます。                                                                                                                                            | `true`           |
+| `scalar.db.cluster.node.scanner_management.expiration_time_millis` | ScalarDB Cluster ノードは進行中のスキャナーを管理しており、長時間アイドル状態のスキャナーを期限切れにしてリソースリークを防ぎます。この設定では、このスキャナー管理機能の有効期限（ミリ秒単位）を指定します。                                                                     | `60000` (60秒)   |
 
 ## トランザクションマネージャーの設定
 
@@ -189,6 +191,14 @@ ScalarDB は、複数のストレージ実装を同時に使用することを�
 | `scalar.db.cross_partition_scan.enabled`           | パーティション間スキャンを有効にします。                  | `false` |
 | `scalar.db.cross_partition_scan.filtering.enabled` | パーティション間スキャンでフィルタリングを有効にします。     | `false` |
 | `scalar.db.cross_partition_scan.ordering.enabled`  | パーティション間スキャンで順序付けを有効にします。      | `false` |
+
+##### スキャンフェッチサイズ
+
+ストレージのスキャン操作でフェッチサイズを次のプロパティで設定できます。
+
+| 名前                         | 説明                                                                                                                                                                                                                             | デフォルト |
+|-----------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |-----------|
+| `scalar.db.scan_fetch_size` | ストレージのスキャン操作時に一度に取得するレコード数を指定します。値を大きくすると、大きな結果セットの場合にストレージへのアクセスの往復回数が減りパフォーマンスが向上しますが、メモリ使用量も増加します。値を小さくするとメモリ使用量は減りますが、レイテンシが増加する場合があります。 | `10`     |
 
 ### 非トランザクションストレージ操作を実行する
 
