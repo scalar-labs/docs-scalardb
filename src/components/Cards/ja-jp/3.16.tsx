@@ -29,8 +29,8 @@ const new_content = [
       },
       {
         cell: 1, // Second cell
-        links: [''],
-        labels: ['']
+        links: ['consensus-commit#1フェーズコミット最適化'],
+        labels: ['1フェーズコミット最適化']
       },
       {
         cell: 2, // Third cell
