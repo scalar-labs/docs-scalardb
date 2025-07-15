@@ -29,13 +29,13 @@ const new_content = [
       },
       {
         cell: 1, // Second cell
-        links: [''],
-        labels: ['']
+        links: ['consensus-commit#1フェーズコミット'],
+        labels: ['1フェーズコミット']
       },
       {
         cell: 2, // Third cell
-        links: [''],
-        labels: ['']
+        links: ['configurations#スキャンフェッチサイズ'],
+        labels: ['スキャンフェッチサイズ']
       }
     ]
   }
