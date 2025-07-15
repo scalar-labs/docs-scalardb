@@ -692,9 +692,14 @@ Optional<Result> result = transaction.get(get);
 
 ##### `Scan` 操作
 
-`Scan` は、パーティション内の複数のレコードを取得する操作です。`Scan` 操作では、クラスタリングキーの境界とクラスタリングキー列の順序を指定できます。
+`Scan` は、パーティション内の複数のレコードを取得する操作です。`Scan` 操作では、クラスタリングキーの境界とクラスタリングキー列の順序を指定できます。`Scan` 操作を実行するには、`transaction.scan()` メソッドまたは `transaction.getScanner()` メソッドを使用できます。
 
-まず `Scan` オブジェクトを作成し、次に次のように `transaction.scan()` メソッドを使用してオブジェクトを実行する必要があります。
+- `transaction.scan()`:
+  - このメソッドは、指定された `Scan` 操作を即座に実行し、一致するすべてのレコードのリストを返します。結果セットがメモリに収まる程度の小さい場合に適しています。
+- `transaction.getScanner()`:
+  - このメソッドは、結果セットを遅延的にイテレートできる `Scanner` オブジェクトを返します。結果セットが大きくなる可能性がある場合に有用で、すべてのレコードを一度にメモリに読み込むことを避けられます。
+
+まず `Scan` オブジェクトを作成し、次に `transaction.scan()` メソッドまたは `transaction.getScanner()` メソッドを使用してオブジェクトを実行する必要があります。
 
 ```java
 // Create a `Scan` operation.
@@ -715,8 +720,17 @@ Scan scan =
         .limit(10)
         .build();
 
-// Execute the `Scan` operation.
+// Execute the `Scan` operation by using the `transaction.scan()` method.
 List<Result> results = transaction.scan(scan);
+
+// Or, execute the `Scan` operation by using the `transaction.getScanner()` method.
+try (TransactionCrudOperable.Scanner scanner = transaction.getScanner(scan)) {
+  // Fetch the next result from the scanner
+  Optional<Result> result = scanner.one();
+
+  // Fetch all remaining results from the scanner
+  List<Result> allResults = scanner.all();
+}
 ```
 
 クラスタリングキー境界を省略するか、`start` 境界または `end` 境界のいずれかを指定できます。`orderings` を指定しない場合は、テーブルの作成時に定義したクラスタリング順序で結果が並べられます。
@@ -1355,9 +1369,14 @@ Optional<Result> result = transactionManager.get(get);
 
 #### `Scan` 操作の実行
 
-`Scan` は、パーティション内の複数のレコードを取得する操作です。`Scan` 操作では、クラスタリングキーの境界とクラスタリングキー列の順序を指定できます。
+`Scan` は、パーティション内の複数のレコードを取得する操作です。`Scan` 操作では、クラスタリングキーの境界とクラスタリングキー列の順序を指定できます。`Scan` 操作を実行するには、`transactionManager.scan()` メソッドまたは `transactionManager.getScanner()` メソッドを使用できます。
 
-まず `Scan` オブジェクトを作成し、次に次のように `transactionManager.scan()` メソッドを使用してオブジェクトを実行する必要があります。
+- `transactionManager.scan()`:
+  - このメソッドは、指定された `Scan` 操作を即座に実行し、一致するすべてのレコードのリストを返します。結果セットがメモリに収まる程度の小さい場合に適しています。
+- `transactionManager.getScanner()`:
+  - このメソッドは、結果セットを遅延的にイテレートできる `Scanner` オブジェクトを返します。結果セットが大きくなる可能性がある場合に有用で、すべてのレコードを一度にメモリに読み込むことを避けられます。
+
+まず `Scan` オブジェクトを作成し、次に `transactionManager.scan()` メソッドまたは `transactionManager.getScanner()` メソッドを使用してオブジェクトを実行する必要があります。
 
 ```java
 // Create a `Scan` operation.
@@ -1377,8 +1396,17 @@ Scan scan =
         .limit(10)
         .build();
 
-// Execute the `Scan` operation.
+// Execute the `Scan` operation by using the `transactionManager.scan()` method.
 List<Result> results = transactionManager.scan(scan);
+
+// Or, execute the `Scan` operation by using the `transactionManager.getScanner()` method.
+try (TransactionManagerCrudOperable.Scanner scanner = transactionManager.getScanner(scan)) {
+  // Fetch the next result from the scanner
+  Optional<Result> result = scanner.one();
+
+  // Fetch all remaining results from the scanner
+  List<Result> allResults = scanner.all();
+}
 ```
 
 `Scan` 操作の詳細については、[`Scan` 操作](#scan-操作)を参照してください。
