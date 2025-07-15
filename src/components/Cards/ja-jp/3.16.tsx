@@ -34,8 +34,8 @@ const new_content = [
       },
       {
         cell: 2, // Third cell
-        links: [''],
-        labels: ['']
+        links: ['configurations#スキャンフェッチサイズ'],
+        labels: ['スキャンフェッチサイズ']
       }
     ]
   }
