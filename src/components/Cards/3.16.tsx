@@ -30,7 +30,7 @@ const new_content = [
       {
         cell: 1, // Second cell
         links: ['consensus-commit#one-phase-commit'],
-        labels: ['One-phase commit optimization']
+        labels: ['One-phase commit']
       },
       {
         cell: 2, // Third cell
