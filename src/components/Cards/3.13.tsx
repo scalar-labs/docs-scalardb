@@ -25,12 +25,12 @@ const recentFeatures = [
       // To add a label, use the format ['label1', 'label2'].
       {
         cell: 0, // First cell
-        links: ['run-non-transactional-storage-operations-through-library#configure-scalardb-to-run-non-transactional-storage-operations'],
+        links: ['run-non-transactional-storage-operations-through-library'],
         labels: ['Configure ScalarDB to run non-transactional storage operations']
       },
       {
         cell: 1, // Second cell
-        links: ['scalardb-cluster/run-non-transactional-storage-operations-through-sql-interface/#configure-scalardb-cluster-to-run-non-transactional-storage-operations'],
+        links: ['scalardb-cluster/run-non-transactional-storage-operations-through-sql-interface'],
         labels: ['Configure ScalarDB Cluster to run non-transactional storage operations']
       },
       {
