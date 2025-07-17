@@ -16,26 +16,27 @@ import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook } from '@fortawesome/free-solid-svg-icons';
 
-const new_content = [
+const recentFeatures = [
   {
-    name: 'New content',
+    name: 'Recent features',
     categoryLinks: [
-      // To add a link, use the format ['link1', 'link2']
-      // To add a label, use the format ['label1', 'label2']
+      // Links should be to docs about features that have been introduced in this version or the previous version.
+      // To add a link, use the format ['link1', 'link2']. Links should be relative to the docs directory and not be anchor links.
+      // To add a label, use the format ['label1', 'label2'].
       {
         cell: 0, // First cell
-        links: ['features'],
-        labels: ['ScalarDB Features']
-      },
-      {
-        cell: 1, // Second cell
         links: ['scalardb-cluster/getting-started-with-vector-search'],
         labels: ['Getting Started with ScalarDB Cluster for Vector Search']
       },
       {
-        cell: 2, // Third cell
+        cell: 1, // Second cell
         links: ['scalardb-cluster/authorize-with-abac'],
         labels: ['Control User Access in a Fine-Grained Manner']
+      },
+      {
+        cell: 2, // Third cell
+        links: ['scalardb-cluster/encrypt-data-at-rest'],
+        labels: ['Encrypt Data at Rest']
       }
     ]
   }
@@ -198,12 +199,12 @@ const CategoryGrid = () => {
         </div>
       </div>
 
-      {/* New content table */}
+      {/* Recent features table */}
       <div className="category-table">
-        {new_content.map((doc, i) => (
+        {recentFeatures.map((doc, i) => (
           <React.Fragment key={i}>
             <div className="category-label">
-              {/* <FontAwesomeIcon icon={faBook} className="new-content-icon" />
+              {/* <FontAwesomeIcon icon={faBook} className="recent-features-icon" />
               &nbsp;{doc.name}*/}
               {doc.name}
             </div>
@@ -215,7 +216,7 @@ const CategoryGrid = () => {
                       {categoryLinkCell.labels[k]}
                     </Link>
                   ) : (
-                    <span key={`${j}-${k}`} className="new-content-cell">
+                    <span key={`${j}-${k}`} className="recent-features-cell">
                       {categoryLinkCell.labels[k]}
                     </span>
                   )
