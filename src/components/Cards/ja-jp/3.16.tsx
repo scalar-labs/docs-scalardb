@@ -24,18 +24,18 @@ const recentFeatures = [
       // To add a label, use the format ['label1', 'label2'].
       {
         cell: 0, // First cell
-        links: ['api-guide#読み取り専用モードでトランザクションを開始またはスタートする'],
-        labels: ['読み取り専用モードでトランザクションを開始またはスタートする']
+        links: [''],
+        labels: ['']
       },
       {
         cell: 1, // Second cell
-        links: ['consensus-commit#1フェーズコミット'],
-        labels: ['1フェーズコミット']
+        links: ['scalardb-cluster/getting-started-with-vector-search'],
+        labels: ['ScalarDB Cluster でベクトル検索をはじめよう']
       },
       {
         cell: 2, // Third cell
-        links: ['configurations#スキャンフェッチサイズ'],
-        labels: ['スキャンフェッチサイズ']
+        links: ['scalardb-cluster/authorize-with-abac'],
+        labels: ['ユーザーアクセスをきめ細かく制御する']
       }
     ]
   }

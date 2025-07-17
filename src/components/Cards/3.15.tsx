@@ -24,18 +24,18 @@ const recentFeatures = [
       // To add a label, use the format ['label1', 'label2'].
       {
         cell: 0, // First cell
-        links: ['features'],
-        labels: ['ScalarDB Features']
-      },
-      {
-        cell: 1, // Second cell
         links: ['scalardb-cluster/getting-started-with-vector-search'],
         labels: ['Getting Started with ScalarDB Cluster for Vector Search']
       },
       {
-        cell: 2, // Third cell
+        cell: 1, // Second cell
         links: ['scalardb-cluster/authorize-with-abac'],
         labels: ['Control User Access in a Fine-Grained Manner']
+      },
+      {
+        cell: 2, // Third cell
+        links: ['scalardb-cluster/encrypt-data-at-rest'],
+        labels: ['Encrypt Data at Rest']
       }
     ]
   }

@@ -24,18 +24,18 @@ const recentFeatures = [
       // To add a label, use the format ['label1', 'label2'].
       {
         cell: 0, // First cell
-        links: ['api-guide#begin-or-start-a-transaction-in-read-only-mode'],
-        labels: ['Begin or start a transaction in read-only mode']
+        links: [''],
+        labels: ['']
       },
       {
         cell: 1, // Second cell
-        links: ['consensus-commit#one-phase-commit'],
-        labels: ['One-phase commit']
+        links: ['scalardb-cluster/getting-started-with-vector-search'],
+        labels: ['Getting Started with ScalarDB Cluster for Vector Search']
       },
       {
         cell: 2, // Third cell
-        links: ['configurations#scan-fetch-size'],
-        labels: ['Scan fetch size']
+        links: ['scalardb-cluster/authorize-with-abac'],
+        labels: ['Control User Access in a Fine-Grained Manner']
       }
     ]
   }
