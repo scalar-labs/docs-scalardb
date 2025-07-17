@@ -24,18 +24,18 @@ const recentFeatures = [
       // To add a label, use the format ['label1', 'label2']
       {
         cell: 0, // First cell
-        links: ['api-guide#coordinator-テーブルのグループコミット'],
-        labels: ['Coordinator テーブルのグループコミット']
-      },
-      {
-        cell: 1, // Second cell
         links: ['run-non-transactional-storage-operations-through-library#configure-scalardb-to-run-non-transactional-storage-operations'],
         labels: ['非トランザクショナルストレージ操作を実行するための ScalarDB の設定']
       },
       {
-        cell: 2, // Third cell
+        cell: 1, // Second cell
         links: ['scalardb-cluster/run-non-transactional-storage-operations-through-sql-interface/#configure-scalardb-cluster-to-run-non-transactional-storage-operations'],
         labels: ['非トランザクショナルストレージ操作を実行するための ScalarDB Cluster の設定']
+      },
+      {
+        cell: 2, // Third cell
+        links: ['scalardb-cluster/scalardb-auth-with-sql'],
+        labels: ['ユーザーの認証と認可']
       }
     ]
   }
