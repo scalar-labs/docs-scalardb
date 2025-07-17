@@ -18,7 +18,7 @@ import { faBook } from '@fortawesome/free-solid-svg-icons';
 
 const new_content = [
   {
-    name: 'New content',
+    name: 'New features',
     categoryLinks: [
       // To add a link, use the format ['link1', 'link2']
       // To add a label, use the format ['label1', 'label2']
