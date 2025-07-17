@@ -14,6 +14,35 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 このページには、ScalarDB 3.16 のリリースノートのリストが含まれています。
 
+## v3.16.1
+
+**発売日:** 2025年07月16日
+
+### まとめ
+
+このリリースには、いくつかのバグ修正および脆弱性修正が含まれています。
+
+### Community edition
+
+#### バグの修正
+
+- トランザクションのコミット時に、実際にはコミットされているにもかかわらず CommitException がスローされるバグを修正しました。([#2826](https://github.com/scalar-labs/scalardb/pull/2826))
+- Cassandra におけるミューテーションのエラーハンドリングを修正しました。([#2827](https://github.com/scalar-labs/scalardb/pull/2827))
+- ワンフェーズコミットでグループコミットが正しく動作しないバグを修正しました。([#2832](https://github.com/scalar-labs/scalardb/pull/2832))
+
+### Enterprise edition
+
+#### バグの修正
+
+##### ScalarDB Cluster
+
+- update または upsert 操作で data tag が指定されていない場合でも更新されてしまうバグを修正しました。
+- リモートレプリケーション機能のメトリクスが不足していた問題を修正しました。
+- `replication-cli` の Jar ファイルが不足していた問題を修正しました。
+- ABAC が有効な場合に、ABAC ポリシーが設定されていないテーブルで put 操作を実行すると `UnsupportedOperationException` がスローされるバグを修正しました。
+- セキュリティ問題を修正するために `grpc_health_probe` をアップグレードしました。[CVE-2025-22874](https://github.com/advisories/GHSA-6f52-wpx2-hvf2 "CVE-2025-22874")
+- ワンフェーズコミット最適化が有効な場合にレプリケーション機能が開始されないようにバリデーションを追加しました。
+
 ## v3.16.0
 
 **発売日:** 2025年06月20日
