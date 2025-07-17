@@ -18,7 +18,7 @@ import { faBook } from '@fortawesome/free-solid-svg-icons';
 
 const recentFeatures = [
   {
-    name: '新機能',
+    name: '最近の機能',
     categoryLinks: [
       // To add a link, use the format ['link1', 'link2']. Links should be relative to the docs directory and not be anchor links.
       // To add a label, use the format ['label1', 'label2'].
