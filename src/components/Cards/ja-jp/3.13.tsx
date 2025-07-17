@@ -203,7 +203,7 @@ const CategoryGrid = () => {
         {newFeature.map((doc, i) => (
           <React.Fragment key={i}>
             <div className="category-label">
-              {/* <FontAwesomeIcon icon={faBook} className="new-content-icon" />
+              {/* <FontAwesomeIcon icon={faBook} className="new-feature-icon" />
               &nbsp;{doc.name}*/}
               {doc.name}
             </div>
@@ -215,7 +215,7 @@ const CategoryGrid = () => {
                       {categoryLinkCell.labels[k]}
                     </Link>
                   ) : (
-                    <span key={`${j}-${k}`} className="new-content-cell">
+                    <span key={`${j}-${k}`} className="new-feature-cell">
                       {categoryLinkCell.labels[k]}
                     </span>
                   )
