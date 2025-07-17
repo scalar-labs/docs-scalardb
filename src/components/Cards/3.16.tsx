@@ -198,7 +198,7 @@ const CategoryGrid = () => {
         </div>
       </div>
 
-      {/* New content table */}
+      {/* New features table */}
       <div className="category-table">
         {new_content.map((doc, i) => (
           <React.Fragment key={i}>
