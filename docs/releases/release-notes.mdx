@@ -10,6 +10,35 @@ displayed_sidebar: docsEnglish
 
 This page includes a list of release notes for ScalarDB 3.16.
 
+## v3.16.1
+
+**Release date:** July 16, 2025
+
+### Summary
+
+This release includes several bug fixes and vulnerability fixes.
+
+### Community edition
+
+#### Bug fixes
+
+- Fixed a bug where a CommitException was thrown when committing a transaction, even though the transaction was actually committed. ([#2826](https://github.com/scalar-labs/scalardb/pull/2826))
+- Fixed error handling for mutations in Cassandra. ([#2827](https://github.com/scalar-labs/scalardb/pull/2827))
+- Fixed a bug where group commit did not work correctly with one-phase commit. ([#2832](https://github.com/scalar-labs/scalardb/pull/2832))
+
+### Enterprise edition
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Fixed a bug where the data tag was updated even when it was not specified in update or upsert operations.
+- Added missing metrics for the remote replication features.
+- Released missing Jar file of `replication-cli`
+- Fixed a bug where an `UnsupportedOperationException` was thrown when executing put operations on tables without ABAC policies, when ABAC was enabled.
+- Upgraded `grpc_health_probe` to fix a security issue. [CVE-2025-22874](https://github.com/advisories/GHSA-6f52-wpx2-hvf2 "CVE-2025-22874")
+- Added validation to prevent the replication feature from starting if the one-phase commit optimization is enabled.
+
 ## v3.16.0
 
 **Release date:** June 20, 2025
