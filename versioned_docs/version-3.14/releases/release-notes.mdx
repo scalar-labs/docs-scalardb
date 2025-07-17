@@ -10,6 +10,33 @@ displayed_sidebar: docsEnglish
 
 This page includes a list of release notes for ScalarDB 3.14.
 
+## v3.14.4
+
+**Release date:** July 16, 2025
+
+### Summary
+
+This release includes several bug fixes and vulnerability fixes.
+
+### Community edition
+
+#### Bug fixes
+
+- Added exception handling for DateTimeParseException on column value conversion ([#2662](https://github.com/scalar-labs/scalardb/pull/2662))  
+- Fixed potential connection leak when using `jdbc` storage and Scan operation fails because the target table doesn't exist ([#2766](https://github.com/scalar-labs/scalardb/pull/2766))
+- Upgraded the PostgreSQL driver to fix security issues. [CVE-2025-49146](https://github.com/advisories/GHSA-hq9p-pm7w-8p54 "CVE-2025-49146") ([#2772](https://github.com/scalar-labs/scalardb/pull/2772))
+- Fixed error handling for mutations in Cassandra. ([#2827](https://github.com/scalar-labs/scalardb/pull/2827))
+
+### Enterprise edition
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Fixed a memory leak issue when the coordinator group commit feature is enabled.
+- Upgraded the `jetty` library to fix a security issue. [CVE-2024-13009](https://github.com/advisories/GHSA-q4rv-gq96-w7c5 "CVE-2024-13009")
+- Upgraded `grpc_health_probe` to fix a security issue. [CVE-2025-22874](https://github.com/advisories/GHSA-6f52-wpx2-hvf2 "CVE-2025-22874")
+
 ## v3.14.3
 
 **Release date:** May 15, 2025

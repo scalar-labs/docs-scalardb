@@ -14,6 +14,30 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 このページには、ScalarDB 3.13 のリリースノートのリストが含まれています。
 
+## v3.13.5
+
+**発売日:** 2025年07月16日
+
+### まとめ
+
+このリリースには、いくつかのバグ修正および脆弱性修正が含まれています。
+
+### Community edition
+
+#### バグの修正
+
+- 列値変換時の DateTimeParseException に対する例外処理を追加しました。([#2662](https://github.com/scalar-labs/scalardb/pull/2662))
+- `jdbc` ストレージを使用していて、対象テーブルが存在しないために Scan 操作が失敗した場合の潜在的な接続リークを修正しました。([#2766](https://github.com/scalar-labs/scalardb/pull/2766))
+- Cassandra におけるミューテーションのエラーハンドリングを修正しました。([#2827](https://github.com/scalar-labs/scalardb/pull/2827))
+
+#### バグの修正
+
+##### ScalarDB Cluster
+
+- コーディネーターグループコミット機能が有効なときのメモリリークの問題を修正しました。
+- セキュリティ問題を修正するために `jetty` ライブラリをアップグレードしました。[CVE-2024-13009](https://github.com/advisories/GHSA-q4rv-gq96-w7c5 "CVE-2024-13009")
+- セキュリティ問題を修正するために `grpc_health_probe` をアップグレードしました。[CVE-2025-22874](https://github.com/advisories/GHSA-6f52-wpx2-hvf2 "CVE-2025-22874")
+
 ## v3.13.4
 
 **発売日:** 2025年05月15日
