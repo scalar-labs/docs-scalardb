@@ -16,7 +16,7 @@ import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook } from '@fortawesome/free-solid-svg-icons';
 
-const new_content = [
+const newFeature = [
   {
     name: 'New features',
     categoryLinks: [
@@ -200,7 +200,7 @@ const CategoryGrid = () => {
 
       {/* New features table */}
       <div className="category-table">
-        {new_content.map((doc, i) => (
+        {newFeature.map((doc, i) => (
           <React.Fragment key={i}>
             <div className="category-label">
               {/* <FontAwesomeIcon icon={faBook} className="new-content-icon" />
