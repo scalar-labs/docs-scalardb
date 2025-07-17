@@ -25,18 +25,18 @@ const recentFeatures = [
       // To add a label, use the format ['label1', 'label2'].
       {
         cell: 0, // First cell
-        links: [''],
-        labels: ['']
-      },
-      {
-        cell: 1, // Second cell
         links: ['scalardb-cluster/getting-started-with-vector-search'],
         labels: ['ScalarDB Cluster でベクトル検索をはじめよう']
       },
       {
-        cell: 2, // Third cell
+        cell: 1, // Second cell
         links: ['scalardb-cluster/authorize-with-abac'],
         labels: ['ユーザーアクセスをきめ細かく制御する']
+      },
+      {
+        cell: 2, // Third cell
+        links: ['scalardb-cluster/encrypt-data-at-rest'],
+        labels: ['保存データの暗号化']
       }
     ]
   }
