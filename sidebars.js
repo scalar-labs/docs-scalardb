@@ -195,11 +195,6 @@ const sidebars = {
             },
             {
               type: 'doc',
-              id: 'scalardb-analytics/design',
-              label: 'ScalarDB Analytics Design',
-            },
-            {
-              type: 'doc',
               id: 'scalardb-analytics-postgresql/installation',
               label: 'Install ScalarDB Analytics with PostgreSQL Locally',
             }
@@ -229,11 +224,6 @@ const sidebars = {
               type: 'doc',
               id: 'data-modeling',
               label: 'Model Your Data',
-            },
-            {
-              type: 'doc',
-              id: 'consensus-commit',
-              label: 'Consensus Commit Protocol',
             },
             {
               type: 'category',
@@ -935,6 +925,16 @@ const sidebars = {
       items: [
         {
           type: 'doc',
+          id: 'consensus-commit',
+          label: 'Consensus Commit Protocol',
+        },
+        {
+          type: 'doc',
+          id: 'scalardb-analytics/design',
+          label: 'ScalarDB Analytics Design',
+        },
+        {
+          type: 'doc',
           id: 'scalar-licensing/index',
           label: 'Configure a Product License Key',
         },
@@ -1119,11 +1119,6 @@ const sidebars = {
             },
             {
               type: 'doc',
-              id: 'scalardb-analytics/design',
-              label: 'ScalarDB Analytics の設計',
-            },
-            {
-              type: 'doc',
               id: 'scalardb-analytics-postgresql/installation',
               label: 'ScalarDB Analytics with PostgreSQL をローカルにインストール',
             },
@@ -1153,11 +1148,6 @@ const sidebars = {
               type: 'doc',
               id: 'data-modeling',
               label: 'データモデリング',
-            },
-            {
-              type: 'doc',
-              id: 'consensus-commit',
-              label: 'Consensus Commit プロトコル',
             },
             {
               type: 'category',
@@ -1869,6 +1859,16 @@ const sidebars = {
       label: '関連情報',
       collapsible: true,
       items: [
+        {
+          type: 'doc',
+          id: 'consensus-commit',
+          label: 'Consensus Commit プロトコル',
+        },
+        {
+          type: 'doc',
+          id: 'scalardb-analytics/design',
+          label: 'ScalarDB Analytics の設計',
+        },
         {
           type: 'doc',
           id: 'scalar-licensing/index',
