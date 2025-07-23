@@ -195,11 +195,6 @@ const sidebars = {
             },
             {
               type: 'doc',
-              id: 'scalardb-analytics/design',
-              label: 'ScalarDB Analytics Design',
-            },
-            {
-              type: 'doc',
               id: 'scalardb-analytics-postgresql/installation',
               label: 'Install ScalarDB Analytics with PostgreSQL Locally',
             }
@@ -935,6 +930,11 @@ const sidebars = {
         },
         {
           type: 'doc',
+          id: 'scalardb-analytics/design',
+          label: 'ScalarDB Analytics Design',
+        },
+        {
+          type: 'doc',
           id: 'scalar-licensing/index',
           label: 'Configure a Product License Key',
         },
@@ -1116,11 +1116,6 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/getting-started-with-using-python-for-scalardb-cluster',
               label: 'Python から ScalarDB Cluster を使用',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-analytics/design',
-              label: 'ScalarDB Analytics の設計',
             },
             {
               type: 'doc',
@@ -1868,6 +1863,11 @@ const sidebars = {
           type: 'doc',
           id: 'consensus-commit',
           label: 'Consensus Commit プロトコル',
+        },
+        {
+          type: 'doc',
+          id: 'scalardb-analytics/design',
+          label: 'ScalarDB Analytics の設計',
         },
         {
           type: 'doc',
