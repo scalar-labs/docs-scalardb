@@ -1,0 +1,63 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsEnglish
+---
+
+# Permission Requirements
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+This page describes the required permissions for using ScalarDB with its [supported databases](requirements.mdx#databases).
+
+## Cassandra
+
+ScalarDB requires the following actions to be granted to the Cassandra role that ScalarDB uses to access Cassandra:
+
+<Tabs groupId="cassandra-versions" queryString>
+  <TabItem value="cassandra-3.11" label="Cassandra 3.11" default>
+
+  - `CREATE`
+  - `DROP`
+  - `ALTER`
+  - `SELECT`
+  - `MODIFY`
+
+  </TabItem>
+  <TabItem value="cassandra-3.0" label="Cassandra 3.0">
+
+  - `CREATE`
+  - `DROP`
+  - `ALTER`
+  - `SELECT`
+  - `MODIFY`
+
+  </TabItem>
+</Tabs>
+
+## DynamoDB
+
+ScalarDB requires the following actions to be granted to the AWS IAM user that ScalarDB uses to access DynamoDB:
+
+- `dynamodb:ConditionCheckItem`
+- `dynamodb:PutItem`
+- `dynamodb:ListTables`
+- `dynamodb:DeleteItem`
+- `dynamodb:Scan`
+- `dynamodb:Query`
+- `dynamodb:UpdateItem`
+- `dynamodb:DeleteTable`
+- `dynamodb:UpdateContinuousBackups`
+- `dynamodb:CreateTable`
+- `dynamodb:DescribeTable`
+- `dynamodb:GetItem`
+- `dynamodb:DescribeContinuousBackups`
+- `dynamodb:UpdateTable`
+- `application-autoscaling:RegisterScalableTarget`
+- `application-autoscaling:DeleteScalingPolicy`
+- `application-autoscaling:PutScalingPolicy`
+- `application-autoscaling:DeregisterScalableTarget`
+- `application-autoscaling:TagResource`
