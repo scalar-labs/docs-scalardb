@@ -231,11 +231,6 @@ const sidebars = {
               label: 'Model Your Data',
             },
             {
-              type: 'doc',
-              id: 'consensus-commit',
-              label: 'Consensus Commit Protocol',
-            },
-            {
               type: 'category',
               label: 'Run Through the CRUD Interface',
               collapsible: true,
@@ -935,6 +930,11 @@ const sidebars = {
       items: [
         {
           type: 'doc',
+          id: 'consensus-commit',
+          label: 'Consensus Commit Protocol',
+        },
+        {
+          type: 'doc',
           id: 'scalar-licensing/index',
           label: 'Configure a Product License Key',
         },
@@ -1153,11 +1153,6 @@ const sidebars = {
               type: 'doc',
               id: 'data-modeling',
               label: 'データモデリング',
-            },
-            {
-              type: 'doc',
-              id: 'consensus-commit',
-              label: 'Consensus Commit プロトコル',
             },
             {
               type: 'category',
@@ -1869,6 +1864,11 @@ const sidebars = {
       label: '関連情報',
       collapsible: true,
       items: [
+        {
+          type: 'doc',
+          id: 'consensus-commit',
+          label: 'Consensus Commit プロトコル',
+        },
         {
           type: 'doc',
           id: 'scalar-licensing/index',
