@@ -6,7 +6,7 @@ tags:
 displayed_sidebar: docsJapanese
 ---
 
-# ScalarDB の設定
+# ScalarDB Core の設定
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -14,39 +14,25 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 <TranslationBanner />
 
-このページでは、ScalarDB で使用可能な設定について説明します。
+このページでは、ScalarDB Core で使用可能な設定について説明します。
 
-## ScalarDB クライアントの設定
+:::tip
 
-このセクションでは、ScalarDB クライアントの設定について説明します。ScalarDB は、Consensus Commit を使用してトランザクションを実行する方法、非トランザクションストレージ操作を実行する方法、および ScalarDB Cluster を介してトランザクションを実行する方法を提供します。
-
-### Consensus Commit を使用してトランザクションを実行する
-
-ScalarDB は、Consensus Commit と呼ばれる独自のトランザクションプロトコルを提供します。これは、ScalarDB のデフォルトのトランザクションマネージャータイプです。Consensus Commit トランザクションマネージャーを使用するには、ScalarDB プロパティファイルに次の内容を追加します。
-
-```properties
-scalar.db.transaction_manager=consensus-commit
-```
-
-:::note
-
-`scalar.db.transaction_manager` プロパティを指定しない場合は、`consensus-commit` がデフォルト値になります。
+ScalarDB Cluster を使用している場合は、代わりに [ScalarDB Cluster の設定](./scalardb-cluster/scalardb-cluster-configurations.mdx)を参照してください。
 
 :::
 
-#### 基本設定
+## 一般的な設定
 
-Consensus Commit トランザクションマネージャーでは、次の基本設定が利用可能です。
+ScalarDB トランザクションマネージャーでは、次の一般的な設定が利用可能です。
 
-| 名前                                                   | 説明                                                                                                                                                                                                                                                                                                                                            | デフォルト     |
-|-------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
-| `scalar.db.transaction_manager`                       | `consensus-commit` を指定する必要があります。                                                                                                                                                                                                                                                                                                       | -             |
-| `scalar.db.consensus_commit.isolation_level`          | Consensus Commit に使用される分離レベル。`SNAPSHOT` または `SERIALIZABLE` のいずれかを指定できます。                                                                                                                                                                                                                                                     | `SNAPSHOT`    |
-| `scalar.db.consensus_commit.serializable_strategy`    | Consensus Commit に使用されるシリアル化可能な戦略。`EXTRA_READ` または `EXTRA_WRITE` のいずれかを指定できます。`scalar.db.consensus_commit.isolation_level` プロパティで `SNAPSHOT` が指定されている場合、この設定は無視されます。                                                                                                                                   | `EXTRA_READ`  |
-| `scalar.db.consensus_commit.coordinator.namespace`    | Coordinator テーブルの名前空間名。                                                                                                                                                                                                                                                                                                                 | `coordinator` |
-| `scalar.db.consensus_commit.include_metadata.enabled` | `true` に設定すると、`Get` および `Scan` 操作の結果にトランザクションメタデータが含まれます。特定のテーブルのトランザクションメタデータ列の詳細を表示するには、`DistributedTransactionAdmin.getTableMetadata()` メソッドを使用します。このメソッドは、トランザクションメタデータ列が追加されたテーブルメタデータを返します。この設定を使用すると、トランザクション関連の問題を調査するのに役立ちます。 | `false`       |
+| 名前                                                   | 説明                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | デフォルト           |
+|-------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|
+| `scalar.db.transaction_manager`                       | ScalarDB のトランザクションマネージャー。[Consensus Commit](./consensus-commit.mdx) を使用するには `consensus-commit` を指定し、[非トランザクションストレージ操作を実行する](./run-non-transactional-storage-operations-through-library.mdx) には `single-crud-operation` を指定します。`single-crud-operation` を使用する場合、`scalar.db.consensus_commit` プレフィックスの下の設定は無視されることに注意してください。 | `consensus-commit`  |
+| `scalar.db.consensus_commit.isolation_level`          | Consensus Commit に使用される分離レベル。`SNAPSHOT`、`SERIALIZABLE` または `READ_COMMITTED` のいずれかを指定できます。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | `SNAPSHOT`          |
+| `scalar.db.consensus_commit.coordinator.namespace`    | Consensus Commit に使用される Coordinator テーブルの名前空間名。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | `coordinator`       |
 
-#### パフォーマンス関連の設定
+## パフォーマンス関連の設定
 
 Consensus Commit トランザクションマネージャーでは、次のパフォーマンス関連の設定が利用できます。
 
@@ -68,9 +54,9 @@ Consensus Commit トランザクションマネージャーでは、次のパフ
 | `scalar.db.consensus_commit.coordinator.group_commit.timeout_check_interval_millis`    | グループコミット関連のタイムアウトをチェックする間隔。                                                                                                                                                                           | `20`                                                     |
 | `scalar.db.consensus_commit.coordinator.group_commit.metrics_monitor_log_enabled`      | グループコミットのメトリックが定期的にログに記録されるかどうか。                                                                                                                                                                   | `false`                                                  |
 
-#### 基盤となるストレージまたはデータベースの設定
+#### ストレージ関連の設定
 
-Consensus Commit にはストレージ抽象化レイヤーがあり、複数の基盤となるストレージをサポートしています。`scalar.db.storage` プロパティを使用してストレージ実装を指定できます。
+ScalarDB には、複数のストレージ実装をサポートするストレージ（データベース）抽象化レイヤーがあります。`scalar.db.storage` プロパティを使用してストレージ実装を指定できます。
 
 データベースを選択して、各ストレージで使用可能な設定を確認します。
 
@@ -183,32 +169,16 @@ ScalarDB は、複数のストレージ実装の同時使用をサポートし�
 | `scalar.db.cross_partition_scan.filtering.enabled` | クロスパーティションスキャンでフィルタリングを有効にします。 | `false`  |
 | `scalar.db.cross_partition_scan.ordering.enabled`  | パーティション間スキャンでの順序付けを有効にします。       | `false`  |
 
-### 非トランザクションストレージ操作を実行する
-
-非トランザクションストレージ操作を実行するには、`scalar.db.transaction_manager` プロパティを `single-crud-operation` に設定する必要があります。
-
-```properties
-scalar.db.transaction_manager=single-crud-operation
-```
-
-また、[基盤となるストレージまたはデータベースの設定](#基盤となるストレージまたはデータベースの設定)の説明に従って、基盤となるストレージまたはデータベースを設定する必要があります。
-
-### ScalarDB Cluster を介してトランザクションを実行する
-
-[ScalarDB Cluster](scalardb-cluster/index.mdx) は、ScalarDB に gRPC インターフェースを提供するコンポーネントです。
-
-クライアント設定の詳細については、[ScalarDB Cluster クライアント設定](scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#クライアント設定)を参照してください。
-
 ## その他の ScalarDB 設定
 
 ScalarDB で使用できる追加の設定は次のとおりです。
 
-| 名前                                                              | 説明                                                                                                                                                                      | デフォルト         |
-|------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|
-| `scalar.db.metadata.cache_expiration_time_secs`                  | ScalarDB には、データベースへのリクエスト数を減らすためのメタデータキャッシュがあります。この設定では、キャッシュの有効期限を秒単位で指定します。`-1`を指定した場合は、キャッシュは期限切れになりません。 | `60`              |
-| `scalar.db.active_transaction_management.expiration_time_millis` | ScalarDB は進行中のトランザクションを維持し、トランザクション ID を使用して再開できます。この設定は、このトランザクション管理機能の有効期限をミリ秒単位で指定します。                               | `-1` (有効期限なし) |
-| `scalar.db.default_namespace_name`                               | 指定された名前空間名は、名前空間を指定していない操作によって使用されます。                                                                                                             |                  |
-| `scalar.db.system_namespace_name`                                | 指定された名前空間名は ScalarDB によって内部的に使用されます。                                                                                                                     | `scalardb`       |
+| 名前                                                              | 説明                                                                                                                                                                                                                                                                                                                                           | デフォルト         |
+|------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|
+| `scalar.db.metadata.cache_expiration_time_secs`                  | ScalarDB には、データベースへのリクエスト数を減らすためのメタデータキャッシュがあります。この設定では、キャッシュの有効期限を秒単位で指定します。`-1`を指定した場合は、キャッシュは期限切れになりません。                                                                                                                                                                      | `60`              |
+| `scalar.db.active_transaction_management.expiration_time_millis` | ScalarDB は進行中のトランザクションを管理しており、トランザクション ID を使用して再開できます。この設定は、このトランザクション管理機能の有効期限をミリ秒単位で指定します。                                                                                                                                                                                                    | `-1` (有効期限なし) |
+| `scalar.db.consensus_commit.include_metadata.enabled`            | Consensus Commit を使用している場合に、`true` に設定すると、`Get` および `Scan` 操作の結果にトランザクションメタデータが含まれます。特定のテーブルのトランザクションメタデータ列の詳細を表示するには、`DistributedTransactionAdmin.getTableMetadata()` メソッドを使用します。このメソッドは、トランザクションメタデータ列が追加されたテーブルメタデータを返します。この設定を使用すると、トランザクション関連の問題を調査するのに役立ちます。 | `false`          |
+| `scalar.db.default_namespace_name`                               | 指定された名前空間名は、名前空間を指定していない操作によって使用されます。                                                                                                                                                                                                                                                                                  |                  |
 
 ## プレースホルダーの使用
 
@@ -223,11 +193,7 @@ scalar.db.password=${env:SCALAR_DB_PASSWORD}
 
 この設定例では、ScalarDB は環境変数からユーザー名とパスワードを読み取ります。環境変数 `SCALAR_DB_USERNAME` が存在しない場合、ScalarDB はデフォルト値 `admin` を使用します。
 
-## 設定例
-
-このセクションでは、いくつかの設定例を示します。
-
-### 設定例 #1 - アプリとデータベース
+## 設定例 - アプリとデータベース
 
 ```mermaid
 flowchart LR
@@ -260,35 +226,3 @@ scalar.db.contact_points=<CASSANDRA_HOST>
 scalar.db.username=<USERNAME>
 scalar.db.password=<PASSWORD>
 ```
-
-### 設定例 #2 - アプリ、ScalarDB Cluster、データベース
-
-```mermaid
-flowchart LR
-    app["アプリ -<br />ScalarDB ライブラリと gRPC"]
-    cluster["ScalarDB Cluster -<br />(ScalarDB ライブラリと<br />Consensus Commit)"]
-    db[(基盤となるストレージまたはデータベース)]
-    app --> cluster --> db
-```
-
-この例の設定では、アプリ (gRPC を使用した ScalarDB ライブラリ) は、ScalarDB Enterprise エディションでのみ使用可能なコンポーネントである ScalarDB Cluster を介して、基盤となるストレージまたはデータベース (この場合は Cassandra) に接続します。
-
-:::note
-
-ScalarDB Cluster は [Scalar Admin](https://github.com/scalar-labs/scalar-admin) インターフェイスを実装しており、これにより ScalarDB Cluster を一時停止することで ScalarDB のトランザクション的に一貫性のあるバックアップを取得できるため、この設定は実稼働環境での使用に適しています。
-
-:::
-
-以下は、ScalarDB Cluster を介してアプリを基盤となるデータベースに接続するための設定の例です。
-
-```properties
-# Transaction manager implementation.
-scalar.db.transaction_manager=cluster
-
-# Contact point of the cluster.
-scalar.db.contact_points=indirect:<SCALARDB_CLUSTER_CONTACT_POINT>
-```
-
-クライアント設定の詳細については、[ScalarDB Cluster クライアント設定](scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#クライアント設定) を参照してください。
-
-[^1]: アプリケーションのアクセスパターンを考慮し、アプリケーションが使用する同じ基盤ストレージで、いくつかのバリエーション (たとえば、デフォルト値の 75% と 125%) でパフォーマンスをベンチマークして、最適な設定を決定することは価値があります。最適な設定は実際にはこれらの要因によって決まるためです。また、これらのパラメーターの組み合わせ (たとえば、1番目に `slot_capacity:20` と `group_size_fix_timeout_millis:40`、2番目に `slot_capacity:30` と `group_size_fix_timeout_millis:40`、3番目に `slot_capacity:20` と `group_size_fix_timeout_millis:80`) をベンチマークして、最適な組み合わせを決定することも重要です。
