@@ -13,62 +13,43 @@ import TabItem from '@theme/TabItem';
 
 <TranslationBanner />
 
-このドキュメントでは、ScalarDB Cluster の設定について説明します。ScalarDB Cluster は複数のクラスターノードで構成されており、各クラスターノードを設定する必要があります。
+このドキュメントでは、ScalarDB Cluster の設定について説明します。ScalarDB Cluster は複数のクラスターノードで構成されており、各クラスターノードを設定する必要があります。設定はプロパティファイルで指定する必要があります。
 
-## 基本設定
+## クラスター設定
 
-クラスターノードの基本設定は次のとおりです。
+このセクションでは、ScalarDB Cluster の設定について説明します。
 
-| 名前                                                                | 説明                                                                                                                                                      | デフォルト          |
-|-------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------|----------------|
-| `scalar.db.cluster.membership.type`                               | メンバーシップの種類。現在、`KUBERNETES` のみ指定できます。                                                                                                                    | `KUBERNETES`   |
-| `scalar.db.cluster.membership.kubernetes.endpoint.namespace_name` | この設定は、`KUBERNETES` メンバーシップタイプ用です。[endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) の名前空間名。                | `default`      |
-| `scalar.db.cluster.membership.kubernetes.endpoint.name`           | この設定は、`KUBERNETES` メンバーシップタイプ用です。メンバーシップ情報を取得するための [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) の名前。 |                |
-| `scalar.db.cluster.node.decommissioning_duration_secs`            | 廃止期間（秒単位）。                                                                                                                                              | `30`           |
-| `scalar.db.cluster.node.grpc.max_inbound_message_size`            | 受信可能な最大メッセージサイズ。                                                                                                                                        | gRPCのデフォルト値    |
-| `scalar.db.cluster.node.grpc.max_inbound_metadata_size`           | 受信できるメタデータの最大サイズ。                                                                                                                                       | gRPCのデフォルト値    |
-| `scalar.db.cluster.node.port`                                     | ScalarDB Cluster ノードのポート番号。                                                                                                                             | `60053`        |
-| `scalar.db.cluster.node.prometheus_exporter_port`                 | Prometheus エクスポーターのポート番号。                                                                                                                               | `9080`         |
-| `scalar.db.cluster.grpc.deadline_duration_millis`                 | gRPC の期限期間（ミリ秒単位）。                                                                                                                                      | `60000` (60秒) |
-| `scalar.db.cluster.node.standalone_mode.enabled`                  | スタンドアロンモードが有効かどうか。スタンドアロンモードが有効になっている場合、メンバーシップ設定 (`scalar.db.cluster.membership.*`) は無視されることに注意してください。                                                 | `false`        |
-| `scalar.db.metadata.cache_expiration_time_secs`                   | ScalarDB には、データベースへのリクエスト数を減らすためのメタデータキャッシュがあります。この設定では、キャッシュの有効期限を秒単位で指定します。`-1`を指定した場合は、キャッシュは期限切れになりません。                                             | `60`           |
-| `scalar.db.active_transaction_management.expiration_time_millis`  | ScalarDB Cluster ノードは進行中のトランザクションを維持し、トランザクション ID を使用して再開できます。この設定では、このトランザクション管理機能の有効期限をミリ秒単位で指定します。                                                   | `60000` (60秒) |
-| `scalar.db.system_namespace_name`                                 | 指定された名前空間名は ScalarDB によって内部的に使用されます。                                                                                                                    | `scalardb`     |
-| `scalar.db.transaction.enabled`                                   | トランザクション機能が有効かどうか。例えば、Embedding 機能のみを使用する場合、このプロパティをfalseに設定できます。                                                       | `true`                 |
+### 一般的な設定
 
-## トランザクションマネージャーの設定
+ScalarDB Cluster では、次の一般的な設定が利用可能です。
 
-このセクションでは、トランザクションマネージャーの設定について説明します。ScalarDB は、コンセンサスコミットを使用してトランザクションを実行する方法と、非トランザクションストレージ操作を実行する方法を提供します。
+#### トランザクション管理設定
 
-### コンセンサスコミットを使用してトランザクションを実行する
+| 名前                                                   | 説明                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | デフォルト           |
+|-------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------------|
+| `scalar.db.transaction_manager`                       | ScalarDB のトランザクションマネージャー。[Consensus Commit](../consensus-commit.mdx) を使用するには `consensus-commit` を指定し、[非トランザクションストレージ操作を実行する](./run-non-transactional-storage-operations-through-scalardb-cluster.mdx) には `single-crud-operation` を指定します。`single-crud-operation` を使用する場合、`scalar.db.consensus_commit` プレフィックスの下の設定は無視されることに注意してください。 | `consensus-commit`  |
+| `scalar.db.consensus_commit.isolation_level`          | Consensus Commit に使用される分離レベル。`SNAPSHOT`、`SERIALIZABLE` または `READ_COMMITTED` のいずれかを指定できます。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | `SNAPSHOT`          |
+| `scalar.db.consensus_commit.coordinator.namespace`    | Consensus Commit に使用される Coordinator テーブルの名前空間名。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | `coordinator`       |
 
-ScalarDB は、コンセンサスコミットと呼ばれる独自のトランザクションプロトコルを提供します。これは、ScalarDB のデフォルトのトランザクションマネージャータイプです。コンセンサスコミットトランザクションマネージャーを使用するには、ScalarDB プロパティファイルに次の内容を追加します。
+#### ノード設定
 
-```properties
-scalar.db.transaction_manager=consensus-commit
-```
+| 名前                                                                | 説明                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | デフォルト          |
+|-------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------|
+| `scalar.db.cluster.membership.type`                               | メンバーシップの種類。現在、`KUBERNETES` のみ指定できます。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    | `KUBERNETES`   |
+| `scalar.db.cluster.membership.kubernetes.endpoint.namespace_name` | この設定は、`KUBERNETES` メンバーシップタイプ用です。[endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) の名前空間名。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | `default`      |
+| `scalar.db.cluster.membership.kubernetes.endpoint.name`           | この設定は、`KUBERNETES` メンバーシップタイプ用です。メンバーシップ情報を取得するための [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) の名前。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 |                |
+| `scalar.db.cluster.node.decommissioning_duration_secs`            | 廃止期間（秒単位）。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              | `30`           |
+| `scalar.db.cluster.node.grpc.max_inbound_message_size`            | 受信可能な最大メッセージサイズ。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | gRPCのデフォルト値    |
+| `scalar.db.cluster.node.grpc.max_inbound_metadata_size`           | 受信できるメタデータの最大サイズ。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | gRPCのデフォルト値    |
+| `scalar.db.cluster.node.port`                                     | ScalarDB Cluster ノードのポート番号。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             | `60053`        |
+| `scalar.db.cluster.node.prometheus_exporter_port`                 | Prometheus エクスポーターのポート番号。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | `9080`         |
+| `scalar.db.cluster.grpc.deadline_duration_millis`                 | gRPC の期限期間（ミリ秒単位）。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | `60000` (60秒) |
+| `scalar.db.cluster.node.standalone_mode.enabled`                  | スタンドアロンモードが有効かどうか。スタンドアロンモードが有効になっている場合、メンバーシップ設定 (`scalar.db.cluster.membership.*`) は無視されることに注意してください。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | `false`        |
+| `scalar.db.transaction.enabled`                                    | トランザクション機能が有効かどうか。たとえば、埋め込み機能のみを使用する場合は、このプロパティを `false` に設定できます。                                                                                                                                                                                      | `true`                 |
 
-:::note
+### パフォーマンス関連の設定
 
-`scalar.db.transaction_manager` プロパティを指定しない場合は、`consensus-commit` がデフォルト値になります。
-
-:::
-
-#### 基本設定
-
-コンセンサスコミットトランザクションマネージャーでは、次の基本設定が利用可能です。
-
-| 名前                                                              | 説明                                                                                                                                                                                                    | デフォルト                |
-|-------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------------|
-| `scalar.db.transaction_manager`                       | `consensus-commit` を指定する必要があります。                                                                                                                                                                                                                                                                                                                                                                      | -             |
-| `scalar.db.consensus_commit.isolation_level`          | コンセンサスコミットに使用される分離レベル。`SNAPSHOT` または `SERIALIZABLE` のいずれかを指定できます。                                                                                                                                                                                                                                                                                                             | `SNAPSHOT`    |
-| `scalar.db.consensus_commit.serializable_strategy`    | コンセンサスコミットに使用されるシリアル化可能な戦略。`EXTRA_READ` または `EXTRA_WRITE` のいずれかを指定できます。`scalar.db.consensus_commit.isolation_level` プロパティで `SNAPSHOT` が指定されている場合、この設定は無視されます。                                                                                                                                                                         | `EXTRA_READ`  |
-| `scalar.db.consensus_commit.coordinator.namespace`    | Coordinator テーブルの名前空間名。                                                                                                                                                                                                                                                                                                                                                                        | `coordinator` |
-| `scalar.db.consensus_commit.include_metadata.enabled` | `true` に設定すると、`Get` および `Scan` 操作の結果にトランザクションメタデータが含まれます。特定のテーブルのトランザクションメタデータ列の詳細を表示するには、`DistributedTransactionAdmin.getTableMetadata()` メソッドを使用します。このメソッドは、トランザクションメタデータ列が追加されたテーブルメタデータを返します。この設定を使用すると、トランザクション関連の問題を調査するのに役立ちます。 | `false`       |
-
-#### パフォーマンス関連の設定
-
-コンセンサスコミットトランザクションマネージャーでは、次のパフォーマンス関連の設定が利用できます。
+Consensus Commit トランザクションマネージャーでは、次のパフォーマンス関連の設定が利用できます。
 
 | 名前                                                              | 説明                                                                                                                                                                                                    | デフォルト                |
 |----------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------|
@@ -88,9 +69,9 @@ scalar.db.transaction_manager=consensus-commit
 | `scalar.db.consensus_commit.coordinator.group_commit.timeout_check_interval_millis`    | グループコミット関連のタイムアウトをチェックする間隔。                                                                                                                                                                                                                                  | `20`                                                              |
 | `scalar.db.consensus_commit.coordinator.group_commit.metrics_monitor_log_enabled`      | グループコミットのメトリックが定期的にログに記録されるかどうか。                                                                                                                                                                                                                   | `false`                                                           |
 
-#### 基盤となるストレージまたはデータベースの設定
+### ストレージ関連の設定
 
-Consensus Commit にはストレージ抽象化レイヤーがあり、複数の基盤となるストレージをサポートしています。`scalar.db.storage` プロパティを使用してストレージ実装を指定できます。
+ScalarDB には、複数のストレージ実装をサポートするストレージ（データベース）抽象化レイヤーがあります。`scalar.db.storage` プロパティを使用してストレージ実装を指定できます。
 
 データベースを選択して、各ストレージで使用可能な設定を確認します。
 
@@ -164,7 +145,7 @@ DynamoDB では次の設定が利用可能です。
   </TabItem>
 </Tabs>
 
-##### マルチストレージのサポート
+#### マルチストレージのサポート
 
 ScalarDB は、複数のストレージ実装を同時に使用することをサポートしています。`scalar.db.storage` プロパティの値として `multi-storage` を指定すると、複数のストレージを使用できます。
 
@@ -188,17 +169,7 @@ ScalarDB は、複数のストレージ実装を同時に使用することを�
 | `scalar.db.cross_partition_scan.filtering.enabled` | パーティション間スキャンでフィルタリングを有効にします。     | `false` |
 | `scalar.db.cross_partition_scan.ordering.enabled`  | パーティション間スキャンで順序付けを有効にします。      | `false` |
 
-### 非トランザクションストレージ操作を実行する
-
-非トランザクションストレージ操作を実行するには、`scalar.db.transaction_manager` プロパティを `single-crud-operation` に設定する必要があります。
-
-```properties
-scalar.db.transaction_manager=single-crud-operation
-```
-
-また、[基盤となるストレージまたはデータベースの設定](#基盤となるストレージまたはデータベースの設定)の説明に従って、基盤となるストレージまたはデータベースを設定する必要があります。
-
-## ScalarDB Cluster GraphQL 設定
+## ScalarDB Cluster GraphQL の設定
 
 ScalarDB Cluster GraphQL の設定は次のとおりです。
 
@@ -211,17 +182,17 @@ ScalarDB Cluster GraphQL の設定は次のとおりです。
 | `scalar.db.graphql.graphiql`                        | GraphQL サーバーが [GraphiQL](https://github.com/graphql/graphiql) IDE を提供するかどうか。                                                                                                                   | `true`               |
 | `scalar.db.graphql.schema_checking_interval_millis` | ScalarDB スキーマに変更が検出された場合に GraphQL サーバーが GraphQL スキーマを再構築する間隔 (ミリ秒単位)。                                                                       | `30000` (30秒) |
 
-### サーバーの実行中に ScalarDB スキーマを作成または変更する
+#### サーバーの実行中に ScalarDB スキーマを作成または変更する
 
 GraphQL スキーマはサーバーの起動時に静的に構築されるため、ScalarDB スキーマが変更された場合 (たとえば、テーブルが追加、変更、または削除された場合)、対応する GraphQL スキーマは再構築されない限り変更を反映しません。これに対処するために、GraphQL サーバーは、定期的なチェックとオンデマンドチェックの2つのメカニズムを提供します。
 
-#### 定期的なチェックを実行する
+##### 定期的なチェックを実行する
 
 サーバーは、ScalarDB スキーマに変更が発生したかどうかを定期的にチェックし、必要に応じて対応する GraphQL スキーマを再構築します。デフォルトでは、チェックは30秒ごとに行われますが、間隔は `scalar.db.graphql.schema_checking_interval_millis` プロパティを使用して設定できます。
 
 定期的なチェックを実行する必要がない場合は、プロパティ値を `-1` に設定して無効にすることができます。
 
-#### オンデマンドチェックを実行する
+##### オンデマンドチェックを実行する
 
 また、HTTP API の `/update-graphql-schema` エンドポイントに POST リクエストを実行して、サーバーに ScalarDB スキーマの変更をチェックし、必要に応じて対応する GraphQL スキーマを再構築するように要求することもできます。
 
@@ -231,7 +202,7 @@ GraphQL スキーマはサーバーの起動時に静的に構築されるため
 curl -X POST http://localhost:8080/graphql/update-graphql-schema
 ```
 
-## ScalarDB Cluster SQL 設定
+### SQL 関連の設定
 
 ScalarDB Cluster SQL の設定は次のとおりです。
 
@@ -242,3 +213,109 @@ ScalarDB Cluster SQL の設定は次のとおりです。
 | `scalar.db.sql.statement_cache.size`     | キャッシュされたステートメントの最大数。                                                                     | `100`         |
 | `scalar.db.sql.default_transaction_mode` | デフォルトのトランザクションモード。`TRANSACTION` または `TWO_PHASE_COMMIT_TRANSACTION` を設定できます。                    | `TRANSACTION` |
 | `scalar.db.sql.default_namespace_name`   | デフォルトの名前空間名。SQL ステートメントで名前空間名を指定しない場合は、この値が使用されます。 |               |
+
+## その他の ScalarDB Cluster 設定
+
+ScalarDB Cluster で使用できる追加の設定は次のとおりです。
+
+| 名前                                                              | 説明                                                                                                                                                                                                                                                                                                                                           | デフォルト         |
+|------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------|
+| `scalar.db.metadata.cache_expiration_time_secs`                  | ScalarDB には、データベースへのリクエスト数を減らすためのメタデータキャッシュがあります。この設定では、キャッシュの有効期限を秒単位で指定します。`-1`を指定した場合は、キャッシュは期限切れになりません。                                                                                                                                                                      | `60`              |
+| `scalar.db.active_transaction_management.expiration_time_millis` | ScalarDB は進行中のトランザクションを管理しており、トランザクション ID を使用して再開できます。この設定は、このトランザクション管理機能の有効期限をミリ秒単位で指定します。                                                                                                                                                                                                    | `-1` (有効期限なし) |
+| `scalar.db.consensus_commit.include_metadata.enabled`            | Consensus Commit を使用している場合に、`true` に設定すると、`Get` および `Scan` 操作の結果にトランザクションメタデータが含まれます。特定のテーブルのトランザクションメタデータ列の詳細を表示するには、`DistributedTransactionAdmin.getTableMetadata()` メソッドを使用します。このメソッドは、トランザクションメタデータ列が追加されたテーブルメタデータを返します。この設定を使用すると、トランザクション関連の問題を調査するのに役立ちます。 | `false`          |
+| `scalar.db.default_namespace_name`                               | 指定された名前空間名は、名前空間を指定していない操作によって使用されます。                                                                                                                                                                                                                                                                                  |                  |
+
+## クライアント設定
+
+このセクションでは、ScalarDB Cluster クライアントの一般的な設定について説明します。
+
+### プリミティブインターフェイスの設定
+
+次の表は、ScalarDB Cluster クライアントの一般的な設定を示しています。
+
+| 名前                                               | 説明                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | デフォルト                |
+|----------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------|
+| `scalar.db.transaction_manager`                    | `cluster` を指定する必要があります。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | -                      |
+| `scalar.db.contact_points`                         | クラスターの接続先。`indirect` クライアントモードを使用する場合は、`indirect:<LOAD_BALANCER_IP_ADDRESS>` 形式を使用して、クラスターノードの前にあるロードバランサーの IP アドレスを指定します。`direct-kubernetes` クライアントモードを使用する場合は、`direct-kubernetes:<NAMESPACE_NAME>/<ENDPOINT_NAME>` または `direct-kubernetes:<ENDPOINT_NAME>` 形式を使用して、メンバーシップ情報を取得するための名前空間名 (オプション) と [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) の名前を指定します。名前空間名を指定しない場合、クライアントは `default` 名前空間を使用します。 |                        |  
+| `scalar.db.contact_port`                           | 接続先のポート番号。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | `60053`                |
+| `scalar.db.cluster.grpc.deadline_duration_millis`  | gRPC の期限期間 (ミリ秒単位)。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | `60000` (60秒)   |
+| `scalar.db.cluster.grpc.max_inbound_message_size`  | 単一の gRPC フレームに許可される最大メッセージサイズ。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | gRPC のデフォルト値 |
+| `scalar.db.cluster.grpc.max_inbound_metadata_size` | 受信できるメタデータの最大サイズ。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | gRPC のデフォルト値 |
+
+たとえば、`indirect` クライアントモードを使用し、ロードバランサーの IP アドレスが `192.168.10.1` の場合、次のようにクライアントを設定できます。
+
+```properties
+scalar.db.transaction_manager=cluster
+scalar.db.contact_points=indirect:192.168.10.1
+```
+
+または、`direct-kubernetes` クライアントモードを使用し、エンドポイントの名前空間が `ns`、エンドポイント名が `scalardb-cluster` の場合、次のようにクライアントを設定できます。
+
+```properties
+scalar.db.transaction_manager=cluster
+scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
+```
+
+### SQL インターフェイスの設定
+
+次の表は、ScalarDB Cluster SQL クライアントの設定を示しています。
+
+| 名前                                               | 説明                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | デフォルト                |
+|----------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------|
+| `scalar.db.sql.cluster_mode.contact_points`        | クラスターの接続先。`indirect` クライアントモードを使用する場合は、`indirect:<LOAD_BALANCER_IP_ADDRESS>` 形式を使用して、クラスターノードの前にあるロードバランサーの IP アドレスを指定します。`direct-kubernetes` クライアントモードを使用する場合は、`direct-kubernetes:<NAMESPACE_NAME>/<ENDPOINT_NAME>` または `direct-kubernetes:<ENDPOINT_NAME>` 形式を使用して、メンバーシップ情報を取得するための名前空間名 (オプション) と [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) の名前を指定します。名前空間名を指定しない場合、クライアントは `default` 名前空間を使用します。 |                        |
+| `scalar.db.sql.cluster_mode.contact_port`          | 接続先のポート番号。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | `60053`                |
+| `scalar.db.sql.default_transaction_mode`           | デフォルトのトランザクションモード。`TRANSACTION` または `TWO_PHASE_COMMIT_TRANSACTION` を設定できます。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | `TRANSACTION`          |
+| `scalar.db.sql.default_namespace_name`             | デフォルトの名前空間名。SQL ステートメントで名前空間名を指定しない場合は、この値が使用されます。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |                        |
+| `scalar.db.cluster.grpc.deadline_duration_millis`  | gRPC の期限期間 (ミリ秒単位)。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | `60000` (60秒)   |
+| `scalar.db.cluster.grpc.max_inbound_message_size`  | 単一の gRPC フレームに許可される最大メッセージサイズ。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | gRPC のデフォルト値 |
+| `scalar.db.cluster.grpc.max_inbound_metadata_size` | 受信できるメタデータの最大サイズ。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | gRPC のデフォルト値 |
+
+たとえば、`indirect` クライアントモードを使用し、ロードバランサーの IP アドレスが `192.168.10.1` の場合、次のようにクライアントを設定できます。
+
+```properties
+scalar.db.sql.connection_mode=cluster
+scalar.db.sql.cluster_mode.contact_points=indirect:192.168.10.1
+```
+
+または、`direct-kubernetes` クライアントモードを使用し、エンドポイントの名前空間が `ns`、エンドポイント名が `scalardb-cluster` の場合、次のようにクライアントを設定できます。
+
+```properties
+scalar.db.sql.connection_mode=cluster
+scalar.db.sql.cluster_mode.contact_points=direct-kubernetes:ns/scalardb-cluster
+```
+
+ScalarDB JDBC の設定方法の詳細については、[JDBC 接続 URL](../scalardb-sql/jdbc-guide.mdx#jdbc-接続-url) を参照してください。
+
+Spring Data JDBC for ScalarDB の設定方法の詳細については、[設定](../scalardb-sql/spring-data-guide.mdx#設定)を参照してください。
+
+## 設定例 - アプリ、ScalarDB Cluster、データベース
+
+```mermaid
+flowchart LR
+    app["アプリ -<br />gRPC を利用する ScalarDB ライブラリ"]
+    cluster["ScalarDB Cluster -<br />(Consensus Commit を提供する<br />ScalarDB ライブラリ)"]
+    db[(基盤となるストレージまたはデータベース)]
+    app --> cluster --> db
+```
+
+この設定例では、アプリ (gRPC を利用する ScalarDB ライブラリ) が ScalarDB Cluster を通じて基盤となるストレージまたはデータベース (この場合は Cassandra) に接続しています。ScalarDB Cluster は、ScalarDB Enterprise エディションでのみ利用可能なコンポーネントです。
+
+:::note
+
+この設定は、ScalarDB Cluster が [Scalar Admin](https://github.com/scalar-labs/scalar-admin) インターフェースを実装しているため、本番環境での使用に適しています。このインターフェースにより、ScalarDB Cluster を一時停止することで、ScalarDB のトランザクション的に一貫性のあるバックアップを作成できます。
+
+:::
+
+アプリを ScalarDB Cluster を通じて基盤となるデータベースに接続する設定例を以下に示します。
+
+```properties
+# トランザクションマネージャーの実装。
+scalar.db.transaction_manager=cluster
+
+# クラスターの接続先。
+scalar.db.contact_points=indirect:<SCALARDB_CLUSTER_CONTACT_POINT>
+```
+
+クライアント設定の詳細については、[ScalarDB Cluster クライアント設定](#クライアント設定) を参照してください。
+
+[^1]: アプリケーションのアクセスパターンを考慮し、アプリケーションで使用するストレージと同じストレージを使用して、いくつかのバリエーション（例：デフォルト値の75%と125%）でパフォーマンスをベンチマークし、最適な設定を決定することをお勧めします。適切な設定は、これらの要素に強く依存して決まります。また、最適な組み合わせを決定するために、これらのパラメータの組み合わせをベンチマークすることも重要です（例：最初に `slot_capacity:20` と `group_size_fix_timeout_millis:40`、次に `slot_capacity:30` と `group_size_fix_timeout_millis:40`、3番目に `slot_capacity:20` と `group_size_fix_timeout_millis:80`）。
