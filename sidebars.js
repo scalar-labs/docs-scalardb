@@ -984,6 +984,11 @@ const sidebars = {
           label: '要件',
         },
         {
+          "type": "doc",
+          "id": "permissions",
+          "label": "権限要件"
+        },
+        {
           type: 'doc',
           id: 'database-configurations',
           label: 'データベースの設定',
