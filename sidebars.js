@@ -56,6 +56,11 @@ const sidebars = {
         },
         {
           type: 'doc',
+          id: 'permissions',
+          label: 'Permission Requirements',
+        },
+        {
+          type: 'doc',
           id: 'database-configurations',
           label: 'Underlying Database Configurations',
         },
