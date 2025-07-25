@@ -1277,9 +1277,20 @@ const sidebars = {
           ],
         },
         {
-          type: 'doc',
-          id: 'scalardb-analytics/run-analytical-queries',
-          label: 'ScalarDB Analytics を通じた分析クエリの実行',
+          type: 'category',
+          label: '分析クエリの実行の概要',
+          collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'develop-run-analytical-queries-overview',
+          },
+          items: [
+            {
+              type: 'doc',
+              id: 'scalardb-analytics/run-analytical-queries',
+              label: 'ScalarDB Analytics を通じた分析クエリの実行',
+            },
+          ],
         },
         {
           type: 'category',
