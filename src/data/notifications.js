@@ -14,6 +14,15 @@ const notificationsList = [
   // },
   {
     message: {
+      en: 'Replicate data for disaster recovery in ScalarDB #.16',
+    },
+    url: {
+      en: 'scalardb-cluster/remote-replication?utm_source=docs-site&utm_medium=notifications',
+    },
+    unread: true
+  },
+  {
+    message: {
       en: 'Support for IBM Db2 has been added in ScalarDB 3.16',
       ja: 'ScalarDB 3.16 で IBM Db2 がサポートされました'
     },
