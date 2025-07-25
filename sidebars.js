@@ -827,6 +827,11 @@ const sidebars = {
           label: 'Upgrade',
         },
         {
+          type: 'doc',
+          id: 'scalardb-cluster/remote-replication',
+          label: 'Replicate Data for Disaster Recovery',
+        },
+        {
           type: 'category',
           label: 'Monitor',
           collapsible: true,

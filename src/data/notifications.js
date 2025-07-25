@@ -14,12 +14,23 @@ const notificationsList = [
   // },
   {
     message: {
-      en: 'Support for IBM Db2 has been added in ScalarDB 3.16',
+      en: 'Replicate data for disaster recovery in ScalarDB 3.16',
       ja: 'ScalarDB 3.16 で IBM Db2 がサポートされました'
     },
     url: {
-      en: 'requirements?RDBs=Db2#relational-databases?utm_source=docs-site&utm_medium=notifications',
+      en: 'scalardb-cluster/remote-replication?utm_source=docs-site&utm_medium=notifications',
       ja: 'requirements?RDBs=Db2#リレーショナルデータベース?utm_source=docs-site&utm_medium=notifications'
+    },
+    unread: true
+  },
+  {
+    message: {
+      en: 'Support for IBM Db2 has been added in ScalarDB 3.16',
+      ja: 'ScalarDB 3.15 できめ細かなユーザーアクセス制御のサポートが追加されました'
+    },
+    url: {
+      en: 'requirements?RDBs=Db2#relational-databases?utm_source=docs-site&utm_medium=notifications',
+      ja: 'scalardb-cluster/getting-started-with-vector-search?RDBs=Db2#リレーショナルデータベース?utm_source=docs-site&utm_medium=notifications'
     },
     unread: true
   },
