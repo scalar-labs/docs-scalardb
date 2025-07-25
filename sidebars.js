@@ -325,9 +325,20 @@ const sidebars = {
           ],
         },
         {
-          type: 'doc',
-          id: 'scalardb-analytics/run-analytical-queries',
-          label: 'Run Analytical Queries',
+          type: 'category',
+          label: 'Run Analytical Queries Overview',
+          collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'develop-run-analytical-queries-overview',
+          },
+          items: [
+            {
+              type: 'doc',
+              id: 'scalardb-analytics/run-analytical-queries',
+              label: 'Run Analytical Queries',
+            },
+          ],
         },
         {
           type: 'category',
