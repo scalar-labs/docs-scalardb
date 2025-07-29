@@ -280,6 +280,21 @@ const config = {
     ],
     require.resolve('docusaurus-plugin-image-zoom'),
     [
+      'docusaurus-plugin-llms',
+      {
+        generateLLMsTxt: true,
+        generateLLMsFullTxt: true,
+        docsDir: 'docs',
+        version: 'latest',
+        title: 'ScalarDB Documentation',
+        description: 'Cloud-native universal transaction manager',
+        // Content cleaning options
+        excludeImports: true, // This configuration currently option doesn't seem to work as expected. I don't think it's a major issue, but we should upgrade the plugin when a new version is available to see if the issue is fixed.
+        removeDuplicateHeadings: true, // This configuration currently option doesn't seem to work as expected. I don't think it's a major issue, but we should upgrade the plugin when a new version is available to see if the issue is fixed.
+        includeUnmatchedLast: true,
+      },
+    ],
+    [
       '@docusaurus/plugin-pwa',
       {
         debug: true,
