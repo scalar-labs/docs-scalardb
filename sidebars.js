@@ -168,7 +168,7 @@ const sidebars = {
           items: [
             {
               type: 'doc',
-              id: 'scalardb-samples/scalardb-analytics-spark-sample/README',
+              id: 'scalardb-analytics/quickstart',
               label: 'Use Spark as an execution engine',
             },
             {
@@ -1113,7 +1113,7 @@ const sidebars = {
           items: [
             {
               type: 'doc',
-              id: 'scalardb-samples/scalardb-analytics-spark-sample/README',
+              id: 'scalardb-analytics/quickstart',
               label: 'Spark を実行エンジンとして使用',
             },
             {
