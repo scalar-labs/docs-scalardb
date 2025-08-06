@@ -187,6 +187,10 @@ const config = {
             from: '/docs/releases/release-support-policy',
           },
           {
+            to: '/docs/latest/scalardb-analytics/quickstart',
+            from: '/docs/latest/scalardb-samples/scalardb-analytics-spark-sample',
+          },
+          {
             to: '/docs/latest/scalardb-analytics/run-analytical-queries',
             from: '/docs/latest/scalardb-analytics/deployment/development',
           },

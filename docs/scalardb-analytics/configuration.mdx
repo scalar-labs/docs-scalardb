@@ -1,0 +1,242 @@
+---
+tags:
+  - Enterprise Option
+displayed_sidebar: docsEnglish
+---
+
+# Configuration reference
+
+This page provides a comprehensive reference for configuring all components of ScalarDB Analytics.
+
+## Overview
+
+ScalarDB Analytics consists of three main components that require configuration:
+
+1. **ScalarDB Analytics server** - The server that hosts the catalog and metering services
+2. **CLI client** - The command-line interface for managing catalogs and data sources
+3. **Spark integration** - Configuration for using ScalarDB Analytics with Apache Spark
+
+## ScalarDB Analytics server configuration
+
+The server is configured using a standard Java properties file (e.g., `scalardb-analytics-server.properties`) that defines database connections, network settings, licensing, and optional features.
+
+### Configuration properties
+
+#### Metadata database configuration
+
+The server requires a metadata database to store catalog information.
+
+| Property                                 | Required | Description                          | Default | Example                                               |
+| ---------------------------------------- | -------- | ------------------------------------ | ------- | ----------------------------------------------------- |
+| `scalar.db.analytics.server.db.url`      | Yes      | JDBC URL for the metadata database   | -       | `jdbc:postgresql://localhost:5432/scalardb_analytics` |
+| `scalar.db.analytics.server.db.username` | Yes      | Database user for authentication     | -       | `analytics_user`                                      |
+| `scalar.db.analytics.server.db.password` | Yes      | Database password for authentication | -       | `your_secure_password`                                |
+
+#### gRPC server configuration
+
+Configure the ports for the catalog and metering services.
+
+| Property                                   | Required | Default | Description                   | Example |
+| ------------------------------------------ | -------- | ------- | ----------------------------- | ------- |
+| `scalar.db.analytics.server.catalog.port`  | No       | `11051` | Port for the catalog service  | `11051` |
+| `scalar.db.analytics.server.metering.port` | No       | `11052` | Port for the metering service | `11052` |
+
+#### TLS configuration
+
+Enable TLS/SSL for secure communication.
+
+| Property                                          | Required | Default | Description                               | Example               |
+| ------------------------------------------------- | -------- | ------- | ----------------------------------------- | --------------------- |
+| `scalar.db.analytics.server.tls.enabled`          | No       | `false` | Enable TLS/SSL for gRPC endpoints         | `true`                |
+| `scalar.db.analytics.server.tls.cert_chain_path`  | Yes\*    | -       | Path to the server certificate chain file | `/path/to/server.crt` |
+| `scalar.db.analytics.server.tls.private_key_path` | Yes\*    | -       | Path to the server private key file       | `/path/to/server.key` |
+
+\* Required when `tls.enabled` is `true`
+
+#### License configuration
+
+Configure your ScalarDB Analytics license.
+
+| Property                                                       | Required | Description                                    | Default | Example                        |
+| -------------------------------------------------------------- | -------- | ---------------------------------------------- | ------- | ------------------------------ |
+| `scalar.db.analytics.server.licensing.license_key`             | Yes      | Your ScalarDB Analytics license key            | -       | Contact Scalar for license     |
+| `scalar.db.analytics.server.licensing.license_check_cert_pem`  | Yes\*    | License verification certificate as PEM string | -       | Contact Scalar for certificate |
+| `scalar.db.analytics.server.licensing.license_check_cert_path` | Yes\*    | Path to license verification certificate file  | -       | `/path/to/cert.pem`            |
+
+\* Either `license_check_cert_pem` or `license_check_cert_path` must be specified
+
+#### Metering storage configuration
+
+Configure storage for metering data.
+
+| Property                                                      | Required | Default    | Description                                                                                      | Example                                    |
+| ------------------------------------------------------------- | -------- | ---------- | ------------------------------------------------------------------------------------------------ | ------------------------------------------ |
+| `scalar.db.analytics.server.metering.storage.provider`        | Yes      | -          | Storage provider for metering data (`filesystem`, `aws-s3`, `azureblob`, `google-cloud-storage`) | `filesystem`                               |
+| `scalar.db.analytics.server.metering.storage.containerName`   | No       | `metering` | Container/bucket name for cloud storage                                                          | `my-metering-bucket`                       |
+| `scalar.db.analytics.server.metering.storage.path`            | Yes\*    | -          | Local directory path (for `filesystem` provider only)                                            | `/var/scalardb-analytics/metering`         |
+| `scalar.db.analytics.server.metering.storage.accessKeyId`     | Yes\*\*  | -          | Access key ID for cloud storage providers                                                        | `AKIAIOSFODNN7EXAMPLE`                     |
+| `scalar.db.analytics.server.metering.storage.secretAccessKey` | Yes\*\*  | -          | Secret access key for cloud storage providers                                                    | `wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY` |
+| `scalar.db.analytics.server.metering.storage.prefix`          | No       | -          | Optional prefix for all storage paths                                                            | `production/`                              |
+
+\* Required when provider is `filesystem`  
+\*\* Required for cloud storage providers (`aws-s3`, `azureblob`, `google-cloud-storage`)
+
+## CLI client configuration
+
+The CLI client requires connection settings to communicate with the ScalarDB Analytics server using a Java properties file (e.g., `client.properties`).
+
+### Configuration properties
+
+#### Server connection configuration
+
+| Property                                          | Required | Default | Description                                             | Example                 |
+| ------------------------------------------------- | -------- | ------- | ------------------------------------------------------- | ----------------------- |
+| `scalar.db.analytics.client.server.host`          | Yes      | -       | Hostname or IP address of the ScalarDB Analytics server | `analytics.example.com` |
+| `scalar.db.analytics.client.server.catalog.port`  | No       | `11051` | Port number for the catalog service                     | `11051`                 |
+| `scalar.db.analytics.client.server.metering.port` | No       | `11052` | Port number for the metering service                    | `11052`                 |
+
+#### TLS configuration
+
+| Property                                                   | Required | Default | Description                                                             | Example             |
+| ---------------------------------------------------------- | -------- | ------- | ----------------------------------------------------------------------- | ------------------- |
+| `scalar.db.analytics.client.server.tls.enabled`            | No       | `false` | Enable TLS/SSL for server connections                                   | `true`              |
+| `scalar.db.analytics.client.server.tls.ca_root_cert_path`  | Yes\*    | -       | Path to the CA certificate file for verifying server certificates       | `/path/to/cert.pem` |
+| `scalar.db.analytics.client.server.tls.override_authority` | No       | -       | Override the server authority for TLS verification (useful for testing) | `test.example.com`  |
+
+\* Required when `tls.enabled` is `true`
+
+## Spark integration configuration
+
+To use ScalarDB Analytics with Apache Spark, configure your Spark application by adding the necessary settings to your Spark configuration file (`spark-defaults.conf`).
+
+### Configuration properties
+
+#### Core Spark configuration
+
+| Property               | Required | Description                                           | Default | Example                                                            |
+| ---------------------- | -------- | ----------------------------------------------------- | ------- | ------------------------------------------------------------------ |
+| `spark.jars.packages`  | Yes      | Maven coordinates for ScalarDB Analytics dependencies | -       | `com.scalar-labs:scalardb-analytics-spark-all-3.5_2.12:3.16.2`     |
+| `spark.extraListeners` | Yes      | Register the ScalarDB Analytics metering listener     | -       | `com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener` |
+
+For `spark.jars.packages`, replace:
+
+- `<SPARK_VERSION>` with your Spark version (e.g., `3.5`)
+- `<SCALA_VERSION>` with your Scala version (e.g., `2.12`)
+- `<SCALARDB_ANALYTICS_VERSION>` with the ScalarDB Analytics version (e.g., `3.16.2`)
+
+#### Catalog configuration
+
+| Property                           | Required | Description                                            | Default | Value                                                            |
+| ---------------------------------- | -------- | ------------------------------------------------------ | ------- | ---------------------------------------------------------------- |
+| `spark.sql.catalog.<catalog-name>` | Yes      | Register the ScalarDB Analytics catalog implementation | -       | `com.scalar.db.analytics.spark.catalog.ScalarDBAnalyticsCatalog` |
+
+#### Server connection settings
+
+| Property                                                | Required | Default | Description                                             | Example     |
+| ------------------------------------------------------- | -------- | ------- | ------------------------------------------------------- | ----------- |
+| `spark.sql.catalog.<catalog-name>.server.host`          | Yes      | -       | Hostname or IP address of the ScalarDB Analytics server | `localhost` |
+| `spark.sql.catalog.<catalog-name>.server.catalog.port`  | No       | `11051` | Port number for the catalog service                     | `11051`     |
+| `spark.sql.catalog.<catalog-name>.server.metering.port` | No       | `11052` | Port number for the metering service                    | `11052`     |
+
+#### TLS/SSL settings
+
+| Property                                                         | Required | Default | Description                                                       | Example             |
+| ---------------------------------------------------------------- | -------- | ------- | ----------------------------------------------------------------- | ------------------- |
+| `spark.sql.catalog.<catalog-name>.server.tls.enabled`            | No       | `false` | Enable TLS/SSL for server connections                             | `true`              |
+| `spark.sql.catalog.<catalog-name>.server.tls.ca_root_cert_path`  | Yes\*    | -       | Path to the CA certificate file for verifying server certificates | `/path/to/cert.pem` |
+| `spark.sql.catalog.<catalog-name>.server.tls.override_authority` | No       | -       | Override the server authority for TLS verification                | `test.example.com`  |
+
+\* Required when `tls.enabled` is `true`
+
+Replace `<catalog-name>` with your chosen catalog name (e.g., `analytics`).
+
+## Configuration examples
+
+### Basic development configuration
+
+#### Server configuration (`scalardb-analytics-server.properties`)
+
+```properties
+# Metadata database
+scalar.db.analytics.server.db.url=jdbc:postgresql://localhost:5432/scalardb_analytics
+scalar.db.analytics.server.db.username=dev_user
+scalar.db.analytics.server.db.password=dev_password
+
+# License
+scalar.db.analytics.server.licensing.license_key=YOUR_DEV_LICENSE_KEY
+scalar.db.analytics.server.licensing.license_check_cert_path=/path/to/license_cert.pem
+
+# Metering storage (filesystem for development)
+scalar.db.analytics.server.metering.storage.provider=filesystem
+scalar.db.analytics.server.metering.storage.path=/tmp/scalardb-analytics-metering
+```
+
+#### Client configuration (`client.properties`)
+
+```properties
+scalar.db.analytics.client.server.host=localhost
+```
+
+#### Spark configuration (`spark-defaults.conf`)
+
+```properties
+spark.jars.packages                         com.scalar-labs:scalardb-analytics-spark-all-3.5_2.12:3.16.2
+spark.extraListeners                        com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener
+spark.sql.catalog.analytics                 com.scalar.db.analytics.spark.catalog.ScalarDBAnalyticsCatalog
+spark.sql.catalog.analytics.server.host     localhost
+```
+
+### Production configuration with TLS
+
+#### Server configuration (`scalardb-analytics-server.properties`)
+
+```properties
+# Metadata database
+scalar.db.analytics.server.db.url=jdbc:postgresql://db.internal:5432/scalardb_analytics_prod
+scalar.db.analytics.server.db.username=analytics_prod
+scalar.db.analytics.server.db.password=your_secure_password
+
+# gRPC ports
+scalar.db.analytics.server.catalog.port=11051
+scalar.db.analytics.server.metering.port=11052
+
+# TLS
+scalar.db.analytics.server.tls.enabled=true
+scalar.db.analytics.server.tls.cert_chain_path=/path/to/server.crt
+scalar.db.analytics.server.tls.private_key_path=/path/to/server.key
+
+# License
+scalar.db.analytics.server.licensing.license_key=YOUR_LICENSE_KEY
+scalar.db.analytics.server.licensing.license_check_cert_pem=-----BEGIN CERTIFICATE-----\nMIID...certificate content...\n-----END CERTIFICATE-----
+
+# Metering storage (S3)
+scalar.db.analytics.server.metering.storage.provider=aws-s3
+scalar.db.analytics.server.metering.storage.containerName=analytics-metering
+scalar.db.analytics.server.metering.storage.accessKeyId=AKIAIOSFODNN7EXAMPLE
+scalar.db.analytics.server.metering.storage.secretAccessKey=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+scalar.db.analytics.server.metering.storage.prefix=prod/
+```
+
+#### Client configuration (`client.properties`)
+
+```properties
+scalar.db.analytics.client.server.host=analytics.example.com
+scalar.db.analytics.client.server.tls.enabled=true
+scalar.db.analytics.client.server.tls.ca_root_cert_path=/path/to/cert.pem
+```
+
+#### Spark configuration (`spark-defaults.conf`)
+
+```properties
+spark.jars.packages                                     com.scalar-labs:scalardb-analytics-spark-all-3.5_2.12:3.16.2
+spark.extraListeners                                    com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener
+spark.sql.catalog.analytics                             com.scalar.db.analytics.spark.catalog.ScalarDBAnalyticsCatalog
+spark.sql.catalog.analytics.server.host                 analytics.example.com
+spark.sql.catalog.analytics.server.tls.enabled          true
+spark.sql.catalog.analytics.server.tls.ca_root_cert_path /path/to/cert.pem
+```
+
+## Next steps
+
+- [Run analytical queries](run-analytical-queries.mdx) - Start running queries with your configuration
+- [Deployment guide](deployment.mdx) - Deploy ScalarDB Analytics in production

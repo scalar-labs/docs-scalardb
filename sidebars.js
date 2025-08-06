@@ -515,6 +515,16 @@ const sidebars = {
                   id: 'scalardb-analytics-postgresql/schema-importer',
                   label: 'PostgreSQL Schema Importer for PostgreSQL',
                 },
+                {
+                  type: 'doc',
+                  id: 'scalardb-analytics/administration',
+                  label: 'Manage ScalarDB Analytics',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-analytics/configuration',
+                  label: 'Configuration Reference',
+                },
               ],
             },
             {
@@ -1471,6 +1481,16 @@ const sidebars = {
                   type: 'doc',
                   id: 'scalardb-analytics-postgresql/schema-importer',
                   label: 'PostgreSQL 用 Schema Importer',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-analytics/administration',
+                  label: 'ScalarDB Analytics を管理',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-analytics/configuration',
+                  label: '設定リファレンス',
                 },
               ],
             },
