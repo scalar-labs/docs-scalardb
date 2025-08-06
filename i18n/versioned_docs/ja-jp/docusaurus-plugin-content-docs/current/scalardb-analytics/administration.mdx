@@ -1,0 +1,794 @@
+---
+tags:
+  - Enterprise Option
+displayed_sidebar: docsJapanese
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+# ScalarDB Analytics を管理する
+
+import WarningLicenseKeyContact from "/src/components/ja-jp/_warning-license-key-contact.mdx";
+import TranslationBanner from "/src/components/_translation-ja-jp.mdx";
+
+<TranslationBanner />
+
+このガイドでは、ScalarDB Analytics サーバーとそのカタログのセットアップと管理方法を説明します。ScalarDB Analytics サーバーは [ScalarDB Analytics 設計](design.mdx) で説明されている Universal Data Catalog の実装であり、複数のデータベース間での分析クエリのための集中型メタデータ管理を提供します。
+
+<WarningLicenseKeyContact product="ScalarDB Analytics" />
+
+## 概要
+
+ScalarDB Analytics は、単一のインターフェースを通じて複数のデータベースへの統一されたアクセスを可能にするユニバーサルデータカタログを提供します。[ScalarDB Analytics 設計](design.mdx#universal-data-catalog) ドキュメントで説明されている Universal Data Catalog アーキテクチャに基づき、システムは以下の2つの主要コンポーネントで構成されています：
+
+1. **ScalarDB Analytics サーバー**: 以下を管理する gRPC ベースのサービス：
+   - **カタログメタデータ**: データソース、名前空間、テーブル、カラムを整理
+   - **データソース接続**: 外部データベースへの接続情報と認証情報を維持
+   - **ライセンス検証**: エンタープライズライセンスを検証
+   - **使用量メータリング**: 課金目的でリソース使用量を追跡
+
+   サーバーは 2 つの gRPC エンドポイントを提供します：
+   - ポート 11051: メタデータ操作のためのカタログサービス
+   - ポート 11052: 使用量追跡のためのメータリングサービス
+
+2. **ScalarDB Analytics CLI**: サーバーと通信してカタログの管理、データソースの登録、管理タスクを実行するコマンドラインツール
+
+## セットアップ
+
+カタログを管理する前に、ScalarDB Analytics サーバーと CLI をセットアップして設定する必要があります。
+
+### サーバーのセットアップ
+
+#### 前提条件: メタデータデータベース
+
+サーバーはカタログメタデータとデータソース接続情報を保存するためのデータベースが必要です。このドキュメント全体で、このデータベースを**メタデータデータベース**と呼びます。ScalarDB Analytics は以下のデータベースをメタデータデータベースとしてサポートしています：
+
+- PostgreSQL
+- MySQL
+- SQL Server
+- Oracle
+
+サーバーを起動する前に、データベースと適切な権限を持つユーザーを作成してください。具体的なコマンドはデータベースタイプによって異なります。
+
+#### サーバー設定
+
+サーバー設定ファイルを作成します（例：`scalardb-analytics-server.properties`）。以下の例では PostgreSQL をメタデータデータベースとして使用しています：
+
+```properties
+# メタデータデータベース設定（必須）
+scalar.db.analytics.server.db.url=jdbc:postgresql://localhost:5432/scalardb_analytics
+scalar.db.analytics.server.db.username=analytics_user
+scalar.db.analytics.server.db.password=your_secure_password
+
+# gRPC サーバー設定（オプション）
+scalar.db.analytics.server.catalog.port=11051  # デフォルト
+scalar.db.analytics.server.metering.port=11052  # デフォルト
+
+# TLS 設定（オプション、本番環境では推奨）
+scalar.db.analytics.server.tls.enabled=true
+scalar.db.analytics.server.tls.cert_chain_path=/path/to/server.crt
+scalar.db.analytics.server.tls.private_key_path=/path/to/server.key
+
+# ライセンス設定（必須）
+scalar.db.analytics.server.licensing.license_key=<YOUR_LICENSE_KEY>
+scalar.db.analytics.server.licensing.license_check_cert_pem=<YOUR_LICENSE_CERT_PEM>
+
+# メータリングストレージ設定（必須）
+scalar.db.analytics.server.metering.storage.provider=filesystem
+scalar.db.analytics.server.metering.storage.path=/var/scalardb-analytics/metering
+```
+
+詳細な設定オプションについては、[設定リファレンス](configuration.mdx)を参照してください。
+
+#### サーバーの起動
+
+設定ファイルを使用して ScalarDB Analytics サーバーを起動します：
+
+```console
+docker run -d \
+  --name scalardb-analytics-server \
+  -p 11051:11051 \
+  -p 11052:11052 \
+  -v /path/to/scalardb-analytics-server.properties:/scalardb-analytics-server/server.properties \
+  ghcr.io/scalar-labs/scalardb-analytics-server:<VERSION>
+```
+
+`<VERSION>` を使用したい ScalarDB Analytics のバージョンに置き換えてください。利用可能なバージョンは [Docker レジストリページ](https://github.com/scalar-labs/scalardb-analytics/pkgs/container/scalardb-analytics-server) で確認できます。
+
+コンテナはデフォルトで `/scalardb-analytics-server/server.properties` の設定ファイルを使用します。
+
+サーバーは起動時に以下を実行します：
+1. ライセンスを検証
+2. メタデータデータベースに接続
+3. 設定されたポートで gRPC サービスを開始
+4. クライアント接続の受け入れを開始
+
+#### ヘルスチェック（オプション）
+
+サーバーが正常に動作していることを確認したい場合は、grpc-health-probe（Dockerコンテナに含まれています）を使用できます：
+
+```console
+# カタログサービスのヘルスチェック
+docker exec scalardb-analytics-server grpc-health-probe -addr=localhost:11051
+
+# メータリングサービスのヘルスチェック
+docker exec scalardb-analytics-server grpc-health-probe -addr=localhost:11052
+
+# TLS有効化サーバーの場合
+docker exec scalardb-analytics-server grpc-health-probe -addr=localhost:11051 -tls -tls-ca-cert=/path/to/ca.crt
+```
+
+### CLI のセットアップ
+
+#### CLI のインストール
+
+`scalardb-analytics-cli` ツールは Docker イメージとして利用可能です：
+
+```console
+# CLI イメージをプル
+docker pull ghcr.io/scalar-labs/scalardb-analytics-cli:<VERSION>
+```
+
+`<VERSION>` を使用したい ScalarDB Analytics のバージョンに置き換えてください。利用可能なバージョンは [Docker レジストリページ](https://github.com/scalar-labs/scalardb-analytics/pkgs/container/scalardb-analytics-cli) で確認できます。
+
+CLI コマンドを実行するには、設定ファイルをコンテナにマウントする必要があります：
+
+```console
+# 例：カタログを一覧表示
+docker run --rm \
+  -v $(pwd)/client.properties:/config/client.properties:ro \
+  ghcr.io/scalar-labs/scalardb-analytics-cli:<VERSION> \
+  -c /config/client.properties \
+  catalog list
+```
+
+#### クライアント設定
+
+現在のディレクトリに `client.properties` という名前の設定ファイルを作成します：
+
+```properties
+# サーバー接続
+scalar.db.analytics.client.server.host=localhost
+scalar.db.analytics.client.server.catalog.port=11051
+scalar.db.analytics.client.server.metering.port=11052
+
+# TLS/SSL 設定（サーバーで有効な場合）
+scalar.db.analytics.client.server.tls.enabled=true
+scalar.db.analytics.client.server.tls.ca_root_cert_path=/path/to/ca.crt
+scalar.db.analytics.client.server.tls.override_authority=analytics.example.com
+```
+
+詳細な設定オプションについては、[設定リファレンス](configuration.mdx)を参照してください。
+
+#### エイリアスの設定（オプション）
+
+便利のため、長い Docker コマンドを毎回入力することを避けるためにエイリアスを作成できます：
+
+```console
+alias scalardb-analytics-cli='docker run --rm -v $(pwd)/client.properties:/config/client.properties:ro ghcr.io/scalar-labs/scalardb-analytics-cli:<VERSION> -c /config/client.properties'
+```
+
+このエイリアスを使用すると、より簡単にコマンドを実行できます：
+
+```console
+scalardb-analytics-cli catalog list
+```
+
+## CLI コマンドリファレンス
+
+ScalarDB Analytics CLI は階層構造のコマンドを使用します：
+
+```
+scalardb-analytics <resource> <operation> [options]
+```
+
+利用可能なリソース：
+- **catalog**: データソースを整理するためのトップレベルコンテナ
+- **data-source**: カタログ内に登録された外部データベース
+- **namespace**: データベース固有の組織単位（自動検出）
+- **table**: 名前空間内のデータ構造（自動検出）
+
+注：以下のすべての例では、前に作成した Docker エイリアスを使用していることを想定しています。Docker コマンドを直接実行する場合は、`scalardb-analytics-cli` を完全な Docker コマンドに置き換えてください。
+
+### カタログ操作
+
+```console
+# 新しいカタログを作成
+scalardb-analytics-cli catalog create --catalog <catalog-name>
+
+# すべてのカタログを一覧表示
+scalardb-analytics-cli catalog list
+
+# カタログの詳細を表示（名前または ID で）
+scalardb-analytics-cli catalog describe --catalog <catalog-name>
+scalardb-analytics-cli catalog describe --catalog-id <catalog-uuid>
+
+# カタログを削除（空でない場合は --cascade が必要）
+scalardb-analytics-cli catalog delete --catalog <catalog-name>
+scalardb-analytics-cli catalog delete --catalog <catalog-name> --cascade
+```
+
+### データソース操作
+
+```console
+# JSON 定義ファイルを使用して新しいデータソースを登録
+scalardb-analytics-cli data-source register --data-source-json <path-to-json>
+
+# カタログ内のすべてのデータソースを一覧表示
+scalardb-analytics-cli data-source list --catalog <catalog-name>
+
+# データソースの詳細を表示（名前または ID で）
+scalardb-analytics-cli data-source describe --catalog <catalog-name> --data-source <data-source-name>
+scalardb-analytics-cli data-source describe --data-source-id <data-source-uuid>
+
+# データソースを削除（空でない場合は --cascade が必要）
+scalardb-analytics-cli data-source delete --catalog <catalog-name> --data-source <data-source-name>
+scalardb-analytics-cli data-source delete --catalog <catalog-name> --data-source <data-source-name> --cascade
+```
+
+`register` コマンドには JSON 定義ファイルが必要です。JSON ファイル形式については、下記の[データソース設定](#データソース設定)セクションを参照してください。
+
+### 名前空間操作
+
+```console
+# データソース内のすべての名前空間を一覧表示
+scalardb-analytics-cli namespace list --catalog <catalog-name> --data-source <data-source-name>
+
+# 名前空間の詳細を表示（名前または ID で）
+# ネストされた名前空間の場合、'.' を区切り文字として使用（例：--namespace parent.child）
+scalardb-analytics-cli namespace describe --catalog <catalog-name> --data-source <data-source-name> --namespace <namespace-name>
+scalardb-analytics-cli namespace describe --namespace-id <namespace-uuid>
+```
+
+### テーブル操作
+
+```console
+# 名前空間内のすべてのテーブルを一覧表示
+scalardb-analytics-cli table list --catalog <catalog-name> --data-source <data-source-name> --namespace <namespace-name>
+
+# すべてのカラムを含むテーブルスキーマを表示（名前または ID で）
+# ネストされた名前空間の場合、'.' を区切り文字として使用（例：--namespace parent.child）
+scalardb-analytics-cli table describe --catalog <catalog-name> --data-source <data-source-name> --namespace <namespace-name> --table <table-name>
+scalardb-analytics-cli table describe --table-id <table-uuid>
+```
+
+## データソース設定
+
+### データソース JSON 形式
+
+データソースは以下の構造を持つ JSON 定義ファイルを使用して登録されます：
+
+```json
+{
+  "catalog": "<catalog-name>",       // データソースを登録するカタログ
+  "name": "<data-source-name>",      // このデータソースの一意の名前
+  "type": "<database-type>",         // データベースタイプ: postgres, mysql, scalardb, sqlserver, oracle, dynamodb
+  "provider": {                       // タイプ固有の接続設定
+    // 設定はデータベースタイプによって異なります
+  }
+}
+```
+
+`provider` セクションには、`type` フィールドに基づいたデータベース固有の接続設定が含まれます。
+
+### タイプ別の Provider 設定
+
+以下のセクションでは、サポートされている各データベースタイプの Provider 設定を示します：
+
+<Tabs groupId="data-source-type" queryString>
+  <TabItem value="scalardb" label="ScalarDB" default>
+
+#### 設定
+
+| フィールド        | 必須 | 説明                             | デフォルト |
+| ------------ | -------- | --------------------------------------- | ------- |
+| `configPath` | はい      | ScalarDB 設定ファイルへのパス | -       |
+
+**例:**
+
+```json
+{
+  "catalog": "production",
+  "name": "scalardb_source",
+  "type": "scalardb",
+  "provider": {
+    "configPath": "/path/to/scalardb.properties"
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="postgresql" label="PostgreSQL">
+
+#### 設定
+
+| フィールド | 必須 | 説明                 | デフォルト |
+| ---------- | -------- | --------------------------- | ------- |
+| `host`     | はい      | PostgreSQL サーバーのホスト名  | -       |
+| `port`     | はい      | ポート番号                 | -       |
+| `username` | はい      | データベースユーザー               | -       |
+| `password` | はい      | データベースパスワード           | -       |
+| `database` | はい      | 接続するデータベース名 | -       |
+
+**例:**
+
+```json
+{
+  "catalog": "production",
+  "name": "postgres_customers",
+  "type": "postgres",
+  "provider": {
+    "host": "postgres.example.com",
+    "port": 5432,
+    "username": "analytics_user",
+    "password": "secure_password",
+    "database": "customers"
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="mysql" label="MySQL">
+
+#### 設定
+
+| フィールド | 必須 | 説明                                                             | デフォルト |
+| ---------- | -------- | ----------------------------------------------------------------------- | ------- |
+| `host`     | はい      | MySQL サーバーのホスト名                                                   | -       |
+| `port`     | はい      | ポート番号                                                             | -       |
+| `username` | はい      | データベースユーザー                                                           | -       |
+| `password` | はい      | データベースパスワード                                                       | -       |
+| `database` | いいえ       | インポートする特定のデータベース。省略した場合、すべてのデータベースがインポートされます | -       |
+
+**例:**
+
+```json
+{
+  "catalog": "production",
+  "name": "mysql_orders",
+  "type": "mysql",
+  "provider": {
+    "host": "mysql.example.com",
+    "port": 3306,
+    "username": "analytics_user",
+    "password": "secure_password",
+    "database": "orders"  // オプション - 省略した場合、すべてのデータベースがインポートされます
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="oracle" label="Oracle">
+
+#### 設定
+
+| フィールド         | 必須 | 説明       | デフォルト |
+| ------------- | -------- | ----------------- | ------- |
+| `host`        | はい      | Oracle サーバーのホスト名 | -       |
+| `port`        | はい      | ポート番号       | -       |
+| `username`    | はい      | データベースユーザー     | -       |
+| `password`    | はい      | データベースパスワード | -       |
+| `serviceName` | はい      | Oracle サービス名 | -       |
+
+**例:**
+
+```json
+{
+  "catalog": "production",
+  "name": "oracle_warehouse",
+  "type": "oracle",
+  "provider": {
+    "host": "oracle.example.com",
+    "port": 1521,
+    "username": "analytics_user",
+    "password": "secure_password",
+    "serviceName": "ORCL"
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="sql-server" label="SQL Server">
+
+#### 設定
+
+| フィールド      | 必須 | 説明                      | デフォルト |
+| ---------- | -------- | -------------------------------- | ------- |
+| `host`     | はい      | SQL Server のホスト名              | -       |
+| `port`     | はい      | ポート番号                      | -       |
+| `username` | はい      | データベースユーザー                    | -       |
+| `password` | はい      | データベースパスワード                | -       |
+| `database` | いいえ       | 接続する特定のデータベース  | -       |
+| `secure`   | いいえ       | 暗号化を有効化                | -       |
+
+**例:**
+
+```json
+{
+  "catalog": "production",
+  "name": "sqlserver_analytics",
+  "type": "sqlserver",
+  "provider": {
+    "host": "sqlserver.example.com",
+    "port": 1433,
+    "username": "sa",
+    "password": "secure_password",
+    "database": "analytics",  // オプション - 指定した場合、このデータベースのみがインポートされます
+    "secure": true  // オプション - 暗号化を有効化
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="dynamodb" label="DynamoDB">
+
+#### 設定
+
+| フィールド      | 必須 | 説明                                         | デフォルト |
+| ---------- | -------- | --------------------------------------------------- | ------- |
+| `region`   | はい*     | AWS リージョン（例: us-east-1）                        | -       |
+| `endpoint` | はい*     | カスタムエンドポイント URL                                 | -       |
+| `schema`   | はい      | 完全なスキーマ定義                          | -       |
+
+\* `region` または `endpoint` のいずれかを指定する必要があります（両方は指定できません）。
+
+DynamoDB はスキーマレスなので、完全なスキーマ定義を提供する必要があります。
+
+##### スキーマ構造
+
+| フィールド                                   | 必須 | 説明                        | デフォルト |
+| --------------------------------------- | -------- | ---------------------------------- | ------- |
+| `.schema`                               | はい      | 完全なスキーマ定義         | -       |
+| `.schema.namespaces[]`                  | はい      | 名前空間定義の配列     | -       |
+| `.schema.namespaces[].names[]`          | はい      | 名前空間名の配列（文字列） | -       |
+| `.schema.namespaces[].tables[]`         | はい      | テーブル定義の配列         | -       |
+| `.schema.namespaces[].tables[].name`    | はい      | テーブル名                         | -       |
+| `.schema.namespaces[].tables[].columns[]` | はい   | カラム定義の配列        | -       |
+| `.schema.namespaces[].tables[].columns[].name` | はい | カラム名                     | -       |
+| `.schema.namespaces[].tables[].columns[].type` | はい | データ型                       | -       |
+| `.schema.namespaces[].tables[].columns[].nullable` | いいえ | カラムがnull値を含むことができるかどうか | true |
+
+**例:**
+
+```json
+{
+  "catalog": "production",
+  "name": "dynamodb_events",
+  "type": "dynamodb",
+  "provider": {
+    "region": "us-east-1",
+    "schema": {
+      "namespaces": [
+        {
+          "names": ["production"],
+          "tables": [
+            {
+              "name": "user_events",
+              "columns": [
+                {"name": "user_id", "type": "TEXT", "nullable": false},
+                {"name": "event_time", "type": "TIMESTAMP", "nullable": false},
+                {"name": "event_type", "type": "TEXT"},
+                {"name": "event_data", "type": "TEXT"}
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## カタログメタデータリファレンス
+
+### データソース別のカタログ構造マッピング
+
+データソースを ScalarDB Analytics に登録する際、データソースのカタログ構造（名前空間、テーブル、列など）が解決され、ユニバーサルデータカタログに登録されます。データソースのカタログ構造を解決するために、データソース側の特定のオブジェクトがユニバーサルデータカタログオブジェクトにマッピングされます。
+
+#### カタログレベルのマッピング
+
+カタログレベルのマッピングは、データソースから名前空間名、テーブル名、および列名をユニバーサルデータカタログへのマッピングです。各データソースでのカタログレベルのマッピングを確認するには、データソースを選択してください。
+
+<Tabs groupId="data-source" queryString>
+  <TabItem value="scalardb" label="ScalarDB" default>
+    ScalarDB のカタログ構造は ScalarDB Analytics によって自動的に解決されます。カタログレベルのオブジェクトは以下のようにマッピングされます：
+
+    - ScalarDB 名前空間は名前空間にマッピングされます。したがって、ScalarDB データソースの名前空間は常に単一レベルで、名前空間名のみで設定されます。
+    - ScalarDB テーブルはテーブルにマッピングされます。
+    - ScalarDB 列は列にマッピングされます。
+
+  </TabItem>
+
+  <TabItem value="postgresql" label="PostgreSQL" default>
+    PostgreSQL のカタログ構造は ScalarDB Analytics によって自動的に解決されます。カタログレベルのオブジェクトは以下のようにマッピングされます：
+
+    - PostgreSQL スキーマは名前空間にマッピングされます。したがって、PostgreSQL データソースの名前空間は常に単一レベルで、スキーマ名のみで設定されます。
+        - ユーザー定義スキーマのみが名前空間にマッピングされます。以下のシステムスキーマは無視されます：
+          - `information_schema`
+          - `pg_catalog`
+    - PostgreSQL テーブルはテーブルにマッピングされます。
+    - PostgreSQL 列は列にマッピングされます。
+
+  </TabItem>
+  <TabItem value="mysql" label="MySQL">
+    MySQL のカタログ構造は ScalarDB Analytics によって自動的に解決されます。カタログレベルのオブジェクトは以下のようにマッピングされます：
+
+    - MySQL データベースは名前空間にマッピングされます。したがって、MySQL データソースの名前空間は常に単一レベルで、データベース名のみで設定されます。
+        - ユーザー定義データベースのみが名前空間にマッピングされます。以下のシステムデータベースは無視されます：
+            - `mysql`
+            - `sys`
+            - `information_schema`
+            - `performance_schema`
+    - MySQL テーブルはテーブルにマッピングされます。
+    - MySQL 列は列にマッピングされます。
+
+  </TabItem>
+  <TabItem value="oracle" label="Oracle">
+    Oracle のカタログ構造は ScalarDB Analytics によって自動的に解決されます。カタログレベルのオブジェクトは以下のようにマッピングされます：
+
+    - Oracle スキーマは名前空間にマッピングされます。したがって、Oracle データソースの名前空間は常に単一レベルで、スキーマ名のみで設定されます。
+        - ユーザー定義スキーマのみが名前空間にマッピングされます。以下のシステムスキーマは無視されます：
+            - `ANONYMOUS`
+            - `APPQOSSYS`
+            - `AUDSYS`
+            - `CTXSYS`
+            - `DBSNMP`
+            - `DGPDB_INT`
+            - `DBSFWUSER`
+            - `DVF`
+            - `DVSYS`
+            - `GGSYS`
+            - `GSMADMIN_INTERNAL`
+            - `GSMCATUSER`
+            - `GSMROOTUSER`
+            - `GSMUSER`
+            - `LBACSYS`
+            - `MDSYS`
+            - `OJVMSYS`
+            - `ORDDATA`
+            - `ORDPLUGINS`
+            - `ORDSYS`
+            - `OUTLN`
+            - `REMOTE_SCHEDULER_AGENT`
+            - `SI_INFORMTN_SCHEMA`
+            - `SYS`
+            - `SYS$UMF`
+            - `SYSBACKUP`
+            - `SYSDG`
+            - `SYSKM`
+            - `SYSRAC`
+            - `SYSTEM`
+            - `WMSYS`
+            - `XDB`
+            - `DIP`
+            - `MDDATA`
+            - `ORACLE_OCM`
+            - `XS$NULL`
+
+  </TabItem>
+  <TabItem value="sql-server" label="SQL Server">
+    SQL Server のカタログ構造は ScalarDB Analytics によって自動的に解決されます。カタログレベルのオブジェクトは以下のようにマッピングされます：
+
+    - SQL Server データベースとスキーマは共に名前空間にマッピングされます。したがって、SQL Server データソースの名前空間は常に二段階で、データベース名とスキーマ名で構成されます。
+        - ユーザー定義データベースのみが名前空間にマッピングされます。以下のシステムデータベースは無視されます：
+            - `sys`
+            - `guest`
+            - `INFORMATION_SCHEMA`
+            - `db_accessadmin`
+            - `db_backupoperator`
+            - `db_datareader`
+            - `db_datawriter`
+            - `db_ddladmin`
+            - `db_denydatareader`
+            - `db_denydatawriter`
+            - `db_owner`
+            - `db_securityadmin`
+        - ユーザー定義スキーマのみが名前空間にマッピングされます。以下のシステムスキーマは無視されます：
+            - `master`
+            - `model`
+            - `msdb`
+            - `tempdb`
+    - SQL Server テーブルはテーブルにマッピングされます。
+    - SQL Server 列は列にマッピングされます。
+
+  </TabItem>
+  <TabItem value="dynamodb" label="DynamoDB">
+    DynamoDB はスキーマレスであるため、DynamoDB データソースを登録する際に以下のような形式のJSONを使用してカタログ構造を明示的に指定する必要があります：
+
+    ```json
+    {
+        "namespaces": [
+            {
+                "name": "<NAMESPACE_NAME>",
+                "tables": [
+                    {
+                        "name": "<TABLE_NAME>",
+                        "columns": [
+                            {
+                                "name": "<COLUMN_NAME>",
+                                "type": "<COLUMN_TYPE>"
+                            },
+                            ...
+                        ]
+                    },
+                    ...
+                ]
+            },
+            ...
+        ]
+    }
+    ```
+
+    指定した JSON では、任意の名前空間名を使用できますが、テーブル名は DynamoDB のテーブル名と一致する必要があり、列名と型は DynamoDB のフィールド名と型と一致する必要があります。
+
+  </TabItem>
+</Tabs>
+
+### データタイプマッピング
+
+以下のセクションでは、各データソースのネイティブタイプが ScalarDB Analytics タイプにどのようにマッピングされるかを示します：
+
+<Tabs groupId="data-source-type" queryString>
+  <TabItem value="scalardb" label="ScalarDB" default>
+
+| **ScalarDB データタイプ**      | **ScalarDB Analytics データタイプ** |
+|:------------------------------|:---------------------------------|
+| `BOOLEAN`                     | `BOOLEAN`                        |
+| `INT`                         | `INT`                            |
+| `BIGINT`                      | `BIGINT`                         |
+| `FLOAT`                       | `FLOAT`                          |
+| `DOUBLE`                      | `DOUBLE`                         |
+| `TEXT`                        | `TEXT`                           |
+| `BLOB`                        | `BLOB`                           |
+| `DATE`                        | `DATE`                           |
+| `TIME`                        | `TIME`                           |
+| `TIMESTAMP`                   | `TIMESTAMP`                      |
+| `TIMESTAMPTZ`                 | `TIMESTAMPTZ`                    |
+
+  </TabItem>
+  <TabItem value="postgresql" label="PostgreSQL">
+
+| **PostgreSQL データタイプ**      | **ScalarDB Analytics データタイプ** |
+|:------------------------------|:---------------------------------|
+| `integer`                     | `INT`                            |
+| `bigint`                      | `BIGINT`                         |
+| `real`                        | `FLOAT`                          |
+| `double precision`            | `DOUBLE`                         |
+| `smallserial`                 | `SMALLINT`                       |
+| `serial`                      | `INT`                            |
+| `bigserial`                   | `BIGINT`                         |
+| `char`                        | `TEXT`                           |
+| `varchar`                     | `TEXT`                           |
+| `text`                        | `TEXT`                           |
+| `bpchar`                      | `TEXT`                           |
+| `boolean`                     | `BOOLEAN`                        |
+| `bytea`                       | `BLOB`                           |
+| `date`                        | `DATE`                           |
+| `time`                        | `TIME`                           |
+| `time with time zone`         | `TIME`                           |
+| `time without time zone`      | `TIME`                           |
+| `timestamp`                   | `TIMESTAMP`                      |
+| `timestamp with time zone`    | `TIMESTAMPTZ`                      |
+| `timestamp without time zone` | `TIMESTAMP`                      |
+
+  </TabItem>
+  <TabItem value="mysql" label="MySQL">
+
+| **MySQL データタイプ**    | **ScalarDB Analytics データタイプ** |
+|:-----------------------|:---------------------------------|
+| `bit`                  | `BOOLEAN`                        |
+| `bit(1)`               | `BOOLEAN`                        |
+| `bit(x)` if *x >= 2*   | `BLOB`                           |
+| `tinyint`              | `SMALLINT`                       |
+| `tinyint(1)`           | `BOOLEAN`                        |
+| `boolean`              | `BOOLEAN`                        |
+| `smallint`             | `SMALLINT`                       |
+| `smallint unsigned`    | `INT`                            |
+| `mediumint`            | `INT`                            |
+| `mediumint unsigned`   | `INT`                            |
+| `int`                  | `INT`                            |
+| `int unsigned`         | `BIGINT`                         |
+| `bigint`               | `BIGINT`                         |
+| `float`                | `FLOAT`                          |
+| `double`               | `DOUBLE`                         |
+| `real`                 | `DOUBLE`                         |
+| `char`                 | `TEXT`                           |
+| `varchar`              | `TEXT`                           |
+| `text`                 | `TEXT`                           |
+| `binary`               | `BLOB`                           |
+| `varbinary`            | `BLOB`                           |
+| `blob`                 | `BLOB`                           |
+| `date`                 | `DATE`                           |
+| `time`                 | `TIME`                           |
+| `datetime`             | `TIMESTAMP`                      |
+| `timestamp`            | `TIMESTAMPTZ`                      |
+
+  </TabItem>
+  <TabItem value="oracle" label="Oracle">
+
+| **Oracle データタイプ**               | **ScalarDB Analytics データタイプ** |
+|:-----------------------------------|:---------------------------------|
+| `NUMBER` if *scale = 0*            | `BIGINT`                         |
+| `NUMBER` if *scale > 0*            | `DOUBLE`                         |
+| `FLOAT` if *precision ≤ 53*        | `DOUBLE`                         |
+| `BINARY_FLOAT`                     | `FLOAT`                          |
+| `BINARY_DOUBLE`                    | `DOUBLE`                         |
+| `CHAR`                             | `TEXT`                           |
+| `NCHAR`                            | `TEXT`                           |
+| `VARCHAR2`                         | `TEXT`                           |
+| `NVARCHAR2`                        | `TEXT`                           |
+| `CLOB`                             | `TEXT`                           |
+| `NCLOB`                            | `TEXT`                           |
+| `BLOB`                             | `BLOB`                           |
+| `BOOLEAN`                          | `BOOLEAN`                        |
+| `DATE`                             | `DATE`                           |
+| `TIMESTAMP`                        | `TIMESTAMPTZ`                      |
+| `TIMESTAMP WITH TIME ZONE`         | `TIMESTAMPTZ`                      |
+| `TIMESTAMP WITH LOCAL TIME ZONE`   | `TIMESTAMP`                      |
+| `RAW`                              | `BLOB`                           |
+
+  </TabItem>
+  <TabItem value="sql-server" label="SQL Server">
+
+| **SQL Server データタイプ**   | **ScalarDB Analytics データタイプ** |
+|:---------------------------|:---------------------------------|
+| `bit`                      | `BOOLEAN`                        |
+| `tinyint`                  | `SMALLINT`                       |
+| `smallint`                 | `SMALLINT`                       |
+| `int`                      | `INT`                            |
+| `bigint`                   | `BIGINT`                         |
+| `real`                     | `FLOAT`                          |
+| `float`                    | `DOUBLE`                         |
+| `float(n)` if *n ≤ 24*     | `FLOAT`                          |
+| `float(n)` if *n ≥ 25*     | `DOUBLE`                         |
+| `binary`                   | `BLOB`                           |
+| `varbinary`                | `BLOB`                           |
+| `char`                     | `TEXT`                           |
+| `varchar`                  | `TEXT`                           |
+| `nchar`                    | `TEXT`                           |
+| `nvarchar`                 | `TEXT`                           |
+| `ntext`                    | `TEXT`                           |
+| `text`                     | `TEXT`                           |
+| `date`                     | `DATE`                           |
+| `time`                     | `TIME`                           |
+| `datetime`                 | `TIMESTAMP`                      |
+| `datetime2`                | `TIMESTAMP`                      |
+| `smalldatetime`            | `TIMESTAMP`                      |
+| `datetimeoffset`           | `TIMESTAMPTZ`                      |
+
+  </TabItem>
+  <TabItem value="dynamodb" label="DynamoDB">
+
+| **DynamoDB データタイプ**   | **ScalarDB Analytics データタイプ** |
+|:-------------------------|:---------------------------------|
+| `Number`                 | `BYTE`                           |
+| `Number`                 | `SMALLINT`                       |
+| `Number`                 | `INT`                            |
+| `Number`                 | `BIGINT`                         |
+| `Number`                 | `FLOAT`                          |
+| `Number`                 | `DOUBLE`                         |
+| `Number`                 | `DECIMAL`                        |
+| `String`                 | `TEXT`                           |
+| `Binary`                 | `BLOB`                           |
+| `Boolean`                | `BOOLEAN`                        |
+
+:::warning
+
+`Number` タイプのフィールド値が ScalarDB Analytics で指定されたデータタイプとして解析可能であることを確認することが重要です。たとえば、`Number` タイプフィールドに対応するカラムが `INT` タイプとして指定されている場合、その値は整数でなければなりません。値が整数でない場合、クエリ実行時にエラーが発生します。
+
+:::
+
+  </TabItem>
+</Tabs>
+
+## 次のステップ
+
+ScalarDB Analytics サーバーとカタログ管理をセットアップした後：
+
+1. カタログを使用するよう Spark やその他のクエリエンジンを設定 - [設定リファレンス](configuration.mdx) を参照
+2. 分析クエリの実行を開始 - [分析クエリの実行](run-analytical-queries.mdx) を参照
+3. 本番デプロイメントをセットアップ - [デプロイメントガイド](deployment.mdx) を参照
