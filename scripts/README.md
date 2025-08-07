@@ -31,18 +31,21 @@ python scripts/generate-llms-full.py
 ### Requirements
 
 - Python 3.8+
-- gitingest package (automatically installed by using `pip` if not present)
+- gitingest package
+
+> [!NOTE]
+>
+> For local development, install gitingest manually by using `pip install --user gitingest` or `pipx install gitingest`. For GitHub Actions, gitingest is automatically installed in the workflow for building and deploying the docs site at `.github/workflows/deploy.yml`.
 
 ### What the `generate-llms-full.py` script does
 
 1. Uses gitingest to analyze the `docs` directory.
-2. Automatically installs gitingest if not already available.
-3. Includes only .mdx documentation files (`docs/*.mdx`, `docs/**/*.mdx`, and `src/components/en-us`).
-4. Focuses on the latest version of English documentation.
-5. Excludes build artifacts, node_modules, and other irrelevant files.
-6. Generates a comprehensive AI-friendly text digest.
-7. Adds a custom header for ScalarDB documentation context.
-8. Outputs to `build/llms-full.txt`.
+2. Includes only .mdx documentation files (`docs/*.mdx`, `docs/**/*.mdx`, and `src/components/en-us`).
+3. Focuses on the latest version of English documentation.
+4. Excludes build artifacts, node_modules, and other irrelevant files.
+5. Generates a comprehensive AI-friendly text digest.
+6. Adds a custom header for ScalarDB documentation context.
+7. Outputs to `build/llms-full.txt`.
 
 ### Configuration
 
