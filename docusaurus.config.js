@@ -10,7 +10,7 @@ import { getNotifications } from './src/data/notifications';
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'ScalarDB Documentation',
-  tagline: 'Cloud-native universal transaction manager',
+  tagline: 'Universal hybrid transaction/analytical processing (HTAP) engine for diverse databases',
   favicon: 'img/favicon.ico',
 
   // Set the production url of your site here
@@ -291,7 +291,7 @@ const config = {
         docsDir: 'docs',
         version: 'latest',
         title: 'ScalarDB Documentation',
-        description: 'Cloud-native universal transaction manager',
+        description: 'Universal hybrid transaction/analytical processing (HTAP) engine for diverse databases',
         // Content cleaning options
         excludeImports: true, // This configuration currently option doesn't seem to work as expected. I don't think it's a major issue, but we should upgrade the plugin when a new version is available to see if the issue is fixed.
         removeDuplicateHeadings: true, // This configuration currently option doesn't seem to work as expected. I don't think it's a major issue, but we should upgrade the plugin when a new version is available to see if the issue is fixed.
