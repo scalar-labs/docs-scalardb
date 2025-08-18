@@ -1804,6 +1804,11 @@ const sidebars = {
           label: 'アップグレード',
         },
         {
+          type: 'doc',
+          id: 'scalardb-cluster/remote-replication',
+          label: '災害復旧のためのデータレプリケーション',
+        },
+        {
           type: 'category',
           label: '監視',
           collapsible: true,
