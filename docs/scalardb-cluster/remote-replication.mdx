@@ -19,7 +19,7 @@ Remote replication provides several key advantages for disaster recovery and bus
 
 - Guarantees zero data loss (RPO of 0) for all committed transactions.
 - Minimizes performance impact through the combination of synchronous and asynchronous processing.
-- Enables backup site deployment across different regions, availability zones, or data centers.
+- Enables backup site deployment in different regions, availability zones, or data centers from the primary site.
 - Supports replication between different cloud service providers and database types.
 - Provides built-in crash tolerance and automatic recovery mechanisms.
 
@@ -147,7 +147,7 @@ The current private preview version has the following limitations, but they are 
 
 Remote replication has the following architectural limitations, which are inherently challenging to relax due to the architecture:
 
-- Only read operations with the read-committed isolation level are permitted on backup sites until failover. However, since write operations from the primary site are applied at the record level on backup sites, you may observe inconsistent snapshots across multiple records during replication until all write operations have been fully applied.
+- Only [transactions in read-only mode](../api-guide.mdx#begin-or-start-a-transaction-in-read-only-mode) with the [read-committed isolation level](../consensus-commit.mdx#isolation-levels) are permitted on backup sites until failover.
 - DDL operations are not replicated. Schema changes must be applied manually to both primary and backup sites.
 - You cannot use the two-phase commit interface if this feature is enabled.
 - There may be a slight performance impact on the primary site, depending on replication database specifications and configurations.
@@ -340,7 +340,7 @@ For the backup site, tune thread counts ([`scalar.db.replication.log_applier.tra
 
 #### High-latency database environments
 
-Multi-region databases may have higher latency. Consider using [group commit configurations](../api-guide.mdx#group-commit-for-the-coordinator-table) to improve throughput on high-latency Coordinator databases. The Coordinator group commit feature batches multiple transactions together, reducing the impact of network latency on overall throughput. For replication database tuning, see the [LogWriter performance tuning](#logapplier-performance-tuning) section above.
+Multi-region databases may have higher latency. Consider using [group commit configurations](../api-guide.mdx#group-commit-for-the-coordinator-table) to improve throughput on high-latency Coordinator databases. The Coordinator group commit feature batches multiple transactions together, reducing the impact of network latency on overall throughput. For replication database tuning, see the [LogWriter performance tuning](#logwriter-performance-tuning) section above.
 
 ## Tutorial
 
@@ -457,7 +457,7 @@ Verify the primary site deployment:
 kubectl logs <PRIMARY_POD_NAME> -n <NAMESPACE>
 ```
 
-Replace `<PRIMARY_POD_NAME>` with your actual pod name. Ensure there are no errors.
+Replace `<PRIMARY_POD_NAME>` with your actual Pod name. Ensure there are no errors.
 
 #### 2.3 Create primary site tables
 
@@ -525,7 +525,7 @@ spec:
           name: schema-config-primary
 ```
 
-Replace `<PRIMARY_CLUSTER_CONTACT_POINTS>` with your primary site cluster contact points (same format as [ScalarDB Cluster client configurations](scalardb-cluster-configurations.mdx)) and `<VERSION>` with the ScalarDB Cluster version that you're using.
+Replace `<PRIMARY_CLUSTER_CONTACT_POINTS>` with your primary site cluster contact points (same format as [ScalarDB Cluster client configurations](scalardb-cluster-configurations.mdx#client-configurations)) and `<VERSION>` with the ScalarDB Cluster version that you're using.
 
 Apply and run the Schema Loader job:
 
@@ -665,7 +665,7 @@ spec:
           name: schema-config-backup
 ```
 
-Replace `<BACKUP_CLUSTER_CONTACT_POINTS>` with your backup site cluster contact points (same format as [ScalarDB Cluster client configurations](scalardb-cluster-configurations.mdx)) and `<VERSION>` with the ScalarDB Cluster version that you're using.
+Replace `<BACKUP_CLUSTER_CONTACT_POINTS>` with your backup site cluster contact points (same format as [ScalarDB Cluster client configurations](scalardb-cluster-configurations.mdx#client-configurations)) and `<VERSION>` with the ScalarDB Cluster version that you're using.
 
 Apply and run the Schema Loader job:
 
@@ -742,7 +742,7 @@ Verify the backup site deployment with LogApplier:
 kubectl logs <BACKUP_POD_NAME> -n <NAMESPACE>
 ```
 
-Replace `<BACKUP_POD_NAME>` with your actual pod name. Ensure there are no errors. You should see a message indicating that LogApplier is properly initialized:
+Replace `<BACKUP_POD_NAME>` with your actual Pod name. Ensure there are no errors. You should see a message indicating that LogApplier is properly initialized:
 
 ```console
 2025-07-03 03:28:27,725 [INFO  com.scalar.db.cluster.replication.logapplier.LogApplier] Starting LogApplier processing. Partition range: Range{startInclusive=0, endExclusive=256}
@@ -753,7 +753,6 @@ Replace `<BACKUP_POD_NAME>` with your actual pod name. Ensure there are no error
 #### 4.1 Set up the SQL CLI for the primary site and test replication
 
 To test replication between sites, you should use the ScalarDB SQL CLI. Create a Kubernetes Pod to run the SQL CLI for the primary site:
-
 
 ```yaml
 # sql-cli-primary.yaml
@@ -791,10 +790,10 @@ spec:
 
 Replace `<PRIMARY_CLUSTER_CONTACT_POINTS>` with your primary site cluster contact points and `<VERSION>` with the ScalarDB Cluster version that you're using.
 
-Apply and connect to the SQL CLI by running the following commands:
+Create and connect to the SQL CLI Pod by running the following commands:
 
 ```bash
-# Apply the pod
+# Create the SQL CLI Pod
 kubectl apply -f sql-cli-primary.yaml -n <NAMESPACE>
 
 # Attach to the running SQL CLI
@@ -810,7 +809,7 @@ INSERT INTO test_namespace.test_table (id, name, value) VALUES (1, 'test_record'
 SELECT * FROM test_namespace.test_table WHERE id = 1;
 ```
 
-Detach from the session by pressing `Ctrl + P`, then `Ctrl + Q`. Then, create a similar pod for the backup site:
+Detach from the session by pressing `Ctrl + P`, then `Ctrl + Q`. Then, create a similar Pod for the backup site:
 
 ```yaml
 # sql-cli-backup.yaml
@@ -848,10 +847,10 @@ spec:
 
 Replace `<BACKUP_CLUSTER_CONTACT_POINTS>` with your backup site cluster contact points and `<VERSION>` with the ScalarDB Cluster version that you're using.
 
-Apply and verify replication on the backup site by running the following commands:
+Create and connect to the SQL CLI Pod by running the following commands:
 
 ```bash
-# Apply the pod
+# Create the SQL CLI Pod
 kubectl apply -f sql-cli-backup.yaml -n <NAMESPACE>
 
 # Attach to the running SQL CLI
@@ -866,7 +865,7 @@ SELECT * FROM test_namespace.test_table WHERE id = 1;
 
 You should see the same data on both sites, confirming that replication is working correctly. You can insert additional records in the primary site and verify they appear in the backup site as well. To detach from the session, press `Ctrl + P`, then `Ctrl + Q`.
 
-Clean up the SQL CLI pods when done:
+Clean up the SQL CLI Pods when done:
 
 ```bash
 kubectl delete -f sql-cli-primary.yaml -n <NAMESPACE>
