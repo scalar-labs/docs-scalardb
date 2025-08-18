@@ -44,17 +44,6 @@ const notificationsList = [
       ja: 'scalardb-cluster/getting-started-with-vector-search?utm_source=docs-site&utm_medium=notifications'
     },
     unread: true
-  },
-  {
-    message: {
-      en: 'Support for ScalarDB 3.11 will end soon: Please consider upgrading for enhanced features and continued support',
-      ja: 'ScalarDB 3.11 のサポートがまもなく終了します: 機能強化と継続的なサポートのため、アップグレードをご検討ください'
-    },
-    url: {
-      en: 'scalar-kubernetes/HowToUpgradeScalarDB?utm_source=docs-site&utm_medium=notifications',
-      ja: 'scalar-kubernetes/HowToUpgradeScalarDB?utm_source=docs-site&utm_medium=notifications'
-    },
-    unread: true
   }
 ];
 
