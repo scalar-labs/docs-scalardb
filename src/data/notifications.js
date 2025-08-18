@@ -36,8 +36,8 @@ const notificationsList = [
   },
   {
     message: {
-      en: 'Discover how to implement vector search capabilities with ScalarDB Cluster 3.15',
-      ja: 'ScalarDB Cluster 3.15 でベクトル検索機能を実装する方法を学ぶ'
+      en: 'Discover how to implement vector search capabilities with ScalarDB Cluster',
+      ja: 'ScalarDB Cluster でベクトル検索機能を実装する方法を学ぶ'
     },
     url: {
       en: 'scalardb-cluster/getting-started-with-vector-search?utm_source=docs-site&utm_medium=notifications',
