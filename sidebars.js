@@ -56,11 +56,6 @@ const sidebars = {
         },
         {
           type: 'doc',
-          id: 'permissions',
-          label: 'Permission Requirements',
-        },
-        {
-          type: 'doc',
           id: 'database-configurations',
           label: 'Underlying Database Configurations',
         },
@@ -1008,11 +1003,6 @@ const sidebars = {
           type: 'doc',
           id: 'requirements',
           label: '要件',
-        },
-        {
-          "type": "doc",
-          "id": "permissions",
-          "label": "権限要件"
         },
         {
           type: 'doc',
