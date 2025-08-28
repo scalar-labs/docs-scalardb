@@ -457,7 +457,12 @@ Verify the primary site deployment:
 kubectl logs <PRIMARY_POD_NAME> -n <NAMESPACE>
 ```
 
-Replace `<PRIMARY_POD_NAME>` with your actual Pod name. Ensure there are no errors.
+Replace `<PRIMARY_POD_NAME>` with your actual Pod name. If there are no errors, you should see a message indicating that LogWriter is properly initialized:
+
+```console
+2025-07-03 08:56:10,162 [INFO  com.scalar.db.cluster.replication.logwriter.LogWriterSnapshotHook] LogWriter is initialized
+```
+
 
 #### 2.3 Create primary site tables
 
@@ -871,6 +876,72 @@ Clean up the SQL CLI Pods when done:
 kubectl delete -f sql-cli-primary.yaml -n <NAMESPACE>
 kubectl delete -f sql-cli-backup.yaml -n <NAMESPACE>
 ```
+
+### Step 5: Monitor the replication state
+
+In this step, you'll monitor the replication status by using Replication CLI and Prometheus metrics.
+
+#### Replication CLI
+
+Replication CLI can get the status of LogApplier. This includes the number of partitions that contain remaining unapplied write operations in the replication database. This information is important because, if there are zero partitions, it means that all write operations have been successfully replicated and applied to the backup site database. In this case, you can use the synchronized backup site database as a new primary site database.
+
+Create a Kubernetes Pod to run Replication CLI for the backup site:
+
+```yaml
+# repl-cli-backup.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: repl-cli-backup
+spec:
+  restartPolicy: Never
+  containers:
+  - name: repl-cli-backup
+    image: ghcr.io/scalar-labs/scalardb-cluster-replication-cli:<VERSION>
+    args:
+      - "--contact-points"
+      - "<BACKUP_CLUSTER_CONTACT_POINTS>"
+      - "status"
+```
+
+Replace `<BACKUP_CLUSTER_CONTACT_POINTS>` with your backup site cluster contact points (in the same format as [ScalarDB Cluster client configurations](scalardb-cluster-configurations.mdx#client-configurations)) and `<VERSION>` with the ScalarDB Cluster version that you're using.
+
+Ensure no new writes are being made to the primary site database to get an accurate synchronization point. Then, apply and run Replication CLI, and check the output:
+
+```bash
+# Apply the Pod
+kubectl apply -f repl-cli-backup.yaml -n <NAMESPACE>
+
+# Check the status
+kubectl get pod repl-cli-backup -n <NAMESPACE>
+
+# Check the output from the Pod
+kubectl logs repl-cli-backup -n <NAMESPACE>
+```
+
+If there are no errors, you should see a JSON output that includes the number of partitions containing the remaining unapplied write operations in the replication database:
+
+```json
+{"remainingTransactionGroupPartitions":0}
+```
+
+If `remainingTransactionGroupPartitions` is more than 0, it indicates unapplied write operations still remain and you need to wait until it becomes 0 before using the backup site database as a new primary database.
+
+Clean up the Replication CLI Pod when done:
+
+```bash
+kubectl delete -f repl-cli-backup.yaml -n <NAMESPACE>
+```
+
+#### Prometheus metrics
+
+You can monitor LogApplier by using metrics. ScalarDB Cluster exposes many Prometheus format metrics, including LogApplier metrics, which can be monitored by using any tool that supports the format. For example, one option is using [Prometheus Operator (kube-prometheus-stack)](helm-charts/getting-started-monitoring.mdx).
+
+While LogApplier provides many metrics, the following metric is the most important for monitoring overall replication health:
+
+- **scalardb_cluster_stats_transaction_group_repo_oldest_record_age_millis:** The age (milliseconds) of the oldest transaction data in the replication database scanned by LogApplier. If this metric increases continuously, it indicates one of the following issues, which requires immediate investigation:
+  - LogApplier is failing to process stored write operations (for example, the backup site database is down).
+  - LogApplier cannot keep up with the primary site's throughput.
 
 ## Additional details
 
