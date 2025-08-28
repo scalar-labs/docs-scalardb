@@ -17,6 +17,15 @@ The ScalarDB Java API is mainly composed of the Administrative API and Transacti
 
 This section explains how to execute administrative operations programmatically by using the Administrative API in ScalarDB.
 
+:::warning
+
+When an Administrative API call writes to the underlying databases, it triggers several write operations. However, these operations are not executed atomically, meaning that if the call fails midway, you may encounter inconsistent states. To resolve this inconsistency issue, you can repair the table. For details, see the following pages:
+
+- [Repair a table](#repair-a-table) by using the Java API
+- [Repair tables](schema-loader.mdx#repair-tables) by using ScalarDB Schema Loader
+
+:::
+
 :::note
 
 Another method for executing administrative operations is to use [Schema Loader](schema-loader.mdx).
