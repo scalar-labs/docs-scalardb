@@ -51,6 +51,15 @@ displayed_sidebar: docsEnglish
 
 ## DDL
 
+:::warning
+
+Each DDL command triggers several write operations, but these operations are not executed atomically, meaning that if the command fails midway, you may encounter inconsistent states. To resolve this inconsistency issue, you can repair the table. For details, see the following pages:
+
+- [Repair a table](../api-guide.mdx#repair-a-table) by using the Java API
+- [Repair tables](../schema-loader.mdx#repair-tables) by using ScalarDB Schema Loader
+
+:::
+
 ### CREATE NAMESPACE
 
 Before creating tables, namespaces must be created since a table belongs to one namespace.
