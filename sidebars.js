@@ -1459,11 +1459,6 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
-                  id: 'scalardb-analytics/README',
-                  label: '概要',
-                },
-                {
-                  type: 'doc',
                   id: 'scalardb-analytics-postgresql/scalardb-fdw',
                   label: 'PostgreSQL 用 ScalarDB FDW',
                 },
