@@ -240,6 +240,211 @@ For details on how to configure each database, see [Configurations for the Under
 
 :::
 
+### Permission requirements
+
+This section describes the required permissions for using ScalarDB with its supported databases.
+
+#### Oracle Database
+
+ScalarDB requires the following actions to be granted to the Oracle Database user that ScalarDB uses to access Oracle Database:
+
+<Tabs groupId="oracle-versions" queryString>
+  <TabItem value="oracle-23ai" label="Oracle Database 23ai" default>
+    - `CREATE SESSION`
+    - `CREATE USER`
+    - `DROP USER`
+    - `ALTER USER`
+    - `CREATE ANY TABLE`
+    - `DROP ANY TABLE`
+    - `CREATE ANY INDEX`
+    - `DROP ANY INDEX`
+    - `ALTER ANY TABLE`
+    - `SELECT ANY TABLE`
+    - `INSERT ANY TABLE`
+    - `UPDATE ANY TABLE`
+    - `DELETE ANY TABLE`
+  </TabItem>
+  <TabItem value="oracle-21c" label="Oracle Database 21c">
+    - `CREATE SESSION`
+    - `CREATE USER`
+    - `DROP USER`
+    - `ALTER USER`
+    - `CREATE ANY TABLE`
+    - `DROP ANY TABLE`
+    - `CREATE ANY INDEX`
+    - `DROP ANY INDEX`
+    - `ALTER ANY TABLE`
+    - `SELECT ANY TABLE`
+    - `INSERT ANY TABLE`
+    - `UPDATE ANY TABLE`
+    - `DELETE ANY TABLE`
+  </TabItem>
+  <TabItem value="oracle-19c" label="Oracle Database 19c">
+    - `CREATE SESSION`
+    - `CREATE USER`
+    - `DROP USER`
+    - `ALTER USER`
+    - `CREATE ANY TABLE`
+    - `DROP ANY TABLE`
+    - `CREATE ANY INDEX`
+    - `DROP ANY INDEX`
+    - `ALTER ANY TABLE`
+    - `SELECT ANY TABLE`
+    - `INSERT ANY TABLE`
+    - `UPDATE ANY TABLE`
+    - `DELETE ANY TABLE`
+  </TabItem>
+</Tabs>
+
+#### MySQL
+
+ScalarDB requires the following privileges to be granted to the MySQL user that ScalarDB uses to access MySQL:
+
+<Tabs groupId="mysql-versions" queryString>
+  <TabItem value="mysql-8.4" label="MySQL 8.4" default>
+    - `CREATE`
+    - `DROP`
+    - `INDEX`
+    - `ALTER`
+    - `SELECT`
+    - `INSERT`
+    - `UPDATE`
+    - `DELETE`
+  </TabItem>
+  <TabItem value="mysql-8.0" label="MySQL 8.0">
+    - `CREATE`
+    - `DROP`
+    - `INDEX`
+    - `ALTER`
+    - `SELECT`
+    - `INSERT`
+    - `UPDATE`
+    - `DELETE`
+  </TabItem>
+</Tabs>
+
+#### PostgreSQL
+
+ScalarDB requires the following PostgreSQL database role to be granted to the PostgreSQL role that ScalarDB uses to access PostgreSQL:
+
+<Tabs groupId="postgresql-versions" queryString>
+  <TabItem value="postgresql-17" label="PostgreSQL 17" default>
+    - `SUPERUSER`
+  </TabItem>
+  <TabItem value="postgresql-16" label="PostgreSQL 16">
+    - `SUPERUSER`
+  </TabItem>
+  <TabItem value="postgresql-15" label="PostgreSQL 15">
+    - `SUPERUSER`
+  </TabItem>
+  <TabItem value="postgresql-14" label="PostgreSQL 14">
+    - `SUPERUSER`
+  </TabItem>
+  <TabItem value="postgresql-13" label="PostgreSQL 13">
+    - `SUPERUSER`
+  </TabItem>
+</Tabs>
+
+#### MariaDB
+
+ScalarDB requires the following privileges to be granted to the MariaDB user that ScalarDB uses to access MariaDB:
+
+<Tabs groupId="mariadb-versions" queryString>
+  <TabItem value="mariadb-11.4" label="MariaDB 11.4" default>
+    - `CREATE`
+    - `DROP`
+    - `INDEX`
+    - `ALTER`
+    - `SELECT`
+    - `INSERT`
+    - `UPDATE`
+    - `DELETE`
+  </TabItem>
+  <TabItem value="mariadb-10.11" label="MariaDB 10.11">
+    - `CREATE`
+    - `DROP`
+    - `INDEX`
+    - `ALTER`
+    - `SELECT`
+    - `INSERT`
+    - `UPDATE`
+    - `DELETE`
+  </TabItem>
+</Tabs>
+
+#### SQL Server
+
+ScalarDB requires the following database roles to be granted to the SQL Server user that ScalarDB uses to access SQL Server:
+
+<Tabs groupId="sqlserver-versions" queryString>
+  <TabItem value="sqlserver-2022" label="SQL Server 2022" default>
+    - `db_ddladmin`
+    - `db_datareader`
+    - `db_datawriter`
+  </TabItem>
+  <TabItem value="sqlserver-2019" label="SQL Server 2019">
+    - `db_ddladmin`
+    - `db_datareader`
+    - `db_datawriter`
+  </TabItem>
+  <TabItem value="sqlserver-2017" label="SQL Server 2017">
+    - `db_ddladmin`
+    - `db_datareader`
+    - `db_datawriter`
+  </TabItem>
+</Tabs>
+
+#### YugabyteDB
+
+ScalarDB requires the following YugabyteDB database role to be granted to the YugabyteDB role that ScalarDB uses to access YugabyteDB:
+
+- `SUPERUSER`
+
+#### Amazon DynamoDB
+
+ScalarDB requires the following actions to be granted to the AWS IAM user that ScalarDB uses to access DynamoDB:
+
+- `dynamodb:ConditionCheckItem`
+- `dynamodb:PutItem`
+- `dynamodb:ListTables`
+- `dynamodb:DeleteItem`
+- `dynamodb:Scan`
+- `dynamodb:Query`
+- `dynamodb:UpdateItem`
+- `dynamodb:DeleteTable`
+- `dynamodb:UpdateContinuousBackups`
+- `dynamodb:CreateTable`
+- `dynamodb:DescribeTable`
+- `dynamodb:GetItem`
+- `dynamodb:DescribeContinuousBackups`
+- `dynamodb:UpdateTable`
+- `application-autoscaling:RegisterScalableTarget`
+- `application-autoscaling:DeleteScalingPolicy`
+- `application-autoscaling:PutScalingPolicy`
+- `application-autoscaling:DeregisterScalableTarget`
+- `application-autoscaling:TagResource`
+
+#### Apache Cassandra
+
+ScalarDB requires the following actions to be granted to the Cassandra role that ScalarDB uses to access Cassandra:
+
+<Tabs groupId="cassandra-versions" queryString>
+  <TabItem value="cassandra-3.11" label="Cassandra 3.11" default>
+    - `CREATE`
+    - `DROP`
+    - `ALTER`
+    - `SELECT`
+    - `MODIFY`
+  </TabItem>
+  <TabItem value="cassandra-3.0" label="Cassandra 3.0">
+    - `CREATE`
+    - `DROP`
+    - `ALTER`
+    - `SELECT`
+    - `MODIFY`
+  </TabItem>
+</Tabs>
+
 ## Kubernetes
 
 ScalarDB is provided as a Pod on the Kubernetes platform in production environments. ScalarDB supports the following platforms and tools.
