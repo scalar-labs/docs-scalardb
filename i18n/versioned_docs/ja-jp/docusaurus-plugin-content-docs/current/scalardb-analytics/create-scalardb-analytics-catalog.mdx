@@ -1,0 +1,250 @@
+---
+tags:
+  - Enterprise Option
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Analytics カタログの作成
+
+import WarningLicenseKeyContact from "/src/components/ja-jp/_warning-license-key-contact.mdx";
+import TranslationBanner from "/src/components/_translation-ja-jp.mdx";
+
+<TranslationBanner />
+
+このガイドでは、ScalarDB Analytics カタログの作成方法を説明します。ScalarDB Analytics カタログは、データベーススキーマや接続ポイントなど、さまざまな基盤となるデータソースからの情報を整理する中央ハブとして機能し、統一されたインターフェースを通じてこれらのデータソース間で分析クエリを実行できるようにします。この情報はカタログ情報と呼ばれます。
+
+<WarningLicenseKeyContact product="ScalarDB Analytics" />
+
+## ScalarDB Analytics サーバーのセットアップ
+
+カタログ情報は、ScalarDB Analytics サーバーというコンポーネントによって管理されます。そのため、まず ScalarDB Analytics サーバーをセットアップする必要があります。ScalarDB Analytics サーバーは、使用量メータリング情報の収集とファイルシステムまたはクラウド blob ストレージへの保存など、その他いくつかのタスクも実行します。
+
+### 前提条件
+
+ScalarDB Analytics サーバーは、カタログ情報を保存するためのデータベースが必要です。このドキュメント全体で、このデータベースを**メタデータデータベース**と呼びます。ScalarDB Analytics は以下のデータベースをメタデータデータベースとしてサポートしています：
+
+- PostgreSQL
+- MySQL
+- SQL Server
+- Oracle
+
+ScalarDB Analytics サーバーを起動する前に、適切な権限を持つデータベースとユーザーを作成してください。具体的なコマンドはデータベースタイプによって異なります。
+
+### ScalarDB Analytics サーバーの設定
+
+ScalarDB Analytics サーバー設定ファイル（例：`scalardb-analytics-server.properties`）を作成します。以下の例では PostgreSQL をメタデータデータベースとして使用しています：
+
+```properties
+# メタデータデータベース設定（必須）
+scalar.db.analytics.server.db.url=jdbc:postgresql://localhost:5432/scalardb_analytics
+scalar.db.analytics.server.db.username=analytics_user
+scalar.db.analytics.server.db.password=your_secure_password
+
+# gRPC サーバー設定（オプション）
+scalar.db.analytics.server.catalog.port=11051  # デフォルト
+scalar.db.analytics.server.metering.port=11052  # デフォルト
+
+# TLS 設定（オプション、本番環境では推奨）
+scalar.db.analytics.server.tls.enabled=true
+scalar.db.analytics.server.tls.cert_chain_path=/path/to/server.crt
+scalar.db.analytics.server.tls.private_key_path=/path/to/server.key
+
+# ライセンス設定（必須）
+scalar.db.analytics.server.licensing.license_key=<YOUR_LICENSE_KEY>
+scalar.db.analytics.server.licensing.license_check_cert_pem=<YOUR_LICENSE_CERT_PEM>
+
+# メータリングストレージ設定（必須）
+scalar.db.analytics.server.metering.storage.provider=filesystem
+scalar.db.analytics.server.metering.storage.path=/var/scalardb-analytics/metering
+```
+
+:::note
+本番環境では、メータリングデータのストレージにはローカルファイルシステムではなく、オブジェクトストレージ（例：Amazon S3、Google Cloud Storage、Azure Blob Storage）を使用することを推奨します。詳細な設定オプションについては、[設定リファレンス](./configurations.mdx)を参照してください。
+:::
+
+### ScalarDB Analytics サーバーの起動
+
+設定ファイルを使用して ScalarDB Analytics サーバーを起動します：
+
+```console
+docker run -d \
+  --name scalardb-analytics-server \
+  -p 11051:11051 \
+  -p 11052:11052 \
+  -v /path/to/scalardb-analytics-server.properties:/scalardb-analytics-server/server.properties \
+  ghcr.io/scalar-labs/scalardb-analytics-server:<VERSION>
+```
+
+`<VERSION>` を使用したい ScalarDB Analytics のバージョンに置き換えてください。利用可能なバージョンは [コンテナレジストリページ](https://github.com/scalar-labs/scalardb-analytics/pkgs/container/scalardb-analytics-server-byol) で確認できます。
+
+コンテナはデフォルトで `/scalardb-analytics-server/server.properties` の設定ファイルを使用します。
+
+ScalarDB Analytics サーバーは起動中に以下を実行します：
+
+1. ライセンスを検証
+2. メタデータデータベースに接続
+3. 設定されたポートで gRPC サービスを開始
+4. クライアント接続の受け入れを開始
+
+:::tip
+
+サーバー設定（ホスト名とポート）をメモしておいてください。後で Spark アプリケーションがカタログに接続するよう設定する際にこの情報が必要になります。
+
+:::
+
+### サーバーヘルスチェック（オプション）
+
+サーバーが正常に動作していることを確認したい場合は、grpc-health-probe（コンテナイメージに含まれています）を使用できます：
+
+```console
+# カタログサービスのヘルスチェック
+docker exec scalardb-analytics-server grpc-health-probe -addr=localhost:11051
+
+# メータリングサービスのヘルスチェック
+docker exec scalardb-analytics-server grpc-health-probe -addr=localhost:11052
+
+# TLS有効化サーバーの場合
+docker exec scalardb-analytics-server grpc-health-probe -addr=localhost:11051 -tls -tls-ca-cert=/path/to/ca.crt
+```
+
+## ScalarDB Analytics CLI のセットアップ
+
+ScalarDB Analytics CLI は、ScalarDB Analytics サーバーと通信してカタログの管理、データソースの登録、管理タスクを実行するコマンドラインツールです。
+
+### CLI のインストール
+
+`scalardb-analytics-cli` ツールはコンテナイメージとして利用可能です：
+
+```console
+# CLI イメージをプル
+docker pull ghcr.io/scalar-labs/scalardb-analytics-cli:<VERSION>
+```
+
+`<VERSION>` を使用したい ScalarDB Analytics のバージョンに置き換えてください。利用可能なバージョンは [コンテナレジストリページ](https://github.com/scalar-labs/scalardb-analytics/pkgs/container/scalardb-analytics-cli) で確認できます。
+
+CLI コマンドを実行するには、設定ファイルをコンテナにマウントする必要があります：
+
+```console
+# 例：カタログを一覧表示
+docker run --rm \
+  -v $(pwd)/client.properties:/config/client.properties:ro \
+  ghcr.io/scalar-labs/scalardb-analytics-cli:<VERSION> \
+  -c /config/client.properties \
+  catalog list
+```
+
+### クライアント設定
+
+現在のディレクトリに `client.properties` という名前の設定ファイルを作成します：
+
+```properties
+# サーバー接続
+scalar.db.analytics.client.server.host=localhost
+scalar.db.analytics.client.server.catalog.port=11051
+scalar.db.analytics.client.server.metering.port=11052
+
+# TLS/SSL 設定（サーバーで有効な場合）
+scalar.db.analytics.client.server.tls.enabled=true
+scalar.db.analytics.client.server.tls.ca_root_cert_path=/path/to/ca.crt
+scalar.db.analytics.client.server.tls.override_authority=analytics.example.com
+```
+
+詳細な設定オプションについては、[設定リファレンス](./configurations.mdx)を参照してください。
+
+### エイリアスの設定（オプション）
+
+便利のため、長い Docker コマンドを毎回入力することを避けるためにエイリアスを作成できます：
+
+```console
+alias scalardb-analytics-cli='docker run --rm -v $(pwd)/client.properties:/config/client.properties:ro ghcr.io/scalar-labs/scalardb-analytics-cli:<VERSION> -c /config/client.properties'
+```
+
+このエイリアスを使用すると、より簡単にコマンドを実行できます：
+
+```console
+scalardb-analytics-cli catalog list
+```
+
+## カタログの作成
+
+このセクションでは、カタログコンテナの作成、カタログへのデータソースの追加、およびカタログの検証方法について説明します。
+
+### カタログコンテナの作成
+
+カタログは、データソースを整理するための論理的なコンテナとして機能します。最初のカタログを作成します：
+
+```console
+scalardb-analytics-cli catalog create production
+```
+
+:::important
+
+ここで選択したカタログ名（例：`production`）を覚えておいてください。このカタログに接続するよう Spark アプリケーションを設定する際に、この正確な名前を使用する必要があります。
+
+:::
+
+カタログが作成されたことを確認します：
+
+```console
+scalardb-analytics-cli catalog list
+```
+
+### カタログにデータソースを追加
+
+データベースのデータソース登録ファイルを作成します。PostgreSQL の例は以下のとおりです：
+
+`postgres-datasource.json` を作成します：
+
+```json
+{
+  "catalog": "production",
+  "name": "postgres_customers",
+  "type": "postgres",
+  "provider": {
+    "host": "postgres.example.com",
+    "port": 5432,
+    "username": "analytics_user",
+    "password": "secure_password",
+    "database": "customers"
+  }
+}
+```
+
+他のデータベースタイプ（MySQL、ScalarDB、Oracle、SQL Server、DynamoDB）の詳細な設定オプションと例については、[データソースリファレンス](./reference-data-source.mdx)を参照してください。
+
+データソースを登録します：
+
+```console
+scalardb-analytics-cli data-source register --data-source-json postgres-datasource.json
+```
+
+### カタログの検証
+
+カタログ内のすべてのデータソースを一覧表示します：
+
+```console
+scalardb-analytics-cli data-source list --catalog production
+```
+
+カタログ内の名前空間を一覧表示します：
+
+```console
+scalardb-analytics-cli namespace list --catalog production
+```
+
+カタログ内のテーブルを一覧表示します：
+
+```console
+scalardb-analytics-cli table list --catalog production
+```
+
+## 次のステップ
+
+これで、登録されたデータソースを持つ完全に機能する ScalarDB Analytics カタログができました。
+
+このカタログを使用して分析アプリケーションを開発するには：
+
+1. **分析クエリを実行する：** [ScalarDB Analytics を通じた分析クエリの実行](./run-analytical-queries.mdx)
+2. **データソースを追加する：** [ScalarDB Analytics データソースリファレンス](./reference-data-source.mdx)
+3. **パブリッククラウドにデプロイする：** [パブリッククラウド環境への ScalarDB Analytics のデプロイ](./deployment.mdx)
+4. **設定の詳細を確認する：** [設定リファレンス](./configurations.mdx)
