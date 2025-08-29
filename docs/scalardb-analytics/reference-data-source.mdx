@@ -1,0 +1,697 @@
+---
+tags:
+  - Enterprise Option
+displayed_sidebar: docsEnglish
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Data Source Reference
+
+import WarningLicenseKeyContact from "/src/components/en-us/_warning-license-key-contact.mdx";
+
+This reference guide provides detailed information about data source configuration formats, provider-specific settings, and data type mappings for ScalarDB Analytics.
+
+<WarningLicenseKeyContact product="ScalarDB Analytics" />
+
+## Data source registration file format
+
+Data sources are registered to catalogs using the CLI with data source registration files. These files have the following structure. For CLI command details, see [CLI command reference](./reference-cli-command.mdx).
+
+```json
+{
+  "catalog": "<catalog-name>", // The catalog to register the data source in
+  "name": "<data-source-name>", // A unique name for this data source
+  "type": "<database-type>", // Database type: postgres, mysql, scalardb, sqlserver, oracle, dynamodb
+  "provider": {
+    // Type-specific connection configuration
+    // Configuration varies by database type
+  }
+}
+```
+
+The `provider` section contains data source-specific connection settings that vary based on the `type` field.
+
+## Provider configuration by type
+
+The following sections show the provider configuration for each supported database type:
+
+<Tabs groupId="data-source-type" queryString>
+  <TabItem value="scalardb" label="ScalarDB" default>
+
+<h3>Configurations</h3>
+
+The following configuration is for ScalarDB.
+
+<h4>`configPath`</h4>
+
+- **Field:** `configPath`
+- **Description:** Path to the ScalarDB configuration file.
+
+<h3>Example</h3>
+
+```json
+{
+  "catalog": "production",
+  "name": "scalardb_source",
+  "type": "scalardb",
+  "provider": {
+    "configPath": "/path/to/scalardb.properties"
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="postgresql" label="PostgreSQL">
+
+<h3>Configuration</h3>
+
+The following configurations are for PostgreSQL.
+
+<h4>`host`</h4>
+
+- **Field:** `host`
+- **Description:** PostgreSQL server hostname.
+
+<h4>`port`</h4>
+
+- **Field:** `port`
+- **Description:** Port number.
+
+<h4>`username`</h4>
+
+- **Field:** `username`
+- **Description:** Database user.
+
+<h4>`password`</h4>
+
+- **Field:** `password`
+- **Description:** Database password.
+
+<h4>`database`</h4>
+
+- **Field:** `database`
+- **Description:** Database name to connect to.
+
+<h3>Example</h3>
+
+```json
+{
+  "catalog": "production",
+  "name": "postgres_customers",
+  "type": "postgres",
+  "provider": {
+    "host": "postgres.example.com",
+    "port": 5432,
+    "username": "analytics_user",
+    "password": "secure_password",
+    "database": "customers"
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="mysql" label="MySQL">
+
+<h3>Configuration</h3>
+
+The following configurations are for MySQL.
+
+<h4>`host`</h4>
+
+- **Field:** `host`
+- **Description:** MySQL server hostname.
+
+<h4>`port`</h4>
+
+- **Field:** `port`
+- **Description:** Port number.
+
+<h4>`username`</h4>
+
+- **Field:** `username`
+- **Description:** Database user.
+
+<h4>`password`</h4>
+
+- **Field:** `password`
+- **Description:** Database password.
+
+<h4>`database`</h4>
+
+- **Field:** `database`
+- **Description:** Specific database to import. If omitted, all databases will be imported.
+- **Default value:** None (imports all databases)
+
+<h3>Example</h3>
+
+```json
+{
+  "catalog": "production",
+  "name": "mysql_orders",
+  "type": "mysql",
+  "provider": {
+    "host": "mysql.example.com",
+    "port": 3306,
+    "username": "analytics_user",
+    "password": "secure_password",
+    "database": "orders" // Optional - if omitted, all databases will be imported
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="oracle" label="Oracle">
+
+<h3>Configuration</h3>
+
+The following configurations are for Oracle.
+
+<h4>`host`</h4>
+
+- **Field:** `host`
+- **Description:** Oracle server hostname.
+
+<h4>`port`</h4>
+
+- **Field:** `port`
+- **Description:** Port number.
+
+<h4>`username`</h4>
+
+- **Field:** `username`
+- **Description:** Database user.
+
+<h4>`password`</h4>
+
+- **Field:** `password`
+- **Description:** Database password.
+
+<h4>`serviceName`</h4>
+
+- **Field:** `serviceName`
+- **Description:** Oracle service name.
+
+<h3>Example</h3>
+
+```json
+{
+  "catalog": "production",
+  "name": "oracle_warehouse",
+  "type": "oracle",
+  "provider": {
+    "host": "oracle.example.com",
+    "port": 1521,
+    "username": "analytics_user",
+    "password": "secure_password",
+    "serviceName": "ORCL"
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="sql-server" label="SQL Server">
+
+<h3>Configuration</h3>
+
+The following configurations are for SQL Server.
+
+<h4>`host`</h4>
+
+- **Field:** `host`
+- **Description:** SQL Server hostname.
+
+<h4>`port`</h4>
+
+- **Field:** `port`
+- **Description:** Port number.
+
+<h4>`username`</h4>
+
+- **Field:** `username`
+- **Description:** Database user.
+
+<h4>`password`</h4>
+
+- **Field:** `password`
+- **Description:** Database password.
+
+<h4>`database`</h4>
+
+- **Field:** `database`
+- **Description:** Specific database to connect to.
+- **Default value:** None (connects to default database)
+
+<h4>`secure`</h4>
+
+- **Field:** `secure`
+- **Description:** Enable encryption.
+- **Default value:** `false`
+
+<h3>Example</h3>
+
+```json
+{
+  "catalog": "production",
+  "name": "sqlserver_analytics",
+  "type": "sqlserver",
+  "provider": {
+    "host": "sqlserver.example.com",
+    "port": 1433,
+    "username": "sa",
+    "password": "secure_password",
+    "database": "analytics", // Optional - if specified, only this database will be imported
+    "secure": true // Optional - enable encryption
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="dynamodb" label="DynamoDB">
+
+<h3>Configuration</h3>
+
+The following configurations are for DynamoDB.
+
+:::note AWS Credentials
+
+DynamoDB authentication uses the standard AWS SDK credential provider chain. Credentials can be configured through:
+
+- Environment variables (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`)
+- AWS credentials file (`~/.aws/credentials`)
+- IAM roles (when running on EC2, ECS, or Lambda)
+- AWS SSO or other credential providers supported by the AWS SDK
+
+For more information, see the [AWS SDK documentation on credential providers](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html).
+
+:::
+
+<h4>`region`</h4>
+
+- **Field:** `region`
+- **Description:** AWS region (e.g., us-east-1). Either `region` or `endpoint` must be specified (not both).
+
+<h4>`endpoint`</h4>
+
+- **Field:** `endpoint`
+- **Description:** Custom endpoint URL. Either `region` or `endpoint` must be specified (not both).
+
+<h4>`schema`</h4>
+
+- **Field:** `schema`
+- **Description:** Complete schema definition. Since DynamoDB is schema-less, you must provide a complete schema definition.
+
+<h4>Schema structure</h4>
+
+The schema field must contain the following structure:
+
+<h5>`.schema.namespaces[]`</h5>
+
+- **Field:** `.schema.namespaces[]`
+- **Description:** Array of namespace definitions.
+
+<h5>`.schema.namespaces[].names[]`</h5>
+
+- **Field:** `.schema.namespaces[].names[]`
+- **Description:** Array of namespace names (strings).
+
+<h5>`.schema.namespaces[].tables[]`</h5>
+
+- **Field:** `.schema.namespaces[].tables[]`
+- **Description:** Array of table definitions.
+
+<h5>`.schema.namespaces[].tables[].name`</h5>
+
+- **Field:** `.schema.namespaces[].tables[].name`
+- **Description:** Table name.
+
+<h5>`.schema.namespaces[].tables[].columns[]`</h5>
+
+- **Field:** `.schema.namespaces[].tables[].columns[]`
+- **Description:** Array of column definitions.
+
+<h5>`.schema.namespaces[].tables[].columns[].name`</h5>
+
+- **Field:** `.schema.namespaces[].tables[].columns[].name`
+- **Description:** Column name.
+
+<h5>`.schema.namespaces[].tables[].columns[].type`</h5>
+
+- **Field:** `.schema.namespaces[].tables[].columns[].type`
+- **Description:** Data type.
+
+<h5>`.schema.namespaces[].tables[].columns[].nullable`</h5>
+
+- **Field:** `.schema.namespaces[].tables[].columns[].nullable`
+- **Description:** Whether column can contain null values.
+- **Default value:** `true`
+
+<h3>Example</h3>
+
+```json
+{
+  "catalog": "production",
+  "name": "dynamodb_events",
+  "type": "dynamodb",
+  "provider": {
+    "region": "us-east-1",
+    "schema": {
+      "namespaces": [
+        {
+          "names": ["production"],
+          "tables": [
+            {
+              "name": "user_events",
+              "columns": [
+                { "name": "user_id", "type": "TEXT", "nullable": false },
+                {
+                  "name": "event_time",
+                  "type": "TIMESTAMP",
+                  "nullable": false
+                },
+                { "name": "event_type", "type": "TEXT" },
+                { "name": "event_data", "type": "TEXT" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## Catalog information reference
+
+This section describes catalog structure mappings by data source and data type mappings.
+
+### Catalog structure mappings by data source
+
+When registering a data source to ScalarDB Analytics, the catalog structure of the data source, that is, namespaces, tables, and columns, are resolved and registered to the universal data catalog. To resolve the catalog structure of the data source, a particular object on the data sources side are mapped to the universal data catalog object.
+
+#### Catalog-level mappings
+
+The catalog-level mappings are the mappings of the namespace names, table names, and column names from the data sources to the universal data catalog. To see the catalog-level mappings in each data source, select a data source.
+
+<Tabs groupId="data-source" queryString>
+  <TabItem value="scalardb" label="ScalarDB" default>
+    The catalog structure of ScalarDB is automatically resolved by ScalarDB Analytics. The catalog-level objects are mapped as follows:
+
+    - The ScalarDB namespace is mapped to the namespace. Therefore, the namespace of the ScalarDB data source is always single level, consisting of only the namespace name.
+    - The ScalarDB table is mapped to the table.
+    - The ScalarDB column is mapped to the column.
+
+  </TabItem>
+
+  <TabItem value="postgresql" label="PostgreSQL" default>
+    The catalog structure of PostgreSQL is automatically resolved by ScalarDB Analytics. The catalog-level objects are mapped as follows:
+
+    - The PostgreSQL schema is mapped to the namespace. Therefore, the namespace of the PostgreSQL data source is always single level, consisting of only the schema name.
+        - Only user-defined schemas are mapped to namespaces. The following system schemas are ignored:
+          - `information_schema`
+          - `pg_catalog`
+    - The PostgreSQL table is mapped to the table.
+    - The PostgreSQL column is mapped to the column.
+
+  </TabItem>
+  <TabItem value="mysql" label="MySQL">
+    The catalog structure of MySQL is automatically resolved by ScalarDB Analytics. The catalog-level objects are mapped as follows:
+
+    - The MySQL database is mapped to the namespace. Therefore, the namespace of the MySQL data source is always single level, consisting of only the database name.
+        - Only user-defined databases are mapped to namespaces. The following system databases are ignored:
+            - `mysql`
+            - `sys`
+            - `information_schema`
+            - `performance_schema`
+    - The MySQL table is mapped to the table.
+    - The MySQL column is mapped to the column.
+
+  </TabItem>
+  <TabItem value="oracle" label="Oracle">
+    The catalog structure of Oracle is automatically resolved by ScalarDB Analytics. The catalog-level objects are mapped as follows:
+
+    - The Oracle schema is mapped to the namespace. Therefore, the namespace of the Oracle data source is always single level, consisting of only schema name.
+        - Only user-defined schemas are mapped to namespaces. The following system schemas are ignored:
+            - `ANONYMOUS`
+            - `APPQOSSYS`
+            - `AUDSYS`
+            - `CTXSYS`
+            - `DBSNMP`
+            - `DGPDB_INT`
+            - `DBSFWUSER`
+            - `DVF`
+            - `DVSYS`
+            - `GGSYS`
+            - `GSMADMIN_INTERNAL`
+            - `GSMCATUSER`
+            - `GSMROOTUSER`
+            - `GSMUSER`
+            - `LBACSYS`
+            - `MDSYS`
+            - `OJVMSYS`
+            - `ORDDATA`
+            - `ORDPLUGINS`
+            - `ORDSYS`
+            - `OUTLN`
+            - `REMOTE_SCHEDULER_AGENT`
+            - `SI_INFORMTN_SCHEMA`
+            - `SYS`
+            - `SYS$UMF`
+            - `SYSBACKUP`
+            - `SYSDG`
+            - `SYSKM`
+            - `SYSRAC`
+            - `SYSTEM`
+            - `WMSYS`
+            - `XDB`
+            - `DIP`
+            - `MDDATA`
+            - `ORACLE_OCM`
+            - `XS$NULL`
+
+  </TabItem>
+  <TabItem value="sql-server" label="SQL Server">
+    The catalog structure of SQL Server is automatically resolved by ScalarDB Analytics. The catalog-level objects are mapped as follows:
+
+    - The SQL Server database and schema are mapped to the namespace together. Therefore, the namespace of the SQL Server data source is always two-level, consisting of the database name and the schema name.
+        - Only user-defined databases are mapped to namespaces. The following system databases are ignored:
+            - `sys`
+            - `guest`
+            - `INFORMATION_SCHEMA`
+            - `db_accessadmin`
+            - `db_backupoperator`
+            - `db_datareader`
+            - `db_datawriter`
+            - `db_ddladmin`
+            - `db_denydatareader`
+            - `db_denydatawriter`
+            - `db_owner`
+            - `db_securityadmin`
+        - Only user-defined schemas are mapped to namespaces. The following system schemas are ignored:
+            - `master`
+            - `model`
+            - `msdb`
+            - `tempdb`
+    - The SQL Server table is mapped to the table.
+    - The SQL Server column is mapped to the column.
+
+  </TabItem>
+  <TabItem value="dynamodb" label="DynamoDB">
+    Since DynamoDB is schema-less, you need to specify the catalog structure explicitly when registering a DynamoDB data source by using the following format JSON:
+
+    ```json
+    {
+        "namespaces": [
+            {
+                "name": "<NAMESPACE_NAME>",
+                "tables": [
+                    {
+                        "name": "<TABLE_NAME>",
+                        "columns": [
+                            {
+                                "name": "<COLUMN_NAME>",
+                                "type": "<COLUMN_TYPE>"
+                            },
+                            ...
+                        ]
+                    },
+                    ...
+                ]
+            },
+            ...
+        ]
+    }
+    ```
+
+    In the specified JSON, you can use any arbitrary namespace names, but the table names must match the table names in DynamoDB and column name and type must match field names and types in DynamoDB.
+
+  </TabItem>
+</Tabs>
+
+### Data type mappings
+
+The following sections show how native types from each data source are mapped to ScalarDB Analytics types:
+
+:::warning
+
+Columns with data types that are not included in the mapping tables below will be ignored during data source registration. These columns will not appear in the ScalarDB Analytics catalog and cannot be queried. Information about ignored columns is logged in the ScalarDB Analytics server logs.
+
+:::
+
+<Tabs groupId="data-source-type" queryString>
+  <TabItem value="scalardb" label="ScalarDB" default>
+
+| **ScalarDB Data Type** | **ScalarDB Analytics Data Type** |
+| :--------------------- | :------------------------------- |
+| `BOOLEAN`              | `BOOLEAN`                        |
+| `INT`                  | `INT`                            |
+| `BIGINT`               | `BIGINT`                         |
+| `FLOAT`                | `FLOAT`                          |
+| `DOUBLE`               | `DOUBLE`                         |
+| `TEXT`                 | `TEXT`                           |
+| `BLOB`                 | `BLOB`                           |
+| `DATE`                 | `DATE`                           |
+| `TIME`                 | `TIME`                           |
+| `TIMESTAMP`            | `TIMESTAMP`                      |
+| `TIMESTAMPTZ`          | `TIMESTAMPTZ`                    |
+
+  </TabItem>
+  <TabItem value="postgresql" label="PostgreSQL">
+
+| **PostgreSQL Data Type**      | **ScalarDB Analytics Data Type** |
+| :---------------------------- | :------------------------------- |
+| `integer`                     | `INT`                            |
+| `bigint`                      | `BIGINT`                         |
+| `real`                        | `FLOAT`                          |
+| `double precision`            | `DOUBLE`                         |
+| `smallserial`                 | `SMALLINT`                       |
+| `serial`                      | `INT`                            |
+| `bigserial`                   | `BIGINT`                         |
+| `char`                        | `TEXT`                           |
+| `varchar`                     | `TEXT`                           |
+| `text`                        | `TEXT`                           |
+| `bpchar`                      | `TEXT`                           |
+| `boolean`                     | `BOOLEAN`                        |
+| `bytea`                       | `BLOB`                           |
+| `date`                        | `DATE`                           |
+| `time`                        | `TIME`                           |
+| `time with time zone`         | `TIME`                           |
+| `time without time zone`      | `TIME`                           |
+| `timestamp`                   | `TIMESTAMP`                      |
+| `timestamp with time zone`    | `TIMESTAMPTZ`                    |
+| `timestamp without time zone` | `TIMESTAMP`                      |
+
+  </TabItem>
+  <TabItem value="mysql" label="MySQL">
+
+| **MySQL Data Type**  | **ScalarDB Analytics Data Type** |
+| :------------------- | :------------------------------- |
+| `bit`                | `BOOLEAN`                        |
+| `bit(1)`             | `BOOLEAN`                        |
+| `bit(x)` if _x >= 2_ | `BLOB`                           |
+| `tinyint`            | `SMALLINT`                       |
+| `tinyint(1)`         | `BOOLEAN`                        |
+| `boolean`            | `BOOLEAN`                        |
+| `smallint`           | `SMALLINT`                       |
+| `smallint unsigned`  | `INT`                            |
+| `mediumint`          | `INT`                            |
+| `mediumint unsigned` | `INT`                            |
+| `int`                | `INT`                            |
+| `int unsigned`       | `BIGINT`                         |
+| `bigint`             | `BIGINT`                         |
+| `float`              | `FLOAT`                          |
+| `double`             | `DOUBLE`                         |
+| `real`               | `DOUBLE`                         |
+| `char`               | `TEXT`                           |
+| `varchar`            | `TEXT`                           |
+| `text`               | `TEXT`                           |
+| `binary`             | `BLOB`                           |
+| `varbinary`          | `BLOB`                           |
+| `blob`               | `BLOB`                           |
+| `date`               | `DATE`                           |
+| `time`               | `TIME`                           |
+| `datetime`           | `TIMESTAMP`                      |
+| `timestamp`          | `TIMESTAMPTZ`                    |
+
+  </TabItem>
+  <TabItem value="oracle" label="Oracle">
+
+| **Oracle Data Type**             | **ScalarDB Analytics Data Type** |
+| :------------------------------- | :------------------------------- |
+| `NUMBER` if _scale = 0_          | `BIGINT`                         |
+| `NUMBER` if _scale > 0_          | `DOUBLE`                         |
+| `FLOAT` if _precision ≤ 53_      | `DOUBLE`                         |
+| `BINARY_FLOAT`                   | `FLOAT`                          |
+| `BINARY_DOUBLE`                  | `DOUBLE`                         |
+| `CHAR`                           | `TEXT`                           |
+| `NCHAR`                          | `TEXT`                           |
+| `VARCHAR2`                       | `TEXT`                           |
+| `NVARCHAR2`                      | `TEXT`                           |
+| `CLOB`                           | `TEXT`                           |
+| `NCLOB`                          | `TEXT`                           |
+| `BLOB`                           | `BLOB`                           |
+| `BOOLEAN`                        | `BOOLEAN`                        |
+| `DATE`                           | `DATE`                           |
+| `TIMESTAMP`                      | `TIMESTAMPTZ`                    |
+| `TIMESTAMP WITH TIME ZONE`       | `TIMESTAMPTZ`                    |
+| `TIMESTAMP WITH LOCAL TIME ZONE` | `TIMESTAMP`                      |
+| `RAW`                            | `BLOB`                           |
+
+  </TabItem>
+  <TabItem value="sql-server" label="SQL Server">
+
+| **SQL Server Data Type** | **ScalarDB Analytics Data Type** |
+| :----------------------- | :------------------------------- |
+| `bit`                    | `BOOLEAN`                        |
+| `tinyint`                | `SMALLINT`                       |
+| `smallint`               | `SMALLINT`                       |
+| `int`                    | `INT`                            |
+| `bigint`                 | `BIGINT`                         |
+| `real`                   | `FLOAT`                          |
+| `float`                  | `DOUBLE`                         |
+| `float(n)` if _n ≤ 24_   | `FLOAT`                          |
+| `float(n)` if _n ≥ 25_   | `DOUBLE`                         |
+| `binary`                 | `BLOB`                           |
+| `varbinary`              | `BLOB`                           |
+| `char`                   | `TEXT`                           |
+| `varchar`                | `TEXT`                           |
+| `nchar`                  | `TEXT`                           |
+| `nvarchar`               | `TEXT`                           |
+| `ntext`                  | `TEXT`                           |
+| `text`                   | `TEXT`                           |
+| `date`                   | `DATE`                           |
+| `time`                   | `TIME`                           |
+| `datetime`               | `TIMESTAMP`                      |
+| `datetime2`              | `TIMESTAMP`                      |
+| `smalldatetime`          | `TIMESTAMP`                      |
+| `datetimeoffset`         | `TIMESTAMPTZ`                    |
+
+  </TabItem>
+  <TabItem value="dynamodb" label="DynamoDB">
+
+| **DynamoDB Data Type** | **ScalarDB Analytics Data Type** |
+| :--------------------- | :------------------------------- |
+| `String`               | `TEXT`                           |
+| `Number`               | `DOUBLE`                         |
+| `Binary`               | `BLOB`                           |
+| `Boolean`              | `BOOLEAN`                        |
+| `Null`                 | `NULL`                           |
+| `String Set`           | `TEXT`                           |
+| `Number Set`           | `TEXT`                           |
+| `Binary Set`           | `TEXT`                           |
+| `List`                 | `TEXT`                           |
+| `Map`                  | `TEXT`                           |
+
+:::note
+
+DynamoDB complex data types (String Set, Number Set, Binary Set, List, Map) are mapped to `TEXT` for compatibility. The actual values are serialized as JSON strings in ScalarDB Analytics queries.
+
+:::
+
+  </TabItem>
+</Tabs>
+
