@@ -7,256 +7,17 @@ displayed_sidebar: docsEnglish
 import Tabs from "@theme/Tabs";
 import TabItem from "@theme/TabItem";
 
-# Manage ScalarDB Analytics
+# Data Source Reference
 
 import WarningLicenseKeyContact from "/src/components/en-us/_warning-license-key-contact.mdx";
 
-This guide explains how to set up and manage the ScalarDB Analytics server and its catalogs. The ScalarDB Analytics server is the implementation of the Universal Data Catalog described in the [ScalarDB Analytics Design](design.mdx), providing centralized metadata management for analytical queries across multiple databases.
+This reference guide provides detailed information about data source configuration formats, provider-specific settings, and data type mappings for ScalarDB Analytics.
 
 <WarningLicenseKeyContact product="ScalarDB Analytics" />
 
-## Overview
+## Data source registration file format
 
-ScalarDB Analytics provides a universal data catalog that enables unified access to multiple databases through a single interface. Based on the Universal Data Catalog architecture described in the [ScalarDB Analytics Design](design.mdx#universal-data-catalog) documentation, the system consists of two main components:
-
-1. **ScalarDB Analytics server**: A gRPC-based service that manages:
-   - **Catalog metadata**: Organizes data sources, namespaces, tables, and columns
-   - **Data source connections**: Maintains connection information and credentials for external databases
-   - **License validation**: Verifies enterprise licenses
-   - **Usage metering**: Tracks resource usage for billing purposes
-
-   The server provides two gRPC endpoints:
-   - Port 11051: Catalog service for metadata operations
-   - Port 11052: Metering service for usage tracking
-
-2. **ScalarDB Analytics CLI**: A command-line tool that communicates with the server to manage catalogs, register data sources, and perform administrative tasks
-
-## Setup
-
-Before managing catalogs, you need to set up and configure the ScalarDB Analytics server and CLI.
-
-### Server setup
-
-#### Prerequisites: Metadata database
-
-The server requires a database to store catalog metadata and data source connection information. We refer to this database as the **metadata database** throughout this documentation. ScalarDB Analytics supports the following databases for the metadata database:
-
-- PostgreSQL
-- MySQL
-- SQL Server
-- Oracle
-
-Create a database and user with appropriate privileges before starting the server. The specific commands vary by database type.
-
-#### Server configuration
-
-Create a server configuration file (e.g., `scalardb-analytics-server.properties`). The following example uses PostgreSQL as the metadata database:
-
-```properties
-# Metadata database configuration (required)
-scalar.db.analytics.server.db.url=jdbc:postgresql://localhost:5432/scalardb_analytics
-scalar.db.analytics.server.db.username=analytics_user
-scalar.db.analytics.server.db.password=your_secure_password
-
-# gRPC server configuration (optional)
-scalar.db.analytics.server.catalog.port=11051  # default
-scalar.db.analytics.server.metering.port=11052  # default
-
-# TLS configuration (optional but recommended for production)
-scalar.db.analytics.server.tls.enabled=true
-scalar.db.analytics.server.tls.cert_chain_path=/path/to/server.crt
-scalar.db.analytics.server.tls.private_key_path=/path/to/server.key
-
-# License configuration (required)
-scalar.db.analytics.server.licensing.license_key=<YOUR_LICENSE_KEY>
-scalar.db.analytics.server.licensing.license_check_cert_pem=<YOUR_LICENSE_CERT_PEM>
-
-# Metering storage configuration (required)
-scalar.db.analytics.server.metering.storage.provider=filesystem
-scalar.db.analytics.server.metering.storage.path=/var/scalardb-analytics/metering
-```
-
-For detailed configuration options, see the [Configuration reference](configuration.mdx).
-
-#### Starting the server
-
-Start the ScalarDB Analytics server with your configuration:
-
-```console
-docker run -d \
-  --name scalardb-analytics-server \
-  -p 11051:11051 \
-  -p 11052:11052 \
-  -v /path/to/scalardb-analytics-server.properties:/scalardb-analytics-server/server.properties \
-  ghcr.io/scalar-labs/scalardb-analytics-server:<VERSION>
-```
-
-Replace `<VERSION>` with the ScalarDB Analytics version you want to use. You can find available versions at the [Docker registry page](https://github.com/scalar-labs/scalardb-analytics/pkgs/container/scalardb-analytics-server).
-
-The container uses the configuration file at `/scalardb-analytics-server/server.properties` by default.
-
-The server will perform the following during startup:
-
-1. Validate the license
-2. Connect to the metadata database
-3. Start gRPC services on the configured ports
-4. Begin accepting client connections
-
-#### Health checks (optional)
-
-If you want to verify the server is running properly, you can use grpc-health-probe (included in the Docker container):
-
-```console
-# Check catalog service health
-docker exec scalardb-analytics-server grpc-health-probe -addr=localhost:11051
-
-# Check metering service health
-docker exec scalardb-analytics-server grpc-health-probe -addr=localhost:11052
-
-# For TLS-enabled servers
-docker exec scalardb-analytics-server grpc-health-probe -addr=localhost:11051 -tls -tls-ca-cert=/path/to/ca.crt
-```
-
-### CLI setup
-
-#### Installing the CLI
-
-The `scalardb-analytics-cli` tool is available as a Docker image:
-
-```console
-# Pull the CLI image
-docker pull ghcr.io/scalar-labs/scalardb-analytics-cli:<VERSION>
-```
-
-Replace `<VERSION>` with the ScalarDB Analytics version you want to use. Available versions can be found at the [Docker registry page](https://github.com/scalar-labs/scalardb-analytics/pkgs/container/scalardb-analytics-cli).
-
-To run CLI commands, you'll need to mount your configuration file into the container:
-
-```console
-# Example: List catalogs
-docker run --rm \
-  -v $(pwd)/client.properties:/config/client.properties:ro \
-  ghcr.io/scalar-labs/scalardb-analytics-cli:<VERSION> \
-  -c /config/client.properties \
-  catalog list
-```
-
-#### Client configuration
-
-Create a configuration file named `client.properties` in your current directory:
-
-```properties
-# Server connection
-scalar.db.analytics.client.server.host=localhost
-scalar.db.analytics.client.server.catalog.port=11051
-scalar.db.analytics.client.server.metering.port=11052
-
-# TLS/SSL configuration (if enabled on server)
-scalar.db.analytics.client.server.tls.enabled=true
-scalar.db.analytics.client.server.tls.ca_root_cert_path=/path/to/ca.crt
-scalar.db.analytics.client.server.tls.override_authority=analytics.example.com
-```
-
-For detailed configuration options, see the [Configuration reference](configuration.mdx).
-
-#### Setting up an alias (optional)
-
-For convenience, you can create an alias to avoid typing the long Docker command each time:
-
-```console
-alias scalardb-analytics-cli='docker run --rm -v $(pwd)/client.properties:/config/client.properties:ro ghcr.io/scalar-labs/scalardb-analytics-cli:<VERSION> -c /config/client.properties'
-```
-
-With this alias, you can run commands more simply:
-
-```console
-scalardb-analytics-cli catalog list
-```
-
-## CLI command reference
-
-The ScalarDB Analytics CLI uses a hierarchical command structure:
-
-```
-scalardb-analytics <resource> <operation> [options]
-```
-
-Available resources:
-
-- **catalog**: Top-level containers for organizing data sources
-- **data-source**: External databases registered within catalogs
-- **namespace**: Database-specific organizational units (auto-discovered)
-- **table**: Data structures within namespaces (auto-discovered)
-
-Note: In all examples below, we assume you're using the Docker alias created earlier. If running Docker commands directly, replace `scalardb-analytics-cli` with the full Docker command.
-
-### Catalog operations
-
-```console
-# Create a new catalog
-scalardb-analytics-cli catalog create --catalog <catalog-name>
-
-# List all catalogs
-scalardb-analytics-cli catalog list
-
-# Show catalog details (by name or ID)
-scalardb-analytics-cli catalog describe --catalog <catalog-name>
-scalardb-analytics-cli catalog describe --catalog-id <catalog-uuid>
-
-# Delete a catalog (fails if not empty unless --cascade is used)
-scalardb-analytics-cli catalog delete --catalog <catalog-name>
-scalardb-analytics-cli catalog delete --catalog <catalog-name> --cascade
-```
-
-### Data source operations
-
-```console
-# Register a new data source using a JSON definition file
-scalardb-analytics-cli data-source register --data-source-json <path-to-json>
-
-# List all data sources in a catalog
-scalardb-analytics-cli data-source list --catalog <catalog-name>
-
-# Show data source details (by name or ID)
-scalardb-analytics-cli data-source describe --catalog <catalog-name> --data-source <data-source-name>
-scalardb-analytics-cli data-source describe --data-source-id <data-source-uuid>
-
-# Delete a data source (fails if not empty unless --cascade is used)
-scalardb-analytics-cli data-source delete --catalog <catalog-name> --data-source <data-source-name>
-scalardb-analytics-cli data-source delete --catalog <catalog-name> --data-source <data-source-name> --cascade
-```
-
-The `register` command requires a JSON definition file. The JSON file format is described in the [Data source configuration](#data-source-configuration) section below.
-
-### Namespace operations
-
-```console
-# List all namespaces in a data source
-scalardb-analytics-cli namespace list --catalog <catalog-name> --data-source <data-source-name>
-
-# Show namespace details (by name or ID)
-# For nested namespaces, use '.' as a separator (e.g., --namespace parent.child)
-scalardb-analytics-cli namespace describe --catalog <catalog-name> --data-source <data-source-name> --namespace <namespace-name>
-scalardb-analytics-cli namespace describe --namespace-id <namespace-uuid>
-```
-
-### Table operations
-
-```console
-# List all tables in a namespace
-scalardb-analytics-cli table list --catalog <catalog-name> --data-source <data-source-name> --namespace <namespace-name>
-
-# Show table schema with all columns (by name or ID)
-# For nested namespaces, use '.' as a separator (e.g., --namespace parent.child)
-scalardb-analytics-cli table describe --catalog <catalog-name> --data-source <data-source-name> --namespace <namespace-name> --table <table-name>
-scalardb-analytics-cli table describe --table-id <table-uuid>
-```
-
-## Data source configuration
-
-### Data source JSON format
-
-Data sources are registered using JSON definition files with the following structure:
+Data sources are registered to catalogs using the CLI with data source registration files. These files have the following structure. For CLI command details, see [CLI command reference](./reference-cli-command.mdx).
 
 ```json
 {
@@ -270,22 +31,25 @@ Data sources are registered using JSON definition files with the following struc
 }
 ```
 
-The `provider` section contains database-specific connection settings that vary based on the `type` field.
+The `provider` section contains data source-specific connection settings that vary based on the `type` field.
 
-### Provider configuration by type
+## Provider configuration by type
 
 The following sections show the provider configuration for each supported database type:
 
 <Tabs groupId="data-source-type" queryString>
   <TabItem value="scalardb" label="ScalarDB" default>
 
-#### Configuration
+<h3>Configurations</h3>
 
-| Field        | Required | Description                             | Default |
-| ------------ | -------- | --------------------------------------- | ------- |
-| `configPath` | Yes      | Path to the ScalarDB configuration file | -       |
+The following configuration is for ScalarDB.
 
-**Example:**
+<h4>`configPath`</h4>
+
+- **Field:** `configPath`
+- **Description:** Path to the ScalarDB configuration file.
+
+<h3>Example</h3>
 
 ```json
 {
@@ -301,17 +65,36 @@ The following sections show the provider configuration for each supported databa
   </TabItem>
   <TabItem value="postgresql" label="PostgreSQL">
 
-#### Configuration
+<h3>Configuration</h3>
 
-| Field      | Required | Description                 | Default |
-| ---------- | -------- | --------------------------- | ------- |
-| `host`     | Yes      | PostgreSQL server hostname  | -       |
-| `port`     | Yes      | Port number                 | -       |
-| `username` | Yes      | Database user               | -       |
-| `password` | Yes      | Database password           | -       |
-| `database` | Yes      | Database name to connect to | -       |
+The following configurations are for PostgreSQL.
 
-**Example:**
+<h4>`host`</h4>
+
+- **Field:** `host`
+- **Description:** PostgreSQL server hostname.
+
+<h4>`port`</h4>
+
+- **Field:** `port`
+- **Description:** Port number.
+
+<h4>`username`</h4>
+
+- **Field:** `username`
+- **Description:** Database user.
+
+<h4>`password`</h4>
+
+- **Field:** `password`
+- **Description:** Database password.
+
+<h4>`database`</h4>
+
+- **Field:** `database`
+- **Description:** Database name to connect to.
+
+<h3>Example</h3>
 
 ```json
 {
@@ -331,17 +114,37 @@ The following sections show the provider configuration for each supported databa
   </TabItem>
   <TabItem value="mysql" label="MySQL">
 
-#### Configuration
+<h3>Configuration</h3>
 
-| Field      | Required | Description                                                             | Default |
-| ---------- | -------- | ----------------------------------------------------------------------- | ------- |
-| `host`     | Yes      | MySQL server hostname                                                   | -       |
-| `port`     | Yes      | Port number                                                             | -       |
-| `username` | Yes      | Database user                                                           | -       |
-| `password` | Yes      | Database password                                                       | -       |
-| `database` | No       | Specific database to import. If omitted, all databases will be imported | -       |
+The following configurations are for MySQL.
 
-**Example:**
+<h4>`host`</h4>
+
+- **Field:** `host`
+- **Description:** MySQL server hostname.
+
+<h4>`port`</h4>
+
+- **Field:** `port`
+- **Description:** Port number.
+
+<h4>`username`</h4>
+
+- **Field:** `username`
+- **Description:** Database user.
+
+<h4>`password`</h4>
+
+- **Field:** `password`
+- **Description:** Database password.
+
+<h4>`database`</h4>
+
+- **Field:** `database`
+- **Description:** Specific database to import. If omitted, all databases will be imported.
+- **Default value:** None (imports all databases)
+
+<h3>Example</h3>
 
 ```json
 {
@@ -361,17 +164,36 @@ The following sections show the provider configuration for each supported databa
   </TabItem>
   <TabItem value="oracle" label="Oracle">
 
-#### Configuration
+<h3>Configuration</h3>
 
-| Field         | Required | Description            | Default |
-| ------------- | -------- | ---------------------- | ------- |
-| `host`        | Yes      | Oracle server hostname | -       |
-| `port`        | Yes      | Port number            | -       |
-| `username`    | Yes      | Database user          | -       |
-| `password`    | Yes      | Database password      | -       |
-| `serviceName` | Yes      | Oracle service name    | -       |
+The following configurations are for Oracle.
 
-**Example:**
+<h4>`host`</h4>
+
+- **Field:** `host`
+- **Description:** Oracle server hostname.
+
+<h4>`port`</h4>
+
+- **Field:** `port`
+- **Description:** Port number.
+
+<h4>`username`</h4>
+
+- **Field:** `username`
+- **Description:** Database user.
+
+<h4>`password`</h4>
+
+- **Field:** `password`
+- **Description:** Database password.
+
+<h4>`serviceName`</h4>
+
+- **Field:** `serviceName`
+- **Description:** Oracle service name.
+
+<h3>Example</h3>
 
 ```json
 {
@@ -391,18 +213,43 @@ The following sections show the provider configuration for each supported databa
   </TabItem>
   <TabItem value="sql-server" label="SQL Server">
 
-#### Configuration
+<h3>Configuration</h3>
 
-| Field      | Required | Description                     | Default |
-| ---------- | -------- | ------------------------------- | ------- |
-| `host`     | Yes      | SQL Server hostname             | -       |
-| `port`     | Yes      | Port number                     | -       |
-| `username` | Yes      | Database user                   | -       |
-| `password` | Yes      | Database password               | -       |
-| `database` | No       | Specific database to connect to | -       |
-| `secure`   | No       | Enable encryption               | -       |
+The following configurations are for SQL Server.
 
-**Example:**
+<h4>`host`</h4>
+
+- **Field:** `host`
+- **Description:** SQL Server hostname.
+
+<h4>`port`</h4>
+
+- **Field:** `port`
+- **Description:** Port number.
+
+<h4>`username`</h4>
+
+- **Field:** `username`
+- **Description:** Database user.
+
+<h4>`password`</h4>
+
+- **Field:** `password`
+- **Description:** Database password.
+
+<h4>`database`</h4>
+
+- **Field:** `database`
+- **Description:** Specific database to connect to.
+- **Default value:** None (connects to default database)
+
+<h4>`secure`</h4>
+
+- **Field:** `secure`
+- **Description:** Enable encryption.
+- **Default value:** `false`
+
+<h3>Example</h3>
 
 ```json
 {
@@ -423,33 +270,84 @@ The following sections show the provider configuration for each supported databa
   </TabItem>
   <TabItem value="dynamodb" label="DynamoDB">
 
-#### Configuration
+<h3>Configuration</h3>
 
-| Field      | Required | Description                  | Default |
-| ---------- | -------- | ---------------------------- | ------- |
-| `region`   | Yes\*    | AWS region (e.g., us-east-1) | -       |
-| `endpoint` | Yes\*    | Custom endpoint URL          | -       |
-| `schema`   | Yes      | Complete schema definition   | -       |
+The following configurations are for DynamoDB.
 
-\* Either `region` or `endpoint` must be specified (not both).
+:::note AWS Credentials
 
-Since DynamoDB is schema-less, you must provide a complete schema definition.
+DynamoDB authentication uses the standard AWS SDK credential provider chain. Credentials can be configured through:
 
-##### Schema structure
+- Environment variables (`AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY`)
+- AWS credentials file (`~/.aws/credentials`)
+- IAM roles (when running on EC2, ECS, or Lambda)
+- AWS SSO or other credential providers supported by the AWS SDK
 
-| Field                                              | Required | Description                            | Default |
-| -------------------------------------------------- | -------- | -------------------------------------- | ------- |
-| `.schema`                                          | Yes      | Complete schema definition             | -       |
-| `.schema.namespaces[]`                             | Yes      | Array of namespace definitions         | -       |
-| `.schema.namespaces[].names[]`                     | Yes      | Array of namespace names (strings)     | -       |
-| `.schema.namespaces[].tables[]`                    | Yes      | Array of table definitions             | -       |
-| `.schema.namespaces[].tables[].name`               | Yes      | Table name                             | -       |
-| `.schema.namespaces[].tables[].columns[]`          | Yes      | Array of column definitions            | -       |
-| `.schema.namespaces[].tables[].columns[].name`     | Yes      | Column name                            | -       |
-| `.schema.namespaces[].tables[].columns[].type`     | Yes      | Data type                              | -       |
-| `.schema.namespaces[].tables[].columns[].nullable` | No       | Whether column can contain null values | true    |
+For more information, see the [AWS SDK documentation on credential providers](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html).
 
-**Example:**
+:::
+
+<h4>`region`</h4>
+
+- **Field:** `region`
+- **Description:** AWS region (e.g., us-east-1). Either `region` or `endpoint` must be specified (not both).
+
+<h4>`endpoint`</h4>
+
+- **Field:** `endpoint`
+- **Description:** Custom endpoint URL. Either `region` or `endpoint` must be specified (not both).
+
+<h4>`schema`</h4>
+
+- **Field:** `schema`
+- **Description:** Complete schema definition. Since DynamoDB is schema-less, you must provide a complete schema definition.
+
+<h4>Schema structure</h4>
+
+The schema field must contain the following structure:
+
+<h5>`.schema.namespaces[]`</h5>
+
+- **Field:** `.schema.namespaces[]`
+- **Description:** Array of namespace definitions.
+
+<h5>`.schema.namespaces[].names[]`</h5>
+
+- **Field:** `.schema.namespaces[].names[]`
+- **Description:** Array of namespace names (strings).
+
+<h5>`.schema.namespaces[].tables[]`</h5>
+
+- **Field:** `.schema.namespaces[].tables[]`
+- **Description:** Array of table definitions.
+
+<h5>`.schema.namespaces[].tables[].name`</h5>
+
+- **Field:** `.schema.namespaces[].tables[].name`
+- **Description:** Table name.
+
+<h5>`.schema.namespaces[].tables[].columns[]`</h5>
+
+- **Field:** `.schema.namespaces[].tables[].columns[]`
+- **Description:** Array of column definitions.
+
+<h5>`.schema.namespaces[].tables[].columns[].name`</h5>
+
+- **Field:** `.schema.namespaces[].tables[].columns[].name`
+- **Description:** Column name.
+
+<h5>`.schema.namespaces[].tables[].columns[].type`</h5>
+
+- **Field:** `.schema.namespaces[].tables[].columns[].type`
+- **Description:** Data type.
+
+<h5>`.schema.namespaces[].tables[].columns[].nullable`</h5>
+
+- **Field:** `.schema.namespaces[].tables[].columns[].nullable`
+- **Description:** Whether column can contain null values.
+- **Default value:** `true`
+
+<h3>Example</h3>
 
 ```json
 {
@@ -487,7 +385,9 @@ Since DynamoDB is schema-less, you must provide a complete schema definition.
   </TabItem>
 </Tabs>
 
-## Catalog metadata reference
+## Catalog information reference
+
+This section describes catalog structure mappings by data source and data type mappings.
 
 ### Catalog structure mappings by data source
 
@@ -636,6 +536,12 @@ The catalog-level mappings are the mappings of the namespace names, table names,
 
 The following sections show how native types from each data source are mapped to ScalarDB Analytics types:
 
+:::warning
+
+Columns with data types that are not included in the mapping tables below will be ignored during data source registration. These columns will not appear in the ScalarDB Analytics catalog and cannot be queried. Information about ignored columns is logged in the ScalarDB Analytics server logs.
+
+:::
+
 <Tabs groupId="data-source-type" queryString>
   <TabItem value="scalardb" label="ScalarDB" default>
 
@@ -769,30 +675,23 @@ The following sections show how native types from each data source are mapped to
 
 | **DynamoDB Data Type** | **ScalarDB Analytics Data Type** |
 | :--------------------- | :------------------------------- |
-| `Number`               | `BYTE`                           |
-| `Number`               | `SMALLINT`                       |
-| `Number`               | `INT`                            |
-| `Number`               | `BIGINT`                         |
-| `Number`               | `FLOAT`                          |
-| `Number`               | `DOUBLE`                         |
-| `Number`               | `DECIMAL`                        |
 | `String`               | `TEXT`                           |
+| `Number`               | `DOUBLE`                         |
 | `Binary`               | `BLOB`                           |
 | `Boolean`              | `BOOLEAN`                        |
+| `Null`                 | `NULL`                           |
+| `String Set`           | `TEXT`                           |
+| `Number Set`           | `TEXT`                           |
+| `Binary Set`           | `TEXT`                           |
+| `List`                 | `TEXT`                           |
+| `Map`                  | `TEXT`                           |
 
-:::warning
+:::note
 
-It is important to ensure that the field values of `Number` types are parsable as a specified data type for ScalarDB Analytics. For example, if a column that corresponds to a `Number`-type field is specified as an `INT` type, its value must be an integer. If the value is not an integer, an error will occur when running a query.
+DynamoDB complex data types (String Set, Number Set, Binary Set, List, Map) are mapped to `TEXT` for compatibility. The actual values are serialized as JSON strings in ScalarDB Analytics queries.
 
 :::
 
   </TabItem>
 </Tabs>
 
-## Next steps
-
-After setting up the ScalarDB Analytics server and managing catalogs:
-
-1. Configure Spark or other query engines to use your catalogs - see [Configuration Reference](configuration.mdx)
-2. Start running analytical queries - see [Run Analytical Queries](run-analytical-queries.mdx)
-3. Set up production deployment - see [Deployment Guide](deployment.mdx)
