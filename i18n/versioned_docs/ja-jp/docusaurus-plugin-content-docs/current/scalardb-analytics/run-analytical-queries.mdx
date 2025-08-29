@@ -22,8 +22,8 @@ ScalarDB Analytics は現在、実行エンジンとして Spark を使用し、
 
 ### 前提条件
 
-- **ScalarDB Analytics catalog server**: カタログメタデータを管理し、データソースに接続する実行中のインスタンス。サーバーには少なくとも1つのデータソースが登録されている必要があります。セットアップとデータソース登録の手順については、[ScalarDB Analytics catalog server のセットアップと管理](./administration.mdx)を参照してください。
-- **Apache Spark**: 互換性のあるバージョンの Apache Spark。サポートされているバージョンについては、[バージョン互換性](#バージョン互換性)を参照してください。まだ Spark をインストールしていない場合は、[Apache Spark のウェブサイト](https://spark.apache.org/downloads.html)から Spark ディストリビューションをダウンロードしてください。
+- **ScalarDB Analytics server:** カタログメタデータを管理し、データソースに接続する実行中のインスタンス。サーバーには少なくとも1つのデータソースが登録されている必要があります。データソースの登録については、[ScalarDB Analytics カタログの作成](./create-scalardb-analytics-catalog.mdx)を参照してください。
+- **Apache Spark:** 互換性のあるバージョンの Apache Spark。サポートされているバージョンについては、[バージョン互換性](#バージョン互換性)を参照してください。まだ Spark をインストールしていない場合は、[Apache Spark のウェブサイト](https://spark.apache.org/downloads.html)から Spark ディストリビューションをダウンロードしてください。
 
 :::note
 
@@ -33,15 +33,15 @@ Apache Spark は Scala 2.12 または Scala 2.13 でビルドされています�
 
 ### ScalarDB Analytics のセットアップのための Spark 設定
 
-ScalarDB Analytics は catalog server と統合するために特定の Spark 設定が必要です。
+ScalarDB Analytics は ScalarDB Analytics server と統合するために特定の Spark 設定が必要です。
 
 #### 必要な Spark 設定
 
 ScalarDB Analytics を Spark で使用するには、以下を設定する必要があります:
 
-1. **ScalarDB Analytics パッケージ**: Spark と Scala のバージョンに一致する JAR 依存関係を追加
-2. **メータリングリスナー**: 課金のためのリソース使用状況を追跡するリスナーを登録
-3. **カタログ登録**: ScalarDB Analytics サーバーに接続する Spark カタログを登録
+1. **ScalarDB Analytics パッケージ:** Spark と Scala のバージョンに一致する JAR 依存関係を追加
+2. **メータリングリスナー:** 課金のためのリソース使用状況を追跡するリスナーを登録
+3. **カタログ登録:** ScalarDB Analytics サーバーに接続する Spark カタログを登録
 
 Spark を設定する際は、ScalarDB Analytics サーバー上で作成されたカタログと一致するカタログ名を指定する必要があります。これにより、Spark がそのカタログで管理されているデータソースに正しくアクセスできるようになります。
 
@@ -71,9 +71,9 @@ spark.sql.catalog.myanalytics.server.metering.port 11052
 
 この例では:
 
-- カタログ名 `myanalytics` は、ScalarDB Analytics サーバー上に存在するカタログと一致する必要があります
-- ScalarDB Analytics サーバーは `analytics-server.example.com` で実行されています
-- テーブルには `myanalytics.<data_source>.<namespace>.<table>` の形式でアクセスします
+- カタログ名 `myanalytics` は、ScalarDB Analytics サーバー上に存在するカタログと一致する必要があります.
+- ScalarDB Analytics サーバーは `analytics-server.example.com` で実行されています.
+- テーブルには `myanalytics.<data_source>.<namespace>.<table>` の形式でアクセスします.
 
 :::important
 
@@ -83,7 +83,7 @@ Spark 設定のカタログ名は、CLI を使用して ScalarDB Analytics サ�
 
 :::note
 
-データソース設定は catalog server で管理されます。catalog server でのデータソースの設定方法については、[ScalarDB Analytics catalog server のセットアップと管理](./administration.mdx#configure-data-sources)を参照してください。
+データソース設定は ScalarDB Analytics server で管理されます。ScalarDB Analytics server でのデータソースの設定方法については、[ScalarDB Analytics カタログの作成](./create-scalardb-analytics-catalog.mdx)を参照してください。
 
 :::
 
@@ -91,9 +91,9 @@ Spark 設定のカタログ名は、CLI を使用して ScalarDB Analytics サ�
 
 ScalarDB Analytics を使用する Spark アプリケーションを開発する際は、ビルド設定に依存関係を追加できます。たとえば Gradle の場合:
 
-```groovy
+```kotlin
 dependencies {
-    implementation 'com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>'
+    implementation("com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>")
 }
 ```
 
@@ -119,7 +119,7 @@ ScalarDB Analytics を使用した Spark アプリケーションの開発には
 
 :::
 
-これらのすべての方法で、同じテーブル識別子形式を使用して ScalarDB Analytics のテーブルを参照できます。ScalarDB Analytics がデータソースからカタログ情報をマッピングする方法の詳細については、[カタログメタデータリファレンス](./administration.mdx#catalog-metadata-reference)を参照してください。
+これらのすべての方法で、同じテーブル識別子形式を使用して ScalarDB Analytics のテーブルを参照できます。ScalarDB Analytics がデータソースからカタログ情報をマッピングする方法の詳細については、[カタログ情報リファレンス](./reference-data-source.mdx#カタログ情報リファレンス)を参照してください。
 
 <Tabs groupId="spark-application-type" queryString>
   <TabItem value="spark-driver" label="Spark ドライバーアプリケーション">
@@ -128,11 +128,11 @@ ScalarDB Analytics には一般的に使用される `SparkSession` クラスを
 
 ScalarDB Analytics のテーブルからデータを読み取るには、通常のSparkテーブルを読み取る場合と同じように `spark.sql` または `spark.read.table` 関数を使用できます。
 
-まず、Java プロジェクトをセットアップする必要があります。例えば、Gradle を使用している場合は、`build.gradle` ファイルに以下を追加できます:
+まず、Java プロジェクトをセットアップする必要があります。例えば、Gradle を使用している場合は、`build.gradle.kts` ファイルに以下を追加できます:
 
-```groovy
+```kotlin
 dependencies {
-    implementation 'com.scalar-labs:scalardb-analytics-spark-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>'
+    implementation("com.scalar-labs:scalardb-analytics-spark-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>")
 }
 ```
 
@@ -194,7 +194,7 @@ spark-submit --class MyApp --master local[*] my-spark-application-all.jar
 
 :::
 
-また、アプリケーションに Spark Connect クライアントパッケージを含める必要があります。例えば、Gradle を使用している場合は、`build.gradle` ファイルに以下を追加できます:
+また、アプリケーションに Spark Connect クライアントパッケージを含める必要があります。例えば、Gradle を使用している場合は、`build.gradle.kts` ファイルに以下を追加できます:
 
 ```kotlin
 implementation("org.apache.spark:spark-connect-client-jvm_2.12:3.5.3")
