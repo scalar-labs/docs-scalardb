@@ -507,11 +507,6 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
-                  id: 'scalardb-analytics/administration',
-                  label: 'Manage ScalarDB Analytics',
-                },
-                {
-                  type: 'doc',
                   id: 'scalardb-analytics/configuration',
                   label: 'Configuration Reference',
                 },
@@ -1287,8 +1282,13 @@ const sidebars = {
           items: [
             {
               type: 'doc',
+              id: 'scalardb-analytics/create-scalardb-analytics-catalog',
+              label: 'カタログの作成',
+            },
+            {
+              type: 'doc',
               id: 'scalardb-analytics/run-analytical-queries',
-              label: 'ScalarDB Analytics を通じた分析クエリの実行',
+              label: '分析クエリの実行',
             },
           ],
         },
@@ -1464,13 +1464,18 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
-                  id: 'scalardb-analytics/administration',
-                  label: 'ScalarDB Analytics を管理',
+                  id: 'scalardb-analytics/configurations',
+                  label: '設定',
                 },
                 {
                   type: 'doc',
-                  id: 'scalardb-analytics/configuration',
-                  label: '設定リファレンス',
+                  id: 'scalardb-analytics/reference-data-source',
+                  label: 'データソースリファレンス',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-analytics/reference-cli-command',
+                  label: 'CLI コマンドリファレンス',
                 },
               ],
             },
