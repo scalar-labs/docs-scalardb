@@ -330,6 +330,11 @@ const sidebars = {
           items: [
             {
               type: 'doc',
+              id: 'scalardb-analytics/create-scalardb-analytics-catalog',
+              label: 'Create a Catalog',
+            },
+            {
+              type: 'doc',
               id: 'scalardb-analytics/run-analytical-queries',
               label: 'Run Analytical Queries',
             },
@@ -507,8 +512,18 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
-                  id: 'scalardb-analytics/configuration',
-                  label: 'Configuration Reference',
+                  id: 'scalardb-analytics/configurations',
+                  label: 'Configurations',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-analytics/reference-data-source',
+                  label: 'Data Source Reference',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-analytics/reference-cli-command',
+                  label: 'CLI Command Reference',
                 },
               ],
             },
