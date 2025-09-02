@@ -22,52 +22,207 @@ The following general configurations are available for ScalarDB Cluster.
 
 #### Transaction management configurations
 
-| Name                                                  | Description                                                                                                                                                                                                                                                                                                                                                                                                  | Default.           |
-|-------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|--------------------|
-| `scalar.db.transaction_manager`                       | Transaction manager of ScalarDB. Specify `consensus-commit` to use [Consensus Commit](../consensus-commit.mdx) or `single-crud-operation` to [run non-transactional storage operations](./run-non-transactional-storage-operations-through-scalardb-cluster.mdx). Note that the configurations under the `scalar.db.consensus_commit` prefix are ignored if you use `single-crud-operation`.                 | `consensus-commit` |
-| `scalar.db.consensus_commit.isolation_level`          | Isolation level used for Consensus Commit. Either `SNAPSHOT`, `SERIALIZABLE`, or `READ_COMMITTED` can be specified.                                                                                                                                                                                                                                                                                          | `SNAPSHOT`         |
-| `scalar.db.consensus_commit.coordinator.namespace`    | Namespace name of Coordinator tables used for Consensus Commit.                                                                                                                                                                                                                                                                                                                                                                        | `coordinator`      |
+The following transaction management-related configurations are available for ScalarDB Cluster.
+
+##### `transaction_manager`
+
+- **Field:** `scalar.db.transaction_manager`
+- **Description:** Transaction manager of ScalarDB. Specify `consensus-commit` to use [Consensus Commit](../consensus-commit.mdx) or `single-crud-operation` to [run non-transactional storage operations](./run-non-transactional-storage-operations-through-scalardb-cluster.mdx). Note that the configurations under the `scalar.db.consensus_commit` prefix are ignored if you use `single-crud-operation`.
+- **Default value:** `consensus-commit`
+
+##### `isolation_level`
+
+- **Field:** `scalar.db.consensus_commit.isolation_level`
+- **Description:** Isolation level used for Consensus Commit. Either `SNAPSHOT`, `SERIALIZABLE`, or `READ_COMMITTED` can be specified.
+- **Default value:** `SNAPSHOT`
+
+##### `coordinator.namespace`
+
+- **Field:** `scalar.db.consensus_commit.coordinator.namespace`
+- **Description:** Namespace name of Coordinator tables used for Consensus Commit.
+- **Default value:** `coordinator`
 
 #### Node configurations
 
-| Name                                                               | Description                                                                                         　                                                                                                                                                                                                                      | Default                |
-|--------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------|
-| `scalar.db.cluster.membership.type`                                | Membership type. Currently, only `KUBERNETES` can be specified.                                                                                                                                                                                                                                                            | `KUBERNETES`           |
-| `scalar.db.cluster.membership.kubernetes.endpoint.namespace_name`  | This configuration is for the `KUBERNETES` membership type. Namespace name for the [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints).                                                                                                                                        | `default`              |
-| `scalar.db.cluster.membership.kubernetes.endpoint.name`            | This configuration is for the `KUBERNETES` membership type. Name of the [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) to get the membership info.                                                                                                                        |                        |
-| `scalar.db.cluster.node.decommissioning_duration_secs`             | Decommissioning duration in seconds.                                                                                                                                                                                                                                                                                       | `30`                   |
-| `scalar.db.cluster.node.grpc.max_inbound_message_size`             | Maximum message size allowed to be received.                                                                                                                                                                                                                                                                               | The gRPC default value |
-| `scalar.db.cluster.node.grpc.max_inbound_metadata_size`            | Maximum size of metadata allowed to be received.                                                                                                                                                                                                                                                                           | The gRPC default value |
-| `scalar.db.cluster.node.port`                                      | Port number of the ScalarDB Cluster node.                                                                                                                                                                                                                                                                                  | `60053`                |
-| `scalar.db.cluster.node.prometheus_exporter_port`                  | Port number of the Prometheus exporter.                                                                                                                                                                                                                                                                                    | `9080`                 |
-| `scalar.db.cluster.grpc.deadline_duration_millis`                  | Deadline duration for gRPC in milliseconds.                                                                                                                                                                                                                                                                                | `60000` (60 seconds)   |
-| `scalar.db.cluster.node.standalone_mode.enabled`                   | Whether standalone mode is enabled. Note that if standalone mode is enabled, the membership configurations (`scalar.db.cluster.membership.*`) will be ignored.                                                                                                                                                             | `false`                |
-| `scalar.db.transaction.enabled`                                    | Whether the transaction feature is enabled. For example, if you use only the embedding feature, you can set this property to `false`.                                                                                                                                                                                      | `true`                 |
-| `scalar.db.cluster.node.scanner_management.expiration_time_millis` | ScalarDB Cluster nodes maintain in-progress scanners. This process expires scanners that have been idle for an extended period to prevent resource leaks. This configuration specifies the expiration time of this scanner management feature in milliseconds.                                                             | `60000` (60 seconds)   |
+The following node-related configurations are available for ScalarDB Cluster.
+
+##### `cluster.membership.type`
+
+- **Field:** `scalar.db.cluster.membership.type`
+- **Description:** Membership type. Currently, only `KUBERNETES` can be specified.
+- **Default value:** `KUBERNETES`
+
+##### `cluster.membership.kubernetes.endpoint.namespace_name`
+
+- **Field:** `scalar.db.cluster.membership.kubernetes.endpoint.namespace_name`
+- **Description:** This configuration is for the `KUBERNETES` membership type. Namespace name for the [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints).
+- **Default value:** `default`
+
+##### `cluster.membership.kubernetes.endpoint.name`
+
+- **Field:** `scalar.db.cluster.membership.kubernetes.endpoint.name`
+- **Description:** This configuration is for the `KUBERNETES` membership type. Name of the [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) to get the membership info.
+- **Default value:** empty
+
+##### `cluster.node.decommissioning_duration_secs`
+
+- **Field:** `scalar.db.cluster.node.decommissioning_duration_secs`
+- **Description:** Decommissioning duration in seconds.
+- **Default value:** `30`
+
+##### `cluster.node.grpc.max_inbound_message_size`
+
+- **Field:** `scalar.db.cluster.node.grpc.max_inbound_message_size`
+- **Description:** Maximum message size allowed to be received.
+- **Default value:** The gRPC default value
+
+##### `cluster.node.grpc.max_inbound_metadata_size`
+
+- **Field:** `scalar.db.cluster.node.grpc.max_inbound_metadata_size`
+- **Description:** Maximum size of metadata allowed to be received.
+- **Default value:** The gRPC default value
+
+##### `cluster.node.port`
+
+- **Field:** `scalar.db.cluster.node.port`
+- **Description:** Port number of the ScalarDB Cluster node.
+- **Default value:** `60053`
+
+##### `cluster.node.prometheus_exporter_port`
+
+- **Field:** `scalar.db.cluster.node.prometheus_exporter_port`
+- **Description:** Port number of the Prometheus exporter.
+- **Default value:** `9080`
+
+##### `cluster.grpc.deadline_duration_millis`
+
+- **Field:** `scalar.db.cluster.grpc.deadline_duration_millis`
+- **Description:** Deadline duration for gRPC in milliseconds.
+- **Default value:** `60000` (60 seconds)
+
+##### `cluster.node.standalone_mode.enabled`
+
+- **Field:** `scalar.db.cluster.node.standalone_mode.enabled`
+- **Description:** Whether standalone mode is enabled. Note that if standalone mode is enabled, the membership configurations (`scalar.db.cluster.membership.*`) will be ignored.
+- **Default value:** `false`
+
+##### `transaction.enabled`
+
+- **Field:** `scalar.db.transaction.enabled`
+- **Description:** Whether the transaction feature is enabled. For example, if you use only the embedding feature, you can set this property to `false`.
+- **Default value:** `true`
+
+##### `cluster.node.scanner_management.expiration_time_millis`
+
+- **Field:** `scalar.db.cluster.node.scanner_management.expiration_time_millis`
+- **Description:** ScalarDB Cluster nodes maintain in-progress scanners. This process expires scanners that have been idle for an extended period to prevent resource leaks. This configuration specifies the expiration time of this scanner management feature in milliseconds.
+- **Default value:** `60000` (60 seconds)
 
 ### Performance-related configurations
 
-The following performance-related configurations are available for the Consensus Commit transaction manager:
+The following performance-related configurations are available for the Consensus Commit transaction manager.
 
-| Name                                                                                   | Description                                                                                                                                                                                                                                                                               | Default                                                           |
-|----------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------|
-| `scalar.db.consensus_commit.parallel_executor_count`                                   | Number of executors (threads) for parallel execution. This number refers to the total number of threads across transactions in a ScalarDB Cluster node or a ScalarDB process.                                                                                                             | `128`                                                             |
-| `scalar.db.consensus_commit.parallel_preparation.enabled`                              | Whether or not the preparation phase is executed in parallel.                                                                                                                                                                                                                             | `true`                                                            |
-| `scalar.db.consensus_commit.parallel_validation.enabled`                               | Whether or not the validation phase (in `EXTRA_READ`) is executed in parallel.                                                                                                                                                                                                            | The value of `scalar.db.consensus_commit.parallel_commit.enabled` |
-| `scalar.db.consensus_commit.parallel_commit.enabled`                                   | Whether or not the commit phase is executed in parallel.                                                                                                                                                                                                                                  | `true`                                                            |
-| `scalar.db.consensus_commit.parallel_rollback.enabled`                                 | Whether or not the rollback phase is executed in parallel.                                                                                                                                                                                                                                | The value of `scalar.db.consensus_commit.parallel_commit.enabled` |
-| `scalar.db.consensus_commit.async_commit.enabled`                                      | Whether or not the commit phase is executed asynchronously.                                                                                                                                                                                                                               | `false`                                                           |
-| `scalar.db.consensus_commit.async_rollback.enabled`                                    | Whether or not the rollback phase is executed asynchronously.                                                                                                                                                                                                                             | The value of `scalar.db.consensus_commit.async_commit.enabled`    |
-| `scalar.db.consensus_commit.parallel_implicit_pre_read.enabled`                        | Whether or not implicit pre-read is executed in parallel.                                                                                                                                                                                                                                 | `true`                                                            |
-| `scalar.db.consensus_commit.one_phase_commit.enabled`                                  | Whether or not the one-phase commit optimization is enabled.                                                                                                                                                                                                                              | `false`                                                           |
-| `scalar.db.consensus_commit.coordinator.write_omission_on_read_only.enabled`           | Whether or not the Coordinator write omission optimization is enabled for read-only transactions. This optimization is useful for read-only transactions that do not modify any data, as it avoids unnecessary writes to the Coordinator tables.                                          | `true`                                                            |
-| `scalar.db.consensus_commit.coordinator.group_commit.enabled`                          | Whether or not committing the transaction state is executed in batch mode. This feature can't be used with a two-phase commit interface.                                                                                                                                                  | `false`                                                           |
-| `scalar.db.consensus_commit.coordinator.group_commit.slot_capacity`                    | Maximum number of slots in a group for the group commit feature. A large value improves the efficiency of group commit, but may also increase latency and the likelihood of transaction conflicts.[^1]                                                                                    | `20`                                                              |
-| `scalar.db.consensus_commit.coordinator.group_commit.group_size_fix_timeout_millis`    | Timeout to fix the size of slots in a group. A large value improves the efficiency of group commit, but may also increase latency and the likelihood of transaction conflicts.[^1]                                                                                                        | `40`                                                              |
-| `scalar.db.consensus_commit.coordinator.group_commit.delayed_slot_move_timeout_millis` | Timeout to move delayed slots from a group to another isolated group to prevent the original group from being affected by delayed transactions. A large value improves the efficiency of group commit, but may also increase the latency and the likelihood of transaction conflicts.[^1] | `1200`                                                            |
-| `scalar.db.consensus_commit.coordinator.group_commit.old_group_abort_timeout_millis`   | Timeout to abort an old ongoing group. A small value reduces resource consumption through aggressive aborts, but may also increase the likelihood of unnecessary aborts for long-running transactions.                                                                                    | `60000`                                                           |
-| `scalar.db.consensus_commit.coordinator.group_commit.timeout_check_interval_millis`    | Interval for checking the group commit–related timeouts.                                                                                                                                                                                                                                  | `20`                                                              |
-| `scalar.db.consensus_commit.coordinator.group_commit.metrics_monitor_log_enabled`      | Whether or not the metrics of the group commit are logged periodically.                                                                                                                                                                                                                   | `false`                                                           |
+#### `parallel_executor_count`
+
+- **Field:** `scalar.db.consensus_commit.parallel_executor_count`
+- **Description:** Number of executors (threads) for parallel execution. This number refers to the total number of threads across transactions in a ScalarDB Cluster node or a ScalarDB process.
+- **Default value:** `128`
+
+#### `parallel_preparation.enabled`
+
+- **Field:** `scalar.db.consensus_commit.parallel_preparation.enabled`
+- **Description:** Whether or not the preparation phase is executed in parallel.
+- **Default value:** `true`
+
+#### `parallel_validation.enabled`
+
+- **Field:** `scalar.db.consensus_commit.parallel_validation.enabled`
+- **Description:** Whether or not the validation phase (in `EXTRA_READ`) is executed in parallel.
+- **Default value:** The value of `scalar.db.consensus_commit.parallel_commit.enabled`
+
+#### `parallel_commit.enabled`
+
+- **Field:** `scalar.db.consensus_commit.parallel_commit.enabled`
+- **Description:** Whether or not the commit phase is executed in parallel.
+- **Default value:** `true`
+
+#### `parallel_rollback.enabled`
+
+- **Field:** `scalar.db.consensus_commit.parallel_rollback.enabled`
+- **Description:** Whether or not the rollback phase is executed in parallel.
+- **Default value:** The value of `scalar.db.consensus_commit.parallel_commit.enabled`
+
+#### `async_commit.enabled`
+
+- **Field:** `scalar.db.consensus_commit.async_commit.enabled`
+- **Description:** Whether or not the commit phase is executed asynchronously.
+- **Default value:** `false`
+
+#### `async_rollback.enabled`
+
+- **Field:** `scalar.db.consensus_commit.async_rollback.enabled`
+- **Description:** Whether or not the rollback phase is executed asynchronously.
+- **Default value:** The value of `scalar.db.consensus_commit.async_commit.enabled`
+
+#### `parallel_implicit_pre_read.enabled`
+
+- **Field:** `scalar.db.consensus_commit.parallel_implicit_pre_read.enabled`
+- **Description:** Whether or not implicit pre-read is executed in parallel.
+- **Default value:** `true`
+
+#### `one_phase_commit.enabled`
+
+- **Field:** `scalar.db.consensus_commit.one_phase_commit.enabled`
+- **Description:** Whether or not the one-phase commit optimization is enabled.
+- **Default value:** `false`
+
+#### `coordinator.write_omission_on_read_only.enabled`
+
+- **Field:** `scalar.db.consensus_commit.coordinator.write_omission_on_read_only.enabled`
+- **Description:** Whether or not the Coordinator write omission optimization is enabled for read-only transactions. This optimization is useful for read-only transactions that do not modify any data, as it avoids unnecessary writes to the Coordinator tables.
+- **Default value:** `true`
+
+#### `coordinator.group_commit.enabled`
+
+- **Field:** `scalar.db.consensus_commit.coordinator.group_commit.enabled`
+- **Description:** Whether or not committing the transaction state is executed in batch mode. This feature can't be used with a two-phase commit interface.
+- **Default value:** `false`
+
+#### `coordinator.group_commit.slot_capacity`
+
+- **Field:** `scalar.db.consensus_commit.coordinator.group_commit.slot_capacity`
+- **Description:** Maximum number of slots in a group for the group commit feature. A large value improves the efficiency of group commit, but may also increase latency and the likelihood of transaction conflicts.[^1]
+- **Default value:** `20`
+
+#### `coordinator.group_commit.group_size_fix_timeout_millis`
+
+- **Field:** `scalar.db.consensus_commit.coordinator.group_commit.group_size_fix_timeout_millis`
+- **Description:** Timeout to fix the size of slots in a group. A large value improves the efficiency of group commit, but may also increase latency and the likelihood of transaction conflicts.[^1]
+- **Default value:** `40`
+
+#### `coordinator.group_commit.delayed_slot_move_timeout_millis`
+
+- **Field:** `scalar.db.consensus_commit.coordinator.group_commit.delayed_slot_move_timeout_millis`
+- **Description:** Timeout to move delayed slots from a group to another isolated group to prevent the original group from being affected by delayed transactions. A large value improves the efficiency of group commit, but may also increase the latency and the likelihood of transaction conflicts.[^1]
+- **Default value:** `1200`
+
+#### `coordinator.group_commit.old_group_abort_timeout_millis`
+
+- **Field:** `scalar.db.consensus_commit.coordinator.group_commit.old_group_abort_timeout_millis`
+- **Description:** Timeout to abort an old ongoing group. A small value reduces resource consumption through aggressive aborts, but may also increase the likelihood of unnecessary aborts for long-running transactions.
+- **Default value:** `60000`
+
+#### `coordinator.group_commit.timeout_check_interval_millis`
+
+- **Field:** `scalar.db.consensus_commit.coordinator.group_commit.timeout_check_interval_millis`
+- **Description:** Interval for checking the group commit–related timeouts.
+- **Default value:** `20`
+
+#### `coordinator.group_commit.metrics_monitor_log_enabled`
+
+- **Field:** `scalar.db.consensus_commit.coordinator.group_commit.metrics_monitor_log_enabled`
+- **Description:** Whether or not the metrics of the group commit are logged periodically.
+- **Default value:** `false`
 
 ### Storage-related configurations
 
@@ -77,28 +232,115 @@ Select a database to see the configurations available for each storage.
 
 <Tabs groupId="databases" queryString>
   <TabItem value="JDBC_databases" label="JDBC databases" default>
-    The following configurations are available for JDBC databases:
+    The following configurations are available for JDBC databases.
 
-    | Name                                                      | Description                                                                                                                                                                                                                                                                               | Default                      |
-    |-----------------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------|
-    | `scalar.db.storage`                                       | `jdbc` must be specified.                                                                                                                                                                                                                                                                 | -                            |
-    | `scalar.db.contact_points`                                | JDBC connection URL.                                                                                                                                                                                                                                                                      |                              |
-    | `scalar.db.username`                                      | Username to access the database.                                                                                                                                                                                                                                                          |                              |
-    | `scalar.db.password`                                      | Password to access the database.                                                                                                                                                                                                                                                          |                              |
-    | `scalar.db.jdbc.connection_pool.min_idle`                 | Minimum number of idle connections in the connection pool.                                                                                                                                                                                                                                | `20`                         |
-    | `scalar.db.jdbc.connection_pool.max_idle`                 | Maximum number of connections that can remain idle in the connection pool.                                                                                                                                                                                                                | `50`                         |
-    | `scalar.db.jdbc.connection_pool.max_total`                | Maximum total number of idle and borrowed connections that can be active at the same time for the connection pool. Use a negative value for no limit.                                                                                                                                     | `100`                        |
-    | `scalar.db.jdbc.prepared_statements_pool.enabled`         | Setting this property to `true` enables prepared-statement pooling.                                                                                                                                                                                                                       | `false`                      |
-    | `scalar.db.jdbc.prepared_statements_pool.max_open`        | Maximum number of open statements that can be allocated from the statement pool at the same time. Use a negative value for no limit.                                                                                                                                                      | `-1`                         |
-    | `scalar.db.jdbc.isolation_level`                          | Isolation level for JDBC. `READ_UNCOMMITTED`, `READ_COMMITTED`, `REPEATABLE_READ`, or `SERIALIZABLE` can be specified.                                                                                                                                                                    | Underlying-database specific |
-    | `scalar.db.jdbc.table_metadata.connection_pool.min_idle`  | Minimum number of idle connections in the connection pool for the table metadata.                                                                                                                                                                                                         | `5`                          |
-    | `scalar.db.jdbc.table_metadata.connection_pool.max_idle`  | Maximum number of connections that can remain idle in the connection pool for the table metadata.                                                                                                                                                                                         | `10`                         |
-    | `scalar.db.jdbc.table_metadata.connection_pool.max_total` | Maximum total number of idle and borrowed connections that can be active at the same time for the connection pool for the table metadata. Use a negative value for no limit.                                                                                                              | `25`                         |
-    | `scalar.db.jdbc.admin.connection_pool.min_idle`           | Minimum number of idle connections in the connection pool for admin.                                                                                                                                                                                                                      | `5`                          |
-    | `scalar.db.jdbc.admin.connection_pool.max_idle`           | Maximum number of connections that can remain idle in the connection pool for admin.                                                                                                                                                                                                      | `10`                         |
-    | `scalar.db.jdbc.admin.connection_pool.max_total`          | Maximum total number of idle and borrowed connections that can be active at the same time for the connection pool for admin. Use a negative value for no limit.                                                                                                                           | `25`                         |
-    | `scalar.db.jdbc.db2.variable_key_column_size`             | Column size for TEXT and BLOB columns in IBM Db2 when they are used as a primary key or secondary key. Minimum 64 bytes.                                                                                                                                                                      | `128`                        |
-    | `scalar.db.jdbc.db2.time_column.default_date_component`   | Value of the date component used for storing `TIME` data in IBM Db2. Since the IBM Db2 TIMESTAMP type is used to store ScalarDB `TIME` type data because it provides fractional-second precision, ScalarDB stores `TIME` data with the same date component value for ease of comparison and sorting. | `1970-01-01`                 |
+    <h4>`storage`</h4>
+
+    - **Field:** `scalar.db.storage`
+    - **Description:** `jdbc` must be specified.
+    - **Default value:** empty
+
+    <h4>`contact_points`</h4>
+
+    - **Field:** `scalar.db.contact_points`
+    - **Description:** JDBC connection URL.
+    - **Default value:** empty
+
+    <h4>`username`</h4>
+
+    - **Field:** `scalar.db.username`
+    - **Description:** Username to access the database.
+    - **Default value:** empty
+
+    <h4>`password`</h4>
+
+    - **Field:** `scalar.db.password`
+    - **Description:** Password to access the database.
+    - **Default value:** empty
+
+    <h4>`jdbc.connection_pool.min_idle`</h4>
+
+    - **Field:** `scalar.db.jdbc.connection_pool.min_idle`
+    - **Description:** Minimum number of idle connections in the connection pool.
+    - **Default value:** `20`
+
+    <h4>`jdbc.connection_pool.max_idle`</h4>
+
+    - **Field:** `scalar.db.jdbc.connection_pool.max_idle`
+    - **Description:** Maximum number of connections that can remain idle in the connection pool.
+    - **Default value:** `50`
+
+    <h4>`jdbc.connection_pool.max_total`</h4>
+
+    - **Field:** `scalar.db.jdbc.connection_pool.max_total`
+    - **Description:** Maximum total number of idle and borrowed connections that can be active at the same time for the connection pool. Use a negative value for no limit.
+    - **Default value:** `100`
+
+    <h4>`jdbc.prepared_statements_pool.enabled`</h4>
+
+    - **Field:** `scalar.db.jdbc.prepared_statements_pool.enabled`
+    - **Description:** Setting this property to `true` enables prepared-statement pooling.
+    - **Default value:** `false`
+
+    <h4>`jdbc.prepared_statements_pool.max_open`</h4>
+
+    - **Field:** `scalar.db.jdbc.prepared_statements_pool.max_open`
+    - **Description:** Maximum number of open statements that can be allocated from the statement pool at the same time. Use a negative value for no limit.
+    - **Default value:** `-1`
+
+    <h4>`jdbc.isolation_level`</h4>
+
+    - **Field:** `scalar.db.jdbc.isolation_level`
+    - **Description:** Isolation level for JDBC. `READ_UNCOMMITTED`, `READ_COMMITTED`, `REPEATABLE_READ`, or `SERIALIZABLE` can be specified.
+    - **Default value:** Underlying-database specific
+
+    <h4>`jdbc.table_metadata.connection_pool.min_idle`</h4>
+
+    - **Field:** `scalar.db.jdbc.table_metadata.connection_pool.min_idle`
+    - **Description:** Minimum number of idle connections in the connection pool for the table metadata.
+    - **Default value:** `5`
+
+    <h4>`jdbc.table_metadata.connection_pool.max_idle`</h4>
+
+    - **Field:** `scalar.db.jdbc.table_metadata.connection_pool.max_idle`
+    - **Description:** Maximum number of connections that can remain idle in the connection pool for the table metadata.
+    - **Default value:** `10`
+
+    <h4>`jdbc.table_metadata.connection_pool.max_total`</h4>
+
+    - **Field:** `scalar.db.jdbc.table_metadata.connection_pool.max_total`
+    - **Description:** Maximum total number of idle and borrowed connections that can be active at the same time for the connection pool for the table metadata. Use a negative value for no limit.
+    - **Default value:** `25`
+
+    <h4>`jdbc.admin.connection_pool.min_idle`</h4>
+
+    - **Field:** `scalar.db.jdbc.admin.connection_pool.min_idle`
+    - **Description:** Minimum number of idle connections in the connection pool for admin.
+    - **Default value:** `5`
+
+    <h4>`jdbc.admin.connection_pool.max_idle`</h4>
+
+    - **Field:** `scalar.db.jdbc.admin.connection_pool.max_idle`
+    - **Description:** Maximum number of connections that can remain idle in the connection pool for admin.
+    - **Default value:** `10`
+
+    <h4>`jdbc.admin.connection_pool.max_total`</h4>
+
+    - **Field:** `scalar.db.jdbc.admin.connection_pool.max_total`
+    - **Description:** Maximum total number of idle and borrowed connections that can be active at the same time for the connection pool for admin. Use a negative value for no limit.
+    - **Default value:** `25`
+
+    <h4>`jdbc.db2.variable_key_column_size`</h4>
+
+    - **Field:** `scalar.db.jdbc.db2.variable_key_column_size`
+    - **Description:** Column size for TEXT and BLOB columns in IBM Db2 when they are used as a primary key or secondary key. Minimum 64 bytes.
+    - **Default value:** `128`
+
+    <h4>`jdbc.db2.time_column.default_date_component`</h4>
+
+    - **Field:** `scalar.db.jdbc.db2.time_column.default_date_component`
+    - **Description:** Value of the date component used for storing `TIME` data in IBM Db2. Since the IBM Db2 TIMESTAMP type is used to store ScalarDB `TIME` type data because it provides fractional-second precision, ScalarDB stores `TIME` data with the same date component value for ease of comparison and sorting.
+    - **Default value:** `1970-01-01`
 :::note
 
 If you're using SQLite3 as a JDBC database, you must set `scalar.db.contact_points` as follows:
@@ -113,37 +355,103 @@ To avoid frequent errors caused internally by [`SQLITE_BUSY`](https://www.sqlite
 :::
 </TabItem>
 <TabItem value="DynamoDB" label="DynamoDB">
-The following configurations are available for DynamoDB:
+The following configurations are available for DynamoDB.
 
-    | Name                                  | Description                                                                                                                                                                                                                                                 | Default    |
-    |---------------------------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------|
-    | `scalar.db.storage`                   | `dynamo` must be specified.                                                                                                                                                                                                                                 | -          |
-    | `scalar.db.contact_points`            | AWS region with which ScalarDB should communicate (e.g., `us-east-1`).                                                                                                                                                                                      |            |
-    | `scalar.db.username`                  | AWS access key used to identify the user interacting with AWS.                                                                                                                                                                                              |            |
-    | `scalar.db.password`                  | AWS secret access key used to authenticate the user interacting with AWS.                                                                                                                                                                                   |            |
-    | `scalar.db.dynamo.endpoint_override`  | Amazon DynamoDB endpoint with which ScalarDB should communicate. This is primarily used for testing with a local instance instead of an AWS service.                                                                                                        |            |
-    | `scalar.db.dynamo.namespace.prefix`   | Prefix for the user namespaces and metadata namespace names. Since AWS requires having unique tables names in a single AWS region, this is useful if you want to use multiple ScalarDB environments (development, production, etc.) in a single AWS region. |            |
+    <h4>`storage`</h4>
+
+    - **Field:** `scalar.db.storage`
+    - **Description:** `dynamo` must be specified.
+    - **Default value:** empty
+
+    <h4>`contact_points`</h4>
+
+    - **Field:** `scalar.db.contact_points`
+    - **Description:** AWS region with which ScalarDB should communicate (for example, `us-east-1`).
+    - **Default value:** empty
+
+    <h4>`username`</h4>
+
+    - **Field:** `scalar.db.username`
+    - **Description:** AWS access key used to identify the user interacting with AWS.
+    - **Default value:** empty
+
+    <h4>`password`</h4>
+
+    - **Field:** `scalar.db.password`
+    - **Description:** AWS secret access key used to authenticate the user interacting with AWS.
+    - **Default value:** empty
+
+    <h4>`dynamo.endpoint_override`</h4>
+
+    - **Field:** `scalar.db.dynamo.endpoint_override`
+    - **Description:** Amazon DynamoDB endpoint with which ScalarDB should communicate. This is primarily used for testing with a local instance instead of an AWS service.
+    - **Default value:** empty
+
+    <h4>`dynamo.namespace.prefix`</h4>
+
+    - **Field:** `scalar.db.dynamo.namespace.prefix`
+    - **Description:** Prefix for the user namespaces and metadata namespace names. Since AWS requires having unique tables names in a single AWS region, this is useful if you want to use multiple ScalarDB environments (development, production, etc.) in a single AWS region.
+    - **Default value:** empty
   </TabItem>
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
-    The following configurations are available for CosmosDB for NoSQL:
+    The following configurations are available for Cosmos DB for NoSQL.
 
-    | Name                                 | Description                                                                                              | Default  |
-    |--------------------------------------|----------------------------------------------------------------------------------------------------------|----------|
-    | `scalar.db.storage`                  | `cosmos` must be specified.                                                                              | -        |
-    | `scalar.db.contact_points`           | Azure Cosmos DB for NoSQL endpoint with which ScalarDB should communicate.                               |          |
-    | `scalar.db.password`                 | Either a master or read-only key used to perform authentication for accessing Azure Cosmos DB for NoSQL. |          |
-    | `scalar.db.cosmos.consistency_level` | Consistency level used for Cosmos DB operations. `STRONG` or `BOUNDED_STALENESS` can be specified.       | `STRONG` |
+    <h4>`storage`</h4>
+
+    - **Field:** `scalar.db.storage`
+    - **Description:** `cosmos` must be specified.
+    - **Default value:** empty
+
+    <h4>`contact_points`</h4>
+
+    - **Field:** `scalar.db.contact_points`
+    - **Description:** Azure Cosmos DB for NoSQL endpoint with which ScalarDB should communicate.
+    - **Default value:** empty
+
+    <h4>`password`</h4>
+
+    - **Field:** `scalar.db.password`
+    - **Description:** Either a master or read-only key used to perform authentication for accessing Azure Cosmos DB for NoSQL.
+    - **Default value:** empty
+
+    <h4>`cosmos.consistency_level`</h4>
+
+    - **Field:** `scalar.db.cosmos.consistency_level`
+    - **Description:** Consistency level used for Cosmos DB operations. `STRONG` or `BOUNDED_STALENESS` can be specified.
+    - **Default value:** `STRONG`
   </TabItem>
   <TabItem value="Cassandra" label="Cassandra">
-    The following configurations are available for Cassandra:
+    The following configurations are available for Cassandra.
 
-    | Name                                    | Description                                                           | Default    |
-    |-----------------------------------------|-----------------------------------------------------------------------|------------|
-    | `scalar.db.storage`                     | `cassandra` must be specified.                                        | -          |
-    | `scalar.db.contact_points`              | Comma-separated contact points.                                       |            |
-    | `scalar.db.contact_port`                | Port number for all the contact points.                               |            |
-    | `scalar.db.username`                    | Username to access the database.                                      |            |
-    | `scalar.db.password`                    | Password to access the database.                                      |            |
+    <h4>`storage`</h4>
+
+    - **Field:** `scalar.db.storage`
+    - **Description:** `cassandra` must be specified.
+    - **Default value:** empty
+
+    <h4>`contact_points`</h4>
+
+    - **Field:** `scalar.db.contact_points`
+    - **Description:** Comma-separated contact points.
+    - **Default value:** empty
+
+    <h4>`contact_port`</h4>
+
+    - **Field:** `scalar.db.contact_port`
+    - **Description:** Port number for all the contact points.
+    - **Default value:** empty
+
+    <h4>`username`</h4>
+
+    - **Field:** `scalar.db.username`
+    - **Description:** Username to access the database.
+    - **Default value:** empty
+
+    <h4>`password`</h4>
+
+    - **Field:** `scalar.db.password`
+    - **Description:** Password to access the database.
+    - **Default value:** empty
   </TabItem>
 </Tabs>
 
@@ -165,32 +473,73 @@ For non-JDBC databases, we do not recommend enabling cross-partition scan with t
 
 :::
 
-| Name                                               | Description                                   | Default |
-|----------------------------------------------------|-----------------------------------------------|---------|
-| `scalar.db.cross_partition_scan.enabled`           | Enable cross-partition scan.                  | `false` |
-| `scalar.db.cross_partition_scan.filtering.enabled` | Enable filtering in cross-partition scan.     | `false` |
-| `scalar.db.cross_partition_scan.ordering.enabled`  | Enable ordering in cross-partition scan.      | `false` |
+##### `cross_partition_scan.enabled`
+
+- **Field:** `scalar.db.cross_partition_scan.enabled`
+- **Description:** Enable cross-partition scan.
+- **Default value:** `false`
+
+##### `cross_partition_scan.filtering.enabled`
+
+- **Field:** `scalar.db.cross_partition_scan.filtering.enabled`
+- **Description:** Enable filtering in cross-partition scan.
+- **Default value:** `false`
+
+##### `cross_partition_scan.ordering.enabled`
+
+- **Field:** `scalar.db.cross_partition_scan.ordering.enabled`
+- **Description:** Enable ordering in cross-partition scan.
+- **Default value:** `false`
 
 #### Scan fetch size
 
-You can configure the fetch size for storage scan operations by using the following property:
+You can configure the fetch size for storage scan operations by using the following property.
 
-| Name                        | Description                                                                                                                                                                                                                                                                                      | Default | 
-|-----------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
-| `scalar.db.scan_fetch_size` | Specifies the number of records to fetch in a single batch during a storage scan operation. A larger value can improve performance for a large result set by reducing round trips to the storage, but it also increases memory usage. A smaller value uses less memory but may increase latency. | `10`    |
+##### `scan_fetch_size`
+
+- **Field:** `scalar.db.scan_fetch_size`
+- **Description:** Specifies the number of records to fetch in a single batch during a storage scan operation. A larger value can improve performance for a large result set by reducing round trips to the storage, but it also increases memory usage. A smaller value uses less memory but may increase latency.
+- **Default value:** `10`
 
 ### GraphQL-related configurations
 
 The configurations for ScalarDB Cluster GraphQL are as follows:
 
-| Name                                                | Description                                                                                                                                 | Default              |
-|-----------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------|----------------------|
-| `scalar.db.graphql.enabled`                         | Whether ScalarDB Cluster GraphQL is enabled.                                                                                                | `false`              |
-| `scalar.db.graphql.port`                            | Port number of the GraphQL server.                                                                                                          | `8080`               |
-| `scalar.db.graphql.path`                            | Path component of the URL of the GraphQL endpoint.                                                                                          | `/graphql`           |
-| `scalar.db.graphql.namespaces`                      | Comma-separated list of namespaces of tables for which the GraphQL server generates a schema. Note that at least one namespace is required. |                      |
-| `scalar.db.graphql.graphiql`                        | Whether the GraphQL server serves [GraphiQL](https://github.com/graphql/graphiql) IDE.                                                      | `true`               |
-| `scalar.db.graphql.schema_checking_interval_millis` | Interval in milliseconds at which GraphQL server will rebuild the GraphQL schema if any change is detected in the ScalarDB schema.          | `30000` (30 seconds) |
+#### `graphql.enabled`
+
+- **Field:** `scalar.db.graphql.enabled`
+- **Description:** Whether ScalarDB Cluster GraphQL is enabled.
+- **Default value:** `false`
+
+#### `graphql.port`
+
+- **Field:** `scalar.db.graphql.port`
+- **Description:** Port number of the GraphQL server.
+- **Default value:** `8080`
+
+#### `graphql.path`
+
+- **Field:** `scalar.db.graphql.path`
+- **Description:** Path component of the URL of the GraphQL endpoint.
+- **Default value:** `/graphql`
+
+#### `graphql.namespaces`
+
+- **Field:** `scalar.db.graphql.namespaces`
+- **Description:** Comma-separated list of namespaces of tables for which the GraphQL server generates a schema. If not specified, the GraphQL server generates a schema for all tables in all ScalarDB-managed namespaces.
+- **Default value:** empty
+
+#### `graphql.graphiql`
+
+- **Field:** `scalar.db.graphql.graphiql`
+- **Description:** Whether the GraphQL server serves [GraphiQL](https://github.com/graphql/graphiql) IDE.
+- **Default value:** `true`
+
+#### `graphql.schema_checking_interval_millis`
+
+- **Field:** `scalar.db.graphql.schema_checking_interval_millis`
+- **Description:** Interval in milliseconds at which GraphQL server will rebuild the GraphQL schema if any change is detected in the ScalarDB schema.
+- **Default value:** `30000` (30 seconds)
 
 #### Creating or modifying the ScalarDB schema when the server is running
 
@@ -216,24 +565,63 @@ curl -X POST http://localhost:8080/graphql/update-graphql-schema
 
 The configurations for ScalarDB Cluster SQL are as follows:
 
-| Name                                     | Description                                                                                              | Default       |
-|------------------------------------------|----------------------------------------------------------------------------------------------------------|---------------|
-| `scalar.db.sql.enabled`                  | Whether ScalarDB Cluster SQL is enabled.                                                                 | `false`       |
-| `scalar.db.sql.statement_cache.enabled`  | Enable the statement cache.                                                                              | `false`       |
-| `scalar.db.sql.statement_cache.size`     | Maximum number of cached statements.                                                                     | `100`         |
-| `scalar.db.sql.default_transaction_mode` | Default transaction mode. `TRANSACTION` or `TWO_PHASE_COMMIT_TRANSACTION` can be set.                    | `TRANSACTION` |
-| `scalar.db.sql.default_namespace_name`   | Default namespace name. If you don't specify a namespace name in your SQL statement, this value is used. |               |
+#### `sql.enabled`
 
-## Other ScalarDB Cluster configurations
+- **Field:** `scalar.db.sql.enabled`
+- **Description:** Whether ScalarDB Cluster SQL is enabled.
+- **Default value:** `false`
 
-The following are additional configurations available for ScalarDB Cluster:
+#### `sql.statement_cache.enabled`
 
-| Name                                                             | Description                                                                                                                                                                                                                                                                                                                                                                                                  | Default              |
-|------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------|
-| `scalar.db.metadata.cache_expiration_time_secs`                  | ScalarDB has a metadata cache to reduce the number of requests to the database. This setting specifies the expiration time of the cache in seconds. If you specify `-1`, the cache will never expire.                                                                                                                                                                                                        | `60`                 |
-| `scalar.db.active_transaction_management.expiration_time_millis` | ScalarDB maintains in-progress transactions, which can be resumed by using a transaction ID. This process expires transactions that have been idle for an extended period to prevent resource leaks. This setting specifies the expiration time of this transaction management feature in milliseconds.                                                                                                      | `60000` (60 seconds) |
-| `scalar.db.consensus_commit.include_metadata.enabled`            | When using Consensus Commit, if this is set to `true`, `Get` and `Scan` operations results will contain transaction metadata. To see the transaction metadata columns details for a given table, you can use the `DistributedTransactionAdmin.getTableMetadata()` method, which will return the table metadata augmented with the transaction metadata columns. Using this configuration can be useful to investigate transaction-related issues. | `false`              |
-| `scalar.db.default_namespace_name`                               | The given namespace name will be used by operations that do not already specify a namespace.                                                                                                                                                                                                                                                                                                                 |                      |
+- **Field:** `scalar.db.sql.statement_cache.enabled`
+- **Description:** Enable the statement cache.
+- **Default value:** `false`
+
+#### `sql.statement_cache.size`
+
+- **Field:** `scalar.db.sql.statement_cache.size`
+- **Description:** Maximum number of cached statements.
+- **Default value:** `100`
+
+#### `sql.default_transaction_mode`
+
+- **Field:** `scalar.db.sql.default_transaction_mode`
+- **Description:** Default transaction mode. `TRANSACTION` or `TWO_PHASE_COMMIT_TRANSACTION` can be set.
+- **Default value:** `TRANSACTION`
+
+#### `sql.default_namespace_name`
+
+- **Field:** `scalar.db.sql.default_namespace_name`
+- **Description:** Default namespace name. If you don't specify a namespace name in your SQL statement, this value is used.
+- **Default value:** empty
+
+### Other ScalarDB Cluster configurations
+
+The following are additional configurations available for ScalarDB Cluster.
+
+#### `metadata.cache_expiration_time_secs`
+
+- **Field:** `scalar.db.metadata.cache_expiration_time_secs`
+- **Description:** ScalarDB has a metadata cache to reduce the number of requests to the database. This setting specifies the expiration time of the cache in seconds. If you specify `-1`, the cache will never expire.
+- **Default value:** `60`
+
+#### `active_transaction_management.expiration_time_millis`
+
+- **Field:** `scalar.db.active_transaction_management.expiration_time_millis`
+- **Description:** ScalarDB maintains in-progress transactions, which can be resumed by using a transaction ID. This process expires transactions that have been idle for an extended period to prevent resource leaks. This setting specifies the expiration time of this transaction management feature in milliseconds.
+- **Default value:** `60000` (60 seconds)
+
+#### `consensus_commit.include_metadata.enabled`
+
+- **Field:** `scalar.db.consensus_commit.include_metadata.enabled`
+- **Description:** When using Consensus Commit, if this is set to `true`, `Get` and `Scan` operations results will contain transaction metadata. To see the transaction metadata columns details for a given table, you can use the `DistributedTransactionAdmin.getTableMetadata()` method, which will return the table metadata augmented with the transaction metadata columns. Using this configuration can be useful to investigate transaction-related issues.
+- **Default value:** `false`
+
+#### `default_namespace_name`
+
+- **Field:** `scalar.db.default_namespace_name`
+- **Description:** The given namespace name will be used by operations that do not already specify a namespace.
+- **Default value:** empty
 
 ## Client configurations
 
@@ -241,17 +629,49 @@ This section describes the general configurations for the ScalarDB Cluster clien
 
 ### Configurations for the primitive interface
 
-The following table shows the general configurations for the ScalarDB Cluster client.
+The following shows the general configurations for the ScalarDB Cluster client.
 
-| Name                                               | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Default                |
-|----------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------|
-| `scalar.db.transaction_manager`                    | `cluster` should be specified.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | -                      |
-| `scalar.db.contact_points`                         | Contact point of the cluster. If you use the `indirect` client mode, specify the IP address of the load balancer in front of your cluster nodes by using the format `indirect:<the load balancer IP address>`. If you use the `direct-kubernetes` client mode, specify the namespace name (optional) and the name of the [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) to get the membership information by using the format `direct-kubernetes:<namespace name>/<endpoint name>` or just `direct-kubernetes:<endpoint name>`. If you don't specify the namespace name, the client will use the `default` namespace. |                        |
-| `scalar.db.contact_port`                           | Port number for the contact point.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | `60053`                |
-| `scalar.db.cluster.grpc.deadline_duration_millis`  | Deadline duration for gRPC in millis.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | `60000` (60 seconds)   |
-| `scalar.db.cluster.grpc.max_inbound_message_size`  | Maximum message size allowed for a single gRPC frame.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | The gRPC default value |
-| `scalar.db.cluster.grpc.max_inbound_metadata_size` | Maximum size of metadata allowed to be received.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | The gRPC default value |
-| `scalar.db.cluster.client.scan_fetch_size`         | The fetch size used for `Scanner` to fetch data from the cluster. This is the number of records that `Scanner` fetches at once from the cluster. A larger value can improve performance by reducing the number of round trips to the cluster, but it may also increase memory usage.                                                                                                                                                                                                                                                                                                                                                                               | `10`                   |
+#### `transaction_manager`
+
+- **Field:** `scalar.db.transaction_manager`
+- **Description:** `cluster` should be specified.
+- **Default value:** empty
+
+#### `contact_points`
+
+- **Field:** `scalar.db.contact_points`
+- **Description:** Contact point of the cluster. If you use the `indirect` client mode, specify the IP address of the load balancer in front of your cluster nodes by using the format `indirect:<the load balancer IP address>`. If you use the `direct-kubernetes` client mode, specify the namespace name (optional) and the name of the [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) to get the membership information by using the format `direct-kubernetes:<namespace name>/<endpoint name>` or just `direct-kubernetes:<endpoint name>`. If you don't specify the namespace name, the client will use the `default` namespace.
+- **Default value:** empty
+
+#### `contact_port`
+
+- **Field:** `scalar.db.contact_port`
+- **Description:** Port number for the contact point.
+- **Default value:** `60053`
+
+#### `cluster.grpc.deadline_duration_millis`
+
+- **Field:** `scalar.db.cluster.grpc.deadline_duration_millis`
+- **Description:** Deadline duration for gRPC in millis.
+- **Default value:** `60000` (60 seconds)
+
+#### `cluster.grpc.max_inbound_message_size`
+
+- **Field:** `scalar.db.cluster.grpc.max_inbound_message_size`
+- **Description:** Maximum message size allowed for a single gRPC frame.
+- **Default value:** The gRPC default value
+
+#### `cluster.grpc.max_inbound_metadata_size`
+
+- **Field:** `scalar.db.cluster.grpc.max_inbound_metadata_size`
+- **Description:** Maximum size of metadata allowed to be received.
+- **Default value:** The gRPC default value
+
+#### `cluster.client.scan_fetch_size`
+
+- **Field:** `scalar.db.cluster.client.scan_fetch_size`
+- **Description:** The fetch size used for `Scanner` to fetch data from the cluster. This is the number of records that `Scanner` fetches at once from the cluster. A larger value can improve performance by reducing the number of round trips to the cluster, but it may also increase memory usage.
+- **Default value:** `10`
 
 For example, if you use the `indirect` client mode and the load balancer IP address is `192.168.10.1`, you can configure the client as follows:
 
@@ -269,18 +689,55 @@ scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
 
 ### Configurations for the SQL interface
 
-The following table shows the configurations for the ScalarDB Cluster SQL client.
+The following shows the configurations for the ScalarDB Cluster SQL client.
 
-| Name                                               | Description                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Default                |
-|----------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------|
-| `scalar.db.sql.connection_mode`                    | `cluster` should be specified.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         | -                      |
-| `scalar.db.sql.cluster_mode.contact_points`        | Contact point of the cluster. If you use the `indirect` client mode, specify the IP address of the load balancer in front of your cluster nodes by using the format `indirect:<the load balancer IP address>`. If you use the `direct-kubernetes` client mode, specify the namespace name (optional) and the name of the [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) to get the membership information by using the format `direct-kubernetes:<namespace name>/<endpoint name>` or just `direct-kubernetes:<endpoint name>`. If you don't specify the namespace name, the client will use the `default` namespace. |                        |
-| `scalar.db.sql.cluster_mode.contact_port`          | Port number for the contact point.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     | `60053`                |
-| `scalar.db.sql.default_transaction_mode`           | Default transaction mode. `TRANSACTION` or `TWO_PHASE_COMMIT_TRANSACTION` can be set.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | `TRANSACTION`          |
-| `scalar.db.sql.default_namespace_name`             | Default namespace name. If you don't specify a namespace name in your SQL statement, this value is used.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |                        |
-| `scalar.db.cluster.grpc.deadline_duration_millis`  | Deadline duration for gRPC in millis.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | `60000` (60 seconds)   |
-| `scalar.db.cluster.grpc.max_inbound_message_size`  | Maximum message size allowed for a single gRPC frame.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | The gRPC default value |
-| `scalar.db.cluster.grpc.max_inbound_metadata_size` | Maximum size of metadata allowed to be received.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | The gRPC default value |
+#### `sql.connection_mode`
+
+- **Field:** `scalar.db.sql.connection_mode`
+- **Description:** `cluster` should be specified.
+- **Default value:** empty
+
+#### `sql.cluster_mode.contact_points`
+
+- **Field:** `scalar.db.sql.cluster_mode.contact_points`
+- **Description:** Contact point of the cluster. If you use the `indirect` client mode, specify the IP address of the load balancer in front of your cluster nodes by using the format `indirect:<the load balancer IP address>`. If you use the `direct-kubernetes` client mode, specify the namespace name (optional) and the name of the [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) to get the membership information by using the format `direct-kubernetes:<namespace name>/<endpoint name>` or just `direct-kubernetes:<endpoint name>`. If you don't specify the namespace name, the client will use the `default` namespace.
+- **Default value:** empty
+
+#### `sql.cluster_mode.contact_port`
+
+- **Field:** `scalar.db.sql.cluster_mode.contact_port`
+- **Description:** Port number for the contact point.
+- **Default value:** `60053`
+
+#### `sql.default_transaction_mode`
+
+- **Field:** `scalar.db.sql.default_transaction_mode`
+- **Description:** Default transaction mode. `TRANSACTION` or `TWO_PHASE_COMMIT_TRANSACTION` can be set.
+- **Default value:** `TRANSACTION`
+
+#### `sql.default_namespace_name`
+
+- **Field:** `scalar.db.sql.default_namespace_name`
+- **Description:** Default namespace name. If you don't specify a namespace name in your SQL statement, this value is used.
+- **Default value:** empty
+
+#### `cluster.grpc.deadline_duration_millis`
+
+- **Field:** `scalar.db.cluster.grpc.deadline_duration_millis`
+- **Description:** Deadline duration for gRPC in millis.
+- **Default value:** `60000` (60 seconds)
+
+#### `cluster.grpc.max_inbound_message_size`
+
+- **Field:** `scalar.db.cluster.grpc.max_inbound_message_size`
+- **Description:** Maximum message size allowed for a single gRPC frame.
+- **Default value:** The gRPC default value
+
+#### `cluster.grpc.max_inbound_metadata_size`
+
+- **Field:** `scalar.db.cluster.grpc.max_inbound_metadata_size`
+- **Description:** Maximum size of metadata allowed to be received.
+- **Default value:** The gRPC default value
 
 For example, if you use the `indirect` client mode and the load balancer IP address is `192.168.10.1`, you can configure the client as follows:
 
