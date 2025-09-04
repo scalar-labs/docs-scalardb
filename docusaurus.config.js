@@ -186,6 +186,10 @@ const config = {
             to: '/docs/latest/releases/release-support-policy',
             from: '/docs/releases/release-support-policy',
           },
+          { // As of version 3.16, the redirect for this doc in Japanese is at i18n/versioned_docs/ja-jp/docusaurus-plugin-content-docs/current/scalardb-analytics/index.html. This redirect can be removed when version 3.17 has been released.
+            to: '/docs/latest/scalardb-analytics/design',
+            from: '/docs/latest/scalardb-analytics',
+          },
           {
             to: '/docs/latest/scalardb-analytics/quickstart',
             from: '/docs/latest/scalardb-samples/scalardb-analytics-spark-sample',
