@@ -5,9 +5,11 @@ tags:
 displayed_sidebar: docsEnglish
 ---
 
-# Replicate Data for Disaster Recovery
+# Replicate Data for High Availability
 
-ScalarDB Cluster can replicate its managed data to a remote site for disaster recovery. The remote replication feature provides near-real-time replication of write operations from a primary site to one or more backup sites. This feature ensures business continuity by enabling failover to a backup site when disasters or other critical failures affect the primary site.
+ScalarDB Cluster can replicate its managed data to remote sites for high availability and workload distribution. The remote replication feature provides near-real-time replication of write operations from a primary site to one or more backup sites.
+
+This feature ensures business continuity by enabling failover to a backup site in the event of disasters or critical failures affecting the primary site. Additionally, the backup sites can function as read replicas, helping to offload analytical queries, reporting, and business intelligence workloads.
 
 ## What is remote replication in ScalarDB?
 
@@ -15,7 +17,7 @@ Remote replication in ScalarDB uses a hybrid approach, combining synchronous and
 
 ## Key benefits
 
-Remote replication provides several key advantages for disaster recovery and business continuity:
+Remote replication provides several key advantages:
 
 - Guarantees zero data loss (RPO of 0) for all committed transactions.
 - Minimizes performance impact through the combination of synchronous and asynchronous processing.
