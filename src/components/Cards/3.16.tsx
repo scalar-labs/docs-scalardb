@@ -26,7 +26,7 @@ const recentFeatures = [
       {
         cell: 0, // First cell
         links: ['scalardb-cluster/remote-replication'],
-        labels: ['Replicate Data for Disaster Recovery']
+        labels: ['Replicate Data for High Availability']
       },
       {
         cell: 1, // Second cell
