@@ -14,7 +14,7 @@ const notificationsList = [
   // },
   {
     message: {
-      en: 'Replicate data for disaster recovery in ScalarDB 3.16',
+      en: 'Replicate data for high availability in ScalarDB 3.16',
       ja: 'ScalarDB 3.16 でのデータの災害復旧のためのレプリケーション'
     },
     url: {

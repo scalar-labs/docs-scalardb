@@ -839,7 +839,7 @@ const sidebars = {
         {
           type: 'doc',
           id: 'scalardb-cluster/remote-replication',
-          label: 'Replicate Data for Disaster Recovery',
+          label: 'Replicate Data for High Availability',
         },
         {
           type: 'category',
