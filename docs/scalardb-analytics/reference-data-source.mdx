@@ -23,7 +23,7 @@ Data sources are registered to catalogs using the CLI with data source registrat
 {
   "catalog": "<catalog-name>", // The catalog to register the data source in
   "name": "<data-source-name>", // A unique name for this data source
-  "type": "<database-type>", // Database type: postgres, mysql, scalardb, sqlserver, oracle, dynamodb
+  "type": "<database-type>", // Database type: postgres, mysql, scalardb, sqlserver, oracle, dynamodb, databricks, snowflake
   "provider": {
     // Type-specific connection configuration
     // Configuration varies by database type
@@ -268,6 +268,106 @@ The following configurations are for SQL Server.
 ```
 
   </TabItem>
+  <TabItem value="databricks" label="Databricks">
+
+<h3>Configuration</h3>
+
+The following configurations are for Databricks (Databricks SQL/JDBC).
+
+<h4>`host`</h4>
+
+- **Field:** `host`
+- **Description:** Databricks workspace hostname (for example, `adb-1234567890123.4.azuredatabricks.net`).
+
+<h4>`port`</h4>
+
+- **Field:** `port`
+- **Description:** Port number.
+- **Default value:** Driver default. (Optional)
+
+<h4>`httpPath`</h4>
+
+- **Field:** `httpPath`
+- **Description:** HTTP path of your SQL warehouse or cluster (for example, `/sql/1.0/warehouses/xxxxxxxxxxxxxx`).
+
+<h4>`oAuthClientId`</h4>
+
+- **Field:** `oAuthClientId`
+- **Description:** OAuth client ID for Databricks SQL/JDBC authentication.
+
+<h4>`oAuthSecret`</h4>
+
+- **Field:** `oAuthSecret`
+- **Description:** OAuth client secret for Databricks SQL/JDBC authentication.
+
+<h4>`catalog`</h4>
+
+- **Field:** `catalog`
+- **Description:** Default catalog to use. (Optional)
+
+<h3>Example</h3>
+
+```json
+{
+  "catalog": "production",
+  "name": "databricks_analytics",
+  "type": "databricks",
+  "provider": {
+    "host": "adb-1234567890123.4.azuredatabricks.net",
+    "port": 443,
+    "httpPath": "/sql/1.0/warehouses/xxxxxxxxxxxxxx",
+    "oAuthClientId": "YOUR_CLIENT_ID",
+    "oAuthSecret": "YOUR_CLIENT_SECRET",
+    "catalog": "main"
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="snowflake" label="Snowflake">
+
+<h3>Configuration</h3>
+
+The following configurations are for Snowflake.
+
+<h4>`account`</h4>
+
+- **Field:** `account`
+- **Description:** Snowflake account identifier (for example, `xy12345.ap-northeast-1`).
+
+<h4>`username`</h4>
+
+- **Field:** `username`
+- **Description:** Database user.
+
+<h4>`password`</h4>
+
+- **Field:** `password`
+- **Description:** Database password.
+
+<h4>`database`</h4>
+
+- **Field:** `database`
+- **Description:** Default database to resolve/import. (Optional)
+
+<h3>Example</h3>
+
+```json
+{
+  "catalog": "production",
+  "name": "snowflake_dwh",
+  "type": "snowflake",
+  "provider": {
+    "account": "YOUR-ACCOUNT",
+    "username": "analytics_user",
+    "password": "secure_password",
+    "database": "ANALYTICS"
+  }
+}
+```
+
+  </TabItem>
+
   <TabItem value="dynamodb" label="DynamoDB">
 
 <h3>Configuration</h3>
@@ -397,7 +497,7 @@ When registering a data source to ScalarDB Analytics, the catalog structure of t
 
 The catalog-level mappings are the mappings of the namespace names, table names, and column names from the data sources to the universal data catalog. To see the catalog-level mappings in each data source, select a data source.
 
-<Tabs groupId="data-source" queryString>
+<Tabs groupId="data-source-type" queryString>
   <TabItem value="scalardb" label="ScalarDB" default>
     The catalog structure of ScalarDB is automatically resolved by ScalarDB Analytics. The catalog-level objects are mapped as follows:
 
@@ -406,8 +506,7 @@ The catalog-level mappings are the mappings of the namespace names, table names,
     - The ScalarDB column is mapped to the column.
 
   </TabItem>
-
-  <TabItem value="postgresql" label="PostgreSQL" default>
+  <TabItem value="postgresql" label="PostgreSQL">
     The catalog structure of PostgreSQL is automatically resolved by ScalarDB Analytics. The catalog-level objects are mapped as follows:
 
     - The PostgreSQL schema is mapped to the namespace. Therefore, the namespace of the PostgreSQL data source is always single level, consisting of only the schema name.
@@ -477,7 +576,7 @@ The catalog-level mappings are the mappings of the namespace names, table names,
   <TabItem value="sql-server" label="SQL Server">
     The catalog structure of SQL Server is automatically resolved by ScalarDB Analytics. The catalog-level objects are mapped as follows:
 
-    - The SQL Server database and schema are mapped to the namespace together. Therefore, the namespace of the SQL Server data source is always two-level, consisting of the database name and the schema name.
+    - Each SQL Server database-schema pair is mapped to a namespace in ScalarDB Analytics. Therefore, the namespace of the SQL Server data source is always two-level, consisting of the database name and the schema name.
         - Only user-defined databases are mapped to namespaces. The following system databases are ignored:
             - `sys`
             - `guest`
@@ -498,6 +597,28 @@ The catalog-level mappings are the mappings of the namespace names, table names,
             - `tempdb`
     - The SQL Server table is mapped to the table.
     - The SQL Server column is mapped to the column.
+
+  </TabItem>
+  <TabItem value="databricks" label="Databricks">
+    The catalog structure of Databricks is automatically resolved by ScalarDB Analytics. The catalog-level objects are mapped as follows:
+
+    - Each Databricks catalog-schema pair is mapped to a namespace in ScalarDB Analytics. Therefore, the namespace of the Databricks data source always has two levels, consisting of the catalog name and the schema name.
+        - The following system catalogs/schemas are ignored:
+            - **Catalogs:** `system`
+            - **Schemas:** `information_schema`, `global_temp`, `sys`, `routines`
+    - The Databricks table is mapped to the table.
+    - The Databricks column is mapped to the column.
+
+  </TabItem>
+  <TabItem value="snowflake" label="Snowflake">
+    The catalog structure of Snowflake is automatically resolved by ScalarDB Analytics. The catalog-level objects are mapped as follows:
+
+    - Each Snowflake database-schema pair is mapped to a namespace in ScalarDB Analytics. Therefore, the namespace of the Snowflake data source always has two levels, consisting of the database name and the schema name.
+        - The following system databases/schemas are ignored:
+            - **Databases:** `SNOWFLAKE`
+            - **Schemas:** `INFORMATION_SCHEMA`
+    - The Snowflake table is mapped to the table.
+    - The Snowflake column is mapped to the column.
 
   </TabItem>
   <TabItem value="dynamodb" label="DynamoDB">
@@ -671,6 +792,43 @@ Columns with data types that are not included in the mapping tables below will b
 | `datetimeoffset`         | `TIMESTAMPTZ`                    |
 
   </TabItem>
+  <TabItem value="databricks" label="Databricks">
+
+| **Databricks SQL Data Type** | **ScalarDB Analytics Data Type**                                                    |
+| :--------------------------- | :---------------------------------------------------------------------------------- |
+| `TINYINT`                    | `SMALLINT`                                                                          |
+| `SMALLINT`                   | `SMALLINT`                                                                          |
+| `INT` / `INTEGER`            | `INT`                                                                               |
+| `BIGINT`                     | `BIGINT`                                                                            |
+| `FLOAT`                      | `FLOAT`                                                                             |
+| `DOUBLE`                     | `DOUBLE`                                                                            |
+| `DECIMAL(p,0)`               | `BYTE` (p ≤ 2), `SMALLINT` (3–4), `INT` (5–9), `BIGINT` (10–18), `DECIMAL` (p > 18) |
+| `STRING` / `VARCHAR`         | `TEXT`                                                                              |
+| `BINARY`                     | `BLOB`                                                                              |
+| `BOOLEAN`                    | `BOOLEAN`                                                                           |
+| `DATE`                       | `DATE`                                                                              |
+| `TIMESTAMP`                  | `TIMESTAMPTZ`                                                                       |
+| `TIMESTAMP_NTZ`              | `TIMESTAMP`                                                                         |
+
+  </TabItem>
+  <TabItem value="snowflake" label="Snowflake">
+
+| **Snowflake Data Type**                                                                                                      | **ScalarDB Analytics Data Type**                                                    |
+| :--------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
+| `NUMBER(p,0)`                                                                                                                | `BYTE` (p ≤ 2), `SMALLINT` (3–4), `INT` (5–9), `BIGINT` (10–18), `DECIMAL` (p > 18) |
+| `NUMBER` / `NUMERIC`                                                                                                         | `DECIMAL`                                                                           |
+| `INT` / `INTEGER` / `BIGINT` / `SMALLINT` / `TINYINT` / `BYTEINT`                                                            | `DECIMAL`                                                                           |
+| `FLOAT` / `FLOAT4` / `FLOAT8` / `DOUBLE` / `DOUBLE PRECISION` / `REAL`                                                       | `DOUBLE`                                                                            |
+| `VARCHAR` / `STRING` / `TEXT` / `NVARCHAR` / `NVARCHAR2` / `CHAR VARYING` / `NCHAR VARYING` / `CHAR` / `CHARACTER` / `NCHAR` | `TEXT`                                                                              |
+| `BINARY` / `VARBINARY`                                                                                                       | `BLOB`                                                                              |
+| `BOOLEAN`                                                                                                                    | `BOOLEAN`                                                                           |
+| `DATE`                                                                                                                       | `DATE`                                                                              |
+| `TIME`                                                                                                                       | `TIME`                                                                              |
+| `TIMESTAMP_NTZ` / `DATETIME`                                                                                                 | `TIMESTAMP`                                                                         |
+| `TIMESTAMP_LTZ`                                                                                                              | `TIMESTAMPTZ`                                                                       |
+| `TIMESTAMP_TZ`                                                                                                               | `TIMESTAMPTZ`                                                                       |
+
+  </TabItem>
   <TabItem value="dynamodb" label="DynamoDB">
 
 | **DynamoDB Data Type** | **ScalarDB Analytics Data Type** |
@@ -694,4 +852,3 @@ DynamoDB complex data types (String Set, Number Set, Binary Set, List, Map) are 
 
   </TabItem>
 </Tabs>
-
