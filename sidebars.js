@@ -1806,7 +1806,7 @@ const sidebars = {
         {
           type: 'doc',
           id: 'scalardb-cluster/remote-replication',
-          label: '災害復旧のためのデータレプリケーション',
+          label: '高可用性のためのデータレプリケーション',
         },
         {
           type: 'category',
