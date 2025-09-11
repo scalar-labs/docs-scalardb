@@ -11,61 +11,77 @@ displayed_sidebar: docsEnglish
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-This page describes the required tools and their versions to use ScalarDB correctly.
+This page outlines the requirements for using each ScalarDB component, including the programming languages and their versions, supported databases and their versions, and the necessary configurations.
 
-## Client SDK
+## Core
 
-Because ScalarDB is written in Java, the easiest way to interact with ScalarDB is to use the Java client SDKs:
+ScalarDB Core is a key component of ScalarDB, providing a database manager with an abstraction layer that abstracts underlying databases. For more information, see [ScalarDB Design](./design.mdx).
 
-- [SDK for ScalarDB Core](add-scalardb-to-your-build.mdx)
-- [SDK for ScalarDB Cluster](scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx)
+### Languages and runtimes
 
-### Java
+ScalarDB Core provides a Java client SDK for interacting with ScalarDB. It also includes tools, such as Schema Loader and Data Loader, which run on the Java Virtual Machine (JVM).
 
-The following Java Development Kits (JDKs) are verified and supported.
+#### Java
+
+The ScalarDB Core library is available on the Maven Central Repository. You can add the library as a build dependency to your application by using Gradle or Maven. For more details, see [Add ScalarDB to Your Build](./add-scalardb-to-your-build.mdx).
+
+For building applications that integrate with the library, the following Java Development Kits (JDKs) are verified and supported.
 
 - **[Oracle JDK](https://www.oracle.com/java/):** 8, 11, 17 or 21 (LTS versions)
-- **[OpenJDK](https://openjdk.org/) ([Eclipse Temurin](https://adoptium.net/temurin/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/)):** 8, 11, 17, or 21 (LTS versions)
+- **[OpenJDK](https://openjdk.org/) ([Eclipse Temurin](https://adoptium.net/temurin/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/)):** 8, 11, 17 or 21 (LTS versions)
 
-### .NET
+The same versioned Java Runtime Environments (JREs) are also supported for running the tools.
 
-ScalarDB is provided as a gRPC server called ScalarDB Cluster, which also has a [.NET client SDK](scalardb-cluster-dotnet-client-sdk/index.mdx) that wraps the .NET client generated from the proto file.
+### Databases
 
-The following .NET versions are verified and supported:
+ScalarDB runs on top of the following databases and their versions.
 
-- [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-- [.NET 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
-
-### Other languages
-
-ScalarDB Cluster uses gRPC version 1.65.0, so you can create your own client by using the generated clients of your preferred languages.
-
-## Databases
-
-ScalarDB is middleware that runs on top of the following databases and their versions.
-
-### Relational databases
+#### Relational databases
 
 <Tabs groupId="RDBs" queryString>
 <TabItem value="Oracle_Database" label="Oracle Database" default>
 
-| Version           | Oracle Database 23ai  | Oracle Database 21c  | Oracle Database 19c  |
-|:------------------|:--------------------|:------------------|:------------------|
-| **ScalarDB 3.15** | ✅                  | ✅                | ✅                |
-| **ScalarDB 3.14** | ✅                  | ✅                | ✅                |
-| **ScalarDB 3.13** | ✅                  | ✅                | ✅                |
-| **ScalarDB 3.12** | ✅                  | ✅                | ✅                |
-| **ScalarDB 3.11** | ✅                  | ✅                | ✅                |
-| **ScalarDB 3.10** | ✅                  | ✅                | ✅                |
-| **ScalarDB 3.9**  | ✅                  | ✅                | ✅                |
-| **ScalarDB 3.8**  | ✅                  | ✅                | ✅                |
-| **ScalarDB 3.7**  | ✅                  | ✅                | ✅                |
+|      Version      | Oracle Database 23ai | Oracle Database 21c | Oracle Database 19c |
+| :---------------- | :------------------- | :------------------ | :------------------ |
+| **ScalarDB 3.16** | ✅                    | ✅                   | ✅                   |
+| **ScalarDB 3.15** | ✅                    | ✅                   | ✅                   |
+| **ScalarDB 3.14** | ✅                    | ✅                   | ✅                   |
+| **ScalarDB 3.13** | ✅                    | ✅                   | ✅                   |
+| **ScalarDB 3.12** | ✅                    | ✅                   | ✅                   |
+| **ScalarDB 3.11** | ✅                    | ✅                   | ✅                   |
+| **ScalarDB 3.10** | ✅                    | ✅                   | ✅                   |
+| **ScalarDB 3.9**  | ✅                    | ✅                   | ✅                   |
+| **ScalarDB 3.8**  | ✅                    | ✅                   | ✅                   |
+| **ScalarDB 3.7**  | ✅                    | ✅                   | ✅                   |
+
+</TabItem>
+<TabItem value="Db2" label="IBM Db2">
+
+|      Version      | Db2 12.1 | Db2 11.5 |
+| :---------------- | :------- | :------- |
+| **ScalarDB 3.16** | ✅        | ✅        |
+| **ScalarDB 3.15** | ❌        | ❌        |
+| **ScalarDB 3.14** | ❌        | ❌        |
+| **ScalarDB 3.13** | ❌        | ❌        |
+| **ScalarDB 3.12** | ❌        | ❌        |
+| **ScalarDB 3.11** | ❌        | ❌        |
+| **ScalarDB 3.10** | ❌        | ❌        |
+| **ScalarDB 3.9**  | ❌        | ❌        |
+| **ScalarDB 3.8**  | ❌        | ❌        |
+| **ScalarDB 3.7**  | ❌        | ❌        |
+
+:::note
+
+Only Linux, UNIX, and Windows versions of Db2 are supported. The z/OS version is not currently supported.
+
+:::
 
 </TabItem>
 <TabItem value="MySQL" label="MySQL">
 
-| Version           | MySQL 8.4 | MySQL 8.0  |
-|:------------------|:----------|:-----------|
+|      Version      | MySQL 8.4 | MySQL 8.0 |
+| :---------------- | :-------- | :-------- |
+| **ScalarDB 3.16** | ✅         | ✅         |
 | **ScalarDB 3.15** | ✅         | ✅         |
 | **ScalarDB 3.14** | ✅         | ✅         |
 | **ScalarDB 3.13** | ✅         | ✅         |
@@ -79,23 +95,25 @@ ScalarDB is middleware that runs on top of the following databases and their ver
 </TabItem>
 <TabItem value="PostgreSQL" label="PostgreSQL">
 
-| Version           | PostgreSQL 17 | PostgreSQL 16 | PostgreSQL 15 | PostgreSQL 14 | PostgreSQL 13 |
-|:------------------|:--------------|:--------------|:--------------|:--------------|---------------|
-| **ScalarDB 3.15** | ✅             | ✅             | ✅             | ✅             | ✅              |
-| **ScalarDB 3.14** | ✅             | ✅             | ✅             | ✅             | ✅              |
-| **ScalarDB 3.13** | ✅             | ✅             | ✅             | ✅             | ✅              |
-| **ScalarDB 3.12** | ✅             | ✅             | ✅             | ✅             | ✅              |
-| **ScalarDB 3.11** | ✅             | ✅             | ✅             | ✅             | ✅              |
-| **ScalarDB 3.10** | ✅             | ✅             | ✅             | ✅             | ✅              |
-| **ScalarDB 3.9**  | ✅             | ✅             | ✅             | ✅             | ✅              |
-| **ScalarDB 3.8**  | ✅             | ✅             | ✅             | ✅             | ✅              |
-| **ScalarDB 3.7**  | ✅             | ✅             | ✅             | ✅             | ✅              |
+|      Version      | PostgreSQL 17 | PostgreSQL 16 | PostgreSQL 15 | PostgreSQL 14 | PostgreSQL 13 |
+| :---------------- | :------------ | :------------ | :------------ | :------------ | ------------- |
+| **ScalarDB 3.16** | ✅             | ✅             | ✅             | ✅             | ✅             |
+| **ScalarDB 3.15** | ✅             | ✅             | ✅             | ✅             | ✅             |
+| **ScalarDB 3.14** | ✅             | ✅             | ✅             | ✅             | ✅             |
+| **ScalarDB 3.13** | ✅             | ✅             | ✅             | ✅             | ✅             |
+| **ScalarDB 3.12** | ✅             | ✅             | ✅             | ✅             | ✅             |
+| **ScalarDB 3.11** | ✅             | ✅             | ✅             | ✅             | ✅             |
+| **ScalarDB 3.10** | ✅             | ✅             | ✅             | ✅             | ✅             |
+| **ScalarDB 3.9**  | ✅             | ✅             | ✅             | ✅             | ✅             |
+| **ScalarDB 3.8**  | ✅             | ✅             | ✅             | ✅             | ✅             |
+| **ScalarDB 3.7**  | ✅             | ✅             | ✅             | ✅             | ✅             |
 
 </TabItem>
 <TabItem value="Amazon_Aurora_MySQL" label="Amazon Aurora MySQL">
 
-| Version           | Aurora MySQL 3  | Aurora MySQL 2  |
-|:------------------|:----------------|:----------------|
+|      Version      | Aurora MySQL 3 | Aurora MySQL 2 |
+| :---------------- | :------------- | :------------- |
+| **ScalarDB 3.16** | ✅              | ✅              |
 | **ScalarDB 3.15** | ✅              | ✅              |
 | **ScalarDB 3.14** | ✅              | ✅              |
 | **ScalarDB 3.13** | ✅              | ✅              |
@@ -109,8 +127,9 @@ ScalarDB is middleware that runs on top of the following databases and their ver
 </TabItem>
 <TabItem value="Amazon_Aurora_PostgreSQL" label="Amazon Aurora PostgreSQL">
 
-| Version           | Aurora PostgreSQL 16 | Aurora PostgreSQL 15 | Aurora PostgreSQL 14 | Aurora PostgreSQL 13 |
-|:------------------|:---------------------|:---------------------|:---------------------|:---------------------|
+|      Version      | Aurora PostgreSQL 16 | Aurora PostgreSQL 15 | Aurora PostgreSQL 14 | Aurora PostgreSQL 13 |
+| :---------------- | :------------------- | :------------------- | :------------------- | :------------------- |
+| **ScalarDB 3.16** | ✅                    | ✅                    | ✅                    | ✅                    |
 | **ScalarDB 3.15** | ✅                    | ✅                    | ✅                    | ✅                    |
 | **ScalarDB 3.14** | ✅                    | ✅                    | ✅                    | ✅                    |
 | **ScalarDB 3.13** | ✅                    | ✅                    | ✅                    | ✅                    |
@@ -124,23 +143,25 @@ ScalarDB is middleware that runs on top of the following databases and their ver
 </TabItem>
 <TabItem value="MariaDB" label="MariaDB">
 
-| Version           | MariaDB 11.4  | MariaDB 10.11 |
-|:------------------|:--------------|:--------------|
-| **ScalarDB 3.15** | ✅            | ✅            |
-| **ScalarDB 3.14** | ✅            | ✅            |
-| **ScalarDB 3.13** | ✅            | ✅            |
-| **ScalarDB 3.12** | ✅            | ✅            |
-| **ScalarDB 3.11** | ✅            | ✅            |
-| **ScalarDB 3.10** | ✅            | ✅            |
-| **ScalarDB 3.9**  | ✅            | ✅            |
-| **ScalarDB 3.8**  | ✅            | ✅            |
-| **ScalarDB 3.7**  | ✅            | ✅            |
+|      Version      | MariaDB 11.4 | MariaDB 10.11 |
+| :---------------- | :----------- | :------------ |
+| **ScalarDB 3.16** | ✅            | ✅             |
+| **ScalarDB 3.15** | ✅            | ✅             |
+| **ScalarDB 3.14** | ✅            | ✅             |
+| **ScalarDB 3.13** | ✅            | ✅             |
+| **ScalarDB 3.12** | ✅            | ✅             |
+| **ScalarDB 3.11** | ✅            | ✅             |
+| **ScalarDB 3.10** | ✅            | ✅             |
+| **ScalarDB 3.9**  | ✅            | ✅             |
+| **ScalarDB 3.8**  | ✅            | ✅             |
+| **ScalarDB 3.7**  | ✅            | ✅             |
 
 </TabItem>
 <TabItem value="SQL_Server" label="SQL Server">
 
-| Version           | SQL Server 2022  | SQL Server 2019  | SQL Server 2017  |
-|:------------------|:-----------------|:-----------------|:-----------------|
+|      Version      | SQL Server 2022 | SQL Server 2019 | SQL Server 2017 |
+| :---------------- | :-------------- | :-------------- | :-------------- |
+| **ScalarDB 3.16** | ✅               | ✅               | ✅               |
 | **ScalarDB 3.15** | ✅               | ✅               | ✅               |
 | **ScalarDB 3.14** | ✅               | ✅               | ✅               |
 | **ScalarDB 3.13** | ✅               | ✅               | ✅               |
@@ -154,8 +175,9 @@ ScalarDB is middleware that runs on top of the following databases and their ver
 </TabItem>
 <TabItem value="SQLite" label="SQLite">
 
-| Version           | SQLite 3  |
-|:------------------|:----------|
+|      Version      | SQLite 3 |
+| :---------------- | :------- |
+| **ScalarDB 3.16** | ✅        |
 | **ScalarDB 3.15** | ✅        |
 | **ScalarDB 3.14** | ✅        |
 | **ScalarDB 3.13** | ✅        |
@@ -169,28 +191,30 @@ ScalarDB is middleware that runs on top of the following databases and their ver
 </TabItem>
 <TabItem value="YugabyteDB" label="YugabyteDB">
 
-| Version           | YugabyteDB 2 |
-|:------------------|:-------------|
-| **ScalarDB 3.15** | ✅           |
-| **ScalarDB 3.14** | ✅           |
-| **ScalarDB 3.13** | ✅           |
-| **ScalarDB 3.12** | ❌           |
-| **ScalarDB 3.11** | ❌           |
-| **ScalarDB 3.10** | ❌           |
-| **ScalarDB 3.9**  | ❌           |
-| **ScalarDB 3.8**  | ❌           |
-| **ScalarDB 3.7**  | ❌           |
+|      Version      | YugabyteDB 2 |
+| :---------------- | :----------- |
+| **ScalarDB 3.16** | ✅            |
+| **ScalarDB 3.15** | ✅            |
+| **ScalarDB 3.14** | ✅            |
+| **ScalarDB 3.13** | ✅            |
+| **ScalarDB 3.12** | ❌            |
+| **ScalarDB 3.11** | ❌            |
+| **ScalarDB 3.10** | ❌            |
+| **ScalarDB 3.9**  | ❌            |
+| **ScalarDB 3.8**  | ❌            |
+| **ScalarDB 3.7**  | ❌            |
 
 </TabItem>
 </Tabs>
 
-### NoSQL databases
+#### NoSQL databases
 
 <Tabs groupId="NoSQL" queryString>
 <TabItem value="Amazon_DynamoDB" label="Amazon DynamoDB" default>
 
-| Version           | DynamoDB  |
-|:------------------|:----------|
+|      Version      | DynamoDB |
+| :---------------- | :------- |
+| **ScalarDB 3.16** | ✅        |
 | **ScalarDB 3.15** | ✅        |
 | **ScalarDB 3.14** | ✅        |
 | **ScalarDB 3.13** | ✅        |
@@ -204,8 +228,9 @@ ScalarDB is middleware that runs on top of the following databases and their ver
 </TabItem>
 <TabItem value="Apache_Cassandra" label="Apache Cassandra">
 
-| Version           | Cassandra 4.1  | Cassandra 4.0  | Cassandra 3.11  | Cassandra 3.0  |
-|:------------------|:---------------|:---------------|:----------------|:---------------|
+|      Version      | Cassandra 4.1 | Cassandra 4.0 | Cassandra 3.11 | Cassandra 3.0 |
+| :---------------- | :------------ | :------------ | :------------- | :------------ |
+| **ScalarDB 3.16** | ❌             | ❌             | ✅              | ✅             |
 | **ScalarDB 3.15** | ❌             | ❌             | ✅              | ✅             |
 | **ScalarDB 3.14** | ❌             | ❌             | ✅              | ✅             |
 | **ScalarDB 3.13** | ❌             | ❌             | ✅              | ✅             |
@@ -219,8 +244,9 @@ ScalarDB is middleware that runs on top of the following databases and their ver
 </TabItem>
 <TabItem value="Azure_Cosmos_DB_for_NoSQL" label="Azure Cosmos DB for NoSQL">
 
-| Version           | Cosmos DB for NoSQL  |
-|:------------------|:---------------------|
+|      Version      | Cosmos DB for NoSQL |
+| :---------------- | :------------------ |
+| **ScalarDB 3.16** | ✅                   |
 | **ScalarDB 3.15** | ✅                   |
 | **ScalarDB 3.14** | ✅                   |
 | **ScalarDB 3.13** | ✅                   |
@@ -240,13 +266,13 @@ For details on how to configure each database, see [Configurations for the Under
 
 :::
 
-### Permission requirements
+### Database permission requirements
 
-This section describes the required permissions for using ScalarDB with its supported databases.
+ScalarDB requires specific permissions to perform its operations on the underlying databases.
 
 #### Oracle Database
 
-ScalarDB requires the following privileges to be granted to the Oracle Database user that ScalarDB uses to access Oracle Database:
+If you're using Oracle Database, the following privileges must be granted. 
 
 <Tabs groupId="oracle-versions" queryString>
   <TabItem value="oracle-23ai" label="Oracle Database 23ai" default>
@@ -296,9 +322,24 @@ ScalarDB requires the following privileges to be granted to the Oracle Database 
   </TabItem>
 </Tabs>
 
+#### IBM Db2
+
+If you're using Db2, the following authorities must be granted. 
+
+<Tabs groupId="db2-versions" queryString>
+  <TabItem value="db2-12.1" label="Db2 12.1" default>
+    - `DBADM`
+    - `DATAACCESS`
+  </TabItem>
+  <TabItem value="db2-11.5" label="Db2 11.5">
+    - `DBADM`
+    - `DATAACCESS`
+  </TabItem>
+</Tabs>
+
 #### MySQL
 
-ScalarDB requires the following privileges to be granted to the MySQL user that ScalarDB uses to access MySQL:
+If you're using MySQL, the following privileges must be granted. 
 
 <Tabs groupId="mysql-versions" queryString>
   <TabItem value="mysql-8.4" label="MySQL 8.4" default>
@@ -325,7 +366,7 @@ ScalarDB requires the following privileges to be granted to the MySQL user that 
 
 #### PostgreSQL
 
-ScalarDB requires the following database role to be granted to the PostgreSQL role that ScalarDB uses to access PostgreSQL:
+If you're using PostgreSQL, the following database role must be granted. 
 
 <Tabs groupId="postgresql-versions" queryString>
   <TabItem value="postgresql-17" label="PostgreSQL 17" default>
@@ -347,7 +388,7 @@ ScalarDB requires the following database role to be granted to the PostgreSQL ro
 
 #### MariaDB
 
-ScalarDB requires the following privileges to be granted to the MariaDB user that ScalarDB uses to access MariaDB:
+If you're using MariaDB, the following privileges must be granted. 
 
 <Tabs groupId="mariadb-versions" queryString>
   <TabItem value="mariadb-11.4" label="MariaDB 11.4" default>
@@ -374,7 +415,7 @@ ScalarDB requires the following privileges to be granted to the MariaDB user tha
 
 #### SQL Server
 
-ScalarDB requires the following database roles to be granted to the SQL Server user that ScalarDB uses to access SQL Server:
+If you're using SQL Server, the following database roles must be granted. 
 
 <Tabs groupId="sqlserver-versions" queryString>
   <TabItem value="sqlserver-2022" label="SQL Server 2022" default>
@@ -396,13 +437,13 @@ ScalarDB requires the following database roles to be granted to the SQL Server u
 
 #### YugabyteDB
 
-ScalarDB requires the following database role to be granted to the YugabyteDB role that ScalarDB uses to access YugabyteDB:
+If you're using YugabyteDB, the following database role must be granted. 
 
 - `SUPERUSER`
 
 #### Amazon DynamoDB
 
-ScalarDB requires the following actions to be granted to the AWS IAM user that ScalarDB uses to access DynamoDB:
+If you're using Amazon DynamoDB, the following actions must be granted. 
 
 - `dynamodb:ConditionCheckItem`
 - `dynamodb:PutItem`
@@ -426,7 +467,7 @@ ScalarDB requires the following actions to be granted to the AWS IAM user that S
 
 #### Apache Cassandra
 
-ScalarDB requires the following privileges to be granted to the Cassandra role that ScalarDB uses to access Cassandra:
+If you're using Apache Cassandra, the following privileges must be granted. 
 
 <Tabs groupId="cassandra-versions" queryString>
   <TabItem value="cassandra-3.11" label="Cassandra 3.11" default>
@@ -445,15 +486,191 @@ ScalarDB requires the following privileges to be granted to the Cassandra role t
   </TabItem>
 </Tabs>
 
-## Kubernetes
+## Cluster
 
-ScalarDB is provided as a Pod on the Kubernetes platform in production environments. ScalarDB supports the following platforms and tools.
+ScalarDB Cluster is a component that provides a clustering solution for the Core component to work as a clustered server.  For more information, see [ScalarDB Design](./design.mdx).
 
-### Platform
+### Languages and runtimes
+
+ScalarDB Cluster provides Java and .NET client SDKs that wrap gRPC-generated clients for ease of use.
+
+#### Java
+
+The Java client SDK for ScalarDB Cluster is available on the Maven Central Repository. You can add the library as a build dependency to your application by using Gradle or Maven. For more details, see [Add ScalarDB Cluster Java Client SDK to your build](scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#add-scalardb-cluster-java-client-sdk-to-your-build).
+
+For building applications that integrate with the library, the following Java Development Kits (JDKs) are verified and supported:
+
+- **[Oracle JDK](https://www.oracle.com/java/):** 8, 11, 17 or 21 (LTS versions)
+- **[OpenJDK](https://openjdk.org/) ([Eclipse Temurin](https://adoptium.net/temurin/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/)):** 8, 11, 17 or 21 (LTS versions)
+
+#### .NET
+
+The .NET client SDK for ScalarDB Cluster is available as a NuGet package. For more details, see [Install the SDK](scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-transactions#install-the-sdk).
+
+For building applications that integrate with the library, the following .NET versions are verified and supported:
+
+- [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- [.NET 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+
+#### Other languages
+
+Since ScalarDB Cluster uses gRPC, you can also create your own client in your preferred language by using the generated clients from the proto file. If you need the proto file, please [contact support](https://www.scalar-labs.com/support).
+
+### Databases
+
+Since ScalarDB Cluster uses Core to interact with databases, the requirements for databases are the same as those for Core. For more information, see [Databases](#databases).
+
+### Kubernetes
+
+ScalarDB Cluster is provided as a cluster consisting of one or more Pods on the Kubernetes platform in production environments. ScalarDB Cluster supports the following platforms and tools.
+
+#### Platform
+
 - **[Kubernetes](https://kubernetes.io/):** 1.28 - 1.32
   - **[Amazon Elastic Kubernetes Service (EKS)](https://aws.amazon.com/eks/)**
   - **[Azure Kubernetes Service (AKS)](https://azure.microsoft.com/en-us/products/kubernetes-service)**
 - **[Red Hat OpenShift](https://www.redhat.com/en/technologies/cloud-computing/openshift):** TBD
 
-### Package manager
+#### Package manager
+
+- **[Helm](https://helm.sh/):** 3.5+
+
+## Analytics
+
+ScalarDB Analytics is a component that provides scalable analytical processing for the data managed by the Core component or managed by applications that don’t use ScalarDB. For more information, see [ScalarDB Design](./design.mdx).
+
+### Spark
+
+ScalarDB Analytics uses [Apache Spark](https://spark.apache.org/) for the query engine. It supports the following versions of Spark.
+
+| ScalarDB Analytics Version | Spark Versions | Scala Versions |
+| :------------------------- | :------------- | :------------- |
+| 3.16                       | 3.5, 3.4       | 2.13, 2.12     |
+| 3.15                       | 3.5, 3.4       | 2.13, 2.12     |
+| 3.14                       | 3.5, 3.4       | 2.13, 2.12     |
+
+### Languages and runtimes
+
+ScalarDB Analytics provides a Java library for running federated queries on Spark. It also provides a tool called ScalarDB Analytics CLI, which runs on the Java Virtual Machine (JVM).
+
+:::note
+
+Since Spark and Scala may be incompatible among different minor versions, the library offers different artifacts for various Spark and Scala versions, named in the format `scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>`. Make sure that you select the artifact matching the Spark and Scala versions you're using. For example, if you're using Spark 3.5 with Scala 2.13, you must specify `scalardb-analytics-spark-all-3.5_2.13`.
+
+:::
+
+#### Java
+
+The library is available on the Maven Central Repository. You need to specify the library when setting up Spark. For more details, see [Set up ScalarDB Analytics in the Spark configuration](scalardb-analytics/run-analytical-queries.mdx#set-up-scalardb-analytics-in-the-spark-configuration).
+
+:::note
+
+The ScalarDB Analytics library is built with JDK 11 to be able to be integrated with various Spark environments.
+
+:::
+
+For running ScalarDB Analytics CLI, the following JREs are verified and supported:
+
+- **[Oracle JDK](https://www.oracle.com/java/):** 21 
+- **[OpenJDK](https://openjdk.org/) ([Eclipse Temurin](https://adoptium.net/temurin/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/)):** 21
+
+### Databases
+
+ScalarDB Analytics runs on top of the following databases and their versions.
+
+#### ScalarDB
+
+ScalarDB Analytics can run analytical queries on the databases managed by ScalarDB Core and Cluster. It uses the ScalarDB Core library of the same version to interact with these databases, as shown below.
+
+| ScalarDB Analytics version | ScalarDB Core version |
+| :------------------------- | :-------------------- |
+| 3.16                       | 3.16                  |
+| 3.15                       | 3.15                  |
+| 3.14                       | 3.14                  |
+
+For the supported databases and their versions, see [Databases](#databases).
+
+#### Relational databases
+
+ScalarDB Analytics can run analytical queries on the following relational databases **not** managed by ScalarDB Core and Cluster.
+
+<Tabs groupId="RDBs" queryString>
+<TabItem value="Oracle_Database" label="Oracle Database" default>
+
+|           Version           | Oracle Database 23ai |
+| :-------------------------- | :------------------- |
+| **ScalarDB Analytics 3.16** | ✅                    |
+| **ScalarDB Analytics 3.15** | ✅                    |
+| **ScalarDB Analytics 3.14** | ✅                    |
+
+</TabItem>
+<TabItem value="MySQL" label="MySQL">
+
+|           Version           | MySQL 8.0 |
+| :-------------------------- | :-------- |
+| **ScalarDB Analytics 3.16** | ✅         |
+| **ScalarDB Analytics 3.15** | ✅         |
+| **ScalarDB Analytics 3.14** | ✅         |
+
+</TabItem>
+<TabItem value="PostgreSQL" label="PostgreSQL">
+
+|           Version           | PostgreSQL 16 |
+| :-------------------------- | :------------ |
+| **ScalarDB Analytics 3.16** | ✅             |
+| **ScalarDB Analytics 3.15** | ✅             |
+| **ScalarDB Analytics 3.14** | ✅             |
+
+</TabItem>
+<TabItem value="SQL_Server" label="SQL Server">
+
+|           Version           | SQL Server 2019 |
+| :-------------------------- | :-------------- |
+| **ScalarDB Analytics 3.16** | ✅               |
+| **ScalarDB Analytics 3.15** | ✅               |
+| **ScalarDB Analytics 3.14** | ✅               |
+
+</TabItem>
+</Tabs>
+
+#### NoSQL databases
+
+ScalarDB Analytics can run analytical queries on the following NoSQL databases **not** managed by ScalarDB Core and Cluster.
+
+<Tabs groupId="NoSQL" queryString>
+<TabItem value="Amazon_DynamoDB" label="Amazon DynamoDB" default>
+
+|           Version           | DynamoDB |
+| :-------------------------- | :------- |
+| **ScalarDB Analytics 3.16** | ✅        |
+| **ScalarDB Analytics 3.15** | ✅        |
+| **ScalarDB Analytics 3.14** | ✅        |
+
+</TabItem>
+</Tabs>
+
+### Database permission requirements
+
+ScalarDB Analytics requires read permissions to perform its operations on the underlying databases.
+
+For databases managed under ScalarDB Core and Cluster, the databases are already configured according to [Database permission requirements](requirements.mdx#database-permission-requirements), so no additional configuration is required.
+
+For databases **not** managed under ScalarDB Core and Cluster, make sure you register your data sources with users who have read permission on the data sources. For instructions on registering your data sources, see [Create your catalog](scalardb-analytics/create-scalardb-analytics-catalog#create-your-catalog).
+
+The ScalarDB Analytics server also requires permissions to manage catalog information in its database.
+Create a user with permission according to [Database permission requirements](requirements.mdx#database-permission-requirements) and set the user to the ScalarDB Analytics server configuration.
+
+### Kubernetes
+
+The server component of ScalarDB Analytics (ScalarDB Analytics server) is provided as a Pod on the Kubernetes platform in production environments. ScalarDB Analytics supports the following platforms and tools.
+
+#### Platform
+
+- **[Kubernetes](https://kubernetes.io/):** 1.28 - 1.32
+  - **[Amazon Elastic Kubernetes Service (EKS)](https://aws.amazon.com/eks/)**
+  - **[Azure Kubernetes Service (AKS)](https://azure.microsoft.com/en-us/products/kubernetes-service)**
+- **[Red Hat OpenShift](https://www.redhat.com/en/technologies/cloud-computing/openshift):** TBD
+
+#### Package manager
+
 - **[Helm](https://helm.sh/):** 3.5+
