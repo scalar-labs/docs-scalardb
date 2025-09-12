@@ -48,6 +48,8 @@ ScalarDB は機能を提供するために基盤となるデータベース内�
 | Cluster     | `scalardb.users`, `scalardb.namespace_privileges`, `scalardb.table_privileges`, `scalardb.auth_tokens` | [認証と承認](./scalardb-cluster/scalardb-auth-with-sql.mdx)用             | scalardb のシステム名前空間を格納するために指定された1つのデータベース内     |
 | Cluster     | `scalardb.encrypted_columns`                                                                           | [保存時の暗号化](./scalardb-cluster/encrypt-data-at-rest.mdx)用            | scalardb のシステム名前空間を格納するために指定された1つのデータベース内     |
 | Cluster     | `scalardb.abac_*`                                                                                      | [属性ベースのアクセス制御](./scalardb-cluster/authorize-with-abac.mdx)用     | scalardb のシステム名前空間を格納するために指定された1つのデータベース内     |
+| Cluster     | リモートレプリケーション管理テーブル (`transaction_groups`)                                            | [リモートレプリケーション](./scalardb-cluster/remote-replication.mdx)におけるプライマリサイトからの書き込み操作のバッファリング用 | レプリケーションデータベース内                                       |
+| Cluster     | リモートレプリケーション管理テーブル (`__records` サフィックス付き)                                      | [リモートレプリケーション](./scalardb-cluster/remote-replication.mdx)におけるバックアップサイトデータベーステーブルのレプリケーション状態管理用 | バックアップサイトデータベース内                                     |
 | Analytics   | カタログサーバーによって管理されるすべてのテーブル                                                              | [データカタログ](./scalardb-analytics/design.mdx#universal-data-catalog)用 | カタログサーバーデータベース内                                 |
 
 :::note
