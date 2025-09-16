@@ -497,6 +497,19 @@ ScalarDB が Cassandra にアクセスするために使用する Cassandra ロ�
   </TabItem>
 </Tabs>
 
+## 必要なポート
+
+ScalarDB では、以下のポートにアクセスできる必要があります。これらは、必要に応じて設定可能なデフォルトのポート番号です:
+
+- **ScalarDB Cluster**
+  - 60053 (Administrative API / Transactional API / SQL API / ポーズ operation)
+  - 8080 (GraphQL)
+  - 9080 (メトリクス)
+- **ScalarDB Analytics**
+  - 11051 (カタログサービス)
+  - 11052 (メータリングサービス)
+  - Apache Spark が使用するポート番号は、Spark クラスターのデプロイ方法によって異なります。アクセス可能にする必要があるポートの詳細については、Spark サービスプロバイダーのドキュメントを参照してください。
+
 ## Kubernetes
 
 ScalarDB は、本番環境では Kubernetes プラットフォーム上の Pod として提供されます。ScalarDB は次のプラットフォームとツールをサポートしています。
