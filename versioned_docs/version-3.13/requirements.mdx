@@ -520,6 +520,19 @@ Since ScalarDB Cluster uses gRPC, you can also create your own client in your pr
 
 Since ScalarDB Cluster uses Core to interact with databases, the requirements for databases are the same as those for Core. For more information, see [Databases](#databases).
 
+### Required ports
+
+ScalarDB requires the following ports to be accessible. These default port numbers can be configured as needed:
+
+- **ScalarDB Cluster**
+  - 60053 (Administrative API / Transactional API / SQL API / pause operation)
+  - 8080 (GraphQL)
+  - 9080 (metrics)
+- **ScalarDB Analytics**
+  - 11051 (catalog service)
+  - 11052 (metering service)
+  - The port number that Apache Spark uses depends on how you deploy the Spark cluster. For details on which ports you need to make accessible, please refer to your Spark service provider's documentation.
+
 ### Kubernetes
 
 ScalarDB Cluster is provided as a cluster consisting of one or more Pods on the Kubernetes platform in production environments. ScalarDB Cluster supports the following platforms and tools.
