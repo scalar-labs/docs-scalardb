@@ -30,7 +30,7 @@ For building applications that integrate with the library, the following Java De
 - **[Oracle JDK](https://www.oracle.com/java/):** 8, 11, 17 or 21 (LTS versions)
 - **[OpenJDK](https://openjdk.org/) ([Eclipse Temurin](https://adoptium.net/temurin/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/)):** 8, 11, 17 or 21 (LTS versions)
 
-The same versioned Java Runtime Environments (JREs) are also supported for running the tools.
+Java Runtime Environments (JREs) of these JDKs are also supported for running the tools.
 
 ### Databases
 
@@ -488,7 +488,7 @@ If you're using Apache Cassandra, the following privileges must be granted.
 
 ## Cluster
 
-ScalarDB Cluster is a component that provides a clustering solution for the Core component to work as a clustered server.  For more information, see [ScalarDB Design](./design.mdx).
+ScalarDB Cluster is a component that provides a clustering solution for the Core component to work as a clustered server. For more information, see [ScalarDB Design](./design.mdx).
 
 ### Languages and runtimes
 
@@ -505,7 +505,7 @@ For building applications that integrate with the library, the following Java De
 
 #### .NET
 
-The .NET client SDK for ScalarDB Cluster is available as a NuGet package. For more details, see [Install the SDK](scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-transactions#install-the-sdk).
+The .NET client SDK for ScalarDB Cluster is available as a NuGet package. For more details, see [Install the SDK](scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-transactions.mdx#install-the-sdk).
 
 For building applications that integrate with the library, the following .NET versions are verified and supported:
 
@@ -545,7 +545,7 @@ ScalarDB Cluster is provided as a cluster consisting of one or more Pods on the 
 
 ## Analytics
 
-ScalarDB Analytics is a component that provides scalable analytical processing for the data managed by the Core component or managed by applications that don’t use ScalarDB. For more information, see [ScalarDB Design](./design.mdx).
+ScalarDB Analytics is a component that provides scalable analytical processing for the data managed by the Core component or managed by applications that don't use ScalarDB. For more information, see [ScalarDB Design](./design.mdx).
 
 ### Spark
 
@@ -661,12 +661,11 @@ ScalarDB Analytics can run analytical queries on the following NoSQL databases *
 
 ScalarDB Analytics requires read permissions to perform its operations on the underlying databases.
 
-For databases managed under ScalarDB Core and Cluster, the databases are already configured according to [Database permission requirements](requirements.mdx#database-permission-requirements), so no additional configuration is required.
+For databases managed under ScalarDB Core and Cluster, the databases are already configured according to [Database permission requirements](#database-permission-requirements), so no additional configuration is required.
 
-For databases **not** managed under ScalarDB Core and Cluster, make sure you register your data sources with users who have read permission on the data sources. For instructions on registering your data sources, see [Create your catalog](scalardb-analytics/create-scalardb-analytics-catalog#create-your-catalog).
+For databases **not** managed under ScalarDB Core and Cluster, make sure you register your data sources with users who have read permission on the data sources. For instructions on registering your data sources, see [Create your catalog](scalardb-analytics/create-scalardb-analytics-catalog.mdx#create-your-catalog).
 
-The ScalarDB Analytics server also requires permissions to manage catalog information in its database.
-Create a user with permission according to [Database permission requirements](requirements.mdx#database-permission-requirements) and set the user to the ScalarDB Analytics server configuration.
+The ScalarDB Analytics server also requires permissions to manage catalog information in its database. Create a user with permission according to [Database permission requirements](#database-permission-requirements) and set the user to the ScalarDB Analytics server configuration.
 
 ### Required ports
 
