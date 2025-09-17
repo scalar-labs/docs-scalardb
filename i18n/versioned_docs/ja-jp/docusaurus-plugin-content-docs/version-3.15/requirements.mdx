@@ -14,76 +14,93 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 <TranslationBanner />
 
-このページでは、ScalarDB を正しく使用するために必要なツールとそのバージョンについて説明します。
+このページでは、各 ScalarDB コンポーネントの使用要件 (プログラミング言語とそのバージョン、サポートされているデータベースとそのバージョン、必要な設定など) について説明します。
 
-## クライアント SDK
+## Core
 
-ScalarDB は Java で記述されているため、ScalarDB を操作する最も簡単な方法は、Java Client SDK を使用することです。
+ScalarDB Core は ScalarDB の主要コンポーネントであり、基盤となるデータベースを抽象化する抽象化レイヤーを備えたデータベースマネージャーを提供します。詳細については、[ScalarDB 設計](./design.mdx)を参照してください。
 
-- [ScalarDB Core 用 SDK](add-scalardb-to-your-build.mdx)
-- [ScalarDB Cluster 用 SDK](scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx)
+### 言語とランタイム
 
-### Java
+ScalarDB Core は、ScalarDB と対話するための Java Client SDK を提供しています。また、Java Virtual Machine (JVM) 上で動作する Schema Loader や Data Loader などのツールも含まれています。
 
-次の Java Software Development (JDK) が検証され、サポートされています。
+#### Java
 
-- **[Oracle JDK](https://www.oracle.com/java/):** 8、11、17、または21 (LTS バージョン)
-- **[OpenJDK](https://openjdk.org/) ([Eclipse Temurin](https://adoptium.net/temurin/)、[Amazon Corretto](https://aws.amazon.com/corretto/)、または [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/)):** 8、11、17、または21 (LTS バージョン)
+ScalarDB Core ライブラリは Maven Central Repository で利用できます。Gradle または Maven を使用して、アプリケーションのビルド依存関係としてライブラリを追加できます。詳細については、[ビルドに ScalarDB を追加する](./add-scalardb-to-your-build.mdx)を参照してください。
 
-### .NET
+ライブラリを利用したアプリケーションの構築には、以下の Java Development Kit (JDK) がサポートされています。
 
-ScalarDB は、ScalarDB Cluster と呼ばれる gRPC サーバーとして提供され、proto ファイルから生成された .NET クライアントをラップする [.NET Client SDK](scalardb-cluster-dotnet-client-sdk/index.mdx) も備えています。
+- **[Oracle JDK](https://www.oracle.com/java/):** 8、11、17、または 21 (LTS バージョン)
+- **[OpenJDK](https://openjdk.org/) ([Eclipse Temurin](https://adoptium.net/temurin/)、[Amazon Corretto](https://aws.amazon.com/corretto/)、または [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/)):** 8、11、17、または 21 (LTS バージョン)
 
-次の .NET バージョンが検証され、サポートされています。
+これらの JDK の Java Runtime Environment (JRE) も、ツールの実行でサポートされています。
 
-- [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
-- [.NET 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+### データベース
 
-### その他の言語
+ScalarDB は、以下のデータベースとそのバージョン上で動作します。
 
-ScalarDB Cluster は gRPC バージョン1.65.0を使用するため、好みの言語で生成されたクライアントを使用して独自のクライアントを作成できます。
-
-## データベース
-
-ScalarDB は、次のデータベースとそのバージョン上で実行されるミドルウェアです。
-
-### リレーショナルデータベース
+#### リレーショナルデータベース
 
 <Tabs groupId="RDBs" queryString>
 <TabItem value="Oracle_Database" label="Oracle Database" default>
 
-| バージョン          | Oracle Database 23ai | Oracle Database 21c | Oracle Database 19c |
-|:------------------|:---------------------|:--------------------|:--------------------|
-| **ScalarDB 3.15** | ✅                   | ✅                  | ✅                  |
-| **ScalarDB 3.14** | ✅                   | ✅                  | ✅                  |
-| **ScalarDB 3.13** | ✅                   | ✅                  | ✅                  |
-| **ScalarDB 3.12** | ✅                   | ✅                  | ✅                  |
-| **ScalarDB 3.11** | ✅                   | ✅                  | ✅                  |
-| **ScalarDB 3.10** | ✅                   | ✅                  | ✅                  |
-| **ScalarDB 3.9**  | ✅                   | ✅                  | ✅                  |
-| **ScalarDB 3.8**  | ✅                   | ✅                  | ✅                  |
-| **ScalarDB 3.7**  | ✅                   | ✅                  | ✅                  |
+|      バージョン      | Oracle Database 23ai | Oracle Database 21c | Oracle Database 19c |
+| :------------------ | :------------------- | :------------------ | :------------------ |
+| **ScalarDB 3.16** | ✅                    | ✅                   | ✅                   |
+| **ScalarDB 3.15** | ✅                    | ✅                   | ✅                   |
+| **ScalarDB 3.14** | ✅                    | ✅                   | ✅                   |
+| **ScalarDB 3.13** | ✅                    | ✅                   | ✅                   |
+| **ScalarDB 3.12** | ✅                    | ✅                   | ✅                   |
+| **ScalarDB 3.11** | ✅                    | ✅                   | ✅                   |
+| **ScalarDB 3.10** | ✅                    | ✅                   | ✅                   |
+| **ScalarDB 3.9**  | ✅                    | ✅                   | ✅                   |
+| **ScalarDB 3.8**  | ✅                    | ✅                   | ✅                   |
+| **ScalarDB 3.7**  | ✅                    | ✅                   | ✅                   |
+
+</TabItem>
+<TabItem value="Db2" label="IBM Db2">
+
+|      バージョン      | Db2 12.1 | Db2 11.5 |
+| :------------------ | :------- | :------- |
+| **ScalarDB 3.16** | ✅        | ✅        |
+| **ScalarDB 3.15** | ❌        | ❌        |
+| **ScalarDB 3.14** | ❌        | ❌        |
+| **ScalarDB 3.13** | ❌        | ❌        |
+| **ScalarDB 3.12** | ❌        | ❌        |
+| **ScalarDB 3.11** | ❌        | ❌        |
+| **ScalarDB 3.10** | ❌        | ❌        |
+| **ScalarDB 3.9**  | ❌        | ❌        |
+| **ScalarDB 3.8**  | ❌        | ❌        |
+| **ScalarDB 3.7**  | ❌        | ❌        |
+
+:::note
+
+Db2 は Linux、UNIX、Windows 版のみがサポートされています。z/OS 版は現在サポートされていません。
+
+:::
 
 </TabItem>
 <TabItem value="MySQL" label="MySQL">
 
-| バージョン          | MySQL 8.4 | MySQL 8.0 |
-|:------------------|:----------|:----------|
-| **ScalarDB 3.15** | ✅        | ✅        |
-| **ScalarDB 3.14** | ✅        | ✅        |
-| **ScalarDB 3.13** | ✅        | ✅        |
-| **ScalarDB 3.12** | ✅        | ✅        |
-| **ScalarDB 3.11** | ✅        | ✅        |
-| **ScalarDB 3.10** | ✅        | ✅        |
-| **ScalarDB 3.9**  | ✅        | ✅        |
-| **ScalarDB 3.8**  | ✅        | ✅        |
-| **ScalarDB 3.7**  | ✅        | ✅        |
+|      バージョン      | MySQL 8.4 | MySQL 8.0 |
+| :------------------ | :-------- | :-------- |
+| **ScalarDB 3.16** | ✅         | ✅         |
+| **ScalarDB 3.15** | ✅         | ✅         |
+| **ScalarDB 3.14** | ✅         | ✅         |
+| **ScalarDB 3.13** | ✅         | ✅         |
+| **ScalarDB 3.12** | ✅         | ✅         |
+| **ScalarDB 3.11** | ✅         | ✅         |
+| **ScalarDB 3.10** | ✅         | ✅         |
+| **ScalarDB 3.9**  | ✅         | ✅         |
+| **ScalarDB 3.8**  | ✅         | ✅         |
+| **ScalarDB 3.7**  | ✅         | ✅         |
 
 </TabItem>
 <TabItem value="PostgreSQL" label="PostgreSQL">
 
-| バージョン          | PostgreSQL 17 | PostgreSQL 16 | PostgreSQL 15 | PostgreSQL 14 | PostgreSQL 13 |
-|:------------------|:--------------|:--------------|:--------------|:--------------|---------------|
+|      バージョン      | PostgreSQL 17 | PostgreSQL 16 | PostgreSQL 15 | PostgreSQL 14 | PostgreSQL 13 |
+| :------------------ | :------------ | :------------ | :------------ | :------------ | ------------- |
+| **ScalarDB 3.16** | ✅             | ✅             | ✅             | ✅             | ✅             |
 | **ScalarDB 3.15** | ✅             | ✅             | ✅             | ✅             | ✅             |
 | **ScalarDB 3.14** | ✅             | ✅             | ✅             | ✅             | ✅             |
 | **ScalarDB 3.13** | ✅             | ✅             | ✅             | ✅             | ✅             |
@@ -97,23 +114,25 @@ ScalarDB は、次のデータベースとそのバージョン上で実行さ�
 </TabItem>
 <TabItem value="Amazon_Aurora_MySQL" label="Amazon Aurora MySQL">
 
-| バージョン          | Aurora MySQL 3 | Aurora MySQL 2 |
-|:------------------|:---------------|:---------------|
-| **ScalarDB 3.15** | ✅             | ✅             |
-| **ScalarDB 3.14** | ✅             | ✅             |
-| **ScalarDB 3.13** | ✅             | ✅             |
-| **ScalarDB 3.12** | ✅             | ✅             |
-| **ScalarDB 3.11** | ✅             | ✅             |
-| **ScalarDB 3.10** | ✅             | ✅             |
-| **ScalarDB 3.9**  | ✅             | ✅             |
-| **ScalarDB 3.8**  | ✅             | ✅             |
-| **ScalarDB 3.7**  | ✅             | ✅             |
+|      バージョン      | Aurora MySQL 3 | Aurora MySQL 2 |
+| :------------------ | :------------- | :------------- |
+| **ScalarDB 3.16** | ✅              | ✅              |
+| **ScalarDB 3.15** | ✅              | ✅              |
+| **ScalarDB 3.14** | ✅              | ✅              |
+| **ScalarDB 3.13** | ✅              | ✅              |
+| **ScalarDB 3.12** | ✅              | ✅              |
+| **ScalarDB 3.11** | ✅              | ✅              |
+| **ScalarDB 3.10** | ✅              | ✅              |
+| **ScalarDB 3.9**  | ✅              | ✅              |
+| **ScalarDB 3.8**  | ✅              | ✅              |
+| **ScalarDB 3.7**  | ✅              | ✅              |
 
 </TabItem>
 <TabItem value="Amazon_Aurora_PostgreSQL" label="Amazon Aurora PostgreSQL">
 
-| バージョン          | Aurora PostgreSQL 16 | Aurora PostgreSQL 15 | Aurora PostgreSQL 14 | Aurora PostgreSQL 13 |
-|:------------------|:---------------------|:---------------------|:---------------------|:---------------------|
+|      バージョン      | Aurora PostgreSQL 16 | Aurora PostgreSQL 15 | Aurora PostgreSQL 14 | Aurora PostgreSQL 13 |
+| :------------------ | :------------------- | :------------------- | :------------------- | :------------------- |
+| **ScalarDB 3.16** | ✅                    | ✅                    | ✅                    | ✅                    |
 | **ScalarDB 3.15** | ✅                    | ✅                    | ✅                    | ✅                    |
 | **ScalarDB 3.14** | ✅                    | ✅                    | ✅                    | ✅                    |
 | **ScalarDB 3.13** | ✅                    | ✅                    | ✅                    | ✅                    |
@@ -127,129 +146,136 @@ ScalarDB は、次のデータベースとそのバージョン上で実行さ�
 </TabItem>
 <TabItem value="MariaDB" label="MariaDB">
 
-| バージョン          | MariaDB 11.4 | MariaDB 10.11 |
-|:------------------|:-------------|:--------------|
-| **ScalarDB 3.15** | ✅           | ✅            |
-| **ScalarDB 3.14** | ✅           | ✅            |
-| **ScalarDB 3.13** | ✅           | ✅            |
-| **ScalarDB 3.12** | ✅           | ✅            |
-| **ScalarDB 3.11** | ✅           | ✅            |
-| **ScalarDB 3.10** | ✅           | ✅            |
-| **ScalarDB 3.9**  | ✅           | ✅            |
-| **ScalarDB 3.8**  | ✅           | ✅            |
-| **ScalarDB 3.7**  | ✅           | ✅            |
+|      バージョン      | MariaDB 11.4 | MariaDB 10.11 |
+| :------------------ | :----------- | :------------ |
+| **ScalarDB 3.16** | ✅            | ✅             |
+| **ScalarDB 3.15** | ✅            | ✅             |
+| **ScalarDB 3.14** | ✅            | ✅             |
+| **ScalarDB 3.13** | ✅            | ✅             |
+| **ScalarDB 3.12** | ✅            | ✅             |
+| **ScalarDB 3.11** | ✅            | ✅             |
+| **ScalarDB 3.10** | ✅            | ✅             |
+| **ScalarDB 3.9**  | ✅            | ✅             |
+| **ScalarDB 3.8**  | ✅            | ✅             |
+| **ScalarDB 3.7**  | ✅            | ✅             |
 
 </TabItem>
 <TabItem value="SQL_Server" label="SQL Server">
 
-| バージョン          | SQL Server 2022 | SQL Server 2019 | SQL Server 2017 |
-|:------------------|:----------------|:----------------|:----------------|
-| **ScalarDB 3.15** | ✅              | ✅              | ✅              |
-| **ScalarDB 3.14** | ✅              | ✅              | ✅              |
-| **ScalarDB 3.13** | ✅              | ✅              | ✅              |
-| **ScalarDB 3.12** | ✅              | ✅              | ✅              |
-| **ScalarDB 3.11** | ✅              | ✅              | ✅              |
-| **ScalarDB 3.10** | ✅              | ✅              | ✅              |
-| **ScalarDB 3.9**  | ✅              | ✅              | ✅              |
-| **ScalarDB 3.8**  | ✅              | ✅              | ✅              |
-| **ScalarDB 3.7**  | ✅              | ✅              | ✅              |
+|      バージョン      | SQL Server 2022 | SQL Server 2019 | SQL Server 2017 |
+| :------------------ | :-------------- | :-------------- | :-------------- |
+| **ScalarDB 3.16** | ✅               | ✅               | ✅               |
+| **ScalarDB 3.15** | ✅               | ✅               | ✅               |
+| **ScalarDB 3.14** | ✅               | ✅               | ✅               |
+| **ScalarDB 3.13** | ✅               | ✅               | ✅               |
+| **ScalarDB 3.12** | ✅               | ✅               | ✅               |
+| **ScalarDB 3.11** | ✅               | ✅               | ✅               |
+| **ScalarDB 3.10** | ✅               | ✅               | ✅               |
+| **ScalarDB 3.9**  | ✅               | ✅               | ✅               |
+| **ScalarDB 3.8**  | ✅               | ✅               | ✅               |
+| **ScalarDB 3.7**  | ✅               | ✅               | ✅               |
 
 </TabItem>
 <TabItem value="SQLite" label="SQLite">
 
-| バージョン          | SQLite 3 |
-|:------------------|:---------|
-| **ScalarDB 3.15** | ✅       |
-| **ScalarDB 3.14** | ✅       |
-| **ScalarDB 3.13** | ✅       |
-| **ScalarDB 3.12** | ✅       |
-| **ScalarDB 3.11** | ✅       |
-| **ScalarDB 3.10** | ✅       |
-| **ScalarDB 3.9**  | ✅       |
-| **ScalarDB 3.8**  | ❌       |
-| **ScalarDB 3.7**  | ❌       |
+|      バージョン      | SQLite 3 |
+| :------------------ | :------- |
+| **ScalarDB 3.16** | ✅        |
+| **ScalarDB 3.15** | ✅        |
+| **ScalarDB 3.14** | ✅        |
+| **ScalarDB 3.13** | ✅        |
+| **ScalarDB 3.12** | ✅        |
+| **ScalarDB 3.11** | ✅        |
+| **ScalarDB 3.10** | ✅        |
+| **ScalarDB 3.9**  | ✅        |
+| **ScalarDB 3.8**  | ❌        |
+| **ScalarDB 3.7**  | ❌        |
 
 </TabItem>
 <TabItem value="YugabyteDB" label="YugabyteDB">
 
-| バージョン          | YugabyteDB 2 |
-|:------------------|:-------------|
-| **ScalarDB 3.15** | ✅           |
-| **ScalarDB 3.14** | ✅           |
-| **ScalarDB 3.13** | ✅           |
-| **ScalarDB 3.12** | ❌           |
-| **ScalarDB 3.11** | ❌           |
-| **ScalarDB 3.10** | ❌           |
-| **ScalarDB 3.9**  | ❌           |
-| **ScalarDB 3.8**  | ❌           |
-| **ScalarDB 3.7**  | ❌           |
+|      バージョン      | YugabyteDB 2 |
+| :------------------ | :----------- |
+| **ScalarDB 3.16** | ✅            |
+| **ScalarDB 3.15** | ✅            |
+| **ScalarDB 3.14** | ✅            |
+| **ScalarDB 3.13** | ✅            |
+| **ScalarDB 3.12** | ❌            |
+| **ScalarDB 3.11** | ❌            |
+| **ScalarDB 3.10** | ❌            |
+| **ScalarDB 3.9**  | ❌            |
+| **ScalarDB 3.8**  | ❌            |
+| **ScalarDB 3.7**  | ❌            |
 
 </TabItem>
 </Tabs>
 
-### NoSQL データベース
+#### NoSQL データベース
 
 <Tabs groupId="NoSQL" queryString>
 <TabItem value="Amazon_DynamoDB" label="Amazon DynamoDB" default>
 
-| バージョン          | DynamoDB |
-|:------------------|:---------|
-| **ScalarDB 3.15** | ✅       |
-| **ScalarDB 3.14** | ✅       |
-| **ScalarDB 3.13** | ✅       |
-| **ScalarDB 3.12** | ✅       |
-| **ScalarDB 3.11** | ✅       |
-| **ScalarDB 3.10** | ✅       |
-| **ScalarDB 3.9**  | ✅       |
-| **ScalarDB 3.8**  | ✅       |
-| **ScalarDB 3.7**  | ✅       |
+|      バージョン      | DynamoDB |
+| :------------------ | :------- |
+| **ScalarDB 3.16** | ✅        |
+| **ScalarDB 3.15** | ✅        |
+| **ScalarDB 3.14** | ✅        |
+| **ScalarDB 3.13** | ✅        |
+| **ScalarDB 3.12** | ✅        |
+| **ScalarDB 3.11** | ✅        |
+| **ScalarDB 3.10** | ✅        |
+| **ScalarDB 3.9**  | ✅        |
+| **ScalarDB 3.8**  | ✅        |
+| **ScalarDB 3.7**  | ✅        |
 
 </TabItem>
 <TabItem value="Apache_Cassandra" label="Apache Cassandra">
 
-| バージョン          | Cassandra 4.1 | Cassandra 4.0 | Cassandra 3.11 | Cassandra 3.0 |
-|:------------------|:--------------|:--------------|:---------------|:--------------|
-| **ScalarDB 3.15** | ❌            | ❌            | ✅             | ✅            |
-| **ScalarDB 3.14** | ❌            | ❌            | ✅             | ✅            |
-| **ScalarDB 3.13** | ❌            | ❌            | ✅             | ✅            |
-| **ScalarDB 3.12** | ❌            | ❌            | ✅             | ✅            |
-| **ScalarDB 3.11** | ❌            | ❌            | ✅             | ✅            |
-| **ScalarDB 3.10** | ❌            | ❌            | ✅             | ✅            |
-| **ScalarDB 3.9**  | ❌            | ❌            | ✅             | ✅            |
-| **ScalarDB 3.8**  | ❌            | ❌            | ✅             | ✅            |
-| **ScalarDB 3.7**  | ❌            | ❌            | ✅             | ✅            |
+|      バージョン      | Cassandra 4.1 | Cassandra 4.0 | Cassandra 3.11 | Cassandra 3.0 |
+| :------------------ | :------------ | :------------ | :------------- | :------------ |
+| **ScalarDB 3.16** | ❌             | ❌             | ✅              | ✅             |
+| **ScalarDB 3.15** | ❌             | ❌             | ✅              | ✅             |
+| **ScalarDB 3.14** | ❌             | ❌             | ✅              | ✅             |
+| **ScalarDB 3.13** | ❌             | ❌             | ✅              | ✅             |
+| **ScalarDB 3.12** | ❌             | ❌             | ✅              | ✅             |
+| **ScalarDB 3.11** | ❌             | ❌             | ✅              | ✅             |
+| **ScalarDB 3.10** | ❌             | ❌             | ✅              | ✅             |
+| **ScalarDB 3.9**  | ❌             | ❌             | ✅              | ✅             |
+| **ScalarDB 3.8**  | ❌             | ❌             | ✅              | ✅             |
+| **ScalarDB 3.7**  | ❌             | ❌             | ✅              | ✅             |
 
 </TabItem>
 <TabItem value="Azure_Cosmos_DB_for_NoSQL" label="Azure Cosmos DB for NoSQL">
 
-| バージョン          | Cosmos DB for NoSQL |
-|:------------------|:--------------------|
-| **ScalarDB 3.15** | ✅                  |
-| **ScalarDB 3.14** | ✅                  |
-| **ScalarDB 3.13** | ✅                  |
-| **ScalarDB 3.12** | ✅                  |
-| **ScalarDB 3.11** | ✅                  |
-| **ScalarDB 3.10** | ✅                  |
-| **ScalarDB 3.9**  | ✅                  |
-| **ScalarDB 3.8**  | ✅                  |
-| **ScalarDB 3.7**  | ✅                  |
+|      バージョン      | Cosmos DB for NoSQL |
+| :------------------ | :------------------ |
+| **ScalarDB 3.16** | ✅                   |
+| **ScalarDB 3.15** | ✅                   |
+| **ScalarDB 3.14** | ✅                   |
+| **ScalarDB 3.13** | ✅                   |
+| **ScalarDB 3.12** | ✅                   |
+| **ScalarDB 3.11** | ✅                   |
+| **ScalarDB 3.10** | ✅                   |
+| **ScalarDB 3.9**  | ✅                   |
+| **ScalarDB 3.8**  | ✅                   |
+| **ScalarDB 3.7**  | ✅                   |
 
 </TabItem>
 </Tabs>
 
 :::note
 
-各データベースの設定方法の詳細については、[ScalarDB の基盤となるデータベースの設定](./database-configurations.mdx) を参照してください。
+各データベースの設定方法の詳細については、[ScalarDB の基盤となるデータベースの設定](./database-configurations.mdx)を参照してください。
 
 :::
 
-### 権限要件
+### データベース権限要件
 
-このセクションでは、ScalarDB がサポートしているデータベースを使用するために必要な権限について説明します。
+ScalarDB は、基盤となるデータベースで操作を実行するために特定の権限が必要です。
 
 #### Oracle Database
 
-ScalarDB が Oracle Database にアクセスするために使用する Oracle Database ユーザーには、以下の権限が許可されている必要があります:
+Oracle Database を使用している場合、以下の権限を付与する必要があります。
 
 <Tabs groupId="oracle-versions" queryString>
   <TabItem value="oracle-23ai" label="Oracle Database 23ai" default>
@@ -301,7 +327,7 @@ ScalarDB が Oracle Database にアクセスするために使用する Oracle D
 
 #### MySQL
 
-ScalarDB が MySQL にアクセスするために使用する MySQL ユーザーには、以下の権限が許可されている必要があります:
+MySQL を使用している場合、以下の権限を付与する必要があります。
 
 <Tabs groupId="mysql-versions" queryString>
   <TabItem value="mysql-8.4" label="MySQL 8.4" default>
@@ -328,7 +354,7 @@ ScalarDB が MySQL にアクセスするために使用する MySQL ユーザー
 
 #### PostgreSQL
 
-ScalarDB が PostgreSQL にアクセスするために使用する PostgreSQL ロールには、以下のデータベースロールが許可されている必要があります:
+PostgreSQL を使用している場合、以下のデータベースロールを付与する必要があります。
 
 <Tabs groupId="postgresql-versions" queryString>
   <TabItem value="postgresql-17" label="PostgreSQL 17" default>
@@ -350,7 +376,7 @@ ScalarDB が PostgreSQL にアクセスするために使用する PostgreSQL �
 
 #### MariaDB
 
-ScalarDB が MariaDB にアクセスするために使用する MariaDB ユーザーには、以下の権限が許可されている必要があります:
+MariaDB を使用している場合、以下の権限を付与する必要があります。
 
 <Tabs groupId="mariadb-versions" queryString>
   <TabItem value="mariadb-11.4" label="MariaDB 11.4" default>
@@ -377,7 +403,7 @@ ScalarDB が MariaDB にアクセスするために使用する MariaDB ユー�
 
 #### SQL Server
 
-ScalarDB が SQL Server にアクセスするために使用する SQL Server ユーザーには、以下のデータベースロールが許可されている必要があります:
+SQL Server を使用している場合、以下のデータベースロールを付与する必要があります。
 
 <Tabs groupId="sqlserver-versions" queryString>
   <TabItem value="sqlserver-2022" label="SQL Server 2022" default>
@@ -399,13 +425,13 @@ ScalarDB が SQL Server にアクセスするために使用する SQL Server �
 
 #### YugabyteDB
 
-ScalarDB が YugabyteDB にアクセスするために使用する YugabyteDB ロールには、以下のデータベースロールが許可されている必要があります:
+YugabyteDB を使用している場合、以下のデータベースロールを付与する必要があります。
 
 - `SUPERUSER`
 
 #### Amazon DynamoDB
 
-ScalarDB が DynamoDB にアクセスするために使用する AWS IAM ユーザーには、以下のアクションが許可されている必要があります:
+Amazon DynamoDB を使用している場合、以下のアクションを付与する必要があります。
 
 - `dynamodb:ConditionCheckItem`
 - `dynamodb:PutItem`
@@ -429,7 +455,7 @@ ScalarDB が DynamoDB にアクセスするために使用する AWS IAM ユー�
 
 #### Apache Cassandra
 
-ScalarDB が Cassandra にアクセスするために使用する Cassandra ロールには、以下の権限が許可されている必要があります:
+Apache Cassandra を使用している場合、以下の権限を付与する必要があります。
 
 <Tabs groupId="cassandra-versions" queryString>
   <TabItem value="cassandra-3.11" label="Cassandra 3.11" default>
@@ -448,30 +474,207 @@ ScalarDB が Cassandra にアクセスするために使用する Cassandra ロ�
   </TabItem>
 </Tabs>
 
-## 必要なポート
+## Cluster
 
-ScalarDB では、以下のポートにアクセスできる必要があります。これらは、必要に応じて設定可能なデフォルトのポート番号です:
+ScalarDB Cluster は、Core コンポーネントがクラスター化されたサーバーとして動作するためのクラスタリングソリューションを提供するコンポーネントです。詳細については、[ScalarDB 設計](./design.mdx)を参照してください。
 
-- **ScalarDB Cluster**
-  - 60053 (Administrative API / Transactional API / SQL API / ポーズ operation)
-  - 8080 (GraphQL)
-  - 9080 (メトリクス)
-- **ScalarDB Analytics**
-  - 11051 (カタログサービス)
-  - 11052 (メータリングサービス)
-  - Apache Spark が使用するポート番号は、Spark クラスターのデプロイ方法によって異なります。アクセス可能にする必要があるポートの詳細については、Spark サービスプロバイダーのドキュメントを参照してください。
+### 言語とランタイム
 
-## Kubernetes
+ScalarDB Cluster は、使いやすさのために gRPC で生成されたクライアントをラップする Java および .NET Client SDK を提供しています。
 
-ScalarDB は、本番環境では Kubernetes プラットフォーム上の Pod として提供されます。ScalarDB は次のプラットフォームとツールをサポートしています。
+#### Java
 
-### プラットフォーム
+ScalarDB Cluster の Java Client SDK は Maven Central Repository で利用できます。Gradle または Maven を使用して、アプリケーションのビルド依存関係としてライブラリを追加できます。詳細については、[ScalarDB Cluster Java Client SDK をビルドに追加する](scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#add-scalardb-cluster-java-client-sdk-to-your-build)を参照してください。
+
+ライブラリを利用したアプリケーションの構築には、以下の Java Development Kit (JDK) がサポートされています。
+
+- **[Oracle JDK](https://www.oracle.com/java/):** 8、11、17、または 21 (LTS バージョン)
+- **[OpenJDK](https://openjdk.org/) ([Eclipse Temurin](https://adoptium.net/temurin/)、[Amazon Corretto](https://aws.amazon.com/corretto/)、または [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/)):** 8、11、17、または 21 (LTS バージョン)
+
+#### .NET
+
+ScalarDB Cluster の .NET Client SDK は NuGet パッケージとして利用できます。詳細については、[SDK のインストール](scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-transactions.mdx#install-the-sdk)を参照してください。
+
+ライブラリを利用したアプリケーションの構築には、以下の .NET バージョンがサポートされています。
+
+- [.NET 8.0](https://dotnet.microsoft.com/en-us/download/dotnet/8.0)
+- [.NET 6.0](https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
+
+#### その他の言語
+
+ScalarDB Cluster は gRPC を使用するため、proto ファイルから生成されたクライアントを使用して、お好みの言語で独自のクライアントを作成することもできます。proto ファイルが必要な場合は、[サポートにお問い合わせ](https://www.scalar-labs.com/support)ください。
+
+### データベース
+
+ScalarDB Cluster は Core を使用してデータベースと対話するため、データベースの要件は Core と同じです。詳細については、[データベース](#データベース)を参照してください。
+
+### 必要なポート
+
+ScalarDB Cluster では、以下のポートにアクセスできる必要があります。これらは、必要に応じて設定可能なデフォルトのポート番号です:
+
+- 60053 (Administrative API / Transactional API / SQL API / ポーズ operation)
+- 8080 (GraphQL)
+- 9080 (メトリクス)
+
+### Kubernetes
+
+ScalarDB Cluster は、本番環境では Kubernetes プラットフォーム上の1つ以上の Pod で構成されるクラスターとして提供されます。ScalarDB Cluster は以下のプラットフォームとツールをサポートしています。
+
+#### プラットフォーム
 
 - **[Kubernetes](https://kubernetes.io/):** 1.28 - 1.32
-  - **[Amazon Elastic Kubernetes Service (EKS)](https://aws.amazon.com/jp/eks/)**
-  - **[Azure Kubernetes Service (AKS)](https://azure.microsoft.com/ja-jp/products/kubernetes-service)**
+  - **[Amazon Elastic Kubernetes Service (EKS)](https://aws.amazon.com/eks/)**
+  - **[Azure Kubernetes Service (AKS)](https://azure.microsoft.com/en-us/products/kubernetes-service)**
 - **[Red Hat OpenShift](https://www.redhat.com/en/technologies/cloud-computing/openshift):** TBD
 
-### パッケージマネージャー
+#### パッケージマネージャー
+
+- **[Helm](https://helm.sh/):** 3.5+
+
+## Analytics
+
+ScalarDB Analytics は、Core コンポーネントによって管理されるデータ、または ScalarDB を使用していないアプリケーションによって管理されるデータに対して、スケーラブルな分析処理を提供するコンポーネントです。詳細については、[ScalarDB 設計](./design.mdx)を参照してください。
+
+### Spark
+
+ScalarDB Analytics は、クエリエンジンに [Apache Spark](https://spark.apache.org/) を使用します。以下のバージョンの Spark をサポートしています。
+
+| ScalarDB Analytics バージョン | Spark バージョン | Scala バージョン |
+| :---------------------------- | :-------------- | :-------------- |
+| 3.16                          | 3.5、3.4        | 2.13、2.12      |
+| 3.15                          | 3.5、3.4        | 2.13、2.12      |
+| 3.14                          | 3.5、3.4        | 2.13、2.12      |
+
+### 言語とランタイム
+
+ScalarDB Analytics は、Spark 上でフェデレーテッドクエリを実行するための Java ライブラリを提供しています。また、Java Virtual Machine (JVM) 上で動作する ScalarDB Analytics CLI というツールも提供しています。
+
+:::note
+
+Spark と Scala はマイナーバージョン間で互換性がない場合があるため、ライブラリは `scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>` の形式で命名された、さまざまな Spark および Scala バージョン用の異なるアーティファクトを提供しています。使用している Spark および Scala バージョンと一致するアーティファクトを選択してください。たとえば、Spark 3.5 と Scala 2.13 を使用している場合は、`scalardb-analytics-spark-all-3.5_2.13` を指定する必要があります。
+
+:::
+
+#### Java
+
+ライブラリは Maven Central Repository で利用できます。Spark をセットアップする際にライブラリを指定する必要があります。詳細については、[ScalarDB Analytics のセットアップのための Spark 設定](scalardb-analytics/run-analytical-queries.mdx#scalardb-analytics-のセットアップのための-spark-設定)を参照してください。
+
+:::note
+
+ScalarDB Analytics ライブラリは、さまざまな Spark 環境と統合できるように JDK 11 で構築されています。
+
+:::
+
+ScalarDB Analytics CLI の実行では、以下の JRE が検証されサポートされています。
+
+- **[Oracle JDK](https://www.oracle.com/java/):** 21
+- **[OpenJDK](https://openjdk.org/) ([Eclipse Temurin](https://adoptium.net/temurin/)、[Amazon Corretto](https://aws.amazon.com/corretto/)、または [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/)):** 21
+
+### データベース
+
+ScalarDB Analytics は、以下のデータベースとそのバージョン上で動作します。
+
+#### ScalarDB
+
+ScalarDB Analytics は、ScalarDB Core および Cluster によって管理されるデータベース上で分析クエリを実行できます。以下に示すように、これらのデータベースと対話するために同じバージョンの ScalarDB Core ライブラリを使用します。
+
+| ScalarDB Analytics バージョン | ScalarDB Core バージョン |
+| :---------------------------- | :----------------------- |
+| 3.16                          | 3.16                     |
+| 3.15                          | 3.15                     |
+| 3.14                          | 3.14                     |
+
+サポートされているデータベースとそのバージョンについては、[データベース](#データベース)を参照してください。
+
+#### リレーショナルデータベース
+
+ScalarDB Analytics は、ScalarDB Core および Cluster によって**管理されていない**以下のリレーショナルデータベース上で分析クエリを実行できます。
+
+<Tabs groupId="RDBs" queryString>
+<TabItem value="Oracle_Database" label="Oracle Database" default>
+
+|           バージョン           | Oracle Database 23ai |
+| :----------------------------- | :------------------- |
+| **ScalarDB Analytics 3.16** | ✅                    |
+| **ScalarDB Analytics 3.15** | ✅                    |
+| **ScalarDB Analytics 3.14** | ✅                    |
+
+</TabItem>
+<TabItem value="MySQL" label="MySQL">
+
+|           バージョン           | MySQL 8.0 |
+| :----------------------------- | :-------- |
+| **ScalarDB Analytics 3.16** | ✅         |
+| **ScalarDB Analytics 3.15** | ✅         |
+| **ScalarDB Analytics 3.14** | ✅         |
+
+</TabItem>
+<TabItem value="PostgreSQL" label="PostgreSQL">
+
+|           バージョン           | PostgreSQL 16 |
+| :----------------------------- | :------------ |
+| **ScalarDB Analytics 3.16** | ✅             |
+| **ScalarDB Analytics 3.15** | ✅             |
+| **ScalarDB Analytics 3.14** | ✅             |
+
+</TabItem>
+<TabItem value="SQL_Server" label="SQL Server">
+
+|           バージョン           | SQL Server 2019 |
+| :----------------------------- | :-------------- |
+| **ScalarDB Analytics 3.16** | ✅               |
+| **ScalarDB Analytics 3.15** | ✅               |
+| **ScalarDB Analytics 3.14** | ✅               |
+
+</TabItem>
+</Tabs>
+
+#### NoSQL データベース
+
+ScalarDB Analytics は、ScalarDB Core および Cluster によって**管理されていない**以下の NoSQL データベース上で分析クエリを実行できます。
+
+<Tabs groupId="NoSQL" queryString>
+<TabItem value="Amazon_DynamoDB" label="Amazon DynamoDB" default>
+
+|           バージョン           | DynamoDB |
+| :----------------------------- | :------- |
+| **ScalarDB Analytics 3.16** | ✅        |
+| **ScalarDB Analytics 3.15** | ✅        |
+| **ScalarDB Analytics 3.14** | ✅        |
+
+</TabItem>
+</Tabs>
+
+### データベース権限要件
+
+ScalarDB Analytics は、基盤となるデータベースで操作を実行するために読み取り権限が必要です。
+
+ScalarDB Core および Cluster で管理されているデータベースについては、[データベース権限要件](requirements.mdx#データベース権限要件)に従ってデータベースがすでに設定されているため、追加の設定は必要ありません。
+
+ScalarDB Core および Cluster で**管理されていない**データベースについては、データソースに対する読み取り権限を持つユーザーでデータソースを登録してください。データソースの登録手順については、[データソースの設定](scalardb-analytics/run-analytical-queries.mdx#データソースの設定)を参照してください。
+
+ScalarDB Analytics サーバーは、そのデータベース内のカタログ情報を管理するための権限も必要です。
+[データベース権限要件](requirements.mdx#データベース権限要件)に従って権限を持つユーザーを作成し、そのユーザーを ScalarDB Analytics サーバー設定に設定してください。
+
+### 必要なポート
+
+ScalarDB Analytics では、以下のポートにアクセスできる必要があります。これらは、必要に応じて設定可能なデフォルトのポート番号です:
+
+- 11051 (カタログサービス)
+- 11052 (メータリングサービス)
+- Apache Spark が使用するポート番号は、Spark クラスターのデプロイ方法によって異なります。アクセス可能にする必要があるポートの詳細については、Spark サービスプロバイダーのドキュメントを参照してください。
+
+### Kubernetes
+
+ScalarDB Analytics のサーバーコンポーネント (ScalarDB Analytics サーバー) は、本番環境では Kubernetes プラットフォーム上の Pod として提供されます。ScalarDB Analytics は以下のプラットフォームとツールをサポートしています。
+
+#### プラットフォーム
+
+- **[Kubernetes](https://kubernetes.io/):** 1.28 - 1.32
+  - **[Amazon Elastic Kubernetes Service (EKS)](https://aws.amazon.com/eks/)**
+  - **[Azure Kubernetes Service (AKS)](https://azure.microsoft.com/en-us/products/kubernetes-service)**
+- **[Red Hat OpenShift](https://www.redhat.com/en/technologies/cloud-computing/openshift):** TBD
+
+#### パッケージマネージャー
 
 - **[Helm](https://helm.sh/):** 3.5+
