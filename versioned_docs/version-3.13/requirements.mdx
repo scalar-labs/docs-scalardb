@@ -30,7 +30,7 @@ For building applications that integrate with the library, the following Java De
 - **[Oracle JDK](https://www.oracle.com/java/):** 8, 11, 17 or 21 (LTS versions)
 - **[OpenJDK](https://openjdk.org/) ([Eclipse Temurin](https://adoptium.net/temurin/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/)):** 8, 11, 17 or 21 (LTS versions)
 
-The same versioned Java Runtime Environments (JREs) are also supported for running the tools.
+Java Runtime Environments (JREs) of these JDKs are also supported for running the tools.
 
 ### Databases
 
@@ -488,7 +488,7 @@ If you're using Apache Cassandra, the following privileges must be granted.
 
 ## Cluster
 
-ScalarDB Cluster is a component that provides a clustering solution for the Core component to work as a clustered server.  For more information, see [ScalarDB Design](./design.mdx).
+ScalarDB Cluster is a component that provides a clustering solution for the Core component to work as a clustered server. For more information, see [ScalarDB Design](./design.mdx).
 
 ### Languages and runtimes
 
@@ -505,7 +505,7 @@ For building applications that integrate with the library, the following Java De
 
 #### .NET
 
-The .NET client SDK for ScalarDB Cluster is available as a NuGet package. For more details, see [Install the SDK](scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-transactions#install-the-sdk).
+The .NET client SDK for ScalarDB Cluster is available as a NuGet package. For more details, see [Install the SDK](scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-transactions.mdx#install-the-sdk).
 
 For building applications that integrate with the library, the following .NET versions are verified and supported:
 
@@ -522,16 +522,11 @@ Since ScalarDB Cluster uses Core to interact with databases, the requirements fo
 
 ### Required ports
 
-ScalarDB requires the following ports to be accessible. These default port numbers can be configured as needed:
+ScalarDB Cluster requires the following ports to be accessible. These default port numbers can be configured as needed:
 
-- **ScalarDB Cluster**
-  - 60053 (Administrative API / Transactional API / SQL API / pause operation)
-  - 8080 (GraphQL)
-  - 9080 (metrics)
-- **ScalarDB Analytics**
-  - 11051 (catalog service)
-  - 11052 (metering service)
-  - The port number that Apache Spark uses depends on how you deploy the Spark cluster. For details on which ports you need to make accessible, please refer to your Spark service provider's documentation.
+- 60053 (Administrative API / Transactional API / SQL API / pause operation)
+- 8080 (GraphQL)
+- 9080 (metrics)
 
 ### Kubernetes
 
