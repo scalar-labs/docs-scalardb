@@ -10,13 +10,14 @@ import TabItem from "@theme/TabItem";
 # Deploy ScalarDB Analytics in Public Cloud Environments
 
 This guide explains how to deploy ScalarDB Analytics in a public cloud environment. ScalarDB Analytics consists of two main components: a ScalarDB Analytics server and Apache Spark. In this guide, you can choose either Amazon EMR or Databricks for the Spark environment.
+
 For details about ScalarDB Analytics, refer to [ScalarDB Analytics Design](./design.mdx).
 
-## Deploy ScalarDB Analytics catalog server
+## Deploy ScalarDB Analytics server
 
-ScalarDB Analytics requires a catalog server to manage metadata and data source connections. The catalog server should be deployed by using Helm charts on a Kubernetes cluster.
+ScalarDB Analytics requires a catalog server to manage metadata and data source connections. The catalog server should be deployed by using Helm Charts on a Kubernetes cluster.
 
-For detailed deployment instructions, see [TBD - Helm chart deployment guide].
+For detailed deployment instructions, see [How to install Scalar products through AWS Marketplace](../scalar-kubernetes/AwsMarketplaceGuide?products=scalardb-analytics-server).
 
 After deploying the catalog server, note the following information for Spark configuration:
 
@@ -156,7 +157,7 @@ spark.sql.catalog.<CATALOG_NAME>.server.metering.port 11052
 Replace the placeholders:
 
 - `<CATALOG_NAME>`: The name of the catalog. This must match a catalog created on the ScalarDB Analytics server.
-- `<CATALOG_SERVER_HOST>`: The host address of your ScalarDB Analytics catalog server.
+- `<CATALOG_SERVER_HOST>`: The host address of your ScalarDB Analytics server.
 
 4. Add the library of ScalarDB Analytics to the launched cluster as a Maven dependency. For details on how to add the library, refer to the [Databricks cluster libraries documentation](https://docs.databricks.com/en/libraries/cluster-libraries.html).
 

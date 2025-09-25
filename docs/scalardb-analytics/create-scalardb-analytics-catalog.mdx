@@ -18,7 +18,7 @@ Catalog information is managed by a component called a ScalarDB Analytics server
 
 ### Prerequisites
 
-The ScalarDB Analytics server requires a database to store catalog information. We refer to this database as the **metadata database** throughout this documentation. ScalarDB Analytics supports the following databases for the metadata database:
+The ScalarDB Analytics server requires a database to store catalog information. This database is referred to as the **metadata database** throughout this documentation. ScalarDB Analytics supports the following databases for the metadata database:
 
 - PostgreSQL
 - MySQL
@@ -56,7 +56,9 @@ scalar.db.analytics.server.metering.storage.path=/var/scalardb-analytics/meterin
 ```
 
 :::note
-For production deployments, configure metering storage to use object storage (for example, Amazon S3, Google Cloud Storage, or Azure Blob Storage) instead of the local filesystem.For detailed configuration options, see the [Configuration reference](./configurations.mdx).
+
+For production deployments, configure metering storage to use object storage (for example, Amazon S3, Google Cloud Storage, or Azure Blob Storage) instead of the local filesystem. For detailed configuration options, see [ScalarDB Analytics Configurations](./configurations.mdx).
+
 :::
 
 ### Start the ScalarDB Analytics server
@@ -108,6 +110,8 @@ docker exec scalardb-analytics-server grpc-health-probe -addr=localhost:11051 -t
 
 ScalarDB Analytics CLI is a command-line tool that communicates with the ScalarDB Analytics server to manage catalogs, register data sources, and perform administrative tasks.
 
+For details, see the [ScalarDB Analytics CLI Command Reference](./reference-cli-command.mdx)
+
 ### Install the CLI
 
 The `scalardb-analytics-cli` tool is available as a container image:
@@ -146,7 +150,7 @@ scalar.db.analytics.client.server.tls.ca_root_cert_path=/path/to/ca.crt
 scalar.db.analytics.client.server.tls.override_authority=analytics.example.com
 ```
 
-For detailed configuration options, see the [Configuration reference](./configurations.mdx).
+For detailed configuration options, see [ScalarDB Analytics Configurations](./configurations.mdx).
 
 ### Set up an alias (optional)
 
