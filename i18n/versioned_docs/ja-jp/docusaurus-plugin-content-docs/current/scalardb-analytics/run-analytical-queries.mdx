@@ -23,13 +23,7 @@ ScalarDB Analytics は現在、実行エンジンとして Spark を使用し、
 ### 前提条件
 
 - **ScalarDB Analytics server:** カタログメタデータを管理し、データソースに接続する実行中のインスタンス。サーバーには少なくとも1つのデータソースが登録されている必要があります。データソースの登録については、[ScalarDB Analytics カタログの作成](./create-scalardb-analytics-catalog.mdx)を参照してください。
-- **Apache Spark:** 互換性のあるバージョンの Apache Spark。サポートされているバージョンについては、[バージョン互換性](#バージョン互換性)を参照してください。まだ Spark をインストールしていない場合は、[Apache Spark のウェブサイト](https://spark.apache.org/downloads.html)から Spark ディストリビューションをダウンロードしてください。
-
-:::note
-
-Apache Spark は Scala 2.12 または Scala 2.13 でビルドされています。ScalarDB Analytics は両方のバージョンをサポートしています。後で適切なバージョンの ScalarDB Analytics を選択できるように、使用しているバージョンを確認してください。詳細については、[バージョン互換性](#バージョン互換性)を参照してください。
-
-:::
+- **Apache Spark:** 互換性のあるバージョンの Apache Spark。サポートされているバージョンについては、[Spark](../requirements.mdx#spark)を参照してください。まだ Spark をインストールしていない場合は、[Apache Spark のウェブサイト](https://spark.apache.org/downloads.html)から Spark ディストリビューションをダウンロードしてください。
 
 ### ScalarDB Analytics のセットアップのための Spark 設定
 
@@ -77,7 +71,7 @@ spark.sql.catalog.myanalytics.server.metering.port 11052
 
 :::important
 
-Spark 設定のカタログ名は、CLI を使用して ScalarDB Analytics サーバー上で作成されたカタログの名前と一致させる必要があります。たとえば、サーバー上で `production` という名前のカタログを作成した場合、Spark 設定プロパティでカタログ名として `production` を使用する必要があります（例：`spark.sql.catalog.production`、`spark.sql.catalog.production.server.host` など）。
+Spark 設定のカタログ名は、CLI を使用して ScalarDB Analytics サーバー上で作成されたカタログの名前と一致させる必要があります。たとえば、サーバー上で `production` という名前のカタログを作成した場合、Spark 設定プロパティでカタログ名として `production` を使用する必要があります (例: `spark.sql.catalog.production`、`spark.sql.catalog.production.server.host` など)。
 
 :::
 
@@ -115,11 +109,11 @@ ScalarDB Analytics を使用した Spark アプリケーションの開発には
 
 :::note
 
-環境によっては、上記のすべての方法を使用できない場合があります。サポートされる機能とデプロイメントオプションの詳細については、[サポートされるマネージド Spark サービスとそのアプリケーションタイプ](./deployment.mdx#サポートされるマネージド-spark-サービスとそのアプリケーションタイプ)を参照してください。
+環境によっては、上記のすべての方法を使用できない場合があります。サポートされる機能とデプロイメントオプションの詳細については、[サポートされているマネージド Spark サービスとそのアプリケーションタイプ](./deployment.mdx#サポートされているマネージド-spark-サービスとそのアプリケーションタイプ)を参照してください。
 
 :::
 
-これらのすべての方法で、同じテーブル識別子形式を使用して ScalarDB Analytics のテーブルを参照できます。ScalarDB Analytics がデータソースからカタログ情報をマッピングする方法の詳細については、[カタログ情報リファレンス](./reference-data-source.mdx#カタログ情報リファレンス)を参照してください。
+これらのすべての方法で、同じテーブル識別子形式を使用して ScalarDB Analytics のテーブルを参照できます。ScalarDB Analytics がデータソースからカタログ情報をマッピングする方法の詳細については、[カタログ情報リファレンス](./design.mdx#データソース別のカタログ情報マッピング)を参照してください。
 
 <Tabs groupId="spark-application-type" queryString>
   <TabItem value="spark-driver" label="Spark ドライバーアプリケーション">
@@ -132,7 +126,7 @@ ScalarDB Analytics のテーブルからデータを読み取るには、通常�
 
 ```kotlin
 dependencies {
-    implementation("com.scalar-labs:scalardb-analytics-spark-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>")
+    implementation("com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>")
 }
 ```
 
@@ -238,7 +232,7 @@ Spark Connect の使用方法の詳細については、[Spark Connect のドキ
 
 ScalarDB Analytics は、データソース、名前空間、テーブル、列を含む独自のカタログを管理します。この情報は自動的に Spark カタログにマッピングされます。このセクションでは、ScalarDB Analytics がカタログ情報を Spark カタログにマッピングする方法について説明します。
 
-データソース内の情報が ScalarDB Analytics カタログにマッピングされる方法の詳細については、[データソース別のカタログ情報マッピング](./design.mdx#データソース別のカタログ情報マッピング)を参照してください。
+データソース内の情報が ScalarDB Analytics カタログにマッピングされる方法の詳細については、[データソース別のカタログ構造マッピング](./reference-data-source.mdx#データソース別のカタログ構造マッピング)を参照してください。
 
 ### カタログ構造のマッピング
 
@@ -279,16 +273,3 @@ ScalarDB Analytics は、カタログ内のデータ型を Spark データ型に
 | `TIMESTAMPTZ`     | `Timestamp`        |
 | `DURATION`        | `CalendarInterval` |
 | `INTERVAL`        | `CalendarInterval` |
-
-## バージョン互換性
-
-Spark と Scala は異なるマイナーバージョン間で互換性がない場合があるため、ScalarDB Analytics は様々な Spark と Scala バージョン向けに `scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>` という形式で異なるアーティファクトを提供しています。使用している Spark と Scala のバージョンに合わせてアーティファクトを選択してください。例えば、Spark 3.5 と Scala 2.13 を使用している場合は、`scalardb-analytics-spark-all-3.5_2.13` を指定する必要があります。
-
-Java バージョンに関しては、ScalarDB Analytics は Java 8以降をサポートしています。
-
-以下は、ScalarDB Analytics の各バージョンでサポートされている Spark と Scalar のバージョンのリストです。
-
-| ScalarDB Analytics バージョン | ScalarDB バージョン | サポートされている Spark バージョン | サポートされている Scala バージョン | 最小 Java バージョン |
-| :---------------------------- | :------------------ | :---------------------------------- | :---------------------------------- | :------------------- |
-| 3.16                          | 3.16                | 3.5, 3.4                            | 2.13, 2.12                          | 8                    |
-| 3.15                          | 3.15                | 3.5, 3.4                            | 2.13, 2.12                          | 8                    |

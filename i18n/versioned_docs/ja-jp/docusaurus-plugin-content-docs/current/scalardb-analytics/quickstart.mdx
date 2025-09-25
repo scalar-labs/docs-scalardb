@@ -15,7 +15,7 @@ import TranslationBanner from "/src/components/_translation-ja-jp.mdx";
 
 ## 何を構築するか
 
-このチュートリアルでは、以下のようなサンプル電子商取引分析環境をセットアップします：
+このチュートリアルでは、以下のようなサンプル電子商取引分析環境をセットアップします:
 
 - 顧客データは PostgreSQL に格納
 - 注文データは ScalarDB を介して MySQL で管理
@@ -35,7 +35,7 @@ import TranslationBanner from "/src/components/_translation-ja-jp.mdx";
 
 ### リポジトリをクローンする
 
-**ターミナル** を開き、ScalarDB サンプルリポジトリをクローンします：
+**ターミナル** を開き、ScalarDB サンプルリポジトリをクローンします:
 
 ```console
 git clone https://github.com/scalar-labs/scalardb-samples
@@ -44,7 +44,7 @@ cd scalardb-samples/scalardb-analytics-sample
 
 ### ライセンスを設定する
 
-ScalarDB Analytics ライセンスを追加するには、`config/scalardb-analytics-server.properties` を開きます。次に、ライセンス設定行のコメントを外して更新し、`<YOUR_LICENSE_KEY>` と `<YOUR_LICENSE_CERT_PEM>` を実際のライセンス情報に置き換えます：
+ScalarDB Analytics ライセンスを追加するには、`config/scalardb-analytics-server.properties` を開きます。次に、ライセンス設定行のコメントを外して更新し、`<YOUR_LICENSE_KEY>` と `<YOUR_LICENSE_CERT_PEM>` を実際のライセンス情報に置き換えます:
 
 ```properties
 # License configuration (required for production)
@@ -60,13 +60,13 @@ scalar.db.analytics.server.licensing.license_check_cert_pem=<YOUR_LICENSE_CERT_P
 docker compose up -d --wait
 ```
 
-このコマンドは、以下のサービスをローカルで起動します：
+このコマンドは、以下のサービスをローカルで起動します:
 
 - **ScalarDB Analytics コンポーネント:**
   - **ScalarDB Analytics サーバー:** すべてのデータソースのメタデータを管理し、クエリ実行のための統一インターフェースを提供します。
 - **サンプルデータベース:**
-  - **PostgreSQL:** ScalarDB 管理外データベースとして使用（直接アクセス）
-  - **Cassandra および MySQL:** ScalarDB 管理下データベースとして使用（ScalarDB のトランザクションレイヤー経由でアクセス）
+  - **PostgreSQL:** ScalarDB 管理外データベースとして使用 (直接アクセス)
+  - **Cassandra および MySQL:** ScalarDB 管理下データベースとして使用 (ScalarDB のトランザクションレイヤー経由でアクセス)
 
 このガイドでは、PostgreSQL は ScalarDB トランザクションによって管理されない **ScalarDB 管理外データベース** と呼ばれ、Cassandra および MySQL は ScalarDB トランザクションによって管理される **ScalarDB 管理下データベース** と呼ばれます。
 
@@ -89,7 +89,7 @@ ScalarDB 内では、`cassandrans` と `mysqlns` がそれぞれ Cassandra と M
 
 ### カタログを作成する
 
-まず、データソースを整理するための新しいカタログを作成します：
+まず、データソースを整理するための新しいカタログを作成します:
 
 ```console
 docker compose run --rm scalardb-analytics-cli catalog create --catalog sample_catalog
@@ -97,7 +97,7 @@ docker compose run --rm scalardb-analytics-cli catalog create --catalog sample_c
 
 ### ScalarDB をデータソースとして登録する
 
-ScalarDB が管理するデータベースを登録します：
+ScalarDB が管理するデータベースを登録します:
 
 ```console
 docker compose run --rm scalardb-analytics-cli data-source register \
@@ -108,7 +108,7 @@ docker compose run --rm scalardb-analytics-cli data-source register \
 
 ### PostgreSQL をデータソースとして登録する
 
-PostgreSQL データベースを登録します：
+PostgreSQL データベースを登録します:
 
 ```console
 docker compose run --rm scalardb-analytics-cli data-source register \
@@ -127,7 +127,7 @@ Spark SQL コンソールを起動すると、**spark-defaults.conf** の設定�
 
 ### 名前空間マッピング
 
-設定されたデータソースの以下のテーブルは、Spark SQL テーブルにマッピングされ、異なるデータソース間でのシームレスなクエリが可能になります：
+設定されたデータソースの以下のテーブルは、Spark SQL テーブルにマッピングされ、異なるデータソース間でのシームレスなクエリが可能になります:
 
 - PostgreSQL:
   - `sample_catalog.postgres.sample_ns.customer`
@@ -142,13 +142,13 @@ ScalarDB Analytics 環境のセットアップが完了したので、Spark SQL 
 
 ### クエリ 1: 出荷パフォーマンスと返品の分析
 
-以下の SQL クエリは、Cassandra の明細項目データを調査することで、基本的な分析機能を示します。このクエリは以下のようなビジネス上の質問に答えるのに役立ちます：
+以下の SQL クエリは、Cassandra の明細項目データを調査することで、基本的な分析機能を示します。このクエリは以下のようなビジネス上の質問に答えるのに役立ちます:
 
 - 返品された商品対正常に出荷された商品の割合は？
 - 返品の財務的影響は？
 - 注文ステータスによって価格設定はどう異なるか？
 
-このクエリは、返品ステータスとラインステータス別にグループ化された主要メトリックを計算します：
+このクエリは、返品ステータスとラインステータス別にグループ化された主要メトリックを計算します:
 
 ```sql
 SELECT
@@ -185,11 +185,11 @@ R       F       1461    2190869.9676265526      1284178.4378283697      1814151.
 
 ### クエリ 2: 収益最適化のためのクロスデータベース分析
 
-以下の SQL クエリは、ScalarDB Analytics の主要な機能を示します：データ移動なしで異なるデータベース間のデータを結合する機能です。具体的には、このクエリは ETL パイプラインなどによるデータ移動を必要とせずに、PostgreSQL の顧客テーブル、MySQL の注文テーブル、Cassandra の明細項目を結合します。このクエリは以下のようなビジネス上の質問に答えるのに役立ちます：
+以下の SQL クエリは、ScalarDB Analytics の主要な機能を示します: データ移動なしで異なるデータベース間のデータを結合する機能です。具体的には、このクエリは ETL パイプラインなどによるデータ移動を必要とせずに、PostgreSQL の顧客テーブル、MySQL の注文テーブル、Cassandra の明細項目を結合します。このクエリは以下のようなビジネス上の質問に答えるのに役立ちます:
 
 - フルフィルメントを優先するために、特定の顧客セグメントからのまだ出荷されていない高額注文は何か？
 
-このクエリは、AUTOMOBILE セグメントの顧客の未出荷注文を収益順に見つけます：
+このクエリは、AUTOMOBILE セグメントの顧客の未出荷注文を収益順に見つけます:
 
 ```sql
 SELECT

@@ -10,13 +10,13 @@ import TranslationBanner from "/src/components/_translation-ja-jp.mdx";
 
 <TranslationBanner />
 
-ScalarDB Analytics CLI は階層構造のコマンドを使用します：
+ScalarDB Analytics CLI は階層構造のコマンドを使用します:
 
 ```
 scalardb-analytics-cli <resource> <operation> [options]
 ```
 
-利用可能なリソース：
+利用可能なリソース:
 
 - **catalog:** データソースを整理するためのトップレベルコンテナ
 - **data-source:** カタログ内に登録された外部データベース
@@ -47,14 +47,14 @@ scalardb-analytics-cli catalog list
 
 特定のカタログの詳細情報を表示します。カタログは名前または UUID で指定できます。
 
-カタログ名で指定する場合：
+カタログ名で指定する場合:
 ```
 scalardb-analytics-cli catalog describe --catalog <catalog-name>
 ```
 
 `<catalog-name>` を表示したいカタログの名前に置き換えてください。
 
-カタログ ID で指定する場合：
+カタログ ID で指定する場合:
 ```
 scalardb-analytics-cli catalog describe --catalog-id <catalog-uuid>
 ```
@@ -65,14 +65,14 @@ scalardb-analytics-cli catalog describe --catalog-id <catalog-uuid>
 
 システムからカタログを削除します。カタログにデータソースが含まれている場合、`--cascade` オプションを使用してすべてのコンテンツを削除しない限り、操作は失敗します。
 
-空のカタログを削除する場合：
+空のカタログを削除する場合:
 ```
 scalardb-analytics-cli catalog delete --catalog <catalog-name>
 ```
 
 `<catalog-name>` を削除したいカタログの名前に置き換えてください。
 
-カタログとそのすべてのコンテンツを削除する場合：
+カタログとそのすべてのコンテンツを削除する場合:
 ```
 scalardb-analytics-cli catalog delete --catalog <catalog-name> --cascade
 ```
@@ -91,7 +91,7 @@ scalardb-analytics-cli data-source register --data-source-json <path-to-json>
 
 `<path-to-json>` をデータソース登録ファイルのファイルパスに置き換えてください。
 
-`register` コマンドにはデータソース登録ファイルが必要です。ファイル形式については、[データソース設定](#data-source-configuration)セクションで説明されています。
+`register` コマンドにはデータソース登録ファイルが必要です。ファイル形式については、[データソース登録ファイル形式](reference-data-source.mdx#データソース登録ファイル形式)セクションで説明されています。
 
 ### すべてのデータソースを一覧表示
 
@@ -107,16 +107,16 @@ scalardb-analytics-cli data-source list --catalog <catalog-name>
 
 特定のデータソースの詳細情報を表示します。データソースはカタログ内の名前または UUID で指定できます。
 
-カタログとデータソース名で指定する場合：
+カタログとデータソース名で指定する場合:
 ```
 scalardb-analytics-cli data-source describe --catalog <catalog-name> --data-source <data-source-name>
 ```
 
-以下を置き換えてください：
+以下を置き換えてください:
 - `<catalog-name>` をデータソースを含むカタログの名前
 - `<data-source-name>` を表示したいデータソースの名前
 
-データソース ID で指定する場合：
+データソース ID で指定する場合:
 ```
 scalardb-analytics-cli data-source describe --data-source-id <data-source-uuid>
 ```
@@ -127,16 +127,16 @@ scalardb-analytics-cli data-source describe --data-source-id <data-source-uuid>
 
 カタログからデータソースを削除します。データソースに名前空間が含まれている場合、`--cascade` オプションを使用してすべてのコンテンツを削除しない限り、操作は失敗します。
 
-空のデータソースを削除する場合：
+空のデータソースを削除する場合:
 ```
 scalardb-analytics-cli data-source delete --catalog <catalog-name> --data-source <data-source-name>
 ```
 
-以下を置き換えてください：
+以下を置き換えてください:
 - `<catalog-name>` をデータソースを含むカタログの名前
 - `<data-source-name>` を削除したいデータソースの名前
 
-データソースとそのすべてのコンテンツを削除する場合：
+データソースとそのすべてのコンテンツを削除する場合:
 ```
 scalardb-analytics-cli data-source delete --catalog <catalog-name> --data-source <data-source-name> --cascade
 ```
@@ -153,24 +153,24 @@ scalardb-analytics-cli data-source delete --catalog <catalog-name> --data-source
 scalardb-analytics-cli namespace list --catalog <catalog-name>
 ```
 
-以下を置き換えてください：
+以下を置き換えてください:
 - `<catalog-name>` を名前空間を一覧表示したいカタログの名前
 
 ### 名前空間の詳細を表示
 
-特定の名前空間の詳細情報を表示します。名前空間はデータソース内の名前または UUID で指定できます。ネストされた名前空間の場合、`.` を区切り文字として使用します（例：`--namespace parent.child`）。
+特定の名前空間の詳細情報を表示します。名前空間はデータソース内の名前または UUID で指定できます。ネストされた名前空間の場合、`.` を区切り文字として使用します (例: `--namespace parent.child`)。
 
-カタログ、データソース、名前空間名で指定する場合：
+カタログ、データソース、名前空間名で指定する場合:
 ```
 scalardb-analytics-cli namespace describe --catalog <catalog-name> --data-source <data-source-name> --namespace <namespace-name>
 ```
 
-以下を置き換えてください：
+以下を置き換えてください:
 - `<catalog-name>` をデータソースを含むカタログの名前
 - `<data-source-name>` を名前空間を含むデータソースの名前
 - `<namespace-name>` を表示したい名前空間の名前
 
-名前空間 ID で指定する場合：
+名前空間 ID で指定する場合:
 ```
 scalardb-analytics-cli namespace describe --namespace-id <namespace-uuid>
 ```
@@ -189,25 +189,25 @@ scalardb-analytics-cli namespace describe --namespace-id <namespace-uuid>
 scalardb-analytics-cli table list --catalog <catalog-name>
 ```
 
-以下を置き換えてください：
+以下を置き換えてください:
 - `<catalog-name>` をデータソースを含むカタログの名前
 
 ### テーブルスキーマを表示
 
-特定のテーブルのすべてのカラムを含むスキーマ情報を表示します。テーブルは名前空間内の名前または UUID で指定できます。ネストされた名前空間の場合、`.` を区切り文字として使用します（例：`--namespace parent.child`）。
+特定のテーブルのすべてのカラムを含むスキーマ情報を表示します。テーブルは名前空間内の名前または UUID で指定できます。ネストされた名前空間の場合、`.` を区切り文字として使用します (例: `--namespace parent.child`)。
 
-カタログ、データソース、名前空間、テーブル名で指定する場合：
+カタログ、データソース、名前空間、テーブル名で指定する場合:
 ```
 scalardb-analytics-cli table describe --catalog <catalog-name> --data-source <data-source-name> --namespace <namespace-name> --table <table-name>
 ```
 
-以下を置き換えてください：
+以下を置き換えてください:
 - `<catalog-name>` をデータソースを含むカタログの名前
 - `<data-source-name>` を名前空間を含むデータソースの名前
 - `<namespace-name>` をテーブルを含む名前空間の名前
 - `<table-name>` を表示したいテーブルの名前
 
-テーブル ID で指定する場合：
+テーブル ID で指定する場合:
 ```
 scalardb-analytics-cli table describe --table-id <table-uuid>
 ```
