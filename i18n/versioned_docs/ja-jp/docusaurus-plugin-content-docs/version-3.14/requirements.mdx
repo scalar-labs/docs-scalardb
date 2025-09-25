@@ -522,10 +522,10 @@ ScalarDB Cluster は、本番環境では Kubernetes プラットフォーム上
 
 #### プラットフォーム
 
-- **[Kubernetes](https://kubernetes.io/):** 1.28 - 1.32
-  - **[Amazon Elastic Kubernetes Service (EKS)](https://aws.amazon.com/eks/)**
-  - **[Azure Kubernetes Service (AKS)](https://azure.microsoft.com/en-us/products/kubernetes-service)**
-- **[Red Hat OpenShift](https://www.redhat.com/en/technologies/cloud-computing/openshift):** TBD
+- **[Kubernetes](https://kubernetes.io/):** 1.30 - 1.33
+  - **[Amazon Elastic Kubernetes Service (EKS)](https://aws.amazon.com/jp/eks)**
+  - **[Azure Kubernetes Service (AKS)](https://azure.microsoft.com/ja-jp/products/kubernetes-service)**
+- **[Red Hat OpenShift](https://www.redhat.com/ja/technologies/cloud-computing/openshift):** TBD
 
 #### パッケージマネージャー
 
@@ -667,6 +667,171 @@ ScalarDB Analytics では、以下のポートにアクセスできる必要が�
 ### Kubernetes
 
 ScalarDB Analytics のサーバーコンポーネント (ScalarDB Analytics サーバー) は、本番環境では Kubernetes プラットフォーム上の Pod として提供されます。ScalarDB Analytics は以下のプラットフォームとツールをサポートしています。
+
+#### プラットフォーム
+
+- **[Kubernetes](https://kubernetes.io/):** 1.30 - 1.33
+  - **[Amazon Elastic Kubernetes Service (EKS)](https://aws.amazon.com/jp/eks)**
+  - **[Azure Kubernetes Service (AKS)](https://azure.microsoft.com/ja-jp/products/kubernetes-service)**
+- **[Red Hat OpenShift](https://www.redhat.com/jp/technologies/cloud-computing/openshift):** TBD
+
+#### パッケージマネージャー
+
+- **[Helm](https://helm.sh/):** 3.5+
+
+## Analytics
+
+ScalarDB Analytics は、Core コンポーネントによって管理されるデータ、または ScalarDB を使用していないアプリケーションによって管理されるデータに対して、スケーラブルな分析処理を提供するコンポーネントです。詳細については、[ScalarDB 設計](./design.mdx) を参照してください。
+
+### Spark
+
+ScalarDB Analytics は、クエリエンジンに [Apache Spark](https://spark.apache.org/) を使用します。以下のバージョンの Spark をサポートしています。
+
+| ScalarDB Analytics バージョン | Spark バージョン | Scala バージョン |
+| :---------------------------- | :-------------- | :-------------- |
+| 3.16                          | 3.5、3.4        | 2.13、2.12      |
+| 3.15                          | 3.5、3.4        | 2.13、2.12      |
+| 3.14                          | 3.5、3.4        | 2.13、2.12      |
+
+### 言語とランタイム
+
+ScalarDB Analytics は、Spark 上でフェデレーテッドクエリを実行するための Java ライブラリを提供しています。また、Java Virtual Machine（JVM）上で動作する ScalarDB Analytics CLI というツールも提供しています。
+
+:::note
+
+Spark と Scala はマイナーバージョン間で互換性がない場合があるため、ライブラリは `scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>` の形式で命名された、さまざまな Spark および Scala バージョン用の異なるアーティファクトを提供しています。使用している Spark および Scala バージョンと一致するアーティファクトを選択してください。たとえば、Spark 3.5 と Scala 2.13 を使用している場合は、`scalardb-analytics-spark-all-3.5_2.13` を指定する必要があります。
+
+:::
+
+#### Java
+
+ライブラリは Maven Central Repository から取得できます。Spark をセットアップする際にライブラリを指定する必要があります。詳細については、[ScalarDB Analytics のセットアップのための Spark 設定](scalardb-analytics/run-analytical-queries.mdx#scalardb-analytics-のセットアップのための-spark-設定)を参照してください。
+
+:::note
+
+ScalarDB Analytics ライブラリは、さまざまな Spark 環境と統合できるように JDK 11 で構築されています。
+
+:::
+
+ScalarDB Analytics CLI の実行では、以下の JRE が検証されサポートされています。
+
+- **[Oracle JDK](https://www.oracle.com/java/):** 21
+- **[OpenJDK](https://openjdk.org/) ([Eclipse Temurin](https://adoptium.net/temurin/)、[Amazon Corretto](https://aws.amazon.com/corretto/)、または [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/)):** 21
+
+### データベース
+
+ScalarDB Analytics は、以下のデータベースとそのバージョン上で動作します。
+
+#### ScalarDB
+
+ScalarDB Analytics は、ScalarDB Core および Cluster によって管理されるデータベース上で分析クエリを実行できます。以下に示すように、これらのデータベースと対話するために同じバージョンの ScalarDB Core ライブラリを使用します。
+
+| ScalarDB Analytics バージョン | ScalarDB Core バージョン |
+| :---------------------------- | :----------------------- |
+| 3.16                          | 3.16                     |
+| 3.15                          | 3.15                     |
+| 3.14                          | 3.14                     |
+
+サポートされているデータベースとそのバージョンについては、[データベース](#データベース) を参照してください。
+
+#### リレーショナルデータベース
+
+ScalarDB Analytics は、ScalarDB Core および Cluster によって**管理されていない**以下のリレーショナルデータベース上で分析クエリを実行できます。
+
+<Tabs groupId="RDBs" queryString>
+<TabItem value="Oracle_Database" label="Oracle Database" default>
+
+|           バージョン           | Oracle Database 23ai |
+| :----------------------------- | :------------------- |
+| **ScalarDB Analytics 3.16** | ✅                    |
+| **ScalarDB Analytics 3.15** | ✅                    |
+| **ScalarDB Analytics 3.14** | ✅                    |
+
+</TabItem>
+<TabItem value="MySQL" label="MySQL">
+
+|           バージョン           | MySQL 8.0 |
+| :----------------------------- | :-------- |
+| **ScalarDB Analytics 3.16** | ✅         |
+| **ScalarDB Analytics 3.15** | ✅         |
+| **ScalarDB Analytics 3.14** | ✅         |
+
+</TabItem>
+<TabItem value="PostgreSQL" label="PostgreSQL">
+
+|           バージョン           | PostgreSQL 16 |
+| :----------------------------- | :------------ |
+| **ScalarDB Analytics 3.16** | ✅             |
+| **ScalarDB Analytics 3.15** | ✅             |
+| **ScalarDB Analytics 3.14** | ✅             |
+
+</TabItem>
+<TabItem value="SQL_Server" label="SQL Server">
+
+|           バージョン           | SQL Server 2019 |
+| :----------------------------- | :-------------- |
+| **ScalarDB Analytics 3.16** | ✅               |
+| **ScalarDB Analytics 3.15** | ✅               |
+| **ScalarDB Analytics 3.14** | ✅               |
+
+</TabItem>
+</Tabs>
+
+#### NoSQL データベース
+
+ScalarDB Analytics は、ScalarDB Core および Cluster によって**管理されていない**以下の NoSQL データベース上で分析クエリを実行できます。
+
+<Tabs groupId="NoSQL" queryString>
+<TabItem value="Amazon_DynamoDB" label="Amazon DynamoDB" default>
+
+|           バージョン           | DynamoDB |
+| :----------------------------- | :------- |
+| **ScalarDB Analytics 3.16** | ✅        |
+| **ScalarDB Analytics 3.15** | ✅        |
+| **ScalarDB Analytics 3.14** | ✅        |
+
+</TabItem>
+</Tabs>
+
+#### 分析プラットフォーム
+
+ScalarDB Analytics は、ScalarDB Core および Cluster によって**管理されていない**以下の 分析プラットフォーム上で分析クエリを実行できます。
+
+<Tabs groupId="analytical-platforms" queryString>
+<TabItem value="databricks" label="Databricks" default>
+
+|           バージョン          | Databricks |
+| :-------------------------- | :--------- |
+| **ScalarDB Analytics 3.16** | ✅         |
+| **ScalarDB Analytics 3.15** | ❌         |
+| **ScalarDB Analytics 3.14** | ❌         |
+
+</TabItem>
+<TabItem value="snowflake" label="Snowflake">
+
+|           バージョン          | Snowflake |
+| :-------------------------- | :-------- |
+| **ScalarDB Analytics 3.16** | ✅        |
+| **ScalarDB Analytics 3.15** | ❌        |
+| **ScalarDB Analytics 3.14** | ❌        |
+
+</TabItem>
+</Tabs>
+
+### データベース権限要件
+
+ScalarDB Analytics は、基盤となるデータベースで操作を実行するために読み取り権限が必要です。
+
+ScalarDB Core および Cluster で管理されているデータベースについては、[データベース権限要件](requirements.mdx#データベース権限要件) に従ってデータベースがすでに設定されているため、追加の設定は必要ありません。
+
+ScalarDB Core および Cluster で**管理されていない**データベースについては、データソースに対する読み取り権限を持つユーザーでデータソースを登録してください。データソースの登録手順については、[カタログの作成](scalardb-analytics/create-scalardb-analytics-catalog#create-your-catalog) を参照してください。
+
+ScalarDB Analytics サーバーは、そのデータベース内のカタログ情報を管理するための権限も必要です。
+[データベース権限要件](requirements.mdx#データベース権限要件) に従って権限を持つユーザーを作成し、そのユーザーを ScalarDB Analytics サーバー設定に設定してください。
+
+### Kubernetes
+
+ScalarDB Analytics のサーバーコンポーネント（ScalarDB Analytics サーバー）は、本番環境では Kubernetes プラットフォーム上の Pod として提供されます。ScalarDB Analytics は以下のプラットフォームとツールをサポートしています。
 
 #### プラットフォーム
 
