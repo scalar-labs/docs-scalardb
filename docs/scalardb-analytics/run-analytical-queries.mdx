@@ -20,13 +20,7 @@ This section describes the prerequisites, setting up ScalarDB Analytics in the S
 ### Prerequisites
 
 - **ScalarDB Analytics server:** A running instance that manages catalog information and connects to your data sources. The server must be set up with at least one data source registered. For registering data sources, see [Create a ScalarDB Analytics Catalog](./create-scalardb-analytics-catalog.mdx).
-- **Apache Spark:** A compatible version of Apache Spark. For supported versions, see [Version compatibility](#version-compatibility). If you don't have Spark installed yet, please download the Spark distribution from [Apache's website](https://spark.apache.org/downloads.html).
-
-:::note
-
-Apache Spark is built with either Scala 2.12 or Scala 2.13. ScalarDB Analytics supports both versions. You need to be sure which version you are using so that you can select the correct version of ScalarDB Analytics later. For more details, see [Version compatibility](#version-compatibility).
-
-:::
+- **Apache Spark:** A compatible version of Apache Spark. For supported versions, see [Spark](../requirements.mdx#spark). If you don't have Spark installed yet, please download the Spark distribution from [Apache's website](https://spark.apache.org/downloads.html).
 
 ### Set up ScalarDB Analytics in the Spark configuration
 
@@ -116,7 +110,7 @@ Depending on your environment, you may not be able to use all the methods mentio
 
 :::
 
-With all these methods, you can refer to tables in ScalarDB Analytics by using the same table identifier format. For details about how ScalarDB Analytics maps catalog information from data sources, see [Catalog information reference](./reference-data-source.mdx#catalog-information-reference).
+With all these methods, you can refer to tables in ScalarDB Analytics by using the same table identifier format. For details about how ScalarDB Analytics maps catalog information from data sources, see [Catalog structure mappings by data source](./reference-data-source.mdx#catalog-structure-mappings-by-data-source).
 
 <Tabs groupId="spark-application-type" queryString>
   <TabItem value="spark-driver" label="Spark driver application">
@@ -129,7 +123,7 @@ First, you need to set up your Java project. For example, if you are using Gradl
 
 ```kotlin
 dependencies {
-    implementation("com.scalar-labs:scalardb-analytics-spark-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>")
+    implementation("com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>")
 }
 ```
 
