@@ -522,10 +522,10 @@ ScalarDB Cluster は、本番環境では Kubernetes プラットフォーム上
 
 #### プラットフォーム
 
-- **[Kubernetes](https://kubernetes.io/):** 1.28 - 1.32
-  - **[Amazon Elastic Kubernetes Service (EKS)](https://aws.amazon.com/eks/)**
-  - **[Azure Kubernetes Service (AKS)](https://azure.microsoft.com/en-us/products/kubernetes-service)**
-- **[Red Hat OpenShift](https://www.redhat.com/en/technologies/cloud-computing/openshift):** TBD
+- **[Kubernetes](https://kubernetes.io/):** 1.30 - 1.33
+  - **[Amazon Elastic Kubernetes Service (EKS)](https://aws.amazon.com/jp/eks)**
+  - **[Azure Kubernetes Service (AKS)](https://azure.microsoft.com/ja-jp/products/kubernetes-service)**
+- **[Red Hat OpenShift](https://www.redhat.com/ja/technologies/cloud-computing/openshift):** TBD
 
 #### パッケージマネージャー
 
@@ -645,6 +645,31 @@ ScalarDB Analytics は、ScalarDB Core および Cluster によって**管理さ
 </TabItem>
 </Tabs>
 
+#### 分析プラットフォーム
+
+ScalarDB Analytics は、ScalarDB Core および Cluster によって**管理されていない**以下の分析プラットフォーム上で分析クエリを実行できます。
+
+<Tabs groupId="analytical-platforms" queryString>
+<TabItem value="databricks" label="Databricks" default>
+
+|           バージョン          | Databricks |
+| :-------------------------- | :--------- |
+| **ScalarDB Analytics 3.16** | ✅         |
+| **ScalarDB Analytics 3.15** | ❌         |
+| **ScalarDB Analytics 3.14** | ❌         |
+
+</TabItem>
+<TabItem value="snowflake" label="Snowflake">
+
+|           バージョン          | Snowflake |
+| :-------------------------- | :-------- |
+| **ScalarDB Analytics 3.16** | ✅        |
+| **ScalarDB Analytics 3.15** | ❌        |
+| **ScalarDB Analytics 3.14** | ❌        |
+
+</TabItem>
+</Tabs>
+
 ### データベース権限要件
 
 ScalarDB Analytics は、基盤となるデータベースで操作を実行するために読み取り権限が必要です。
@@ -653,8 +678,7 @@ ScalarDB Core および Cluster で管理されているデータベースにつ
 
 ScalarDB Core および Cluster で**管理されていない**データベースについては、データソースに対する読み取り権限を持つユーザーでデータソースを登録してください。データソースの登録手順については、[データソースの設定](scalardb-analytics/run-analytical-queries.mdx#データソースの設定)を参照してください。
 
-ScalarDB Analytics サーバーは、そのデータベース内のカタログ情報を管理するための権限も必要です。
-[データベース権限要件](requirements.mdx#データベース権限要件)に従って権限を持つユーザーを作成し、そのユーザーを ScalarDB Analytics サーバー設定に設定してください。
+ScalarDB Analytics サーバーは、そのデータベース内のカタログ情報を管理するための権限も必要です。[データベース権限要件](requirements.mdx#データベース権限要件)に従って権限を持つユーザーを作成し、そのユーザーを ScalarDB Analytics サーバー設定に設定してください。
 
 ### 必要なポート
 
@@ -670,10 +694,10 @@ ScalarDB Analytics のサーバーコンポーネント (ScalarDB Analytics サ�
 
 #### プラットフォーム
 
-- **[Kubernetes](https://kubernetes.io/):** 1.28 - 1.32
-  - **[Amazon Elastic Kubernetes Service (EKS)](https://aws.amazon.com/eks/)**
-  - **[Azure Kubernetes Service (AKS)](https://azure.microsoft.com/en-us/products/kubernetes-service)**
-- **[Red Hat OpenShift](https://www.redhat.com/en/technologies/cloud-computing/openshift):** TBD
+- **[Kubernetes](https://kubernetes.io/):** 1.30 - 1.33
+  - **[Amazon Elastic Kubernetes Service (EKS)](https://aws.amazon.com/jp/eks)**
+  - **[Azure Kubernetes Service (AKS)](https://azure.microsoft.com/ja-jp/products/kubernetes-service)**
+- **[Red Hat OpenShift](https://www.redhat.com/jp/technologies/cloud-computing/openshift):** TBD
 
 #### パッケージマネージャー
 
