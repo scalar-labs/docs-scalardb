@@ -50,12 +50,12 @@ graph TD
 The following are definitions for those levels:
 
 - **Catalog** is a folder that contains all your data source information. For example, you might have one catalog called `analytics_catalog` for your analytics data and another called `operational_catalog` for your day-to-day operations.
-- **Data source** represents each data source you connect to. For each data source, we store important information like:
+- **Data source** represents each data source you connect to. For each data source, ScalarDB Analytics stores important information like:
   - What kind of data source it is (PostgreSQL, Cassandra, etc.)
   - How to connect to it (connection details and passwords)
   - Special features the data source supports (like transactions)
 - **Namespace** is like a subfolder within your data source that groups related tables together. In PostgreSQL these are called schemas, in Cassandra they're called keyspaces. You can have multiple levels of namespaces, similar to having folders within folders.
-- **Table** is where your actual data lives. For each table, we keep track of:
+- **Table** is where your actual data lives. For each table, ScalarDB Analytics keeps track of:
   - What columns it has
   - What type of data each column can store
   - Whether columns can be empty (null)
@@ -95,7 +95,7 @@ When registering a data source to ScalarDB Analytics, two types of mappings occu
 1. **Catalog structure mapping**: The data source's catalog information (namespaces, tables, and columns) is resolved and mapped to the universal data catalog structure
 2. **Data type mapping**: Native data types from each data source are mapped to the universal data types listed above
 
-These mappings ensure compatibility and consistency across different database systems. For detailed information about how specific databases are mapped, see [Catalog information mappings by data source](./design.mdx#catalog-information-mappings-by-data-source).
+These mappings ensure compatibility and consistency across different database systems. For detailed information about how specific databases are mapped, see [Catalog structure mappings by data source](./reference-data-source.mdx#catalog-structure-mappings-by-data-source).
 
 ## Query engine
 
