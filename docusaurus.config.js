@@ -25,7 +25,6 @@ const config = {
   projectName: 'docs-scalardb', // Usually your repo name.
 
   onBrokenLinks: 'warn',
-  onBrokenMarkdownLinks: 'ignore',
   onBrokenAnchors: 'ignore',
 
   // Even if you don't use internationalization, you can use this field to set
@@ -374,6 +373,9 @@ const config = {
   ],
   markdown: {
     mermaid: true,
+    hooks: {
+      onBrokenMarkdownLinks: 'ignore',
+    },
   },
   themes: ['@docusaurus/theme-mermaid'],
 
