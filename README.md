@@ -1,6 +1,6 @@
 # ScalarDB Documentation
 
-This repository contains documentation source files for ScalarDB. Please view this documentation at [ScalarDB Docs](https://scalardb.scalar-labs.com/docs).
+This repository contains the source files for the [ScalarDB documentation](https://scalardb.scalar-labs.com/docs).
 
 ## Interested in using ScalarDB Enterprise?
 
