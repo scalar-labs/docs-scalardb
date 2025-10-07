@@ -571,6 +571,11 @@ const config = {
         textColor: '#FFFFFF',
         isCloseable: false,
       },
+      colorMode: {
+        defaultMode: 'light',
+        disableSwitch: false,
+        respectPrefersColorScheme: true,
+      },
       zoom: {
         selector: '.markdown :not(em) > img',
         background: {
