@@ -589,6 +589,23 @@ const sidebars = {
                 },
               ],
             },
+            {
+              type: 'category',
+              label: 'ScalarDB MCP Server',
+              collapsible: true,
+              items: [
+                {
+                type: 'doc',
+                id: 'scalardb-mcp-server/getting-started-with-scalardb-mcp-server',
+                label: 'Use ScalarDB MCP Server',
+                },
+                {
+                type: 'doc',
+                id: 'scalardb-mcp-server/tools-reference',
+                label: 'ScalarDB MCP Server Tools Reference',
+                },
+              ],
+            },
           ],
         },
       ],
