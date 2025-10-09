@@ -624,10 +624,16 @@ const sidebars = {
           id: 'scalardb-cluster/setup-scalardb-cluster-on-kubernetes-by-using-helm-chart',
           label: 'Deploy ScalarDB Cluster Locally',
         },
+
         {
           type: 'doc',
           id: 'scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS',
           label: 'Deploy ScalarDB Cluster on Amazon EKS',
+        },
+        {
+          type: 'doc',
+          id: 'scalardb-analytics/deployment-local',
+          label: 'Deploy ScalarDB Analytics Locally',
         },
         {
           type: 'doc',
