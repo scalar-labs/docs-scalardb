@@ -25,8 +25,8 @@ const config = {
   projectName: 'docs-scalardb', // Usually your repo name.
 
   onBrokenLinks: 'warn',
-  onBrokenMarkdownLinks: 'ignore',
   onBrokenAnchors: 'ignore',
+  onDuplicateRoutes: 'warn',
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -374,6 +374,9 @@ const config = {
   ],
   markdown: {
     mermaid: true,
+    hooks: {
+      onBrokenMarkdownLinks: 'ignore',
+    },
   },
   themes: ['@docusaurus/theme-mermaid'],
 
@@ -567,6 +570,11 @@ const config = {
         backgroundColor: '#2673BB',
         textColor: '#FFFFFF',
         isCloseable: false,
+      },
+      colorMode: {
+        defaultMode: 'light',
+        disableSwitch: false,
+        respectPrefersColorScheme: true,
       },
       zoom: {
         selector: '.markdown :not(em) > img',

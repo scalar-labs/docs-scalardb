@@ -29,8 +29,8 @@ const notificationsList = [
       ja: 'ScalarDB 3.15 できめ細かなユーザーアクセス制御のサポートが追加されました'
     },
     url: {
-      en: 'requirements?RDBs=Db2#relational-databases?utm_source=docs-site&utm_medium=notifications',
-      ja: 'scalardb-cluster/getting-started-with-vector-search?RDBs=Db2#リレーショナルデータベース?utm_source=docs-site&utm_medium=notifications'
+      en: 'requirements?RDBs=Db2&utm_source=docs-site&utm_medium=notifications#relational-databases',
+      ja: 'scalardb-cluster/authorize-with-abac?utm_source=docs-site&utm_medium=notifications'
     },
     unread: true
   },
