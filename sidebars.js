@@ -1757,6 +1757,11 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
+                  id: 'helm-charts/configure-custom-values-scalardb-analytics-server',
+                  label: 'ScalarDB Analytics server のカスタム値ファイルを構成',
+                },
+                {
+                  type: 'doc',
                   id: 'helm-charts/configure-custom-values-scalardb-analytics-postgresql',
                   label: 'ScalarDB Analytics with PostgreSQL のカスタム値ファイルを構成',
                 },
