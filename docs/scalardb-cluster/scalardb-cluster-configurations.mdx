@@ -595,6 +595,37 @@ The configurations for ScalarDB Cluster SQL are as follows:
 - **Description:** Default namespace name. If you don't specify a namespace name in your SQL statement, this value is used.
 - **Default value:** empty
 
+### ABAC configurations
+
+The following shows the attribute-based access control (ABAC) configurations for ScalarDB Cluster.
+
+:::warning
+
+The single CRUD operation transaction manager does not support ABAC.
+
+:::
+
+#### `abac.enabled`
+
+- **Field:** `scalar.db.cluster.abac.enabled`
+- **Description:** Whether the ABAC feature is enabled.
+- **Default value:** `false`
+
+:::warning
+
+If you enable the ABAC feature, you will also need to do the following:
+
+- Enable authentication and authorization. For more information, see [Authenticate and Authorize Users](./scalardb-auth-with-sql.mdx).
+- Set [`scalar.db.cross_partition_scan.enabled`](#cross-partition-scan-configurations) to `true` for the system namespace (`scalardb` by default). This is because the ABAC feature performs cross-partition scans internally.
+
+:::
+
+#### `abac.cache_expiration_time_millis`
+
+- **Field:** `scalar.db.cluster.abac.cache_expiration_time_millis`
+- **Description:** The cache expiration time of the ABAC metadata cache in milliseconds. If you update the ABAC metadata, for example, the policy configuration, you might need to wait until this expiration time is reached for the changes to be applied. Setting this property to a low number may increase the number of accesses to the backend database and decrease performance.
+- **Default value:** `60000` (1 minute)
+
 ### Other ScalarDB Cluster configurations
 
 The following are additional configurations available for ScalarDB Cluster.
