@@ -223,6 +223,24 @@ The following are additional configurations available for ScalarDB Cluster:
 | `scalar.db.consensus_commit.include_metadata.enabled`            | When using Consensus Commit, if this is set to `true`, `Get` and `Scan` operations results will contain transaction metadata. To see the transaction metadata columns details for a given table, you can use the `DistributedTransactionAdmin.getTableMetadata()` method, which will return the table metadata augmented with the transaction metadata columns. Using this configuration can be useful to investigate transaction-related issues. | `false`              |
 | `scalar.db.default_namespace_name`                               | The given namespace name will be used by operations that do not already specify a namespace.                                                                                                                                                                                                                                                                                                                 |                      |
 
+### ABAC configurations
+
+The following shows the attribute-based access control (ABAC) configurations for ScalarDB Cluster.
+
+:::warning
+
+- The single CRUD operation transaction manager does not support ABAC.
+- If you enable the ABAC feature, you will also need to do the following:
+  - Enable authentication and authorization. For more information, see [Authenticate and Authorize Users](./scalardb-auth-with-sql.mdx).
+  - Set [`scalar.db.cross_partition_scan.enabled`](#cross-partition-scan-configurations) to `true` for the system namespace (`scalardb` by default). This is because the ABAC feature performs cross-partition scans internally.
+
+:::
+
+| Name                               | Description                                 | Default |
+|------------------------------------|---------------------------------------------|---------|
+| `scalar.db.cluster.abac.enabled`   | Whether the ABAC feature is enabled.        | `false` |
+| `scalar.db.cluster.abac.cache_expiration_time_millis` | The cache expiration time of the ABAC metadata cache in milliseconds. If you update the ABAC metadata, for example, the policy configuration, you might need to wait until this expiration time is reached for the changes to be applied. Setting this property to a low number may increase the number of accesses to the backend database and decrease performance. | `60000` (1 minute) |
+
 ## Client configurations
 
 This section describes the general configurations for the ScalarDB Cluster client.
