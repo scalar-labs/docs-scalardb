@@ -1589,6 +1589,23 @@ const sidebars = {
                 },
               ],
             },
+            {
+              type: 'category',
+              label: 'ScalarDB MCP Server',
+              collapsible: true,
+              items: [
+                {
+                type: 'doc',
+                id: 'scalardb-mcp-server/getting-started-with-scalardb-mcp-server',
+                label: 'ScalarDB MCP Server を使用',
+                },
+                {
+                type: 'doc',
+                id: 'scalardb-mcp-server/tools-reference',
+                label: 'ScalarDB MCP Server ツールリファレンス',
+                },
+              ],
+            },
           ],
         },
       ],
