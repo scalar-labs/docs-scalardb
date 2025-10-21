@@ -14,23 +14,23 @@ const notificationsList = [
   // },
   {
     message: {
-      en: 'Replicate data for high availability in ScalarDB 3.16',
-      ja: 'ScalarDB 3.16 でのデータの高可用性のためのレプリケーション'
+      en: 'Query databases by using natural language with ScalarDB MCP Server',
+      ja: 'ScalarDB MCP Server を使用して自然言語でデータベースをクエリする'
     },
     url: {
-      en: 'scalardb-cluster/remote-replication?utm_source=docs-site&utm_medium=notifications',
-      ja: 'scalardb-cluster/remote-replication?utm_source=docs-site&utm_medium=notifications'
+      en: 'scalardb-mcp-server/getting-started-with-scalardb-mcp-server?utm_source=docs-site&utm_medium=notifications',
+      ja: 'scalardb-mcp-server/getting-started-with-scalardb-mcp-server?utm_source=docs-site&utm_medium=notifications'
     },
     unread: true
   },
   {
     message: {
-      en: 'Support for IBM Db2 has been added in ScalarDB 3.16',
-      ja: 'ScalarDB 3.15 できめ細かなユーザーアクセス制御のサポートが追加されました'
+      en: 'Replicate data for high availability in ScalarDB 3.16',
+      ja: 'ScalarDB 3.16 で高可用性のためのデータレプリケーションを行う'
     },
     url: {
-      en: 'requirements?RDBs=Db2#relational-databases?utm_source=docs-site&utm_medium=notifications',
-      ja: 'scalardb-cluster/getting-started-with-vector-search?RDBs=Db2#リレーショナルデータベース?utm_source=docs-site&utm_medium=notifications'
+      en: 'scalardb-cluster/remote-replication?utm_source=docs-site&utm_medium=notifications',
+      ja: 'scalardb-cluster/remote-replication?utm_source=docs-site&utm_medium=notifications'
     },
     unread: true
   },
