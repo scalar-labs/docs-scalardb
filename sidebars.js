@@ -1413,6 +1413,11 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'data-loader',
+              label: 'Data Loader',
+            },
+            {
+              type: 'doc',
               id: 'scalardb-cluster/index',
               label: 'ScalarDB Cluster',
             },
