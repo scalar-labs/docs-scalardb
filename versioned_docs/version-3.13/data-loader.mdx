@@ -206,7 +206,7 @@ When using INSERT mode, you must have matching fields in the source file for eac
 
 Based on your schema type, you can use one of the following modes:
 
-- **`TRANSACTION`:** Use this mode for databases that have [transaction metadata](consensus-commit.mdx/#distributed-wal) in their schemas. Rows are imported by using transactional operations, ensuring ACID properties and data consistency. By default, up to 100 put operations are grouped into a single transaction. You can adjust this by using the `--transaction-size` option.
+- **`TRANSACTION`:** Use this mode for databases that have [transaction metadata](consensus-commit.mdx#distributed-wal) in their schemas. Rows are imported by using transactional operations, ensuring ACID properties and data consistency. By default, up to 100 put operations are grouped into a single transaction. You can adjust this by using the `--transaction-size` option.
 
   :::note
 
@@ -214,7 +214,7 @@ Based on your schema type, you can use one of the following modes:
 
   :::
 
-- **`STORAGE` (default):** Use this mode for databases that do not have [transaction metadata](consensus-commit.mdx/#distributed-wal) in their schemas. This mode performs direct database imports by using non-transactional storage operations for better performance, without full ACID guarantees.
+- **`STORAGE` (default):** Use this mode for databases that do not have [transaction metadata](consensus-commit.mdx#distributed-wal) in their schemas. This mode performs direct database imports by using non-transactional storage operations for better performance, without full ACID guarantees.
 
 For additional configuration options including validation, logging, and performance tuning, see the [Command-line flags](#command-line-flags) section below.
 
