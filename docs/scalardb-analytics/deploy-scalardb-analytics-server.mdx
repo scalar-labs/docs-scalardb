@@ -1,0 +1,545 @@
+---
+tags:
+  - Enterprise
+displayed_sidebar: docsEnglish
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import WarningLicenseKeyContact from '/src/components/en-us/_warning-license-key-contact.mdx';
+import HelmCommandUsage from '/src/components/en-us/_helm-command-usage.mdx';
+
+# Deploy a ScalarDB Analytics server
+
+This document explains how to deploy a ScalarDB Analytics server in your local or production environment.
+
+## Step 1. Decide on the billing method for ScalarDB Analytics
+
+You can get the ScalarDB Analytics server in several ways:
+
+<Tabs groupId="billing-method" queryString>
+  <TabItem value="pay-as-you-go" label="Pay as you go" default>
+    You can use ScalarDB Analytics in a pay-as-you-go plan. In this case, you will pay the license fee based on your query usage.
+    <Tabs groupId="cloud" queryString>
+      <TabItem value="aws" label="AWS Marketplace" default>
+        You can use ScalarDB Analytics in the pay-as-you-go plan in AWS Marketplace.
+        <Tabs groupId="offering" queryString>
+          <TabItem value="container" label="Container offer" default>
+            To deploy the ScalarDB Analytics server from AWS Marketplace with a pay-as-you-go plan:
+
+            1. Go to the AWS Marketplace page [ScalarDB Analytics server](https://aws.amazon.com/marketplace/pp/prodview-53ik57autkmci).
+            1. Subscribe to the ScalarDB Analytics server.
+               1. Select **View purchase options**.
+               1. Select **Subscribe**.
+
+:::tip
+
+After subscribing, you'll have permission to pull the container image of the ScalarDB Analytics server from the following container registry. You will specify this container registry and pull the container image in a later step, so keep note of it.
+
+```console
+709825985650.dkr.ecr.us-east-1.amazonaws.com/scalar/scalardb-analytics-server-aws-payg
+```
+
+:::
+          </TabItem>
+        </Tabs>
+      </TabItem>
+    </Tabs>
+  </TabItem>
+  <TabItem value="fixed-price-byil" label="Fixed price (bring your own license)">
+    You can use ScalarDB Analytics in a fixed-price method. In this case, you will pay the fixed license fee based on your contract, with an upper limit on the queries you can run.
+    <Tabs groupId="cloud" queryString>
+      <TabItem value="any-supported-kubernetes" label="Any supported Kubernetes platform" default>
+        You can use ScalarDB Analytics in the fixed-price method on any supported Kubernetes platforms. You can see the supported Kubernetes platforms in [Requirements](../requirements.mdx#kubernetes).
+        <Tabs groupId="offering" queryString>
+          <TabItem value="container" label="Container offer" default>
+            <WarningLicenseKeyContact product="ScalarDB Analytics server" />
+            You can deploy the ScalarDB Analytics server by using a container image with a license key that is provided at a fixed price, also known as bring your own license (BYOL). You can pull the container image of the ScalarDB Analytics server from the following container registry.
+
+:::note
+
+You will specify this container registry in a later step, so keep note of it.
+
+:::
+
+            ```console
+            ghcr.io/scalar-labs/scalardb-analytics-server-byol
+            ```
+          </TabItem>
+        </Tabs>
+      </TabItem>
+    </Tabs>
+  </TabItem>
+</Tabs>
+
+## Step 2. Deploy a Kubernetes cluster
+
+Deploy a cluster on your preferred Kubernetes platform based on the following requirements and checkpoints:
+
+1. Decide which Kubernetes platform to use based on the billing method and purpose.
+
+   - If you chose **Pay as you go (container offer - AWS Marketplace)** in [Step 1. Decide on the billing method for ScalarDB Analytics](#step-1-decide-on-the-billing-method-for-scalardb-analytics), you need to deploy Amazon Elastic Kubernetes Service (EKS) in the supported regions. The supported regions will be referred to in a later step.
+   - If you chose **Fixed price w/bring your own license (container offer - any supported Kubernetes platform)** in [Step 1. Decide on the billing method for ScalarDB Analytics](#step-1-decide-on-the-billing-method-for-scalardb-analytics), you can use any of the supported Kubernetes platforms.
+
+     :::note
+
+     You should use minikube for testing or development purposes only. minikube is not recommended for production use.
+
+     :::
+
+1. Check the general recommendations and requirements of the Kubernetes cluster for the ScalarDB Analytics server.
+
+   - Recommendations
+     - You should use a worker node that has at least 2 CPUs and 4 GB of memory.
+       - Currently, the ScalarDB Analytics server does not have a clustering feature. Therefore, only one worker node is enough.
+       - If you want to make the Kubernetes cluster itself highly available, you can deploy it with multiple worker nodes.
+   - Requirements
+     - You must allow your Spark application to connect to the ScalarDB Analytics server deployed on the Kubernetes cluster from a network perspective. To see which port the ScalarDB Analytics server uses, see [Requirements](../requirements.mdx).
+     - You must allow the ScalarDB Analytics server to read from and write to the backend database to store the catalog information. These procedures will be described in detail in [Step 3. Deploy a backend database](#step-3-deploy-a-backend-database).
+     - You must allow the ScalarDB Analytics server to read from and write to the object storage to store metering information. These procedures will be described in detail in [Step 4. Deploy an object storage](#step-4-deploy-an-object-storage).
+
+1. Deploy a Kubernetes cluster for the ScalarDB Analytics server.
+
+   <Tabs groupId="environments" queryString>
+     <TabItem value="development" label="Testing/development environments" default>
+       For testing or development purposes, you can use minikube as a local Kubernetes cluster. For details on how to install and start minikube, see the [official minikube documentation](https://minikube.sigs.k8s.io/docs/start/).
+     </TabItem>
+     <TabItem value="production" label="Production/staging environments">
+       For production environments, please deploy the Kubernetes cluster based on the above requirements of the ScalarDB Analytics server and your system's requirements, for example, security, availability, backup/restore, cost, and scalability amongst your other requirements.
+       <Tabs groupId="kubernetes" queryString>
+         <TabItem value="eks" label="EKS" default>
+           - If you chose **Fixed price w/ bring your own license (container offer - any supported Kubernetes platform)**, you can use Amazon Elastic Kubernetes Service (EKS).
+           - If you chose **Pay as you go (container offer - AWS Marketplace)** in [Step 1. Decide on the billing method for ScalarDB Analytics](#step-1-decide-on-the-billing-method-for-scalardb-analytics), you need to do the following:
+             1. Deploy EKS in supported regions that are described in the AWS documentation [MeterUsage Region support for Amazon ECS and Amazon EKS](https://docs.aws.amazon.com/marketplace/latest/APIReference/metering-regions.html#meterusage-region-support-ecs-eks).
+             1. Run the following two commands after you deploy EKS:
+                - `eksctl utils associate-iam-oidc-provider`
+
+                  ```console
+                  eksctl utils associate-iam-oidc-provider --region <REGION> --cluster <EKS_CLUSTER_NAME> --approve
+                  ```
+
+                - `eksctl create iamserviceaccount`
+
+                  ```console
+                  eksctl create iamserviceaccount \
+                      --name <SERVICE_ACCOUNT_NAME> \
+                      --namespace <NAMESPACE> \
+                      --region <REGION> \
+                      --cluster <EKS_CLUSTER_NAME> \
+                      --attach-policy-arn arn:aws:iam::aws:policy/AWSMarketplaceMeteringFullAccess \
+                      --approve \
+                      --override-existing-serviceaccounts
+                  ```
+
+                  You can set an arbitrary name to `SERVICE_ACCOUNT_NAME` based on the [Kubernetes resource naming rule](https://kubernetes.io/docs/concepts/overview/working-with-objects/names/).
+
+                    :::note
+
+                    Keep note of the value that you set for `SERVICE_ACCOUNT_NAME` because you will specify this service account name in a later step.
+
+                    :::
+         </TabItem>
+         <TabItem value="minikube" label="minikube">
+    :::important
+
+    For production environments, you must use the supported Kubernetes platform. You can see the supported Kubernetes platforms in [Requirements](../requirements.mdx#kubernetes).
+
+    :::
+         </TabItem>
+       </Tabs>
+     </TabItem>
+   </Tabs>
+
+## Step 3. Deploy a backend database
+
+Deploy your preferred backend database based on the following requirements and checkpoints:
+
+1. Decide which backend database to use.
+   - You can see the supported backend database for the ScalarDB Analytics server in [Requirements](../requirements.mdx).
+   - Unless you have a special reason not to, you should use a database that you are familiar with.
+1. Check the backend database requirements for the ScalarDB Analytics server.
+   - You can see the requirements of each backend database in the [Requirements](../requirements.mdx) page.
+1. Deploy the backend database in your environment.
+
+   <Tabs groupId="environments" queryString>
+          <TabItem value="development" label="Testing/development environments" default>
+       For testing or development purposes, you can deploy a backend database in the Kubernetes cluster as a Pod. For example, if you use PostgreSQL, you can deploy it as follows:
+
+       1. Add the Bitnami Helm repository by running the following command:
+
+          ```console
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          ```
+
+       1. Deploy PostgreSQL by running the following command:
+
+          ```console
+          helm install postgresql-scalardb-cluster bitnami/postgresql \
+            --set auth.postgresPassword=postgres \
+            --set primary.persistence.enabled=false
+          ```
+
+       1. Check if the PostgreSQL container is running by running the following command:
+
+          ```console
+          kubectl get pod
+          ```
+
+          You should see the following output:
+
+          ```console
+          NAME                            READY   STATUS    RESTARTS   AGE
+          postgresql-scalardb-cluster-0   1/1     Running   0          17s
+          ```
+     </TabItem>
+     <TabItem value="production" label="Production/staging environments">
+       For production environments, please deploy the backend database based on the above requirements of the ScalarDB Analytics server and your system's requirements, for example, security, availability, backup/restore, cost, and scalability amongst your other requirements.
+     </TabItem>
+   </Tabs>
+
+## Step 4. Deploy an object storage
+
+Deploy an object storage based on the following requirements and checkpoints:
+
+1. Decide which object storage to use.
+   - You can use [Amazon S3](https://aws.amazon.com/s3/), [Azure Blob Storage](https://azure.microsoft.com/products/storage/blobs), or [Google's Cloud Storage](https://cloud.google.com/storage) as a data store for metering information for the ScalarDB Analytics server.
+   - You should use the object storage that is provided by the same cloud service provider as the Kubernetes cluster that you chose in [Step 2. Deploy a Kubernetes cluster](#step-2-deploy-a-kubernetes-cluster). For example, if you chose EKS, you should use Amazon S3.
+
+1. Check the object storage requirements for the ScalarDB Analytics server.
+   - You must allow the ScalarDB Analytics server to read from and write to the object storage.
+1. Deploy the object storage in your environment.
+
+   <Tabs groupId="environments" queryString>
+     <TabItem value="development" label="Testing/development environments" default>
+       For testing or development purposes, you can store metering information on the filesystem in the ScalarDB Analytics server container. In other words, you don't need to use the object storage. In this case, you need to set `scalar.db.analytics.server.metering.storage.provider=filesystem` in the properties file. For more details, see [Step 5. Create a custom values file](#step-5-create-a-custom-values-file).
+     </TabItem>
+     <TabItem value="production" label="Production/staging environments">
+       For production environments, please deploy the object storage based on the above requirements of the ScalarDB Analytics server and your system's requirements, for example, security, availability, backup/restore, cost, and scalability amongst your other requirements.
+     </TabItem>
+   </Tabs>
+
+## Step 5. Create a custom values file
+
+Create your custom values file `scalardb-analytics-server.yaml` based on your environment and your decisions in the previous steps.
+
+### Set the required configurations
+
+1. Set the container image and the license configurations
+
+   Based on the billing method you chose in [Step 1. Decide on the billing method for ScalarDB Analytics](#step-1-decide-on-the-billing-method-for-scalardb-analytics), set the container image configuration to `scalarDbAnalyticsServer.image.repository`. Select one of the following billing methods to see an example of this configuration.
+
+   <Tabs groupId="billing-method" queryString>
+     <TabItem value="payg-container-offer-aws-marketplace" label="Pay as you go (container offer - AWS Marketplace)" default>
+     ```yaml
+     scalarDbAnalyticsServer:
+       image:
+         repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/scalar/scalardb-analytics-server-aws-payg
+     ```
+     </TabItem>
+     <TabItem value="fixed-price-byol-container-offer" label="Fixed price w/bring your own license (container offer - any supported Kubernetes platform)">
+     <WarningLicenseKeyContact product="ScalarDB Analytics server" />
+     ```yaml
+     scalarDbAnalyticsServer:
+       image:
+         repository: ghcr.io/scalar-labs/scalardb-analytics-server-byol
+       properties: |
+         scalar.db.analytics.server.licensing.license_key=<YOUR_LICENSE_KEY>
+         scalar.db.analytics.server.licensing.license_check_cert_pem=-----BEGIN CERTIFICATE-----\nMIID...certificate content...\n-----END CERTIFICATE-----
+     ```
+     </TabItem>
+   </Tabs>
+
+1. Set the service account configurations
+
+   Based on the billing method you chose in [Step 1. Decide on the billing method for ScalarDB Analytics](#step-1-decide-on-the-billing-method-for-scalardb-analytics), set the service account configurations to `scalarDbAnalyticsServer.serviceAccount`. Select one of the following billing methods to see an example of this configuration.
+
+   <Tabs groupId="billing-method" queryString>
+     <TabItem value="payg-container-offer-aws-marketplace" label="Pay as you go (container offer - AWS Marketplace)" default>
+     ```yaml
+     scalarDbAnalyticsServer:
+       serviceAccount:
+         serviceAccountName: <SERVICE_ACCOUNT_NAME>
+         automountServiceAccountToken: true
+     ```
+
+     :::note
+
+     Change `<SERVICE_ACCOUNT_NAME>` to the name of the service account that you created by using the `eksctl create iamserviceaccount` command in [Step 2. Deploy a Kubernetes cluster](#step-2-deploy-a-kubernetes-cluster).
+
+     :::
+     </TabItem>
+     <TabItem value="fixed-price-byol-container-offer" label="Fixed price w/bring your own license (container offer - any supported Kubernetes platform)">
+     You don't need to set a service account configuration.
+     </TabItem>
+   </Tabs>
+
+1. Set the database configurations
+
+   Based on the backend database you chose in [Step 3. Deploy a backend database](#step-3-deploy-a-backend-database), set the database configurations in `scalarDbAnalyticsServer.properties`. Select one of the following databases to see an example of these configurations.
+
+   <Tabs groupId="databases" queryString>
+     <TabItem value="postgresql" label="PostgreSQL" default>
+     ```yaml
+     scalarDbAnalyticsServer:
+       properties: |
+         scalar.db.analytics.server.db.url=jdbc:postgresql://<POSTGRESQL_SERVER_HOSTNAME>:<POSTGRESQL_SERVER_PORT>/<POSTGRESQL_DATABASE_NAME>
+         scalar.db.analytics.server.db.username=<POSTGRESQL_USERNAME>
+         scalar.db.analytics.server.db.password=<POSTGRESQL_PASSWORD>
+     ```
+     </TabItem>
+     <TabItem value="mysql" label="MySQL">
+     ```yaml
+     scalarDbAnalyticsServer:
+       properties: |
+         scalar.db.analytics.server.db.url=jdbc:mysql://<MYSQL_SERVER_HOSTNAME>:<MYSQL_SERVER_PORT>/<MYSQL_DATABASE_NAME>
+         scalar.db.analytics.server.db.username=<MYSQL_USERNAME>
+         scalar.db.analytics.server.db.password=<MYSQL_PASSWORD>
+     ```
+     </TabItem>
+     <TabItem value="sql-server" label="SQL Server">
+     ```yaml
+     scalarDbAnalyticsServer:
+       properties: |
+         scalar.db.analytics.server.db.url=jdbc:sqlserver://<SQL_SERVER_HOSTNAME>:<SQL_SERVER_PORT>;databaseName=<SQL_SERVER_DATABASE_NAME>;encrypt=true;trustServerCertificate=true
+         scalar.db.analytics.server.db.username=<SQL_SERVER_USERNAME>
+         scalar.db.analytics.server.db.password=<SQL_SERVER_PASSWORD>
+     ```
+     </TabItem>
+     <TabItem value="oracle" label="Oracle">
+     ```yaml
+     scalarDbAnalyticsServer:
+       properties: |
+         scalar.db.analytics.server.db.url=jdbc:oracle:thin:@//<ORACLE_SERVER_HOSTNAME>:<ORACLE_SERVER_PORT>/<PDB_NAME>
+         scalar.db.analytics.server.db.username=<ORACLE_USERNAME>
+         scalar.db.analytics.server.db.password=<ORACLE_PASSWORD>
+     ```
+     </TabItem>
+   </Tabs>
+
+1. Set the object storage configurations
+
+   Based on the object storage you chose in [Step 4. Deploy an object storage](#step-4-deploy-an-object-storage), please set object storage configurations in `scalarDbAnalyticsServer.properties`. Select one of the following object storages to see an example of these configurations.
+
+   <Tabs groupId="object-storages" queryString>
+     <TabItem value="amazon-s3" label="Amazon S3" default>
+     ```yaml
+     scalarDbAnalyticsServer:
+       properties: |
+         scalar.db.analytics.server.metering.storage.provider=aws-s3
+         scalar.db.analytics.server.metering.storage.accessKeyId=<YOUR_ACCESS_KEY>
+         scalar.db.analytics.server.metering.storage.secretAccessKey=<YOUR_SECRET_ACCESS_KEY>
+     ```
+     </TabItem>
+     <TabItem value="azure-blob-storage" label="Azure Blob Storage">
+     ```yaml
+     scalarDbAnalyticsServer:
+       properties: |
+         scalar.db.analytics.server.metering.storage.provider=azureblob
+         scalar.db.analytics.server.metering.storage.accessKeyId=<YOUR_ACCESS_KEY>
+         scalar.db.analytics.server.metering.storage.secretAccessKey=<YOUR_SECRET_ACCESS_KEY>
+     ```
+     </TabItem>
+     <TabItem value="cloud-storage" label="Cloud storage">
+     ```yaml
+     scalarDbAnalyticsServer:
+       properties: |
+         scalar.db.analytics.server.metering.storage.provider=google-cloud-storage
+         scalar.db.analytics.server.metering.storage.accessKeyId=<YOUR_ACCESS_KEY>
+         scalar.db.analytics.server.metering.storage.secretAccessKey=<YOUR_SECRET_ACCESS_KEY>
+     ```
+     </TabItem>
+     <TabItem value="filesystem" label="Filesystem">
+     :::note
+
+     You can use `filesystem` for testing or development purposes only. Filesystem is not recommended for production use.
+
+     :::
+     ```yaml
+     scalarDbAnalyticsServer:
+       properties: |
+         scalar.db.analytics.server.metering.storage.provider=filesystem
+         scalar.db.analytics.server.metering.storage.path=/tmp/scalardb-analytics-metering
+     ```
+     </TabItem>
+   </Tabs>
+
+1. Set the service configurations
+
+   Based on the connectivity of the ScalarDB Analytics server, you need to set `scalarDbAnalyticsServer.service.type`. Select one of the following types of connections to see an example of this configuration.
+
+   <Tabs groupId="connectivity" queryString>
+     <TabItem value="external-k8s" label="Access from outside of the Kubernetes cluster" default>
+     If your Spark application accesses the ScalarDB Analytics server from outside of the Kubernetes cluster, set `scalarDbAnalyticsServer.service.type` to `LoadBalancer`.
+
+     ```yaml
+     scalarDbAnalyticsServer:
+       service:
+         type: "LoadBalancer"
+     ```
+     </TabItem>
+     <TabItem value="internal-k8s" label="Access from inside of the Kubernetes cluster">
+     If your Spark application accesses the ScalarDB Analytics server from inside of the Kubernetes cluster, set `scalarDbAnalyticsServer.service.type` to `ClusterIP`.
+
+     ```yaml
+     scalarDbAnalyticsServer:
+       service:
+         type: "ClusterIP"
+     ```
+     </TabItem>
+   </Tabs>
+
+1. Check the required configurations
+
+   After completing the above steps, you should have the following configurations, depending on your environment, for example:
+
+   :::note
+
+   These configurations are just examples. The actual configurations may be different from these examples. Please make sure to set configurations based on your environment.
+
+   :::
+
+   <Tabs groupId="examples" queryString>
+     <TabItem value="example-1" label="BYOL / PostgreSQL / Azure Blob Storage / LoadBalancer" default>
+     ```yaml
+     scalarDbAnalyticsServer:
+       image:
+         repository: ghcr.io/scalar-labs/scalardb-analytics-server-byol
+       properties: |
+         # License configurations
+         scalar.db.analytics.server.licensing.license_key=<YOUR_LICENSE_KEY>
+         scalar.db.analytics.server.licensing.license_check_cert_pem=-----BEGIN CERTIFICATE-----\nMIID...certificate content...\n-----END CERTIFICATE-----
+         # Database configurations
+         scalar.db.analytics.server.db.url=jdbc:postgresql://<POSTGRESQL_SERVER_HOSTNAME>:<POSTGRESQL_SERVER_PORT>/<POSTGRESQL_DATABASE_NAME>
+         scalar.db.analytics.server.db.username=<POSTGRESQL_USERNAME>
+         scalar.db.analytics.server.db.password=<POSTGRESQL_PASSWORD>
+         # Object storage configurations
+         scalar.db.analytics.server.metering.storage.provider=azureblob
+         scalar.db.analytics.server.metering.storage.accessKeyId=<YOUR_ACCESS_KEY>
+         scalar.db.analytics.server.metering.storage.secretAccessKey=<YOUR_SECRET_ACCESS_KEY>
+       service:
+         type: "LoadBalancer"
+     ```
+     </TabItem>
+     <TabItem value="example-2" label="AWS Marketplace / MySQL / Amazon S3 / ClusterIP">
+     ```yaml
+     scalarDbAnalyticsServer:
+       image:
+         repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/scalar/scalardb-analytics-server-aws-payg
+       properties: |
+         # Database configurations
+         scalar.db.analytics.server.db.url=jdbc:mysql://<MYSQL_SERVER_HOSTNAME>:<MYSQL_SERVER_PORT>/<MYSQL_DATABASE_NAME>
+         scalar.db.analytics.server.db.username=<MYSQL_USERNAME>
+         scalar.db.analytics.server.db.password=<MYSQL_PASSWORD>
+         # Object storage configurations
+         scalar.db.analytics.server.metering.storage.provider=aws-s3
+         scalar.db.analytics.server.metering.storage.accessKeyId=<YOUR_ACCESS_KEY>
+         scalar.db.analytics.server.metering.storage.secretAccessKey=<YOUR_SECRET_ACCESS_KEY>
+       service:
+         type: "ClusterIP"
+       serviceAccount:
+         serviceAccountName: "scalardb-analytics-payg-sa"
+         automountServiceAccountToken: true
+     ```
+     </TabItem>
+     <TabItem value="example-3" label="BYOL / SQL Server / Filesystem / ClusterIP">
+     :::note
+
+     You can use `filesystem` for testing or development purposes only. Filesystem is not recommended for production use.
+
+     :::
+
+     ```yaml
+     scalarDbAnalyticsServer:
+       image:
+         repository: ghcr.io/scalar-labs/scalardb-analytics-server-byol
+       properties: |
+         # License configurations
+         scalar.db.analytics.server.licensing.license_key=<YOUR_LICENSE_KEY>
+         scalar.db.analytics.server.licensing.license_check_cert_pem=-----BEGIN CERTIFICATE-----\nMIID...certificate content...\n-----END CERTIFICATE-----
+         # Database configurations
+         scalar.db.analytics.server.db.url=jdbc:sqlserver://<SQL_SERVER_HOSTNAME>:<SQL_SERVER_PORT>;databaseName=<SQL_SERVER_DATABASE_NAME>;encrypt=true;trustServerCertificate=true
+         scalar.db.analytics.server.db.username=<SQL_SERVER_USERNAME>
+         scalar.db.analytics.server.db.password=<SQL_SERVER_PASSWORD>
+         # Filesystem configurations
+         scalar.db.analytics.server.metering.storage.provider=filesystem
+         scalar.db.analytics.server.metering.storage.path=/tmp/scalardb-analytics-metering
+       service:
+         type: "ClusterIP"
+     ```
+     </TabItem>
+   </Tabs>
+
+### Set the optional configurations
+
+You can see the optional configurations in [Optional configurations](../helm-charts/configure-custom-values-scalardb-analytics.mdx#optional-configurations). Set the optional configurations based on your environment if necessary.
+
+## Step 6. Deploy a ScalarDB Analytics server by using Helm Chart
+
+Deploy, upgrade, or uninstall the ScalarDB Analytics server deployment by using the `helm` command with your custom values file `scalardb-analytics-server.yaml` that you created in [Step 5. Create a custom values file](#step-5-create-a-custom-values-file).
+
+<HelmCommandUsage productName="ScalarDB Analytics server" helmChartName="scalardb-analytics-server" />
+
+## Step 7. Check your deployment
+
+After deploying the ScalarDB Analytics server or upgrading it, you should check the following points:
+
+1. Check if the pod status is `Running` by running the following command:
+
+   ```console
+   kubectl get pod --namespace <KUBERNETES_NAMESPACE>
+   ```
+
+   :::note
+
+   For the `--namespace` option, change `<KUBERNETES_NAMESPACE>` to the name of the Kubernetes namespace that you deployed the ScalarDB Analytics server to.
+
+   :::
+
+   For example, you can see `Running` in the `STATUS` column and `1/1` in the `READY` column as follows:
+
+   ```console
+   $ kubectl get pod
+   NAME                                         READY   STATUS    RESTARTS   AGE
+   scalardb-analytics-server-86767fff4c-p6nkq   1/1     Running   0          22m
+   ```
+
+1. Check if the service is exported.
+
+   ```console
+   kubectl get svc --namespace <KUBERNETES_NAMESPACE>
+   ```
+
+   :::note
+
+   For the `--namespace` option, change `<KUBERNETES_NAMESPACE>` to the name of the Kubernetes namespace that you deployed the ScalarDB Analytics server to.
+
+   :::
+
+   <Tabs groupId="connectivity" queryString>
+     <TabItem value="external-k8s" label="Access from outside of the Kubernetes cluster" default>
+     If you set `scalarDbAnalyticsServer.service.type` to `LoadBalancer` in [Step 5. Create a custom values file](#step-5-create-a-custom-values-file), you'll see the IP address or FQDN (depending on Kubernetes cluster) in the `EXTERNAL-IP` column as follows:
+
+     ```console
+     $ kubectl get svc
+     NAME                        TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                           AGE
+     kubernetes                  ClusterIP      10.96.0.1       <none>        443/TCP                           4h54m
+     scalardb-analytics-server   LoadBalancer   10.98.116.121   127.0.0.1     11051:32619/TCP,11052:32598/TCP   2m43s
+     ```
+
+     :::note
+
+     If you're using minikube for testing or development purposes, you'll need to run the [minikube tunnel](https://minikube.sigs.k8s.io/docs/commands/tunnel/) command to expose the `LoadBalancer` service.
+
+     :::
+
+     </TabItem>
+     <TabItem value="internal-k8s" label="Access from inside of the Kubernetes cluster">
+     If you set `scalarDbAnalyticsServer.service.type` to `ClusterIP` in [Step 5. Create a custom values file](#step-5-create-a-custom-values-file), you'll see the IP address in the `CLUSTER-IP` column as follows:
+     ```console
+     $ kubectl get svc
+     NAME                        TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)               AGE
+     kubernetes                  ClusterIP   10.96.0.1        <none>        443/TCP               4h56m
+     scalardb-analytics-server   ClusterIP   10.102.141.240   <none>        11051/TCP,11052/TCP   3s
+     ```
+     </TabItem>
+   </Tabs>
