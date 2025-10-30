@@ -646,6 +646,11 @@ const sidebars = {
           label: 'Deploy ScalarDB Analytics in Public Cloud Environments',
         },
         {
+          type: 'doc',
+          id: 'scalardb-analytics/deploy-scalardb-analytics-server',
+          label: 'Deploy a ScalarDB Analytics Server',
+        },
+        {
           type: 'category',
           label: 'Reference',
           collapsible: true,
