@@ -228,6 +228,12 @@ The following performance-related configurations are available for the Consensus
 
 ScalarDB has a storage (database) abstraction layer that supports multiple storage implementations. You can specify the storage implementation by using the `scalar.db.storage` property.
 
+:::note
+
+For details about using multiple storages, see [Multi-storage configurations](#multi-storage-configurations).
+
+:::
+
 Select a database to see the configurations available for each storage.
 
 <Tabs groupId="databases" queryString>
@@ -238,7 +244,6 @@ Select a database to see the configurations available for each storage.
 
     - **Field:** `scalar.db.storage`
     - **Description:** `jdbc` must be specified.
-    - **Default value:** empty
 
     <h4>`contact_points`</h4>
 
@@ -361,7 +366,6 @@ The following configurations are available for DynamoDB.
 
     - **Field:** `scalar.db.storage`
     - **Description:** `dynamo` must be specified.
-    - **Default value:** empty
 
     <h4>`contact_points`</h4>
 
@@ -400,7 +404,6 @@ The following configurations are available for DynamoDB.
 
     - **Field:** `scalar.db.storage`
     - **Description:** `cosmos` must be specified.
-    - **Default value:** empty
 
     <h4>`contact_points`</h4>
 
@@ -427,7 +430,6 @@ The following configurations are available for DynamoDB.
 
     - **Field:** `scalar.db.storage`
     - **Description:** `cassandra` must be specified.
-    - **Default value:** empty
 
     <h4>`contact_points`</h4>
 
@@ -455,11 +457,49 @@ The following configurations are available for DynamoDB.
   </TabItem>
 </Tabs>
 
-#### Multi-storage support
+#### Multi-storage configurations
 
-ScalarDB supports using multiple storage implementations simultaneously. You can use multiple storages by specifying `multi-storage` as the value for the `scalar.db.storage` property.
+ScalarDB supports using multiple storage implementations simultaneously. For details about using multiple storages, see [Multi-Storage Transactions](../multi-storage-transactions.mdx).
 
-For details about using multiple storages, see [Multi-Storage Transactions](../multi-storage-transactions.mdx).
+##### `storage`
+
+- **Field:** `scalar.db.storage`
+- **Description:** `multi-storage` must be specified.
+
+##### `multi_storage.storages`
+
+- **Field:** `scalar.db.multi_storage.storages`
+- **Description:** Comma-separated storage names (for example, `cassandra,mysql`). These storage names will be used in the `scalar.db.multi_storage.namespace_mapping` property to map namespaces to storages.
+- **Default value:** empty
+
+##### `multi_storage.default_storage`
+
+- **Field:** `scalar.db.multi_storage.default_storage`
+- **Description:** Default storage name. This storage will be used for any namespace that doesn't have mapping defined in the `scalar.db.multi_storage.namespace_mapping` property.
+- **Default value:** empty
+
+##### `multi_storage.namespace_mapping`
+
+- **Field:** `scalar.db.multi_storage.namespace_mapping`
+- **Description:** Mapping of namespaces to storages (for example, `user:my_cassandra,coordinator:my_mysql`).
+- **Default value:** empty
+
+:::tip
+
+The storage names (`<STORAGE_NAME_FOR_NAMESPACE>`) are arbitrary values that you need to define. You can use any names that you like as long as they are consistent across the multi-storage configurations.
+
+:::
+
+##### `multi_storage.storages.<STORAGE_NAME_FOR_NAMESPACE>.<PROPERTY_NAME>`
+
+For configuring specific storages, use `scalar.db.multi_storage.storages.<STORAGE_NAME_FOR_NAMESPACE>.<PROPERTY_NAME>`, with `<STORAGE_NAME_FOR_NAMESPACE>` being one of the storage names specified in the `scalar.db.multi_storage.storages` property and `<PROPERTY_NAME>` being the property name for the specific storage.
+
+For example, if you've defined [namespace mapping](#multi_storagenamespace_mapping) as `scalar.db.multi_storage.namespace_mapping=user:my_cassandra,coordinator:my_mysql`, with `my_cassandra` and `my_mysql` being the storage names for the `user` and `coordinator` namespaces, respectively:
+
+- You can specify the contact points for Cassandra by using `scalar.db.multi_storage.storages.my_cassandra.contact_points`.
+- You can specify the max idle time for the connection pool settings for MySQL by using `scalar.db.multi_storage.storages.my_mysql.jdbc.connection_pool.max_idle`.
+
+For details about the properties available for each storage, see [Storage-related configurations](#storage-related-configurations).
 
 #### Cross-partition scan configurations
 
@@ -491,7 +531,7 @@ For non-JDBC databases, we do not recommend enabling cross-partition scan with t
 - **Description:** Enable ordering in cross-partition scan.
 - **Default value:** `false`
 
-#### Scan fetch size
+#### Scan configurations
 
 You can configure the fetch size for storage scan operations by using the following property.
 
