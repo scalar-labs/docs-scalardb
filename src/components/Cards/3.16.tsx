@@ -30,13 +30,13 @@ const recentFeatures = [
       },
       {
         cell: 1, // Second cell
-        links: ['scalardb-cluster/getting-started-with-vector-search'],
-        labels: ['Getting Started with ScalarDB Cluster for Vector Search']
+        links: ['scalardb-mcp-server/getting-started-with-scalardb-mcp-server'],
+        labels: ['Getting Started with ScalarDB MCP Server']
       },
       {
         cell: 2, // Third cell
-        links: ['scalardb-cluster/encrypt-data-at-rest'],
-        labels: ['Encrypt Data at Rest']
+        links: ['scalardb-cluster/getting-started-with-vector-search'],
+        labels: ['Getting Started with ScalarDB Cluster for Vector Search']
       }
     ]
   }

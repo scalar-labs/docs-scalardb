@@ -427,6 +427,11 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'data-loader',
+              label: 'Data Loader',
+            },
+            {
+              type: 'doc',
               key: 'develop-scalardb-cluster-en-us-3.16',
               id: 'scalardb-cluster/index',
               label: 'ScalarDB Cluster',
@@ -610,6 +615,23 @@ const sidebars = {
                 },
               ],
             },
+            {
+              type: 'category',
+              label: 'ScalarDB MCP Server',
+              collapsible: true,
+              items: [
+                {
+                type: 'doc',
+                id: 'scalardb-mcp-server/getting-started-with-scalardb-mcp-server',
+                label: 'Use ScalarDB MCP Server',
+                },
+                {
+                type: 'doc',
+                id: 'scalardb-mcp-server/tools-reference',
+                label: 'ScalarDB MCP Server Tools Reference',
+                },
+              ],
+            },
           ],
         },
       ],
@@ -628,6 +650,7 @@ const sidebars = {
           id: 'scalardb-cluster/setup-scalardb-cluster-on-kubernetes-by-using-helm-chart',
           label: 'Deploy ScalarDB Cluster Locally',
         },
+
         {
           type: 'doc',
           id: 'scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS',
@@ -635,8 +658,18 @@ const sidebars = {
         },
         {
           type: 'doc',
+          id: 'scalardb-analytics/deployment-local',
+          label: 'Deploy ScalarDB Analytics Locally',
+        },
+        {
+          type: 'doc',
           id: 'scalardb-analytics/deployment',
           label: 'Deploy ScalarDB Analytics in Public Cloud Environments',
+        },
+        {
+          type: 'doc',
+          id: 'scalardb-analytics/deploy-scalardb-analytics-server',
+          label: 'Deploy a ScalarDB Analytics Server',
         },
         {
           type: 'category',
@@ -781,6 +814,11 @@ const sidebars = {
                   type: 'doc',
                   id: 'helm-charts/configure-custom-values-scalardb-cluster',
                   label: 'Configure a custom values file for ScalarDB Cluster',
+                },
+                {
+                  type: 'doc',
+                  id: 'helm-charts/configure-custom-values-scalardb-analytics-server',
+                  label: 'Configure a Custom Values File for ScalarDB Analytics server',
                 },
                 {
                   type: 'doc',
@@ -1418,6 +1456,11 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'data-loader',
+              label: 'Data Loader',
+            },
+            {
+              type: 'doc',
               key: 'develop-scalardb-cluster-ja-jp-3.16',
               id: 'scalardb-cluster/index',
               label: 'ScalarDB Cluster',
@@ -1601,6 +1644,23 @@ const sidebars = {
                 },
               ],
             },
+            {
+              type: 'category',
+              label: 'ScalarDB MCP Server',
+              collapsible: true,
+              items: [
+                {
+                type: 'doc',
+                id: 'scalardb-mcp-server/getting-started-with-scalardb-mcp-server',
+                label: 'ScalarDB MCP Server を使用',
+                },
+                {
+                type: 'doc',
+                id: 'scalardb-mcp-server/tools-reference',
+                label: 'ScalarDB MCP Server ツールリファレンス',
+                },
+              ],
+            },
           ],
         },
       ],
@@ -1772,6 +1832,11 @@ const sidebars = {
                   type: 'doc',
                   id: 'helm-charts/configure-custom-values-scalardb-cluster',
                   label: 'ScalarDB Cluster のカスタム値ファイルを構成',
+                },
+                {
+                  type: 'doc',
+                  id: 'helm-charts/configure-custom-values-scalardb-analytics-server',
+                  label: 'ScalarDB Analytics server のカスタム値ファイルを構成',
                 },
                 {
                   type: 'doc',

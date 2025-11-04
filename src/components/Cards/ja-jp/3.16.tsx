@@ -30,13 +30,13 @@ const recentFeatures = [
       },
       {
         cell: 1, // Second cell
-        links: ['scalardb-cluster/getting-started-with-vector-search'],
-        labels: ['ScalarDB Cluster でベクトル検索をはじめよう']
+        links: ['scalardb-mcp-server/getting-started-with-scalardb-mcp-server'],
+        labels: ['ScalarDB MCP Server をはじめよう']
       },
       {
         cell: 2, // Third cell
-        links: ['scalardb-cluster/authorize-with-abac'],
-        labels: ['ユーザーアクセスをきめ細かく制御する']
+        links: ['scalardb-cluster/getting-started-with-vector-search'],
+        labels: ['ScalarDB Cluster でベクトル検索をはじめよう']
       }
     ]
   }

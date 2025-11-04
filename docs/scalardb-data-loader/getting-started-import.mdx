@@ -12,7 +12,7 @@ This document explains how you can get started with the ScalarDB Data Loader Imp
 
 ## Features
 
-- Import data from JSON or JSONLines files
+- Import data from JSON or JSON Lines files
 - Automatic data mapping based on source field name mapping
 - Custom Data mapping via a JSON control file
 - Import data from one record or line into multiple tables
@@ -20,7 +20,7 @@ This document explains how you can get started with the ScalarDB Data Loader Imp
 
 ## Usage
 
-The data loader import function can be started with the following minimal configuration:
+The Data Loader import function can be started with the following minimal configuration:
 
 ```console
 ./scalardb-data-loader import --config scalardb.properties --namespace namespace --table tableName
@@ -40,11 +40,9 @@ Execute the following steps to successfully import new or existing data
 
 - Find the correct `namespace` and `table` name to import data to.
 
-- Determine if you want to run an `all required columns` check for each data row. If enabled data
-  rows with missing columns will be treated as failed and not imported.
+- Determine if you want to run an `all required columns` check for each data row. If enabled, data rows with missing columns will be treated as failed and not imported.
 
-- Specify the pathnames for the `success` and `failed` output files. By default the data loader
-  creates the files in the working directory.
+- Specify the path names for the `success` and `failed` output files. By default, Data Loader creates the files in the working directory.
 
 - When dealing with JSON data, determine if you want the JSON output for the success or failed log files to
   be in `pretty print` or not. By default, this option is disabled for performance
@@ -56,7 +54,7 @@ Execute the following steps to successfully import new or existing data
 
 ### Command-line flags
 
-Here is a list of flags (options) that can be used with the data loader:
+Here is a list of flags (options) that can be used with Data Loader:
 
 | Flag                            | Description                                                                                                                                                                                                                                                                                                              | Usage                                                       |
 |---------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------|
@@ -69,13 +67,13 @@ Here is a list of flags (options) that can be used with the data loader:
 | --file                          | Specify the path to the file that will be imported. Required                                                                                                                                                                                                                                                             | `scalardb-data-loader --file <pathToFile>`                  |
 | --success                       | The path to the file that is created to write the succeed import results to. Both succeed and failed import results will be written to a different file. <br />Optional. By default, the a new file will be created in the current working directory.<br /><br />Note: if the file already exists, it will be overridden. | `scalardb-data-loader --success <path to file>`             |
 | --failed                        | The path to the file that will be created to write the failed import results to. <br />Optional. By default, the a new file will be created in the current working directory.<br /><br />Note: if the file already exists, it will be overridden.                                                                        | `scalardb-data-loader --failed <path to file>`              |
-| --threads                       | Thread count for concurrent processing                                                                                                                                                                                                                                                                                   | `scalardb-data-loader --threads 500`                        |
+| --threads                       | Thread count for concurrent processing. The default value is the number of available processors.                                                                                                                                                                                                                                                             | `scalardb-data-loader --threads 500`                        |
 | --format                        | The format of the import file. `json` and `jsonl` files are supported. Optional, default the value `json` is selected.                                                                                                                                                                                                   | `scalardb-data-loader --format json`                        |
 | --ignore-null                   | The null values in the source file will be ignored, which means that the existing data will not be overwritten. Optional, default the value is `false`.                                                                                                                                                                  | `scalardb-data-loader --ignore-null`                        |
 | --pretty                        | When set, the output to the success and failed files is done in `pretty print` mode. By default the option is not enabled.                                                                                                                                                                                               | `scalardb-data-loader --pretty`                             |
 | --control-file                  | The path to the JSON control file specifying the rules for the custom data mapping and/or multi-table import.                                                                                                                                                                                                            | `scalardb-data-loader --control-file control.json`          |
 | --control-file-validation-level | The validation level for the control file.  `MAPPED`, `KEYS` or` FULL`.    <br /><br />Optional and by default the level is set to `MAPPED`                                                                                                                                                                              | `scalardb-data-loader --control-file-validation-level FULL` |
-| --log-put-value                 | Wether the value that was used in the ScalarDB `PUT` operation is included in the log files or not.<br />Optional and disabled by default.                                                                                                                                                                              | `scalardb-data-loader --log-put-value`                      |
+| --log-put-value                 | Whether the value that was used in the ScalarDB `PUT` operation is included in the log files or not.<br />Optional and disabled by default.                                                                                                                                                                              | `scalardb-data-loader --log-put-value`                      |
 | --error-file-required           | To export an optional error file of type JSON when the import file contains CSV data. By default, this option is disabled.                                                                                                                                                                                               | `scalardb-data-loader --error-file-required`                |
 | --error                         | To specify an optional error file when the import file contains CSV data.                                                                                                                                                                                                                                                | `scalardb-data-loader --error <pathToFile>`                 |
 | --delimiter                     | To specify a custom delimiter if the import file contains CSV data.                                                                                                                                                                                                                                                      | `scalardb-data-loader --delimiter <value>`                  |
@@ -83,7 +81,7 @@ Here is a list of flags (options) that can be used with the data loader:
 
 ## Import mode
 
-The data loader supports the following import modes:
+Data Loader supports the following import modes:
 
 | Mode   | Description                                                  |
 | ------ | ------------------------------------------------------------ |
@@ -99,7 +97,7 @@ The data loader supports the following import modes:
 
 ### Automatic mapping
 
-When no control file is provided, the data loader will automatically map the fields in the source JSON data to the available columns in the ScalarDB table. If the name does not match, and if all columns are required, it will be treated as a validation error. In this case, the import for this record will fail and the result will be added to the failed output log.
+When no control file is provided, Data Loader will automatically map the fields in the source JSON data to the available columns in the ScalarDB table. If the name does not match, and if all columns are required, it will be treated as a validation error. In this case, the import for this record will fail and the result will be added to the failed output log.
 
 ### Custom mapping
 
@@ -123,11 +121,11 @@ e.g. the following control file to map the field `custom_id` in the source file 
 
 ## Control file
 
-To allow for custom data mapping or multi-table importing, the data loader supports configuration via a JSON control file. This file needs to be passed in via the `--control-file` argument when starting the data loader.
+To allow for custom data mapping or multi-table importing, Data Loader supports configuration via a JSON control file. This file needs to be passed in via the `--control-file` argument when starting Data Loader.
 
 ### Control file validation levels
 
-To enforce validation on the control file, the data loader allows you to specify the validation level. Based on the set level, the data loader will run a pre-check and validate the control file based on the level rules.
+To enforce validation on the control file, Data Loader allows you to specify the validation level. Based on the set level, Data Loader will run a pre-check and validate the control file based on the level rules.
 
 The following levels are supported:
 
@@ -137,7 +135,7 @@ The following levels are supported:
 | KEYS   | This validation makes sure that mappings are available for each ScalarDB table partition and, if available, clustering keys columns in the control file mappings. |
 | MAPPED | The validation makes sure that the provided source fields and target columns exist for only the mappings that are provided in the control file. <br />No other fields are checked. |
 
-The validation level is optional and can be set via the `--control-file-validation-level` argument when starting the data loader.
+The validation level is optional and can be set via the `--control-file-validation-level` argument when starting Data Loader.
 
 *Note*:
 
@@ -147,9 +145,9 @@ e.g. If the level is set to mapped and the control file does not contain mapping
 
 ## Multi-table import
 
-The data loader supports multi-table target importing.  
+Data Loader supports multi-table target importing.
 
-One single row in a JSON or JSONLine file can be imported into multiple tables by specifying table mapping rules in the control file.   Currently, multi-table import is not supported without a control file.
+One single row in a JSON or JSON Lines file can be imported into multiple tables by specifying table mapping rules in the control file.   Currently, multi-table import is not supported without a control file.
 
 When using multi-table import in ScalarDB transaction mode, a transaction is created for each table import.  e.g. If the source record is mapped to 3 tables in the control file, 3 separate transactions are created.
 
@@ -205,7 +203,7 @@ e.g. The import the following source record into `table1` and `table2` we execut
 
 ## Output logs
 
-When starting an import task, the data loader logs the import results in two files. One file contains the import data that is successfully imported and one file contains the data that cannot be imported. The failed data will contain an added field that explains why the data could not be imported. This field is called `data_loader_import_status`.
+When starting an import task, Data Loader logs the import results in two files. One file contains the import data that is successfully imported and one file contains the data that cannot be imported. The failed data will contain an added field that explains why the data could not be imported. This field is called `data_loader_import_status`.
 
 The file containing the failed imports can be edited to correct the problems and used as the source file for a new import task as is. It is not required to first remove the `data_loader_import_status` field containing the error. This field will be ignored during the import process and the original value will not be included in the new version of the success or failed output file.
 
@@ -217,10 +215,10 @@ The file with the successfully imported data also contains the `data_loader_impo
 | -------------- | ------------------------------------------------------------ |
 | action         | The result of the import process for the data record. UPDATE, INSERT or FAILED_DURING_VALIDATION |
 | namespace      | The name of the namespace of the table that the data is imported in |
-| tablename      | The name of the table that the data is imported in           |
+| table_name      | The name of the table that the data is imported in           |
 | is_data_mapped | Whether custom data mapping was applied or not based on an available control file. |
-| tx_id          | The id of the transaction. Only available if the data loader is run in `transaction` mode. |
-| value          | The final value, after optional data mapping, that the data loader uses in the `PUT` operation. |
+| tx_id          | The transaction ID. Only available if Data Loader is run in `transaction` mode. |
+| value          | The final value, after optional data mapping, that Data Loader uses in the `PUT` operation. |
 | row_number     | The line number or record number of the source data.         |
 | Errors         | A list of validation or other errors for things that went wrong during the import process. |
 
@@ -235,7 +233,7 @@ Example of a JSON formatted success log file:
 		"results": [{
 		  "action": "UPDATE",
 			"namespace": "namespace1",
-			"tableName": "table1",
+			"table_name": "table1",
 			"is_data_mapped": true,
 			"tx_id": "value",
 			"value": "value",
@@ -258,7 +256,7 @@ Example of a JSON formatted failed log file:
 		"results": [{
 		  "action": "FAILED_DURING_VALIDATION",
 			"namespace": "namespace1",
-			"tableName": "table1",
+			"table_name": "table1",
 			"is_data_mapped": false,
 			"value": "value",
 			"row_number": "value",
@@ -272,9 +270,9 @@ Example of a JSON formatted failed log file:
 
 ## Data duplicates
 
-The data loader does not handle duplicates by itself. In ScalarDB transaction mode, trying to
+Data Loader does not handle duplicates by itself. In ScalarDB transaction mode, trying to
 update the same target data in fast succession will cause `No Mutation` errors and these are not
-handled by the data loader. These failed data rows will be added to the failed import result output
+handled by Data Loader. These failed data rows will be added to the failed import result output
 file and can be re-tried for import later.
 
 However, it is recommended to make sure the import file does not contain updates or inserts on the
@@ -285,7 +283,7 @@ loader.
 
 ## Storage vs transaction mode
 
-ScalarDB supports both storage and transaction mode and this support is included in the data loader import process.
+ScalarDB supports both storage and transaction mode and this support is included in Data Loader import process.
 
 When the loader is started in storage mode, each import is executed in a non-transactional way.   
 
