@@ -63,7 +63,7 @@ ScalarDB Analytics を有効にするには、EMR クラスターを起動する
     "Properties": {
       "spark.jars.packages": "com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>",
       "spark.extraListeners": "com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener",
-      "spark.sql.catalog.<CATALOG_NAME>": "com.scalar.db.analytics.spark.catalog.ScalarDBAnalyticsCatalog",
+      "spark.sql.catalog.<CATALOG_NAME>": "com.scalar.db.analytics.spark.ScalarDBAnalyticsCatalog",
       "spark.sql.catalog.<CATALOG_NAME>.server.host": "<CATALOG_SERVER_HOST>",
       "spark.sql.catalog.<CATALOG_NAME>.server.catalog.port": "11051",
       "spark.sql.catalog.<CATALOG_NAME>.server.metering.port": "11052"
@@ -151,7 +151,7 @@ ScalarDB Analytics は Databricks の汎用クラスターとジョブコンピ�
 
 ```
 spark.extraListeners com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener
-spark.sql.catalog.<CATALOG_NAME> com.scalar.db.analytics.spark.catalog.ScalarDBAnalyticsCatalog
+spark.sql.catalog.<CATALOG_NAME> com.scalar.db.analytics.spark.ScalarDBAnalyticsCatalog
 spark.sql.catalog.<CATALOG_NAME>.server.host <CATALOG_SERVER_HOST>
 spark.sql.catalog.<CATALOG_NAME>.server.catalog.port 11051
 spark.sql.catalog.<CATALOG_NAME>.server.metering.port 11052

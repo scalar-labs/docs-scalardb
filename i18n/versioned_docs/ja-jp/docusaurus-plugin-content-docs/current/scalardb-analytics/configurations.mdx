@@ -203,7 +203,7 @@ Apache Spark で ScalarDB Analytics を使用するには、Spark 設定ファ�
 #### `spark.sql.catalog.<catalog-name>`
 
 - **フィールド:** `spark.sql.catalog.<catalog-name>`
-- **説明:** ScalarDB Analytics カタログ実装を登録。`<catalog-name>` は ScalarDB Analytics サーバーで作成したカタログの正確な名前に置き換えてください。値として `com.scalar.db.analytics.spark.catalog.ScalarDBAnalyticsCatalog` を使用します。
+- **説明:** ScalarDB Analytics カタログ実装を登録。`<catalog-name>` は ScalarDB Analytics サーバーで作成したカタログの正確な名前に置き換えてください。値として `com.scalar.db.analytics.spark.ScalarDBAnalyticsCatalog` を使用します。
 
 :::important
 
@@ -290,7 +290,7 @@ scalar.db.analytics.client.server.host=localhost
 ```properties
 spark.jars.packages                         com.scalar-labs:scalardb-analytics-spark-all-3.5_2.12:3.16.2
 spark.extraListeners                        com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener
-spark.sql.catalog.analytics                 com.scalar.db.analytics.spark.catalog.ScalarDBAnalyticsCatalog
+spark.sql.catalog.analytics                 com.scalar.db.analytics.spark.ScalarDBAnalyticsCatalog
 spark.sql.catalog.analytics.server.host     localhost
 ```
 
@@ -340,7 +340,7 @@ scalar.db.analytics.client.server.tls.ca_root_cert_path=/path/to/cert.pem
 ```properties
 spark.jars.packages                                     com.scalar-labs:scalardb-analytics-spark-all-3.5_2.12:3.16.2
 spark.extraListeners                                    com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener
-spark.sql.catalog.analytics                             com.scalar.db.analytics.spark.catalog.ScalarDBAnalyticsCatalog
+spark.sql.catalog.analytics                             com.scalar.db.analytics.spark.ScalarDBAnalyticsCatalog
 spark.sql.catalog.analytics.server.host                 analytics.example.com
 spark.sql.catalog.analytics.server.tls.enabled          true
 spark.sql.catalog.analytics.server.tls.ca_root_cert_path /path/to/cert.pem
@@ -351,4 +351,3 @@ spark.sql.catalog.analytics.server.tls.ca_root_cert_path /path/to/cert.pem
 - [ScalarDB Analytics カタログの作成](./create-scalardb-analytics-catalog.mdx) - カタログの作成とデータソースの追加方法を学ぶ
 - [ScalarDB Analytics を通じた分析クエリの実行](run-analytical-queries.mdx) - 設定でクエリの実行を開始
 - [パブリッククラウド環境への ScalarDB Analytics のデプロイ](deployment.mdx) - 本番環境での ScalarDB Analytics のデプロイ
-
