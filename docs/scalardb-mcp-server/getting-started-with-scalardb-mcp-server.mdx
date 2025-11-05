@@ -131,10 +131,12 @@ Select the configuration method that matches your MCP client. If you're using th
 
     <Tabs groupId="distribution" queryString>
       <TabItem value="docker" label="Docker (recommended)" default>
-        Pull the Docker image:
+        Docker images are available from the [ScalarDB MCP Server container registry](https://github.com/scalar-labs/scalardb-mcp-server/pkgs/container/scalardb-mcp-server).
+
+        You can pull the Docker image from the container registry by running the following command. Be sure to replace `<VERSION>` with the version that you want to use.
 
         ```bash
-        docker pull ghcr.io/scalar-labs/scalardb-mcp-server:0.9.0
+        docker pull ghcr.io/scalar-labs/scalardb-mcp-server:<VERSION>
         ```
 
         #### Step 3: Choose your ScalarDB deployment type
@@ -146,7 +148,7 @@ Select the configuration method that matches your MCP client. If you're using th
             ```bash
             claude mcp add scalardb -- docker run --rm -i \
               --name scalardb-mcp-server \
-              ghcr.io/scalar-labs/scalardb-mcp-server:0.9.0 \
+              ghcr.io/scalar-labs/scalardb-mcp-server:<VERSION> \
               --scalar.mcp.db.server.tool.mode=SQL \
               --scalar.db.transaction_manager=cluster \
               --scalar.db.contact_points=indirect:host.docker.internal \
@@ -204,7 +206,7 @@ Docker flags:
             ```bash
             claude mcp add scalardb -- docker run --rm -i \
               --name scalardb-mcp-server \
-              ghcr.io/scalar-labs/scalardb-mcp-server:0.9.0 \
+              ghcr.io/scalar-labs/scalardb-mcp-server:<VERSION> \
               --scalar.mcp.db.server.tool.mode=CRUD \
               --scalar.db.transaction_manager=consensus-commit \
               --scalar.db.storage=multi-storage \
@@ -251,7 +253,7 @@ Docker flags:
 
             ```bash
             claude mcp add scalardb \
-              -- java -jar /path/to/scalardb-mcp-server-0.9.0.jar \
+              -- java -jar /path/to/scalardb-mcp-server-<VERSION>.jar \
               --scalar.mcp.db.server.tool.mode=SQL \
               --scalar.db.transaction_manager=cluster \
               --scalar.db.contact_points=indirect:localhost \
@@ -299,7 +301,7 @@ For complete ScalarDB Cluster deployment and configuration instructions, see [Sc
 
             ```bash
             claude mcp add scalardb \
-              -- java -jar /path/to/scalardb-mcp-server-0.9.0.jar \
+              -- java -jar /path/to/scalardb-mcp-server-<VERSION>.jar \
               --scalar.mcp.db.server.tool.mode=CRUD \
               --scalar.db.transaction_manager=consensus-commit \
               --scalar.db.storage=multi-storage \
@@ -335,10 +337,12 @@ The example above demonstrates a multi-storage configuration. For other ScalarDB
 
     <Tabs groupId="distribution" queryString>
       <TabItem value="docker" label="Docker (recommended)" default>
-        Pull the Docker image:
+        Docker images are available from the [ScalarDB MCP Server container registry](https://github.com/scalar-labs/scalardb-mcp-server/pkgs/container/scalardb-mcp-server).
+
+        You can pull the Docker image from the container registry by running the following command. Be sure to replace `<VERSION>` with the version that you want to use.
 
         ```bash
-        docker pull ghcr.io/scalar-labs/scalardb-mcp-server:0.9.0
+        docker pull ghcr.io/scalar-labs/scalardb-mcp-server:<VERSION>
         ```
 
         #### Step 3: Choose your ScalarDB deployment type
@@ -357,7 +361,7 @@ The example above demonstrates a multi-storage configuration. For other ScalarDB
                     "-i",
                     "--rm",
                     "--name", "scalardb-mcp-server",
-                    "ghcr.io/scalar-labs/scalardb-mcp-server:0.9.0",
+                    "ghcr.io/scalar-labs/scalardb-mcp-server:<VERSION>",
                     "--scalar.db.transaction_manager=cluster",
                     "--scalar.db.contact_points=indirect:host.docker.internal",
                     "--scalar.db.contact_port=60053",
@@ -426,7 +430,7 @@ For complete ScalarDB Cluster deployment and configuration instructions, see [Sc
                     "-i",
                     "--rm",
                     "--name", "scalardb-mcp-server",
-                    "ghcr.io/scalar-labs/scalardb-mcp-server:0.9.0",
+                    "ghcr.io/scalar-labs/scalardb-mcp-server:<VERSION>",
                     "--scalar.mcp.db.server.tool.mode=CRUD",
                     "--scalar.db.transaction_manager=consensus-commit",
                     "--scalar.db.storage=multi-storage",
@@ -482,7 +486,7 @@ The example above demonstrates a multi-storage configuration. For other ScalarDB
                   "command": "java",
                   "args": [
                     "-jar",
-                    "/path/to/scalardb-mcp-server-0.9.0.jar",
+                    "/path/to/scalardb-mcp-server-<VERSION>.jar",
                     "--scalar.mcp.db.server.tool.mode=SQL",
                     "--scalar.db.transaction_manager=cluster",
                     "--scalar.db.contact_points=indirect:localhost",
@@ -539,7 +543,7 @@ For complete ScalarDB Cluster deployment and configuration instructions, see [Sc
                   "command": "java",
                   "args": [
                     "-jar",
-                    "/path/to/scalardb-mcp-server-0.9.0.jar",
+                    "/path/to/scalardb-mcp-server-<VERSION>.jar",
                     "--scalar.mcp.db.server.tool.mode=CRUD",
                     "--scalar.db.transaction_manager=consensus-commit",
                     "--scalar.db.storage=multi-storage",
