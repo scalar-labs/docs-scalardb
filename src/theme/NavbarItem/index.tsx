@@ -3,10 +3,11 @@ import NavbarItem from '@theme-original/NavbarItem';
 import type NavbarItemType from '@theme/NavbarItem';
 import type {WrapperProps} from '@docusaurus/types';
 import NotificationBell from '../../components/NotificationBell';
+import GoogleSearch from '../../components/GoogleSearch';
 import { getNotifications, detectLanguage } from '../../data/notifications';
 
 type Props = WrapperProps<typeof NavbarItemType> & {
-  type?: string;
+  type?: string | 'custom-NotificationBell' | 'custom-GoogleSearch';
   notifications?: any[];
 };
 
@@ -18,5 +19,10 @@ export default function NavbarItemWrapper(props: Props): ReactNode {
 
     return <NotificationBell notifications={notifications} />;
   }
+  
+  if (props.type === 'custom-GoogleSearch') {
+    return <GoogleSearch />;
+  }
+  
   return <NavbarItem {...props} />;
 }
