@@ -154,6 +154,12 @@ Consensus Commit トランザクションマネージャーでは、次のパフ
 
 ScalarDB には、複数のストレージ実装をサポートするストレージ（データベース）抽象化レイヤーがあります。`scalar.db.storage` プロパティを使用してストレージ実装を指定できます。
 
+:::note
+
+複数のストレージの使用の詳細については、[マルチストレージ設定](#マルチストレージ設定)を参照してください。
+
+:::
+
 データベースを選択して、各ストレージで使用可能な設定を確認します。
 
 <Tabs groupId="databases" queryString>
@@ -414,11 +420,49 @@ YugabyteDB のスマートドライバーと負荷分散の詳細については
   </TabItem>
 </Tabs>
 
-### マルチストレージのサポート
+### マルチストレージ設定
 
-ScalarDB は、複数のストレージ実装の同時使用をサポートしています。`scalar.db.storage` プロパティの値として `multi-storage` を指定することで、複数のストレージを使用できます。
+ScalarDB は複数のストレージ実装の同時使用をサポートしています。複数のストレージの使用の詳細については、[マルチストレージトランザクション](./multi-storage-transactions.mdx)を参照してください。
 
-複数のストレージの使用の詳細については、[マルチストレージトランザクション](multi-storage-transactions.mdx)を参照してください。
+#### `storage`
+
+- **フィールド:** `scalar.db.storage`
+- **説明:** `multi-storage` を指定する必要があります。
+
+#### `multi_storage.storages`
+
+- **フィールド:** `scalar.db.multi_storage.storages`
+- **説明:** カンマ区切りのストレージ名（例: `cassandra,mysql`）。これらのストレージ名は、名前空間をストレージにマップするために `scalar.db.multi_storage.namespace_mapping` プロパティで使用されます。
+- **デフォルト値:** empty
+
+#### `multi_storage.default_storage`
+
+- **フィールド:** `scalar.db.multi_storage.default_storage`
+- **説明:** デフォルトのストレージ名。このストレージは、`scalar.db.multi_storage.namespace_mapping` プロパティでマッピングが定義されていない名前空間に使用されます。
+- **デフォルト値:** empty
+
+#### `multi_storage.namespace_mapping`
+
+- **フィールド:** `scalar.db.multi_storage.namespace_mapping`
+- **説明:** 名前空間からストレージへのマッピング（例: `user:my_cassandra,coordinator:my_mysql`）。
+- **デフォルト値:** empty
+
+:::tip
+
+ストレージ名（`<STORAGE_NAME_FOR_NAMESPACE>`）は、定義する必要がある任意の値です。マルチストレージ設定全体で一貫している限り、好きな名前を使用できます。
+
+:::
+
+#### `multi_storage.storages.<STORAGE_NAME_FOR_NAMESPACE>.<PROPERTY_NAME>`
+
+特定のストレージを設定するには、`scalar.db.multi_storage.storages.<STORAGE_NAME_FOR_NAMESPACE>.<PROPERTY_NAME>` を使用します。ここで、`<STORAGE_NAME_FOR_NAMESPACE>` は `scalar.db.multi_storage.storages` プロパティで指定されたストレージ名の1つであり、`<PROPERTY_NAME>` は特定のストレージのプロパティ名です。
+
+例えば、[名前空間マッピング](#multi_storagenamespace_mapping)を `scalar.db.multi_storage.namespace_mapping=user:my_cassandra,coordinator:my_mysql` として定義した場合、`my_cassandra` と `my_mysql` がそれぞれ `user` と `coordinator` 名前空間のストレージ名になります:
+
+- `scalar.db.multi_storage.storages.my_cassandra.contact_points` を使用して Cassandra のコンタクトポイントを指定できます。
+- `scalar.db.multi_storage.storages.my_mysql.jdbc.connection_pool.max_idle` を使用して MySQL のコネクションプール設定の最大アイドル時間を指定できます。
+
+各ストレージで使用可能なプロパティの詳細については、[ストレージ関連の設定](#ストレージ関連の設定)を参照してください。
 
 ### クロスパーティションスキャン設定
 
