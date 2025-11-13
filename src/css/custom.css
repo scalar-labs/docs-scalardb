@@ -835,6 +835,27 @@ html[data-theme="dark"] .notification-dropdown {
   }
 }
 
+/* Make navbar links break onto multiple lines on narrow screens */
+@media (max-width: 1070px) {
+  .navbar__items--right .navbar__link:not(.navbar__link--active) {
+    white-space: normal !important;
+    word-break: break-word;
+    line-height: 1.5;
+    max-width: 120px;
+    text-align: center;
+    padding: 0.25rem 0.5rem;
+  }
+}
+
+@media (max-width: 997px) {
+  .navbar__items--right .navbar__link:not(.navbar__link--active) {
+    max-width: 60px;
+    font-size: 1rem;
+    padding: 0.2rem 0.4rem;
+    line-height: 1.2;
+  }
+}
+
 /* Algolia DocSearch styles */
 :root {
   --docsearch-primary-color: var(--ifm-color-primary);
