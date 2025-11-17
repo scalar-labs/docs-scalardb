@@ -1183,6 +1183,11 @@ const sidebars = {
               id: 'scalardb-analytics/quickstart',
               label: 'Spark を実行エンジンとして使用',
             },
+            {
+              type: 'doc',
+              id: 'scalardb-analytics-postgresql/getting-started',
+              label: 'PostgreSQL を実行エンジンとして使用',
+            },
           ],
         },
         {
@@ -1205,6 +1210,11 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/getting-started-with-using-python-for-scalardb-cluster',
               label: 'Python から ScalarDB Cluster を使用',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-analytics-postgresql/installation',
+              label: 'ScalarDB Analytics with PostgreSQL をローカルにインストール',
             },
           ],
         },
@@ -1398,6 +1408,11 @@ const sidebars = {
               id: 'scalardb-samples/spring-data-microservice-transaction-sample/README',
               label: 'Spring Data JDBC によるマイクロサービストランザクション',
             },
+            {
+              type: 'doc',
+              id: 'scalardb-samples/scalardb-analytics-postgresql-sample/README',
+              label: 'ScalarDB Analytics with PostgreSQL を使用した分析クエリ',
+            },
           ],
         },
         {
@@ -1538,6 +1553,16 @@ const sidebars = {
               label: '分析',
               collapsible: true,
               items: [
+                {
+                  type: 'doc',
+                  id: 'scalardb-analytics-postgresql/scalardb-fdw',
+                  label: 'PostgreSQL 用 ScalarDB FDW',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-analytics-postgresql/schema-importer',
+                  label: 'PostgreSQL 用 Schema Importer',
+                },
                 {
                   type: 'doc',
                   id: 'scalardb-analytics/configurations',
