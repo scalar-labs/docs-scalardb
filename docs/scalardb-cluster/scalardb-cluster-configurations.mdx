@@ -666,6 +666,46 @@ If you enable the ABAC feature, you will also need to do the following:
 - **Description:** The cache expiration time of the ABAC metadata cache in milliseconds. If you update the ABAC metadata, for example, the policy configuration, you might need to wait until this expiration time is reached for the changes to be applied. Setting this property to a low number may increase the number of accesses to the backend database and decrease performance.
 - **Default value:** `60000` (1 minute)
 
+### Authentication and authorization configurations
+
+The following shows the authentication and authorization configurations for ScalarDB Cluster.
+
+#### `auth.enabled`
+
+- **Field:** `scalar.db.cluster.auth.enabled`
+- **Description:** Whether authentication and authorization are enabled.
+- **Default value:** `false`
+
+:::warning
+
+If you enable authentication and authorization, you will also need to set [`scalar.db.cross_partition_scan.enabled`](#cross-partition-scan-configurations) to `true` for the system namespace (`scalardb` by default). This is because the ABAC feature performs cross-partition scans internally.
+
+:::
+
+#### `auth.cache_expiration_time_millis`
+
+- **Field:** `scalar.db.cluster.auth.cache_expiration_time_millis`
+- **Description:** Cache expiration time for authentication and authorization information in milliseconds.
+- **Default value:** `60000` (1 minute)
+
+#### `auth.auth_token_expiration_time_minutes`
+
+- **Field:** `scalar.db.cluster.auth.auth_token_expiration_time_minutes`
+- **Description:** Authentication and authorization token expiration time in minutes.
+- **Default value:** `1440` (1 day)
+
+#### `auth.auth_token_gc_thread_interval_minutes`
+
+- **Field:** `scalar.db.cluster.auth.auth_token_gc_thread_interval_minutes`
+- **Description:** Authentication and authorization token garbage collection (GC) thread interval in minutes.
+- **Default value:** `360` (6 hours)
+
+#### `auth.pepper`
+
+- **Field:** `scalar.db.cluster.auth.pepper`
+- **Description:** A secret value added to a password before hashing. If not specified, the password is hashed without pepper.
+- **Default value:** empty
+
 ### Other ScalarDB Cluster configurations
 
 The following are additional configurations available for ScalarDB Cluster.
@@ -714,6 +754,24 @@ The following shows the general configurations for the ScalarDB Cluster client.
 - **Description:** Contact point of the cluster. If you use the `indirect` client mode, specify the IP address of the load balancer in front of your cluster nodes by using the format `indirect:<the load balancer IP address>`. If you use the `direct-kubernetes` client mode, specify the namespace name (optional) and the name of the [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) to get the membership information by using the format `direct-kubernetes:<namespace name>/<endpoint name>` or just `direct-kubernetes:<endpoint name>`. If you don't specify the namespace name, the client will use the `default` namespace.
 - **Default value:** empty
 
+:::note
+
+For example, if you use the `indirect` client mode and the load balancer IP address is `192.168.10.1`, you can configure the client as follows:
+
+```properties
+scalar.db.transaction_manager=cluster
+scalar.db.contact_points=indirect:192.168.10.1
+```
+
+Or if you use the `direct-kubernetes` client mode, with the namespace of the endpoint as `ns` and the endpoint name as `scalardb-cluster`, you can configure the client as follows:
+
+```properties
+scalar.db.transaction_manager=cluster
+scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
+```
+
+:::
+
 #### `contact_port`
 
 - **Field:** `scalar.db.contact_port`
@@ -744,20 +802,6 @@ The following shows the general configurations for the ScalarDB Cluster client.
 - **Description:** The fetch size used for `Scanner` to fetch data from the cluster. This is the number of records that `Scanner` fetches at once from the cluster. A larger value can improve performance by reducing the number of round trips to the cluster, but it may also increase memory usage.
 - **Default value:** `10`
 
-For example, if you use the `indirect` client mode and the load balancer IP address is `192.168.10.1`, you can configure the client as follows:
-
-```properties
-scalar.db.transaction_manager=cluster
-scalar.db.contact_points=indirect:192.168.10.1
-```
-
-Or if you use the `direct-kubernetes` client mode, with the namespace of the endpoint as `ns` and the endpoint name as `scalardb-cluster`, you can configure the client as follows:
-
-```properties
-scalar.db.transaction_manager=cluster
-scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
-```
-
 ### Configurations for the SQL interface
 
 The following shows the configurations for the ScalarDB Cluster SQL client.
@@ -773,6 +817,28 @@ The following shows the configurations for the ScalarDB Cluster SQL client.
 - **Field:** `scalar.db.sql.cluster_mode.contact_points`
 - **Description:** Contact point of the cluster. If you use the `indirect` client mode, specify the IP address of the load balancer in front of your cluster nodes by using the format `indirect:<the load balancer IP address>`. If you use the `direct-kubernetes` client mode, specify the namespace name (optional) and the name of the [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) to get the membership information by using the format `direct-kubernetes:<namespace name>/<endpoint name>` or just `direct-kubernetes:<endpoint name>`. If you don't specify the namespace name, the client will use the `default` namespace.
 - **Default value:** empty
+
+:::note
+
+For example, if you use the `indirect` client mode and the load balancer IP address is `192.168.10.1`, you can configure the client as follows:
+
+```properties
+scalar.db.sql.connection_mode=cluster
+scalar.db.sql.cluster_mode.contact_points=indirect:192.168.10.1
+```
+
+Or if you use the `direct-kubernetes` client mode, with the namespace of the endpoint as `ns` and the endpoint name as `scalardb-cluster`, you can configure the client as follows:
+
+```properties
+scalar.db.sql.connection_mode=cluster
+scalar.db.sql.cluster_mode.contact_points=direct-kubernetes:ns/scalardb-cluster
+```
+
+For details about how to configure ScalarDB JDBC, see [JDBC connection URL](../scalardb-sql/jdbc-guide.mdx#jdbc-connection-url).
+
+For details about how to configure Spring Data JDBC for ScalarDB, see [Configurations](../scalardb-sql/spring-data-guide.mdx#configurations).
+
+:::
 
 #### `sql.cluster_mode.contact_port`
 
@@ -810,23 +876,33 @@ The following shows the configurations for the ScalarDB Cluster SQL client.
 - **Description:** Maximum size of metadata allowed to be received.
 - **Default value:** The gRPC default value
 
-For example, if you use the `indirect` client mode and the load balancer IP address is `192.168.10.1`, you can configure the client as follows:
+#### Authentication and authorization configurations
 
-```properties
-scalar.db.sql.connection_mode=cluster
-scalar.db.sql.cluster_mode.contact_points=indirect:192.168.10.1
-```
+The following shows the authentication and authorization configurations for the ScalarDB Cluster client.
 
-Or if you use the `direct-kubernetes` client mode, with the namespace of the endpoint as `ns` and the endpoint name as `scalardb-cluster`, you can configure the client as follows:
+##### `auth.enabled`
 
-```properties
-scalar.db.sql.connection_mode=cluster
-scalar.db.sql.cluster_mode.contact_points=direct-kubernetes:ns/scalardb-cluster
-```
+- **Field:** `scalar.db.cluster.auth.enabled`
+- **Description:** Whether authentication and authorization are enabled.
+- **Default value:** `false`
 
-For details about how to configure ScalarDB JDBC, see [JDBC connection URL](../scalardb-sql/jdbc-guide.mdx#jdbc-connection-url).
+:::warning
 
-For details about how to configure Spring Data JDBC for ScalarDB, see [Configurations](../scalardb-sql/spring-data-guide.mdx#configurations).
+If you enable authentication and authorization, you will also need to set [`scalar.db.cross_partition_scan.enabled`](#cross-partition-scan-configurations) to `true` for the system namespace (`scalardb` by default). This is because the ABAC feature performs cross-partition scans internally.
+
+:::
+
+##### `auth.username`
+
+- **Field:** `scalar.db.sql.cluster_mode.username`
+- **Description:** The username of the client.
+- **Default value:** empty
+
+##### `auth.password`
+
+- **Field:** `scalar.db.sql.cluster_mode.password`
+- **Description:** The password of the client.
+- **Default value:** empty
 
 ## Configuration example - App, ScalarDB Cluster, and database
 
