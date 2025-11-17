@@ -166,11 +166,6 @@ const sidebars = {
               id: 'scalardb-analytics/quickstart',
               label: 'Use Spark as an execution engine',
             },
-            {
-              type: 'doc',
-              id: 'scalardb-analytics-postgresql/getting-started',
-              label: 'Use PostgreSQL as an execution engine',
-            },
           ],
         },
         {
@@ -194,11 +189,6 @@ const sidebars = {
               id: 'scalardb-cluster/getting-started-with-using-python-for-scalardb-cluster',
               label: 'Use Python for ScalarDB Cluster',
             },
-            {
-              type: 'doc',
-              id: 'scalardb-analytics-postgresql/installation',
-              label: 'Install ScalarDB Analytics with PostgreSQL Locally',
-            }
           ],
         },
       ],
@@ -379,11 +369,6 @@ const sidebars = {
               id: 'scalardb-samples/spring-data-microservice-transaction-sample/README',
               label: 'Microservice Transactions Through Spring Data JDBC',
             },
-            {
-              type: 'doc',
-              id: 'scalardb-samples/scalardb-analytics-postgresql-sample/README',
-              label: 'Analytical Queries by Using ScalarDB Analytics with PostgreSQL',
-            },
           ],
         },
         {
@@ -524,16 +509,6 @@ const sidebars = {
               label: 'Analytics',
               collapsible: true,
               items: [
-                {
-                  type: 'doc',
-                  id: 'scalardb-analytics-postgresql/scalardb-fdw',
-                  label: 'ScalarDB FDW for PostgreSQL',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-analytics-postgresql/schema-importer',
-                  label: 'PostgreSQL Schema Importer for PostgreSQL',
-                },
                 {
                   type: 'doc',
                   id: 'scalardb-analytics/configurations',
@@ -709,11 +684,6 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
-                  id: 'helm-charts/getting-started-scalardb-analytics-postgresql',
-                  label: 'ScalarDB Analytics with PostgreSQL by Using a Helm Chart',
-                },
-                {
-                  type: 'doc',
                   id: 'helm-charts/getting-started-monitoring',
                   label: 'Prometheus Operator for Monitoring by Using a Helm Chart',
                 },
@@ -788,11 +758,6 @@ const sidebars = {
                   id: 'helm-charts/how-to-deploy-scalardb-cluster',
                   label: 'Deploy ScalarDB Cluster by Using a Helm Chart',
                 },
-                {
-                  type: 'doc',
-                  id: 'helm-charts/how-to-deploy-scalardb-analytics-postgresql',
-                  label: 'Deploy ScalarDB Analytics with PostgreSQL by Using a Helm Chart',
-                },
               ],
             },
             {
@@ -819,11 +784,6 @@ const sidebars = {
                   type: 'doc',
                   id: 'helm-charts/configure-custom-values-scalardb-analytics-server',
                   label: 'Configure a Custom Values File for ScalarDB Analytics server',
-                },
-                {
-                  type: 'doc',
-                  id: 'helm-charts/configure-custom-values-scalardb-analytics-postgresql',
-                  label: 'Configure a Custom Values File for ScalarDB Analytics with PostgreSQL',
                 },
                 {
                   type: 'doc',
@@ -1183,11 +1143,6 @@ const sidebars = {
               id: 'scalardb-analytics/quickstart',
               label: 'Spark を実行エンジンとして使用',
             },
-            {
-              type: 'doc',
-              id: 'scalardb-analytics-postgresql/getting-started',
-              label: 'PostgreSQL を実行エンジンとして使用',
-            },
           ],
         },
         {
@@ -1210,11 +1165,6 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/getting-started-with-using-python-for-scalardb-cluster',
               label: 'Python から ScalarDB Cluster を使用',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-analytics-postgresql/installation',
-              label: 'ScalarDB Analytics with PostgreSQL をローカルにインストール',
             },
           ],
         },
@@ -1408,11 +1358,6 @@ const sidebars = {
               id: 'scalardb-samples/spring-data-microservice-transaction-sample/README',
               label: 'Spring Data JDBC によるマイクロサービストランザクション',
             },
-            {
-              type: 'doc',
-              id: 'scalardb-samples/scalardb-analytics-postgresql-sample/README',
-              label: 'ScalarDB Analytics with PostgreSQL を使用した分析クエリ',
-            },
           ],
         },
         {
@@ -1553,16 +1498,6 @@ const sidebars = {
               label: '分析',
               collapsible: true,
               items: [
-                {
-                  type: 'doc',
-                  id: 'scalardb-analytics-postgresql/scalardb-fdw',
-                  label: 'PostgreSQL 用 ScalarDB FDW',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-analytics-postgresql/schema-importer',
-                  label: 'PostgreSQL 用 Schema Importer',
-                },
                 {
                   type: 'doc',
                   id: 'scalardb-analytics/configurations',
@@ -1727,11 +1662,6 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
-                  id: 'helm-charts/getting-started-scalardb-analytics-postgresql',
-                  label: 'Helm Chart を使用した ScalarDB Analytics with PostgreSQL',
-                },
-                {
-                  type: 'doc',
                   id: 'helm-charts/getting-started-monitoring',
                   label: 'Helm Chart を使用した監視用 Prometheus Operator',
                 },
@@ -1806,11 +1736,6 @@ const sidebars = {
                   id: 'helm-charts/how-to-deploy-scalardb-cluster',
                   label: 'Helm Chart を使用して ScalarDB Cluster をデプロイ',
                 },
-                {
-                  type: 'doc',
-                  id: 'helm-charts/how-to-deploy-scalardb-analytics-postgresql',
-                  label: 'Helm Chart を使用して ScalarDB Analytics with PostgreSQL をデプロイ',
-                },
               ],
             },
             {
@@ -1837,11 +1762,6 @@ const sidebars = {
                   type: 'doc',
                   id: 'helm-charts/configure-custom-values-scalardb-analytics-server',
                   label: 'ScalarDB Analytics server のカスタム値ファイルを構成',
-                },
-                {
-                  type: 'doc',
-                  id: 'helm-charts/configure-custom-values-scalardb-analytics-postgresql',
-                  label: 'ScalarDB Analytics with PostgreSQL のカスタム値ファイルを構成',
                 },
                 {
                   type: 'doc',
