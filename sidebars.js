@@ -166,6 +166,11 @@ const sidebars = {
               id: 'scalardb-analytics/quickstart',
               label: 'Use Spark as an execution engine',
             },
+            {
+              type: 'doc',
+              id: 'scalardb-analytics-postgresql/getting-started',
+              label: 'Use PostgreSQL as an execution engine',
+            },
           ],
         },
         {
@@ -189,6 +194,11 @@ const sidebars = {
               id: 'scalardb-cluster/getting-started-with-using-python-for-scalardb-cluster',
               label: 'Use Python for ScalarDB Cluster',
             },
+            {
+              type: 'doc',
+              id: 'scalardb-analytics-postgresql/installation',
+              label: 'Install ScalarDB Analytics with PostgreSQL Locally',
+            }
           ],
         },
       ],
@@ -369,6 +379,11 @@ const sidebars = {
               id: 'scalardb-samples/spring-data-microservice-transaction-sample/README',
               label: 'Microservice Transactions Through Spring Data JDBC',
             },
+            {
+              type: 'doc',
+              id: 'scalardb-samples/scalardb-analytics-postgresql-sample/README',
+              label: 'Analytical Queries by Using ScalarDB Analytics with PostgreSQL',
+            },
           ],
         },
         {
@@ -509,6 +524,16 @@ const sidebars = {
               label: 'Analytics',
               collapsible: true,
               items: [
+                {
+                  type: 'doc',
+                  id: 'scalardb-analytics-postgresql/scalardb-fdw',
+                  label: 'ScalarDB FDW for PostgreSQL',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-analytics-postgresql/schema-importer',
+                  label: 'PostgreSQL Schema Importer for PostgreSQL',
+                },
                 {
                   type: 'doc',
                   id: 'scalardb-analytics/configurations',
