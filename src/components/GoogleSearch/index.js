@@ -70,7 +70,7 @@ export default function GoogleSearch() {
   // Get localized placeholder text
   const getPlaceholderText = useCallback(() => {
     const currentLanguage = getCurrentLanguage();
-    return currentLanguage === 'ja-jp' ? 'Googleで検索' : 'Google Search';
+    return currentLanguage === 'ja-jp' ? 'Google' : 'Google';
   }, [getCurrentLanguage]);
 
   return (
