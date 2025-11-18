@@ -236,7 +236,7 @@ INSERT モードを使用する場合、各ターゲットカラムに対して�
 | `--require-all-columns`        | 設定した場合、カラムが不足している場合はデータ行をインポートできません。オプション。デフォルト値は `false` です。 | `scalardb-data-loader --require-all-columns`                |
 | `--file`                       | インポートされるファイルへのパス。必須。 | `scalardb-data-loader --file <PATH_TO_FILE>`                |
 | `--log-dir`                    | ログファイルを保存するディレクトリ。オプション。デフォルト値は `logs` です。 | `scalardb-data-loader --log-dir <PATH_TO_DIR>`              |
-| `--log-success`                | 正常に処理されたレコードのログ記録を有効にします。オプション。デフォルト値は `false` です。 | `scalardb-data-loader --log-success`                        |
+| `--enable-log-success`                | 正常に処理されたレコードのログ記録を有効にします。オプション。デフォルト値は `false` です。 | `scalardb-data-loader --enable-log-success`                        |
 | `--log-raw-record`             | ログファイル出力に元のソースレコードを含めます。オプション。デフォルト値は `false` です。 | `scalardb-data-loader --log-raw-record`                     |
 | `--max-threads`                | 並列処理に使用する最大スレッド数。デフォルト値は利用可能なプロセッサ数です。 | `scalardb-data-loader --max-threads 10`                     |
 | `--format`                     | インポートファイルの形式。サポートされる形式は `JSON`、`JSONL`、`CSV` です。オプション。デフォルト値は `JSON` です。 | `scalardb-data-loader --format CSV`                         |
@@ -398,7 +398,7 @@ Data Loader は、すべてのインポート操作について、成功した�
 
 :::tip
 
-正常にインポートされたレコードをログに記録するには `--log-success` を有効にし、ログ出力に元のソースデータを含めるには `--log-raw-record` を使用してください。
+正常にインポートされたレコードをログに記録するには `--enable-log-success` を有効にし、ログ出力に元のソースデータを含めるには `--log-raw-record` を使用してください。
 
 :::
 
