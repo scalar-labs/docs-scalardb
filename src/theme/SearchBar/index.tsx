@@ -276,7 +276,7 @@ function DocSearch({externalUrlRegex, ...props}: DocSearchV4Props) {
         ref={searchButtonRef}
         translations={{
           ...((props.translations?.button ?? translations.button)),
-          buttonText: 'Algolia Search',
+          buttonText: 'Algolia',
           buttonAriaLabel: 'Search docs with Algolia'
         }}
       />
