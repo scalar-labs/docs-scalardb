@@ -77,15 +77,6 @@ export default function GoogleSearch() {
     <div className="googleSearchContainer">
       <form onSubmit={handleSearch} className="googleSearchForm">
         <div className="googleSearchInputWrapper">
-          <input
-            type="text"
-            placeholder={getPlaceholderText()}
-            value={searchQuery}
-            onChange={handleInputChange}
-            onKeyPress={handleKeyPress}
-            className="googleSearchInput"
-            aria-label="Search documentation with Google"
-          />
           <button
             type="submit"
             className="googleSearchButton"
@@ -106,6 +97,15 @@ export default function GoogleSearch() {
               />
             </svg>
           </button>
+          <input
+            type="text"
+            placeholder={getPlaceholderText()}
+            value={searchQuery}
+            onChange={handleInputChange}
+            onKeyPress={handleKeyPress}
+            className="googleSearchInput"
+            aria-label="Search documentation with Google"
+          />
         </div>
       </form>
     </div>
