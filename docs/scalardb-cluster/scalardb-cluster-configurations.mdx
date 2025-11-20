@@ -706,6 +706,146 @@ If you enable authentication and authorization, you will also need to set [`scal
 - **Description:** A secret value added to a password before hashing. If not specified, the password is hashed without pepper.
 - **Default value:** empty
 
+### Data-at-rest encryption configurations
+
+The following configurations are available for encrypting data at rest in ScalarDB Cluster.
+
+For details about encrypting data at rest, see [Encrypt Data at Rest](./encrypt-data-at-rest.mdx).
+
+#### `cluster.encryption.enabled`
+
+- **Field:** `scalar.db.cluster.encryption.enabled`
+- **Description:** Whether ScalarDB encrypts data at rest.
+- **Default value:** `false`
+
+#### `cluster.encryption.type`
+
+- **Field:** `scalar.db.cluster.encryption.type`
+- **Description:** Encryption implementation type. Either `vault` (for HashiCorp Vault encryption) or `self` (for self-encryption) can be specified.
+- **Default value:** empty
+
+#### `cluster.encryption.delete_data_encryption_key_on_drop_table.enabled`
+
+- **Field:** `scalar.db.cluster.encryption.delete_data_encryption_key_on_drop_table.enabled`
+- **Description:** Whether to delete the data encryption key (DEK) when dropping a table.
+- **Default value:** `false`
+
+#### HashiCorp Vault encryption configurations
+
+The following configurations are available when using HashiCorp Vault encryption (`scalar.db.cluster.encryption.type=vault`).
+
+##### `cluster.encryption.vault.key_type`
+
+- **Field:** `scalar.db.cluster.encryption.vault.key_type`
+- **Description:** The key type. Currently, `aes128-gcm96`, `aes256-gcm96`, and `chacha20-poly1305` are supported. For details about the key types, see [Key types](https://developer.hashicorp.com/vault/docs/secrets/transit#key-types).
+- **Default value:** `aes128-gcm96`
+
+##### `cluster.encryption.vault.associated_data_required`
+
+- **Field:** `scalar.db.cluster.encryption.vault.associated_data_required`
+- **Description:** Whether associated data is required for AEAD encryption.
+- **Default value:** `false`
+
+##### `cluster.encryption.vault.address`
+
+- **Field:** `scalar.db.cluster.encryption.vault.address`
+- **Description:** The address of the HashiCorp Vault server.
+- **Default value:** empty
+
+##### `cluster.encryption.vault.token`
+
+- **Field:** `scalar.db.cluster.encryption.vault.token`
+- **Description:** The token to authenticate with HashiCorp Vault.
+- **Default value:** empty
+
+##### `cluster.encryption.vault.namespace`
+
+- **Field:** `scalar.db.cluster.encryption.vault.namespace`
+- **Description:** The namespace of the HashiCorp Vault. This configuration is optional.
+- **Default value:** empty
+
+##### `cluster.encryption.vault.transit_secrets_engine_path`
+
+- **Field:** `scalar.db.cluster.encryption.vault.transit_secrets_engine_path`
+- **Description:** The path of the transit secrets engine.
+- **Default value:** `transit`
+
+##### `cluster.encryption.vault.column_batch_size`
+
+- **Field:** `scalar.db.cluster.encryption.vault.column_batch_size`
+- **Description:** The number of columns to be included in a single request to the HashiCorp Vault server.
+- **Default value:** `64`
+
+#### Self-encryption configurations
+
+The following configurations are available when using self-encryption (`scalar.db.cluster.encryption.type=self`).
+
+##### `cluster.encryption.self.key_type`
+
+- **Field:** `scalar.db.cluster.encryption.self.key_type`
+- **Description:** The key type. Currently, `AES128_GCM`, `AES256_GCM`, `AES128_EAX`, `AES256_EAX`, `AES128_CTR_HMAC_SHA256`, `AES256_CTR_HMAC_SHA256`, `CHACHA20_POLY1305`, and `XCHACHA20_POLY1305` are supported. For details about the key types, see [Choose a key type](https://developers.google.com/tink/aead#choose_a_key_type).
+- **Default value:** `AES128_GCM`
+
+##### `cluster.encryption.self.associated_data_required`
+
+- **Field:** `scalar.db.cluster.encryption.self.associated_data_required`
+- **Description:** Whether associated data is required for AEAD encryption.
+- **Default value:** `false`
+
+##### `cluster.encryption.self.kubernetes.secret.namespace_name`
+
+- **Field:** `scalar.db.cluster.encryption.self.kubernetes.secret.namespace_name`
+- **Description:** The namespace name of the Kubernetes Secrets.
+- **Default value:** `default`
+
+##### `cluster.encryption.self.data_encryption_key_cache_expiration_time`
+
+- **Field:** `scalar.db.cluster.encryption.self.data_encryption_key_cache_expiration_time`
+- **Description:** The expiration time of the DEK cache in milliseconds.
+- **Default value:** `60000` (60 seconds)
+
+### Wire encryption configurations
+
+The following configurations are available for encrypting wire communications in ScalarDB Cluster.
+
+For details about encrypting wire communications, see [Encrypt Wire Communications](./encrypt-wire-communications.mdx).
+
+#### `cluster.tls.enabled`
+
+- **Field:** `scalar.db.cluster.tls.enabled`
+- **Description:** Whether wire encryption (TLS) is enabled.
+- **Default value:** `false`
+
+#### `cluster.tls.ca_root_cert_pem`
+
+- **Field:** `scalar.db.cluster.tls.ca_root_cert_pem`
+- **Description:** The custom CA root certificate (PEM data) for TLS communication.
+- **Default value:** empty
+
+#### `cluster.tls.ca_root_cert_path`
+
+- **Field:** `scalar.db.cluster.tls.ca_root_cert_path`
+- **Description:** The custom CA root certificate (file path) for TLS communication.
+- **Default value:** empty
+
+#### `cluster.tls.override_authority`
+
+- **Field:** `scalar.db.cluster.tls.override_authority`
+- **Description:** The custom authority for TLS communication. This doesn't change what host is actually connected. This is intended for testing, but may safely be used outside of tests as an alternative to DNS overrides. For example, you can specify the hostname presented in the certificate chain file that you set for `scalar.db.cluster.node.tls.cert_chain_path`.
+- **Default value:** empty
+
+#### `cluster.node.tls.cert_chain_path`
+
+- **Field:** `scalar.db.cluster.node.tls.cert_chain_path`
+- **Description:** The certificate chain file used for TLS communication.
+- **Default value:** empty
+
+#### `cluster.node.tls.private_key_path`
+
+- **Field:** `scalar.db.cluster.node.tls.private_key_path`
+- **Description:** The private key file used for TLS communication.
+- **Default value:** empty
+
 ### Other ScalarDB Cluster configurations
 
 The following are additional configurations available for ScalarDB Cluster.
@@ -801,6 +941,50 @@ scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
 - **Field:** `scalar.db.cluster.client.scan_fetch_size`
 - **Description:** The fetch size used for `Scanner` to fetch data from the cluster. This is the number of records that `Scanner` fetches at once from the cluster. A larger value can improve performance by reducing the number of round trips to the cluster, but it may also increase memory usage.
 - **Default value:** `10`
+
+### Configurations for client-side wire encryption
+
+The following configurations are available for client-side encryption.
+
+For details about encrypting wire communications, see [Encrypt Wire Communications](./encrypt-wire-communications.mdx).
+
+#### `cluster.tls.enabled`
+
+- **Field:** `scalar.db.cluster.tls.enabled`
+- **Description:** Whether wire encryption (TLS) is enabled for the client.
+- **Default value:** `false`
+
+#### `cluster.tls.ca_root_cert_pem`
+
+- **Field:** `scalar.db.cluster.tls.ca_root_cert_pem`
+- **Description:** The custom CA root certificate (PEM data) for TLS communication.
+- **Default value:** empty
+
+#### `cluster.tls.ca_root_cert_path`
+
+- **Field:** `scalar.db.cluster.tls.ca_root_cert_path`
+- **Description:** The custom CA root certificate (file path) for TLS communication.
+- **Default value:** empty
+
+#### `cluster.tls.override_authority`
+
+- **Field:** `scalar.db.cluster.tls.override_authority`
+- **Description:** The custom authority for TLS communication. This doesn't change what host is actually connected. This is intended for testing, but may safely be used outside of tests as an alternative to DNS overrides. For example, you can specify the hostname presented in the certificate chain file that you set for `scalar.db.cluster.node.tls.cert_chain_path`, which is the path for the cluster's TLS certificate.
+- **Default value:** empty
+
+For example, if you use the `indirect` client mode and the load balancer IP address is `192.168.10.1`, you can configure the client as follows:
+
+```properties
+scalar.db.transaction_manager=cluster
+scalar.db.contact_points=indirect:192.168.10.1
+```
+
+Or if you use the `direct-kubernetes` client mode, with the namespace of the endpoint as `ns` and the endpoint name as `scalardb-cluster`, you can configure the client as follows:
+
+```properties
+scalar.db.transaction_manager=cluster
+scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
+```
 
 ### Configurations for the SQL interface
 
