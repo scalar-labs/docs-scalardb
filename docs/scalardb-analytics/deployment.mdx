@@ -71,9 +71,9 @@ To enable ScalarDB Analytics, you need to add the following configuration to the
 
 The following describes what you should change the content in the angle brackets to:
 
-- `<SPARK_VERSION>`: The version of Spark (e.g., `3.5` or `3.4`).
-- `<SCALA_VERSION>`: The version of Scala used to build Spark (for example, `2.13` or `2.12`).
-- `<SCALARDB_ANALYTICS_VERSION>`: The version of ScalarDB Analytics (for example, `3.16.0`).
+- `<SPARK_VERSION>`: The version of Spark (`3.5` or `3.4`).
+- `<SCALA_VERSION>`: The version of Scala used to build Spark (`2.13` or `2.12`).
+- `<SCALARDB_ANALYTICS_VERSION>`: The version of ScalarDB Analytics.
 - `<CATALOG_NAME>`: The name of the catalog. This must match a catalog created on the ScalarDB Analytics server.
 - `<CATALOG_SERVER_HOST>`: The host address of your ScalarDB Analytics server.
 
@@ -99,22 +99,20 @@ You first need to configure the Software setting in the same way as the [Spark d
 
 1. Create a script file to launch the Spark Connect server as follows:
 
-```bash
-#!/usr/bin/env bash
+    ```bash
+    #!/usr/bin/env bash
 
-set -eu -o pipefail
+    set -eu -o pipefail
+    cd /var/lib/spark
+    sudo -u spark /usr/lib/spark/sbin/start-connect-server.sh --packages org.apache.spark:spark-connect_<SCALA_VERSION>:<SPARK_FULL_VERSION>,com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>
+    ```
 
-cd /var/lib/spark
+    The following describes what you should change the content in the angle brackets to:
 
-sudo -u spark /usr/lib/spark/sbin/start-connect-server.sh --packages org.apache.spark:spark-connect_<SCALA_VERSION>:<SPARK_FULL_VERSION>,com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>
-```
-
-The following describes what you should change the content in the angle brackets to:
-
-- `<SCALA_VERSION>`: The major and minor version of Scala that matches your Spark installation (such as 2.12 or 2.13)
-- `<SPARK_FULL_VERSION>`: The full version of Spark you are using (such as 3.5.3)
-- `<SPARK_VERSION>`: The major and minor version of Spark you are using (such as 3.5)
-- `<SCALARDB_ANALYTICS_VERSION>`: The version of ScalarDB Analytics
+    - `<SCALA_VERSION>`: The major and minor version of Scala that matches your Spark installation (2.12 or 2.13).
+    - `<SPARK_FULL_VERSION>`: The full version of Spark you are using (such as 3.5.3).
+    - `<SPARK_VERSION>`: The major and minor version of Spark you are using (3.4 or 3.5).
+    - `<SCALARDB_ANALYTICS_VERSION>`: The version of ScalarDB Analytics.
 
 2. Upload the script file to S3.
 3. Allow the role of "EC2 instance profile for Amazon EMR" to access the uploaded script file in S3.
@@ -128,6 +126,7 @@ For details on how to create a Spark application by using Spark Connect, refer t
 
   </TabItem>
   <TabItem value="databricks" label="Databricks">
+
 <h3>Use Databricks</h3>
 
 You can use Databricks to run analytical queries through ScalarDB Analytics.
@@ -138,75 +137,79 @@ Note that Databricks provides a modified version of Apache Spark, which works di
 
 :::
 
-<h4>Launch Databricks cluster</h4>
+<h4>Prepare an init script for loading the ScalarDB Analytics library JAR</h4>
 
-ScalarDB Analytics works with all-purpose and jobs-compute clusters on Databricks. When you launch the cluster, you need to configure the cluster to enable ScalarDB Analytics as follows:
+1. Download the ScalarDB Analytics library JAR file from the Maven repository. Choose the appropriate JAR file based on your Spark, Scala, and ScalarDB versions:
+   - [scalardb-analytics-spark-all-3.4_2.13 (Spark v3.4, Scala v2.13)](https://repo1.maven.org/maven2/com/scalar-labs/scalardb-analytics-spark-all-3.4_2.13/)
+   - [scalardb-analytics-spark-all-3.5_2.13 (Spark v3.5, Scala v2.13)](https://repo1.maven.org/maven2/com/scalar-labs/scalardb-analytics-spark-all-3.5_2.13/)
+   - [scalardb-analytics-spark-all-3.4_2.12 (Spark v3.4, Scala v2.12)](https://repo1.maven.org/maven2/com/scalar-labs/scalardb-analytics-spark-all-3.4_2.12/)
+   - [scalardb-analytics-spark-all-3.5_2.12 (Spark v3.5, Scala v2.12)](https://repo1.maven.org/maven2/com/scalar-labs/scalardb-analytics-spark-all-3.5_2.12/)
+2. Upload the JAR file to the Databricks workspace.
+3. Create an init script as follows, replacing `<PATH_TO_YOUR_JAR_FILE_IN_WORKSPACE>` with the path to your JAR file in the Databricks workspace:
 
-1. Select "No isolation shared" for the cluster mode. (This is required. ScalarDB Analytics works only with this cluster mode.)
-2. Select an appropriate Databricks runtime version that supports Spark 3.4 or later.
-3. Configure "Advanced Options" > "Spark config" as follows:
+    ```bash
+    #!/bin/bash
 
-```
-spark.extraListeners com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener
-spark.sql.catalog.<CATALOG_NAME> com.scalar.db.analytics.spark.ScalarDBAnalyticsCatalog
-spark.sql.catalog.<CATALOG_NAME>.server.host <CATALOG_SERVER_HOST>
-spark.sql.catalog.<CATALOG_NAME>.server.catalog.port 11051
-spark.sql.catalog.<CATALOG_NAME>.server.metering.port 11052
-```
+    # Target directories
+    TARGET_DIRECTORIES=("/databricks/jars" "/databricks/hive_metastore_jars")
+    JAR_PATH="<PATH_TO_YOUR_JAR_FILE_IN_WORKSPACE>"
 
-Replace the placeholders:
+    # Copy the JAR file to the target directories
+    for TARGET_DIR in "${TARGET_DIRECTORIES[@]}"; do
+     mkdir -p "$TARGET_DIR"
+     cp "$JAR_PATH" "$TARGET_DIR/"
+    done
+    ```
 
-- `<CATALOG_NAME>`: The name of the catalog. This must match a catalog created on the ScalarDB Analytics server.
-- `<CATALOG_SERVER_HOST>`: The host address of your ScalarDB Analytics server.
+4. Upload the init script to the Databricks workspace.
 
-4. Add the library of ScalarDB Analytics to the launched cluster as a Maven dependency. For details on how to add the library, refer to the [Databricks cluster libraries documentation](https://docs.databricks.com/en/libraries/cluster-libraries.html).
+<h4>Launch Databricks compute</h4>
+
+ScalarDB Analytics works with all-purpose compute on Databricks. When you launch compute, you need to configure the compute to enable ScalarDB Analytics as follows:
+
+1. Select `Create compute` in the `Compute` menu.
+2. Select `Unrestricted` from the `Policy` dropdown menu.
+3. Select an appropriate Databricks runtime version that supports Spark 3.4 or 3.5.
+4. Go to the `Advanced` section. In the `Access mode` tab, select `Manual` as the access mode, and choose `No isolation shared`.
+5. In the `Advanced` section, select the `Spark` tab, and enter the following configurations in `Spark config`:
+
+    ```
+    spark.extraListeners com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener
+    spark.sql.catalog.<CATALOG_NAME> com.scalar.db.analytics.spark.ScalarDBAnalyticsCatalog
+    spark.sql.catalog.<CATALOG_NAME>.server.host <CATALOG_SERVER_HOST>
+    spark.sql.catalog.<CATALOG_NAME>.server.catalog.port 11051
+    spark.sql.catalog.<CATALOG_NAME>.server.metering.port 11052
+    ```
+
+    Replace the placeholders:
+
+    - `<CATALOG_NAME>`: The name of the catalog. This must match a catalog created on the ScalarDB Analytics server.
+    - `<CATALOG_SERVER_HOST>`: The host address of your ScalarDB Analytics server.
+
+6. In the `Advanced` section, select the `init scripts` tab, and specify the path to the init script in the workspace you uploaded.
+7. Select `Create`.
 
 <h4>Run analytical queries via the Spark driver</h4>
 
-You can run your Spark application on the properly configured Databricks cluster with Databricks Notebook or Databricks Jobs to access the tables in ScalarDB Analytics. To run the Spark application, you can migrate your Pyspark, Scala, or Spark SQL application to Databricks Notebook, or use Databricks Jobs to run your Spark application. ScalarDB Analytics works with task types for Notebook, Python, JAR, and SQL.
+You can run your Spark application on the properly configured Databricks compute with Databricks Notebook or Databricks Jobs to access the tables in ScalarDB Analytics. To run the Spark application, you can migrate your Pyspark, Scala, or Spark SQL application to Databricks Notebook, or use Databricks Jobs to run your Spark application. ScalarDB Analytics works with task types for Notebook, Python, JAR, and SQL.
 
-For more details on how to use Databricks Jobs, refer to the [Databricks Jobs documentation](https://docs.databricks.com/en/jobs/index.html)
+For more details on how to use Databricks Jobs, refer to the [Databricks Jobs documentation](https://docs.databricks.com/en/jobs/index.html).
 
 <h4>Run analytical queries via the JDBC driver</h4>
 
-Databricks supports JDBC to run SQL jobs on the cluster. You can use this feature to run your Spark application in SQL with ScalarDB Analytics by configuring extra settings as follows:
-
-1. Download the ScalarDB Analytics library JAR file from the Maven repository.
-2. Upload the JAR file to the Databricks workspace.
-3. Add the JAR file to the cluster as a library, instead of the Maven dependency.
-4. Create an init script as follows, replacing `<PATH_TO_YOUR_JAR_FILE_IN_WORKSPACE>` with the path to your JAR file in the Databricks workspace:
-
-```bash
-#!/bin/bash
-
-# Target directories
-TARGET_DIRECTORIES=("/databricks/jars" "/databricks/hive_metastore_jars")
-JAR_PATH="<PATH_TO_YOUR_JAR_FILE_IN_WORKSPACE>"
-
-# Copy the JAR file to the target directories
-for TARGET_DIR in "${TARGET_DIRECTORIES[@]}"; do
-  mkdir -p "$TARGET_DIR"
-  cp "$JAR_PATH" "$TARGET_DIR/"
-done
-```
-
-5. Upload the init script to the Databricks workspace.
-6. Add the init script to the cluster to "Advanced Options" > "Init scripts" when you launch the cluster.
-
-After the cluster is launched, you can get the JDBC URL of the cluster in the "Advanced Options" > "JDBC/ODBC" tab on the cluster details page.
-
-To connect to the Databricks cluster by using JDBC, you need to add the Databricks JDBC driver to your application dependencies. For example, if you are using Gradle, you can add the following dependency to your `build.gradle` file:
+Databricks supports JDBC to run SQL jobs on compute.
+After compute is launched, you can get the JDBC URL of the compute in the `Advanced` > `JDBC/ODBC` tab. To connect to the compute by using JDBC, you need to add the Databricks JDBC driver to your application dependencies. For example, if you are using Gradle, you can add the following dependency to your `build.gradle` file after replacing `<DRIVER_VERSION>` with the version of the Databricks JDBC driver you want to use:
 
 ```groovy
-implementation("com.databricks:databricks-jdbc:0.9.6-oss")
+implementation("com.databricks:databricks-jdbc:<DRIVER_VERSION>")
 ```
 
-Then, you can connect to the Databricks cluster by using JDBC with the JDBC URL (`<YOUR_CLUSTERS_JDBC_URL>`), as is common with JDBC applications.
+Then, you can connect to the compute by using JDBC with the JDBC URL (`<YOUR_COMPUTE_JDBC_URL>`), as is common with JDBC applications.
 
 ```java
 Class.forName("com.databricks.client.jdbc.Driver");
-String url = "<YOUR_CLUSTERS_JDBC_URL>";
-Connection conn = DriverManager.getConnection(url)
+String url = "<YOUR_COMPUTE_JDBC_URL>";
+Connection conn = DriverManager.getConnection(url);
 ```
 
 For more details on how to use JDBC with Databricks, refer to the [Databricks JDBC Driver documentation](https://docs.databricks.com/en/integrations/jdbc/index.html).
