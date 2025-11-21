@@ -1,0 +1,463 @@
+---
+tags:
+  - Enterprise Premium
+  - Private Preview
+displayed_sidebar: docsEnglish
+---
+
+# Getting Started with ScalarDB Cluster for Vector Search
+
+import WarningLicenseKeyContact from '/src/components/en-us/_warning-license-key-contact.mdx';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+ScalarDB Cluster provides a vector store abstraction to help applications interact with vector stores (embedding stores) in a unified way. This getting-started tutorial explains how to run vector search in ScalarDB Cluster.
+
+## What is the vector store abstraction?
+
+ScalarDB Cluster provides an abstraction for various vector stores, similar to how it abstracts different types of databases, including relational databases, NoSQL databases, and NewSQL databases. With this vector store abstraction, you can develop applications that interact with vector stores in a unified manner, making your applications independent of specific vector store implementations and ensuring their portability. Additionally, since the integration of vector stores is built into ScalarDB Cluster, your applications can take advantage of its scalability.
+
+The current implementation of the vector store abstraction leverages [LangChain4j](https://docs.langchain4j.dev/) and supports the following vector stores and embedding models.
+
+Vector stores:
+- In-memory
+- OpenSearch
+- Azure Cosmos DB NoSQL
+- Azure AI Search
+- pgvector
+
+Embedding models:
+- In-process
+- Amazon Bedrock
+- Azure OpenAI
+- Google Vertex AI
+- OpenAI
+
+## Why use the vector store abstraction?
+
+In the era of generative AI, one of the challenges organizations face when deploying large language models (LLMs) is enabling these models to understand their enterprise data. Retrieval-augmented generation (RAG) is a key technique used to enhance LLMs with specific enterprise knowledge. For example, to ensure that chatbots powered by LLMs provide accurate and relevant responses, companies use RAG to integrate domain-specific information from user manuals and support documents.
+
+RAG relies on vector stores, which are typically created by extracting data from databases, converting that data into vectors, and then loading those vectors. By using vector store and database abstraction in ScalarDB Cluster, you can implement the entire process seamlessly. This approach significantly simplifies the workflow and code, eliminating the need to write complex applications that depend on specific vector stores and databases.
+
+## Tutorial
+
+This tutorial explains how to run vector search in ScalarDB Cluster.
+
+### Prerequisites
+
+- OpenJDK LTS version (8, 11, 17, or 21) from [Eclipse Temurin](https://adoptium.net/temurin/releases/)
+- [Docker](https://www.docker.com/get-started/) 20.10 or later with [Docker Compose](https://docs.docker.com/compose/install/) V2 or later
+
+:::note
+
+This tutorial has been tested with OpenJDK from Eclipse Temurin. ScalarDB itself, however, has been tested with JDK distributions from various vendors. For details about the requirements for ScalarDB, including compatible JDK distributions, please see [Requirements](../requirements.mdx).
+
+:::
+
+<WarningLicenseKeyContact product="ScalarDB Cluster" />
+
+### 1. Create the ScalarDB Cluster configuration file
+
+Create the following configuration file as `scalardb-cluster-node.properties`, replacing `<YOUR_LICENSE_KEY>` and `<LICENSE_CHECK_CERT_PEM>` with your ScalarDB license key and license check certificate values. For more information about the license key and certificate, see [How to Configure a Product License Key](../scalar-licensing/index.mdx).
+
+```yaml
+scalar.db.transaction.enabled=false
+
+# Enable the standalone mode
+scalar.db.cluster.node.standalone_mode.enabled=true
+
+# Enable the embedding feature
+scalar.db.embedding.enabled=true
+
+# License key configurations
+scalar.db.cluster.node.licensing.license_key=<YOUR_LICENSE_KEY>
+scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
+```
+
+Additionally, you need to add the properties for the embedding store and the embedding model to the configuration file, depending on the embedding store and the embedding model you want to use.
+
+Select the embedding store that you want to use, and follow the instructions to configure it.
+
+<Tabs groupId="embedding-store" queryString>
+  <TabItem value="in-memory" label="In-memory" default>
+    The in-memory embedding store is a basic in-memory implementation. This embedding store is useful for fast prototyping and simple use cases.
+
+    To use the in-memory embedding store, add the following property to the configuration file:
+
+    ```properties
+    scalar.db.embedding.store.type=in-memory
+    ```
+  </TabItem>
+  <TabItem value="opensearch" label="OpenSearch">
+    The OpenSearch embedding store is an embedding store that uses OpenSearch as the backend.
+
+    Select whether your OpenSearch implementation is running locally or running on AWS, and follow the instructions to configure it.
+
+    <Tabs groupId="environment" queryString>
+      <TabItem value="local" label="Running locally" default>
+        For OpenSearch clusters that are running locally and are reachable on the network, add the following properties to the configuration file:
+
+        ```properties
+        scalar.db.embedding.store.type=opensearch
+
+        # OpenSearch Server URL.
+        scalar.db.embedding.store.opensearch.server_url=<SERVER_URL>
+
+        # OpenSearch API key (optional).
+        scalar.db.embedding.store.opensearch.api_key=<API_KEY>
+
+        # OpenSearch username (optional).
+        scalar.db.embedding.store.opensearch.user_name=<USER_NAME>
+
+        # OpenSearch password (optional).
+        scalar.db.embedding.store.opensearch.password=<PASSWORD>
+
+        # OpenSearch index name.
+        scalar.db.embedding.store.opensearch.index_name=<INDEX_NAME>
+        ```
+      </TabItem>
+      <TabItem value="aws" label="Running on AWS">
+        For OpenSearch clusters that are running as a fully managed service on AWS, add the following properties to the configuration file:
+        
+        ```properties
+        scalar.db.embedding.store.type=opensearch
+
+        # OpenSearch Server URL.
+        scalar.db.embedding.store.opensearch.server_url=<SERVER_URL>
+
+        # The AWS signing service name, one of `es` (Amazon OpenSearch) or `aoss` (Amazon OpenSearch Serverless).
+        scalar.db.embedding.store.opensearch.service_name=<SERVICE_NAME>
+
+        # The AWS region for which requests will be signed. This should typically match the region in `server_url`.
+        scalar.db.embedding.store.opensearch.region=<REGION>
+
+        # The AWS access key ID.
+        scalar.db.embedding.store.opensearch.access_key_id=<ACCESS_KEY_ID>
+
+        # The AWS secret access key.
+        scalar.db.embedding.store.opensearch.secret_access_key=<SECRET_ACCESS_KEY>
+
+        # OpenSearch index name.
+        scalar.db.embedding.store.opensearch.index_name=<INDEX_NAME>
+        ```
+      </TabItem>
+    </Tabs>
+  </TabItem>
+  <TabItem value="azure-cosmos-db-for-nosql" label="Azure Cosmos DB for NoSQL">
+    The Azure Cosmos DB for NoSQL embedding store is an embedding store that uses Azure Cosmos DB as the backend.
+
+    To use the Azure Cosmos DB for NoSQL embedding store, add the following properties to the configuration file:
+
+    ```properties
+    scalar.db.embedding.store.type=azure-cosmos-nosql
+
+    # The Azure Cosmos DB endpoint that the SDK will connect to.
+    scalar.db.embedding.store.azure-cosmos-nosql.endpoint=<ENDPOINT>
+
+    # A master key used to perform authentication for accessing resources. A read-only key can also be used only for read-only operations.
+    scalar.db.embedding.store.azure-cosmos-nosql.key=<KEY>
+
+    # The database name to be used.
+    scalar.db.embedding.store.azure-cosmos-nosql.database_name=<DATABASE_NAME>
+
+    # The container name to be used.
+    scalar.db.embedding.store.azure-cosmos-nosql.container_name=<CONTAINER_NAME>
+    ```
+  </TabItem>
+  <TabItem value="azure-ai-search" label="Azure AI Search">
+    The Azure AI Search embedding store is an embedding store that uses Azure AI Search as the backend.
+
+    To use the Azure AI Search embedding store, add the following properties to the configuration file:
+
+    ```properties
+    scalar.db.embedding.store.type=azure-ai-search
+    # The Azure AI Search endpoint.
+    scalar.db.embedding.store.azure-ai-search.endpoint=<ENDPOINT>
+
+    # The Azure AI Search API key.
+    scalar.db.embedding.store.azure-ai-search.api_key=<API_KEY>
+
+    # The name of the index to be used. If no index is provided, the name of the default index to be used.
+    scalar.db.embedding.store.azure-ai-search.index_name=<INDEX_NAME>
+    ```
+  </TabItem>
+  <TabItem value="pgvector" label="pgvector">
+    The pgvector embedding store is an embedding store that uses pgvector, which is a Postgres extension for vector similarity search, as the backend.
+
+    To use the pgvector embedding store, add the following properties to the configuration file:
+
+    ```properties
+    scalar.db.embedding.store.type=pgvector
+
+    # The database host.
+    scalar.db.embedding.store.pgvector.host=<HOST>
+
+    # The database port.
+    scalar.db.embedding.store.pgvector.port=<PORT>
+
+    # The database user.
+    scalar.db.embedding.store.pgvector.user=<USER>
+
+    # The database password.
+    scalar.db.embedding.store.pgvector.password=<PASSWORD>
+
+    # The database name.
+    scalar.db.embedding.store.pgvector.database=<DATABASE>
+
+    # The table name.
+    scalar.db.embedding.store.pgvector.table=<TABLE>
+    ```
+  </TabItem>
+</Tabs>
+
+Select the embedding model that you want to use, and follow the instructions to configure it.
+
+<Tabs groupId="embedding-model" queryString>
+  <TabItem value="in-process" label="In-process" default>
+    The in-process embedding model is a local embedding model powered by [ONNX runtime](https://onnxruntime.ai/docs/get-started/with-java.html) and is running in the ScalarDB Cluster process. This embedding model is useful for fast prototyping and simple use cases.
+
+    To use the in-process embedding model, add the following property to the configuration file:
+
+    ```properties
+    scalar.db.embedding.model.type=in-process
+    ```
+  </TabItem>
+  <TabItem value="amazon-bedrock" label="Amazon Bedrock">
+    The Amazon Bedrock embedding model is an embedding model that uses Amazon Bedrock as the backend.
+
+    To use the Amazon Bedrock embedding model, add the following properties to the configuration file:
+
+    ```properties
+    scalar.db.embedding.model.type=bedrock-titan
+
+    # The AWS region for which requests will be signed.
+    scalar.db.embedding.model.bedrock-titan.region=<REGION>
+
+    # The AWS access key ID.
+    scalar.db.embedding.model.bedrock-titan.access_key_id=<ACCESS_KEY_ID>
+
+    # The AWS secret access key.
+    scalar.db.embedding.model.bedrock-titan.secret_access_key=<SECRET_ACCESS_KEY>
+
+    # The model. Either `amazon.titan-embed-text-v1` or `amazon.titan-embed-text-v2:0`.
+    scalar.db.embedding.model.bedrock-titan.model=<MODEL>
+
+    # The dimensions.
+    scalar.db.embedding.model.bedrock-titan.dimensions=<DIMENSIONS>
+    ```
+  </TabItem>
+  <TabItem value="azure-openai" label="Azure OpenAI">
+    The Azure OpenAI embedding model is an embedding model that uses Azure OpenAI as the backend.
+
+    To use the Azure OpenAI embedding model, add the following properties to the configuration file:
+
+    ```properties
+    scalar.db.embedding.model.type=azure-open-ai
+
+    # The Azure OpenAI endpoint.
+    scalar.db.embedding.model.azure-open-ai.endpoint=<ENDPOINT>
+
+    # The Azure OpenAI API key.
+    scalar.db.embedding.model.azure-open-ai.api_key=<API_KEY>
+
+    # The deployment name in Azure OpenAI.
+    scalar.db.embedding.model.azure-open-ai.deployment_name=<DEPLOYMENT_NAME>
+
+    # The dimensions.
+    scalar.db.embedding.model.azure-open-ai.dimensions=<DIMENSIONS>
+    ```
+  </TabItem>
+  <TabItem value="google-vertex-ai" label="Google Vertex AI">
+    The Google Vertex AI embedding model is an embedding model that uses Google Vertex AI as the backend.
+
+    To use the Google Vertex AI embedding model, add the following properties to the configuration file:
+
+    ```properties
+    scalar.db.embedding.model.type=vertex-ai
+
+    # The Google Cloud project.
+    scalar.db.embedding.model.vertex-ai.project=<PROJECT>
+
+    # The Google Cloud location.
+    scalar.db.embedding.model.vertex-ai.location=<LOCATION>
+
+    # The endpoint.
+    scalar.db.embedding.model.vertex-ai.endpoint=<ENDPOINT>
+
+    # The publisher.
+    scalar.db.embedding.model.vertex-ai.publisher=<PUBLISHER>
+
+    # The model name.
+    scalar.db.embedding.model.vertex-ai.model_name=<MODEL_NAME>
+
+    # The output dimensionality.
+    scalar.db.embedding.model.vertex-ai.output_dimensionality=<OUTPUT_DIMENSIONALITY>
+    ```
+  </TabItem>
+  <TabItem value="openai" label="OpenAI">
+    The OpenAI embedding model is an embedding model that uses OpenAI as the backend.
+
+    To use the OpenAI embedding model, add the following properties to the configuration file:
+
+    ```properties
+    scalar.db.embedding.model.type=open-ai
+
+    # The OpenAI API key.
+    scalar.db.embedding.model.open-ai.api_key=<API_KEY>
+
+    # The model name.
+    scalar.db.embedding.model.open-ai.model_name=<MODEL_NAME>
+
+    # The base URL.
+    scalar.db.embedding.model.open-ai.base_url=<BASE_URL>
+
+    # The organization ID.
+    scalar.db.embedding.model.open-ai.organization_id=<ORGANIZATION_ID>
+
+    # The dimensions.
+    scalar.db.embedding.model.open-ai.dimensions=<DIMENSIONS>
+
+    # The user.
+    scalar.db.embedding.model.open-ai.user=<USER>
+    ```
+  </TabItem>
+</Tabs>
+
+### 2. Create the Docker Compose file
+
+Create the following configuration file as `docker-compose.yaml`.
+
+```yaml
+services:
+  scalardb-cluster-standalone:
+    container_name: "scalardb-cluster-node"
+    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:3.16.0"
+    ports:
+      - 60053:60053
+      - 9080:9080
+    volumes:
+      - ./scalardb-cluster-node.properties:/scalardb-cluster/node/scalardb-cluster-node.properties
+```
+
+### 3. Start ScalarDB Cluster
+
+Run the following command to start ScalarDB Cluster in standalone mode.
+
+```console
+docker compose up -d
+```
+
+It may take a few minutes for ScalarDB Cluster to fully start.
+
+### 4. Add the Java Client SDK for the embedding store abstraction to your project
+
+The ScalarDB Cluster Embedding Java Client SDK library is available on the [Maven Central Repository](https://mvnrepository.com/artifact/com.scalar-labs/scalardb-cluster-embedding-java-client-sdk). You can add the library as a build dependency to your application by using Gradle or Maven.
+
+Select your build tool, and follow the instructions to add the build dependency for the ScalarDB Cluster Embedding Java Client SDK to your application.
+
+<Tabs groupId="build_tools" queryString>
+  <TabItem value="gradle" label="Gradle" default>
+    To add the build dependency for the ScalarDB Cluster Embedding Java Client SDK by using Gradle, add the following to `build.gradle` in your application:
+
+    ```gradle
+    dependencies {
+      implementation 'com.scalar-labs:scalardb-cluster-embedding-java-client-sdk:3.16.0'
+    }
+    ```
+  </TabItem>
+  <TabItem value="maven" label="Maven">
+    To add the build dependency for the ScalarDB Cluster Embedding Java Client SDK by using Maven, add the following to `pom.xml` in your application:
+
+    ```xml
+    <dependency>
+      <groupId>com.scalar-labs</groupId>
+      <artifactId>scalardb-cluster-embedding-java-client-sdk</artifactId>
+      <version>3.16.0</version>
+    </dependency>
+    ```
+  </TabItem>
+</Tabs>
+
+### 5. Run the sample code
+
+Create a new Java class and add the following code to run the sample code.
+
+```java
+try (ScalarDbEmbeddingClientFactory scalarDbEmbeddingClientFactory =
+    ScalarDbEmbeddingClientFactory.builder()
+        .withProperty("scalar.db.embedding.client.contact_points", "indirect:localhost")
+        .build()) {
+  // Create an embedding store and an embedding model.
+  EmbeddingStore<TextSegment> scalarDbEmbeddingStore =
+      scalarDbEmbeddingClientFactory.createEmbeddingStore();
+  EmbeddingModel scalarDbEmbeddingModel = scalarDbEmbeddingClientFactory.createEmbeddingModel();
+
+  // Add embeddings to the embedding store.
+  TextSegment segment1 = TextSegment.from("I like football.");
+  Embedding embedding1 = scalarDbEmbeddingModel.embed(segment1).content();
+        scalarDbEmbeddingStore.add(embedding1, segment1);
+
+  TextSegment segment2 = TextSegment.from("The weather is good today.");
+  Embedding embedding2 = scalarDbEmbeddingModel.embed(segment2).content();
+        scalarDbEmbeddingStore.add(embedding2, segment2);
+
+  // Search for embeddings.
+  Embedding queryEmbedding =
+      scalarDbEmbeddingModel.embed("What is your favourite sport?").content();
+  EmbeddingSearchResult<TextSegment> result =
+      scalarDbEmbeddingStore.search(
+          EmbeddingSearchRequest.builder()
+              .queryEmbedding(queryEmbedding)
+              .maxResults(1)
+              .build());
+
+  // Print the search result.
+  List<EmbeddingMatch<TextSegment>> matches = result.matches();
+  EmbeddingMatch<TextSegment> embeddingMatch = matches.get(0);
+  System.out.println(embeddingMatch.embedded().text());
+  System.out.println(embeddingMatch.score());
+}
+```
+
+This sample code demonstrates how to create an embedding store and an embedding model, add embeddings to the embedding store, and search for embeddings.
+
+Except for the part of the code that creates an embedding store and an embedding model, the usage is the same as LangChain4j. For more information about LangChain4j, see the following:
+- [LangChain4j](https://docs.langchain4j.dev/)
+- [Embedding Model](https://docs.langchain4j.dev/tutorials/rag#embedding-model)
+- [Embedding Store](https://docs.langchain4j.dev/tutorials/rag#embedding-store)
+
+#### About `ScalarDbEmbeddingClientFactory`
+
+As shown in the code snippet, the `ScalarDbEmbeddingClientFactory` class provides a builder to create an instance of the factory. The builder allows you to set properties for the factory. In this example, the `withProperty()` method is used to set the contact points for the factory as follows:
+
+```java
+ScalarDbEmbeddingClientFactory scalarDbEmbeddingClientFactory = ScalarDbEmbeddingClientFactory.builder()
+  .withProperty("scalar.db.embedding.client.contact_points", "indirect:localhost")
+  .build();
+```
+
+You can also set a properties file by using the `withPropertiesFile()` method.
+
+Then, you can create an embedding store and an embedding model by using the factory as follows:
+
+```java
+EmbeddingStore<TextSegment> scalarDbEmbeddingStore =
+    scalarDbEmbeddingClientFactory.createEmbeddingStore();
+EmbeddingModel scalarDbEmbeddingModel = scalarDbEmbeddingClientFactory.createEmbeddingModel();
+```
+
+Their methods internally connect to ScalarDB Cluster, which interacts with the embedding store by using the embedding model, both of which are specified in the configuration.
+
+You should reuse the `scalarDbEmbeddingStore` and `scalarDbEmbeddingModel` instances to interact with vector stores in an application.
+
+:::note
+
+The `ScalarDbEmbeddingClientFactory` instance should be closed after use to release the connection to ScalarDB Cluster.
+
+:::
+
+## Additional details
+
+The vector search feature is currently in Private Preview. For more details, please [contact us](https://www.scalar-labs.com/contact) or wait for this feature to become publicly available in a future version.
+
+- [Javadoc](https://javadoc.io/doc/com.scalar-labs/scalardb-cluster-embedding-java-client-sdk/3.16.0/index.html)

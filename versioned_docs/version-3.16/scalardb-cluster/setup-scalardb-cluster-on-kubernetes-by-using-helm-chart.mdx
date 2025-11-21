@@ -1,0 +1,256 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsEnglish
+---
+
+# How to Deploy ScalarDB Cluster Locally
+
+import WarningLicenseKeyContact from '/src/components/en-us/_warning-license-key-contact.mdx';
+
+This guide provides instructions on how to deploy ScalarDB Cluster by using a Helm Chart on a local Kubernetes cluster, specifically designed for a test environment.
+
+## Prerequisites
+
+- [Docker](https://www.docker.com/get-started/) 20.10 or later with [Docker Compose](https://docs.docker.com/compose/install/) V2 or later
+- Kubernetes cluster (either [minikube](https://minikube.sigs.k8s.io/docs/start/) or [kind](https://kind.sigs.k8s.io/docs/user/quick-start/#installation))
+- [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
+- [Helm](https://helm.sh/docs/intro/install/)
+
+<WarningLicenseKeyContact product="ScalarDB Cluster" />
+
+## What you will create
+
+You will be deploying the following components on a local Kubernetes cluster as depicted below:
+
+```
++---------------------------------------------------------------------------------------------------------------------------------------+
+| [Kubernetes Cluster]                                                                                                                  |
+|                                                                                                                                       |
+|                         [Pod]                                                                [Pod]                         [Pod]      |
+|                                                                                                                                       |
+|                       +-------+                                                                                                       |
+|                 +---> | Envoy | ---+                                                                                                  |
+|                 |     +-------+    |                                                                                                  |
+|                 |                  |                                                                                                  |
+|  +---------+    |     +-------+    |           +--------------------+                                                                 |
+|  | Service | ---+---> | Envoy | ---+---------> |      Service       | ---+                                                            |
+|  | (Envoy) |    |     +-------+    |           | (ScalarDB Cluster) |    |                                                            |
+|  +---------+    |                  |           +--------------------+    |         +-----------------------+                          |
+|                 |     +-------+    |                                     |   +---> | ScalarDB Cluster Node | ---+                     |
+|                 +---> | Envoy | ---+                                     |   |     +-----------------------+    |                     |
+|                       +-------+                                          |   |                                  |                     |
+|                                                                          |   |     +-----------------------+    |     +------------+  |
+|                                                                          +---+---> | ScalarDB Cluster Node | ---+---> | PostgreSQL |  |
+|                                                                          |   |     +-----------------------+    |     +------------+  |
+|                                                                          |   |                                  |                     |
+|                                                                          |   |     +-----------------------+    |                     |
+|                                                                          |   +---> | ScalarDB Cluster Node | ---+                     |
+|                                                                          |         +-----------------------+                          |
+|                                        +----------------------------+    |                                                            |
+|                                        |          Service           | ---+                                                            |
+|                                        | (ScalarDB Cluster GraphQL) |                                                                 |
+|                                        +----------------------------+                                                                 |
+|                                                                                                                                       |
++---------------------------------------------------------------------------------------------------------------------------------------+
+```
+
+## Step 1. Start a PostgreSQL container
+
+ScalarDB Cluster must use some kind of database system as its backend database. The database that is used in this guide is PostgreSQL.
+
+You can deploy PostgreSQL on the Kubernetes cluster as follows.
+
+1. Add the Bitnami Helm repository by running the following command:
+
+   ```console
+   helm repo add bitnami https://charts.bitnami.com/bitnami
+   ```
+
+2. Deploy PostgreSQL by running the following command:
+
+   ```console
+   helm install postgresql-scalardb-cluster bitnami/postgresql \
+     --set auth.postgresPassword=postgres \
+     --set primary.persistence.enabled=false
+   ```
+
+3. Check if the PostgreSQL container is running by running the following command:
+
+   ```console
+   kubectl get pod
+   ```
+
+   You should see the following output:
+
+   ```console
+   NAME                            READY   STATUS    RESTARTS   AGE
+   postgresql-scalardb-cluster-0   1/1     Running   0          17s
+   ```
+
+## Step 2. Deploy ScalarDB Cluster on the Kubernetes cluster by using a Helm Chart
+
+1. Add the Scalar Helm Charts repository by running the following command:
+
+   ```console
+   helm repo add scalar-labs https://scalar-labs.github.io/helm-charts
+   ```
+
+2. Set your license key and certificate as environment variables. If you don't have a license key, please [contact us](https://www.scalar-labs.com/contact). For details about the value for `<CERT_PEM_FOR_YOUR_LICENSE_KEY>`, see [How to Configure a Product License Key](../scalar-licensing/index.mdx).
+
+   ```console
+   SCALAR_DB_CLUSTER_LICENSE_KEY='<YOUR_LICENSE_KEY>'
+   SCALAR_DB_CLUSTER_LICENSE_CHECK_CERT_PEM='<CERT_PEM_FOR_YOUR_LICENSE_KEY>'
+   ```
+
+3. Create a custom values file for ScalarDB Cluster (`scalardb-cluster-custom-values.yaml`) by running the following command:
+
+   ```console
+   cat << 'EOF' > scalardb-cluster-custom-values.yaml
+   envoy:
+     enabled: true
+     service:
+       type: "LoadBalancer"
+
+   scalardbCluster:
+
+     image:
+       repository: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium"
+
+     scalardbClusterNodeProperties: |
+       # ScalarDB Cluster configurations
+       scalar.db.cluster.membership.type=KUBERNETES
+       scalar.db.cluster.membership.kubernetes.endpoint.namespace_name=${env:SCALAR_DB_CLUSTER_MEMBERSHIP_KUBERNETES_ENDPOINT_NAMESPACE_NAME}
+       scalar.db.cluster.membership.kubernetes.endpoint.name=${env:SCALAR_DB_CLUSTER_MEMBERSHIP_KUBERNETES_ENDPOINT_NAME}
+
+       # Storage configurations
+       scalar.db.storage=jdbc
+       scalar.db.contact_points=jdbc:postgresql://postgresql-scalardb-cluster.default.svc.cluster.local:5432/postgres
+       scalar.db.username=${env:SCALAR_DB_CLUSTER_POSTGRES_USERNAME}
+       scalar.db.password=${env:SCALAR_DB_CLUSTER_POSTGRES_PASSWORD}
+
+       # For ScalarDB Cluster GraphQL tutorial.
+       scalar.db.graphql.enabled=true
+       scalar.db.graphql.namespaces=emoney
+
+       # For ScalarDB Cluster SQL tutorial.
+       scalar.db.sql.enabled=true
+
+       ### License key configurations
+       scalar.db.cluster.node.licensing.license_key=${env:SCALAR_DB_CLUSTER_LICENSE_KEY}
+       scalar.db.cluster.node.licensing.license_check_cert_pem=${env:SCALAR_DB_CLUSTER_LICENSE_CHECK_CERT_PEM}
+     graphql:
+       enabled: true
+       service:
+         type: "LoadBalancer"
+
+     secretName: "scalardb-credentials-secret"
+   EOF
+   ```
+
+:::note
+
+   For the purpose of this guide, the service type for ScalarDB Cluster GraphQL and Envoy is set to `LoadBalancer`.
+
+:::
+
+4. Create a secret resource named `scalardb-credentials-secret` that includes credentials and license keys.
+
+   ```console
+   kubectl create secret generic scalardb-credentials-secret \
+   --from-literal=SCALAR_DB_CLUSTER_POSTGRES_USERNAME=postgres \
+   --from-literal=SCALAR_DB_CLUSTER_POSTGRES_PASSWORD=postgres \
+   --from-literal=SCALAR_DB_CLUSTER_LICENSE_KEY="${SCALAR_DB_CLUSTER_LICENSE_KEY}" \
+   --from-file=SCALAR_DB_CLUSTER_LICENSE_CHECK_CERT_PEM=<(echo ${SCALAR_DB_CLUSTER_LICENSE_CHECK_CERT_PEM} | sed 's/\\n/\
+   /g') \
+   -n default
+   ```
+
+5. Set the chart version of ScalarDB Cluster.
+
+   ```console
+   SCALAR_DB_CLUSTER_VERSION=3.16.0
+   SCALAR_DB_CLUSTER_CHART_VERSION=$(helm search repo scalar-labs/scalardb-cluster -l | grep -F "${SCALAR_DB_CLUSTER_VERSION}" | awk '{print $2}' | sort --version-sort -r | head -n 1)
+   ```
+
+6. Deploy ScalarDB Cluster.
+
+   ```console
+   helm install scalardb-cluster scalar-labs/scalardb-cluster -f scalardb-cluster-custom-values.yaml --version ${SCALAR_DB_CLUSTER_CHART_VERSION} -n default
+   ```
+
+7. Check if the ScalarDB Cluster pods are deployed:
+
+   ```console
+   kubectl get pod
+   ```
+
+   You should see the following output:
+
+   ```console
+   NAME                                      READY   STATUS    RESTARTS   AGE
+   postgresql-scalardb-cluster-0             1/1     Running   0          84s
+   scalardb-cluster-envoy-59899dc588-477tg   1/1     Running   0          35s
+   scalardb-cluster-envoy-59899dc588-dpvhx   1/1     Running   0          35s
+   scalardb-cluster-envoy-59899dc588-lv9hx   1/1     Running   0          35s
+   scalardb-cluster-node-866c756c79-5v2tk    1/1     Running   0          35s
+   scalardb-cluster-node-866c756c79-9zhq5    1/1     Running   0          35s
+   scalardb-cluster-node-866c756c79-t6v86    1/1     Running   0          35s
+   ```
+
+   If the ScalarDB Cluster Node Pods and the Envoy Pods are deployed properly, the `STATUS` for each pod will be `Running`.
+
+6. Check if the service resources of ScalarDB Cluster are deployed by running the following command:
+
+   ```console
+   kubectl get svc
+   ```
+
+   You should see the following output:
+
+   ```console
+   NAME                             TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)           AGE
+   kubernetes                       ClusterIP      10.96.0.1        <none>        443/TCP           260d
+   postgresql-scalardb-cluster      ClusterIP      10.110.97.40     <none>        5432/TCP          86s
+   postgresql-scalardb-cluster-hl   ClusterIP      None             <none>        5432/TCP          86s
+   scalardb-cluster-envoy           LoadBalancer   10.105.121.51    localhost     60053:30641/TCP   49s
+   scalardb-cluster-envoy-metrics   ClusterIP      10.111.131.189   <none>        9001/TCP          49s
+   scalardb-cluster-graphql         LoadBalancer   10.105.74.214    localhost     8080:30514/TCP    49s
+   scalardb-cluster-headless        ClusterIP      None             <none>        60053/TCP         49s
+   scalardb-cluster-metrics         ClusterIP      10.110.132.22    <none>        9080/TCP          49s
+   ```
+
+   If the service resources of ScalarDB Cluster and Envoy are deployed properly, the private IP addresses in the `CLUSTER-IP` column will be displayed.
+
+   :::note
+
+   `scalardb-cluster-headless` has no `CLUSTER-IP` address.
+
+   :::
+
+   You can also see `EXTERNAL-IP` addresses assigned to the service resource of ScalarDB Cluster GraphQL (`scalardb-cluster-graphql`) and the service resource of Envoy (`scalardb-cluster-envoy`) with `TYPE` set to `LoadBalancer`.
+
+   In addition, the access method to the `LoadBalancer` service from your environment depends on each Kubernetes distribution. For example:
+
+   - If you're using minikube, you can use the [`minikube tunnel` command](https://minikube.sigs.k8s.io/docs/commands/tunnel/).
+   - If you're using kind, you can use [Cloud Provider KIND](https://kind.sigs.k8s.io/docs/user/loadbalancer/).
+
+   For details on how to access the `LoadBalancer` service, see the official documentation for the Kubernetes distribution that you're using.
+
+## Delete all resources
+
+You can delete all resources created in this guide by running the following command:
+
+```console
+helm uninstall scalardb-cluster postgresql-scalardb-cluster
+```
+
+## Learn more
+
+To get familiar with other use cases for ScalarDB Cluster, try the following tutorials:
+
+- [Getting Started with ScalarDB Cluster](getting-started-with-scalardb-cluster.mdx)
+- [Getting Started with ScalarDB Cluster GraphQL](getting-started-with-scalardb-cluster-graphql.mdx)
+- [Getting Started with ScalarDB Cluster SQL via JDBC](getting-started-with-scalardb-cluster-sql-jdbc.mdx)
+- [Getting Started with ScalarDB Cluster SQL via Spring Data JDBC for ScalarDB](getting-started-with-scalardb-cluster-sql-spring-data-jdbc.mdx)

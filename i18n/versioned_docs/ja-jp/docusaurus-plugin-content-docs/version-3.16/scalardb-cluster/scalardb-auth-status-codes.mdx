@@ -1,0 +1,309 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# 認証および認可エラーコード
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このページでは、認証および認可に関連するエラーコードの一覧を示します。
+
+## エラーコードのクラスと説明
+
+| クラス           | 説明                       |
+|:----------------|:--------------------------|
+| `DB-AUTH-1xxxx` | ユーザーエラーカテゴリのエラー |
+| `DB-AUTH-3xxxx` | 内部エラーカテゴリのエラー    |
+
+## `DB-AUTH-1xxxx` ステータスコード
+
+以下は、ユーザーエラーカテゴリのステータスコードとメッセージです。
+
+### `DB-AUTH-10000`
+
+**メッセージ**
+
+```markdown
+The user already exists. Username: %s
+```
+
+### `DB-AUTH-10001`
+
+**メッセージ**
+
+```markdown
+The user does not exist. Username: %s
+```
+
+### `DB-AUTH-10003`
+
+**メッセージ**
+
+```markdown
+The namespace does not exist. Namespace: %s
+```
+
+### `DB-AUTH-10004`
+
+**メッセージ**
+
+```markdown
+The table does not exist. Table: %s
+```
+
+### `DB-AUTH-10005`
+
+**メッセージ**
+
+```markdown
+Invalid username or password
+```
+
+### `DB-AUTH-10006`
+
+**メッセージ**
+
+```markdown
+Access denied: Invalid auth token
+```
+
+### `DB-AUTH-10007`
+
+**メッセージ**
+
+```markdown
+Access denied: You need the %s privilege on the namespace %s to execute this operation
+```
+
+### `DB-AUTH-10008`
+
+**メッセージ**
+
+```markdown
+Access denied: You need the %s privilege on the table %s to execute this operation
+```
+
+### `DB-AUTH-10009`
+
+**メッセージ**
+
+```markdown
+Access denied: You must be a superuser to execute this operation
+```
+
+### `DB-AUTH-10010`
+
+**メッセージ**
+
+```markdown
+Access denied: You can't access information about the user %s
+```
+
+### `DB-AUTH-10011`
+
+**メッセージ**
+
+```markdown
+Access denied: You can't alter the user %s
+```
+
+### `DB-AUTH-10012`
+
+**メッセージ**
+
+```markdown
+Access denied: You must be a superuser to change the SUPERUSER attribute
+```
+
+### `DB-AUTH-10013`
+
+**メッセージ**
+
+```markdown
+You can't change the SUPERUSER attribute for the current user %s
+```
+
+### `DB-AUTH-10014`
+
+**メッセージ**
+
+```markdown
+You can't drop the current user %s
+```
+
+### `DB-AUTH-10015`
+
+**メッセージ**
+
+```markdown
+Access denied: You can't grant the %s privilege because you don't have the same privilege on the table %s
+```
+
+### `DB-AUTH-10016`
+
+**メッセージ**
+
+```markdown
+Access denied: You can't grant the %s privilege because you don't have the same privilege on the namespace %s
+```
+
+### `DB-AUTH-10017`
+
+**メッセージ**
+
+```markdown
+Access denied: You can't revoke the %s privilege because you don't have the same privilege on the table %s
+```
+
+### `DB-AUTH-10018`
+
+**メッセージ**
+
+```markdown
+Access denied: You can't revoke the %s privilege because you don't have the same privilege on the namespace %s
+```
+
+### `DB-AUTH-10019`
+
+**メッセージ**
+
+```markdown
+The operation does not have the target namespace or table name. Operation: %s
+```
+
+## `DB-AUTH-3xxxx` ステータスコード
+
+以下は、内部エラーカテゴリのステータスコードとメッセージです。
+
+### `DB-AUTH-30000`
+
+**メッセージ**
+
+```markdown
+Getting auth token information failed
+```
+
+### `DB-AUTH-30001`
+
+**メッセージ**
+
+```markdown
+Getting the user failed. Username: %s
+```
+
+### `DB-AUTH-30002`
+
+**メッセージ**
+
+```markdown
+Creating a user failed. Username: %s
+```
+
+### `DB-AUTH-30003`
+
+**メッセージ**
+
+```markdown
+Altering the user failed. Username: %s
+```
+
+### `DB-AUTH-30004`
+
+**メッセージ**
+
+```markdown
+Dropping the user failed. Username: %s
+```
+
+### `DB-AUTH-30005`
+
+**メッセージ**
+
+```markdown
+Granting privileges failed. Username: %s; Namespace: %s; Privileges: %s
+```
+
+### `DB-AUTH-30006`
+
+**メッセージ**
+
+```markdown
+Granting privileges failed. Username: %s; Table: %s; Privileges: %s
+```
+
+### `DB-AUTH-30007`
+
+**メッセージ**
+
+```markdown
+Revoking privileges failed. Username: %s; Namespace: %s; Privileges: %s
+```
+
+### `DB-AUTH-30008`
+
+**メッセージ**
+
+```markdown
+Revoking privileges failed. Username: %s; Table: %s; Privileges: %s
+```
+
+### `DB-AUTH-30009`
+
+**メッセージ**
+
+```markdown
+Getting users failed
+```
+
+### `DB-AUTH-30010`
+
+**メッセージ**
+
+```markdown
+Getting privileges failed. Username: %s; Namespace: %s
+```
+
+### `DB-AUTH-30011`
+
+**メッセージ**
+
+```markdown
+Getting privileges failed. Username: %s; Table: %s
+```
+
+### `DB-AUTH-30012`
+
+**メッセージ**
+
+```markdown
+Deleting privileges failed. Namespace: %s
+```
+
+### `DB-AUTH-30013`
+
+**メッセージ**
+
+```markdown
+Deleting privileges failed. Table: %s
+```
+
+### `DB-AUTH-30014`
+
+**メッセージ**
+
+```markdown
+Logging in failed. Username: %s
+```
+
+### `DB-AUTH-30015`
+
+**メッセージ**
+
+```markdown
+Logging out failed
+```

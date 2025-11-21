@@ -1,0 +1,645 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Data Loader
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+ScalarDB Data Loader は、ScalarDB に対してデータのインポートとエクスポートを簡単に行うことができるユーティリティツールです。
+
+Data Loader は、検証、エラーハンドリング、詳細なログ記録を備えた構造化されたインポートおよびエクスポートプロセスを提供し、ScalarDB との間で安全にデータを移動できるように支援します。
+
+:::note
+
+- Data Loader は現在 ScalarDB Core 上に構築されているため、バックエンドデータベースに対して直接データのインポートとエクスポートのみを行うことができます。そのため、ScalarDB Cluster 経由でのデータのインポートとエクスポートはできません。
+
+:::
+
+## 前提条件
+
+Data Loader を使用する前に、以下が必要です:
+
+以下のいずれかの Java Development Kit (JDK):
+  - Oracle JDK: 8、11、17、または 21 (LTS バージョン)
+  - OpenJDK (Eclipse Temurin、Amazon Corretto、または Microsoft Build of OpenJDK): 8、11、17、または 21 (LTS バージョン)
+- データベース接続設定を含む有効な **`scalardb.properties`** 設定ファイル
+- 読み取りおよび書き込み操作に対する適切な権限を持つデータベースへのアクセス。必要な権限の詳細については、[データベース権限要件](requirements.mdx#データベース権限要件)を参照してください。
+
+## Data Loader のセットアップ
+
+1. [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) ページから最新の Data Loader リリースをダウンロードします。
+2. 以下のコマンドを実行して、`<VERSION>` をバージョン番号に置き換えてインストールを確認します:
+
+```console
+java -jar scalardb-data-loader-<VERSION>.jar --help
+```
+
+成功すると、利用可能なコマンドとオプションのリストが表示されます。
+
+## データのインポート
+
+このセクションでは、Data Loader のインポート機能の使用方法について説明します。
+
+### 基本的なインポートの例
+
+データをインポートする最も簡単な方法は、自動フィールドマッピングを使用することです。これにより、Data Loader がソースファイルのフィールドを名前でテーブルカラムにマッチングします。
+
+Data Loader は3つのファイル形式をサポートしています: JSON、JSONL (JSON Lines)、CSV。以下の例では、各形式をインポートする方法を示します。
+
+<Tabs groupId="file-format" queryString>
+  <TabItem value="json" label="JSON" default>
+    **自動マッピングでの JSON ファイルのインポート**
+
+    JSON ファイルをテーブルにインポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
+
+    ```console
+    java -jar scalardb-data-loader-<VERSION>.jar import \
+      --config scalardb.properties \
+      --namespace <NAMESPACE_NAME> \
+      --table <TABLE_NAME> \
+      --file <FILE_PATH>.json
+    ```
+
+    このコマンドは、デフォルト設定 (INSERT モード、自動フィールドマッピング) を使用して、JSON ファイルを指定されたテーブルにインポートします。
+
+    **JSON ファイル形式の例:**
+
+    ```json
+    [
+      {
+        "id": 1,
+        "name": "Product A",
+        "price": 100
+      },
+      {
+        "id": 2,
+        "name": "Product B",
+        "price": 200
+      }
+    ]
+    ```
+  </TabItem>
+  <TabItem value="jsonl" label="JSONL">
+    **自動マッピングでの JSONL (JSON Lines) ファイルのインポート**
+
+    JSONL ファイルをテーブルにインポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
+
+    ```console
+    java -jar scalardb-data-loader-<VERSION>.jar import \
+      --config scalardb.properties \
+      --namespace <NAMESPACE_NAME> \
+      --table <TABLE_NAME> \
+      --file <FILE_PATH>.jsonl \
+      --format JSONL
+    ```
+
+    このコマンドは、デフォルト設定 (INSERT モード、自動フィールドマッピング) を使用して、JSONL ファイルを指定されたテーブルにインポートします。
+
+    **JSONL ファイル形式の例:**
+
+    ```json
+    {"id": 1, "name": "Product A", "price": 100}
+    {"id": 2, "name": "Product B", "price": 200}
+    ```
+  </TabItem>
+  <TabItem value="csv" label="CSV">
+    **自動マッピングでの CSV ファイルのインポート**
+
+    CSV ファイルをテーブルにインポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
+
+    ```console
+    java -jar scalardb-data-loader-<VERSION>.jar import \
+      --config scalardb.properties \
+      --namespace <NAMESPACE_NAME> \
+      --table <TABLE_NAME> \
+      --file <FILE_PATH>.csv \
+      --format CSV
+    ```
+
+    このコマンドは、デフォルト設定 (INSERT モード、自動フィールドマッピング) を使用して、CSV ファイルを指定されたテーブルにインポートします。
+
+    **CSV ファイル形式の例:**
+
+    ```csv
+    id,name,price
+    1,Product A,100
+    2,Product B,200
+    ```
+
+:::note
+
+CSV ファイルには、テーブルカラムに一致するカラム名を持つヘッダー行が含まれている必要があります。CSV ファイルにヘッダー行がない場合は、`--header` オプションを使用してカラム名を指定してください。
+
+:::
+  </TabItem>
+</Tabs>
+
+### 一般的なインポートシナリオ
+
+このセクションでは、一般的なインポートシナリオについて説明します。
+
+#### 新しいレコードを挿入する代わりに既存のレコードを更新する
+
+新しいレコードを挿入する代わりに既存のレコードを更新するには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
+
+```console
+java -jar scalardb-data-loader-<VERSION>.jar import \
+  --config scalardb.properties \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --file <FILE_PATH>.json \
+  --import-mode UPDATE
+```
+
+#### 制御ファイルを使用したカスタムフィールドマッピングでのインポート
+
+ソースファイルのフィールドがテーブルのカラム名と一致しない場合、制御ファイルを使用してカスタムマッピングルールを定義できます。制御ファイルの作成とマッピング設定の詳細については、[カスタムデータマッピング](#カスタムデータマッピング)を参照してください。
+
+制御ファイルを使用してカスタムフィールドマッピングでインポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
+
+```console
+java -jar scalardb-data-loader-<VERSION>.jar import \
+  --config scalardb.properties \
+  --file <FILE>.json \
+  --control-file <CONTROL_FILE>.json
+```
+
+#### カスタム区切り文字での CSV データのインポート
+
+カスタム区切り文字で CSV データをインポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
+
+```console
+java -jar scalardb-data-loader-<VERSION>.jar import \
+  --config scalardb.properties \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --file <FILE_PATH>.csv \
+  --format CSV \
+  --delimiter ";"
+```
+
+### インポートの設定
+
+インポートプロセスをより詳細に制御するために、さまざまなオプションを設定できます:
+
+#### インポートモード
+
+使用ケースに基づいて適切なインポートモードを選択します:
+
+- **INSERT** (デフォルト): 新しいレコードのみを挿入します。パーティションキーとクラスタリングキーに基づいてデータが既に存在する場合は失敗します。
+- **UPDATE**: 既存のレコードのみを更新します。データが存在しない場合は失敗します。
+- **UPSERT**: パーティションキーとクラスタリングキーに基づいて、新しいレコードを挿入するか既存のレコードを更新します。
+
+:::note
+
+INSERT モードを使用する場合、各ターゲットカラムに対してソースファイル内に一致するフィールドが必要です (自動またはカスタムデータマッピング経由)。この要件は、UPSERT 操作が INSERT 操作になる場合にも適用されます。
+
+:::
+
+#### ScalarDB モード
+
+スキーマタイプに基づいて、以下のいずれかのモードを使用できます:
+
+- **`TRANSACTION`:** スキーマ内に[トランザクションメタデータ](consensus-commit.mdx#分散-wal)を持つデータベースに対してこのモードを使用します。トランザクション操作を使用して行がインポートされ、ACID プロパティとデータ整合性が保証されます。デフォルトでは、最大 100 個の put 操作が単一のトランザクションにグループ化されます。これは `--transaction-size` オプションを使用して調整できます。
+
+  :::note
+
+  `TRANSACTION` モードを使用する場合、各トランザクショングループ (デフォルトでは 100 レコードを含む) は ACID 保証を満たしますが、全体的なインポートまたはエクスポート操作はアトミックではありません。中断された場合、一部のグループはコミットされ、他のグループはコミットされない可能性があります。ログファイルを使用して失敗したレコードを特定し、再試行してください。
+
+  :::
+
+- **`STORAGE` (デフォルト):** スキーマ内に[トランザクションメタデータ](consensus-commit.mdx#分散-wal)を持たないデータベースに対してこのモードを使用します。このモードは、完全な ACID 保証なしに、より良いパフォーマンスのために非トランザクション Storage 操作を使用して直接データベースインポートを実行します。
+
+検証、ログ記録、パフォーマンスチューニングを含む追加の設定オプションについては、以下の[コマンドラインオプション](#コマンドラインオプション)セクションを参照してください。
+
+### コマンドラインオプション
+
+以下は、Data Loader のインポート機能で使用できるオプションのリストです:
+
+| オプション                         | 説明                                                  | 使用法                                                       |
+| ---------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------- |
+| `--mode`                       | ScalarDB が動作するモード。サポートされるモードは `STORAGE` と `TRANSACTION` です。省略した場合、デフォルト値は `STORAGE` です。 | `scalardb-data-loader --mode TRANSACTION`                   |
+| `--config`                     | ScalarDB 用の `.properties` ファイルへのパス。省略した場合、ツールは現在のフォルダで `scalardb.properties` という名前のファイルを探します。 | `scalardb-data-loader --config scalardb.properties`         |
+| `--namespace`                  | データをインポートするテーブルのネームスペース。制御ファイルが提供されていない場合は必須です。 | `scalardb-data-loader --namespace namespace`                |
+| `--table`                      | データをインポートするテーブルの名前。制御ファイルが提供されていない場合は必須です。 | `scalardb-data-loader --table tableName`                    |
+| `--import-mode`                | ScalarDB テーブルにデータをインポートするモード。サポートされるモードは `INSERT`、`UPDATE`、`UPSERT` です。オプション。デフォルト値は `INSERT` です。 | `scalardb-data-loader --import-mode UPDATE`                 |
+| `--require-all-columns`        | 設定した場合、カラムが不足している場合はデータ行をインポートできません。オプション。デフォルト値は `false` です。 | `scalardb-data-loader --require-all-columns`                |
+| `--file`                       | インポートされるファイルへのパス。必須。 | `scalardb-data-loader --file <PATH_TO_FILE>`                |
+| `--log-dir`                    | ログファイルを保存するディレクトリ。オプション。デフォルト値は `logs` です。 | `scalardb-data-loader --log-dir <PATH_TO_DIR>`              |
+| `--enable-log-success`                | 正常に処理されたレコードのログ記録を有効にします。オプション。デフォルト値は `false` です。 | `scalardb-data-loader --enable-log-success`                        |
+| `--log-raw-record`             | ログファイル出力に元のソースレコードを含めます。オプション。デフォルト値は `false` です。 | `scalardb-data-loader --log-raw-record`                     |
+| `--max-threads`                | 並列処理に使用する最大スレッド数。デフォルト値は利用可能なプロセッサ数です。 | `scalardb-data-loader --max-threads 10`                     |
+| `--format`                     | インポートファイルの形式。サポートされる形式は `JSON`、`JSONL`、`CSV` です。オプション。デフォルト値は `JSON` です。 | `scalardb-data-loader --format CSV`                         |
+| `--ignore-nulls`               | インポート時にソースファイル内の null 値を無視します。これは、既存のデータが null 値で上書きされないことを意味します。オプション。デフォルト値は `false` です。 | `scalardb-data-loader --ignore-nulls`                       |
+| `--pretty-print`               | **(JSON/JSONL のみ)** ログファイル内の JSON 出力でプリティプリントを有効にします。オプション。デフォルト値は `false` です。 | `scalardb-data-loader --pretty-print`                       |
+| `--control-file`               | カスタムデータマッピングおよび/またはマルチテーブルインポートのルールを指定する JSON 制御ファイルへのパス。 | `scalardb-data-loader --control-file control.json`          |
+| `--control-file-validation`    | 制御ファイルの検証レベル。サポートされるレベルは `MAPPED`、`KEYS`、`FULL` です。オプション。デフォルトレベルは `MAPPED` です。 | `scalardb-data-loader --control-file-validation FULL`       |
+| `--delimiter`                  | **(CSV のみ)** CSV インポートファイルで使用される区切り文字。デフォルトの区切り文字はカンマです。 | `scalardb-data-loader --delimiter ";"`                      |
+| `--header`                     | **(CSV のみ)** インポートファイルに CSV データが含まれ、ヘッダー行がない場合にヘッダー行を指定します。カラム名を単一の区切り文字で区切ったリストとして提供します。`--delimiter` を変更した場合は、ヘッダー値で同じ区切り文字を使用してください。 | `scalardb-data-loader --header id,name,price`               |
+| `--data-chunk-size`            | 次のバッチに移る前に処理のためにメモリにロードするレコード数。これはメモリ使用量を制御し、トランザクション境界ではありません。オプション。デフォルト値は `500` です。 | `scalardb-data-loader --data-chunk-size 1000`               |
+| `--data-chunk-queue-size`      | 処理を待っているロードされたレコードの最大キューサイズ。オプション。デフォルト値は `256` です。 | `scalardb-data-loader --data-chunk-queue-size 100`          |
+| `--split-log-mode`             | データチャンクに基づいてログファイルを複数のファイルに分割します。オプション。デフォルト値は `false` です。 | `scalardb-data-loader --split-log-mode`                     |
+| `--transaction-size`           | トランザクションコミットあたりの put 操作のグループサイズ。単一のトランザクションで一緒にコミットされるレコード数を指定します。`TRANSACTION` モードでのみサポートされます。オプション。デフォルト値は `100` です。 | `scalardb-data-loader --transaction-size 200`               |
+
+### データマッピング
+
+このセクションでは、2つのデータマッピングタイプ (自動データマッピングとカスタムデータマッピング) について説明します。
+
+#### 自動データマッピング
+
+制御ファイルが提供されていない場合、Data Loader はソースデータ内のフィールドを ScalarDB テーブル内の利用可能なカラムに自動的にマッピングします。名前が一致せず、すべてのカラムが必要な場合、検証エラーが発生します。この場合、レコードのインポートが失敗し、結果が失敗出力ログに追加されます。
+
+#### カスタムデータマッピング
+
+ソースフィールドがターゲットカラム名と一致しない場合、制御ファイルを使用する必要があります。制御ファイルでは、フィールド名のカスタムマッピングルールを指定する必要があります。
+
+たとえば、以下の制御ファイルは、ソースファイル内のフィールド `source_field_name` をターゲットテーブル内の `target_column_name` にマッピングします:
+
+```json
+{
+	"tables": [{
+			"namespace": "<NAMESPACE>",
+			"table_name": "<TABLE>",
+			"mappings": [{
+				"source_field": "<SOURCE_FIELD_NAME>",
+				"target_column": "<TARGET_COLUMN_NAME>"
+			}]
+		}
+	]
+}
+```
+
+### 制御ファイル
+
+カスタムデータマッピングまたはマルチテーブルインポートを可能にするために、Data Loader は JSON 制御ファイルによる設定をサポートしています。このファイルは、Data Loader を開始するときに `--control-file` 引数で渡す必要があります。
+
+#### 制御ファイル検証レベル
+
+制御ファイルに対する検証を強制するため、Data Loader では検証レベルを指定できます。設定されたレベルに基づいて、Data Loader は事前チェックを実行し、レベルルールに基づいて制御ファイルを検証します。
+
+以下のレベルがサポートされています:
+
+| レベル | 検証内容 | 使用タイミング |
+| ----- | ----------------- | ----------- |
+| FULL | すべてのテーブルカラムにマッピングがある | 制御ファイルがすべてのカラムをカバーしていることを確認する場合 |
+| KEYS | パーティションキーとクラスタリングキーのみにマッピングがある | キーカラムのみを考慮する部分更新の場合 |
+| MAPPED (デフォルト) | 指定したマッピングのみが有効 | 制御ファイルを信頼し、最小限の検証を行う場合 |
+
+検証レベルはオプションであり、Data Loader を開始するときに `--control-file-validation` 引数で設定できます。
+
+:::note
+
+この検証は事前チェックとして実行され、インポートプロセスが自動的に成功することを意味するものではありません。
+
+たとえば、レベルが MAPPED に設定され、制御ファイルに INSERT 操作の各カラムのマッピングが含まれていない場合、INSERT 操作ではすべてのカラムのマッピングが必要であるため、インポートプロセスは依然として失敗します。
+
+:::
+
+### マルチテーブルインポート
+
+Data Loader はマルチテーブルターゲットインポートをサポートしており、制御ファイルでテーブルマッピングルールを指定することにより、JSON、JSON Lines、または CSV ファイルの単一行を複数のテーブルにインポートできます。
+
+:::note
+
+マルチテーブルインポートには制御ファイルが必要です。この機能は制御ファイルなしではサポートされていません。
+
+:::
+
+ScalarDB `TRANSACTION` モードでマルチテーブルインポートを使用する場合、ソース行がインポートされる各テーブルに対して個別のトランザクションが作成されます。たとえば、ソース行が制御ファイル内の2つのテーブルにマッピングされている場合、2つの個別のトランザクションが作成されます。
+
+**例: 1つのソース行を複数のテーブルにインポート**
+
+複数のフィールドを持つ JSON ソースレコード:
+
+```json
+[{
+	"field1": "value1",
+	"field2": "value2",
+	"field3": "value3"
+}]
+```
+
+異なるフィールドを異なるテーブルにマッピングする制御ファイルを使用して複数のテーブルにインポートできます:
+
+```json
+{
+	"tables": [{
+			"namespace": "<NAMESPACE>",
+			"table_name": "<TABLE1>",
+			"mappings": [{
+				"source_field": "field1",
+				"target_column": "<COLUMN1>"
+			}, {
+				"source_field": "field2",
+				"target_column": "<COLUMN2>"
+			}]
+		},
+		{
+			"namespace": "<NAMESPACE>",
+			"table_name": "<TABLE2>",
+			"mappings": [{
+				"source_field": "field1",
+				"target_column": "<COLUMN1>"
+			}, {
+				"source_field": "field3",
+				"target_column": "<COLUMN3>"
+			}]
+		}
+	]
+}
+```
+
+この設定では、`field1` と `field2` を `<TABLE1>` に、`field1` と `field3` を `<TABLE2>` にインポートします。
+
+### 出力ログ
+
+Data Loader は、すべてのインポート操作について、成功したレコードと失敗したレコードの両方を追跡する詳細なログファイルを作成します。
+
+#### ログファイルの場所
+
+デフォルトでは、Data Loader は `logs/` ディレクトリに2つのログファイルを生成します:
+
+- **成功ログ:** 正常にインポートされたすべてのレコードが含まれます。
+- **失敗ログ:** インポートに失敗したレコードとエラーの詳細が含まれます。
+
+`--log-dir` オプションを使用してログディレクトリを変更できます。
+
+#### ログの理解
+
+両方のログファイルには、各レコードに追加された `data_loader_import_status` フィールドが含まれます:
+
+**成功ログ内:**
+
+- 各レコードが挿入 (新規) されたか更新 (既存) されたかを示します。
+- `TRANSACTION` モードで実行時にトランザクションの詳細を含みます。
+
+**失敗ログ内:**
+
+- 各レコードがインポートに失敗した理由を説明します。
+- 特定の検証エラーまたは制約違反をリストします。
+
+#### 失敗したインポートの再試行
+
+失敗ログは簡単に復旧できるように設計されています:
+
+1. **失敗したレコードを編集** 失敗ログ内で問題を修正します (たとえば、不足しているカラムの追加や無効な値の修正)。
+2. **編集されたファイルを直接使用** 新しいインポート操作の入力として使用します。
+3. **クリーンアップ不要** `data_loader_import_status` フィールドは再インポート時に自動的に無視されるためです。
+
+:::tip
+
+正常にインポートされたレコードをログに記録するには `--enable-log-success` を有効にし、ログ出力に元のソースデータを含めるには `--log-raw-record` を使用してください。
+
+:::
+
+#### ログ形式
+
+| フィールド          | 説明                                                  |
+| -------------- | ------------------------------------------------------------ |
+| `action`         | データレコードのインポートプロセスの結果: UPDATE、INSERT、または FAILED_DURING_VALIDATION。 |
+| `namespace`      | データがインポートされるテーブルのネームスペースの名前。 |
+| `tableName`      | データがインポートされるテーブルの名前。           |
+| `is_data_mapped` | 利用可能な制御ファイルに基づいてカスタムデータマッピングが適用されたかどうか。 |
+| `tx_id`          | トランザクション ID。Data Loader が `TRANSACTION` モードで実行されている場合のみ利用可能。 |
+| `value`          | オプションのデータマッピング後に、Data Loader が `PUT` 操作で使用する最終値。 |
+| `row_number`     | ソースデータの行番号またはレコード番号。         |
+| `errors`         | インポートプロセス中に失敗した操作の検証またはその他のエラーのリスト。 |
+
+以下は、成功したインポートを示す JSON 形式のログファイルの例です:
+
+```json
+[{
+	"column_1": 1,
+	"column_2": 2,
+	"column_n": 3,
+	"data_loader_import_status": {
+		"results": [{
+		  "action": "UPDATE",
+			"namespace": "namespace1",
+			"tableName": "table1",
+			"is_data_mapped": true,
+			"tx_id": "value",
+			"value": "value",
+			"row_number": "value"
+		}]
+	}
+}]
+```
+以下は、失敗したインポートの JSON 形式のログファイルの例です:
+
+```json
+[{
+	"column_1": 1,
+	"column_2": 2,
+	"column_n": 3,
+	"data_loader_import_status": {
+		"results": [{
+		  "action": "FAILED_DURING_VALIDATION",
+			"namespace": "namespace1",
+			"tableName": "table1",
+			"is_data_mapped": false,
+			"value": "value",
+			"row_number": "value",
+			"errors": [
+			   "missing columns found during validation"
+			]
+		}]
+	}
+}]
+```
+
+### 重複データ
+
+:::warning
+
+インポートファイルに同じパーティションキーおよび/またはクラスタリングキーを持つ重複レコードが含まれていないことを確認してください。Data Loader はソースファイル内の重複を検出または防止しません。
+
+:::
+
+ScalarDB `TRANSACTION` モードでは、同じターゲットデータを短時間で更新しようとすると `No Mutation` エラーが発生します。Data Loader はこれらのエラーを自動的に処理しません。失敗したデータ行は失敗インポート結果出力ファイルにログ記録され、必要に応じて後で確認および再インポートできます。
+
+## データのエクスポート
+
+このセクションでは、Data Loader のエクスポート機能の使用方法について説明します。
+
+### 基本的なエクスポートの例
+
+データをエクスポートする最も簡単な方法は、テーブル全体をエクスポートすることです。Data Loader は ScalarDB スキャン操作を実行し、結果をファイルにエクスポートします。
+
+Data Loader は3つのエクスポート形式をサポートしています: JSON、JSONL (JSON Lines)、CSV。以下の例では、各形式へのエクスポート方法を示します。
+
+<Tabs groupId="file-format" queryString>
+  <TabItem value="json" label="JSON" default>
+    **テーブル全体を JSON にエクスポート**
+
+    テーブルを JSON 形式にエクスポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
+
+    ```console
+    java -jar scalardb-data-loader-<VERSION>.jar export \
+      --config scalardb.properties \
+      --namespace <NAMESPACE_NAME> \
+      --table <TABLE_NAME> \
+      --format json
+    ```
+
+    このコマンドは、指定されたテーブルのすべてのデータを現在のディレクトリの JSON ファイルにエクスポートします。出力ファイルは `export.<namespace>.<table>.<timestamp>.json` という形式で自動的に名前が付けられます。
+
+    **JSON 出力形式の例:**
+
+    ```json
+    [
+      {
+        "id": 1,
+        "name": "Product A",
+        "price": 100
+      },
+      {
+        "id": 2,
+        "name": "Product B",
+        "price": 200
+      }
+    ]
+    ```
+  </TabItem>
+  <TabItem value="jsonl" label="JSONL">
+    **テーブル全体を JSONL にエクスポート**
+
+    テーブルを JSONL (JSON Lines) 形式にエクスポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
+
+    ```console
+    java -jar scalardb-data-loader-<VERSION>.jar export \
+      --config scalardb.properties \
+      --namespace <NAMESPACE_NAME> \
+      --table <TABLE_NAME> \
+      --format jsonl
+    ```
+
+    このコマンドは、指定されたテーブルのすべてのデータを現在のディレクトリの JSONL ファイルにエクスポートします。出力ファイルは `export.<namespace>.<table>.<timestamp>.jsonl` という形式で自動的に名前が付けられます。
+
+    **JSONL 出力形式の例:**
+
+    ```json
+    {"id": 1, "name": "Product A", "price": 100}
+    {"id": 2, "name": "Product B", "price": 200}
+    ```
+  </TabItem>
+  <TabItem value="csv" label="CSV">
+    **テーブル全体を CSV にエクスポート**
+
+    テーブルを CSV 形式にエクスポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
+
+    ```console
+    java -jar scalardb-data-loader-<VERSION>.jar export \
+      --config scalardb.properties \
+      --namespace <NAMESPACE_NAME> \
+      --table <TABLE_NAME> \
+      --format csv
+    ```
+
+    このコマンドは、指定されたテーブルのすべてのデータを現在のディレクトリの CSV ファイルにエクスポートします。出力ファイルは `export.<namespace>.<table>.<timestamp>.csv` という形式で自動的に名前が付けられます。
+
+    **CSV 出力形式の例:**
+
+    ```csv
+    id,name,price
+    1,Product A,100
+    2,Product B,200
+    ```
+
+:::note
+
+デフォルトでは、CSV エクスポートにはカラム名を持つヘッダー行が含まれます。必要に応じて `--no-header` オプションを使用してヘッダー行を除外してください。
+
+:::
+  </TabItem>
+</Tabs>
+
+### 一般的なエクスポートシナリオ
+
+以下は、一般的なデータエクスポートシナリオです。
+
+#### 特定のファイルと形式にデータをエクスポート
+
+特定のファイルと形式にデータをエクスポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
+
+```console
+java -jar scalardb-data-loader-<VERSION>.jar export \
+  --config scalardb.properties \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --output-file <OUTPUT_FILE_PATH>.csv \
+  --format csv
+```
+
+#### 特定のカラムのみをエクスポート
+
+特定のカラムのみをエクスポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
+
+```console
+java -jar scalardb-data-loader-<VERSION>.jar export \
+  --config scalardb.properties \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --projection <COLUMN1>,<COLUMN2>,<COLUMN3>
+```
+
+#### 特定のパーティションキーのデータをエクスポート
+
+特定のパーティションキーのデータをエクスポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
+
+```console
+java -jar scalardb-data-loader-<VERSION>.jar export \
+  --config scalardb.properties \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --partition-key <KEY_NAME>=<VALUE>
+```
+
+#### 行数制限でエクスポート
+
+行数制限でエクスポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
+
+```console
+java -jar scalardb-data-loader-<VERSION>.jar export \
+  --config scalardb.properties \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --limit 1000
+```
+
+### コマンドラインオプション
+
+以下は、Data Loader のエクスポート機能で使用できるオプションのリストです:
+
+| オプション                     | 説明                                                  | 使用法                                                  |
+| ------------------------ | ------------------------------------------------------------ | ------------------------------------------------------ |
+| `--config`                 | ScalarDB 用の `.properties` ファイルへのパス。省略した場合、ツールは現在のフォルダで `scalardb.properties` という名前のファイルを探します。 | `scalardb-data-loader --config scalardb.properties`    |
+| `--namespace`              | テーブルデータをエクスポートするネームスペース。必須。               | `scalardb-data-loader --namespace namespace`           |
+| `--table`                  | データをエクスポートするテーブルの名前。必須。                 | `scalardb-data-loader --table tableName`               |
+| `--partition-key`          | データをエクスポートする特定のパーティションキー。`key=value` 形式で指定します。デフォルトでは、このオプションは指定されたテーブルのすべてのデータをエクスポートします。 | `scalardb-data-loader --partition-key id=100`          |
+| `--sort-by`                | クラスタリングキーのソート順。サポートされる値は `asc` と `desc` です。このオプションは `--partition-key` を使用する場合にのみ適用されます。 | `scalardb-data-loader --sort-by asc`                   |
+| `--projection`             | エクスポートに含めるカラム。カンマ区切りのリストとして提供します。引数を繰り返して複数のプロジェクションを提供することもできます。 | `scalardb-data-loader --projection column1,column2`    |
+| `--start-key`              | スキャンの開始を示すクラスタリングキーと値。`key=value` 形式で指定します。このオプションは `--partition-key` を使用する場合にのみ適用されます。 | `scalardb-data-loader --start-key timestamp=1000`      |
+| `--start-inclusive`        | 開始キーを包括的にします。デフォルト値は `true` です。このオプションは `--partition-key` を使用する場合にのみ適用されます。 | `scalardb-data-loader --start-inclusive false`         |
+| `--end-key`                | スキャンの終了を示すクラスタリングキーと値。`key=value` 形式で指定します。このオプションは `--partition-key` を使用する場合にのみ適用されます。 | `scalardb-data-loader --end-key timestamp=9999`        |
+| `--end-inclusive`          | 終了キーを包括的にします。デフォルト値は `true` です。このオプションは `--partition-key` を使用する場合にのみ適用されます。 | `scalardb-data-loader --end-inclusive false`           |
+| `--limit`                  | エクスポートする最大行数。省略した場合、制限はありません。 | `scalardb-data-loader --limit 1000`                    |
+| `--output-dir`             | エクスポートされたファイルを保存するディレクトリ。デフォルトは現在のディレクトリです。<br /><br />注意: Data Loader は出力ディレクトリを作成しないため、ディレクトリが既に存在している必要があります。 | `scalardb-data-loader --output-dir ./exports`          |
+| `--output-file`            | エクスポートされたデータの出力ファイル名。省略した場合、ツールは以下の名前形式でファイルを保存します:<br />`export.<namespace>.<table>.<timestamp>.<format>` | `scalardb-data-loader --output-file output.json`       |
+| `--format`                 | エクスポートされたデータファイルの形式。サポートされる形式は `JSON`、`JSONL`、`CSV` です。デフォルト値は `JSON` です。 | `scalardb-data-loader --format CSV`                    |
+| `--include-metadata`       | エクスポートされたデータにトランザクションメタデータを含めます。デフォルト値は `false` です。 | `scalardb-data-loader --include-metadata`              |
+| `--delimiter`              | **(CSV のみ)** CSV ファイルの区切り文字。デフォルトの区切り文字はカンマです。 | `scalardb-data-loader --delimiter ";"`                 |
+| `--no-header`              | **(CSV のみ)** CSV ファイルでヘッダー行を除外します。デフォルト値は `false` です。 | `scalardb-data-loader --no-header`                     |
+| `--pretty-print`           | **(JSON/JSONL のみ)** JSON 出力をプリティプリントします。デフォルト値は `false` です。 | `scalardb-data-loader --pretty-print`                  |
+| `--data-chunk-size`        | 次のバッチに移る前に処理のためにメモリにロードするレコード数。これはメモリ使用量を制御します。デフォルト値は `200` です。 | `scalardb-data-loader --data-chunk-size 500`           |
+| `--max-threads`            | 並列処理に使用する最大スレッド数。デフォルト値は利用可能なプロセッサ数です。 | `scalardb-data-loader --max-threads 10`                |
