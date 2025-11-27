@@ -165,7 +165,11 @@ You can add a new, non-partition key column to a table as follows:
 
 ```java
 // Add a new column "c6" with the INT data type to the table "ns.tbl".
-admin.addNewColumnToTable("ns", "tbl", "c6", DataType.INT)
+admin.addNewColumnToTable("ns", "tbl", "c6", DataType.INT);
+
+// Add the new column only if it does not already exist.
+boolean ifNotExists = true;
+admin.addNewColumnToTable("ns", "tbl", "c6", DataType.INT, false, ifNotExists);
 ```
 
 :::warning
@@ -174,7 +178,101 @@ You should carefully consider adding a new column to a table because the executi
 
 - **For Cosmos DB for NoSQL and DynamoDB:** Adding a column is almost instantaneous as the table schema is not modified. Only the table metadata stored in a separate table is updated.
 - **For Cassandra:** Adding a column will only update the schema metadata and will not modify the existing schema records. The cluster topology is the main factor for the execution time. Changes to the schema metadata are shared to each cluster node via a gossip protocol. Because of this, the larger the cluster, the longer it will take for all nodes to be updated.
-- **For relational databases (MySQL, Oracle, etc.):** Adding a column shouldn't take a long time to execute.
+- **For relational databases (MySQL, Oracle, etc.):** Adding a column can cause a table rebuild depending on the database engine. In such cases, it can take a long time to execute.
+
+:::
+
+### Drop a column from a table
+
+You can drop a column from a table as follows:
+
+```java
+// Drop the column "c6" from the table "ns.tbl".
+admin.dropColumnFromTable("ns", "tbl", "c6");
+
+// Drop the column only if it exists.
+boolean ifExists = true;
+admin.dropColumnFromTable("ns", "tbl", "c6", ifExists);
+```
+
+:::note
+
+You cannot drop a column from a table in the following cases:
+
+- The column is part of the partition key or clustering key.
+- The table is on a non-JDBC database except for Cassandra.
+
+:::
+
+:::warning
+
+You should carefully consider dropping a column from a table because the execution time may vary greatly depending on the underlying storage. Please plan accordingly and consider the following, especially if the database runs in production:
+
+- **For Cassandra:** Dropping a column will only update the schema metadata and the actual data will be removed during the next compaction. The cluster topology is the main factor for the execution time. Changes to the schema metadata are shared to each cluster node via a gossip protocol. Because of this, the larger the cluster, the longer it will take for all nodes to be updated.
+- **For relational databases (MySQL, Oracle, etc.):** Dropping a column issues `ALTER TABLE ... DROP COLUMN` to the underlying relational databases and could trigger a table rebuild depending on the database. In such cases, it can take a long time to execute.
+
+:::
+
+### Rename a column of a table
+
+You can rename a column of a table as follows:
+
+```java
+// Rename the column "c6" to "c66" in the table "ns.tbl".
+admin.renameColumnInTable("ns", "tbl", "c6", "c66");
+```
+
+:::note
+
+You cannot rename a column of a table in the following cases:
+
+- The table is on a non-JDBC database except for Cassandra.
+- For Cassandra, the column is not part of the partition key or clustering key.
+- For Db2, the column is part of the partition key, clustering key, or secondary index key.
+
+:::
+
+### Rename a table
+
+You can rename a table as follows:
+
+```java
+// Rename the table "ns.tbl" to "ns.new_tbl".
+admin.renameTable("ns", "tbl", "new_tbl");
+```
+
+:::note
+
+You cannot rename a table on non-JDBC databases.
+
+:::
+
+### Alter a column data type of a table
+
+You can alter a column data type of a table as follows:
+
+```java
+// Alter the data type of the column "c6" to BIGINT in the table "ns.tbl".
+admin.alterColumnDataType("ns", "tbl", "c6", DataType.BIGINT);
+```
+
+:::note
+
+You cannot alter a column data type of a table in the following cases:
+
+- The column is part of the partition key, clustering key, or secondary index key.
+- The table is on a non-JDBC database or on SQLite.
+- The conversions other than from INT to BIGINT, FLOAT to DOUBLE, and from any data to TEXT are specified.
+- For Oracle, the conversions except for from INT to BIGINT are specified.
+- For Db2 and TiDB, the conversion from BLOB to TEXT is specified.
+
+:::
+
+:::warning
+
+You should carefully consider altering a column type because the execution time may vary greatly depending on the underlying storage. Please plan accordingly and consider the following, especially if the database runs in production:
+
+- **For relational databases (MySQL, Oracle, etc.):** Altering a column issues `ALTER TABLE ... ALTER COLUMN`  or `ALTER TABLE ... MODIFY` to the underlying relational databases and could trigger a table rebuild depending on the database. In such cases, it can take a long time to execute.
 
 :::
 

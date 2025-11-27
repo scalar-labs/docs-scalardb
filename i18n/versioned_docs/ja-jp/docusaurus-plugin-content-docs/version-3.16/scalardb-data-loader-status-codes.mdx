@@ -1,0 +1,542 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Data Loader エラーコード
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このページでは、ScalarDB Data Loader のエラーコードの一覧を示します。
+
+## エラーコードのクラスと説明
+
+| クラス                  | 説明                       |
+|:-----------------------|:--------------------------|
+| `DB-DATA-LOADER-1xxxx` | ユーザーエラーカテゴリのエラー |
+| `DB-DATA-LOADER-3xxxx` | 内部エラーカテゴリのエラー    |
+
+## `DB-DATA-LOADER-1xxxx` ステータスコード
+
+以下は、ユーザーエラーカテゴリのステータスコードとメッセージです。
+
+### `DB-DATA-LOADER-10000`
+
+**メッセージ**
+
+```markdown
+Data chunk queue size must be greater than 0
+```
+
+### `DB-DATA-LOADER-10001`
+
+**メッセージ**
+
+```markdown
+The directory '%s' does not have write permissions. Please ensure that the current user has write access to the directory
+```
+
+### `DB-DATA-LOADER-10002`
+
+**メッセージ**
+
+```markdown
+Failed to create the directory '%s'. Please check if you have sufficient permissions and if there are any file system restrictions. Details: %s
+```
+
+### `DB-DATA-LOADER-10003`
+
+**メッセージ**
+
+```markdown
+Directory path cannot be null or empty
+```
+
+### `DB-DATA-LOADER-10004`
+
+**メッセージ**
+
+```markdown
+No file extension was found in the provided file name %s
+```
+
+### `DB-DATA-LOADER-10005`
+
+**メッセージ**
+
+```markdown
+Invalid file extension: %s. Allowed extensions are: %s
+```
+
+### `DB-DATA-LOADER-10006`
+
+**メッセージ**
+
+```markdown
+Invalid key: Column %s does not exist in the table %s in namespace %s
+```
+
+### `DB-DATA-LOADER-10007`
+
+**メッセージ**
+
+```markdown
+Invalid base64 encoding for blob value '%s' for column %s in table %s in namespace %s
+```
+
+### `DB-DATA-LOADER-10008`
+
+**メッセージ**
+
+```markdown
+Invalid number '%s' specified for column %s in table %s in namespace %s
+```
+
+### `DB-DATA-LOADER-10009`
+
+**メッセージ**
+
+```markdown
+Method null argument not allowed
+```
+
+### `DB-DATA-LOADER-10010`
+
+**メッセージ**
+
+```markdown
+The provided clustering key %s was not found
+```
+
+### `DB-DATA-LOADER-10011`
+
+**メッセージ**
+
+```markdown
+The column '%s' was not found
+```
+
+### `DB-DATA-LOADER-10012`
+
+**メッセージ**
+
+```markdown
+The provided partition key is incomplete. Required key: %s
+```
+
+### `DB-DATA-LOADER-10013`
+
+**メッセージ**
+
+```markdown
+The provided clustering-key order does not match the table schema. Required order: %s
+```
+
+### `DB-DATA-LOADER-10014`
+
+**メッセージ**
+
+```markdown
+The provided partition-key order does not match the table schema. Required order: %s
+```
+
+### `DB-DATA-LOADER-10015`
+
+**メッセージ**
+
+```markdown
+Missing namespace or table: %s, %s
+```
+
+### `DB-DATA-LOADER-10016`
+
+**メッセージ**
+
+```markdown
+Failed to retrieve table metadata. Details: %s
+```
+
+### `DB-DATA-LOADER-10017`
+
+**メッセージ**
+
+```markdown
+Duplicate data mappings found for table '%s' in the control file
+```
+
+### `DB-DATA-LOADER-10018`
+
+**メッセージ**
+
+```markdown
+No mapping found for column '%s' in table '%s' in the control file. Control file validation set at 'FULL'. All columns need to be mapped
+```
+
+### `DB-DATA-LOADER-10019`
+
+**メッセージ**
+
+```markdown
+The control file is missing data mappings
+```
+
+### `DB-DATA-LOADER-10020`
+
+**メッセージ**
+
+```markdown
+The target column '%s' for source field '%s' could not be found in table '%s'
+```
+
+### `DB-DATA-LOADER-10021`
+
+**メッセージ**
+
+```markdown
+The required partition key '%s' is missing in the control file mapping for table '%s'
+```
+
+### `DB-DATA-LOADER-10022`
+
+**メッセージ**
+
+```markdown
+The required clustering key '%s' is missing in the control file mapping for table '%s'
+```
+
+### `DB-DATA-LOADER-10023`
+
+**メッセージ**
+
+```markdown
+Duplicated data mappings found for column '%s' in table '%s'
+```
+
+### `DB-DATA-LOADER-10024`
+
+**メッセージ**
+
+```markdown
+Missing required field or column mapping for clustering key %s
+```
+
+### `DB-DATA-LOADER-10025`
+
+**メッセージ**
+
+```markdown
+Missing required field or column mapping for partition key %s
+```
+
+### `DB-DATA-LOADER-10026`
+
+**メッセージ**
+
+```markdown
+Missing field or column mapping for %s
+```
+
+### `DB-DATA-LOADER-10027`
+
+**メッセージ**
+
+```markdown
+Something went wrong while converting the ScalarDB values to strings. The table metadata and Value datatype probably do not match. Details: %s
+```
+
+### `DB-DATA-LOADER-10028`
+
+**メッセージ**
+
+```markdown
+The provided file format is not supported : %s
+```
+
+### `DB-DATA-LOADER-10029`
+
+**メッセージ**
+
+```markdown
+Could not find the partition key
+```
+
+### `DB-DATA-LOADER-10030`
+
+**メッセージ**
+
+```markdown
+The source record needs to contain all fields if the UPSERT turns into an INSERT
+```
+
+### `DB-DATA-LOADER-10031`
+
+**メッセージ**
+
+```markdown
+Record already exists
+```
+
+### `DB-DATA-LOADER-10032`
+
+**メッセージ**
+
+```markdown
+Record was not found
+```
+
+### `DB-DATA-LOADER-10033`
+
+**メッセージ**
+
+```markdown
+Could not find the clustering key
+```
+
+### `DB-DATA-LOADER-10034`
+
+**メッセージ**
+
+```markdown
+No table metadata found
+```
+
+### `DB-DATA-LOADER-10035`
+
+**メッセージ**
+
+```markdown
+The data mapping source field '%s' for table '%s' is missing in the JSON data record
+```
+
+### `DB-DATA-LOADER-10036`
+
+**メッセージ**
+
+```markdown
+The CSV row: %s does not match header: %s
+```
+
+### `DB-DATA-LOADER-10037`
+
+**メッセージ**
+
+```markdown
+Expected JSON file content to be an array
+```
+
+### `DB-DATA-LOADER-10038`
+
+**メッセージ**
+
+```markdown
+Missing option: either the '--namespace' and '--table' options or the '--control-file' option must be specified
+```
+
+### `DB-DATA-LOADER-10039`
+
+**メッセージ**
+
+```markdown
+The file '%s' specified by the argument '%s' does not exist
+```
+
+### `DB-DATA-LOADER-10040`
+
+**メッセージ**
+
+```markdown
+Cannot write to the log directory: %s
+```
+
+### `DB-DATA-LOADER-10041`
+
+**メッセージ**
+
+```markdown
+Failed to create the log directory: %s
+```
+
+### `DB-DATA-LOADER-10042`
+
+**メッセージ**
+
+```markdown
+Failed to parse the control file: %s
+```
+
+### `DB-DATA-LOADER-10043`
+
+**メッセージ**
+
+```markdown
+No permission to create or write files in the directory: %s
+```
+
+### `DB-DATA-LOADER-10044`
+
+**メッセージ**
+
+```markdown
+Failed to create the directory: %s
+```
+
+### `DB-DATA-LOADER-10045`
+
+**メッセージ**
+
+```markdown
+Path exists but is not a directory: %s
+```
+
+### `DB-DATA-LOADER-10046`
+
+**メッセージ**
+
+```markdown
+File path must not be blank
+```
+
+### `DB-DATA-LOADER-10047`
+
+**メッセージ**
+
+```markdown
+File not found: %s
+```
+
+### `DB-DATA-LOADER-10048`
+
+**メッセージ**
+
+```markdown
+Invalid date time value '%s' specified for column %s in table %s in namespace %s
+```
+
+### `DB-DATA-LOADER-10049`
+
+**メッセージ**
+
+```markdown
+Key value cannot be null or empty
+```
+
+### `DB-DATA-LOADER-10050`
+
+**メッセージ**
+
+```markdown
+Invalid key-value format: %s
+```
+
+### `DB-DATA-LOADER-10051`
+
+**メッセージ**
+
+```markdown
+Value must not be null
+```
+
+### `DB-DATA-LOADER-10052`
+
+**メッセージ**
+
+```markdown
+Delimiter must not be null
+```
+
+### `DB-DATA-LOADER-10053`
+
+**メッセージ**
+
+```markdown
+Config file path must not be blank
+```
+
+### `DB-DATA-LOADER-10054`
+
+**メッセージ**
+
+```markdown
+Data chunk size must be greater than 0
+```
+
+### `DB-DATA-LOADER-10055`
+
+**メッセージ**
+
+```markdown
+Transaction size must be greater than 0
+```
+
+### `DB-DATA-LOADER-10056`
+
+**メッセージ**
+
+```markdown
+Number of max threads must be greater than 0
+```
+
+## `DB-DATA-LOADER-3xxxx` ステータスコード
+
+以下は、内部エラーカテゴリのステータスコードとメッセージです。
+
+### `DB-DATA-LOADER-30000`
+
+**メッセージ**
+
+```markdown
+A problem occurred while trying to save the data. Details: %s
+```
+
+### `DB-DATA-LOADER-30001`
+
+**メッセージ**
+
+```markdown
+A problem occurred while scanning. Are you sure you are running in the correct transaction mode? Details: %s
+```
+
+### `DB-DATA-LOADER-30002`
+
+**メッセージ**
+
+```markdown
+Failed to read CSV file. Details: %s
+```
+
+### `DB-DATA-LOADER-30003`
+
+**メッセージ**
+
+```markdown
+Failed to CSV read header line. Details: %s
+```
+
+### `DB-DATA-LOADER-30004`
+
+**メッセージ**
+
+```markdown
+Data chunk processing was interrupted. Details: %s
+```
+
+### `DB-DATA-LOADER-30005`
+
+**メッセージ**
+
+```markdown
+Failed to read JSON file. Details: %s
+```
+
+### `DB-DATA-LOADER-30006`
+
+**メッセージ**
+
+```markdown
+Failed to read JSON Lines file. Details: %s
+```

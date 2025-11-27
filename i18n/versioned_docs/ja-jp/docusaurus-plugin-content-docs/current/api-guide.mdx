@@ -168,7 +168,11 @@ admin.createIndex("ns", "tbl", "c5", options);
 
 ```java
 // Add a new column "c6" with the INT data type to the table "ns.tbl".
-admin.addNewColumnToTable("ns", "tbl", "c6", DataType.INT)
+admin.addNewColumnToTable("ns", "tbl", "c6", DataType.INT);
+
+// Add the new column only if it does not already exist.
+boolean ifNotExists = true;
+admin.addNewColumnToTable("ns", "tbl", "c6", DataType.INT, false, ifNotExists);
 ```
 
 :::warning
@@ -177,7 +181,101 @@ admin.addNewColumnToTable("ns", "tbl", "c6", DataType.INT)
 
 - **Cosmos DB for NoSQL および DynamoDB の場合:** テーブルスキーマは変更されないため、列の追加はほぼ瞬時に行われます。別のテーブルに格納されているテーブルメタデータのみが更新されます。
 - **Cassandra の場合:** 列を追加すると、スキーマメタデータのみが更新され、既存のスキーマレコードは変更されません。クラスタートポロジが実行時間の主な要因です。スキーマメタデータの変更は、ゴシッププロトコルを介して各クラスターノードに共有されます。このため、クラスターが大きいほど、すべてのノードが更新されるまでの時間が長くなります。
-- **リレーショナルデータベース (MySQL、Oracle など) の場合:** 列の追加は実行にそれほど時間がかかりません。
+- **リレーショナルデータベース (MySQL、Oracle など) の場合:** 列の追加は、データベースエンジンによってはテーブルの再構築を引き起こす可能性があります。そのような場合、実行に長時間かかることがあります。
+
+:::
+
+### テーブルから列を削除する
+
+次のようにテーブルから列を削除できます。
+
+```java
+// Drop the column "c6" from the table "ns.tbl".
+admin.dropColumnFromTable("ns", "tbl", "c6");
+
+// Drop the column only if it exists.
+boolean ifExists = true;
+admin.dropColumnFromTable("ns", "tbl", "c6", ifExists);
+```
+
+:::note
+
+次の場合、テーブルから列を削除することはできません。
+
+- 列がパーティションキーまたはクラスタリングキーの一部である場合。
+- テーブルが Cassandra を除く非 JDBC データベース上にある場合。
+
+:::
+
+:::warning
+
+テーブルから列を削除する場合は、基盤となるストレージによって実行時間が大きく異なる可能性があるため、慎重に検討する必要があります。特にデータベースが本番環境で実行されている場合は、以下の点を考慮して適切に計画を立ててください。
+
+- **Cassandra の場合:** 列を削除すると、スキーマメタデータのみが更新され、実際のデータは次のコンパクション時に削除されます。クラスタートポロジが実行時間の主な要因です。スキーマメタデータの変更は、ゴシッププロトコルを介して各クラスターノードに共有されます。このため、クラスターが大きいほど、すべてのノードが更新されるまでの時間が長くなります。
+- **リレーショナルデータベース (MySQL、Oracle など) の場合:** 列の削除は、基盤となるリレーショナルデータベースに `ALTER TABLE ... DROP COLUMN` を発行し、データベースによってはテーブルの再構築を引き起こす可能性があります。そのような場合、実行に長時間かかることがあります。
+
+:::
+
+### テーブルの列の名前を変更する
+
+次のようにテーブルの列の名前を変更できます。
+
+```java
+// Rename the column "c6" to "c66" in the table "ns.tbl".
+admin.renameColumnInTable("ns", "tbl", "c6", "c66");
+```
+
+:::note
+
+次の場合、テーブルの列の名前を変更することはできません。
+
+- テーブルが Cassandra を除く非 JDBC データベース上にある場合。
+- Cassandra の場合、列がパーティションキーまたはクラスタリングキーの一部でない場合。
+- Db2 の場合、列がパーティションキー、クラスタリングキー、またはセカンダリインデックスキーの一部である場合。
+
+:::
+
+### テーブルの名前を変更する
+
+次のようにテーブルの名前を変更できます。
+
+```java
+// Rename the table "ns.tbl" to "ns.new_tbl".
+admin.renameTable("ns", "tbl", "new_tbl");
+```
+
+:::note
+
+非 JDBC データベースではテーブルの名前を変更することはできません。
+
+:::
+
+### テーブルの列のデータ型を変更する
+
+次のようにテーブルの列のデータ型を変更できます。
+
+```java
+// Alter the data type of the column "c6" to BIGINT in the table "ns.tbl".
+admin.alterColumnDataType("ns", "tbl", "c6", DataType.BIGINT);
+```
+
+:::note
+
+次の場合、テーブルの列のデータ型を変更することはできません。
+
+- 列がパーティションキー、クラスタリングキー、またはセカンダリインデックスキーの一部である場合。
+- テーブルが非 JDBC データベース上または SQLite 上にある場合。
+- INT から BIGINT、FLOAT から DOUBLE、および任意のデータから TEXT への変換以外の変換が指定されている場合。
+- Oracle の場合、INT から BIGINT 以外の変換が指定されている場合。
+- Db2 および TiDB の場合、BLOB から TEXT への変換が指定されている場合。
+
+:::
+
+:::warning
+
+列の型を変更する場合は、基盤となるストレージによって実行時間が大きく異なる可能性があるため、慎重に検討する必要があります。特にデータベースが本番環境で実行されている場合は、以下の点を考慮して適切に計画を立ててください。
+
+- **リレーショナルデータベース (MySQL、Oracle など) の場合:** 列の変更は、基盤となるリレーショナルデータベースに `ALTER TABLE ... ALTER COLUMN` または `ALTER TABLE ... MODIFY` を発行し、データベースによってはテーブルの再構築を引き起こす可能性があります。そのような場合、実行に長時間かかることがあります。
 
 :::
 

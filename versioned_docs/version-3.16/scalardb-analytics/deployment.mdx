@@ -1,0 +1,218 @@
+---
+tags:
+  - Enterprise Option
+displayed_sidebar: docsEnglish
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Deploy ScalarDB Analytics in Public Cloud Environments
+
+This guide explains how to deploy ScalarDB Analytics in a public cloud environment. ScalarDB Analytics consists of two main components: a ScalarDB Analytics server and Apache Spark. In this guide, you can choose either Amazon EMR or Databricks for the Spark environment.
+
+For details about ScalarDB Analytics, refer to [ScalarDB Analytics Design](./design.mdx).
+
+## Deploy ScalarDB Analytics server
+
+ScalarDB Analytics requires a catalog server to manage metadata and data source connections. The catalog server should be deployed by using Helm Charts on a Kubernetes cluster.
+
+For detailed deployment instructions, see [How to install Scalar products through AWS Marketplace](../scalar-kubernetes/AwsMarketplaceGuide?products=scalardb-analytics-server).
+
+After deploying the catalog server, note the following information for Spark configuration:
+
+- Catalog server host address
+- Catalog port (default: 11051)
+- Metering port (default: 11052)
+
+## Deploy Spark with ScalarDB Analytics
+
+After deploying the catalog server, you can configure and deploy Spark with ScalarDB Analytics by using managed Spark services.
+
+### Supported managed Spark services and their application types
+
+ScalarDB Analytics supports the following managed Spark services and application types.
+
+| Public Cloud Service    | Spark Driver | Spark Connect | JDBC |
+| ----------------------- | ------------ | ------------- | ---- |
+| Amazon EMR (EMR on EC2) | ✅           | ✅            | ❌   |
+| Databricks              | ✅           | ❌            | ✅   |
+
+### Configure and deploy
+
+Select your public cloud environment, and follow the instructions to set up and deploy Spark with ScalarDB Analytics.
+
+<Tabs groupId="cloud-service" queryString>
+  <TabItem value="emr" label="Amazon EMR">
+
+<h3>Use Amazon EMR</h3>
+
+You can use Amazon EMR (EMR on EC2) to run analytical queries through ScalarDB Analytics. For the basics to launch an EMR cluster, please refer to the [AWS EMR on EC2 documentation](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-plan.html).
+
+<h4>ScalarDB Analytics configuration</h4>
+
+To enable ScalarDB Analytics, you need to add the following configuration to the Software setting when you launch an EMR cluster. Be sure to replace the content in the angle brackets:
+
+```json
+[
+  {
+    "Classification": "spark-defaults",
+    "Properties": {
+      "spark.jars.packages": "com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>",
+      "spark.extraListeners": "com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener",
+      "spark.sql.catalog.<CATALOG_NAME>": "com.scalar.db.analytics.spark.ScalarDBAnalyticsCatalog",
+      "spark.sql.catalog.<CATALOG_NAME>.server.host": "<CATALOG_SERVER_HOST>",
+      "spark.sql.catalog.<CATALOG_NAME>.server.catalog.port": "11051",
+      "spark.sql.catalog.<CATALOG_NAME>.server.metering.port": "11052"
+    }
+  }
+]
+```
+
+The following describes what you should change the content in the angle brackets to:
+
+- `<SPARK_VERSION>`: The version of Spark (`3.5` or `3.4`).
+- `<SCALA_VERSION>`: The version of Scala used to build Spark (`2.13` or `2.12`).
+- `<SCALARDB_ANALYTICS_VERSION>`: The version of ScalarDB Analytics.
+- `<CATALOG_NAME>`: The name of the catalog. This must match a catalog created on the ScalarDB Analytics server.
+- `<CATALOG_SERVER_HOST>`: The host address of your ScalarDB Analytics server.
+
+For more details, refer to [Set up ScalarDB Analytics in the Spark configuration](./run-analytical-queries.mdx#set-up-scalardb-analytics-in-the-spark-configuration).
+
+<h4>Run analytical queries via the Spark driver</h4>
+
+After the EMR Spark cluster has launched, you can use ssh to connect to the primary node of the EMR cluster and run your Spark application. For details on how to create a Spark driver application, refer to [Spark driver application](./run-analytical-queries.mdx?spark-application-type=spark-driver#develop-a-spark-application).
+
+<h4>Run analytical queries via Spark Connect</h4>
+
+You can use Spark Connect to run your Spark application remotely by using the EMR cluster that you launched.
+
+You first need to configure the Software setting in the same way as the [Spark driver application](./run-analytical-queries.mdx?spark-application-type=spark-driver#develop-a-spark-application). You also need to set the following configuration to enable Spark Connect.
+
+<h5>Allow inbound traffic for a Spark Connect server</h5>
+
+1. Create a security group to allow inbound traffic for a Spark Connect server. (Port 15001 is the default).
+2. Allow the role of "Amazon EMR service role" to attach the security group to the primary node of the EMR cluster.
+3. Add the security group to the primary node of the EMR cluster as "Additional security groups" when you launch the EMR cluster.
+
+<h5>Launch the Spark Connect server via a bootstrap action</h5>
+
+1. Create a script file to launch the Spark Connect server as follows:
+
+    ```bash
+    #!/usr/bin/env bash
+
+    set -eu -o pipefail
+    cd /var/lib/spark
+    sudo -u spark /usr/lib/spark/sbin/start-connect-server.sh --packages org.apache.spark:spark-connect_<SCALA_VERSION>:<SPARK_FULL_VERSION>,com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>
+    ```
+
+    The following describes what you should change the content in the angle brackets to:
+
+    - `<SCALA_VERSION>`: The major and minor version of Scala that matches your Spark installation (2.12 or 2.13).
+    - `<SPARK_FULL_VERSION>`: The full version of Spark you are using (such as 3.5.3).
+    - `<SPARK_VERSION>`: The major and minor version of Spark you are using (3.4 or 3.5).
+    - `<SCALARDB_ANALYTICS_VERSION>`: The version of ScalarDB Analytics.
+
+2. Upload the script file to S3.
+3. Allow the role of "EC2 instance profile for Amazon EMR" to access the uploaded script file in S3.
+4. Add the uploaded script file to "Bootstrap actions" when you launch the EMR cluster.
+
+<h5>Run analytical queries</h5>
+
+You can run your Spark application via Spark Connect from anywhere by using the remote URL of the Spark Connect server, which is `sc://<PRIMARY_NODE_PUBLIC_HOSTNAME>:15001`.
+
+For details on how to create a Spark application by using Spark Connect, refer to [Spark Connect application](./run-analytical-queries.mdx?spark-application-type=spark-connect#develop-a-spark-application).
+
+  </TabItem>
+  <TabItem value="databricks" label="Databricks">
+
+<h3>Use Databricks</h3>
+
+You can use Databricks to run analytical queries through ScalarDB Analytics.
+
+:::note
+
+Note that Databricks provides a modified version of Apache Spark, which works differently from the original Apache Spark.
+
+:::
+
+<h4>Prepare an init script for loading the ScalarDB Analytics library JAR</h4>
+
+1. Download the ScalarDB Analytics library JAR file from the Maven repository. Choose the appropriate JAR file based on your Spark, Scala, and ScalarDB versions:
+   - [scalardb-analytics-spark-all-3.4_2.13 (Spark v3.4, Scala v2.13)](https://repo1.maven.org/maven2/com/scalar-labs/scalardb-analytics-spark-all-3.4_2.13/)
+   - [scalardb-analytics-spark-all-3.5_2.13 (Spark v3.5, Scala v2.13)](https://repo1.maven.org/maven2/com/scalar-labs/scalardb-analytics-spark-all-3.5_2.13/)
+   - [scalardb-analytics-spark-all-3.4_2.12 (Spark v3.4, Scala v2.12)](https://repo1.maven.org/maven2/com/scalar-labs/scalardb-analytics-spark-all-3.4_2.12/)
+   - [scalardb-analytics-spark-all-3.5_2.12 (Spark v3.5, Scala v2.12)](https://repo1.maven.org/maven2/com/scalar-labs/scalardb-analytics-spark-all-3.5_2.12/)
+2. Upload the JAR file to the Databricks workspace.
+3. Create an init script as follows, replacing `<PATH_TO_YOUR_JAR_FILE_IN_WORKSPACE>` with the path to your JAR file in the Databricks workspace:
+
+    ```bash
+    #!/bin/bash
+
+    # Target directories
+    TARGET_DIRECTORIES=("/databricks/jars" "/databricks/hive_metastore_jars")
+    JAR_PATH="<PATH_TO_YOUR_JAR_FILE_IN_WORKSPACE>"
+
+    # Copy the JAR file to the target directories
+    for TARGET_DIR in "${TARGET_DIRECTORIES[@]}"; do
+     mkdir -p "$TARGET_DIR"
+     cp "$JAR_PATH" "$TARGET_DIR/"
+    done
+    ```
+
+4. Upload the init script to the Databricks workspace.
+
+<h4>Launch Databricks compute</h4>
+
+ScalarDB Analytics works with all-purpose compute on Databricks. When you launch compute, you need to configure the compute to enable ScalarDB Analytics as follows:
+
+1. Select `Create compute` in the `Compute` menu.
+2. Select `Unrestricted` from the `Policy` dropdown menu.
+3. Select an appropriate Databricks runtime version that supports Spark 3.4 or 3.5.
+4. Go to the `Advanced` section. In the `Access mode` tab, select `Manual` as the access mode, and choose `No isolation shared`.
+5. In the `Advanced` section, select the `Spark` tab, and enter the following configurations in `Spark config`:
+
+    ```
+    spark.extraListeners com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener
+    spark.sql.catalog.<CATALOG_NAME> com.scalar.db.analytics.spark.ScalarDBAnalyticsCatalog
+    spark.sql.catalog.<CATALOG_NAME>.server.host <CATALOG_SERVER_HOST>
+    spark.sql.catalog.<CATALOG_NAME>.server.catalog.port 11051
+    spark.sql.catalog.<CATALOG_NAME>.server.metering.port 11052
+    ```
+
+    Replace the placeholders:
+
+    - `<CATALOG_NAME>`: The name of the catalog. This must match a catalog created on the ScalarDB Analytics server.
+    - `<CATALOG_SERVER_HOST>`: The host address of your ScalarDB Analytics server.
+
+6. In the `Advanced` section, select the `init scripts` tab, and specify the path to the init script in the workspace you uploaded.
+7. Select `Create`.
+
+<h4>Run analytical queries via the Spark driver</h4>
+
+You can run your Spark application on the properly configured Databricks compute with Databricks Notebook or Databricks Jobs to access the tables in ScalarDB Analytics. To run the Spark application, you can migrate your Pyspark, Scala, or Spark SQL application to Databricks Notebook, or use Databricks Jobs to run your Spark application. ScalarDB Analytics works with task types for Notebook, Python, JAR, and SQL.
+
+For more details on how to use Databricks Jobs, refer to the [Databricks Jobs documentation](https://docs.databricks.com/en/jobs/index.html).
+
+<h4>Run analytical queries via the JDBC driver</h4>
+
+Databricks supports JDBC to run SQL jobs on compute.
+After compute is launched, you can get the JDBC URL of the compute in the `Advanced` > `JDBC/ODBC` tab. To connect to the compute by using JDBC, you need to add the Databricks JDBC driver to your application dependencies. For example, if you are using Gradle, you can add the following dependency to your `build.gradle` file after replacing `<DRIVER_VERSION>` with the version of the Databricks JDBC driver you want to use:
+
+```groovy
+implementation("com.databricks:databricks-jdbc:<DRIVER_VERSION>")
+```
+
+Then, you can connect to the compute by using JDBC with the JDBC URL (`<YOUR_COMPUTE_JDBC_URL>`), as is common with JDBC applications.
+
+```java
+Class.forName("com.databricks.client.jdbc.Driver");
+String url = "<YOUR_COMPUTE_JDBC_URL>";
+Connection conn = DriverManager.getConnection(url);
+```
+
+For more details on how to use JDBC with Databricks, refer to the [Databricks JDBC Driver documentation](https://docs.databricks.com/en/integrations/jdbc/index.html).
+
+  </TabItem>
+</Tabs>

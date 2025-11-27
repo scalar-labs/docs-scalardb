@@ -16,7 +16,7 @@ This guide explains how to deploy ScalarDB Analytics to a local Kubernetes clust
 
 Before deploying ScalarDB Analytics to a local environment, ensure that you have the following tools installed:
 
-- Kubernetes cluster (this guide assumes you're using [minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Fmacos%2Farm64%2Fstable%2Fbinary+download))
+- Kubernetes cluster (this guide assumes you're using [minikube](https://minikube.sigs.k8s.io/docs/start/))
 - [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
 - [Helm](https://helm.sh/docs/intro/install/)
 
@@ -28,7 +28,7 @@ The following is an example architecture described in this guide.
 
 ![Example architecture](images/scalardb-analytics-local-deployment-architecture.jpg)
 
-This guide assumes a Kubernetes cluster running on minikube. In this setup, PostgreSQL is treated as an external data source not managed by ScalarDB transactions, while MySQL is treated as a data source managed by ScalarDB transactions (ScalarDB-managed data source). The ScalarDB Analytics server is deployed as a Pod by using a Helm Chart. A separate Pod is also created to serve as the client for running Spark commands. Additionally, the CLI tool used to operate the ScalarDB Analytics server is provided as a container image and runs on a separate Pod.
+This guide assumes a Kubernetes cluster running on minikube. In this setup, PostgreSQL is treated as an external data source not managed by ScalarDB transactions, while MySQL is treated as a data source managed by ScalarDB transactions (ScalarDB-managed data source). The ScalarDB Analytics server is deployed as a Pod by using a Helm Chart. The ScalarDB Analytics server uses a dedicated backend database to manage catalog information. For simplicity, in this guide, the backend database used to store catalog information will be created on the PostgreSQL instance mentioned above. A separate Pod is also created to serve as the client for running Spark commands. Additionally, the CLI tool used to operate the ScalarDB Analytics server is provided as a container image and runs on a separate Pod.
 
 :::note
 
@@ -56,9 +56,10 @@ metadata:
   namespace: ${NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding
 metadata:
   name: spark-role
+  namespace: ${NAMESPACE}
 roleRef:
   kind: ClusterRole
   name: cluster-admin
@@ -75,6 +76,12 @@ You can change the `NAMESPACE` and `SERVICE_ACCOUNT_NAME` environment variables 
 ## Step 2: Deploy the ScalarDB Analytics server
 
 In this step, you will deploy the ScalarDB Analytics server to the Kubernetes environment using the Helm Chart provided by Scalar.
+
+### Deploy a backend database for a ScalarDB Analytics server
+
+The ScalarDB Analytics server uses a dedicated backend database to manage catalog information. For simplicity, in this guide, the backend database is set up on PostgreSQL, used as an external data source outside ScalarDB transaction management.
+
+For detailed instructions on setting up the backend database for ScalarDB Analytics, please see [Create a ScalarDB Analytics Catalog](./create-scalardb-analytics-catalog.mdx).
 
 ### Prepare a configuration file for the ScalarDB data source
 
@@ -200,7 +207,7 @@ metadata:
 spec:
   containers:
     - name: analytics-server-cli
-      image: ghcr.io/scalar-labs/scalardb-analytics-cli:3.16.2
+      image: ghcr.io/scalar-labs/scalardb-analytics-cli:3.17.0
       command: ['sleep']
       args: ['inf']
   restartPolicy: Never
@@ -231,7 +238,7 @@ alias scalardb-analytics-cli="java -jar /scalardb-analytics-cli/scalardb-analyti
 
 You must define the data sources that ScalarDB Analytics accesses in JSON format.
 
-The following is an example of defining a data source managed by ScalarDB. You must specify `scalardb` as the value of `type` item when using the ScalarDB-managed data source.
+The following is an example of defining a data source managed by ScalarDB. Replace `<CATALOG_NAME>` with a name of your choice. When using a ScalarDB-managed data source, you must set the `type` item to `scalardb`.
 
 :::note
 
@@ -242,7 +249,7 @@ The `configPath` value must be a common path accessible from both the ScalarDB A
 ```shell
 cat <<EOF > data_source_scalardb.json
 {
-    "catalog": "mycatalog",
+    "catalog": <CATALOG_NAME>,
     "name": "data_source_scalardb",
     "type": "scalardb",
     "provider": {
@@ -252,12 +259,12 @@ cat <<EOF > data_source_scalardb.json
 EOF
 ```
 
-The following is an example of defining a PostgreSQL data source that is not managed by ScalarDB. You must specify `postgres` as the value of `type` item when using PostgreSQL as the data source. Then, replace the contents in the command below in angle brackets with details about your backend DB connection and run the command:
+The following is an example of defining a PostgreSQL data source that is not managed by ScalarDB. Replace `<CATALOG_NAME>` with a name of your choice. You must specify `postgres` as the value of `type` item when using PostgreSQL as the data source. Then, replace the contents in the command below in angle brackets with details about your backend DB connection and run the command:
 
 ```shell
 cat <<EOF > data_source_postgres.json
 {
-    "catalog": "mycatalog",
+    "catalog": <CATALOG_NAME>,
     "name": "data_source_postgres",
     "type": "postgres",
     "provider": {
@@ -357,7 +364,7 @@ kubectl apply -f spark-client.yaml
 
 ### Set up the Spark client Pod
 
-Access the Spark client pod via a shell session by running the following command:
+Access the Spark client Pod via a shell session by running the following command:
 
 ```shell
 kubectl exec -it spark-client -- bash
@@ -366,7 +373,7 @@ kubectl exec -it spark-client -- bash
 Install the Spark binary files and navigate to their directory by running the following command:
 
 ```shell
-VERSION=3.5.6
+VERSION=3.5.7
 
 curl -O https://dlcdn.apache.org/spark/spark-${VERSION}/spark-${VERSION}-bin-hadoop3.tgz
 tar xzf spark-${VERSION}-bin-hadoop3.tgz
@@ -410,7 +417,7 @@ At this point, the Spark client Pod has been set up and is ready to run Spark jo
 
 :::note
 
-ScalarDB Analytics currently uses Apache Spark as its query engine. It can leverage Spark’s native Kubernetes deployment mode, which enables dynamic provisioning of Spark driver and executor Pods at runtime. To use the Kubernetes deployment mode, you need to specify the Kubernetes API server (`k8s://...`) in the `--master` option of the spark commands.
+ScalarDB Analytics currently uses Apache Spark as its query engine. It can leverage Spark's native Kubernetes deployment mode, which enables dynamic provisioning of Spark driver and executor Pods at runtime. To use the Kubernetes deployment mode, you need to specify the Kubernetes API server (`k8s://...`) in the `--master` option of the spark commands.
 
 :::
 
@@ -423,7 +430,7 @@ You can run Spark SQL by running a command like the following:
 ```shell
 ./bin/spark-sql \
 --master k8s://https://kubernetes.default.svc \
---conf spark.kubernetes.container.image=docker.io/bitnami/spark:3.5 \
+--conf spark.kubernetes.container.image=apache/spark:3.5.7-scala2.12-java11-python3-r-ubuntu \
 --conf spark.driver.host=$(hostname -i)
 ```
   </TabItem>
@@ -500,7 +507,7 @@ kubectl delete pod spark-pvc-loader
 
 <h4>Create a Pod template</h4>
 
-To create a Pod template for the dynamically generated Spark driver and executor Pods, log in to the Spark client pod and run the following command:
+To create a Pod template for the dynamically generated Spark driver and executor Pods, log in to the Spark client Pod and run the following command:
 
 ```shell
 PVC_NAME=spark-app-pvc
@@ -543,7 +550,7 @@ Run the application as a Spark job by using a command like the following:
 --deploy-mode cluster \
 --name analytics-sample-job \
 --class com.example.TestApp \
---conf spark.kubernetes.container.image=docker.io/bitnami/spark:3.5 \
+--conf spark.kubernetes.container.image=apache/spark:3.5.7-scala2.12-java11-python3-r-ubuntu \
 --conf spark.kubernetes.namespace=default \
 --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark \
 --conf spark.kubernetes.driver.podTemplateFile=./spark-pod-template.yaml \

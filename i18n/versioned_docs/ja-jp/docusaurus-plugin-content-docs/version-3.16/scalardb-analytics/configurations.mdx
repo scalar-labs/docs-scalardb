@@ -1,0 +1,353 @@
+---
+tags:
+  - Enterprise Option
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Analytics の設定
+
+import TranslationBanner from "/src/components/_translation-ja-jp.mdx";
+
+<TranslationBanner />
+
+このページでは、ScalarDB Analytics のすべてのコンポーネントの設定に関する包括的なリファレンスを提供します。
+
+## 概要
+
+ScalarDB Analytics は、設定が必要な 3 つの主要コンポーネントで構成されています:
+
+1. **ScalarDB Analytics サーバー** - カタログ情報とメータリングサービスをホストするサーバー
+2. **CLI クライアント** - カタログとデータソースを管理するためのコマンドラインインターフェース
+3. **Spark 統合** - Apache Spark で ScalarDB Analytics を使用するための設定
+
+## ScalarDB Analytics サーバー設定
+
+サーバーは、データベース接続、ネットワーク設定、ライセンス、オプション機能を定義する標準的な Java プロパティファイル (例: `scalardb-analytics-server.properties`) を使用して設定されます。
+
+### メタデータデータベース設定
+
+カタログ情報を格納するメタデータデータベースを設定します。
+
+#### `db.url`
+
+- **フィールド:** `scalar.db.analytics.server.db.url`
+- **説明:** ScalarDB Analytics で使用されるメタデータデータベースの JDBC URL。
+
+#### `db.username`
+
+- **フィールド:** `scalar.db.analytics.server.db.username`
+- **説明:** メタデータデータベースに接続するためのユーザー名。
+
+#### `db.password`
+
+- **フィールド:** `scalar.db.analytics.server.db.password`
+- **説明:** メタデータデータベースユーザーのパスワード。
+
+### サーバーネットワーク設定
+
+サービスポートと TLS/SSL 暗号化を含むネットワーク設定を構成します。
+
+#### `catalog.port`
+
+- **フィールド:** `scalar.db.analytics.server.catalog.port`
+- **説明:** カタログサービスのポート。
+- **デフォルト値:** `11051`
+
+#### `metering.port`
+
+- **フィールド:** `scalar.db.analytics.server.metering.port`
+- **説明:** メータリングサービスのポート。
+- **デフォルト値:** `11052`
+
+#### `tls.enabled`
+
+- **フィールド:** `scalar.db.analytics.server.tls.enabled`
+- **説明:** セキュアな通信のために TLS/SSL を有効にする。
+- **デフォルト値:** `false`
+
+#### `tls.cert_chain_path`
+
+- **フィールド:** `scalar.db.analytics.server.tls.cert_chain_path`
+- **説明:** サーバー証明書チェーンファイルへのパス。`tls.enabled` が `true` の場合に必須。
+
+#### `tls.private_key_path`
+
+- **フィールド:** `scalar.db.analytics.server.tls.private_key_path`
+- **説明:** サーバー秘密鍵ファイルへのパス。`tls.enabled` が `true` の場合に必須。
+
+### ライセンス設定
+
+ScalarDB Analytics ライセンスを設定します。
+
+#### `licensing.license_key`
+
+- **フィールド:** `scalar.db.analytics.server.licensing.license_key`
+- **説明:** ScalarDB Analytics ライセンスキー。
+
+#### `licensing.license_check_cert_pem`
+
+- **フィールド:** `scalar.db.analytics.server.licensing.license_check_cert_pem`
+- **説明:** ライセンス検証に使用する証明書の PEM 形式文字列。本フィールドまたは `license_check_cert_path` のいずれか一方を指定してください。
+
+#### `licensing.license_check_cert_path`
+
+- **フィールド:** `scalar.db.analytics.server.licensing.license_check_cert_path`
+- **説明:** ライセンス検証に使用する証明書ファイルのパス。本フィールドまたは `license_check_cert_pem` のいずれか一方を指定してください。
+
+### メータリングストレージ設定
+
+メータリングデータのストレージを設定します。
+
+#### `metering.storage.provider`
+
+- **フィールド:** `scalar.db.analytics.server.metering.storage.provider`
+- **説明:** メータリングデータのストレージプロバイダー (`filesystem`、`aws-s3`、`azureblob`、`google-cloud-storage`)。
+
+#### `metering.storage.containerName`
+
+- **フィールド:** `scalar.db.analytics.server.metering.storage.containerName`
+- **説明:** クラウドストレージ用のコンテナ/バケット名。
+- **デフォルト値:** `metering`
+
+#### `metering.storage.path`
+
+- **フィールド:** `scalar.db.analytics.server.metering.storage.path`
+- **説明:** ローカルディレクトリパス。プロバイダーが `filesystem` の場合に必須。
+
+#### `metering.storage.accessKeyId`
+
+- **フィールド:** `scalar.db.analytics.server.metering.storage.accessKeyId`
+- **説明:** クラウドストレージプロバイダー用のアクセスキー ID。`aws-s3`、`azureblob`、`google-cloud-storage` の場合に必須。
+
+#### `metering.storage.secretAccessKey`
+
+- **フィールド:** `scalar.db.analytics.server.metering.storage.secretAccessKey`
+- **説明:** クラウドストレージプロバイダー用のシークレットアクセスキー。`aws-s3`、`azureblob`、`google-cloud-storage` の場合に必須。
+
+#### `metering.storage.prefix`
+
+- **フィールド:** `scalar.db.analytics.server.metering.storage.prefix`
+- **説明:** すべてのストレージパスのオプションのプレフィックス。
+
+## CLI クライアント設定
+
+CLI クライアントは、ScalarDB Analytics サーバーと通信するための接続設定を Java プロパティファイル (例: `client.properties`) を使用して設定します。
+
+## 設定プロパティ
+
+このセクションでは、設定プロパティについて説明します。
+
+### サーバー接続設定
+
+以下は、サーバーへの接続の設定の一覧です。
+
+#### `server.host`
+
+- **フィールド:** `scalar.db.analytics.client.server.host`
+- **説明:** ScalarDB Analytics サーバーのホスト名または IP アドレス。
+
+#### `server.catalog.port`
+
+- **フィールド:** `scalar.db.analytics.client.server.catalog.port`
+- **説明:** カタログサービスのポート番号。
+- **デフォルト値:** `11051`
+
+#### `server.metering.port`
+
+- **フィールド:** `scalar.db.analytics.client.server.metering.port`
+- **説明:** メータリングサービスのポート番号。
+- **デフォルト値:** `11052`
+
+### TLS 設定
+
+以下は、TLSの設定の一覧です。
+
+#### `server.tls.enabled`
+
+- **フィールド:** `scalar.db.analytics.client.server.tls.enabled`
+- **説明:** サーバー接続の TLS/SSL を有効にする。
+- **デフォルト値:** `false`
+
+#### `server.tls.ca_root_cert_path`
+
+- **フィールド:** `scalar.db.analytics.client.server.tls.ca_root_cert_path`
+- **説明:** サーバー証明書を検証するための CA 証明書ファイルへのパス。`tls.enabled` が `true` の場合に必須。
+
+#### `server.tls.override_authority`
+
+- **フィールド:** `scalar.db.analytics.client.server.tls.override_authority`
+- **説明:** TLS 検証のためのサーバー権限をオーバーライド (テストに便利)。
+
+## Spark 統合設定
+
+Apache Spark で ScalarDB Analytics を使用するには、Spark 設定ファイル (`spark-defaults.conf`) に必要な設定を追加して Spark アプリケーションを設定します。
+
+### Spark Core 設定
+
+以下は、Spark Core の設定の一覧です。
+
+#### `spark.jars.packages`
+
+- **フィールド:** `spark.jars.packages`
+- **説明:** ScalarDB Analytics 依存関係の Maven 座標。
+
+#### `spark.extraListeners`
+
+- **フィールド:** `spark.extraListeners`
+- **説明:** ScalarDB Analytics メータリングリスナーを登録。
+
+### カタログ設定
+
+以下は、カタログの設定の一覧です。
+
+#### `spark.sql.catalog.<catalog-name>`
+
+- **フィールド:** `spark.sql.catalog.<catalog-name>`
+- **説明:** ScalarDB Analytics カタログ実装を登録。`<catalog-name>` は ScalarDB Analytics サーバーで作成したカタログの正確な名前に置き換えてください。値として `com.scalar.db.analytics.spark.ScalarDBAnalyticsCatalog` を使用します。
+
+:::important
+
+`<catalog-name>` は CLI を使用して ScalarDB Analytics サーバーで作成したカタログ名と一致する必要があります。例えば、サーバーで `production` という名前のカタログを作成した場合は、`spark.sql.catalog.production` を使用してください。
+
+:::
+
+### サーバー接続設定
+
+以下は、サーバー接続の設定の一覧です。
+
+#### `spark.sql.catalog.<catalog-name>.server.host`
+
+- **フィールド:** `spark.sql.catalog.<catalog-name>.server.host`
+- **説明:** ScalarDB Analytics サーバーのホスト名または IP アドレス。
+
+#### `spark.sql.catalog.<catalog-name>.server.catalog.port`
+
+- **フィールド:** `spark.sql.catalog.<catalog-name>.server.catalog.port`
+- **説明:** カタログサービスのポート番号。
+- **デフォルト値:** `11051`
+
+#### `spark.sql.catalog.<catalog-name>.server.metering.port`
+
+- **フィールド:** `spark.sql.catalog.<catalog-name>.server.metering.port`
+- **説明:** メータリングサービスのポート番号。
+- **デフォルト値:** `11052`
+
+### TLS/SSL 設定
+
+以下は、TLS/SSL の設定の一覧です。
+
+#### `spark.sql.catalog.<catalog-name>.server.tls.enabled`
+
+- **フィールド:** `spark.sql.catalog.<catalog-name>.server.tls.enabled`
+- **説明:** サーバー接続の TLS/SSL を有効にする。
+- **デフォルト値:** `false`
+
+#### `spark.sql.catalog.<catalog-name>.server.tls.ca_root_cert_path`
+
+- **フィールド:** `spark.sql.catalog.<catalog-name>.server.tls.ca_root_cert_path`
+- **説明:** サーバー証明書を検証するための CA 証明書ファイルへのパス。`tls.enabled` が `true` の場合に必須。
+
+#### `spark.sql.catalog.<catalog-name>.server.tls.override_authority`
+
+- **フィールド:** `spark.sql.catalog.<catalog-name>.server.tls.override_authority`
+- **説明:** TLS 検証のためのサーバー権限をオーバーライド。
+
+`<catalog-name>` を選択したカタログ名 (例: `analytics`) に置き換えてください。
+
+## 設定例
+
+このセクションでは、いくつかの設定例を提供します。
+
+### 基本的な開発設定
+
+以下は、サーバー、CLI クライアント、および Spark の設定例です。
+
+#### サーバー設定 (`scalardb-analytics-server.properties`)
+
+```properties
+# メタデータデータベース
+scalar.db.analytics.server.db.url=jdbc:postgresql://localhost:5432/scalardb_analytics
+scalar.db.analytics.server.db.username=dev_user
+scalar.db.analytics.server.db.password=dev_password
+
+# ライセンス
+scalar.db.analytics.server.licensing.license_key=YOUR_DEV_LICENSE_KEY
+scalar.db.analytics.server.licensing.license_check_cert_path=/path/to/license_cert.pem
+
+# メータリングストレージ (開発用に filesystem)
+scalar.db.analytics.server.metering.storage.provider=filesystem
+scalar.db.analytics.server.metering.storage.path=/tmp/scalardb-analytics-metering
+```
+
+#### CLI クライアント設定 (`client.properties`)
+
+```properties
+scalar.db.analytics.client.server.host=localhost
+```
+
+#### Spark 設定 (`spark-defaults.conf`)
+
+```properties
+spark.jars.packages                         com.scalar-labs:scalardb-analytics-spark-all-3.5_2.12:3.16.2
+spark.extraListeners                        com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener
+spark.sql.catalog.analytics                 com.scalar.db.analytics.spark.ScalarDBAnalyticsCatalog
+spark.sql.catalog.analytics.server.host     localhost
+```
+
+### TLS を使用した本番設定
+
+以下は、本番環境での TLS、CLI クライアント、および Spark の設定例です。
+
+#### サーバー設定 (`scalardb-analytics-server.properties`)
+
+```properties
+# メタデータデータベース
+scalar.db.analytics.server.db.url=jdbc:postgresql://db.internal:5432/scalardb_analytics_prod
+scalar.db.analytics.server.db.username=analytics_prod
+scalar.db.analytics.server.db.password=your_secure_password
+
+# gRPC ポート
+scalar.db.analytics.server.catalog.port=11051
+scalar.db.analytics.server.metering.port=11052
+
+# TLS
+scalar.db.analytics.server.tls.enabled=true
+scalar.db.analytics.server.tls.cert_chain_path=/path/to/server.crt
+scalar.db.analytics.server.tls.private_key_path=/path/to/server.key
+
+# ライセンス
+scalar.db.analytics.server.licensing.license_key=YOUR_LICENSE_KEY
+scalar.db.analytics.server.licensing.license_check_cert_pem=-----BEGIN CERTIFICATE-----\nMIID...certificate content...\n-----END CERTIFICATE-----
+
+# メータリングストレージ (S3)
+scalar.db.analytics.server.metering.storage.provider=aws-s3
+scalar.db.analytics.server.metering.storage.containerName=analytics-metering
+scalar.db.analytics.server.metering.storage.accessKeyId=AKIAIOSFODNN7EXAMPLE
+scalar.db.analytics.server.metering.storage.secretAccessKey=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY
+scalar.db.analytics.server.metering.storage.prefix=prod/
+```
+
+#### CLI クライアント設定 (`client.properties`)
+
+```properties
+scalar.db.analytics.client.server.host=analytics.example.com
+scalar.db.analytics.client.server.tls.enabled=true
+scalar.db.analytics.client.server.tls.ca_root_cert_path=/path/to/cert.pem
+```
+
+#### Spark 設定 (`spark-defaults.conf`)
+
+```properties
+spark.jars.packages                                     com.scalar-labs:scalardb-analytics-spark-all-3.5_2.12:3.16.2
+spark.extraListeners                                    com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener
+spark.sql.catalog.analytics                             com.scalar.db.analytics.spark.ScalarDBAnalyticsCatalog
+spark.sql.catalog.analytics.server.host                 analytics.example.com
+spark.sql.catalog.analytics.server.tls.enabled          true
+spark.sql.catalog.analytics.server.tls.ca_root_cert_path /path/to/cert.pem
+```
+
+## 次のステップ
+
+- [ScalarDB Analytics カタログの作成](./create-scalardb-analytics-catalog.mdx) - カタログの作成とデータソースの追加方法を学ぶ
+- [ScalarDB Analytics を通じた分析クエリの実行](run-analytical-queries.mdx) - 設定でクエリの実行を開始
+- [パブリッククラウド環境への ScalarDB Analytics のデプロイ](deployment.mdx) - 本番環境での ScalarDB Analytics のデプロイ

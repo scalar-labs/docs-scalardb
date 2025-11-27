@@ -1,0 +1,246 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsEnglish
+---
+
+# Consensus Commit Protocol
+
+import JavadocLink from '/src/theme/JavadocLink.js';
+
+Consensus Commit is the transaction protocol used in ScalarDB and is designed for executing transactions spanning multiple diverse databases. Its uniqueness is that the protocol achieves ACID transactions without relying on the transaction capabilities of the underlying databases, unlike X/Open XA-based solutions. This document explains the details of the protocol, including how it works, the guaranteed isolation levels, the interfaces, the performance optimization that it employs, and its limitations.
+
+## The protocol
+
+This section explains how the Consensus Commit protocol works. The Consensus Commit protocol uses a concurrency control protocol to guarantee isolation and an atomic commitment protocol to guarantee atomicity and durability.
+
+### Concurrency control protocol
+
+The Consensus Commit protocol employs optimistic concurrency control (OCC) as its concurrency control protocol. OCC operates under the assumption that conflicts are rare, allowing transactions to proceed without the need for locks and resolving conflicts only when they actually occur. Therefore, OCC performs great in low-contention environments. It is also particularly beneficial in distributed environments, where managing locks is tricky.
+
+:::note
+
+Pessimistic concurrency control (PCC), on the other hand, assumes conflicts are common and takes locks on resources when they are used to avoid interference. Therefore, PCC performs great in high-contention environments.
+
+:::
+
+The OCC protocol of ScalarDB has three phases, as the commonly used OCC protocols, each of which does the following:
+
+* Read phase:
+  * ScalarDB tracks the read and write sets of transactions. ScalarDB copies every record that a transaction accesses from databases to its local workspace and stores its writes in the local workspace.
+* Validation phase:
+  * ScalarDB checks if the committing transaction conflicts with other transactions. ScalarDB uses backward validation; it goes to the write phase only if other transactions have not written what the transaction reads and writes, which are called read validation and write validation, respectively.
+* Write phase:
+  * ScalarDB propagates the changes in the transaction's write set to the database and makes them visible to other transactions.
+
+As described next, ScalarDB provides an isolation mode (isolation level) where it skips the read validation in the validation phase to allow for more performance for some workloads that don't require the read validation for correctness.
+
+:::note
+
+The OCC of ScalarDB without the read validation works similarly to snapshot isolation. However, it works with a single version and causes read-skew anomalies because it does not create global snapshots.
+
+:::
+
+### Atomic commitment protocol
+
+The Consensus Commit protocol employs a variant of the two-phase commit protocol as an atomic commitment protocol (ACP). The ACP of ScalarDB comprises two phases, each of which has two sub-phases, and briefly works as follows:
+
+* Prepare phase (prepare-records phase \+ validate-records phase):
+  * In the prepare-records phase, ScalarDB runs the write validation of the OCC protocol for all the records written by the transaction by updating the statuses of the records to PREPARED and moves on to the next phase if all the records are successfully validated.
+  * In the validate-records phase, ScalarDB runs the read validation of the OCC protocol for all the records read by the transaction and moves on to the next phase if all the records are successfully validated.
+* Commit phase (commit-state phase \+ commit-records phase):
+  * In the commit-state phase, ScalarDB commits the transaction by writing a COMMITTED state to a special table called a coordinator table.
+  * In the commit-records phase, ScalarDB runs the write phase of the OCC protocol for all the records written by the transaction by updating the statuses of the records to COMMITTED.
+
+:::note
+
+In case of deleting records, the statuses of the records are first changed to DELETED in the prepare phase and later physically deleted in the commit phase.
+
+:::
+
+#### How it works in more detail
+
+Let's see how the protocol works in each phase in more detail.
+
+##### Before the prepare phase
+
+First, a transaction begins when a client accesses ScalarDB (or a ScalarDB Cluster node) and issues a `begin` command. When a transaction begins, ScalarDB acts as a transaction coordinator, accessing the underlying databases, and first generates a transaction ID (TxID) with UUID version 4. Then, when the client is ready to commit the transaction after performing operations such as reading and writing records, it calls a `commit` command to request ScalarDB to commit the transaction and enters the prepare phase. As described previously, ScalarDB holds the read set (readSet) and write set (writeSet) of the transaction in its local workspace at the time of committing.
+
+##### Prepare phase
+
+ScalarDB first prepares the records of the write set by propagating the records, including transaction logs like TxID as described later, with PREPARED states to the underlying databases as the prepare-records phase. Here, we assume a write set maintains updated records composed of the original records and updated columns. If any preparation fails, it aborts the transaction by writing an ABORTED state record to a Coordinator table, where all the transactions’ final states are determined and managed. We explain the Coordinator table in more detail later in this section.
+
+:::note
+
+ScalarDB checks conflicting preparations by using linearizable conditional writes. A transaction updates a record if the record has not been updated by another transaction since the transaction read it by checking if the TxID of the record has not been changed.
+
+:::
+
+ScalarDB then moves on to the validate-records phase as necessary. The validate-records phase is only necessary if the isolation level is set to SERIALIZABLE. In this phase, ScalarDB re-reads all the records in the read set to see if other transactions have written the records that the transaction has read before. If the read set has not been changed, the transaction can go to the commit-state phase since there are no anti-dependencies; otherwise, it aborts the transaction.
+
+##### Commit phase
+
+If all the validations in the prepare phase are done successfully, ScalarDB commits the transaction by writing a COMMITTED state record to the Coordinator table as the commit-state phase. 
+
+:::note
+
+* ScalarDB uses linearizable conditional writes to coordinate concurrent writes to the Coordinator table, creating a state record with a TxID if there is no record for the TxID. Once the COMMITTED state is correctly written to the Coordinator table, the transaction is regarded as committed.
+* By default, if a transaction contains only read operations, ScalarDB skips the commit-state phase. However, you can configure ScalarDB to write a COMMITTED state record to the Coordinator table even for read-only transactions by setting the following parameter to `false`:
+  * `scalar.db.consensus_commit.coordinator.write_omission_on_read_only.enabled`
+
+:::
+
+Then, ScalarDB commits all the validated (prepared) records by changing the states of the records to COMMITTED as the commit-records phase.
+
+#### Distributed WAL
+
+ScalarDB stores transaction logs, which are for write-ahead logging (WAL), in the underlying database records that it manages. Specifically, as shown in the following figure, ScalarDB manages special columns for the log information in a record in addition to the columns that an application manages. The log information comprises, for example, a transaction ID (TxID) that has updated the corresponding record most recently, a record version number (Version), a record state (TxState) (for example, COMMITTED or PREPARED), timestamps (not shown in the diagram), and a before image that comprises the previous version's application data and its metadata.
+
+ScalarDB also manages transaction states separately from the application records in the Coordinator table. The Coordinator table determines and manages transaction states as a single source of truth. The Coordinator table can be collocated with application-managed tables or located in a separate dedicated database.
+
+![Distributed WAL](images/scalardb-metadata.png)
+
+:::note
+
+The Coordinator table can be replicated for high availability by using the replication and consensus capabilities of the underlying databases. For example, if you manage the Coordinator table by using Cassandra with a replication factor of three, you can make the transaction coordination of ScalarDB tolerate one replica crash. Hence, you can make the atomic commitment protocol of ScalarDB perform like the Paxos Commit protocol; it could mitigate liveness issues (for example, blocking problems) without sacrificing safety.
+
+:::
+
+#### Lazy recovery
+
+Transactions can crash at any time and could leave records in an uncommitted state. ScalarDB recovers uncommitted records lazily when it reads them, depending on the transaction states of the Coordinator table. Specifically, if a record is in the PREPARED state, but the transaction that updated the record has expired or been aborted, the record will be rolled back. If a record is in the PREPARED state and the transaction that updated the record is committed, the record will be rolled forward.
+
+A transaction expires after a certain amount of time (currently 15 seconds). When ScalarDB observes a record that has been prepared by an expired transaction, ScalarDB writes the ABORTED state for the transaction to the Coordinator table (with retries). If ScalarDB successfully writes the ABORTED state to the Coordinator table, the transaction is aborted. Otherwise, the transaction will be committed by the original process that is slow but still alive for some reason, or it will remain in the UNKNOWN state until it is either aborted or committed.
+
+## Isolation levels
+
+The Consensus Commit protocol supports three isolation levels: read-committed snapshot isolation (a weaker variant of snapshot isolation), serializable, and read-committed, each of which has the following characteristics:
+
+* Read-committed snapshot isolation (SNAPSHOT - default)
+  * Possible anomalies: read skew, write skew, read only
+  * Faster than serializable, but guarantees weaker correctness.
+* Serializable (SERIALIZABLE)
+  * Possible anomalies: None
+  * Slower than read-committed snapshot isolation, but guarantees stronger (strongest) correctness.
+* Read-committed (READ_COMMITTED)
+  * Possible anomalies: read skew, write skew, read only
+  * Faster than read-committed snapshot isolation because it could return non-latest committed records.
+
+As described above, serializable is preferable from a correctness perspective, but slower than read-committed snapshot isolation. Choose the appropriate one based on your application requirements and workload. For details on how to configure read-committed snapshot isolation, serializable, and read-committed, see [ScalarDB Configuration](configurations.mdx#basic-configurations).
+
+:::note
+
+The Consensus Commit protocol of ScalarDB requires each underlying database to provide linearizable operations, as described in [Configurations for the Underlying Databases of ScalarDB](database-configurations.mdx#transactions); thus, it guarantees strict serializability.
+
+:::
+
+:::warning
+
+Scanning records without specifying a partition key (for example, <JavadocLink packageName="scalardb" path="com/scalar/db/api" className="ScanAll" /> or `SELECT * FROM table`) for non-JDBC databases does not always guarantee serializability, even if `SERIALIZABLE` is specified. Therefore, you should do so at your own discretion and consider updating the schemas if possible. For more details, refer to [Cross-partition scan configurations](configurations.mdx#cross-partition-scan-configurations).
+
+:::
+
+## Interfaces
+
+The Consensus Commit protocol provides two interfaces: [a one-phase commit interface and a two-phase commit interface](scalardb-cluster/run-transactions-through-scalardb-cluster.mdx#run-transactions).
+
+The one-phase commit interface is a simple interface that provides only a single `commit` method, where all the phases of the atomic commitment protocol are executed in the method. On the other hand, the two-phase commit interface exposes each phase of the protocol with `prepare`, `validate`, and `commit` methods.
+
+:::note
+
+The `prepare` method is for the prepare-records phase, and the `validate` method is for the validate-records phase.
+
+:::
+
+In most cases, using the one-phase commit interface is recommended since it is easier to use and handle errors. But the two-phase commit interface is useful when running a transaction across multiple applications or services without directly accessing databases from ScalarDB, such as maintaining the consistency of databases in microservices.
+
+## Performance optimization
+
+The Consensus Commit protocol employs several performance optimizations.
+
+### Parallel execution
+
+Consensus Commit executes each phase of the atomic commitment protocol in parallel, using intra-transaction parallelism without sacrificing correctness. Specifically, it tries to execute the prepare-records phase by writing records with PREPARED status in parallel. Likewise, it uses a similar parallel execution for the validate-records phase, the commit-records phase, and the rollback process.
+
+You can enable respective parallel execution by using the following parameters:
+
+* Prepare-records phase
+  * `scalar.db.consensus_commit.parallel_preparation.enabled`
+* Validate-records phase
+  * `scalar.db.consensus_commit.parallel_validation.enabled`
+* Commit-records phase
+  * `scalar.db.consensus_commit.parallel_commit.enabled`
+* Rollback processing
+  * `scalar.db.consensus_commit.parallel_rollback.enabled`
+
+You can also configure the execution parallelism by using the following parameter:
+
+* `scalar.db.consensus_commit.parallel_executor_count`
+
+For details about the configuration, refer to [Performance-related configurations](configurations.mdx#performance-related-configurations).
+
+### Asynchronous execution
+
+Since a transaction is regarded as committed if the commit-state phase completes successfully, it can also return to the client without waiting for the completion of the commit-records phase, executing the phase asynchronously. Likewise, when a transaction fails for some reason and does a rollback, the rollback process can also be executed asynchronously without waiting for its completion.
+
+You can enable respective asynchronous execution by using the following parameters:
+
+* Commit-records phase
+  * `scalar.db.consensus_commit.async_commit.enabled`
+* Rollback processing
+  * `scalar.db.consensus_commit.async_rollback.enabled`
+
+### One-phase commit
+
+With one-phase commit optimization, ScalarDB can omit the prepare-records and commit-state phases without sacrificing correctness, provided that the transaction only updates records that the underlying database can atomically update.
+
+You can enable one-phase commit optimization by using the following parameter:
+
+* `scalar.db.consensus_commit.one_phase_commit.enabled`
+
+### Group commit
+
+Consensus Commit provides a group-commit feature to execute the commit-state phase of multiple transactions in a batch, reducing the number of writes for the commit-state phase. It is especially useful when writing to a Coordinator table is slow, for example, when the Coordinator table is deployed in a multi-region environment for high availability.
+
+You can enable group commit by using the following parameter:
+
+* `scalar.db.consensus_commit.coordinator.group_commit.enabled`
+
+Group commit has several other parameters. For more details, refer to [Performance-related configurations](configurations.mdx#performance-related-configurations).
+
+## Limitations
+
+ScalarDB has several limitations in achieving database-agnostic transactions.
+
+### Applications must access ScalarDB to access the underlying databases
+
+Since ScalarDB with the Consensus Commit protocol handles transactions in its layer without depending on the transactional capability of the underlying databases, your applications cannot bypass ScalarDB. Bypassing it will cause unexpected behavior, mostly resulting in facing some database anomalies. Even for read operations, accessing the underlying databases of ScalarDB directly will give you inconsistent data with the transaction metadata, so it is not allowed.
+
+However, for tables that are not managed or touched by ScalarDB transactions, you can read from and write to the tables. For example, it is OK to check tables' metadata information, such as information schema, by directly accessing the tables without going through ScalarDB. Also, there are several other cases where you can access databases directly without going through ScalarDB. The basic criterion is whether or not you update the data of the underlying databases. If you are sure that you do not write to the databases, you can access the databases directly. For example, it is OK to take a backup of databases by using database-native tools.
+
+:::note
+
+If you take backups from multiple databases or from non-transactional databases, you need to pause your applications or ScalarDB Cluster. For more details, refer to [How to Back Up and Restore Databases Used Through ScalarDB](backup-restore.mdx).
+
+:::
+
+### Executing particular operations in a certain sequence is prohibited for correctness
+
+In the current implementation, ScalarDB throws an exception in the following cases:
+
+* Executing scan operations after write (Put, Insert, Update, Upsert, Delete) operations for the same record in a transaction.
+* Executing write (Put, Insert, Update, and Upsert) operations after Delete operations for the same record in a transaction.
+
+## See also
+
+You can learn more about the Consesnus Commit protocol by seeing the following presentation and YouTube video, which summarizes, visually, how the protocol works:
+
+- **Speaker Deck presentation:** [ScalarDB: Universal Transaction Manager](https://speakerdeck.com/scalar/scalar-db-universal-transaction-manager)
+- **YouTube (Japanese):** [How ScalarDB runs transactions (a part of DBSJ lecture)](https://www.youtube.com/watch?v=s6Q7QQccDTc)
+
+In addition, more details about the protocol, including the background, the challenges, and the novelty, are discussed in the following research paper and its presentation:
+
+- **Research paper:** [ScalarDB: Universal Transaction Manager for Polystores](https://www.vldb.org/pvldb/vol16/p3768-yamada.pdf)
+- **Speaker Deck presentation:** [ScalarDB: Universal Transaction Manager for Polystores](https://speakerdeck.com/scalar/scalardb-universal-transaction-manager-for-polystores-vldb23)

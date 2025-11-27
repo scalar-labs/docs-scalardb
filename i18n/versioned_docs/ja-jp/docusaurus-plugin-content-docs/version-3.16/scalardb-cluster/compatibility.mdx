@@ -1,0 +1,53 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Cluster 互換性マトリックス
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このドキュメントでは、クライアント SDK バージョン間の ScalarDB Cluster バージョンの互換性を示します。
+
+## ScalarDB Cluster とクライアント SDK の互換性
+
+| ScalarDB Cluster バージョン | ScalarDB Cluster Java Client SDK バージョン | ScalarDB Cluster .NET Client SDK バージョン |
+|:--------------------------|:------------------------------------------|:------------------------------------------|
+| 3.16                      | 3.9 - 3.16                                | 3.12* - 3.16                              |
+| 3.15                      | 3.9 - 3.15                                | 3.12* - 3.15                              |
+| 3.14                      | 3.9 - 3.14                                | 3.12* - 3.14                              |
+| 3.13                      | 3.9 - 3.13                                | 3.12* - 3.13                              |
+| 3.12                      | 3.9 - 3.12                                | 3.12*                                     |
+| 3.11                      | 3.9 - 3.11                                | サポート対象外                              |
+| 3.10                      | 3.9 - 3.10                                | サポート対象外                              |
+| 3.9                       | 3.9                                       | サポート対象外                              |
+
+\* このバージョンはプライベートプレビュー段階であるため、将来のバージョンでは下位互換性のない更新が行われる可能性があります。
+
+:::note
+
+- クライアントツール (例えば、[ScalarDB Cluster SQL CLI](developer-guide-for-scalardb-cluster-with-java-api.mdx#sql-cli) や [ScalarDB Cluster Schema Loader](developer-guide-for-scalardb-cluster-with-java-api.mdx#クラスター用-schema-loader)) は、ScalarDB Cluster Java Client SDK と同じものと見なすことができます。つまり、ScalarDB Cluster Java Client SDK と同じ互換性ルールをクライアントツールに適用できます。
+- ScalarDB Data Loader を使用してバックエンドデータベースにアクセスする場合は、使用している ScalarDB Cluster のバージョンと互換性のあるバージョンの ScalarDB Data Loader を使用する必要があります。この場合、サポートされている ScalarDB Data Loader のバージョンは、上記の表に示されている ScalarDB Cluster Java Client SDK のバージョンと同じです。ScalarDB Data Loader は ScalarDB Cluster に直接アクセスしないことに注意してください。
+- ScalarDB Cluster が新しいマイナーバージョンで提供する新機能を使用する場合は、同じバージョンまたはそれ以降のバージョンのクライアントツールの利用、もしくは既存のスキーマの再作成 (または更新) が必要となる場合があります。詳細については、各機能の関連ドキュメントを参照してください。
+
+:::
+
+## バージョンスキューポリシー
+
+:::note
+
+バージョンは `x.y.z` として表されます。`x` はメジャーバージョン、`y` はマイナーバージョン、`z` はパッチバージョンを表します。この形式は [セマンティックバージョニング](https://semver.org/) に従います。
+
+:::
+
+- ScalarDB Cluster とクライアント SDK の **メジャー** バージョンが異なる場合、それらは **互換性がない** ため、**サポートされていません**。
+- ScalarDB Cluster とクライアント SDK の **メジャー** バージョンが同じで、**マイナー** バージョンが異なる場合、ScalarDB Cluster のバージョンはクライアント SDK バージョン以上である必要があります。例:
+  - **サポート対象:** ScalarDB Cluster 3.13とクライアント SDK 3.11の組み合わせ
+  - **サポート対象外:** ScalarDB Cluster 3.11とクライアント SDK 3.13の組み合わせ
+- **メジャー** バージョンと **マイナー** バージョンが同じ場合、ScalarDB Cluster とクライアント SDK 間で異なる **パッチ** バージョンを使用できます。例:
+  - **サポート対象:** ScalarDB Cluster 3.13.2とクライアント SDK 3.13.0の組み合わせ
+  - **サポート対象:** ScalarDB Cluster 3.13.0とクライアント SDK 3.13.2の組み合わせ

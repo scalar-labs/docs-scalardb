@@ -1,0 +1,373 @@
+---
+tags:
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Cluster .NET Client SDK での LINQ をはじめよう
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+ScalarDB Cluster .NET Client SDK は、LINQ と Entity Framework のような機能を使用してクラスターをクエリすることをサポートしています。
+
+:::note
+
+この SDK は [Entity Framework](https://learn.microsoft.com/ja-jp/ef/) をサポートしていません。代わりに、この SDK は Entity Framework に似た機能を実装します。
+
+:::
+
+:::note
+
+LINQ を使用するには、クラスターで SQL サポートを有効にする必要があります。
+
+:::
+
+## SDK をインストールする
+
+ScalarDB Cluster と同じメジャーバージョンとマイナーバージョンの [SDK](https://www.nuget.org/packages/ScalarDB.Client) を .NET プロジェクトにインストールします。組み込みの NuGet パッケージマネージャーを使用してこれを行うことができます。`<MAJOR>.<MINOR>` を、使用しているバージョンに置き換えます。
+
+```console
+dotnet add package ScalarDB.Client --version '<MAJOR>.<MINOR>.*'
+```
+
+## クライアント設定の追加
+
+ASP.NET Core アプリの `appsettings.json` ファイルに `ScalarDbOptions` セクションを追加し、`<HOSTNAME_OR_IP_ADDRESS>` を FQDN または IP アドレスに、`<PORT>` をクラスターのポート番号 (デフォルトでは `60053`) に置き換えます。
+
+```json
+{
+  "ScalarDbOptions": {
+    "Address": "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
+    "HopLimit": 10
+  }
+}
+```
+
+設定ファイルやクライアントを設定するその他の方法の詳細については、[クライアント設定](common-reference.mdx#クライアント設定)を参照してください。
+
+## クラスを設定する
+
+SQL サポートが有効になっていることを確認したら、使用する ScalarDB テーブルごとに C# クラスを作成します。例:
+
+```c#
+using System.ComponentModel.DataAnnotations.Schema;
+using ScalarDB.Client.DataAnnotations;
+
+// ...
+
+[Table("ns.statements")]
+public class Statement
+{
+    [PartitionKey]
+    [Column("statement_id", Order = 0)]
+    public int Id { get; set; }
+
+    [SecondaryIndex]
+    [Column("order_id", Order = 1)]
+    public string OrderId { get; set; } = String.Empty;
+
+    [SecondaryIndex]
+    [Column("item_id", Order = 2)]
+    public int ItemId { get; set; }
+
+    [Column("count", Order = 3)]
+    public int Count { get; set; }
+}
+
+[Table("order_service.items")]
+public class Item
+{
+    [PartitionKey]
+    [Column("item_id", Order = 0)]
+    public int Id { get; set; }
+
+    [Column("name", Order = 1)]
+    public string Name { get; set; } = String.Empty;
+
+    [Column("price", Order = 2)]
+    public int Price { get; set; }
+}
+```
+
+パーティションキー、クラスタリングキー、またはセカンダリインデックスが複数の列で設定されている場合、`ColumnAttribute` の `Order` プロパティによってキーまたはインデックス内の順序が決まります。
+
+プロパティに使用する型の詳細については、[ScalarDB 列型と .NET 型間の変換方法](common-reference.mdx#scalardb-列型と-net-型間の変換方法) を参照してください。
+
+すべてのクラスが作成されたら、作成されたコンテキストを依存性注入コンテナに登録する必要があります。例:
+
+```c#
+    public class MyDbContext: ScalarDbContext
+    {
+        public ScalarDbSet<Statement> Statements { get; set; }
+        public ScalarDbSet<Item> Items { get; set; }
+    }
+```
+
+:::note
+
+コンテキストクラスは一時的なサービスとして登録されます。サービス有効期間の詳細については、[.NET の依存関係の挿入 - サービスの有効期間](https://learn.microsoft.com/ja-jp/dotnet/core/extensions/dependency-injection#service-lifetimes)を参照してください。
+
+:::
+
+すべてのクラスが作成されたら、作成されたコンテキストを依存性注入に追加する必要があります。例:
+
+```c#
+using ScalarDB.Client.Extensions;
+
+//...
+
+var builder = WebApplication.CreateBuilder(args);
+
+//...
+
+builder.Services.AddScalarDbContext<MyDbContext>();
+```
+
+コンテキストは、次のようにコントローラーのコンストラクターに挿入できます。
+
+```c#
+[ApiController]
+public class OrderController: ControllerBase
+{
+    private readonly MyDbContext _myDbContext;
+
+    public OrderController(MyDbContext myDbContext)
+    {
+        _myDbContext = myDbContext;
+    }
+}
+```
+
+## LINQ を使用してプロパティをクエリする
+
+コントローラーで `MyDbContext` を受け取ったら、LINQ を使用してそのプロパティをクエリできます。例:
+
+### クエリ構文を使用する
+
+```c#
+from stat in _myDbContext.Statements
+join item in _myDbContext.Items on stat.ItemId equals item.Id
+where stat.Count > 2 && item.Name.Contains("apple")
+orderby stat.Count descending, stat.ItemId
+select new { item.Name, stat.Count };
+```
+
+### メソッド構文を使用する
+
+```c#
+_myDbContext.Statements
+            .Where(stat => stat.OrderId == "1")
+            .Skip(1)
+            .Take(2);
+```
+
+### `First` メソッドを使用して、パーティションキーで1つの `Statement` を取得します。
+
+```c#
+_myDbContext.Statements.First(stat => stat.OrderId == "1");
+```
+
+### `DefaultIfEmpty` メソッドを使用して左外部結合を実行します
+
+```c#
+from stat in _myDbContext.Statements
+join item in _myDbContext.Items on stat.ItemId equals item.Id into items
+from i in items.DefaultIfEmpty()
+select new { ItemName = i != null ? i.Name : "" }
+```
+
+以下のメソッドがサポートされています:
+
+- `Select`
+- `Where`
+- `Join`
+- `GroupJoin`
+- `First`/`FirstOrDefault`
+- `Skip`
+- `Take`
+- `OrderBy`/`OrderByDescending`
+- `ThenBy`/`ThenByDescending`
+
+次の `String` メソッドは、`Where` メソッドと `First`/`FirstOrDefault` メソッドの述語内でサポートされています。
+
+- `Contains`
+- `StartsWith`
+- `EndsWith`
+
+サポートされていない LINQ メソッドは、サポートされているメソッドの後に使用できます。例:
+
+```c#
+_myDbContext.Statements
+            .Where(stat => stat.OrderId == "1") // Will be executed remotely on the cluster.
+            .Distinct() // Will be executed locally in the app.
+            .Where(stat => stat.ItemId < 5); // Will be executed locally.
+```
+
+:::note
+
+`Take` または `First`/`FirstOrDefault` の前に `Skip` が指定されている場合、`Skip` に渡される数値が SQL クエリの `LIMIT` 数値に追加されます。`Skip` 自体では、結果の SQL クエリは変更されません。
+
+:::
+
+## `ScalarDbSet{T}` オブジェクトに対して LINQ を使用する場合の制限
+
+- すべてのメソッド呼び出しは `Select` 内でサポートされます。例:
+
+```c#
+.Select(stat => convertToSomething(stat.ItemId))
+//...
+.Select(stat => stat.ItemId * getSomeNumber())
+```
+
+- クエリオブジェクトに対する呼び出しを除くメソッド呼び出しは、`Where` および `First`/`FirstOrDefault` 内でもサポートされます。例:
+
+```c#
+.Where(stat => stat.ItemId == getItemId()) // is OK
+//...
+.Where(stat => stat.ItemId.ToString() == "1") // is not supported
+```
+
+- すべてのメソッド呼び出しは、`Join` および `GroupJoin` の結果選択ラムダ内でサポートされます。例:
+
+```c#
+.Join(_myDbContext.Items,
+      stat => stat.ItemId,
+      item => item.Id,
+      (stat, item) => new { ItemName = convertToSomething(item.Name),
+                            ItemCount = stat.Count.ToString() })
+```
+
+- `Join` および `GroupJoin` のキー選択ラムダ内では、メソッド呼び出しはサポートされていません。
+- カスタム等価比較子はサポートされていません。`Join` および `GroupJoin` メソッドの `comparer` 引数は、引数が渡された場合は無視されます。
+- `DefaultIfEmpty` メソッドを使用して左外部結合を実行する場合を除き、1つのクエリ内で複数の `from` を直接使用することはサポートされていません。後続の各 `from` は、個別のクエリと見なされます。
+
+```c#
+var firstQuery = from stat in _myDbContext.Statements
+                 where stat.Count > 2
+                 select new { stat.Count };
+
+var secondQuery = from item in _myDbContext.Items
+                  where item.Price > 6
+                  select new { item.Name };
+
+var finalQuery = from first in firstQuery
+                 from second in secondQuery
+                 select new { first.Count, second.Name };
+
+// 1. firstQuery will be executed against the cluster.
+// 2. secondQuery will be executed against the cluster for each object (row) from 1.
+// 3. finalQuery will be executed locally with the results from 1 and 2.
+var result = finalQuery.ToArray();
+```
+
+- メソッド呼び出しは、`OrderBy`/`OrderByDescending` または `ThenBy`/`ThenByDescending` 内ではサポートされていません。
+- `Where` および `First`/`FirstOrDefault` 内では、単一の文字列引数を持つ `Contains`、`StartsWith`、および `EndsWith` メソッドのオーバーロードのみがサポートされています。
+
+## `ScalarDbContext` を使用してクラスター内のデータを変更する
+
+`ScalarDbContext` から継承されたクラスのプロパティを使用して、データを変更できます。
+
+### `AddAsync` メソッドを使用して新しいオブジェクトを追加します
+
+```c#
+var statement = new Statement
+                {
+                    OrderId = "2",
+                    ItemId = 4,
+                    Count = 8
+                };
+await _myDbContext.Statements.AddAsync(statement);
+```
+
+### `UpdateAsync` メソッドを使用してオブジェクトを更新する
+
+```c#
+var statement = _myDbContext.Statements.First(stat => stat.Id == 1);
+
+// ...
+
+statement.Count = 10;
+await _myDbContext.Statements.UpdateAsync(statement);
+```
+
+### `RemoveAsync` メソッドを使用してオブジェクトを削除する
+
+```c#
+var statement = _myDbContext.Statements.First(stat => stat.Id == 1);
+
+// ...
+
+await _myDbContext.Statements.RemoveAsync(statement);
+```
+
+## トランザクションの管理
+
+LINQ クエリと `AddAsync`、`UpdateAsync`、および `RemoveAsync` メソッドは、明示的に開始されたトランザクションなしで実行できます。ただし、1つのトランザクションの一部として複数のクエリとメソッドを実行するには、トランザクションを明示的に開始してコミットする必要があります。`ScalarDbContext` は、通常のトランザクションと、ScalarDB の2フェーズコミットインターフェイスを使用したトランザクションの両方をサポートします。
+
+### 新しいトランザクションを開始する
+
+```c#
+await _myDbContext.BeginTransactionAsync();
+```
+
+### 2フェーズコミットインターフェースで新しいトランザクションを開始する
+
+```c#
+await _myDbContext.BeginTwoPhaseCommitTransactionAsync();
+```
+
+### 現在アクティブなトランザクションのIDを取得する
+
+```c#
+var transactionId = _myDbContext.CurrentTransactionId;
+```
+
+### 2フェーズコミットインターフェースを使用して既存のトランザクションに参加する
+
+```c#
+await _myDbContext.JoinTwoPhaseCommitTransactionAsync(transactionId);
+```
+
+### 既存のトランザクションを再開する
+
+```c#
+await _myDbContext.ResumeTransaction(transactionId);
+```
+
+### 2フェーズコミットインターフェースを使用して既存のトランザクションを再開する
+
+```c#
+await _myDbContext.ResumeTwoPhaseCommitTransaction(transactionId);
+```
+
+:::note
+
+`ResumeTransaction`/`ResumeTwoPhaseCommitTransaction` メソッドには非同期バージョンがありません。これは、クラスターを照会せずに `ScalarDbContext` 継承オブジェクト内のトランザクションデータを初期化するだけだからです。このため、間違った ID を使用してトランザクションを再開する可能性があります。
+
+:::
+
+### トランザクションをコミットする（通常または2フェーズコミット）
+
+```c#
+await _myDbContext.CommitTransactionAsync();
+```
+
+### トランザクションをロールバックする（通常または2フェーズコミット）
+
+```c#
+await _myDbContext.RollbackTransactionAsync();
+```
+
+### コミット用の2フェーズコミットインターフェースを使用してトランザクションを準備する
+
+```c#
+await _myDbContext.PrepareTransactionAsync();
+```
+
+### コミット前に2フェーズコミットインターフェースでトランザクションを検証する
+
+```c#
+await _myDbContext.ValidateTransactionAsync();
+```

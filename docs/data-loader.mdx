@@ -232,7 +232,7 @@ The following is a list of flags (options) that can be used with the import func
 | `--require-all-columns`        | If set, data rows cannot be imported if they are missing columns. Optional. The default value is `false`. | `scalardb-data-loader --require-all-columns`                |
 | `--file`                       | The path to the file that will be imported. Required. | `scalardb-data-loader --file <PATH_TO_FILE>`                |
 | `--log-dir`                    | Directory where log files should be stored. Optional. The default value is `logs`. | `scalardb-data-loader --log-dir <PATH_TO_DIR>`              |
-| `--enable-log-success`                | Enable logging of successfully processed records. Optional. The default value is `false`. | `scalardb-data-loader --enable-log-success`                        |
+| `--log-success`                | Enable logging of successfully processed records. Optional. The default value is `false`. | `scalardb-data-loader --log-success`                        |
 | `--log-raw-record`             | Include the original source record in the log file output. Optional. The default value is `false`. | `scalardb-data-loader --log-raw-record`                     |
 | `--max-threads`                | Maximum number of threads to use for parallel processing. The default value is the number of available processors. | `scalardb-data-loader --max-threads 10`                     |
 | `--format`                     | The format of the import file. Supported formats are `JSON`, `JSONL`, and `CSV`. Optional. The default value is `JSON`. | `scalardb-data-loader --format CSV`                         |
@@ -394,7 +394,7 @@ The failure log is designed for easy recovery:
 
 :::tip
 
-Enable `--enable-log-success` to log successfully imported records, and use `--log-raw-record` to include the original source data in the log output.
+Enable `--log-success` to log successfully imported records, and use `--log-raw-record` to include the original source data in the log output.
 
 :::
 
