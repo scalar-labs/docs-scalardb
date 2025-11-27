@@ -48,7 +48,7 @@ spark.jars.packages com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>
 spark.extraListeners com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener
 
 # 3. Catalog registration
-spark.sql.catalog.myanalytics com.scalar.db.analytics.spark.ScalarDBAnalyticsCatalog
+spark.sql.catalog.myanalytics com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog
 spark.sql.catalog.myanalytics.server.host analytics-server.example.com
 spark.sql.catalog.myanalytics.server.catalog.port 11051
 spark.sql.catalog.myanalytics.server.metering.port 11052
@@ -174,10 +174,10 @@ First, you need to start a Spark Connect server in the remote Spark cluster by r
 
 The following describes what you should change the content in the angle brackets to:
 
-- `<SCALA_VERSION>`: The major and minor version of Scala that matches your Spark installation (such as 2.12 or 2.13)
-- `<SPARK_FULL_VERSION>`: The full version of Spark you are using (such as 3.5.3)
-- `<SPARK_VERSION>`: The major and minor version of Spark you are using (such as 3.5)
-- `<SCALARDB_ANALYTICS_VERSION>`: The version of ScalarDB Analytics
+- `<SCALA_VERSION>`: The major and minor version of Scala that matches your Spark installation (`2.12` or `2.13`)
+- `<SPARK_FULL_VERSION>`: The full version of Spark you are using (for example, `3.5.7`)
+- `<SPARK_VERSION>`: The major and minor version of Spark you are using (`3.4` or `3.5`)
+- `<SCALARDB_ANALYTICS_VERSION>`: The version of ScalarDB Analytics (for example, `3.17.0`)
 
 :::note
 
@@ -188,7 +188,7 @@ The versions of the packages must match the versions of Spark and ScalarDB Analy
 You also need to include the Spark Connect client package in your application. For example, if you are using Gradle, you can add the following to your `build.gradle.kts` file:
 
 ```kotlin
-implementation("org.apache.spark:spark-connect-client-jvm_2.12:3.5.3")
+implementation("org.apache.spark:spark-connect-client-jvm_2.12:3.5.7")
 ```
 
 Then, you can write a Spark Connect client application to connect to the server and read data.
@@ -265,8 +265,8 @@ ScalarDB Analytics maps data types in its catalog to Spark data types. The follo
 | `BLOB`                       | `Binary`           |
 | `BOOLEAN`                    | `Boolean`          |
 | `DATE`                       | `Date`             |
-| `TIME`                       | `TimestampNTZ`     |
-| `TIMESTAMP`                  | `TimestampNTZ`     |
+| `TIME`                       | `Timestamp`        |
+| `TIMESTAMP`                  | `Timestamp`        |
 | `TIMESTAMPTZ`                | `Timestamp`        |
-| `DURATION`                   | `CalendarInterval` |
-| `INTERVAL`                   | `CalendarInterval` |
+| `DURATION`                   | `Long`             |
+| `INTERVAL`                   | `String`           |
