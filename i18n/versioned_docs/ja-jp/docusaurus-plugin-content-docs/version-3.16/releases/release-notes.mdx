@@ -14,6 +14,44 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 このページには、ScalarDB 3.16 のリリースノートのリストが含まれています。
 
+## v3.16.2
+
+**発売日:** 2025年11月26日
+
+### まとめ
+
+このリリースには、いくつかのバグ修正および脆弱性修正が含まれています。
+
+### Community edition
+
+#### 機能強化
+
+- Cassandra 4 および 5 の統合テストを追加しました。([#3143](https://github.com/scalar-labs/scalardb/pull/3143))
+
+#### バグの修正
+
+- データローダーの CSV エクスポートで `--no-header` オプションが無視される問題を修正しました。([#2924](https://github.com/scalar-labs/scalardb/pull/2924))
+- セキュリティ問題を修正するために Cosmos DB ライブラリをアップグレードしました。[CVE-2025-55163](https://github.com/advisories/GHSA-prj3-ccx8-p6x4 "CVE-2025-55163") ([#3105](https://github.com/scalar-labs/scalardb/pull/3105))
+- Get と Scan 操作がトランザクション読み取りと Serializable 検証で異なって準備される不整合を修正しました。これにより、一貫しない順序が発生し、Serializable 検証の失敗を引き起こす可能性がありました。([#3113](https://github.com/scalar-labs/scalardb/pull/3113))
+- `--log-success` 引数を非推奨とし、新しい置換オプション `--enable-log-success` を導入しました。([#3117](https://github.com/scalar-labs/scalardb/pull/3117))
+- maxThreads が必須として扱われる不正な検証を修正しました。([#3128](https://github.com/scalar-labs/scalardb/pull/3128))
+- Consensus Commit トランザクションマネージャーで分離レベルが SERIALIZABLE の場合に、セカンダリインデックスを使用した Get と Scan 操作を禁止しました。これらの操作は結果整合性として定義されており、SERIALIZABLE 分離が要求する厳密な一貫性を保証できないためです。([#3133](https://github.com/scalar-labs/scalardb/pull/3133))
+- 4つの CLI 引数のデフォルト値を含むように import コマンドのヘルプテキストを更新しました。([#3059](https://github.com/scalar-labs/scalardb/pull/3059))
+- インポート時のトランザクション処理中の予期しない例外を適切に処理するようにデータローダーを修正し、トランザクションが中断され、適切なコンテキストでエラーがログに記録されるようにしました。([#3183](https://github.com/scalar-labs/scalardb/pull/3183))
+- Data Loader インポートのストレージモードでの失敗ログ書き込み問題を修正しました。([#3189](https://github.com/scalar-labs/scalardb/pull/3189))
+- CSV インポートでの非TEXT列に対する "null" 値の処理を修正しました。([#3160](https://github.com/scalar-labs/scalardb/pull/3160))
+- セキュリティ問題を修正するために SQLServer ドライバーをアップグレードしました。[CVE-2025-59250](https://github.com/advisories/GHSA-m494-w24q-6f7w "CVE-2025-59250") ([#3223](https://github.com/scalar-labs/scalardb/pull/3223))
+
+### Enterprise edition
+
+#### バグの修正
+
+##### ScalarDB Cluster
+
+- 重複する列名が存在する場合に SQL API の `ResultSet` が不正な結果を返すバグを修正しました。
+- セキュリティ問題を修正するために gRPC ライブラリをアップグレードしました。[CVE-2025-55163](https://github.com/advisories/GHSA-prj3-ccx8-p6x4 "CVE-2025-55163")
+- セキュリティ問題を修正するために `grpc_health_probe` をアップグレードしました：[CVE-2025-47907](https://github.com/advisories/GHSA-j5pm-7495-qmr3 "CVE-2025-47907")、[CVE-2025-58183](https://github.com/advisories/GHSA-9gcr-gp5f-jw27 "CVE-2025-58183")、[CVE-2025-58186](https://github.com/advisories/GHSA-rjcg-56ph-3qvg "CVE-2025-58186")、[CVE-2025-58187](https://github.com/advisories/GHSA-frhw-mqj2-wxw2 "CVE-2025-58187")、および [CVE-2025-58188](https://github.com/advisories/GHSA-7wwx-xj66-r44x "CVE-2025-58188")。
+
 ## v3.16.1
 
 **発売日:** 2025年07月16日

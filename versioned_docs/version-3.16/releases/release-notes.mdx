@@ -10,6 +10,44 @@ displayed_sidebar: docsEnglish
 
 This page includes a list of release notes for ScalarDB 3.16.
 
+## v3.16.2
+
+**Release date:** November 26, 2025
+
+### Summary
+
+This release includes several bug fixes and vulnerability fixes.
+
+### Community edition
+
+#### Enhancements
+
+- Add integration tests for Cassandra 4 and 5. ([#3143](https://github.com/scalar-labs/scalardb/pull/3143))
+
+#### Bug fixes
+
+- Fixed `--no-header` option being ignored in data loader CSV exports ([#2924](https://github.com/scalar-labs/scalardb/pull/2924))
+- Upgraded the Cosmos DB library to fix a security issue. [CVE-2025-55163](https://github.com/advisories/GHSA-prj3-ccx8-p6x4 "CVE-2025-55163") ([#3105](https://github.com/scalar-labs/scalardb/pull/3105))
+- Fixed an inconsistency where Get and Scan operations were prepared differently for transaction reads and Serializable validation, which could result in inconsistent ordering and cause Serializable validation failures. ([#3113](https://github.com/scalar-labs/scalardb/pull/3113))
+- Deprecated `--log-success` argument and introduced a new replacement option `--enable-log-success` ([#3117](https://github.com/scalar-labs/scalardb/pull/3117))
+- Fixed incorrect validation causing maxThreads to be treated as required ([#3128](https://github.com/scalar-labs/scalardb/pull/3128))
+- Prohibited Get and Scan operations using secondary indexes when the isolation level is SERIALIZABLE in the Consensus Commit transaction manager, as these operations are now defined as eventually consistent and cannot guarantee the strict consistency required by SERIALIZABLE isolation. ([#3133](https://github.com/scalar-labs/scalardb/pull/3133))
+- Updated the import command help text to include default values for four CLI arguments. ([#3059](https://github.com/scalar-labs/scalardb/pull/3059))
+- Fixed data-loader to properly handle unexpected exceptions during transaction processing for importing, ensuring transactions are aborted and errors are logged with proper context. ([#3183](https://github.com/scalar-labs/scalardb/pull/3183))
+- Fixed failure log writing issue in storage mode for Data Loader imports ([#3189](https://github.com/scalar-labs/scalardb/pull/3189))
+- Fixed handling of "null" values for non-TEXT columns in CSV imports ([#3160](https://github.com/scalar-labs/scalardb/pull/3160))
+- Upgraded the SQLServer driver to fix a security issue. [CVE-2025-59250](https://github.com/advisories/GHSA-m494-w24q-6f7w "CVE-2025-59250") ([#3223](https://github.com/scalar-labs/scalardb/pull/3223))
+
+### Enterprise edition
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Fixed a bug where `ResultSet` in SQL API returned incorrect results when duplicate column names were present.
+- Upgraded the gRPC library to fix a security issue. [CVE-2025-55163](https://github.com/advisories/GHSA-prj3-ccx8-p6x4 "CVE-2025-55163")
+- Upgraded `grpc_health_probe` to fix security issues: [CVE-2025-47907](https://github.com/advisories/GHSA-j5pm-7495-qmr3 "CVE-2025-47907"), [CVE-2025-58183](https://github.com/advisories/GHSA-9gcr-gp5f-jw27 "CVE-2025-58183"), [CVE-2025-58186](https://github.com/advisories/GHSA-rjcg-56ph-3qvg "CVE-2025-58186"), [CVE-2025-58187](https://github.com/advisories/GHSA-frhw-mqj2-wxw2 "CVE-2025-58187"), and [CVE-2025-58188](https://github.com/advisories/GHSA-7wwx-xj66-r44x "CVE-2025-58188").
+
 ## v3.16.1
 
 **Release date:** July 16, 2025

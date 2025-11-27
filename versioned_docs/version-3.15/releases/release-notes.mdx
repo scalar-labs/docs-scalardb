@@ -10,6 +10,35 @@ displayed_sidebar: docsEnglish
 
 This page includes a list of release notes for ScalarDB 3.15.
 
+## v3.15.6
+
+**Release date:** November 26, 2025
+
+### Summary
+
+This release includes several bug fixes and vulnerability fixes.
+
+### Community edition
+
+#### Enhancements
+
+- Add integration tests for Cassandra 4 and 5. ([#3143](https://github.com/scalar-labs/scalardb/pull/3143))
+
+#### Bug fixes
+
+- Upgraded the Cosmos DB library to fix a security issue. [CVE-2025-55163](https://github.com/advisories/GHSA-prj3-ccx8-p6x4 "CVE-2025-55163") ([#3105](https://github.com/scalar-labs/scalardb/pull/3105))
+- Upgraded the SQLServer driver to fix a security issue. [CVE-2025-59250](https://github.com/advisories/GHSA-m494-w24q-6f7w "CVE-2025-59250") ([#3223](https://github.com/scalar-labs/scalardb/pull/3223))
+
+### Enterprise edition
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Fixed a bug where `ResultSet` in SQL API returned incorrect results when duplicate column names were present.
+- Upgraded the gRPC library to fix a security issue. [CVE-2025-55163](https://github.com/advisories/GHSA-prj3-ccx8-p6x4 "CVE-2025-55163")
+- Upgraded `grpc_health_probe` to fix security issues: [CVE-2025-47907](https://github.com/advisories/GHSA-j5pm-7495-qmr3 "CVE-2025-47907"), [CVE-2025-58183](https://github.com/advisories/GHSA-9gcr-gp5f-jw27 "CVE-2025-58183"), [CVE-2025-58186](https://github.com/advisories/GHSA-rjcg-56ph-3qvg "CVE-2025-58186"), [CVE-2025-58187](https://github.com/advisories/GHSA-frhw-mqj2-wxw2 "CVE-2025-58187"), and [CVE-2025-58188](https://github.com/advisories/GHSA-7wwx-xj66-r44x "CVE-2025-58188").
+
 ## v3.15.5
 
 **Release date:** July 16, 2025
