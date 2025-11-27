@@ -6,6 +6,122 @@ tags:
 displayed_sidebar: docsJapanese
 ---
 
+# ScalarDB 3.17 リリースノート
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このページには、ScalarDB 3.17 のリリースノートのリストが含まれています。
+
+## v3.17.0
+
+**発売日:** 2025年11月26日
+
+### まとめ
+
+このリリースには、多くの機能強化、改善、セキュリティ問題の修正、およびバグ修正が含まれています。
+
+### Community edition
+
+#### 機能強化
+
+- add column 操作において `ifNotExists` オプションのサポートを追加しました。([#2960](https://github.com/scalar-labs/scalardb/pull/2960))
+- ScalarDB での列削除のサポートを追加しました。([#2983](https://github.com/scalar-labs/scalardb/pull/2983))
+- ScalarDB での列名変更のサポートを追加しました。([#2990](https://github.com/scalar-labs/scalardb/pull/2990))
+- ScalarDB でのテーブル名変更のサポートを追加しました。([#3021](https://github.com/scalar-labs/scalardb/pull/3021))
+- ScalarDB での列タイプ変更のサポートを追加しました。([#3028](https://github.com/scalar-labs/scalardb/pull/3028))
+- PostgreSQL JDBC ドライバーを使用することで、AlloyDB バージョン 15 および 16 が基盤ストレージとしてサポートされるようになりました。([#3029](https://github.com/scalar-labs/scalardb/pull/3029))
+- MySQL Connector/J JDBC ドライバーを使用することで、TiDB バージョン 6.5、7.5、および 8.5 が基盤ストレージとしてサポートされるようになりました。([#3001](https://github.com/scalar-labs/scalardb/pull/3001))
+- Transaction API で複数の操作を実行するバッチ操作のサポートを追加しました。([#3082](https://github.com/scalar-labs/scalardb/pull/3082))
+- Azure Blob Storage に対する管理操作のサポートを追加しました。([#3104](https://github.com/scalar-labs/scalardb/pull/3104))
+- Azure Blob Storage に対するデータ操作のサポートを追加しました。([#3124](https://github.com/scalar-labs/scalardb/pull/3124))
+- Amazon S3 アダプターを追加しました。([#3141](https://github.com/scalar-labs/scalardb/pull/3141))
+- Cassandra 4 および 5 の統合テストを追加しました。([#3143](https://github.com/scalar-labs/scalardb/pull/3143))
+- Google Cloud Storage アダプターを追加しました。([#3179](https://github.com/scalar-labs/scalardb/pull/3179))
+- Storage 抽象レイヤーにバーチャルテーブルを導入しました。バーチャルテーブルは、2つのソーステーブルのプライマリキーでの論理結合を公開することで、別々のテーブルに格納された関連データを単一の論理エンティティとしてアクセスできるようにします。([#3180](https://github.com/scalar-labs/scalardb/pull/3180))
+- `StorageInfo` インターフェースに `isConsistentVirtualTableReadGuaranteed()` メソッドを追加し、ストレージがバーチャルテーブルの一貫した読み取りを保証するかどうかを示すようにしました。([#3204](https://github.com/scalar-labs/scalardb/pull/3204))
+- Consensus Commit でトランザクションメタデータの分離サポートを追加しました。この機能により、ユーザーはスキーマの変更やデータ移行なしに、既存データに対して Consensus Commit ScalarDB トランザクションを実行できるようになります。([#3207](https://github.com/scalar-labs/scalardb/pull/3207))
+
+#### 改善点
+
+- Db2 を使用する場合、Db2 から ScalarDB BLOB 列に使用されるデフォルトのデータ型が `VARBINARY(32672)` から `BLOB(2G)` に変更され、最大 2GB のデータを格納できるようになりました。これにより、BLOB 列はパーティションキー、クラスタリングキー、セカンダリインデックス、またはクロスパーティション スキャン（つまり ScanAll）操作での順序列として使用できないという新しい制限が生じます。([#3000](https://github.com/scalar-labs/scalardb/pull/3000))
+- Oracle を使用する場合、Oracle から ScalarDB BLOB 列に使用されるデフォルトのデータ型が `RAW(2000)` から `BLOB` に変更され、最大 2GB のデータを格納できるようになりました。これにより新しい制限が導入されます：BLOB 列は、パーティションキー、クラスタリングキー、セカンダリインデックス、または Get や Scan 操作の条件として使用できなくなります。([#3070](https://github.com/scalar-labs/scalardb/pull/3070))
+- JDBC トランザクションマネージャーを使用する場合、設定 `scalar.db.jdbc.isolation_level` が設定されていない場合に JDBC トランザクション分離レベルを SERIALIZABLE に設定しないようになりました。デフォルトは、ストレージによって設定されたデフォルト値になります。([#3076](https://github.com/scalar-labs/scalardb/pull/3076))
+- ScalarDB Data Loader CLI の Maven パブリッシュサポートを追加し、Maven アーティファクトとしての配布を可能にしました。([#3120](https://github.com/scalar-labs/scalardb/pull/3120))
+
+#### バグの修正
+
+- トランザクションのコミット時に、実際にはコミットされているにもかかわらず CommitException がスローされるバグを修正しました。([#2826](https://github.com/scalar-labs/scalardb/pull/2826))
+- Cassandra におけるミューテーションのエラーハンドリングを修正しました。([#2827](https://github.com/scalar-labs/scalardb/pull/2827))
+- ワンフェーズコミットでグループコミットが正しく動作しないバグを修正しました。([#2832](https://github.com/scalar-labs/scalardb/pull/2832))
+- データローダーの CSV エクスポートで `--no-header` オプションが無視される問題を修正しました。([#2924](https://github.com/scalar-labs/scalardb/pull/2924))
+- Get と Scan 操作がトランザクション読み取りと Serializable 検証で異なって準備される不整合を修正しました。これにより、一貫しない順序が発生し、Serializable 検証の失敗を引き起こす可能性がありました。([#3113](https://github.com/scalar-labs/scalardb/pull/3113))
+- ログ動作を修正するために、alloydb 依存関係から slf4j-api を除外しました。([#3119](https://github.com/scalar-labs/scalardb/pull/3119))
+- `--log-success` 引数を非推奨とし、新しい置換オプション `--enable-log-success` を導入しました。([#3117](https://github.com/scalar-labs/scalardb/pull/3117))
+- maxThreads が必須として扱われる不正な検証を修正しました。([#3128](https://github.com/scalar-labs/scalardb/pull/3128))
+- Consensus Commit トランザクションマネージャーで分離レベルが SERIALIZABLE の場合に、セカンダリインデックスを使用した Get と Scan 操作を禁止しました。これらの操作は結果整合性として定義されており、SERIALIZABLE 分離が要求する厳密な一貫性を保証できないためです。([#3133](https://github.com/scalar-labs/scalardb/pull/3133))
+- 4つの CLI 引数のデフォルト値を含むように import コマンドのヘルプテキストを更新しました。([#3059](https://github.com/scalar-labs/scalardb/pull/3059))
+- インポート時のトランザクション処理中の予期しない例外を適切に処理するようにデータローダーを修正し、トランザクションが中断され、適切なコンテキストでエラーがログに記録されるようにしました。([#3183](https://github.com/scalar-labs/scalardb/pull/3183))
+- Data Loader インポートのストレージモードでの失敗ログ書き込み問題を修正しました。([#3189](https://github.com/scalar-labs/scalardb/pull/3189))
+- CSV インポートでの非TEXT列に対する "null" 値の処理を修正しました。([#3160](https://github.com/scalar-labs/scalardb/pull/3160))
+
+### Enterprise edition
+
+#### 機能強化
+
+##### ScalarDB Cluster
+
+- ScalarDB Cluster で add column 操作における `ifNotExists` オプションのサポートを追加しました。
+- ScalarDB Cluster での列削除のサポートを追加しました。
+- ScalarDB Cluster での列名変更のサポートを追加しました。
+- ScalarDB Cluster でのテーブル名変更のサポートを追加しました。
+- ScalarDB Cluster での列タイプ変更のサポートを追加しました。
+- ScalarDB Cluster のトランザクションサービスで複数の操作を実行するバッチ操作のサポートを追加しました。
+- ScalarDB Cluster で gRPC 接続エージングを制御する設定オプションを追加しました。ユーザーは `scalar.db.cluster.node.grpc.max_connection_age_millis` と `scalar.db.cluster.node.grpc.max_connection_age_grace_millis` を設定して、gRPC 接続がリフレッシュされ、適切に閉じられるタイミングを細かく調整できるようになりました。
+- ScalarDB Cluster Data Loader CLI のサポートを、Docker イメージビルド、脆弱性スキャン、リリースアーティファクト公開を含む完全な CI/CD パイプライン統合とともに追加しました。
+- ScalarDB Cluster でロールベースアクセス制御 (RBAC) のサポートを追加しました。
+- 複数の名前付きインスタンスの埋め込みストアとモデルの設定と使用のサポートを追加しました。
+
+##### ScalarDB SQL
+
+- ScalarDB SQL で集約機能をサポートしました。
+- ScalarDB SQL の `ADD COLUMN` ステートメントで `IF NOT EXISTS` 句のサポートを追加しました。
+- ScalarDB SQL での列削除のサポートを追加しました。
+- ScalarDB SQL での列名変更のサポートを追加しました。
+- ScalarDB SQL でのテーブル名変更のサポートを追加しました。
+- ScalarDB SQL での列タイプ変更のサポートを追加しました。
+- SUM、MIN、MAX、および AVG 関数を追加しました。
+- HAVING 句をサポートしました。
+
+#### 改善点
+
+##### ScalarDB Cluster
+
+- すべての脆弱性チェックワークフローから `CR_PAT` シークレットを削除しました。
+- 埋め込みクライアントライブラリの最小 JDK を 17 に引き上げました。
+- 最新の Lang4j バージョン 1.8.0 に更新しました。
+
+##### ScalarDB SQL
+
+- `WITH GRANT OPTION` を使用する代替手段として、`GRANT` ステートメントの権限リストで直接 `GRANT OPTION` を指定するサポートを追加しました。
+
+#### バグの修正
+
+##### ScalarDB Cluster
+
+- update または upsert 操作で data tag が指定されていない場合でも更新されてしまうバグを修正しました。
+- リモートレプリケーション機能のメトリクスが不足していた問題を修正しました。
+- `replication-cli` の Jar ファイルが不足していた問題を修正しました。
+- ABAC が有効な場合に、ABAC ポリシーが設定されていないテーブルで put 操作を実行すると `UnsupportedOperationException` がスローされるバグを修正しました。
+- セキュリティ問題を修正するために `grpc_health_probe` をアップグレードしました。[CVE-2025-22874](https://github.com/advisories/GHSA-6f52-wpx2-hvf2 "CVE-2025-22874")
+- ワンフェーズコミット最適化が有効な場合にレプリケーション機能が開始されないようにバリデーションを追加しました。
+- 重複する列名が存在する場合に SQL API の `ResultSet` が不正な結果を返すバグを修正しました。
+- セキュリティ問題を修正するために `grpc_health_probe` をアップグレードしました：[CVE-2025-47907](https://github.com/advisories/GHSA-j5pm-7495-qmr3 "CVE-2025-47907")、[CVE-2025-58183](https://github.com/advisories/GHSA-9gcr-gp5f-jw27 "CVE-2025-58183")、[CVE-2025-58186](https://github.com/advisories/GHSA-rjcg-56ph-3qvg "CVE-2025-58186")、[CVE-2025-58187](https://github.com/advisories/GHSA-frhw-mqj2-wxw2 "CVE-2025-58187")、および [CVE-2025-58188](https://github.com/advisories/GHSA-7wwx-xj66-r44x "CVE-2025-58188")。
+
+
+---
+
 # ScalarDB 3.16 リリースノート
 
 import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
