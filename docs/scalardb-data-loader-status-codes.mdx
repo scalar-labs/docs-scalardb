@@ -1,0 +1,538 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsEnglish
+---
+
+# ScalarDB Data Loader Error Codes
+
+This page provides a list of error codes in ScalarDB Data Loader.
+
+## Error code classes and descriptions
+
+| Class                  | Description                            |
+|:-----------------------|:---------------------------------------|
+| `DB-DATA-LOADER-1xxxx` | Errors for the user error category     |
+| `DB-DATA-LOADER-3xxxx` | Errors for the internal error category |
+
+## `DB-DATA-LOADER-1xxxx` status codes
+
+The following are status codes and messages for the user error category.
+
+### `DB-DATA-LOADER-10000`
+
+**Message**
+
+```markdown
+Data chunk queue size must be greater than 0
+```
+
+### `DB-DATA-LOADER-10001`
+
+**Message**
+
+```markdown
+The directory '%s' does not have write permissions. Please ensure that the current user has write access to the directory
+```
+
+### `DB-DATA-LOADER-10002`
+
+**Message**
+
+```markdown
+Failed to create the directory '%s'. Please check if you have sufficient permissions and if there are any file system restrictions. Details: %s
+```
+
+### `DB-DATA-LOADER-10003`
+
+**Message**
+
+```markdown
+Directory path cannot be null or empty
+```
+
+### `DB-DATA-LOADER-10004`
+
+**Message**
+
+```markdown
+No file extension was found in the provided file name %s
+```
+
+### `DB-DATA-LOADER-10005`
+
+**Message**
+
+```markdown
+Invalid file extension: %s. Allowed extensions are: %s
+```
+
+### `DB-DATA-LOADER-10006`
+
+**Message**
+
+```markdown
+Invalid key: Column %s does not exist in the table %s in namespace %s
+```
+
+### `DB-DATA-LOADER-10007`
+
+**Message**
+
+```markdown
+Invalid base64 encoding for blob value '%s' for column %s in table %s in namespace %s
+```
+
+### `DB-DATA-LOADER-10008`
+
+**Message**
+
+```markdown
+Invalid number '%s' specified for column %s in table %s in namespace %s
+```
+
+### `DB-DATA-LOADER-10009`
+
+**Message**
+
+```markdown
+Method null argument not allowed
+```
+
+### `DB-DATA-LOADER-10010`
+
+**Message**
+
+```markdown
+The provided clustering key %s was not found
+```
+
+### `DB-DATA-LOADER-10011`
+
+**Message**
+
+```markdown
+The column '%s' was not found
+```
+
+### `DB-DATA-LOADER-10012`
+
+**Message**
+
+```markdown
+The provided partition key is incomplete. Required key: %s
+```
+
+### `DB-DATA-LOADER-10013`
+
+**Message**
+
+```markdown
+The provided clustering-key order does not match the table schema. Required order: %s
+```
+
+### `DB-DATA-LOADER-10014`
+
+**Message**
+
+```markdown
+The provided partition-key order does not match the table schema. Required order: %s
+```
+
+### `DB-DATA-LOADER-10015`
+
+**Message**
+
+```markdown
+Missing namespace or table: %s, %s
+```
+
+### `DB-DATA-LOADER-10016`
+
+**Message**
+
+```markdown
+Failed to retrieve table metadata. Details: %s
+```
+
+### `DB-DATA-LOADER-10017`
+
+**Message**
+
+```markdown
+Duplicate data mappings found for table '%s' in the control file
+```
+
+### `DB-DATA-LOADER-10018`
+
+**Message**
+
+```markdown
+No mapping found for column '%s' in table '%s' in the control file. Control file validation set at 'FULL'. All columns need to be mapped
+```
+
+### `DB-DATA-LOADER-10019`
+
+**Message**
+
+```markdown
+The control file is missing data mappings
+```
+
+### `DB-DATA-LOADER-10020`
+
+**Message**
+
+```markdown
+The target column '%s' for source field '%s' could not be found in table '%s'
+```
+
+### `DB-DATA-LOADER-10021`
+
+**Message**
+
+```markdown
+The required partition key '%s' is missing in the control file mapping for table '%s'
+```
+
+### `DB-DATA-LOADER-10022`
+
+**Message**
+
+```markdown
+The required clustering key '%s' is missing in the control file mapping for table '%s'
+```
+
+### `DB-DATA-LOADER-10023`
+
+**Message**
+
+```markdown
+Duplicated data mappings found for column '%s' in table '%s'
+```
+
+### `DB-DATA-LOADER-10024`
+
+**Message**
+
+```markdown
+Missing required field or column mapping for clustering key %s
+```
+
+### `DB-DATA-LOADER-10025`
+
+**Message**
+
+```markdown
+Missing required field or column mapping for partition key %s
+```
+
+### `DB-DATA-LOADER-10026`
+
+**Message**
+
+```markdown
+Missing field or column mapping for %s
+```
+
+### `DB-DATA-LOADER-10027`
+
+**Message**
+
+```markdown
+Something went wrong while converting the ScalarDB values to strings. The table metadata and Value datatype probably do not match. Details: %s
+```
+
+### `DB-DATA-LOADER-10028`
+
+**Message**
+
+```markdown
+The provided file format is not supported : %s
+```
+
+### `DB-DATA-LOADER-10029`
+
+**Message**
+
+```markdown
+Could not find the partition key
+```
+
+### `DB-DATA-LOADER-10030`
+
+**Message**
+
+```markdown
+The source record needs to contain all fields if the UPSERT turns into an INSERT
+```
+
+### `DB-DATA-LOADER-10031`
+
+**Message**
+
+```markdown
+Record already exists
+```
+
+### `DB-DATA-LOADER-10032`
+
+**Message**
+
+```markdown
+Record was not found
+```
+
+### `DB-DATA-LOADER-10033`
+
+**Message**
+
+```markdown
+Could not find the clustering key
+```
+
+### `DB-DATA-LOADER-10034`
+
+**Message**
+
+```markdown
+No table metadata found
+```
+
+### `DB-DATA-LOADER-10035`
+
+**Message**
+
+```markdown
+The data mapping source field '%s' for table '%s' is missing in the JSON data record
+```
+
+### `DB-DATA-LOADER-10036`
+
+**Message**
+
+```markdown
+The CSV row: %s does not match header: %s
+```
+
+### `DB-DATA-LOADER-10037`
+
+**Message**
+
+```markdown
+Expected JSON file content to be an array
+```
+
+### `DB-DATA-LOADER-10038`
+
+**Message**
+
+```markdown
+Missing option: either the '--namespace' and '--table' options or the '--control-file' option must be specified
+```
+
+### `DB-DATA-LOADER-10039`
+
+**Message**
+
+```markdown
+The file '%s' specified by the argument '%s' does not exist
+```
+
+### `DB-DATA-LOADER-10040`
+
+**Message**
+
+```markdown
+Cannot write to the log directory: %s
+```
+
+### `DB-DATA-LOADER-10041`
+
+**Message**
+
+```markdown
+Failed to create the log directory: %s
+```
+
+### `DB-DATA-LOADER-10042`
+
+**Message**
+
+```markdown
+Failed to parse the control file: %s
+```
+
+### `DB-DATA-LOADER-10043`
+
+**Message**
+
+```markdown
+No permission to create or write files in the directory: %s
+```
+
+### `DB-DATA-LOADER-10044`
+
+**Message**
+
+```markdown
+Failed to create the directory: %s
+```
+
+### `DB-DATA-LOADER-10045`
+
+**Message**
+
+```markdown
+Path exists but is not a directory: %s
+```
+
+### `DB-DATA-LOADER-10046`
+
+**Message**
+
+```markdown
+File path must not be blank
+```
+
+### `DB-DATA-LOADER-10047`
+
+**Message**
+
+```markdown
+File not found: %s
+```
+
+### `DB-DATA-LOADER-10048`
+
+**Message**
+
+```markdown
+Invalid date time value '%s' specified for column %s in table %s in namespace %s
+```
+
+### `DB-DATA-LOADER-10049`
+
+**Message**
+
+```markdown
+Key value cannot be null or empty
+```
+
+### `DB-DATA-LOADER-10050`
+
+**Message**
+
+```markdown
+Invalid key-value format: %s
+```
+
+### `DB-DATA-LOADER-10051`
+
+**Message**
+
+```markdown
+Value must not be null
+```
+
+### `DB-DATA-LOADER-10052`
+
+**Message**
+
+```markdown
+Delimiter must not be null
+```
+
+### `DB-DATA-LOADER-10053`
+
+**Message**
+
+```markdown
+Config file path must not be blank
+```
+
+### `DB-DATA-LOADER-10054`
+
+**Message**
+
+```markdown
+Data chunk size must be greater than 0
+```
+
+### `DB-DATA-LOADER-10055`
+
+**Message**
+
+```markdown
+Transaction size must be greater than 0
+```
+
+### `DB-DATA-LOADER-10056`
+
+**Message**
+
+```markdown
+Number of max threads must be greater than 0
+```
+
+## `DB-DATA-LOADER-3xxxx` status codes
+
+The following are status codes and messages for the internal error category.
+
+### `DB-DATA-LOADER-30000`
+
+**Message**
+
+```markdown
+A problem occurred while trying to save the data. Details: %s
+```
+
+### `DB-DATA-LOADER-30001`
+
+**Message**
+
+```markdown
+A problem occurred while scanning. Are you sure you are running in the correct transaction mode? Details: %s
+```
+
+### `DB-DATA-LOADER-30002`
+
+**Message**
+
+```markdown
+Failed to read CSV file. Details: %s
+```
+
+### `DB-DATA-LOADER-30003`
+
+**Message**
+
+```markdown
+Failed to CSV read header line. Details: %s
+```
+
+### `DB-DATA-LOADER-30004`
+
+**Message**
+
+```markdown
+Data chunk processing was interrupted. Details: %s
+```
+
+### `DB-DATA-LOADER-30005`
+
+**Message**
+
+```markdown
+Failed to read JSON file. Details: %s
+```
+
+### `DB-DATA-LOADER-30006`
+
+**Message**
+
+```markdown
+Failed to read JSON Lines file. Details: %s
+```

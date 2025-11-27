@@ -1,0 +1,272 @@
+---
+tags:
+  - Enterprise Option
+displayed_sidebar: docsEnglish
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Run Analytical Queries Through ScalarDB Analytics
+
+This guide explains how to develop ScalarDB Analytics applications. For details on the architecture and design, see [ScalarDB Analytics Design](./design.mdx)
+
+ScalarDB Analytics currently uses Spark as an execution engine and provides a Spark custom catalog plugin to provide a unified view of ScalarDB-managed and non-ScalarDB-managed data sources as Spark tables. This allows you to execute arbitrary Spark SQL queries seamlessly.
+
+## Preparation
+
+This section describes the prerequisites, setting up ScalarDB Analytics in the Spark configuration, and adding the ScalarDB Analytics dependency.
+
+### Prerequisites
+
+- **ScalarDB Analytics server:** A running instance that manages catalog information and connects to your data sources. The server must be set up with at least one data source registered. For registering data sources, see [Create a ScalarDB Analytics Catalog](./create-scalardb-analytics-catalog.mdx).
+- **Apache Spark:** A compatible version of Apache Spark. For supported versions, see [Spark](../requirements.mdx#spark). If you don't have Spark installed yet, please download the Spark distribution from [Apache's website](https://spark.apache.org/downloads.html).
+
+### Set up ScalarDB Analytics in the Spark configuration
+
+ScalarDB Analytics requires specific Spark configurations to integrate with ScalarDB Analytics server.
+
+#### Required Spark configurations
+
+To use ScalarDB Analytics with Spark, you need to configure:
+
+1. **ScalarDB Analytics package**: Add the JAR dependency that matches your Spark and Scala versions
+2. **Metering listener**: Register the listener to track resource usage for billing
+3. **Catalog registration**: Register a Spark catalog that connects to your ScalarDB Analytics server
+
+When configuring Spark, you must specify a catalog name that matches the catalog created on your ScalarDB Analytics server. This ensures Spark can correctly access the data sources managed by that catalog.
+
+#### Example configuration
+
+The following is a complete example configuration:
+
+```conf
+# 1. ScalarDB Analytics package
+spark.jars.packages com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>
+
+# 2. Metering listener
+spark.extraListeners com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener
+
+# 3. Catalog registration
+spark.sql.catalog.myanalytics com.scalar.db.analytics.spark.ScalarDBAnalyticsCatalog
+spark.sql.catalog.myanalytics.server.host analytics-server.example.com
+spark.sql.catalog.myanalytics.server.catalog.port 11051
+spark.sql.catalog.myanalytics.server.metering.port 11052
+```
+
+The following describes what you should change the content in the angle brackets to:
+
+- `<SPARK_VERSION>`: Your Spark version (for example, `3.5` or `3.4`)
+- `<SCALA_VERSION>`: Your Scala version (for example, `2.13` or `2.12`)
+- `<SCALARDB_ANALYTICS_VERSION>`: The ScalarDB Analytics version (for example, `3.17.0`)
+
+In this example:
+
+- The catalog name `myanalytics` must match a catalog that exists on your ScalarDB Analytics server.
+- The ScalarDB Analytics server is running at `analytics-server.example.com`.
+- Tables will be accessed using the format: `myanalytics.<data_source>.<namespace>.<table>`.
+
+:::important
+
+The catalog name in your Spark configuration must match the name of a catalog created on the ScalarDB Analytics server by using the CLI. For example, if you created a catalog named `production` on the server, you must use `production` as the catalog name in your Spark configuration properties (for example, `spark.sql.catalog.production`, `spark.sql.catalog.production.server.host`, etc.).
+
+:::
+
+:::note
+
+Data source configurations are managed by ScalarDB Analytics server. For information on configuring data sources in ScalarDB Analytics server, see [Create a ScalarDB Analytics Catalog](./create-scalardb-analytics-catalog.mdx).
+
+:::
+
+### Build configuration for Spark applications
+
+When developing Spark applications that use ScalarDB Analytics, you can add the dependency to your build configuration. For example, with Gradle:
+
+```kotlin
+dependencies {
+    implementation("com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>")
+}
+```
+
+:::note
+
+If you bundle your application in a fat JAR by using plugins like Gradle Shadow or Maven Shade, exclude ScalarDB Analytics from the fat JAR by using configurations such as `provided` or `shadow`.
+
+:::
+
+## Develop a Spark application
+
+In this section, you will learn how to develop a Spark application that uses ScalarDB Analytics in Java.
+
+There are three ways to develop Spark applications with ScalarDB Analytics:
+
+1. **Spark driver application**: A traditional Spark application that runs within the cluster
+2. **Spark Connect application**: A remote application that uses the Spark Connect protocol
+3. **JDBC application**: A remote application that uses the JDBC interface
+
+:::note
+
+Depending on your environment, you may not be able to use all the methods mentioned above. For details about supported features and deployment options, refer to [Supported managed Spark services and their application types](./deployment.mdx#supported-managed-spark-services-and-their-application-types).
+
+:::
+
+With all these methods, you can refer to tables in ScalarDB Analytics by using the same table identifier format. For details about how ScalarDB Analytics maps catalog information from data sources, see [Catalog structure mappings by data source](./reference-data-source.mdx#catalog-structure-mappings-by-data-source).
+
+<Tabs groupId="spark-application-type" queryString>
+  <TabItem value="spark-driver" label="Spark driver application">
+
+You can use a commonly used `SparkSession` class for ScalarDB Analytics. Additionally, you can use any type of cluster deployment that Spark supports, such as YARN, Kubernetes, standalone, or local mode.
+
+To read data from tables in ScalarDB Analytics, you can use the `spark.sql` or `spark.read.table` function in the same way as when reading a normal Spark table.
+
+First, you need to set up your Java project. For example, if you are using Gradle, you can add the following to your `build.gradle.kts` file:
+
+```kotlin
+dependencies {
+    implementation("com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>")
+}
+```
+
+Below is an example of a Spark driver application:
+
+```java
+import org.apache.spark.sql.SparkSession;
+
+public class MyApp {
+    public static void main(String[] args) {
+        // Create a SparkSession
+        try (SparkSession spark = SparkSession.builder().getOrCreate()) {
+            // Read data from a table in ScalarDB Analytics
+            spark.sql("SELECT * FROM my_catalog.my_data_source.my_namespace.my_table").show();
+        }
+    }
+}
+```
+
+Then, you can build and run your application by using the `spark-submit` command.
+
+:::note
+
+You may need to build a fat JAR file for your application, as is usual for normal Spark applications.
+
+:::
+
+```console
+spark-submit --class MyApp --master local[*] my-spark-application-all.jar
+```
+
+:::tip
+
+You can also use other CLI tools that Spark provides, such as `spark-sql` and `spark-shell`, to interact with ScalarDB Analytics tables.
+
+:::
+
+  </TabItem>
+  <TabItem value="spark-connect" label="Spark Connect application">
+
+You can use [Spark Connect](https://spark.apache.org/spark-connect/) to interact with ScalarDB Analytics. By using Spark Connect, you can access a remote Spark cluster and read data in the same way as a Spark driver application. The following briefly describes how to use Spark Connect.
+
+First, you need to start a Spark Connect server in the remote Spark cluster by running the following command:
+
+```console
+./sbin/start-connect-server.sh --packages org.apache.spark:spark-connect_<SCALA_VERSION>:<SPARK_FULL_VERSION>,com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>
+```
+
+The following describes what you should change the content in the angle brackets to:
+
+- `<SCALA_VERSION>`: The major and minor version of Scala that matches your Spark installation (such as 2.12 or 2.13)
+- `<SPARK_FULL_VERSION>`: The full version of Spark you are using (such as 3.5.3)
+- `<SPARK_VERSION>`: The major and minor version of Spark you are using (such as 3.5)
+- `<SCALARDB_ANALYTICS_VERSION>`: The version of ScalarDB Analytics
+
+:::note
+
+The versions of the packages must match the versions of Spark and ScalarDB Analytics that you are using.
+
+:::
+
+You also need to include the Spark Connect client package in your application. For example, if you are using Gradle, you can add the following to your `build.gradle.kts` file:
+
+```kotlin
+implementation("org.apache.spark:spark-connect-client-jvm_2.12:3.5.3")
+```
+
+Then, you can write a Spark Connect client application to connect to the server and read data.
+
+```java
+import org.apache.spark.sql.SparkSession;
+
+public class MyApp {
+    public static void main(String[] args) {
+        try (SparkSession spark = SparkSession.builder()
+            .remote("sc://<CONNECT_SERVER_URL>:<CONNECT_SERVER_PORT>")
+            .getOrCreate()) {
+
+            // Read data from a table in ScalarDB Analytics
+            spark.sql("SELECT * FROM my_catalog.my_data_source.my_namespace.my_table").show();
+        }
+    }
+}
+```
+
+You can run your Spark Connect client application as a normal Java application by running the following command:
+
+```console
+java -jar my-spark-connect-client.jar
+```
+
+For details about how you can use Spark Connect, refer to the [Spark Connect documentation](https://spark.apache.org/docs/latest/spark-connect-overview.html).
+
+  </TabItem>
+  <TabItem value="jdbc" label="JDBC application">
+
+Unfortunately, Spark Thrift JDBC server does not support the Spark features that are necessary for ScalarDB Analytics, so you cannot use JDBC to read data from ScalarDB Analytics in your Apache Spark environment. JDBC application is referred to here because some managed Spark services provide different ways to interact with a Spark cluster via the JDBC interface. For more details, refer to [Supported application types](./deployment.mdx#supported-managed-spark-services-and-their-application-types).
+
+  </TabItem>
+</Tabs>
+
+## Catalog information mapping
+
+ScalarDB Analytics manages its own catalog, containing data sources, namespaces, tables, and columns. That information is automatically mapped to the Spark catalog. In this section, you will learn how ScalarDB Analytics maps its catalog information to the Spark catalog.
+
+For details about how information in the raw data sources is mapped to the ScalarDB Analytics catalog, see [Catalog information mappings by data source](./design.mdx#catalog-information-mappings-by-data-source).
+
+### Catalog structure mapping
+
+ScalarDB Analytics maps catalog structure from data sources to Spark catalogs. Tables from data sources in the ScalarDB Analytics catalog are mapped to Spark tables by using the following format:
+
+```console
+<CATALOG_NAME>.<DATA_SOURCE_NAME>.<NAMESPACE_NAMES>.<TABLE_NAME>
+```
+
+The following describes what you should change the content in the angle brackets to:
+
+- `<CATALOG_NAME>`: The name of the catalog.
+- `<DATA_SOURCE_NAME>`: The name of the data source.
+- `<NAMESPACE_NAMES>`: The names of the namespaces. If the namespace names are multi-level, they are concatenated with a dot (`.`) as the separator.
+- `<TABLE_NAME>`: The name of the table.
+
+For example, if you have a ScalarDB catalog named `my_catalog` that contains a data source named `my_data_source` and a schema named `my_schema`, you can refer to the table named `my_table` in that schema as `my_catalog.my_data_source.my_schema.my_table`.
+
+### Data-type mapping
+
+ScalarDB Analytics maps data types in its catalog to Spark data types. The following table shows how the data types are mapped:
+
+| ScalarDB Analytics Data Type | Spark Data Type    |
+| :--------------------------- | :----------------- |
+| `BYTE`                       | `Byte`             |
+| `SMALLINT`                   | `Short`            |
+| `INT`                        | `Integer`          |
+| `BIGINT`                     | `Long`             |
+| `FLOAT`                      | `Float`            |
+| `DOUBLE`                     | `Double`           |
+| `DECIMAL`                    | `Decimal`          |
+| `TEXT`                       | `String`           |
+| `BLOB`                       | `Binary`           |
+| `BOOLEAN`                    | `Boolean`          |
+| `DATE`                       | `Date`             |
+| `TIME`                       | `TimestampNTZ`     |
+| `TIMESTAMP`                  | `TimestampNTZ`     |
+| `TIMESTAMPTZ`                | `Timestamp`        |
+| `DURATION`                   | `CalendarInterval` |
+| `INTERVAL`                   | `CalendarInterval` |
