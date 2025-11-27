@@ -1,0 +1,44 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ビルドに ScalarDB を追加する
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+ScalarDB ライブラリは、[Maven Central Repository](https://mvnrepository.com/artifact/com.scalar-labs/scalardb) で入手できます。Gradle または Maven を使用して、ライブラリをビルド依存関係としてアプリケーションに追加できます。
+
+## ビルドツールに基づいてアプリケーションを設定する
+
+ビルドツールを選択し、手順に従って ScalarDB のビルド依存関係をアプリケーションに追加します。
+
+<Tabs groupId="build_tools" queryString>
+  <TabItem value="Gradle" label="Gradle" default>
+    Gradle を使用して ScalarDB のビルド依存関係を追加するには、アプリケーションの `build.gradle` に次のコードを追加し、`<VERSION>` を使用する ScalarDB のバージョンに置き換えます。
+
+    ```gradle
+    dependencies {
+      implementation 'com.scalar-labs:scalardb:<VERSION>'
+    }
+    ```
+  </TabItem>
+  <TabItem value="Maven" label="Maven">
+    Maven を使用して ScalarDB のビルド依存関係を追加するには、アプリケーションの `pom.xml` に次のコードを追加し、`<VERSION>` を使用する ScalarDB のバージョンに置き換えます。
+
+    ```xml
+    <dependency>
+      <groupId>com.scalar-labs</groupId>
+      <artifactId>scalardb</artifactId>
+      <version><VERSION></version>
+    </dependency>
+    ```
+  </TabItem>
+</Tabs>
