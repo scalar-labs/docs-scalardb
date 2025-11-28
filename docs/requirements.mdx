@@ -508,7 +508,9 @@ ScalarDB Analytics uses [Apache Spark](https://spark.apache.org/) for the query 
 
 ### Languages and runtimes
 
-ScalarDB Analytics provides a Java library for running federated queries on Spark. It also provides a tool called ScalarDB Analytics CLI, which runs on the Java Virtual Machine (JVM).
+ScalarDB Analytics provides a library for running federated queries on Spark. It also provides a tool called ScalarDB Analytics CLI, which runs on the Java Virtual Machine (JVM).
+
+The library is available on the Maven Central Repository. You need to specify the library when setting up Spark. For more details, see [Set up ScalarDB Analytics in the Spark configuration](scalardb-analytics/run-analytical-queries.mdx#set-up-scalardb-analytics-in-the-spark-configuration).
 
 :::note
 
@@ -518,18 +520,15 @@ Since Spark and Scala may be incompatible among different minor versions, the li
 
 #### Java
 
-The library is available on the Maven Central Repository. You need to specify the library when setting up Spark. For more details, see [Set up ScalarDB Analytics in the Spark configuration](scalardb-analytics/run-analytical-queries.mdx#set-up-scalardb-analytics-in-the-spark-configuration).
+For using the library on Spark, the following JREs are verified and supported:
 
-:::note
-
-The ScalarDB Analytics library is built with JDK 11 to be able to be integrated with various Spark environments.
-
-:::
+- **[Oracle JDK](https://www.oracle.com/java/):** 11, 17 or 21 (LTS versions)
+- **[OpenJDK](https://openjdk.org/) ([Eclipse Temurin](https://adoptium.net/temurin/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/)):** 11, 17 or 21 (LTS versions)
 
 For running ScalarDB Analytics CLI, the following JREs are verified and supported:
 
-- **[Oracle JDK](https://www.oracle.com/java/):** 21 
-- **[OpenJDK](https://openjdk.org/) ([Eclipse Temurin](https://adoptium.net/temurin/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/)):** 21
+- **[Oracle JDK](https://www.oracle.com/java/):** 8, 11, 17 or 21 (LTS versions)
+- **[OpenJDK](https://openjdk.org/) ([Eclipse Temurin](https://adoptium.net/temurin/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/)):** 8, 11, 17 or 21 (LTS versions)
 
 ### Databases
 
@@ -555,42 +554,42 @@ ScalarDB Analytics can run analytical queries on the following relational databa
 <Tabs groupId="RDBs" queryString>
 <TabItem value="Oracle_Database" label="Oracle Database" default>
 
-|           Version           | Oracle Database 23ai |
-| :-------------------------- | :------------------- |
-| **ScalarDB Analytics 3.17** | ✅                    |
-| **ScalarDB Analytics 3.16** | ✅                    |
-| **ScalarDB Analytics 3.15** | ✅                    |
-| **ScalarDB Analytics 3.14** | ✅                    |
+|      Version                | Oracle Database 23ai | Oracle Database 21c | Oracle Database 19c |
+| :-------------------------- | :------------------- | :------------------ | :------------------ |
+| **ScalarDB Analytics 3.17** | ✅                   | ✅                  | ✅                  |
+| **ScalarDB Analytics 3.16** | ✅                   | ❌                  | ❌                  |
+| **ScalarDB Analytics 3.15** | ✅                   | ❌                  | ❌                  |
+| **ScalarDB Analytics 3.14** | ✅                   | ❌                  | ❌                  |
 
 </TabItem>
 <TabItem value="MySQL" label="MySQL">
 
-|           Version           | MySQL 8.0 |
-| :-------------------------- | :-------- |
-| **ScalarDB Analytics 3.17** | ✅         |
-| **ScalarDB Analytics 3.16** | ✅         |
-| **ScalarDB Analytics 3.15** | ✅         |
-| **ScalarDB Analytics 3.14** | ✅         |
+|           Version           | MySQL 8.4 | MySQL 8.0 |
+| :-------------------------- | :-------- | :-------- |
+| **ScalarDB Analytics 3.17** | ✅        | ✅        |
+| **ScalarDB Analytics 3.16** | ❌        | ✅        |
+| **ScalarDB Analytics 3.15** | ❌        | ✅        |
+| **ScalarDB Analytics 3.14** | ❌        | ✅        |
 
 </TabItem>
 <TabItem value="PostgreSQL" label="PostgreSQL">
 
-|           Version           | PostgreSQL 16 |
-| :-------------------------- | :------------ |
-| **ScalarDB Analytics 3.17** | ✅             |
-| **ScalarDB Analytics 3.16** | ✅             |
-| **ScalarDB Analytics 3.15** | ✅             |
-| **ScalarDB Analytics 3.14** | ✅             |
+|           Version           | PostgreSQL 18 | PostgreSQL 17 | PostgreSQL 16 |
+| :-------------------------- | :------------ | :------------ | :------------ |
+| **ScalarDB Analytics 3.17** | ✅            | ✅            | ✅            |
+| **ScalarDB Analytics 3.16** | ❌            | ❌            | ✅            |
+| **ScalarDB Analytics 3.15** | ❌            | ❌            | ✅            |
+| **ScalarDB Analytics 3.14** | ❌            | ❌            | ✅            |
 
 </TabItem>
 <TabItem value="SQL_Server" label="SQL Server">
 
-|           Version           | SQL Server 2019 |
-| :-------------------------- | :-------------- |
-| **ScalarDB Analytics 3.17** | ✅               |
-| **ScalarDB Analytics 3.16** | ✅               |
-| **ScalarDB Analytics 3.15** | ✅               |
-| **ScalarDB Analytics 3.14** | ✅               |
+|           Version           | SQL Server 2022 | SQL Server 2019 | SQL Server 2017 |
+| :-------------------------- | :-------------- | :-------------- | :-------------- |
+| **ScalarDB Analytics 3.17** | ✅              | ✅              | ✅              |
+| **ScalarDB Analytics 3.16** | ❌              | ✅              | ❌              |
+| **ScalarDB Analytics 3.15** | ❌              | ✅              | ❌              |
+| **ScalarDB Analytics 3.14** | ❌              | ✅              | ❌              |
 
 </TabItem>
 </Tabs>
@@ -626,6 +625,12 @@ ScalarDB Analytics can run analytical queries on the following analytical platfo
 | **ScalarDB Analytics 3.15** | ❌         |
 | **ScalarDB Analytics 3.14** | ❌         |
 
+:::note
+
+ScalarDB Analytics supports running queries on Databricks by using both SQL warehouses and compute. For compute, all default compute policies are supported.
+
+:::
+
 </TabItem>
 <TabItem value="snowflake" label="Snowflake">
 
@@ -639,6 +644,10 @@ ScalarDB Analytics can run analytical queries on the following analytical platfo
 </TabItem>
 </Tabs>
 
+#### ScalarDB Analytics server database
+
+The ScalarDB Analytics server manages catalog information in its database using ScalarDB Core. You can use any database supported by ScalarDB Core for this purpose. For the supported databases and their versions, see [Databases](#databases).
+
 ### Database permission requirements
 
 ScalarDB Analytics requires read permissions to perform its operations on the underlying databases.
@@ -647,7 +656,7 @@ For databases managed under ScalarDB Core and Cluster, the databases are already
 
 For databases **not** managed under ScalarDB Core and Cluster, make sure you register your data sources with users who have read permission on the data sources. For instructions on registering your data sources, see [Create your catalog](scalardb-analytics/create-scalardb-analytics-catalog.mdx#create-your-catalog).
 
-The ScalarDB Analytics server also requires permissions to manage catalog information in its database. Create a user with permission according to [Database permission requirements](#database-permission-requirements) and set the user to the ScalarDB Analytics server configuration.
+Since ScalarDB Analytics server uses ScalarDB Core to manage catalog information, you need to configure a database user for ScalarDB Analytics server according to the [Database permission requirements](#database-permission-requirements) documentation for ScalarDB Core.
 
 ### Required ports
 
