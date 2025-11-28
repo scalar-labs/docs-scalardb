@@ -98,7 +98,7 @@ Register the ScalarDB-managed databases:
 
 ```console
 docker compose run --rm scalardb-analytics-cli data-source register \
-  --data-source-json /config/data-sources/scalardb.json
+  --catalog=sample_catalog --data-source=scalardb --provider-file=/config/data-sources/scalardb.json
 ```
 
 This registers tables from both Cassandra and MySQL, which are managed by ScalarDB.
@@ -109,7 +109,7 @@ Register the PostgreSQL database:
 
 ```console
 docker compose run --rm scalardb-analytics-cli data-source register \
-  --data-source-json /config/data-sources/postgres.json
+  --catalog=sample_catalog --data-source=postgres --provider-file=/config/data-sources/postgres.json
 ```
 
 ## Step 4: Launch the Spark SQL console
