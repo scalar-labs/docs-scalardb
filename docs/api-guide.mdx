@@ -101,6 +101,9 @@ Select your database to see the options available:
     | compaction-strategy  | Cassandra compaction strategy, Must be `LCS`, `STCS` or `TWCS`.                        | `STCS`           |
     | replication-factor   | Cassandra replication factor.                                                          | 1                |
   </TabItem>
+  <TabItem value="Object_Storage" label="Object Storage">
+    No options are available for Object Storage.
+  </TabItem>
 </Tabs>
 
 ### Create a table
@@ -158,6 +161,12 @@ admin.createIndex("ns", "tbl", "c5", ifNotExists);
 Map<String, String> options = ...;
 admin.createIndex("ns", "tbl", "c5", options);
 ```
+
+:::note
+
+You cannot create a secondary index on Object Storage.
+
+:::
 
 ### Add a new column to a table
 
@@ -1254,9 +1263,9 @@ MutationCondition updateIfExistsCondition = ConditionBuilder.updateIfExists();
 
 ##### Mutate operation
 
-Mutate is an operation to execute multiple operations for `Put`, `Insert`, `Upsert`, `Update`, and `Delete`.
+Mutate is an operation to execute multiple mutations for `Put`, `Insert`, `Upsert`, `Update`, and `Delete`.
 
-You need to create mutation objects first, and then you can execute the objects by using the `transaction.mutate()` method as follows:
+You need to create mutation objects first, and then you can execute the mutations by using the `transaction.mutate()` method as follows:
 
 ```java
 // Create `Put` and `Delete` operations.
@@ -1284,8 +1293,64 @@ Delete delete =
         .clusteringKey(clusteringKeyForDelete)
         .build();
 
-// Execute the operations.
+// Execute the mutations.
 transaction.mutate(Arrays.asList(put, delete));
+```
+
+##### Batch operation
+
+Batch is an operation to execute multiple operations for `Get`, `Scan`, `Put`, `Insert`, `Upsert`, `Update`, and `Delete`.
+
+You need to create operation objects first, and then you can execute the operations by using the `transaction.batch()` method as follows:
+
+```java
+// Create operation objects.
+Key partitionKey = Key.ofInt("c1", 10);
+
+Key clusteringKeyForGet = Key.of("c2", "aaa", "c3", 100L);
+
+Get get =
+    Get.newBuilder()
+        .namespace("ns")
+        .table("tbl")
+        .partitionKey(partitionKey)
+        .clusteringKey(clusteringKeyForGet)
+        .build();
+
+Scan scan = Scan.newBuilder().namespace("ns").table("tbl").partitionKey(partitionKey).build();
+
+Key clusteringKeyForInsert = Key.of("c2", "bbb", "c3", 200L);
+
+Insert insert =
+    Insert.newBuilder()
+        .namespace("ns")
+        .table("tbl")
+        .partitionKey(partitionKey)
+        .clusteringKey(clusteringKeyForInsert)
+        .floatValue("c4", 1.23F)
+        .doubleValue("c5", 4.56)
+        .build();
+
+Key clusteringKeyForDelete = Key.of("c2", "ccc", "c3", 300L);
+
+Delete delete =
+    Delete.newBuilder()
+        .namespace("ns")
+        .table("tbl")
+        .partitionKey(partitionKey)
+        .clusteringKey(clusteringKeyForDelete)
+        .build();
+
+// Execute the operations.
+List<BatchResult> batchResults = transaction.batch(Arrays.asList(get, scan, insert, delete));
+
+Optional<Result> getResult = batchResults.get(0).getGetResult(); // Result of the get
+
+...
+
+List<Result> scanResult = batchResults.get(1).getScanResult(); // Result of the scan
+
+...
 ```
 
 ##### Default namespace for CRUD operations
@@ -1638,7 +1703,7 @@ For details about the `Delete` operation, see [`Delete` operation](#delete-opera
 
 Mutate is an operation to execute multiple mutations (`Put`, `Insert`, `Upsert`, `Update`, and `Delete` operations).
 
-You need to create mutation objects first, and then you can execute the objects by using the `transactionManager.mutate()` method as follows:
+You need to create mutation objects first, and then you can execute the mutations by using the `transactionManager.mutate()` method as follows:
 
 ```java
 // Create `Put` and `Delete` operations.
@@ -1666,13 +1731,71 @@ Delete delete =
         .clusteringKey(clusteringKeyForDelete)
         .build();
 
-// Execute the operations.
+// Execute the mutations.
 transactionManager.mutate(Arrays.asList(put, delete));
 ```
 
 For details about the Mutate operation, see [Mutate operation](#mutate-operation).
 
 In addition, for details about how to handle exceptions in ScalarDB, see [How to handle exceptions](#how-to-handle-exceptions).
+
+#### Execute Batch operation
+
+Batch is an operation to execute multiple operations for `Get`, `Scan`, `Put`, `Insert`, `Upsert`, `Update`, and `Delete`.
+
+You need to create operation objects first, and then you can execute the operations by using the `transactionManager.batch()` method as follows:
+
+```java
+// Create operation objects.
+Key partitionKey = Key.ofInt("c1", 10);
+
+Key clusteringKeyForGet = Key.of("c2", "aaa", "c3", 100L);
+
+Get get =
+    Get.newBuilder()
+        .namespace("ns")
+        .table("tbl")
+        .partitionKey(partitionKey)
+        .clusteringKey(clusteringKeyForGet)
+        .build();
+
+Scan scan = Scan.newBuilder().namespace("ns").table("tbl").partitionKey(partitionKey).build();
+
+Key clusteringKeyForInsert = Key.of("c2", "bbb", "c3", 200L);
+
+Insert insert =
+    Insert.newBuilder()
+        .namespace("ns")
+        .table("tbl")
+        .partitionKey(partitionKey)
+        .clusteringKey(clusteringKeyForInsert)
+        .floatValue("c4", 1.23F)
+        .doubleValue("c5", 4.56)
+        .build();
+
+Key clusteringKeyForDelete = Key.of("c2", "ccc", "c3", 300L);
+
+Delete delete =
+    Delete.newBuilder()
+        .namespace("ns")
+        .table("tbl")
+        .partitionKey(partitionKey)
+        .clusteringKey(clusteringKeyForDelete)
+        .build();
+
+// Execute the operations.
+List<BatchResult> batchResults = transactionManager.batch(Arrays.asList(get, scan, insert, delete));
+
+Optional<Result> getResult = batchResults.get(0).getGetResult(); // Result of the get
+
+...
+
+List<Result> scanResult = batchResults.get(1).getScanResult(); // Result of the scan
+
+...
+```
+
+For details about the Batch operation, see [Batch operation](#batch-operation).
 
 ## How to handle exceptions
 
