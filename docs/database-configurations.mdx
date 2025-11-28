@@ -82,6 +82,23 @@ Select your database for details on how to configure it to achieve the general r
 
     - Not applicable. Cassandra always returns committed records, so there are no Cassandra-specific requirements.
   </TabItem>
+  <TabItem value="Object_Storage" label="Object Storage">
+    <h4>Transactions</h4>
+
+    - Use a single primary region for all operations.
+      - There is no concept for primary regions in Object Storage, so you must designate a primary region by yourself.
+    - Use a single region for all operations. For Blob Storage, use a single primary region.
+    - Choose the following storage classes or access tiers for each storage:
+      - **S3**: [S3 Standard](https://aws.amazon.com/s3/storage-classes/)
+      - **Blob Storage**: [Hot tier](https://learn.microsoft.com/en-us/azure/storage/blobs/access-tiers-overview)
+      - **Cloud Storage**: [Standard storage](https://docs.cloud.google.com/storage/docs/storage-classes#standard)
+
+:::note
+
+Other storage classes or access tiers can be used, but the ones listed above are verified and supported.
+
+:::
+  </TabItem>
 </Tabs>
 
 ## Recommendations
@@ -116,5 +133,11 @@ Since DynamoDB stores data in multiple availability zones by default, you don’
   </TabItem>
   <TabItem value="Cassandra" label="Cassandra">
     - Increase `concurrent_reads` and `concurrent_writes` for high throughput. For details, see the official Cassandra documentation about [`concurrent_writes`](https://cassandra.apache.org/doc/stable/cassandra/configuration/cass_yaml_file.html#concurrent_writes).
+  </TabItem>
+  <TabItem value="Object_Storage" label="Object Storage">
+    - Since a ScalarDB partition maps to an object in Object Storage, it is recommended to design table schemas as follows:
+      - Avoid defining clustering keys if the sizes of records are large.
+      - Place frequently read records in the same partition to reduce the number of read operations to Object Storage.
+      - Place frequently written records in different partitions to avoid write conflicts in Object Storage.
   </TabItem>
 </Tabs>
