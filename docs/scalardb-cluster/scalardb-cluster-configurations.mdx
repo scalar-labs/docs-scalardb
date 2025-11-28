@@ -118,6 +118,18 @@ The following node-related configurations are available for ScalarDB Cluster.
 - **Description:** ScalarDB Cluster nodes maintain in-progress scanners. This process expires scanners that have been idle for an extended period to prevent resource leaks. This configuration specifies the expiration time of this scanner management feature in milliseconds.
 - **Default value:** `60000` (60 seconds)
 
+##### `cluster.node.grpc.max_connection_age_millis`
+
+- **Field:** `scalar.db.cluster.node.grpc.max_connection_age_millis`
+- **Description:** Maximum time that a channel may exist. It helps proactively close and refresh old connections to prevent imbalance across servers.
+- **Default value:** `Integer.MAX_VALUE` (Infinite)
+
+##### `cluster.node.grpc.max_connection_age_grace_millis`
+
+- **Field:** `scalar.db.cluster.node.grpc.max_connection_age_grace_millis`
+- **Description:** Grace period after the channel reaches its max age. It provides a grace period for ongoing RPCs to complete before the connection is closed.
+- **Default value:** `Integer.MAX_VALUE` (Infinite)
+
 ### Performance-related configurations
 
 The following performance-related configurations are available for the Consensus Commit transaction manager.
@@ -1092,6 +1104,18 @@ scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
 - **Description:** The fetch size used for `Scanner` to fetch data from the cluster. This is the number of records that `Scanner` fetches at once from the cluster. A larger value can improve performance by reducing the number of round trips to the cluster, but it may also increase memory usage.
 - **Default value:** `10`
 
+#### `cluster.client.piggyback_begin.enabled`
+
+- **Field:** `scalar.db.cluster.client.piggyback_begin.enabled`
+- **Description:** Whether the piggyback-begin feature is enabled. It delays transaction begin until the first CRUD operation, piggybacking the begin with the first operation to eliminate a dedicated begin RPC call.
+- **Default value:** `false`
+
+#### `cluster.client.write_buffering.enabled`
+
+- **Field:** `scalar.db.cluster.client.write_buffering.enabled`
+- **Description:** Whether the write-buffering feature is enabled. It buffers non-conditional write operations (inserts, upserts, unconditional puts/updates/deletes) and executes them in batches to reduce the number of RPC calls.
+- **Default value:** `false`
+
 ### Configurations for client-side wire encryption
 
 The following configurations are available for client-side encryption.
@@ -1219,12 +1243,6 @@ The following shows the authentication and authorization configurations for the 
 - **Field:** `scalar.db.cluster.auth.enabled`
 - **Description:** Whether authentication and authorization are enabled.
 - **Default value:** `false`
-
-:::warning
-
-If you enable authentication and authorization, you will also need to set [`scalar.db.cross_partition_scan.enabled`](#cross-partition-scan-configurations) to `true` for the system namespace (`scalardb` by default). This is because the ABAC feature performs cross-partition scans internally.
-
-:::
 
 ##### `auth.username`
 
