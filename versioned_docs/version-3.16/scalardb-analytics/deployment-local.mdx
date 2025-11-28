@@ -384,8 +384,6 @@ Create a `spark-defaults.conf` file by changing the content in the angle bracket
 
 ```shell
 cat <<EOF > ./conf/spark-defaults.conf
-spark.sql.extensions com.scalar.db.analytics.spark.extension.ScalarDbAnalyticsExtensions
-
 spark.jars.packages com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>
 
 spark.sql.catalog.<CATALOG_NAME> com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog
