@@ -9,19 +9,14 @@ displayed_sidebar: docsEnglish
 import JavadocLink from '/src/theme/JavadocLink.js';
 import WarningLicenseKeyContact from '/src/components/en-us/_warning-license-key-contact.mdx';
 
-ScalarDB Cluster has a mechanism to authenticate and authorize users.
-
-This guide describes how to use authentication and authorization in ScalarDB SQL.  
+ScalarDB Cluster can authenticate and authorize users in a coarse-grained manner. You can create users and grant or revoke their privileges. Roles can also be created to group privileges and can be granted to users or other roles. This guide describes how to use authentication and authorization in ScalarDB SQL. For more details about the grammar, see [DCL](../scalardb-sql/grammar.mdx#dcl).
 
 :::tip
 
 You can also do authentication and authorization by using the primitive interface. For details, see <JavadocLink packageName="scalardb-cluster-java-client-sdk" path="com/scalar/db/cluster/client" className="ClusterClientTransactionAdmin" />, which implements <JavadocLink packageName="scalardb" path="com/scalar/db/api" className="AuthAdmin" />.
-
 :::
 
-## Overview
-
-By using authentication and authorization, you can create users and grant or revoke their privileges. You can create a user by using the `CREATE USER` command, and you can grant or revoke one's privileges on a table or a namespace by using the `GRANT` or `REVOKE` command, respectively. For details about such data control language (DCL) commands, see [DCL](../scalardb-sql/grammar.mdx#dcl).
+## Users
 
 Users can log in to ScalarDB Cluster with a username and a password and execute SQL statements if they have the required privileges.
 
@@ -29,6 +24,28 @@ Authentication and authorization support two types of users:
 
 - **Superusers:** This type of user has all privileges. Only superusers can create or drop other users and namespaces.
 - **Normal users:** This type of user initially doesn't have any privileges, so they need to be granted privileges by a superuser or another user who has the `GRANT` privilege.
+
+### Initial user
+
+When you enable authentication and authorization, the initial user `admin` is created and the initial password of that user is `admin`. This user is a superuser and has all privileges. You can log in with this user and create other users if necessary.
+
+:::warning
+
+For security purposes, be sure to change the password of the initial user, especially before deploying to a production environment.
+
+:::
+
+## Roles
+
+A role is a named collection of privileges that can be granted to users or other roles. Using roles provides a convenient way to manage privileges for multiple users, rather than granting individual privileges to each user.
+
+Only superusers can create or drop roles. Users who have the `GRANT` privilege can grant their privileges to roles.
+
+When a role is granted to a user, the user can use all privileges granted to that role. If the role has other roles granted to it (role hierarchy), the user can also use the privileges from those roles.
+
+When granting a role, you can optionally specify `WITH ADMIN OPTION` to allow the grantee to grant the same role to others.
+
+## Privileges
 
 The following privileges are available when using authentication and authorization:
 
@@ -42,7 +59,52 @@ The following privileges are available when using authentication and authorizati
 - `ALTER`
 - `GRANT`
 
-For details about privileges, see [Which privileges are required for each type of operation](#which-privileges-are-required-for-each-type-of-operation).
+### Which privileges are required for each type of operation
+
+The following tables show which privileges are required for each type of operation:
+
+#### DDL
+
+| Command                       | Superuser required | Required privileges |
+|-------------------------------|--------------------|---------------------|
+| `CREATE NAMESPACE`            | `true`             |                     |
+| `DROP NAMESPACE`              | `true`             |                     |
+| `CREATE TABLE`                |                    | `CREATE`            |
+| `DROP TABLE`                  |                    | `DROP`              |
+| `CREATE INDEX`                |                    | `CREATE`            |
+| `DROP INDEX`                  |                    | `DROP`              |
+| `TRUNCATE TABLE`              |                    | `TRUNCATE`          |
+| `ALTER TABLE`                 |                    | `ALTER`             |
+| `CREATE COORDINATOR TABLES`   | `true`             |                     |
+| `DROP COORDINATOR TABLES`     | `true`             |                     |
+| `TRUNCATE COORDINATOR TABLES` | `true`             |                     |
+
+#### DML
+
+| Command  | Superuser required | Required privileges   |
+|----------|--------------------|-----------------------|
+| `SELECT` |                    | `SELECT`              |
+| `INSERT` |                    | `INSERT`              |
+| `UPSERT` |                    | `INSERT`              |
+| `UPDATE` |                    | `SELECT` and `UPDATE` |
+| `DELETE` |                    | `SELECT` and `DELETE` |
+
+#### DCL
+
+| Command                | Superuser required                            | Required privileges                                                            |
+|------------------------|-----------------------------------------------|--------------------------------------------------------------------------------|
+| `CREATE USER`          | `true`                                        |                                                                                |
+| `ALTER USER`           | `true` (Users can change their own password.) |                                                                                |
+| `DROP USER`            | `true`                                        |                                                                                |
+| `GRANT`                |                                               | `GRANT` (Users can grant only the privileges that they have.)                  |
+| `REVOKE`               |                                               | `GRANT` (Users can revoke only the privileges that they have.)                 |
+| `CREATE ROLE`          | `true`                                        |                                                                                |
+| `DROP ROLE`            | `true`                                        |                                                                                |
+| `GRANT ... TO ROLE`    |                                               | `GRANT` (Users can grant only the privileges that they have.)                  |
+| `REVOKE ... FROM ROLE` |                                               | `GRANT` (Users can revoke only the privileges that they have.)                 |
+| `GRANT ROLE`           |                                               | `ADMIN OPTION` on the role (Users can grant only those roles.)                 |
+| `REVOKE ROLE`          |                                               | `ADMIN OPTION` on the role (Users can revoke only those roles.)                |
+| `REVOKE ADMIN OPTION`  |                                               | `ADMIN OPTION` on the role (Users can revoke `ADMIN OPTION` only for those roles.) |
 
 ## Configurations
 
@@ -85,56 +147,6 @@ In addition to the configuration in the [ScalarDB Cluster SQL client configurati
 |---------------------------------------|-----------------------------|---------|
 | `scalar.db.sql.cluster_mode.username` | The username of the client. |         |
 | `scalar.db.sql.cluster_mode.password` | The password of the client. |         |
-
-## Initial user
-
-When you enable authentication and authorization, the initial user `admin` is created and the initial password of that user is `admin`. This user is a superuser and has all privileges. You can log in with this user and create other users if necessary.
-
-:::warning
-
-For security purposes, be sure to change the password of the initial user, especially before deploying to a production environment.
-
-:::
-
-## Which privileges are required for each type of operation
-
-The following tables show which privileges are required for each type of operation:
-
-### DDL
-
-| Command                       | Superuser required | Required privileges |
-|-------------------------------|--------------------|---------------------|
-| `CREATE NAMESPACE`            | `true`             |                     |
-| `DROP NAMESPACE`              | `true`             |                     |
-| `CREATE TABLE`                |                    | `CREATE`            |
-| `DROP TABLE`                  |                    | `DROP`              |
-| `CREATE INDEX`                |                    | `CREATE`            |
-| `DROP INDEX`                  |                    | `DROP`              |
-| `TRUNCATE TABLE`              |                    | `TRUNCATE`          |
-| `ALTER TABLE`                 |                    | `ALTER`             |
-| `CREATE COORDINATOR TABLES`   | `true`             |                     |
-| `DROP COORDINATOR TABLES`     | `true`             |                     |
-| `TRUNCATE COORDINATOR TABLES` | `true`             |                     |
-
-### DML
-
-| Command  | Superuser required | Required privileges   |
-|----------|--------------------|-----------------------|
-| `SELECT` |                    | `SELECT`              |
-| `INSERT` |                    | `INSERT`              |
-| `UPSERT` |                    | `INSERT`              |
-| `UPDATE` |                    | `SELECT` and `UPDATE` |
-| `DELETE` |                    | `SELECT` and `DELETE` |
-
-### DCL
-
-| Command       | Superuser required                            | Required privileges                                            |
-|---------------|-----------------------------------------------|----------------------------------------------------------------|
-| `CREATE USER` | `true`                                        |                                                                |
-| `ALTER USER`  | `true` (Users can change their own password.) |                                                                |
-| `DROP USER`   | `true`                                        |                                                                |
-| `GRANT`       |                                               | `GRANT` (Users can grant only the privileges that they have.)  |
-| `REVOKE`      |                                               | `GRANT` (Users can revoke only the privileges that they have.) |
 
 ## Limitations
 
@@ -318,17 +330,17 @@ SHOW GRANTS FOR user1;
 ```
 
 ```console
-+---------+-----------+-----------+
-|  name   |   type    | privilege |
-+---------+-----------+-----------+
-| ns2     | NAMESPACE | SELECT    |
-| ns1.tbl | TABLE     | SELECT    |
-| ns1.tbl | TABLE     | INSERT    |
-| ns1.tbl | TABLE     | UPDATE    |
-+---------+-----------+-----------+
++---------+-----------+-----------+---------------+-------------------------+
+|  name   |   type    | privilege | grantedToUser | rolesProvidingPrivilege |
++---------+-----------+-----------+---------------+-------------------------+
+| ns2     | NAMESPACE | SELECT    | true          |                         |
+| ns1.tbl | TABLE     | SELECT    | true          |                         |
+| ns1.tbl | TABLE     | INSERT    | true          |                         |
+| ns1.tbl | TABLE     | UPDATE    | true          |                         |
++---------+-----------+-----------+---------------+-------------------------+
 ```
 
-You can see that `user1` has been granted the `SELECT`, `INSERT`, and `UPDATE` privileges on the `ns.tbl` table, and the `SELECT` privilege on the `ns2` namespace.
+You can see that `user1` has been granted the `SELECT`, `INSERT`, and `UPDATE` privileges on the `ns1.tbl` table, and the `SELECT` privilege on the `ns2` namespace.
 
 ### 8. Log in as `user1`
 
@@ -377,3 +389,98 @@ Error: Authorization error (PERMISSION_DENIED: SQL-10021: Access denied: You nee
 ```
 
 You will see the above error message because `user1` doesn't have the `DELETE` privilege on the `ns1.tbl` table.
+
+### 10. Use roles to manage privileges
+
+Log in as `admin` to create and manage roles.
+
+```console
+java -jar scalardb-cluster-sql-cli-3.17.0-all.jar --config scalardb-cluster-sql-cli.properties
+```
+
+Enter the username and password as `admin` and `admin`, respectively.
+
+Create a role named `cleanup_role`.
+
+```sql
+CREATE ROLE cleanup_role;
+```
+
+To verify the role has been created, run the following command.
+
+```sql
+SHOW ROLES;
+```
+
+```console
++--------------+--------------+
+|   roleName   | grantedRoles |
++--------------+--------------+
+| cleanup_role |              |
++--------------+--------------+
+```
+
+Grant the `SELECT`, `DELETE`, and `TRUNCATE` privileges on the `ns1.tbl` table to the role.
+
+```sql
+GRANT SELECT, DELETE, TRUNCATE ON ns1.tbl TO ROLE cleanup_role;
+```
+
+To verify the privileges granted to the role, run the following command.
+
+```sql
+SHOW ROLE GRANTS FOR cleanup_role;
+```
+
+```console
++---------+-------+-----------+
+|  name   | type  | privilege |
++---------+-------+-----------+
+| ns1.tbl | TABLE | SELECT    |
+| ns1.tbl | TABLE | DELETE    |
+| ns1.tbl | TABLE | TRUNCATE  |
++---------+-------+-----------+
+```
+
+Grant the role to `user1`.
+
+```sql
+GRANT ROLE cleanup_role TO user1;
+```
+
+To verify the privileges of `user1`, run the following command.
+
+```sql
+SHOW GRANTS FOR user1;
+```
+
+```console
++---------+-----------+-----------+---------------+-------------------------+
+|  name   |   type    | privilege | grantedToUser | rolesProvidingPrivilege |
++---------+-----------+-----------+---------------+-------------------------+
+| ns2     | NAMESPACE | SELECT    | true          |                         |
+| ns1.tbl | TABLE     | SELECT    | true          | cleanup_role            |
+| ns1.tbl | TABLE     | INSERT    | true          |                         |
+| ns1.tbl | TABLE     | UPDATE    | true          |                         |
+| ns1.tbl | TABLE     | DELETE    | false         | cleanup_role            |
+| ns1.tbl | TABLE     | TRUNCATE  | false         | cleanup_role            |
++---------+-----------+-----------+---------------+-------------------------+
+```
+
+Now, log in as `user1` and try the `DELETE` statement again.
+
+```console
+java -jar scalardb-cluster-sql-cli-3.17.0-all.jar --config scalardb-cluster-sql-cli.properties
+```
+
+Enter the username and password as `user1` and `user1`, respectively.
+
+```sql
+DELETE FROM ns1.tbl WHERE id = 1;
+```
+
+This time, the statement succeeds because `user1` now has the `DELETE` privilege through the `cleanup_role` role.
+
+## See also
+
+For more information about using RBAC, see the role-related sections in the [ScalarDB SQL Grammar](../scalardb-sql/grammar.mdx) reference.
