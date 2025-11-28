@@ -17,21 +17,38 @@ This reference guide provides detailed information about data source configurati
 
 ## Data source registration file format
 
-Data sources are registered to catalogs using the CLI with data source registration files. These files have the following structure. For CLI command details, see [CLI command reference](./reference-cli-command.mdx).
+Data sources are registered to catalogs by using the CLI with provider configuration files. These files define the connection settings for each data source type. For CLI command details, see [CLI command reference](./reference-cli-command.mdx).
+
+The provider configuration file has the following structure:
 
 ```json
 {
-  "catalog": "<catalog-name>", // The catalog to register the data source in
-  "name": "<data-source-name>", // A unique name for this data source
-  "type": "<database-type>", // Database type: postgres, mysql, scalardb, sqlserver, oracle, dynamodb, databricks, snowflake
-  "provider": {
-    // Type-specific connection configuration
-    // Configuration varies by database type
-  }
+  "type": "<database-type>", // Database type: postgresql, mysql, scalardb, sqlserver, oracle, dynamodb, databricks, snowflake
+  // Type-specific connection configuration
+  // Configuration varies by database type
 }
 ```
 
-The `provider` section contains data source-specific connection settings that vary based on the `type` field.
+The catalog name and data source name are specified as CLI options. (`--catalog` and `--data-source`)
+
+:::tip File reference syntax
+
+You can use the `${file:path}` syntax to load configuration values from an external file. This is useful for reusing existing configuration files or separating sensitive information.
+
+**Supported file formats:**
+
+- **`.properties` files**: Loaded and converted to a JSON object with string values
+- **`.json` files**: Loaded as-is (any valid JSON structure)
+
+For example:
+```json
+{
+  "type": "scalardb",
+  "configs": "${file:/path/to/scalardb.properties}"
+}
+```
+
+:::
 
 ## Provider configuration by type
 
@@ -44,21 +61,33 @@ The following sections show the provider configuration for each supported databa
 
 The following configuration is for ScalarDB.
 
-<h4>`configPath`</h4>
+<h4>`configs`</h4>
 
-- **Field:** `configPath`
-- **Description:** Path to the ScalarDB configuration file.
+- **Field:** `configs`
+- **Description:** A map of ScalarDB configuration properties. These are the same properties that would be specified in a ScalarDB configuration file. You can specify the configuration inline as a JSON object or use a file reference with the `${file:path}` syntax.
 
 <h3>Example</h3>
 
+**Inline configuration:**
+
 ```json
 {
-  "catalog": "production",
-  "name": "scalardb_source",
   "type": "scalardb",
-  "provider": {
-    "configPath": "/path/to/scalardb.properties"
+  "configs": {
+    "scalar.db.contact_points": "localhost",
+    "scalar.db.username": "admin",
+    "scalar.db.password": "admin",
+    "scalar.db.storage": "jdbc"
   }
+}
+```
+
+**Using file reference with a properties file:**
+
+```json
+{
+  "type": "scalardb",
+  "configs": "${file:/path/to/scalardb.properties}"
 }
 ```
 
@@ -98,16 +127,12 @@ The following configurations are for PostgreSQL.
 
 ```json
 {
-  "catalog": "production",
-  "name": "postgres_customers",
-  "type": "postgres",
-  "provider": {
-    "host": "postgres.example.com",
-    "port": 5432,
-    "username": "analytics_user",
-    "password": "secure_password",
-    "database": "customers"
-  }
+  "type": "postgresql",
+  "host": "postgres.example.com",
+  "port": 5432,
+  "username": "analytics_user",
+  "password": "secure_password",
+  "database": "customers"
 }
 ```
 
@@ -148,16 +173,12 @@ The following configurations are for MySQL.
 
 ```json
 {
-  "catalog": "production",
-  "name": "mysql_orders",
   "type": "mysql",
-  "provider": {
-    "host": "mysql.example.com",
-    "port": 3306,
-    "username": "analytics_user",
-    "password": "secure_password",
-    "database": "orders" // Optional - if omitted, all databases will be imported
-  }
+  "host": "mysql.example.com",
+  "port": 3306,
+  "username": "analytics_user",
+  "password": "secure_password",
+  "database": "orders" // Optional - if omitted, all databases will be imported
 }
 ```
 
@@ -197,16 +218,12 @@ The following configurations are for Oracle.
 
 ```json
 {
-  "catalog": "production",
-  "name": "oracle_warehouse",
   "type": "oracle",
-  "provider": {
-    "host": "oracle.example.com",
-    "port": 1521,
-    "username": "analytics_user",
-    "password": "secure_password",
-    "serviceName": "ORCL"
-  }
+  "host": "oracle.example.com",
+  "port": 1521,
+  "username": "analytics_user",
+  "password": "secure_password",
+  "serviceName": "ORCL"
 }
 ```
 
@@ -253,17 +270,13 @@ The following configurations are for SQL Server.
 
 ```json
 {
-  "catalog": "production",
-  "name": "sqlserver_analytics",
   "type": "sqlserver",
-  "provider": {
-    "host": "sqlserver.example.com",
-    "port": 1433,
-    "username": "sa",
-    "password": "secure_password",
-    "database": "analytics", // Optional - if specified, only this database will be imported
-    "secure": true // Optional - enable encryption
-  }
+  "host": "sqlserver.example.com",
+  "port": 1433,
+  "username": "sa",
+  "password": "secure_password",
+  "database": "analytics", // Optional - if specified, only this database will be imported
+  "secure": true // Optional - enable encryption
 }
 ```
 
@@ -309,17 +322,13 @@ The following configurations are for Databricks (Databricks SQL/JDBC).
 
 ```json
 {
-  "catalog": "production",
-  "name": "databricks_analytics",
   "type": "databricks",
-  "provider": {
-    "host": "adb-1234567890123.4.azuredatabricks.net",
-    "port": 443,
-    "httpPath": "/sql/1.0/warehouses/xxxxxxxxxxxxxx",
-    "oAuthClientId": "YOUR_CLIENT_ID",
-    "oAuthSecret": "YOUR_CLIENT_SECRET",
-    "catalog": "main"
-  }
+  "host": "adb-1234567890123.4.azuredatabricks.net",
+  "port": 443,
+  "httpPath": "/sql/1.0/warehouses/xxxxxxxxxxxxxx",
+  "oAuthClientId": "YOUR_CLIENT_ID",
+  "oAuthSecret": "YOUR_CLIENT_SECRET",
+  "catalog": "main"
 }
 ```
 
@@ -354,15 +363,11 @@ The following configurations are for Snowflake.
 
 ```json
 {
-  "catalog": "production",
-  "name": "snowflake_dwh",
   "type": "snowflake",
-  "provider": {
-    "account": "YOUR-ACCOUNT",
-    "username": "analytics_user",
-    "password": "secure_password",
-    "database": "ANALYTICS"
-  }
+  "account": "YOUR-ACCOUNT",
+  "username": "analytics_user",
+  "password": "secure_password",
+  "database": "ANALYTICS"
 }
 ```
 
@@ -390,96 +395,104 @@ For more information, see the [AWS SDK documentation on credential providers](ht
 <h4>`region`</h4>
 
 - **Field:** `region`
-- **Description:** AWS region (e.g., us-east-1). Either `region` or `endpoint` must be specified (not both).
+- **Description:** AWS region (for example, `us-east-1`). Either `region` or `endpoint` must be specified (not both).
 
 <h4>`endpoint`</h4>
 
 - **Field:** `endpoint`
 - **Description:** Custom endpoint URL. Either `region` or `endpoint` must be specified (not both).
 
-<h4>`schema`</h4>
+<h3>Schema definition</h3>
 
-- **Field:** `schema`
-- **Description:** Complete schema definition. Since DynamoDB is schema-less, you must provide a complete schema definition.
+Since DynamoDB is schema-less, you must provide a schema definition separately by using the `--schema-json` or `--schema-file` CLI option. The schema cannot be automatically resolved.
 
 <h4>Schema structure</h4>
 
-The schema field must contain the following structure:
+The schema file must contain the following structure:
 
-<h5>`.schema.namespaces[]`</h5>
+<h5>`namespaces[]`</h5>
 
-- **Field:** `.schema.namespaces[]`
+- **Field:** `namespaces[]`
 - **Description:** Array of namespace definitions.
 
-<h5>`.schema.namespaces[].names[]`</h5>
+<h5>`namespaces[].names[]`</h5>
 
-- **Field:** `.schema.namespaces[].names[]`
-- **Description:** Array of namespace names (strings).
+- **Field:** `namespaces[].names[]`
+- **Description:** Array of namespace name components (strings). For single-level namespaces, use a single-element array.
 
-<h5>`.schema.namespaces[].tables[]`</h5>
+<h5>`namespaces[].tables[]`</h5>
 
-- **Field:** `.schema.namespaces[].tables[]`
+- **Field:** `namespaces[].tables[]`
 - **Description:** Array of table definitions.
 
-<h5>`.schema.namespaces[].tables[].name`</h5>
+<h5>`namespaces[].tables[].name`</h5>
 
-- **Field:** `.schema.namespaces[].tables[].name`
-- **Description:** Table name.
+- **Field:** `namespaces[].tables[].name`
+- **Description:** Table name. Must match the DynamoDB table name.
 
-<h5>`.schema.namespaces[].tables[].columns[]`</h5>
+<h5>`namespaces[].tables[].columns[]`</h5>
 
-- **Field:** `.schema.namespaces[].tables[].columns[]`
+- **Field:** `namespaces[].tables[].columns[]`
 - **Description:** Array of column definitions.
 
-<h5>`.schema.namespaces[].tables[].columns[].name`</h5>
+<h5>`namespaces[].tables[].columns[].name`</h5>
 
-- **Field:** `.schema.namespaces[].tables[].columns[].name`
-- **Description:** Column name.
+- **Field:** `namespaces[].tables[].columns[].name`
+- **Description:** Column name. Must match the DynamoDB attribute name.
 
-<h5>`.schema.namespaces[].tables[].columns[].type`</h5>
+<h5>`namespaces[].tables[].columns[].type`</h5>
 
-- **Field:** `.schema.namespaces[].tables[].columns[].type`
+- **Field:** `namespaces[].tables[].columns[].type`
 - **Description:** Data type.
 
-<h5>`.schema.namespaces[].tables[].columns[].nullable`</h5>
+<h5>`namespaces[].tables[].columns[].nullable`</h5>
 
-- **Field:** `.schema.namespaces[].tables[].columns[].nullable`
-- **Description:** Whether column can contain null values.
+- **Field:** `namespaces[].tables[].columns[].nullable`
+- **Description:** Whether the column can contain null values.
 - **Default value:** `true`
 
 <h3>Example</h3>
 
+**Provider configuration file (`provider.json`):**
+
 ```json
 {
-  "catalog": "production",
-  "name": "dynamodb_events",
   "type": "dynamodb",
-  "provider": {
-    "region": "us-east-1",
-    "schema": {
-      "namespaces": [
+  "region": "us-east-1"
+}
+```
+
+**Schema definition file (`schema.json`):**
+
+```json
+{
+  "namespaces": [
+    {
+      "names": ["production"],
+      "tables": [
         {
-          "names": ["production"],
-          "tables": [
-            {
-              "name": "user_events",
-              "columns": [
-                { "name": "user_id", "type": "TEXT", "nullable": false },
-                {
-                  "name": "event_time",
-                  "type": "TIMESTAMP",
-                  "nullable": false
-                },
-                { "name": "event_type", "type": "TEXT" },
-                { "name": "event_data", "type": "TEXT" }
-              ]
-            }
+          "name": "user_events",
+          "columns": [
+            { "name": "user_id", "type": "TEXT", "nullable": false },
+            { "name": "event_time", "type": "TIMESTAMP", "nullable": false },
+            { "name": "event_type", "type": "TEXT" },
+            { "name": "event_data", "type": "TEXT" }
           ]
         }
       ]
     }
-  }
+  ]
 }
+```
+
+**CLI command:**
+
+```console
+scalardb-analytics datasource register \
+  --catalog production \
+  --data-source dynamodb_events \
+  --provider-file provider.json \
+  --schema-file schema.json
 ```
 
   </TabItem>
@@ -578,6 +591,11 @@ The catalog-level mappings are the mappings of the namespace names, table names,
 
     - Each SQL Server database-schema pair is mapped to a namespace in ScalarDB Analytics. Therefore, the namespace of the SQL Server data source is always two-level, consisting of the database name and the schema name.
         - Only user-defined databases are mapped to namespaces. The following system databases are ignored:
+            - `master`
+            - `model`
+            - `msdb`
+            - `tempdb`
+        - Only user-defined schemas are mapped to namespaces. The following system schemas are ignored:
             - `sys`
             - `guest`
             - `INFORMATION_SCHEMA`
@@ -590,11 +608,6 @@ The catalog-level mappings are the mappings of the namespace names, table names,
             - `db_denydatawriter`
             - `db_owner`
             - `db_securityadmin`
-        - Only user-defined schemas are mapped to namespaces. The following system schemas are ignored:
-            - `master`
-            - `model`
-            - `msdb`
-            - `tempdb`
     - The SQL Server table is mapped to the table.
     - The SQL Server column is mapped to the column.
 
@@ -794,39 +807,53 @@ Columns with data types that are not included in the mapping tables below will b
   </TabItem>
   <TabItem value="databricks" label="Databricks">
 
-| **Databricks SQL Data Type** | **ScalarDB Analytics Data Type**                                                    |
-| :--------------------------- | :---------------------------------------------------------------------------------- |
-| `TINYINT`                    | `SMALLINT`                                                                          |
-| `SMALLINT`                   | `SMALLINT`                                                                          |
-| `INT` / `INTEGER`            | `INT`                                                                               |
-| `BIGINT`                     | `BIGINT`                                                                            |
-| `FLOAT`                      | `FLOAT`                                                                             |
-| `DOUBLE`                     | `DOUBLE`                                                                            |
-| `DECIMAL(p,0)`               | `BYTE` (p ≤ 2), `SMALLINT` (3–4), `INT` (5–9), `BIGINT` (10–18), `DECIMAL` (p > 18) |
-| `STRING` / `VARCHAR`         | `TEXT`                                                                              |
-| `BINARY`                     | `BLOB`                                                                              |
-| `BOOLEAN`                    | `BOOLEAN`                                                                           |
-| `DATE`                       | `DATE`                                                                              |
-| `TIMESTAMP`                  | `TIMESTAMPTZ`                                                                       |
-| `TIMESTAMP_NTZ`              | `TIMESTAMP`                                                                         |
+| **Databricks SQL Data Type** | **ScalarDB Analytics Data Type**                                                               |
+| :--------------------------- | :--------------------------------------------------------------------------------------------- |
+| `TINYINT`                    | `SMALLINT`                                                                                     |
+| `SMALLINT`                   | `SMALLINT`                                                                                     |
+| `INT` / `INTEGER`            | `INT`                                                                                          |
+| `BIGINT`                     | `BIGINT`                                                                                       |
+| `FLOAT`                      | `FLOAT`                                                                                        |
+| `DOUBLE`                     | `DOUBLE`                                                                                       |
+| `DECIMAL(p,s)` if _s = 0_    | `BYTE` (p ≤ 2), `SMALLINT` (p 3–4), `INT` (p 5–9), `BIGINT` (p 10–18), `DECIMAL(p,0)` (p > 18) |
+| `DECIMAL(p,s)` if _s ≠ 0_    | `DECIMAL(p,s)`                                                                                 |
+| `STRING` / `VARCHAR`         | `TEXT`                                                                                         |
+| `BINARY`                     | `BLOB`                                                                                         |
+| `BOOLEAN`                    | `BOOLEAN`                                                                                      |
+| `DATE`                       | `DATE`                                                                                         |
+| `TIMESTAMP`                  | `TIMESTAMPTZ`                                                                                  |
+| `TIMESTAMP_NTZ`              | `TIMESTAMP`                                                                                    |
+
+:::note
+
+- For `DECIMAL` types, when precision and scale are not specified during table creation, the default values of precision = 38 and scale = 0 are applied.
+- For `DECIMAL` types with scale = 0 and small precision, optimized integer types (`BYTE`, `SMALLINT`, `INT`, `BIGINT`) are used to improve storage and performance.
+
+:::
 
   </TabItem>
   <TabItem value="snowflake" label="Snowflake">
 
-| **Snowflake Data Type**                                                                                                      | **ScalarDB Analytics Data Type**                                                    |
-| :--------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
-| `NUMBER(p,0)`                                                                                                                | `BYTE` (p ≤ 2), `SMALLINT` (3–4), `INT` (5–9), `BIGINT` (10–18), `DECIMAL` (p > 18) |
-| `NUMBER` / `NUMERIC`                                                                                                         | `DECIMAL`                                                                           |
-| `INT` / `INTEGER` / `BIGINT` / `SMALLINT` / `TINYINT` / `BYTEINT`                                                            | `DECIMAL`                                                                           |
-| `FLOAT` / `FLOAT4` / `FLOAT8` / `DOUBLE` / `DOUBLE PRECISION` / `REAL`                                                       | `DOUBLE`                                                                            |
-| `VARCHAR` / `STRING` / `TEXT` / `NVARCHAR` / `NVARCHAR2` / `CHAR VARYING` / `NCHAR VARYING` / `CHAR` / `CHARACTER` / `NCHAR` | `TEXT`                                                                              |
-| `BINARY` / `VARBINARY`                                                                                                       | `BLOB`                                                                              |
-| `BOOLEAN`                                                                                                                    | `BOOLEAN`                                                                           |
-| `DATE`                                                                                                                       | `DATE`                                                                              |
-| `TIME`                                                                                                                       | `TIME`                                                                              |
-| `TIMESTAMP_NTZ` / `DATETIME`                                                                                                 | `TIMESTAMP`                                                                         |
-| `TIMESTAMP_LTZ`                                                                                                              | `TIMESTAMPTZ`                                                                       |
-| `TIMESTAMP_TZ`                                                                                                               | `TIMESTAMPTZ`                                                                       |
+| **Snowflake Data Type**                                                                                                      | **ScalarDB Analytics Data Type**                                                               |
+| :--------------------------------------------------------------------------------------------------------------------------- | :--------------------------------------------------------------------------------------------- |
+| `NUMBER(p,0)` / `INT` / `INTEGER` / `BIGINT` / `SMALLINT` / `TINYINT` / `BYTEINT`                                            | `BYTE` (p ≤ 2), `SMALLINT` (p 3–4), `INT` (p 5–9), `BIGINT` (p 10–18), `DECIMAL(p,0)` (p > 18) |
+| `NUMBER(p,s)` / `NUMERIC` / `DECIMAL` if _s ≠ 0_                                                                             | `DECIMAL(p,s)`                                                                                 |
+| `FLOAT` / `FLOAT4` / `FLOAT8` / `DOUBLE` / `DOUBLE PRECISION` / `REAL`                                                       | `DOUBLE`                                                                                       |
+| `VARCHAR` / `STRING` / `TEXT` / `NVARCHAR` / `NVARCHAR2` / `CHAR VARYING` / `NCHAR VARYING` / `CHAR` / `CHARACTER` / `NCHAR` | `TEXT`                                                                                         |
+| `BINARY` / `VARBINARY`                                                                                                       | `BLOB`                                                                                         |
+| `BOOLEAN`                                                                                                                    | `BOOLEAN`                                                                                      |
+| `DATE`                                                                                                                       | `DATE`                                                                                         |
+| `TIME`                                                                                                                       | `TIME`                                                                                         |
+| `TIMESTAMP_NTZ` / `DATETIME`                                                                                                 | `TIMESTAMP`                                                                                    |
+| `TIMESTAMP_LTZ`                                                                                                              | `TIMESTAMPTZ`                                                                                  |
+| `TIMESTAMP_TZ`                                                                                                               | `TIMESTAMPTZ`                                                                                  |
+
+:::note
+
+- For `NUMBER` and `DECIMAL` types, when precision and scale are not specified during table creation, the default values of precision = 38 and scale = 0 are applied.
+- For `NUMBER` and `DECIMAL` types with scale = 0 and small precision, optimized integer types (`BYTE`, `SMALLINT`, `INT`, `BIGINT`) are used to improve storage and performance.
+
+:::
 
   </TabItem>
   <TabItem value="dynamodb" label="DynamoDB">
