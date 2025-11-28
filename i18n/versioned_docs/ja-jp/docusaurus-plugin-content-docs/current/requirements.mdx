@@ -511,7 +511,9 @@ ScalarDB Analytics は、クエリエンジンに [Apache Spark](https://spark.a
 
 ### 言語とランタイム
 
-ScalarDB Analytics は、Spark 上でフェデレーテッドクエリを実行するための Java ライブラリを提供しています。また、Java Virtual Machine (JVM) 上で動作する ScalarDB Analytics CLI というツールも提供しています。
+ScalarDB Analytics は、Spark 上でフェデレーテッドクエリを実行するためのライブラリを提供しています。また、Java Virtual Machine (JVM) 上で動作する ScalarDB Analytics CLI というツールも提供しています。
+
+ライブラリは Maven Central Repository で利用できます。Spark をセットアップする際にライブラリを指定する必要があります。詳細については、[ScalarDB Analytics のセットアップのための Spark 設定](scalardb-analytics/run-analytical-queries.mdx#scalardb-analytics-のセットアップのための-spark-設定)を参照してください。
 
 :::note
 
@@ -521,18 +523,15 @@ Spark と Scala はマイナーバージョン間で互換性がない場合が�
 
 #### Java
 
-ライブラリは Maven Central Repository で利用できます。Spark をセットアップする際にライブラリを指定する必要があります。詳細については、[ScalarDB Analytics のセットアップのための Spark 設定](scalardb-analytics/run-analytical-queries.mdx#scalardb-analytics-のセットアップのための-spark-設定)を参照してください。
+Spark 上でライブラリを使用する場合、以下の JRE が検証されサポートされています。
 
-:::note
-
-ScalarDB Analytics ライブラリは、さまざまな Spark 環境と統合できるように JDK 11 で構築されています。
-
-:::
+- **[Oracle JDK](https://www.oracle.com/java/):** 11, 17 or 21 (LTS versions)
+- **[OpenJDK](https://openjdk.org/) ([Eclipse Temurin](https://adoptium.net/temurin/)、[Amazon Corretto](https://aws.amazon.com/corretto/)、または [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/)):** 11, 17 or 21 (LTS versions)
 
 ScalarDB Analytics CLI の実行では、以下の JRE が検証されサポートされています。
 
-- **[Oracle JDK](https://www.oracle.com/java/):** 21
-- **[OpenJDK](https://openjdk.org/) ([Eclipse Temurin](https://adoptium.net/temurin/)、[Amazon Corretto](https://aws.amazon.com/corretto/)、または [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/)):** 21
+- **[Oracle JDK](https://www.oracle.com/java/):** 8, 11, 17 or 21 (LTS versions)
+- **[OpenJDK](https://openjdk.org/) ([Eclipse Temurin](https://adoptium.net/temurin/)、[Amazon Corretto](https://aws.amazon.com/corretto/)、または [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/)):** 8, 11, 17 or 21 (LTS versions)
 
 ### データベース
 
@@ -558,42 +557,42 @@ ScalarDB Analytics は、ScalarDB Core および Cluster によって**管理さ
 <Tabs groupId="RDBs" queryString>
 <TabItem value="Oracle_Database" label="Oracle Database" default>
 
-|           バージョン           | Oracle Database 23ai |
-| :----------------------------- | :------------------- |
-| **ScalarDB Analytics 3.17** | ✅                    |
-| **ScalarDB Analytics 3.16** | ✅                    |
-| **ScalarDB Analytics 3.15** | ✅                    |
-| **ScalarDB Analytics 3.14** | ✅                    |
+|      バージョン                | Oracle Database 23ai | Oracle Database 21c | Oracle Database 19c |
+| :----------------------------- | :------------------- | :------------------ | :------------------ |
+| **ScalarDB Analytics 3.17** | ✅                   | ✅                  | ✅                  |
+| **ScalarDB Analytics 3.16** | ✅                   | ❌                  | ❌                  |
+| **ScalarDB Analytics 3.15** | ✅                   | ❌                  | ❌                  |
+| **ScalarDB Analytics 3.14** | ✅                   | ❌                  | ❌                  |
 
 </TabItem>
 <TabItem value="MySQL" label="MySQL">
 
-|           バージョン           | MySQL 8.0 |
-| :----------------------------- | :-------- |
-| **ScalarDB Analytics 3.17** | ✅         |
-| **ScalarDB Analytics 3.16** | ✅         |
-| **ScalarDB Analytics 3.15** | ✅         |
-| **ScalarDB Analytics 3.14** | ✅         |
+|           バージョン           | MySQL 8.4 | MySQL 8.0 |
+| :----------------------------- | :-------- | :-------- |
+| **ScalarDB Analytics 3.17** | ✅        | ✅        |
+| **ScalarDB Analytics 3.16** | ❌        | ✅        |
+| **ScalarDB Analytics 3.15** | ❌        | ✅        |
+| **ScalarDB Analytics 3.14** | ❌        | ✅        |
 
 </TabItem>
 <TabItem value="PostgreSQL" label="PostgreSQL">
 
-|           バージョン           | PostgreSQL 16 |
-| :----------------------------- | :------------ |
-| **ScalarDB Analytics 3.17** | ✅             |
-| **ScalarDB Analytics 3.16** | ✅             |
-| **ScalarDB Analytics 3.15** | ✅             |
-| **ScalarDB Analytics 3.14** | ✅             |
+|           バージョン           | PostgreSQL 18 | PostgreSQL 17 | PostgreSQL 16 |
+| :----------------------------- | :------------ | :------------ | :------------ |
+| **ScalarDB Analytics 3.17** | ✅            | ✅            | ✅            |
+| **ScalarDB Analytics 3.16** | ❌            | ❌            | ✅            |
+| **ScalarDB Analytics 3.15** | ❌            | ❌            | ✅            |
+| **ScalarDB Analytics 3.14** | ❌            | ❌            | ✅            |
 
 </TabItem>
 <TabItem value="SQL_Server" label="SQL Server">
 
-|           バージョン           | SQL Server 2019 |
-| :----------------------------- | :-------------- |
-| **ScalarDB Analytics 3.17** | ✅               |
-| **ScalarDB Analytics 3.16** | ✅               |
-| **ScalarDB Analytics 3.15** | ✅               |
-| **ScalarDB Analytics 3.14** | ✅               |
+|           バージョン           | SQL Server 2022 | SQL Server 2019 | SQL Server 2017 |
+| :----------------------------- | :-------------- | :-------------- | :-------------- |
+| **ScalarDB Analytics 3.17** | ✅              | ✅              | ✅              |
+| **ScalarDB Analytics 3.16** | ❌              | ✅              | ❌              |
+| **ScalarDB Analytics 3.15** | ❌              | ✅              | ❌              |
+| **ScalarDB Analytics 3.14** | ❌              | ✅              | ❌              |
 
 </TabItem>
 </Tabs>
@@ -629,6 +628,12 @@ ScalarDB Analytics は、ScalarDB Core および Cluster によって**管理さ
 | **ScalarDB Analytics 3.15** | ❌         |
 | **ScalarDB Analytics 3.14** | ❌         |
 
+:::note
+
+ScalarDB Analytics は、SQL warehouses と compute の両方を使用して Databricks でクエリを実行できます。Compute については、すべてのデフォルト compute policies がサポートされています。
+
+:::
+
 </TabItem>
 <TabItem value="snowflake" label="Snowflake">
 
@@ -642,6 +647,10 @@ ScalarDB Analytics は、ScalarDB Core および Cluster によって**管理さ
 </TabItem>
 </Tabs>
 
+#### ScalarDB Analytics サーバーデータベース
+
+ScalarDB Analytics サーバーは、ScalarDB Core を使用してデータベース内のカタログ情報を管理します。この目的には、ScalarDB Core でサポートされている任意のデータベースを使用できます。サポートされているデータベースとそのバージョンについては、[データベース](#データベース)を参照してください。
+
 ### データベース権限要件
 
 ScalarDB Analytics は、基盤となるデータベースで操作を実行するために読み取り権限が必要です。
@@ -650,7 +659,7 @@ ScalarDB Core および Cluster で管理されているデータベースにつ
 
 ScalarDB Core および Cluster で**管理されていない**データベースについては、データソースに対する読み取り権限を持つユーザーでデータソースを登録してください。データソースの登録手順については、[カタログの作成](scalardb-analytics/create-scalardb-analytics-catalog.mdx#カタログの作成)を参照してください。
 
-ScalarDB Analytics サーバーは、そのデータベース内のカタログ情報を管理するための権限も必要です。[データベース権限要件](requirements.mdx#データベース権限要件)に従って権限を持つユーザーを作成し、そのユーザーを ScalarDB Analytics サーバー設定に設定してください。
+ScalarDB Analytics サーバーは ScalarDB Core を使用してカタログ情報を管理するため、ScalarDB Core の[データベース権限要件](#データベース権限要件)に従ってデータベースユーザーを ScalarDB Analytics サーバー用に設定する必要があります。
 
 ### 必要なポート
 
