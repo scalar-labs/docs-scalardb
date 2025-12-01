@@ -312,6 +312,14 @@ Multiple endpoints should be separated by escaped commas.
 
 For information on YugabyteDB's smart driver and load balancing, see [YugabyteDB smart drivers for YSQL](https://docs.yugabyte.com/preview/drivers-orms/smart-drivers/).
 
+**AlloyDB**
+
+If you are using AlloyDB on Google Cloud as a JDBC database and want to connect with the [Java connector](https://docs.cloud.google.com/alloydb/docs/connect-language-connectors#configure-connectors), you need to add additional properties in `scalar.db.contact_points` as follows:
+
+```properties
+scalar.db.contact_points=jdbc:postgresql:///<DATABASE_NAME>?socketFactory=com.google.cloud.alloydb.SocketFactory&alloydbInstanceName=<INSTANCE_NAME>&alloydbIpType=PUBLIC
+```
+
 :::
 
   </TabItem>
