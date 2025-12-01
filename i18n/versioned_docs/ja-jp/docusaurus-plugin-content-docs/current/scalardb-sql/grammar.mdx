@@ -841,17 +841,25 @@ AlterTableAlterColumnStatement statement1 =
 SELECT projection [, projection] ...
   FROM [<namespace name>.]<table name> [AS <alias>] [join_specification [join_specification] ...]
   [WHERE and_predicates [OR and_predicates ...] | or_predicates [AND or_predicates ...]]
-  [ORDER BY identifier [order] [, identifier [order]] ...]
+  [GROUP BY identifier [, identifier] ...]
+  [HAVING having_condition]
+  [ORDER BY order_key [order] [, order_key [order]] ...]
   [LIMIT <limit>]
   [WITH operation_attributes_or_abac_read_tags]
 
-projection: * | identifier [AS <alias>]
+identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
+aggregate_function: <aggregate function name>(* | <column name> | <literal>)
+projection: * | identifier [AS <alias>] | aggregate_function [AS <alias>]
 join_specification: [INNER] JOIN [<namespace name>.]<table name> [AS <alias>] ON join_predicate [AND join_predicate] ... | {LEFT|RIGHT} [OUTER] JOIN [<namespace name>.]<table name> [AS <alias>] ON join_predicate [AND join_predicate] ...
 join_predicate: identifier = identifier
 and_predicates: predicate | (predicate [AND predicate ...])
 or_predicates: predicate | (predicate [OR predicate ...])
 predicate: identifier operator <literal> | identifier BETWEEN <literal> AND <literal> | identifier [NOT] LIKE <pattern> [ESCAPE <escape character>] | identifier IS [NOT] NULL
-identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
+having_condition: having_and_predicates [OR having_and_predicates ...] | having_or_predicates [AND having_or_predicates ...]
+having_and_predicates: having_predicate | (having_predicate [AND having_predicate ...])
+having_or_predicates: having_predicate | (having_predicate [OR having_predicate ...])
+having_predicate: (identifier | aggregate_function | <alias>) operator <literal> | (identifier | aggregate_function | <alias>) BETWEEN <literal> AND <literal> | (identifier | aggregate_function | <alias>) [NOT] LIKE <pattern> [ESCAPE <escape character>] | (identifier | aggregate_function | <alias>) IS [NOT] NULL
+order_key: identifier | aggregate_function | <alias>
 operator: = | <> | != | > | >= | < | <=
 order: ASC | DESC
 operation_attributes_or_abac_read_tags: operation_attribute_or_abac_read_tag [AND operation_attribute_or_abac_read_tag] ...
@@ -888,9 +896,31 @@ abac_read_tag: ABAC_READ_TAG <abac read tag> FOR [POLICY] <abac policy name>
   - `ESCAPE` 句を指定してエスケープ文字を変更できます。
   - 空のエスケープ文字 `ESCAPE ''` を指定してエスケープ文字を無効にすることができます。
 
+`GROUP BY` 句:
+
+- 指定された列で同じ値を持つ行をグループ化します。
+- `SELECT` 句の列は、`GROUP BY` 句に含まれるか集約関数で使用される必要があります。
+
+`HAVING` 句:
+
+- 集約関数の結果に基づいてグループをフィルタリングします。
+- 集約関数を直接参照するか、エイリアスで参照できます。
+- 述語は `having_and_predicates` の OR 形式（論理和標準形と呼ばれます）または `having_or_predicates` の AND 形式（論理積標準形と呼ばれます）である必要があります。
+- 複数の述語を持つ複数の `having_and_predicates` または `having_or_predicates` を接続する場合は、`having_and_predicates` と `having_or_predicates` を括弧で囲む必要があります。
+
+集約関数:
+
+- サポートされている関数: `COUNT`、`SUM`、`AVG`、`MIN`、`MAX`。
+- `COUNT(*)` は全ての行をカウントし、`COUNT(<column name>)` は非 null 値をカウントします。結果の型は `BIGINT` です。
+- `SUM` は数値型（`INT`、`BIGINT`、`FLOAT`、`DOUBLE`）を受け入れます。`INT` と `BIGINT` に対して `BIGINT` を返し、`FLOAT` と `DOUBLE` に対して `DOUBLE` を返します。
+- `AVG` は数値型を受け入れます。`DOUBLE` を返します。
+- `MIN` は比較可能な任意の型を受け入れます。同じ型を返します。
+- `MAX` は比較可能な任意の型を受け入れます。同じ型を返します。
+- `COUNT` のみが `*` を引数として受け入れます。
+
 `ORDER BY` 句:
 
-- `ORDER BY` 句の任意の列に `order` を指定できます。
+- `ORDER BY` 句の任意の列、集約関数、またはエイリアスに `order` を指定できます。
 - `order` を省略すると、デフォルトの順序 `ASC` が使用されます。
 - `ORDER BY` 句では暗号化された列を指定できません。
 
@@ -1357,6 +1387,114 @@ SelectStatement statement13 =
 ```
 
 `JOIN` 句を使用する例については、[パーティションスキャンとインデックススキャンの例](#パーティションスキャンとインデックススキャンの例)を参照してください。
+
+#### 集約クエリの例
+
+次のようなテーブルがあるとします。
+
+```sql
+CREATE TABLE ns.user (
+  id INT,
+  name TEXT,
+  age INT,
+  height FLOAT,
+  PRIMARY KEY (id)
+);
+```
+
+集約クエリの例は次のとおりです。
+
+```sql
+-- 集約関数を使用
+SELECT COUNT(*) FROM ns.user;
+
+-- GROUP BY を使用
+SELECT age, COUNT(*) FROM ns.user GROUP BY age;
+
+-- 複数の集約関数を使用
+SELECT age, COUNT(height), SUM(height), AVG(height), MIN(height), MAX(height) FROM ns.user GROUP BY age;
+
+-- 集約関数のエイリアスと HAVING を使用
+SELECT age, COUNT(*) AS cnt FROM ns.user GROUP BY age HAVING cnt > 1;
+
+-- HAVING で集約関数を直接使用
+SELECT age, COUNT(*) FROM ns.user GROUP BY age HAVING COUNT(*) > 1;
+
+-- GROUP BY、WHERE、ORDER BY でエイリアスを使用、および LIMIT を使用
+SELECT age, SUM(height) AS total_height FROM ns.user WHERE name LIKE 'A%' GROUP BY age ORDER BY total_height DESC LIMIT 10;
+```
+
+集約クエリのステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// 集約関数を使用
+SelectStatement statement1 =
+    StatementBuilder.select(
+            Projection.function(
+                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))))
+        .from("ns", "user")
+        .build();
+
+// GROUP BY を使用
+SelectStatement statement2 =
+    StatementBuilder.select(
+            Projection.column("age"),
+            Projection.function(
+                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))))
+        .from("ns", "user")
+        .groupBy(ColumnRef.of("age"))
+        .build();
+
+// 複数の集約関数を使用
+SelectStatement statement3 =
+    StatementBuilder.select(
+            Projection.column("age"),
+            Projection.function(
+                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
+            Projection.function(
+                FunctionRef.of("SUM", ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
+            Projection.function(
+                FunctionRef.of("AVG", ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
+            Projection.function(
+                FunctionRef.of("MIN", ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
+            Projection.function(
+                FunctionRef.of("MAX", ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))))
+        .from("ns", "user")
+        .groupBy(ColumnRef.of("age"))
+        .build();
+
+// 集約関数のエイリアスと HAVING を使用
+SelectStatement statement4 =
+    StatementBuilder.select(
+            Projection.column("age"),
+            Projection.function(
+                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))).as("cnt"))
+        .from("ns", "user")
+        .groupBy(ColumnRef.of("age"))
+        .having(HavingPredicate.column("cnt").isGreaterThan(Value.of(1L)))
+        .build();
+
+// HAVING で集約関数を直接使用
+SelectStatement statement5 =
+    StatementBuilder.select(Projection.column("age"), Projection.function(FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))))
+        .from("ns", "user")
+        .groupBy(ColumnRef.of("age"))
+        .having(HavingPredicate.function(FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))).isGreaterThan(Value.of(1L)))
+        .build();
+
+// GROUP BY、WHERE、ORDER BY でエイリアスを使用、および LIMIT を使用
+SelectStatement statement6 =
+    StatementBuilder.select(
+            Projection.column("age"),
+            Projection.function(
+                    FunctionRef.of("SUM", ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))).as("total_height"))
+        .from("ns", "user")
+        .where(Predicate.column("name").isLike(Value.of("A%")))
+        .groupBy(ColumnRef.of("age"))
+        .orderBy(Ordering.column("total_height").desc())
+        .limit(10)
+        .build();
+```
 
 ### INSERT
 
