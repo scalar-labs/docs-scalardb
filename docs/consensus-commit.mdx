@@ -96,7 +96,7 @@ Then, ScalarDB commits all the validated (prepared) records by changing the stat
 
 #### Distributed WAL
 
-ScalarDB stores transaction logs, which are for write-ahead logging (WAL), in the underlying database records that it manages. Specifically, as shown in the following figure, ScalarDB manages special columns for the log information in a record in addition to the columns that an application manages. The log information comprises, for example, a transaction ID (TxID) that has updated the corresponding record most recently, a record version number (Version), a record state (TxState) (for example, COMMITTED or PREPARED), timestamps (not shown in the diagram), and a before image that comprises the previous version's application data and its metadata.
+ScalarDB stores transaction logs (transaction metadata), which are for write-ahead logging (WAL), in the underlying database records that it manages. Specifically, as shown in the following figure, ScalarDB manages special columns for the log information in a record in addition to the columns that an application manages. The log information comprises, for example, a transaction ID (TxID) that has updated the corresponding record most recently, a record version number (Version), a record state (TxState) (for example, COMMITTED or PREPARED), timestamps (not shown in the diagram), and a before image that comprises the previous version's application data and its metadata.
 
 ScalarDB also manages transaction states separately from the application records in the Coordinator table. The Coordinator table determines and manages transaction states as a single source of truth. The Coordinator table can be collocated with application-managed tables or located in a separate dedicated database.
 
@@ -107,6 +107,20 @@ ScalarDB also manages transaction states separately from the application records
 The Coordinator table can be replicated for high availability by using the replication and consensus capabilities of the underlying databases. For example, if you manage the Coordinator table by using Cassandra with a replication factor of three, you can make the transaction coordination of ScalarDB tolerate one replica crash. Hence, you can make the atomic commitment protocol of ScalarDB perform like the Paxos Commit protocol; it could mitigate liveness issues (for example, blocking problems) without sacrificing safety.
 
 :::
+
+##### Transaction metadata decoupling
+
+ScalarDB manages transaction metadata in the same table as application data by default. However, ScalarDB also provides an option to enable managing transaction metadata separately from the application data, which we call transaction metadata decoupling. This capability is particularly useful when importing existing database tables into ScalarDB, as it allows users to maintain the original schema without any modifications.
+
+:::note
+
+Transaction metadata decoupling is currently in Private Preview. For details, please [contact us](https://www.scalar-labs.com/contact) or wait for this feature to become publicly available in a future version.
+
+Currently, transaction metadata decoupling is supported only for JDBC databases.
+
+:::
+
+If transaction metadata decoupling is enabled, ScalarDB internally creates a virtual table that combines the application data table with the transaction metadata table. The Consensus Commit protocol operates on this virtual table, functioning in the same manner as it does when transaction metadata decoupling is not enabled. However, ScalarDB requires twice as many accesses to the underlying databases when reading and writing records, which could result in performance overhead. ScalarDB minimizes the performance overhead by grouping and pushing down as many operations as possible when accessing the underlying databases.
 
 #### Lazy recovery
 

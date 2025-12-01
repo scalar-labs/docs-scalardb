@@ -579,11 +579,82 @@ Oracle BLOB type cannot be used as a partition key, clustering key, secondary in
 
 YugabyteDB has limitations that prevent floating point types (FLOAT and DOUBLE) from functioning correctly as a primary key, clustering keys, or secondary index keys.
 
-## Internal metadata for Consensus Commit
+## Internal transaction metadata for Consensus Commit
 
-The Consensus Commit transaction manager manages metadata (for example, transaction ID, record version, and transaction status) stored along with the actual records to handle transactions properly.
+The Consensus Commit transaction manager manages transaction metadata (for example, transaction ID, record version, and transaction status) stored along with the actual records to handle transactions properly.
 
 Thus, along with any columns that the application requires, additional columns for the metadata need to be defined in the schema. Additionally, this tool creates a table with the metadata if you use the Consensus Commit transaction manager.
+
+### Decoupling transaction metadata
+
+You can separately manage the transaction metadata from application data by enabling [transaction metadata decoupling](./consensus-commit.mdx#transaction-metadata-decoupling).
+
+#### Create a new table with transaction metadata decoupling
+
+When creating a new table with transaction metadata decoupling, you first need to enable the option by adding the `"transaction-metadata-decoupling": true` to your schema file, and then create a table.
+
+The following is an example schema file:
+
+```json
+{
+  "sample_db.sample_table": {
+    "transaction-metadata-decoupling": true,
+    "partition-key": [
+      "c1"
+    ],
+    "clustering-key": [
+      "c4"
+    ],
+    "columns": {
+      "c1": "INT",
+      "c2": "TEXT",
+      "c3": "INT",
+      "c4": "INT"
+    }
+  }
+}
+```
+
+ScalarDB internally creates two tables per table defined in the schema: an application table and a transaction metadata table as follows:
+
+| Table                      | Description                                                                                                              |
+|----------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| `<table_name>_data`        | Application table that stores user data                                                                                  |
+| `<table_name>_tx_metadata` | Transaction metadata table that stores transaction-related metadata and before-image columns for non-primary key columns |
+
+Then, you can access the table `<table_name>` as a virtual table that combines the data table and transaction metadata table by using `INNER JOIN`.
+
+#### Import an existing table with transaction metadata decoupling
+
+When importing an existing table with transaction metadata decoupling, you also need to enable the option by adding the `"transaction-metadata-decoupling": true` to your schema file, and then import a table.
+
+The following is an example schema file:
+
+```json
+{
+  "sample_db.sample_table": {
+    "transaction-metadata-decoupling": true
+  }
+}
+```
+
+ScalarDB assumes that the existing table is the data table and creates only the transaction metadata table as follows:
+
+| Table                      | Description                                                                                                              |
+|----------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| `<table_name>`             | Original application table (unchanged)                                                                                   |
+| `<table_name>_tx_metadata` | Transaction metadata table that stores transaction-related metadata and before-image columns for non-primary key columns |
+
+Then, you can access the table `<table_name>_scalardb` as a virtual table that combines the data table and transaction metadata table by using `LEFT OUTER JOIN`.
+
+#### Limitations
+
+Currently, when using transaction metadata decoupling, the following operations are not supported:
+
+- Repairing tables
+- Adding or dropping columns
+- Renaming tables
+- Altering column types
 
 ## Use Schema Loader in your application
 

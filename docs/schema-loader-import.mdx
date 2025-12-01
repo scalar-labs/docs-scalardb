@@ -318,6 +318,28 @@ The following table shows the supported data types in each JDBC database and the
 
 :::
 
+## Decoupling transaction metadata
+
+You can separately manage the transaction metadata from application data by enabling [transaction metadata decoupling](./consensus-commit.mdx#transaction-metadata-decoupling).
+
+To decouple transaction metadata for an imported table, add the `transaction-metadata-decoupling` field with a value of `true` in the import schema file, as shown in the following example:
+
+```json
+{
+  "sample_namespace.sample_table": {
+    "transaction-metadata-decoupling": true
+  }
+}
+```
+
+:::note
+
+The imported table name is the original table name with the `_scalardb` suffix appended, so you can access it as `<table_name>_scalardb`.
+
+:::
+
+For details about transaction metadata decoupling, see [Transaction metadata decoupling](./schema-loader.mdx#transaction-metadata-decoupling).
+
 ## Use import function in your application
 
 You can use the import function in your application by using the following interfaces:
