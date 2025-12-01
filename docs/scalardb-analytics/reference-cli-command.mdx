@@ -61,33 +61,91 @@ Please replace `<catalog-uuid>` with the UUID of the catalog you want to describ
 
 Remove a catalog from the system. The operation fails if the catalog contains data sources unless you use the `--cascade` option to delete all contents.
 
-To delete an empty catalog:
+You can specify the catalog either by its name or by its UUID.
+
+To delete an empty catalog by name:
+
 ```
 scalardb-analytics-cli catalog delete --catalog <catalog-name>
 ```
 
 Please replace `<catalog-name>` with the name of the catalog you want to delete.
 
-To delete a catalog and all its contents:
+To delete a catalog by ID:
+
+```
+scalardb-analytics-cli catalog delete --catalog-id <catalog-uuid>
+```
+
+Please replace `<catalog-uuid>` with the UUID of the catalog you want to delete.
+
+To delete a catalog and all its contents (data sources and their children):
+
 ```
 scalardb-analytics-cli catalog delete --catalog <catalog-name> --cascade
 ```
 
 ## Data source operations
 
-This section describes how to register a new data source, list all data sources, show data source details, and delete a data source
+This section describes how to register a new data source, list all data sources, show data source details, and delete a data source.
 
 ### Register a new data source
 
-Add a new data source to a catalog using a data source registration file.
+Add a new data source to a catalog by specifying the catalog name, data source name, and provider configuration.
 
 ```
-scalardb-analytics-cli data-source register --data-source-json <path-to-json>
+scalardb-analytics-cli data-source register --catalog <catalog-name> --data-source <data-source-name> <provider-option> [schema-option]
 ```
 
-Please replace `<path-to-json>` with the file path to your data source registration file.
+Please replace:
 
-The `register` command requires a data source registration file. The file format is described in the [Data source registration file format](reference-data-source.mdx#data-source-registration-file-format) section below.
+- `<catalog-name>` with the name of the catalog that will own the data source.
+- `<data-source-name>` with the name of the data source to register.
+
+#### Provider options
+
+You must specify the provider configuration by using one of the following options:
+
+- `--provider-json <json>`: Inline JSON payload that describes the data source provider.
+- `--provider-file <path>`: Path to a JSON file that describes the data source provider.
+- `--provider-stdin`: Read the provider JSON payload from standard input.
+
+#### Schema options
+
+For the providers that do not support automatic schema resolution, such as DynamoDB, you must manually specify the schema definition by using one of the following methods:
+
+- `--schema-json <json>`: Inline JSON payload that describes the data source schema.
+- `--schema-file <path>`: Path to a JSON file that describes the data source schema.
+
+:::note
+
+Whether a schema is required depends on the provider type. Some providers, such as PostgreSQL and MySQL, resolve schemas automatically and do not accept manual schema input. Other providers, such as DynamoDB, require a schema to be provided through one of the available schema options.
+
+:::
+
+#### Examples
+
+To register a data source by using a provider file:
+
+```
+scalardb-analytics-cli data-source register --catalog my_catalog --data-source my_datasource --provider-file /path/to/provider.json
+```
+
+Please replace `/path/to/provider.json` with the path to the provider file.
+
+To register a data source by using inline JSON:
+
+```
+scalardb-analytics-cli data-source register --catalog my_catalog --data-source my_datasource --provider-json '{"type":"postgresql","host":"localhost","port":5432,"database":"mydb","user":"user","password":"pass"}'
+```
+
+To register a data source by using standard input:
+
+```
+cat provider.json | scalardb-analytics-cli data-source register --catalog my_catalog --data-source my_datasource --provider-stdin
+```
+
+The provider JSON format is described in the [Data Source Reference](reference-data-source.mdx).
 
 ### List all data sources
 
@@ -104,6 +162,7 @@ Please replace `<catalog-name>` with the name of the catalog whose data sources 
 Display detailed information about a specific data source. You can specify the data source either by its name within a catalog or by its UUID.
 
 To specify by catalog and data source name:
+
 ```
 scalardb-analytics-cli data-source describe --catalog <catalog-name> --data-source <data-source-name>
 ```
@@ -113,6 +172,7 @@ Please replace:
 - `<data-source-name>` with the name of the data source you want to describe
 
 To specify by data source ID:
+
 ```
 scalardb-analytics-cli data-source describe --data-source-id <data-source-uuid>
 ```
@@ -123,7 +183,10 @@ Please replace `<data-source-uuid>` with the UUID of the data source you want to
 
 Remove a data source from a catalog. The operation fails if the data source contains namespaces unless you use the `--cascade` option to delete all contents.
 
-To delete an empty data source:
+You can specify the data source either by its name within a catalog or by its UUID.
+
+To delete an empty data source by name:
+
 ```
 scalardb-analytics-cli data-source delete --catalog <catalog-name> --data-source <data-source-name>
 ```
@@ -132,7 +195,16 @@ Please replace:
 - `<catalog-name>` with the name of the catalog containing the data source
 - `<data-source-name>` with the name of the data source you want to delete
 
-To delete a data source and all its contents:
+To delete a data source by ID:
+
+```
+scalardb-analytics-cli data-source delete --data-source-id <data-source-uuid>
+```
+
+Please replace `<data-source-uuid>` with the UUID of the data source you want to delete.
+
+To delete a data source and all its contents (namespaces, tables, and columns):
+
 ```
 scalardb-analytics-cli data-source delete --catalog <catalog-name> --data-source <data-source-name> --cascade
 ```
@@ -157,6 +229,7 @@ Please replace:
 Display detailed information about a specific namespace. You can specify the namespace either by its name within a data source or by its UUID. For nested namespaces, use `.` as a separator (for example, `--namespace parent.child`).
 
 To specify by catalog, data source, and namespace name:
+
 ```
 scalardb-analytics-cli namespace describe --catalog <catalog-name> --data-source <data-source-name> --namespace <namespace-name>
 ```
@@ -167,6 +240,7 @@ Please replace:
 - `<namespace-name>` with the name of the namespace you want to describe
 
 To specify by namespace ID:
+
 ```
 scalardb-analytics-cli namespace describe --namespace-id <namespace-uuid>
 ```
