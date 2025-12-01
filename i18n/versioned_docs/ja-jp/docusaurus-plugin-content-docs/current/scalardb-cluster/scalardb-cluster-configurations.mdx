@@ -638,6 +638,186 @@ ScalarDB Cluster SQL の設定は次のとおりです。
 - **説明:** デフォルトの名前空間名。SQL ステートメントで名前空間名を指定しない場合は、この値が使用されます。
 - **デフォルト値:** 
 
+### 認証と認可の設定
+
+ScalarDB Cluster の認証と認可の設定は以下の通りです。
+
+#### `auth.enabled`
+
+- **フィールド:** `scalar.db.cluster.auth.enabled`
+- **説明:** 認証と認可が有効になっているかどうか。
+- **デフォルト値:** `false`
+
+:::warning
+
+認証と認可を有効にする場合は、システム名前空間（デフォルトでは `scalardb`）に対して [`scalar.db.cross_partition_scan.enabled`](#パーティション間スキャン設定) を `true` に設定する必要があります。これは、ABAC 機能が内部的にクロスパーティションスキャンを実行するためです。
+
+:::
+
+#### `auth.cache_expiration_time_millis`
+
+- **フィールド:** `scalar.db.cluster.auth.cache_expiration_time_millis`
+- **説明:** 認証と認可情報のキャッシュ有効期限時間 (ミリ秒単位)。
+- **デフォルト値:** `60000` (1分)
+
+#### `auth.auth_token_expiration_time_minutes`
+
+- **フィールド:** `scalar.db.cluster.auth.auth_token_expiration_time_minutes`
+- **説明:** 認証と認可トークンの有効期限時間 (分単位)。
+- **デフォルト値:** `1440` (1日)
+
+#### `auth.auth_token_gc_thread_interval_minutes`
+
+- **フィールド:** `scalar.db.cluster.auth.auth_token_gc_thread_interval_minutes`
+- **説明:** 認証と認可トークンのガベージコレクション (GC) スレッドの間隔 (分単位)。
+- **デフォルト値:** `360` (6時間)
+
+#### `auth.pepper`
+
+- **フィールド:** `scalar.db.cluster.auth.pepper`
+- **説明:** ハッシュ化の前にパスワードに追加される秘密値。指定されていない場合、パスワードはペッパーなしでハッシュ化されます。
+- **デフォルト値:** empty
+
+### 保存時データ暗号化設定
+
+ScalarDB Cluster で保存時のデータを暗号化するための設定は以下の通りです。
+
+保存時のデータ暗号化の詳細については、[保存データの暗号化](./encrypt-data-at-rest.mdx)を参照してください。
+
+#### `cluster.encryption.enabled`
+
+- **フィールド:** `scalar.db.cluster.encryption.enabled`
+- **説明:** ScalarDB が保存時のデータを暗号化するかどうか。
+- **デフォルト値:** `false`
+
+#### `cluster.encryption.type`
+
+- **フィールド:** `scalar.db.cluster.encryption.type`
+- **説明:** 暗号化実装タイプ。`vault`（HashiCorp Vault 暗号化用）または `self`（自己暗号化用）のいずれかを指定できます。
+- **デフォルト値:** empty
+
+#### `cluster.encryption.delete_data_encryption_key_on_drop_table.enabled`
+
+- **フィールド:** `scalar.db.cluster.encryption.delete_data_encryption_key_on_drop_table.enabled`
+- **説明:** テーブルを削除する際にデータ暗号化キー (DEK) を削除するかどうか。
+- **デフォルト値:** `false`
+
+#### HashiCorp Vault 暗号化設定
+
+HashiCorp Vault 暗号化（`scalar.db.cluster.encryption.type=vault`）を使用する場合の設定は以下の通りです。
+
+##### `cluster.encryption.vault.key_type`
+
+- **フィールド:** `scalar.db.cluster.encryption.vault.key_type`
+- **説明:** キーの種類。現在、`aes128-gcm96`、`aes256-gcm96`、`chacha20-poly1305` がサポートされています。キーの種類の詳細については、[Key types](https://developer.hashicorp.com/vault/docs/secrets/transit#key-types) を参照してください。
+- **デフォルト値:** `aes128-gcm96`
+
+##### `cluster.encryption.vault.associated_data_required`
+
+- **フィールド:** `scalar.db.cluster.encryption.vault.associated_data_required`
+- **説明:** AEAD 暗号化で関連データが必要かどうか。
+- **デフォルト値:** `false`
+
+##### `cluster.encryption.vault.address`
+
+- **フィールド:** `scalar.db.cluster.encryption.vault.address`
+- **説明:** HashiCorp Vault サーバーのアドレス。
+- **デフォルト値:** empty
+
+##### `cluster.encryption.vault.token`
+
+- **フィールド:** `scalar.db.cluster.encryption.vault.token`
+- **説明:** HashiCorp Vault で認証するためのトークン。
+- **デフォルト値:** empty
+
+##### `cluster.encryption.vault.namespace`
+
+- **フィールド:** `scalar.db.cluster.encryption.vault.namespace`
+- **説明:** HashiCorp Vault の名前空間。この設定はオプションです。
+- **デフォルト値:** empty
+
+##### `cluster.encryption.vault.transit_secrets_engine_path`
+
+- **フィールド:** `scalar.db.cluster.encryption.vault.transit_secrets_engine_path`
+- **説明:** transit シークレットエンジンのパス。
+- **デフォルト値:** `transit`
+
+##### `cluster.encryption.vault.column_batch_size`
+
+- **フィールド:** `scalar.db.cluster.encryption.vault.column_batch_size`
+- **説明:** HashiCorp Vault サーバーへの単一リクエストに含まれる列数。
+- **デフォルト値:** `64`
+
+#### 自己暗号化設定
+
+自己暗号化（`scalar.db.cluster.encryption.type=self`）を使用する場合の設定は以下の通りです。
+
+##### `cluster.encryption.self.key_type`
+
+- **フィールド:** `scalar.db.cluster.encryption.self.key_type`
+- **説明:** キーの種類。現在、`AES128_GCM`、`AES256_GCM`、`AES128_EAX`、`AES256_EAX`、`AES128_CTR_HMAC_SHA256`、`AES256_CTR_HMAC_SHA256`、`CHACHA20_POLY1305`、`XCHACHA20_POLY1305` がサポートされています。キーの種類の詳細については、[キータイプを選択する](https://developers.google.com/tink/aead?hl=ja#choose_a_key_type)を参照してください。
+- **デフォルト値:** `AES128_GCM`
+
+##### `cluster.encryption.self.associated_data_required`
+
+- **フィールド:** `scalar.db.cluster.encryption.self.associated_data_required`
+- **説明:** AEAD 暗号化で関連データが必要かどうか。
+- **デフォルト値:** `false`
+
+##### `cluster.encryption.self.kubernetes.secret.namespace_name`
+
+- **フィールド:** `scalar.db.cluster.encryption.self.kubernetes.secret.namespace_name`
+- **説明:** Kubernetes Secrets の名前空間名。
+- **デフォルト値:** `default`
+
+##### `cluster.encryption.self.data_encryption_key_cache_expiration_time`
+
+- **フィールド:** `scalar.db.cluster.encryption.self.data_encryption_key_cache_expiration_time`
+- **説明:** DEK キャッシュの有効期限時間（ミリ秒単位）。
+- **デフォルト値:** `60000` (60秒)
+
+### ワイヤ暗号化設定
+
+ScalarDB Cluster でワイヤ通信を暗号化するための設定は以下の通りです。
+
+ワイヤ通信の暗号化の詳細については、[ワイヤ通信の暗号化](./encrypt-wire-communications.mdx)を参照してください。
+
+#### `cluster.tls.enabled`
+
+- **フィールド:** `scalar.db.cluster.tls.enabled`
+- **説明:** ワイヤ暗号化 (TLS) が有効になっているかどうか。
+- **デフォルト値:** `false`
+
+#### `cluster.tls.ca_root_cert_pem`
+
+- **フィールド:** `scalar.db.cluster.tls.ca_root_cert_pem`
+- **説明:** TLS 通信用のカスタム CA ルート証明書 (PEM データ)。
+- **デフォルト値:** empty
+
+#### `cluster.tls.ca_root_cert_path`
+
+- **フィールド:** `scalar.db.cluster.tls.ca_root_cert_path`
+- **説明:** TLS 通信用のカスタム CA ルート証明書 (ファイルパス)。
+- **デフォルト値:** empty
+
+#### `cluster.tls.override_authority`
+
+- **フィールド:** `scalar.db.cluster.tls.override_authority`
+- **説明:** TLS 通信用のカスタムオーソリティ。実際に接続されるホストは変更されません。これはテスト用に意図されていますが、DNS オーバーライドの代替手段として、テスト以外でも安全に使用できます。たとえば、`scalar.db.cluster.node.tls.cert_chain_path` に設定した証明書チェーンファイルで提示されるホスト名を指定できます。
+- **デフォルト値:** empty
+
+#### `cluster.node.tls.cert_chain_path`
+
+- **フィールド:** `scalar.db.cluster.node.tls.cert_chain_path`
+- **説明:** TLS 通信に使用される証明書チェーンファイル。
+- **デフォルト値:** empty
+
+#### `cluster.node.tls.private_key_path`
+
+- **フィールド:** `scalar.db.cluster.node.tls.private_key_path`
+- **説明:** TLS 通信に使用される秘密鍵ファイル。
+- **デフォルト値:** empty
+
 ### ABAC 設定
 
 属性ベースアクセス制御 (ABAC) の設定は次のとおりです。
@@ -801,6 +981,50 @@ scalar.db.transaction_manager=cluster
 scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
 ```
 
+### クライアント側ワイヤ暗号化設定
+
+クライアント側ワイヤ暗号化で使用できる設定は以下の通りです。
+
+ワイヤ通信の暗号化の詳細については、[ワイヤ通信の暗号化](./encrypt-wire-communications.mdx)を参照してください。
+
+#### `cluster.tls.enabled`
+
+- **フィールド:** `scalar.db.cluster.tls.enabled`
+- **説明:** クライアントでワイヤ暗号化 (TLS) が有効になっているかどうか。
+- **デフォルト値:** `false`
+
+#### `cluster.tls.ca_root_cert_pem`
+
+- **フィールド:** `scalar.db.cluster.tls.ca_root_cert_pem`
+- **説明:** TLS 通信用のカスタム CA ルート証明書 (PEM データ)。
+- **デフォルト値:** empty
+
+#### `cluster.tls.ca_root_cert_path`
+
+- **フィールド:** `scalar.db.cluster.tls.ca_root_cert_path`
+- **説明:** TLS 通信用のカスタム CA ルート証明書（ファイルパス）。
+- **デフォルト値:** empty
+
+#### `cluster.tls.override_authority`
+
+- **フィールド:** `scalar.db.cluster.tls.override_authority`
+- **説明:** TLS 通信用のカスタムオーソリティ。実際に接続されるホストは変更されません。これはテスト用に意図されていますが、DNS オーバーライドの代替手段として、テスト以外でも安全に使用できます。たとえば、`scalar.db.cluster.node.tls.cert_chain_path` に設定した証明書チェーンファイルで提示されるホスト名を指定できます。これは、クラスターの TLS 証明書のパスです。
+- **デフォルト値:** empty
+
+たとえば、`indirect` クライアントモードを使用し、ロードバランサーの IP アドレスが `192.168.10.1` の場合、次のようにクライアントを設定できます。
+
+```properties
+scalar.db.transaction_manager=cluster
+scalar.db.contact_points=indirect:192.168.10.1
+```
+
+または、`direct-kubernetes` クライアントモードを使用し、エンドポイントの名前空間が `ns`、エンドポイント名が `scalardb-cluster` の場合、次のようにクライアントを設定できます。
+
+```properties
+scalar.db.transaction_manager=cluster
+scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
+```
+
 ### SQL インターフェイスの設定
 
 次の表は、ScalarDB Cluster SQL クライアントの設定を示しています。
@@ -860,6 +1084,28 @@ scalar.db.sql.cluster_mode.contact_points=indirect:192.168.10.1
 scalar.db.sql.connection_mode=cluster
 scalar.db.sql.cluster_mode.contact_points=direct-kubernetes:ns/scalardb-cluster
 ```
+
+#### 認証と認可の設定
+
+ScalarDB Cluster クライアントの認証と認可の設定は以下の通りです。
+
+##### `auth.enabled`
+
+- **フィールド:** `scalar.db.cluster.auth.enabled`
+- **説明:** 認証と認可が有効になっているかどうか。
+- **デフォルト値:** `false`
+
+##### `auth.username`
+
+- **フィールド:** `scalar.db.sql.cluster_mode.username`
+- **説明:** クライアントのユーザー名。
+- **デフォルト値:** empty
+
+##### `auth.password`
+
+- **フィールド:** `scalar.db.sql.cluster_mode.password`
+- **説明:** クライアントのパスワード。
+- **デフォルト値:** empty
 
 ScalarDB JDBC の設定方法の詳細については、[JDBC 接続 URL](../scalardb-sql/jdbc-guide.mdx#jdbc-接続-url) を参照してください。
 
