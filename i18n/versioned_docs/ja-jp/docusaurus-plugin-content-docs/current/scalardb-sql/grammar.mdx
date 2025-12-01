@@ -34,6 +34,13 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
   - [DROP USER](#drop-user)
   - [GRANT](#grant)
   - [REVOKE](#revoke)
+  - [CREATE ROLE](#create-role)
+  - [DROP ROLE](#drop-role)
+  - [GRANT ... TO ROLE](#grant--to-role)
+  - [REVOKE ... FROM ROLE](#revoke--from-role)
+  - [GRANT ROLE](#grant-role)
+  - [REVOKE ROLE](#revoke-role)
+  - [REVOKE ADMIN OPTION](#revoke-admin-option)
   - [CREATE ABAC_POLICY](#create-abac_policy)
   - [ENABLE ABAC_POLICY](#enable-abac_policy)
   - [DISABLE ABAC_POLICY](#disable-abac_policy)
@@ -73,6 +80,9 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
   - [RESUME](#resume)
   - [SHOW USERS](#show-users)
   - [SHOW GRANTS](#show-grants)
+  - [SHOW ROLES](#show-roles)
+  - [SHOW ROLE USERS](#show-role-users)
+  - [SHOW ROLE GRANTS](#show-role-grants)
   - [SHOW ABAC_POLICY](#show-abac_policy)
   - [SHOW ABAC_POLICIES](#show-abac_policies)
   - [SHOW ABAC_LEVEL](#show-abac_level)
@@ -2513,6 +2523,317 @@ RevokeStatement statement5 =
         .build();
 ```
 
+### CREATE ROLE
+
+`CREATE ROLE` コマンドは、指定されたロール名で新しいロールを作成します。
+
+#### 文法
+
+```sql
+CREATE ROLE <role name>
+```
+
+#### 例
+
+`CREATE ROLE` の例を以下に示します。
+
+```sql
+-- ロールを作成します。
+CREATE ROLE role1;
+```
+
+`CREATE ROLE` のステートメントオブジェクトを構築する例を以下に示します。
+
+```java
+// ロールを作成します。
+CreateRoleStatement statement = StatementBuilder.createRole("role1").build();
+```
+
+### DROP ROLE
+
+`DROP ROLE` コマンドは、指定されたロールを削除します。
+
+#### 文法
+
+```sql
+DROP ROLE <role name>
+```
+
+#### 例
+
+`DROP ROLE` の例を以下に示します。
+
+```sql
+-- ロールを削除します。
+DROP ROLE role1;
+```
+
+`DROP ROLE` のステートメントオブジェクトを構築する例を以下に示します。
+
+```java
+// ロールを削除します。
+DropRoleStatement statement = StatementBuilder.dropRole("role1").build();
+```
+
+### GRANT ... TO ROLE
+
+`GRANT ... TO ROLE` コマンドは、指定されたロールに権限を付与します。
+
+#### 文法
+
+```sql
+GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON [TABLE] <table name> [, <table name>] ... TO ROLE <role name> [, <role name>] ... [WITH GRANT OPTION]
+GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON NAMESPACE <namespace name> [, <namespace name>] ... TO ROLE <role name> [, <role name>] ... [WITH GRANT OPTION]
+
+privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER
+```
+
+- `INSERT` 権限と `UPDATE` 権限は一緒に付与する必要があります。
+- ロールに `UPDATE` または `DELETE` 権限を付与するには、対象ロールが `SELECT` 権限を持つ必要があります。
+- `WITH GRANT OPTION` オプションを指定すると、そのロールを持つユーザーは他のユーザーやロールに権限を付与できます。
+
+#### 例
+
+`GRANT ... TO ROLE` の例を以下に示します。
+
+```sql
+-- テーブルの SELECT 権限をロールに付与します。
+GRANT SELECT ON ns.tbl TO ROLE role1;
+
+-- テーブルの SELECT 権限をロールに付与します。
+GRANT SELECT ON ns.tbl1, ns.tbl2 TO ROLE role1, role2;
+
+-- ネームスペース内のすべてのテーブルの SELECT 権限をロールに付与します。
+GRANT SELECT ON NAMESPACE ns TO ROLE role1;
+
+-- テーブルのすべての権限と GRANT OPTION をロールに付与します。
+GRANT ALL ON ns.tbl TO ROLE role1 WITH GRANT OPTION;
+```
+
+`GRANT ... TO ROLE` のステートメントオブジェクトを構築する例を以下に示します。
+
+```java
+// テーブルの SELECT 権限をロールに付与します。
+GrantPrivilegeToRoleStatement statement1 =
+    StatementBuilder.grantToRole(Privilege.SELECT).onTable("ns", "tbl").toRole("role1").build();
+
+// テーブルの SELECT 権限をロールに付与します。
+GrantPrivilegeToRoleStatement statement2 =
+    StatementBuilder.grantToRole(Privilege.SELECT)
+        .onTable("ns", "tbl1", "ns", "tbl2")
+        .toRole("role1", "role2")
+        .build();
+
+// ネームスペース内のすべてのテーブルの SELECT 権限をロールに付与します。
+GrantPrivilegeToRoleStatement statement3 =
+    StatementBuilder.grantToRole(Privilege.SELECT).onNamespace("ns").toRole("role1").build();
+
+// テーブルのすべての権限と GRANT OPTION をロールに付与します。
+GrantPrivilegeToRoleStatement statement4 =
+    StatementBuilder.grantToRole(Privilege.values())
+        .onTable("ns", "tbl")
+        .toRole("role1")
+        .withGrantOption()
+        .build();
+```
+
+### REVOKE ... FROM ROLE
+
+`REVOKE ... FROM ROLE` コマンドは、指定されたロールから権限を取り消します。
+
+#### 文法
+
+```sql
+REVOKE {privilege [, privilege] ... | ALL [PRIVILEGES]} [, GRANT OPTION] ON [TABLE] <table name> [, <table name>] ... FROM ROLE <role name> [, <role name>] ...
+REVOKE GRANT OPTION ON [TABLE] <table name> [, <table name>] ... FROM ROLE <role name> [, <role name>] ...
+REVOKE {privilege [, privilege] ... | ALL [PRIVILEGES]} [, GRANT OPTION] ON NAMESPACE <namespace name> [, <namespace name>] ... FROM ROLE <role name> [, <role name>] ...
+REVOKE GRANT OPTION ON NAMESPACE <namespace name> [, <namespace name>] ... FROM ROLE <role name> [, <role name>] ...
+
+privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER
+```
+
+- `INSERT` 権限と `UPDATE` 権限は一緒に取り消す必要があります。
+- 対象ロールが `UPDATE` または `DELETE` 権限を持つ場合、そのロールから `SELECT` 権限を取り消すことはできません。
+
+#### 例
+
+`REVOKE ... FROM ROLE` の例を以下に示します。
+
+```sql
+-- ロールからテーブルの SELECT 権限を取り消します。
+REVOKE SELECT ON ns.tbl FROM ROLE role1;
+
+-- ロールからテーブルの SELECT 権限を取り消します。
+REVOKE SELECT ON ns.tbl1, ns.tbl2 FROM ROLE role1, role2;
+
+-- ロールからネームスペース内のすべてのテーブルの SELECT 権限を取り消します。
+REVOKE SELECT ON NAMESPACE ns FROM ROLE role1;
+
+-- ロールからテーブルのすべての権限と GRANT OPTION を取り消します。
+REVOKE ALL, GRANT OPTION ON ns.tbl FROM ROLE role1;
+```
+
+`REVOKE ... FROM ROLE` のステートメントオブジェクトを構築する例を以下に示します。
+
+```java
+// ロールからテーブルの SELECT 権限を取り消します。
+RevokePrivilegeFromRoleStatement statement1 =
+    StatementBuilder.revokeFromRole(Privilege.SELECT).onTable("ns", "tbl").fromRole("role1").build();
+
+// ロールからテーブルの SELECT 権限を取り消します。
+RevokePrivilegeFromRoleStatement statement2 =
+    StatementBuilder.revokeFromRole(Privilege.SELECT)
+        .onTable("ns", "tbl1", "ns", "tbl2")
+        .fromRole("role1", "role2")
+        .build();
+
+// ロールからネームスペース内のすべてのテーブルの SELECT 権限を取り消します。
+RevokePrivilegeFromRoleStatement statement3 =
+    StatementBuilder.revokeFromRole(Privilege.SELECT).onNamespace("ns").fromRole("role1").build();
+
+// ロールからテーブルのすべての権限と GRANT OPTION を取り消します。
+RevokePrivilegeFromRoleStatement statement4 =
+    StatementBuilder.revokeFromRole(Privilege.values())
+        .onTable("ns", "tbl")
+        .fromRole("role1")
+        .build();
+```
+
+### GRANT ROLE
+
+`GRANT ROLE` コマンドは、指定されたユーザーまたはロールにロールを付与します。
+
+#### 文法
+
+```sql
+GRANT ROLE <role name> [, <role name>] ... TO [USER] <username> [, <username>] ... [WITH ADMIN OPTION]
+GRANT ROLE <role name> [, <role name>] ... TO ROLE <role name> [, <role name>] ... [WITH ADMIN OPTION]
+```
+
+- `WITH ADMIN OPTION` オプションを指定すると、付与先は他のユーザーやロールにそのロールを付与できます。
+
+#### 例
+
+`GRANT ROLE` の例を以下に示します。
+
+```sql
+-- ユーザーにロールを付与します。
+GRANT ROLE role1 TO user1;
+
+-- ユーザーにロールを付与します。
+GRANT ROLE role1, role2 TO user1, user2;
+
+-- ADMIN OPTION と共にユーザーにロールを付与します。
+GRANT ROLE role1 TO user1 WITH ADMIN OPTION;
+
+-- 別のロールにロールを付与します。
+GRANT ROLE role1 TO ROLE role2;
+
+-- ADMIN OPTION と共に別のロールにロールを付与します。
+GRANT ROLE role1 TO ROLE role2 WITH ADMIN OPTION;
+```
+
+`GRANT ROLE` のステートメントオブジェクトを構築する例を以下に示します。
+
+```java
+// ユーザーにロールを付与します。
+GrantRoleToUserStatement statement1 =
+    StatementBuilder.grantRole("role1").toUser("user1").build();
+
+// ユーザーにロールを付与します。
+GrantRoleToUserStatement statement2 =
+    StatementBuilder.grantRole("role1", "role2").toUser("user1", "user2").build();
+
+// ADMIN OPTION と共にユーザーにロールを付与します。
+GrantRoleToUserStatement statement3 =
+    StatementBuilder.grantRole("role1").toUser("user1").withAdminOption().build();
+
+// 別のロールにロールを付与します。
+GrantRoleToRoleStatement statement4 =
+    StatementBuilder.grantRole("role1").toRole("role2").build();
+
+// ADMIN OPTION と共に別のロールにロールを付与します。
+GrantRoleToRoleStatement statement5 =
+    StatementBuilder.grantRole("role1").toRole("role2").withAdminOption().build();
+```
+
+### REVOKE ROLE
+
+`REVOKE ROLE` コマンドは、指定されたユーザーまたはロールからロールを取り消します。
+
+#### 文法
+
+```sql
+REVOKE ROLE <role name> [, <role name>] ... FROM [USER] <username> [, <username>] ...
+REVOKE ROLE <role name> [, <role name>] ... FROM ROLE <role name> [, <role name>] ...
+```
+
+#### 例
+
+`REVOKE ROLE` の例を以下に示します。
+
+```sql
+-- ユーザーからロールを取り消します。
+REVOKE ROLE role1 FROM user1;
+
+-- ユーザーからロールを取り消します。
+REVOKE ROLE role1, role2 FROM user1, user2;
+
+-- 別のロールからロールを取り消します。
+REVOKE ROLE role1 FROM ROLE role2;
+```
+
+`REVOKE ROLE` のステートメントオブジェクトを構築する例を以下に示します。
+
+```java
+// ユーザーからロールを取り消します。
+RevokeRoleFromUserStatement statement1 =
+    StatementBuilder.revokeRole("role1").fromUser("user1").build();
+
+// ユーザーからロールを取り消します。
+RevokeRoleFromUserStatement statement2 =
+    StatementBuilder.revokeRole("role1", "role2").fromUser("user1", "user2").build();
+
+// 別のロールからロールを取り消します。
+RevokeRoleFromRoleStatement statement3 =
+    StatementBuilder.revokeRole("role1").fromRole("role2").build();
+```
+
+### REVOKE ADMIN OPTION
+
+`REVOKE ADMIN OPTION` コマンドは、指定されたユーザーまたはロールからロールの管理者オプションを取り消します。付与先はロールを保持しますが、他者にそれを付与することはできなくなります。
+
+#### 文法
+
+```sql
+REVOKE ADMIN OPTION FOR ROLE <role name> [, <role name>] ... FROM [USER] <username> [, <username>] ...
+REVOKE ADMIN OPTION FOR ROLE <role name> [, <role name>] ... FROM ROLE <role name> [, <role name>] ...
+```
+
+#### 例
+
+`REVOKE ADMIN OPTION` の例を以下に示します。
+
+```sql
+-- ユーザーからロールの ADMIN OPTION を取り消します。
+REVOKE ADMIN OPTION FOR ROLE role1 FROM user1;
+
+-- 別のロールからロールの ADMIN OPTION を取り消します。
+REVOKE ADMIN OPTION FOR ROLE role1 FROM ROLE role2;
+```
+
+`REVOKE ADMIN OPTION` のステートメントオブジェクトを構築する例を以下に示します。
+
+```java
+// ユーザーからロールの ADMIN OPTION を取り消します。
+RevokeAdminOptionForRoleFromUserStatement statement1 =
+    StatementBuilder.revokeAdminOptionForRole("role1").fromUser("user1").build();
+
+// 別のロールからロールの ADMIN OPTION を取り消します。
+RevokeAdminOptionForRoleFromRoleStatement statement2 =
+    StatementBuilder.revokeAdminOptionForRole("role1").fromRole("role2").build();
+```
+
 ### CREATE ABAC_POLICY
 
 `CREATE ABAC_POLICY` コマンドは、指定されたポリシー名とデータタグ列名を使用して新しい ABAC ポリシーを作成します。新しく追加されたポリシーはデフォルトで有効になります。
@@ -3654,6 +3975,8 @@ ShowUsersStatement statement = StatementBuilder.showUsers().build();
 - `name`: `TEXT` - タイプに応じて名前空間名またはテーブル名
 - `type`: `TEXT` - オブジェクトのタイプ (`NAMESPACE` または `TABLE`)
 - `privilege`: `TEXT` - 権限
+- `grantedToUser`: `BOOLEAN` - 権限がユーザーに直接付与されているかどうか
+- `rolesProvidingPrivilege`: `TEXT` - この権限をユーザーに提供するロールのカンマ区切りリスト
 
 #### 文法
 
@@ -3685,6 +4008,116 @@ ShowGrantsStatement statement1 = StatementBuilder.showGrants().build();
 
 // Show privileges granted to user1
 ShowGrantsStatement statement2 = StatementBuilder.showGrants().forUser("user1").build();
+```
+
+### SHOW ROLES
+
+`SHOW ROLES` コマンドは、すべてのロールまたは指定されたユーザーに付与されているロールを表示します。
+
+すべてのロールを表示する場合 (`SHOW ROLES`)、このコマンドは以下の列を返します。
+
+- `roleName`: `TEXT` - ロール名
+- `grantedRoles`: `TEXT` - このロールに付与されているロール (カンマ区切り、管理者オプション付きの付与の場合は `(admin option)` サフィックス付き)
+
+ユーザーに直接またはロール階層を通じて利用可能なすべてのロールを表示する場合 (`SHOW ROLES FOR`)、このコマンドは以下の列を返します。
+
+- `roleName`: `TEXT` - ロール名
+- `adminOptionOnUser`: `BOOLEAN` - このロールが管理者オプション付きでユーザーに直接付与されているかどうか
+- `grantedRoles`: `TEXT` - このロールに付与されているロール (カンマ区切り、管理者オプション付きの付与の場合は `(admin option)` サフィックス付き)
+
+#### 文法
+
+```sql
+-- すべてのロールを表示
+SHOW ROLES
+
+-- 指定されたユーザーに付与されたロールを表示
+SHOW ROLES FOR [USER] <username>
+```
+
+#### 例
+
+`SHOW ROLES` の例を以下に示します。
+
+```sql
+-- すべてのロールを表示
+SHOW ROLES;
+
+-- user1 に付与されたロールを表示
+SHOW ROLES FOR user1;
+```
+
+`SHOW ROLES` のステートメントオブジェクトを構築する例を以下に示します。
+
+```java
+// すべてのロールを表示
+ShowRolesStatement statement1 = StatementBuilder.showRoles().build();
+
+// user1 に付与されたロールを表示
+ShowRolesStatement statement2 = StatementBuilder.showRoles().forUser("user1").build();
+```
+
+### SHOW ROLE USERS
+
+`SHOW ROLE USERS` コマンドは、指定されたロールが直接付与されているユーザーを表示します。
+
+このコマンドは以下の列を返します。
+
+- `username`: `TEXT` - ユーザー名
+- `adminOption`: `BOOLEAN` - ユーザーがそのロールの ADMIN OPTION を持つかどうか
+
+#### 文法
+
+```sql
+SHOW ROLE USERS FOR <role name>
+```
+
+#### 例
+
+`SHOW ROLE USERS` の例を以下に示します。
+
+```sql
+-- role1 を付与されているユーザーを表示
+SHOW ROLE USERS FOR role1;
+```
+
+`SHOW ROLE USERS` のステートメントオブジェクトを構築する例を以下に示します。
+
+```java
+// role1 を付与されているユーザーを表示
+ShowRoleUsersStatement statement = StatementBuilder.showRoleUsers("role1").build();
+```
+
+### SHOW ROLE GRANTS
+
+`SHOW ROLE GRANTS` コマンドは、指定されたロールに直接付与されている権限を表示します。
+
+このコマンドは以下の列を返します。
+
+- `name`: `TEXT` - タイプに応じてネームスペース名またはテーブル名
+- `type`: `TEXT` - オブジェクトのタイプ (`NAMESPACE` または `TABLE` のいずれか)
+- `privilege`: `TEXT` - 権限
+
+#### 文法
+
+```sql
+SHOW ROLE GRANTS FOR <role name>
+```
+
+#### 例
+
+`SHOW ROLE GRANTS`の例を以下に示します。
+
+```sql
+-- role1 に付与されている権限を表示
+SHOW ROLE GRANTS FOR role1;
+```
+
+`SHOW ROLE GRANTS` のステートメントオブジェクトを構築する例を以下に示します。
+
+```java
+// role1 に付与されている権限を表示
+ShowRoleGrantsStatement statement = StatementBuilder.showRoleGrants("role1").build();
 ```
 
 ### SHOW ABAC_POLICY
