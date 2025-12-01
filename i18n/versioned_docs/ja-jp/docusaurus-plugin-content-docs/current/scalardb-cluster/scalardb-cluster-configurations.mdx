@@ -669,6 +669,46 @@ ABAC機能を有効にする場合は、以下を行う必要があります:
 - **説明:** ABAC メタデータキャッシュのキャッシュ有効期限時間 (ミリ秒)。ABAC メタデータ (ポリシー設定など) を更新した場合、変更が適用されるまで、この有効期限時間に達するまで待つ必要がある場合があります。このプロパティを低い数値に設定すると、バックエンドデータベースへのアクセス数が増加し、パフォーマンスが低下する可能性があります。
 - **デフォルト値:** `60000` (1分)
 
+### 認証と認可の設定
+
+以下は、ScalarDB Cluster の認証と認可の設定です。
+
+#### `auth.enabled`
+
+- **フィールド:** `scalar.db.cluster.auth.enabled`
+- **説明:** 認証と認可が有効になっているかどうか。
+- **デフォルト値:** `false`
+
+:::warning
+
+認証と認可を有効にする場合、システム名前空間（デフォルトでは `scalardb`）に対して [`scalar.db.cross_partition_scan.enabled`](#パーティション間スキャン設定) を `true` に設定する必要もあります。これは、ABAC 機能が内部的にクロスパーティションスキャンを実行するためです。
+
+:::
+
+#### `auth.cache_expiration_time_millis`
+
+- **フィールド:** `scalar.db.cluster.auth.cache_expiration_time_millis`
+- **説明:** 認証と認可情報のキャッシュ有効期限時間（ミリ秒単位）。
+- **デフォルト値:** `60000` (1分)
+
+#### `auth.auth_token_expiration_time_minutes`
+
+- **フィールド:** `scalar.db.cluster.auth.auth_token_expiration_time_minutes`
+- **説明:** 認証と認可トークンの有効期限時間（分単位）。
+- **デフォルト値:** `1440` (1日)
+
+#### `auth.auth_token_gc_thread_interval_minutes`
+
+- **フィールド:** `scalar.db.cluster.auth.auth_token_gc_thread_interval_minutes`
+- **説明:** 認証と認可トークンのガベージコレクション (GC) スレッド間隔 (分単位)。
+- **デフォルト値:** `360` (6時間)
+
+#### `auth.pepper`
+
+- **フィールド:** `scalar.db.cluster.auth.pepper`
+- **説明:** ハッシュ化前にパスワードに追加される秘密の値。指定されない場合、パスワードはペッパーなしでハッシュ化されます。
+- **デフォルト値:** empty
+
 ## その他の ScalarDB Cluster 設定
 
 ScalarDB Cluster で使用できる追加の設定は次のとおりです。
@@ -824,6 +864,34 @@ scalar.db.sql.cluster_mode.contact_points=direct-kubernetes:ns/scalardb-cluster
 ScalarDB JDBC の設定方法の詳細については、[JDBC 接続 URL](../scalardb-sql/jdbc-guide.mdx#jdbc-接続-url) を参照してください。
 
 Spring Data JDBC for ScalarDB の設定方法の詳細については、[設定](../scalardb-sql/spring-data-guide.mdx#設定)を参照してください。
+
+#### 認証と認可の設定
+
+以下は、ScalarDB Cluster クライアントの認証と認可の設定です。
+
+##### `auth.enabled`
+
+- **フィールド:** `scalar.db.cluster.auth.enabled`
+- **説明:** 認証と認可が有効になっているかどうか。
+- **デフォルト値:** `false`
+
+:::warning
+
+認証と認可を有効にする場合、システム名前空間（デフォルトでは `scalardb`）に対して [`scalar.db.cross_partition_scan.enabled`](#パーティション間スキャン設定) を `true` に設定する必要もあります。これは、ABAC 機能が内部的にクロスパーティションスキャンを実行するためです。
+
+:::
+
+##### `auth.username`
+
+- **フィールド:** `scalar.db.sql.cluster_mode.username`
+- **説明:** クライアントのユーザー名。
+- **デフォルト値:** empty
+
+##### `auth.password`
+
+- **フィールド:** `scalar.db.sql.cluster_mode.password`
+- **説明:** クライアントのパスワード。
+- **デフォルト値:** empty
 
 ## 設定例 - アプリ、ScalarDB Cluster、データベース
 
