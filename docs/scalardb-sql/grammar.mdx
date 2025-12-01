@@ -30,6 +30,13 @@ displayed_sidebar: docsEnglish
   - [DROP USER](#drop-user)
   - [GRANT](#grant)
   - [REVOKE](#revoke)
+  - [CREATE ROLE](#create-role)
+  - [DROP ROLE](#drop-role)
+  - [GRANT ... TO ROLE](#grant--to-role)
+  - [REVOKE ... FROM ROLE](#revoke--from-role)
+  - [GRANT ROLE](#grant-role)
+  - [REVOKE ROLE](#revoke-role)
+  - [REVOKE ADMIN OPTION](#revoke-admin-option)
 - Others
   - [USE](#use)
   - [BEGIN](#begin)
@@ -48,6 +55,9 @@ displayed_sidebar: docsEnglish
   - [RESUME](#resume)
   - [SHOW USERS](#show-users)
   - [SHOW GRANTS](#show-grants)
+  - [SHOW ROLES](#show-roles)
+  - [SHOW ROLE USERS](#show-role-users)
+  - [SHOW ROLE GRANTS](#show-role-grants)
 - Literal
   - [Text](#text)
   - [Numeric](#numeric)
@@ -2224,15 +2234,15 @@ The `GRANT` command grants privileges to the specified user.
 #### Grammar
 
 ```sql
-GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON [TABLE] <table name> [, <table name>] ... TO [USER] <username> [, <username>] ... [WITH GRANT OPTION]
-GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON NAMESPACE <namespace name> [, <namespace name>] ... TO [USER] <username> [, <username>] ... [WITH GRANT OPTION]
+GRANT privilege [, privilege] ... ON [TABLE] <table name> [, <table name>] ... TO [USER] <username> [, <username>] ... [WITH GRANT OPTION]
+GRANT privilege [, privilege] ... ON NAMESPACE <namespace name> [, <namespace name>] ... TO [USER] <username> [, <username>] ... [WITH GRANT OPTION]
 
-privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER  
+privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER | ALL [PRIVILEGES] | GRANT OPTION
 ```
 
 - You must grant `INSERT` and `UPDATE` privileges together.
 - To grant a user the `UPDATE` or `DELETE` privilege, the target user must have the `SELECT` privilege.
-- If you specify the `WITH GRANT OPTION` option, the user can grant privileges to other users.
+- If you specify the `WITH GRANT OPTION` option or the `GRANT OPTION` privilege, the user can grant privileges to other users or roles.
 
 #### Examples
 
@@ -2297,12 +2307,10 @@ The `REVOKE` command revokes privileges from the specified user.
 #### Grammar
 
 ```sql
-REVOKE {privilege [, privilege] ... | ALL [PRIVILEGES]} [, GRANT OPTION] ON [TABLE] <table name> [, <table name>] ... FROM [USER] <username> [, <username>] ...
-REVOKE GRANT OPTION ON [TABLE] <table name> [, <table name>] ... FROM [USER] <username> [, <username>] ...
-REVOKE {privilege [, privilege] ... | ALL [PRIVILEGES]} [, GRANT OPTION] ON NAMESPACE <namespace name> [, <namespace name>] ... FROM [USER] <username> [, <username>] ...
-REVOKE GRANT OPTION ON NAMESPACE <namespace name> [, <namespace name>] ... FROM [USER] <username> [, <username>] ...
+REVOKE privilege [, privilege] ... ON [TABLE] <table name> [, <table name>] ... FROM [USER] <username> [, <username>] ...
+REVOKE privilege [, privilege] ... ON NAMESPACE <namespace name> [, <namespace name>] ... FROM [USER] <username> [, <username>] ...
 
-privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER  
+privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER
 ```
 
 - You must revoke `INSERT` and `UPDATE` privileges together.
@@ -2360,6 +2368,317 @@ RevokeStatement statement5 =
         .onNamespace("ns")
         .fromUser("user1")
         .build();
+```
+
+### CREATE ROLE
+
+The `CREATE ROLE` command creates a new role with the specified role name.
+
+#### Grammar
+
+```sql
+CREATE ROLE <role name>
+```
+
+#### Examples
+
+An example of `CREATE ROLE` is as follows:
+
+```sql
+-- Create a role.
+CREATE ROLE role1;
+```
+
+An example of building statement objects for `CREATE ROLE` is as follows:
+
+```java
+// Create a role.
+CreateRoleStatement statement = StatementBuilder.createRole("role1").build();
+```
+
+### DROP ROLE
+
+The `DROP ROLE` command deletes the specified role.
+
+#### Grammar
+
+```sql
+DROP ROLE <role name>
+```
+
+#### Examples
+
+An example of `DROP ROLE` is as follows:
+
+```sql
+-- Delete a role.
+DROP ROLE role1;
+```
+
+An example of building statement objects for `DROP ROLE` is as follows:
+
+```java
+// Delete a role.
+DropRoleStatement statement = StatementBuilder.dropRole("role1").build();
+```
+
+### GRANT ... TO ROLE
+
+The `GRANT ... TO ROLE` command grants privileges to the specified role.
+
+#### Grammar
+
+```sql
+GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON [TABLE] <table name> [, <table name>] ... TO ROLE <role name> [, <role name>] ... [WITH GRANT OPTION]
+GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON NAMESPACE <namespace name> [, <namespace name>] ... TO ROLE <role name> [, <role name>] ... [WITH GRANT OPTION]
+
+privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER
+```
+
+- You must grant `INSERT` and `UPDATE` privileges together.
+- To grant a role the `UPDATE` or `DELETE` privilege, the target role must have the `SELECT` privilege.
+- If you specify the `WITH GRANT OPTION` option, any user who has the role can grant privileges to other users or roles.
+
+#### Examples
+
+Examples of `GRANT ... TO ROLE` are as follows:
+
+```sql
+-- Grant the SELECT privilege on a table to a role.
+GRANT SELECT ON ns.tbl TO ROLE role1;
+
+-- Grant the SELECT privilege on tables to roles.
+GRANT SELECT ON ns.tbl1, ns.tbl2 TO ROLE role1, role2;
+
+-- Grant the SELECT privilege on all tables in a namespace to a role.
+GRANT SELECT ON NAMESPACE ns TO ROLE role1;
+
+-- Grant all privileges and GRANT OPTION on a table to a role.
+GRANT ALL ON ns.tbl TO ROLE role1 WITH GRANT OPTION;
+```
+
+Examples of building statement objects for `GRANT ... TO ROLE` are as follows:
+
+```java
+// Grant the SELECT privilege on a table to a role.
+GrantPrivilegeToRoleStatement statement1 =
+    StatementBuilder.grantToRole(Privilege.SELECT).onTable("ns", "tbl").toRole("role1").build();
+
+// Grant the SELECT privilege on tables to roles.
+GrantPrivilegeToRoleStatement statement2 =
+    StatementBuilder.grantToRole(Privilege.SELECT)
+        .onTable("ns", "tbl1", "ns", "tbl2")
+        .toRole("role1", "role2")
+        .build();
+
+// Grant the SELECT privilege on all tables in a namespace to a role.
+GrantPrivilegeToRoleStatement statement3 =
+    StatementBuilder.grantToRole(Privilege.SELECT).onNamespace("ns").toRole("role1").build();
+
+// Grant all privileges and GRANT OPTION on a table to a role.
+GrantPrivilegeToRoleStatement statement4 =
+    StatementBuilder.grantToRole(Privilege.values())
+        .onTable("ns", "tbl")
+        .toRole("role1")
+        .withGrantOption()
+        .build();
+```
+
+### REVOKE ... FROM ROLE
+
+The `REVOKE ... FROM ROLE` command revokes privileges from the specified role.
+
+#### Grammar
+
+```sql
+REVOKE {privilege [, privilege] ... | ALL [PRIVILEGES]} [, GRANT OPTION] ON [TABLE] <table name> [, <table name>] ... FROM ROLE <role name> [, <role name>] ...
+REVOKE GRANT OPTION ON [TABLE] <table name> [, <table name>] ... FROM ROLE <role name> [, <role name>] ...
+REVOKE {privilege [, privilege] ... | ALL [PRIVILEGES]} [, GRANT OPTION] ON NAMESPACE <namespace name> [, <namespace name>] ... FROM ROLE <role name> [, <role name>] ...
+REVOKE GRANT OPTION ON NAMESPACE <namespace name> [, <namespace name>] ... FROM ROLE <role name> [, <role name>] ...
+
+privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER
+```
+
+- You must revoke `INSERT` and `UPDATE` privileges together.
+- If the target role has the `UPDATE` or `DELETE` privilege, you cannot revoke the `SELECT` privilege from it.
+
+#### Examples
+
+Examples of `REVOKE ... FROM ROLE` are as follows:
+
+```sql
+-- Revoke the SELECT privilege on a table from a role.
+REVOKE SELECT ON ns.tbl FROM ROLE role1;
+
+-- Revoke the SELECT privilege on tables from roles.
+REVOKE SELECT ON ns.tbl1, ns.tbl2 FROM ROLE role1, role2;
+
+-- Revoke the SELECT privilege on all tables in a namespace from a role.
+REVOKE SELECT ON NAMESPACE ns FROM ROLE role1;
+
+-- Revoke all privileges and GRANT OPTION on a table from a role.
+REVOKE ALL, GRANT OPTION ON ns.tbl FROM ROLE role1;
+```
+
+Examples of building statement objects for `REVOKE ... FROM ROLE` are as follows:
+
+```java
+// Revoke the SELECT privilege on a table from a role.
+RevokePrivilegeFromRoleStatement statement1 =
+    StatementBuilder.revokeFromRole(Privilege.SELECT).onTable("ns", "tbl").fromRole("role1").build();
+
+// Revoke the SELECT privilege on tables from roles.
+RevokePrivilegeFromRoleStatement statement2 =
+    StatementBuilder.revokeFromRole(Privilege.SELECT)
+        .onTable("ns", "tbl1", "ns", "tbl2")
+        .fromRole("role1", "role2")
+        .build();
+
+// Revoke the SELECT privilege on all tables in a namespace from a role.
+RevokePrivilegeFromRoleStatement statement3 =
+    StatementBuilder.revokeFromRole(Privilege.SELECT).onNamespace("ns").fromRole("role1").build();
+
+// Revoke all privileges and GRANT OPTION on a table from a role.
+RevokePrivilegeFromRoleStatement statement4 =
+    StatementBuilder.revokeFromRole(Privilege.values())
+        .onTable("ns", "tbl")
+        .fromRole("role1")
+        .build();
+```
+
+### GRANT ROLE
+
+The `GRANT ROLE` command grants roles to the specified users or roles.
+
+#### Grammar
+
+```sql
+GRANT ROLE <role name> [, <role name>] ... TO [USER] <username> [, <username>] ... [WITH ADMIN OPTION]
+GRANT ROLE <role name> [, <role name>] ... TO ROLE <role name> [, <role name>] ... [WITH ADMIN OPTION]
+```
+
+- If you specify the `WITH ADMIN OPTION` option, the grantee can grant the role to other users or roles.
+
+#### Examples
+
+Examples of `GRANT ROLE` are as follows:
+
+```sql
+-- Grant a role to a user.
+GRANT ROLE role1 TO user1;
+
+-- Grant roles to users.
+GRANT ROLE role1, role2 TO user1, user2;
+
+-- Grant a role to a user with ADMIN OPTION.
+GRANT ROLE role1 TO user1 WITH ADMIN OPTION;
+
+-- Grant a role to another role.
+GRANT ROLE role1 TO ROLE role2;
+
+-- Grant a role to another role with ADMIN OPTION.
+GRANT ROLE role1 TO ROLE role2 WITH ADMIN OPTION;
+```
+
+Examples of building statement objects for `GRANT ROLE` are as follows:
+
+```java
+// Grant a role to a user.
+GrantRoleToUserStatement statement1 =
+    StatementBuilder.grantRole("role1").toUser("user1").build();
+
+// Grant roles to users.
+GrantRoleToUserStatement statement2 =
+    StatementBuilder.grantRole("role1", "role2").toUser("user1", "user2").build();
+
+// Grant a role to a user with ADMIN OPTION.
+GrantRoleToUserStatement statement3 =
+    StatementBuilder.grantRole("role1").toUser("user1").withAdminOption().build();
+
+// Grant a role to another role.
+GrantRoleToRoleStatement statement4 =
+    StatementBuilder.grantRole("role1").toRole("role2").build();
+
+// Grant a role to another role with ADMIN OPTION.
+GrantRoleToRoleStatement statement5 =
+    StatementBuilder.grantRole("role1").toRole("role2").withAdminOption().build();
+```
+
+### REVOKE ROLE
+
+The `REVOKE ROLE` command revokes roles from the specified users or roles.
+
+#### Grammar
+
+```sql
+REVOKE ROLE <role name> [, <role name>] ... FROM [USER] <username> [, <username>] ...
+REVOKE ROLE <role name> [, <role name>] ... FROM ROLE <role name> [, <role name>] ...
+```
+
+#### Examples
+
+Examples of `REVOKE ROLE` are as follows:
+
+```sql
+-- Revoke a role from a user.
+REVOKE ROLE role1 FROM user1;
+
+-- Revoke roles from users.
+REVOKE ROLE role1, role2 FROM user1, user2;
+
+-- Revoke a role from another role.
+REVOKE ROLE role1 FROM ROLE role2;
+```
+
+Examples of building statement objects for `REVOKE ROLE` are as follows:
+
+```java
+// Revoke a role from a user.
+RevokeRoleFromUserStatement statement1 =
+    StatementBuilder.revokeRole("role1").fromUser("user1").build();
+
+// Revoke roles from users.
+RevokeRoleFromUserStatement statement2 =
+    StatementBuilder.revokeRole("role1", "role2").fromUser("user1", "user2").build();
+
+// Revoke a role from another role.
+RevokeRoleFromRoleStatement statement3 =
+    StatementBuilder.revokeRole("role1").fromRole("role2").build();
+```
+
+### REVOKE ADMIN OPTION
+
+The `REVOKE ADMIN OPTION` command revokes the admin option for roles from the specified users or roles. The grantee keeps the roles but can no longer grant them to others.
+
+#### Grammar
+
+```sql
+REVOKE ADMIN OPTION FOR ROLE <role name> [, <role name>] ... FROM [USER] <username> [, <username>] ...
+REVOKE ADMIN OPTION FOR ROLE <role name> [, <role name>] ... FROM ROLE <role name> [, <role name>] ...
+```
+
+#### Examples
+
+Examples of `REVOKE ADMIN OPTION` are as follows:
+
+```sql
+-- Revoke the admin option for a role from a user.
+REVOKE ADMIN OPTION FOR ROLE role1 FROM user1;
+
+-- Revoke the admin option for a role from another role.
+REVOKE ADMIN OPTION FOR ROLE role1 FROM ROLE role2;
+```
+
+Examples of building statement objects for `REVOKE ADMIN OPTION` are as follows:
+
+```java
+// Revoke the admin option for a role from a user.
+RevokeAdminOptionForRoleFromUserStatement statement1 =
+    StatementBuilder.revokeAdminOptionForRole("role1").fromUser("user1").build();
+
+// Revoke the admin option for a role from another role.
+RevokeAdminOptionForRoleFromRoleStatement statement2 =
+    StatementBuilder.revokeAdminOptionForRole("role1").fromRole("role2").build();
 ```
 
 ## Others
@@ -2831,6 +3150,116 @@ ShowGrantsStatement statement1 = StatementBuilder.showGrants().build();
 
 // Show privileges granted to user1
 ShowGrantsStatement statement2 = StatementBuilder.showGrants().forUser("user1").build();
+```
+
+### SHOW ROLES
+
+The `SHOW ROLES` command shows all roles or the roles granted to the specified user.
+
+When showing all roles (`SHOW ROLES`), this command returns the following columns:
+
+- `roleName`: `TEXT` - a role name
+- `grantedRoles`: `TEXT` - the roles granted to this role (comma-separated, with `(admin option)` suffix if the grant includes admin option)
+
+When showing all roles available to the user directly or through role hierarchy (`SHOW ROLES FOR`), this command returns the following columns:
+
+- `roleName`: `TEXT` - a role name
+- `adminOptionOnUser`: `BOOLEAN` - whether this role was directly granted to the user with admin option
+- `grantedRoles`: `TEXT` - the roles granted to this role (comma-separated, with `(admin option)` suffix if the grant includes admin option)
+
+#### Grammar
+
+```sql
+-- Show all roles
+SHOW ROLES
+
+-- Show roles granted to the specified user
+SHOW ROLES FOR [USER] <username>
+```
+
+#### Examples
+
+Examples of `SHOW ROLES` are as follows:
+
+```sql
+-- Show all roles
+SHOW ROLES;
+
+-- Show roles granted to user1
+SHOW ROLES FOR user1;
+```
+
+Examples of building statement objects for `SHOW ROLES` are as follows:
+
+```java
+// Show all roles
+ShowRolesStatement statement1 = StatementBuilder.showRoles().build();
+
+// Show roles granted to user1
+ShowRolesStatement statement2 = StatementBuilder.showRoles().forUser("user1").build();
+```
+
+### SHOW ROLE USERS
+
+The `SHOW ROLE USERS` command shows the users the specified role is directly granted to.
+
+This command returns the following columns:
+
+- `username`: `TEXT` - a username
+- `adminOption`: `BOOLEAN` - whether the user has admin option for the role
+
+#### Grammar
+
+```sql
+SHOW ROLE USERS FOR <role name>
+```
+
+#### Examples
+
+An example of `SHOW ROLE USERS` is as follows:
+
+```sql
+-- Show users who have been granted role1
+SHOW ROLE USERS FOR role1;
+```
+
+An example of building statement objects for `SHOW ROLE USERS` is as follows:
+
+```java
+// Show users who have been granted role1
+ShowRoleUsersStatement statement = StatementBuilder.showRoleUsers("role1").build();
+```
+
+### SHOW ROLE GRANTS
+
+The `SHOW ROLE GRANTS` command shows the privileges directly granted to the specified role.
+
+This command returns the following columns:
+
+- `name`: `TEXT` - a namespace name or a table name, depending on the type
+- `type`: `TEXT` - the type of the object (either `NAMESPACE` or `TABLE`)
+- `privilege`: `TEXT` - a privilege
+
+#### Grammar
+
+```sql
+SHOW ROLE GRANTS FOR <role name>
+```
+
+#### Examples
+
+An example of `SHOW ROLE GRANTS` is as follows:
+
+```sql
+-- Show privileges granted to role1
+SHOW ROLE GRANTS FOR role1;
+```
+
+An example of building statement objects for `SHOW ROLE GRANTS` is as follows:
+
+```java
+// Show privileges granted to role1
+ShowRoleGrantsStatement statement = StatementBuilder.showRoleGrants("role1").build();
 ```
 
 ## Literal
