@@ -211,6 +211,35 @@ You can use the primary key or the secondary key in your Azure Cosmos DB account
     scalar.db.password=cassandra
     ```
   </TabItem>
+  <TabItem value="Blob_Storage" label="Blob Storage">
+    <h3>Run Azurite</h3>
+
+    You can run Azurite, which is a local emulator for Blob Storage, in Docker Compose by using the `docker-compose.yaml` file in the `scalardb-samples/scalardb-cluster-standalone-mode` directory.
+
+    To start Blob Storage, run the following command:
+    
+    ```console
+    docker compose up -d blobstorage
+    ```
+
+    Then, create a container named `test-container` by running the following command:
+    
+    ```console
+    docker compose up blobstorage-container-creator
+    ```
+
+    <h3>Configure ScalarDB Cluster</h3>
+
+    The **scalardb-cluster-node.properties** file in the `scalardb-samples/scalardb-cluster-standalone-mode` directory contains database configurations for ScalarDB Cluster. Please uncomment the properties for Blob Storage in the **scalardb-cluster-node.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For Blob Storage
+    scalar.db.storage=blob-storage
+    scalar.db.contact_points=http://blobstorage-1:10000/test/test-container
+    scalar.db.username=test
+    scalar.db.password=test
+    ```
+  </TabItem>
 </Tabs>
 
 ### Set the license key
