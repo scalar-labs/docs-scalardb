@@ -418,6 +418,84 @@ YugabyteDB のスマートドライバーと負荷分散の詳細については
     - **説明:** データベースにアクセスするためのパスワード。
     - **デフォルト値:** empty
   </TabItem>
+  <TabItem value="S3" label="S3">
+    S3 では次の設定が利用可能です。
+
+    <h4>`storage`</h4>
+
+    - **フィールド:** `scalar.db.storage`
+    - **説明:** `s3` を指定する必要があります。
+
+    <h4>`contact_points`</h4>
+
+    - **フィールド:** `scalar.db.contact_points`
+    - **説明:** '/' で区切られたリージョンと S3 バケット名 (例: `us-east-1/my-bucket`)。
+    - **デフォルト値:** empty
+
+    <h4>`username`</h4>
+
+    - **フィールド:** `scalar.db.username`
+    - **説明:** AWS アクセスキー。
+    - **デフォルト値:** empty
+
+    <h4>`password`</h4>
+
+    - **フィールド:** `scalar.db.password`
+    - **説明:** AWS シークレットアクセスキー。
+    - **デフォルト値:** empty
+  </TabItem>
+  <TabItem value="Blob_Storage" label="Blob Storage">
+    Blob Storage では次の設定が利用可能です。
+
+    <h4>`storage`</h4>
+
+    - **フィールド:** `scalar.db.storage`
+    - **説明:** `blob-storage` を指定する必要があります。
+
+    <h4>`contact_points`</h4>
+
+    - **フィールド:** `scalar.db.contact_points`
+    - **説明:** コンテナ名を含む Blob Storage エンドポイント URL (例: `https://<ACCOUNT_NAME>.blob.core.windows.net/my-container`)。
+    - **デフォルト値:** empty
+
+    <h4>`username`</h4>
+
+    - **フィールド:** `scalar.db.username`
+    - **説明:** Azure Storage アカウント名。
+    - **デフォルト値:** empty
+
+    <h4>`password`</h4>
+
+    - **フィールド:** `scalar.db.password`
+    - **説明:** Azure Storage アカウントキー。
+    - **デフォルト値:** empty
+  </TabItem>
+  <TabItem value="Cloud_Storage" label="Cloud Storage">
+    Cloud Storage では次の設定が利用可能です。
+
+    <h4>`storage`</h4>
+
+    - **フィールド:** `scalar.db.storage`
+    - **説明:** `cloud-storage` を指定する必要があります。
+
+    <h4>`contact_points`</h4>
+
+    - **フィールド:** `scalar.db.contact_points`
+    - **説明:** Cloud Storage バケット名。
+    - **デフォルト値:** empty
+
+    <h4>`username`</h4>
+
+    - **フィールド:** `scalar.db.username`
+    - **説明:** Google Cloud プロジェクト ID。
+    - **デフォルト値:** empty
+
+    <h4>`password`</h4>
+
+    - **フィールド:** `scalar.db.password`
+    - **説明:** JSON 形式の Google Cloud サービスアカウントキー。
+    - **デフォルト値:** empty
+  </TabItem>
 </Tabs>
 
 ### マルチストレージ設定
