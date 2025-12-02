@@ -12,9 +12,7 @@ import WarningLicenseKeyContact from '/src/components/en-us/_warning-license-key
 
 <TranslationBanner />
 
-ScalarDB Cluster には、ユーザーを認証および認可するメカニズムがあります。
-
-このガイドでは、ScalarDB SQL で認証と認可を使用する方法について説明します。
+ScalarDB Cluster では、きめ細かい認証と認可を実行できます。ユーザーを作成し、その権限を付与または取り消すことができます。ロールを作成して権限をグループ化し、ユーザーまたは他のロールに付与することもできます。このガイドでは、ScalarDB SQL で認証と認可を使用する方法について説明します。文法の詳細については、[DCL](../scalardb-sql/grammar.mdx#dcl) を参照してください。
 
 :::tip
 
@@ -22,18 +20,38 @@ ScalarDB Cluster には、ユーザーを認証および認可するメカニズ
 
 :::
 
-## 概要
+## ユーザー
 
-認証と認可を使用することで、ユーザーを作成し、その権限を付与または取り消すことができます。`CREATE USER` コマンドを使用してユーザーを作成し、`GRANT` コマンドまたは `REVOKE` コマンドを使用して、それぞれテーブルまたは名前空間に対する権限を付与または取り消すことができます。このようなデータ制御言語 (DCL) コマンドの詳細については、[DCL](../scalardb-sql/grammar.mdx#dcl) を参照してください。
+ユーザーは、ユーザー名とパスワードを使用して ScalarDB Cluster にログインし、必要な権限を持っている場合に SQL ステートメントを実行できます。
 
-ユーザーは、必要な権限を持っている場合、ユーザー名とパスワードを使用して ScalarDB Cluster にログインし、SQL ステートメントを実行できます。
-
-認証と認可では、次の2種類のユーザーがサポートされます。
+認証と認可では、次の2種類のユーザーがサポートされます:
 
 - **スーパーユーザー:** このタイプのユーザーにはすべての権限があります。スーパーユーザーのみが他のユーザーや名前空間を作成または削除できます。
 - **通常のユーザー:** このタイプのユーザーには最初は権限がないため、スーパーユーザーまたは `GRANT` 権限を持つ別のユーザーによって権限を付与する必要があります。
 
-認証と認可を使用する場合、次の権限が利用できます。
+### 初期ユーザー
+
+認証と認可を有効にすると、初期ユーザー `admin` が作成され、そのユーザーの初期パスワードは `admin` になります。このユーザーはスーパーユーザーであり、すべての権限を持ちます。このユーザーでログインし、必要に応じて他のユーザーを作成できます。
+
+:::warning
+
+セキュリティ上の理由から、特に本番環境にデプロイする前に、初期ユーザーのパスワードを必ず変更してください。
+
+:::
+
+## ロール
+
+ロールは、ユーザーまたは他のロールに付与できる権限の名前付きコレクションです。ロールを使用すると、各ユーザーに個別の権限を付与するよりも、複数のユーザーの権限を便利に管理できます。
+
+スーパーユーザーのみがロールを作成または削除できます。`GRANT` 権限を持つユーザーは、その権限をロールに付与できます。
+
+ロールがユーザーに付与されると、そのユーザーはそのロールに付与されたすべての権限を使用できます。ロールに他のロール (ロール階層) が付与されている場合、ユーザーはそれらのロールからの権限も使用できます。
+
+ロールを付与する際、オプションで `WITH ADMIN OPTION` を指定して、付与対象者が同じロールを他者に付与できるようにすることができます。
+
+## 権限
+
+認証と認可を使用する場合、次の権限が利用できます:
 
 - `SELECT`
 - `INSERT`
@@ -45,7 +63,9 @@ ScalarDB Cluster には、ユーザーを認証および認可するメカニズ
 - `ALTER`
 - `GRANT`
 
-権限の詳細については、[各タイプの操作に必要な権限](#各タイプの操作に必要な権限)を参照してください。
+### 各タイプの操作に必要な権限
+
+次の表は、各タイプの操作に必要な権限を示しています:
 
 ## 設定
 
@@ -63,9 +83,9 @@ ScalarDB Cluster には、ユーザーを認証および認可するメカニズ
 
 | 名前                                                            | 説明                                                                                               | デフォルト       |
 |----------------------------------------------------------------|---------------------------------------------------------------------------------------------------|-----------------|
-| `scalar.db.cluster.auth.cache_expiration_time_millis`          | 認証および認可情報のキャッシュ有効期限（ミリ秒単位）。                                                      | `60000` (1分)  |
-| `scalar.db.cluster.auth.auth_token_expiration_time_minutes`    | 認証および認可トークンの有効期限（分単位）。                                                               | `1440` (1日)  |
-| `scalar.db.cluster.auth.auth_token_gc_thread_interval_minutes` | 認証および認可トークンのガベージコレクション (GC) スレッド間隔 (分単位)。                                    | 360（6時間）    |
+| `scalar.db.cluster.auth.cache_expiration_time_millis`          | 認証および認可情報のキャッシュ有効期限 (ミリ秒単位)。                                                      | `60000` (1分)  |
+| `scalar.db.cluster.auth.auth_token_expiration_time_minutes`    | 認証および認可トークンの有効期限 (分単位)。                                                               | `1440` (1日)  |
+| `scalar.db.cluster.auth.auth_token_gc_thread_interval_minutes` | 認証および認可トークンのガベージコレクション (GC) スレッド間隔 (分単位)。                                    | 360 (6時間)    |
 | `scalar.db.cluster.auth.pepper`                                | ハッシュ化の前にパスワードに追加されるシークレットの値。指定しない場合、パスワードはペッパーなしでハッシュ化されます。 |                |
 
 :::note
@@ -89,19 +109,6 @@ ScalarDB Cluster には、ユーザーを認証および認可するメカニズ
 | `scalar.db.sql.cluster_mode.username` | クライアントのユーザー名。 |         |
 | `scalar.db.sql.cluster_mode.password` | クライアントのパスワード。 |         |
 
-## 初期ユーザー
-
-認証と認可を有効にすると、初期ユーザー `admin` が作成され、そのユーザーの初期パスワードは `admin` になります。このユーザーはスーパーユーザーであり、すべての権限を持ちます。このユーザーでログインし、必要に応じて他のユーザーを作成できます。
-
-:::warning
-
-セキュリティ上の理由から、特に実稼働環境にデプロイする前に、初期ユーザーのパスワードを必ず変更してください。
-
-:::
-
-## 各タイプの操作に必要な権限
-
-次の表は、各タイプの操作に必要な権限を示しています。
 
 ### DDL
 
@@ -131,13 +138,20 @@ ScalarDB Cluster には、ユーザーを認証および認可するメカニズ
 
 ### DCL
 
-| コマンド        | スーパーユーザーが必要です                      | 必要な権限                                                    |
-|---------------|---------------------------------------------|-------------------------------------------------------------|
-| `CREATE USER` | `true`                                      |                                                             |
-| `ALTER USER`  | `true` (ユーザーは自分のパスワードを変更できます。) |                                                             |
-| `DROP USER`   | `true`                                      |                                                             |
-| `GRANT`       |                                             | `GRANT` (ユーザーは自分が持っている権限のみを付与できます。)         |
-| `REVOKE`      |                                             | `GRANT` (ユーザーは自分が持っている権限のみを取り消すことができます。) |
+| コマンド               | スーパーユーザーが必要です                      | 必要な権限                                                                                |
+|----------------------|---------------------------------------------|-----------------------------------------------------------------------------------------|
+| `CREATE USER`        | `true`                                      |                                                                                         |
+| `ALTER USER`         | `true` (ユーザーは自分のパスワードを変更できます。) |                                                                                         |
+| `DROP USER`          | `true`                                      |                                                                                         |
+| `GRANT`              |                                             | `GRANT` (ユーザーは自分が持っている権限のみを付与できます。)                                     |
+| `REVOKE`             |                                             | `GRANT` (ユーザーは自分が持っている権限のみを取り消すことができます。)                           |
+| `CREATE ROLE`        | `true`                                      |                                                                                         |
+| `DROP ROLE`          | `true`                                      |                                                                                         |
+| `GRANT ... TO ROLE`  |                                             | `GRANT` (ユーザーは自分が持っている権限のみを付与できます。)                                     |
+| `REVOKE ... FROM ROLE` |                                             | `GRANT` (ユーザーは自分が持っている権限のみを取り消すことができます。)                           |
+| `GRANT ROLE`         |                                             | ロールの `ADMIN OPTION` (ユーザーはそれらのロールのみを付与できます。)                           |
+| `REVOKE ROLE`        |                                             | ロールの `ADMIN OPTION` (ユーザーはそれらのロールのみを取り消すことができます。)                  |
+| `REVOKE ADMIN OPTION` |                                             | ロールの `ADMIN OPTION` (ユーザーはそれらのロールの `ADMIN OPTION` のみを取り消すことができます。) |
 
 ## 制限事項
 
@@ -149,7 +163,7 @@ ScalarDB Cluster には、ユーザーを認証および認可するメカニズ
 
 ## ワイヤ暗号化
 
-認証と認可を有効にする場合は、ユーザー資格情報を保護するために、本番環境でワイヤ暗号化を有効にすることを強くお勧めします。ワイヤ暗号化の詳細については、[ScalarDB Cluster ワイヤ暗号化](encrypt-wire-communications.mdx)を参照してください。
+認証と認可を有効にする場合は、ユーザー資格情報を保護するために、本番環境でワイヤ暗号化を有効にすることを強くお勧めします。ワイヤ暗号化の詳細については、[ワイヤ通信の暗号化](encrypt-wire-communications.mdx)を参照してください。
 
 ## チュートリアル - ユーザーの認証と認可
 
@@ -319,17 +333,17 @@ SHOW GRANTS FOR user1;
 ```
 
 ```console
-+---------+-----------+-----------+
-|  name   |   type    | privilege |
-+---------+-----------+-----------+
-| ns2     | NAMESPACE | SELECT    |
-| ns1.tbl | TABLE     | SELECT    |
-| ns1.tbl | TABLE     | INSERT    |
-| ns1.tbl | TABLE     | UPDATE    |
-+---------+-----------+-----------+
++---------+-----------+-----------+---------------+-------------------------+
+|  name   |   type    | privilege | grantedToUser | rolesProvidingPrivilege |
++---------+-----------+-----------+---------------+-------------------------+
+| ns2     | NAMESPACE | SELECT    | true          |                         |
+| ns1.tbl | TABLE     | SELECT    | true          |                         |
+| ns1.tbl | TABLE     | INSERT    | true          |                         |
+| ns1.tbl | TABLE     | UPDATE    | true          |                         |
++---------+-----------+-----------+---------------+-------------------------+
 ```
 
-`user1` に `ns.tbl` テーブルに対する `SELECT`、`INSERT`、`UPDATE` 権限と、`ns2` 名前空間に対する `SELECT` 権限が付与されていることがわかります。
+`user1` に `ns1.tbl` テーブルに対する `SELECT`、`INSERT`、`UPDATE` 権限と、`ns2` 名前空間に対する `SELECT` 権限が付与されていることがわかります。
 
 ### 8. `user1` としてログインする
 
@@ -378,3 +392,98 @@ Error: Authorization error (PERMISSION_DENIED: SQL-10021: Access denied: You nee
 ```
 
 `user1` には `ns1.tbl` テーブルに対する `DELETE` 権限がないため、上記のエラーメッセージが表示されます。
+
+### 10. ロールを使用して権限を管理する
+
+`admin` としてログインし、ロールの作成と管理を行います。
+
+```console
+java -jar scalardb-cluster-sql-cli-3.17.0-all.jar --config scalardb-cluster-sql-cli.properties
+```
+
+ユーザー名とパスワードをそれぞれ `admin` と `admin` として入力します。
+
+`cleanup_role` という名前のロールを作成します。
+
+```sql
+CREATE ROLE cleanup_role;
+```
+
+ロールが作成されたことを確認するには、次のコマンドを実行します。
+
+```sql
+SHOW ROLES;
+```
+
+```console
++--------------+--------------+
+|   roleName   | grantedRoles |
++--------------+--------------+
+| cleanup_role |              |
++--------------+--------------+
+```
+
+`ns1.tbl` テーブルの `SELECT`、`DELETE`、`TRUNCATE` 権限をロールに付与します。
+
+```sql
+GRANT SELECT, DELETE, TRUNCATE ON ns1.tbl TO ROLE cleanup_role;
+```
+
+ロールに付与された権限を確認するには、次のコマンドを実行します。
+
+```sql
+SHOW ROLE GRANTS FOR cleanup_role;
+```
+
+```console
++---------+-------+-----------+
+|  name   | type  | privilege |
++---------+-------+-----------+
+| ns1.tbl | TABLE | SELECT    |
+| ns1.tbl | TABLE | DELETE    |
+| ns1.tbl | TABLE | TRUNCATE  |
++---------+-------+-----------+
+```
+
+ロールを `user1` に付与します。
+
+```sql
+GRANT ROLE cleanup_role TO user1;
+```
+
+`user1` の権限を確認するには、次のコマンドを実行します。
+
+```sql
+SHOW GRANTS FOR user1;
+```
+
+```console
++---------+-----------+-----------+---------------+-------------------------+
+|  name   |   type    | privilege | grantedToUser | rolesProvidingPrivilege |
++---------+-----------+-----------+---------------+-------------------------+
+| ns2     | NAMESPACE | SELECT    | true          |                         |
+| ns1.tbl | TABLE     | SELECT    | true          | cleanup_role            |
+| ns1.tbl | TABLE     | INSERT    | true          |                         |
+| ns1.tbl | TABLE     | UPDATE    | true          |                         |
+| ns1.tbl | TABLE     | DELETE    | false         | cleanup_role            |
+| ns1.tbl | TABLE     | TRUNCATE  | false         | cleanup_role            |
++---------+-----------+-----------+---------------+-------------------------+
+```
+
+今度は、`user1` としてログインして、再び `DELETE` ステートメントを試してみます。
+
+```console
+java -jar scalardb-cluster-sql-cli-3.17.0-all.jar --config scalardb-cluster-sql-cli.properties
+```
+
+ユーザー名とパスワードをそれぞれ `user1` と `user1` として入力します。
+
+```sql
+DELETE FROM ns1.tbl WHERE id = 1;
+```
+
+今度は、`user1` が `cleanup_role` ロールを通じて `DELETE` 権限を持っているため、ステートメントが成功します。
+
+## 関連情報
+
+RBAC の使用に関する詳細については、[ScalarDB SQL 文法](../scalardb-sql/grammar.mdx)リファレンスのロール関連セクションを参照してください。
