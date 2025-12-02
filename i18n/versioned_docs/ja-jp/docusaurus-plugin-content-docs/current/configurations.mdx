@@ -316,6 +316,14 @@ scalar.db.contact_points=jdbc:yugabytedb://127.0.0.1:5433\\,127.0.0.2:5433\\,127
 
 YugabyteDB のスマートドライバーと負荷分散の詳細については、[YugabyteDB smart drivers for YSQL](https://docs.yugabyte.com/preview/drivers-orms/smart-drivers/) を参照してください。
 
+**AlloyDB**
+
+Google Cloud 上の AlloyDB を JDBC データベースとして使用し、[Java コネクタ](https://docs.cloud.google.com/alloydb/docs/connect-language-connectors#configure-connectors)で接続したい場合は、次のように `scalar.db.contact_points` で追加のプロパティを追加する必要があります：
+
+```properties
+scalar.db.contact_points=jdbc:postgresql:///<DATABASE_NAME>?socketFactory=com.google.cloud.alloydb.SocketFactory&alloydbInstanceName=<INSTANCE_NAME>&alloydbIpType=PUBLIC
+```
+
 :::
 
   </TabItem>

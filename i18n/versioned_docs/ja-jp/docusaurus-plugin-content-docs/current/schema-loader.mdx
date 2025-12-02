@@ -545,7 +545,7 @@ Cosmos DB for NoSQL の自動スケーリングは、このオプションが `4
 
 次の表は、ScalarDB でサポートされているデータ型と、他のデータベースのデータ型へのマッピングを示しています。
 
-| ScalarDB    | Cassandra                    | Cosmos DB for NoSQL | Db2                  | DynamoDB | MySQL/MariaDB | PostgreSQL/YugabyteDB    | Oracle                   | SQL Server      | SQLite  |
+| ScalarDB    | Cassandra                    | Cosmos DB for NoSQL | Db2                  | DynamoDB | MySQL/MariaDB/TiDB | PostgreSQL/YugabyteDB/AlloyDB | Oracle                   | SQL Server      | SQLite  |
 |-------------|------------------------------|---------------------|----------------------|----------|---------------|--------------------------|--------------------------|-----------------|---------|
 | BOOLEAN     | boolean                      | boolean (JSON)      | BOOLEAN              | BOOL     | boolean       | boolean                  | number(1)                | bit             | boolean |
 | INT         | int                          | number (JSON)       | INT                  | N        | int           | int                      | number(10)               | int             | int     |
@@ -567,7 +567,7 @@ TIMESTAMP はタイムゾーン情報のない日付と時刻を表しますが�
 
 ただし、JDBC データベースの次のデータ型は、主キーまたはセカンダリインデックスキーとして使用される場合、異なる方法で変換されます。これは、RDB データ型の制限によるものです。MySQL および Oracle の場合、キー列の合計サイズの制限を満たす限り、列サイズ (最小 64 バイト) を変更できます。詳細については、[基盤となるストレージまたはデータベースの設定](configurations.mdx#基盤となるストレージまたはデータベースの設定) を参照してください。
 
-| ScalarDB | MySQL/MariaDB  | PostgreSQL/YugabyteDB | Oracle        | Db2            |
+| ScalarDB | MySQL/MariaDB/TiDB  | PostgreSQL/YugabyteDB/AlloyDB | Oracle        | Db2            |
 |----------|----------------|-----------------------|---------------|----------------|
 | TEXT     | VARCHAR(128)   | VARCHAR(10485760)     | VARCHAR2(128) | VARCHAR(128)   |
 | BLOB     | VARBINARY(128) |                       |               |                |
