@@ -177,10 +177,10 @@ spark-submit --class MyApp --master local[*] my-spark-application-all.jar
 
 括弧内の内容は以下のように変更する必要があります:
 
-- `<SCALA_VERSION>`: Spark インストールに対応する Scala のメジャーおよびマイナーバージョン (例: 2.12 または 2.13)
-- `<SPARK_FULL_VERSION>`: 使用している Spark の完全なバージョン (例: 3.5.3)
-- `<SPARK_VERSION>`: 使用している Spark のメジャーおよびマイナーバージョン (例 3.5)
-- `<SCALARDB_ANALYTICS_VERSION>`: ScalarDB Analytics のバージョン
+- `<SCALA_VERSION>`: Spark インストールに対応する Scala のメジャーおよびマイナーバージョン (`2.12` または `2.13`)
+- `<SPARK_FULL_VERSION>`: 使用している Spark の完全なバージョン (例: `3.5.7`)
+- `<SPARK_VERSION>`: 使用している Spark のメジャーおよびマイナーバージョン (`3.4` または `3.5`)
+- `<SCALARDB_ANALYTICS_VERSION>`: ScalarDB Analytics のバージョン (例: `3.17.0`)
 
 :::note
 
@@ -191,7 +191,7 @@ spark-submit --class MyApp --master local[*] my-spark-application-all.jar
 また、アプリケーションに Spark Connect クライアントパッケージを含める必要があります。例えば、Gradle を使用している場合は、`build.gradle.kts` ファイルに以下を追加できます:
 
 ```kotlin
-implementation("org.apache.spark:spark-connect-client-jvm_2.12:3.5.3")
+implementation("org.apache.spark:spark-connect-client-jvm_2.12:3.5.7")
 ```
 
 その後、Spark Connect クライアントアプリケーションを作成してサーバーに接続し、データを読み取ることができます。
@@ -268,8 +268,8 @@ ScalarDB Analytics は、カタログ内のデータ型を Spark データ型に
 | `BLOB`            | `Binary`           |
 | `BOOLEAN`         | `Boolean`          |
 | `DATE`            | `Date`             |
-| `TIME`            | `TimestampNTZ`     |
-| `TIMESTAMP`       | `TimestampNTZ`     |
+| `TIME`            | `Timestamp`        |
+| `TIMESTAMP`       | `Timestamp`        |
 | `TIMESTAMPTZ`     | `Timestamp`        |
-| `DURATION`        | `CalendarInterval` |
-| `INTERVAL`        | `CalendarInterval` |
+| `DURATION`        | `Long`             |
+| `INTERVAL`        | `String`           |
