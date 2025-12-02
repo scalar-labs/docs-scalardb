@@ -1,0 +1,548 @@
+---
+tags:
+  - Enterprise
+displayed_sidebar: docsJapanese
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import WarningLicenseKeyContact from '/src/components/ja-jp/_warning-license-key-contact.mdx';
+import HelmCommandUsage from '/src/components/ja-jp/_helm-command-usage.mdx';
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+# ScalarDB Analytics サーバーをデプロイする
+
+<TranslationBanner />
+
+このドキュメントでは、ローカル環境または本番環境で ScalarDB Analytics サーバーをデプロイする方法について説明します。
+
+## ステップ 1. ScalarDB Analytics の課金プランを決定する
+
+ScalarDB Analytics サーバーは複数の方法で取得できます。
+
+<Tabs groupId="billing-plan" queryString>
+  <TabItem value="pay-as-you-go" label="従量制課金" default>
+    ScalarDB Analytics を従量制課金プランで使用できます。この場合、クエリの使用量に基づいてライセンス料を支払います。
+    <Tabs groupId="cloud" queryString>
+      <TabItem value="aws" label="AWS Marketplace" default>
+        AWS Marketplace で従量制課金プランで ScalarDB Analytics を使用できます。
+        <Tabs groupId="offering" queryString>
+          <TabItem value="container" label="コンテナオファー" default>
+            AWS Marketplace から従量制課金プランで ScalarDB Analytics サーバーをデプロイするには:
+
+            1. AWS Marketplace ページ [ScalarDB Analytics サーバー](https://aws.amazon.com/marketplace/pp/prodview-53ik57autkmci) にアクセスします。
+            1. ScalarDB Analytics サーバーをサブスクライブします。
+               1. **View purchase options** を選択します。
+               1. **Subscribe** を選択します。
+
+:::tip
+
+サブスクライブ後、以下のコンテナレジストリから ScalarDB Analytics サーバーのコンテナイメージをプルする権限が得られます。後のステップでこのコンテナレジストリを指定してコンテナイメージをプルするので、メモしておいてください。
+
+```console
+709825985650.dkr.ecr.us-east-1.amazonaws.com/scalar/scalardb-analytics-server-aws-payg
+```
+
+:::
+          </TabItem>
+        </Tabs>
+      </TabItem>
+    </Tabs>
+  </TabItem>
+  <TabItem value="fixed-price-byil" label="固定価格 (ライセンス持参)">
+    ScalarDB Analytics を固定価格プランで使用できます。この場合、契約に基づいて固定ライセンス料を支払い、実行できるクエリ数に上限があります。
+    <Tabs groupId="cloud" queryString>
+      <TabItem value="any-supported-kubernetes" label="サポートされている任意の Kubernetes プラットフォーム" default>
+        サポートされている任意の Kubernetes プラットフォームで固定価格プランで ScalarDB Analytics を使用できます。サポートされている Kubernetes プラットフォームは[要件](../requirements.mdx#kubernetes)で確認できます。
+        <Tabs groupId="offering" queryString>
+          <TabItem value="container" label="コンテナオファー" default>
+            <WarningLicenseKeyContact product="ScalarDB Analytics サーバー" />
+            ライセンス持参 (BYOL) とも呼ばれる固定価格で提供されるライセンスキーを使用してコンテナイメージで ScalarDB Analytics サーバーをデプロイできます。以下のコンテナレジストリから ScalarDB Analytics サーバーのコンテナイメージをプルできます。
+
+:::note
+
+後のステップでこのコンテナレジストリを指定するので、メモしておいてください。
+
+:::
+
+            ```console
+            ghcr.io/scalar-labs/scalardb-analytics-server-byol
+            ```
+          </TabItem>
+        </Tabs>
+      </TabItem>
+    </Tabs>
+  </TabItem>
+</Tabs>
+
+## ステップ 2. Kubernetes クラスターをデプロイする
+
+以下の要件とチェックポイントに基づいて、お好みの Kubernetes プラットフォームにクラスターをデプロイしてください。
+
+1. 課金プランと目的に基づいて使用する Kubernetes プラットフォームを決定してください。
+
+   - [ステップ 1. ScalarDB Analytics の課金プランを決定する](#ステップ-1-scalardb-analytics-の課金プランを決定する)で**従量制課金 (コンテナオファー - AWS Marketplace)** を選択した場合は、サポートされているリージョンで Amazon Elastic Kubernetes Service (EKS) をデプロイする必要があります。サポートされているリージョンは後のステップで参照されます。 
+   - [ステップ 1. ScalarDB Analytics の課金プランを決定する](#ステップ-1-scalardb-analytics-の課金プランを決定する)で**固定価格 (ライセンス持参) (コンテナオファー - サポートされている任意の Kubernetes プラットフォーム)** を選択した場合は、サポートされている任意の Kubernetes プラットフォームを使用できます。
+
+     :::note
+
+     minikube は、テストまたは開発目的でのみ使用してください。minikube は本番環境での使用は推奨されません。
+
+     :::
+
+1. ScalarDB Analytics サーバー用の Kubernetes クラスターの一般的な推奨事項と要件を確認してください。
+
+   - 推奨事項
+     - 少なくとも 2 つの CPU と 4 GB のメモリを持つワーカーノードを使用することを推奨します。
+       - 現在、ScalarDB Analytics サーバーにはクラスタリング機能がありません。そのため、ワーカーノードは 1 つで十分です。
+       - Kubernetes クラスター自体を高可用性にしたい場合は、複数のワーカーノードでデプロイできます。
+   - 要件
+     - Spark アプリケーションが Kubernetes クラスターにデプロイされた ScalarDB Analytics サーバーにネットワーク的に接続できるようにする必要があります。ScalarDB Analytics サーバーが使用するポートについては、[要件](../requirements.mdx)を参照してください。
+     - ScalarDB Analytics サーバーがカタログ情報を保存するためのバックエンドデータベースに対して読み書きできるようにする必要があります。これらの手順は [ステップ 3. バックエンドデータベースをデプロイする](#ステップ-3-バックエンドデータベースをデプロイする)で詳しく説明されます。
+     - ScalarDB Analytics サーバーがメータリング情報を保存するためのオブジェクトストレージに対して読み書きできるようにする必要があります。これらの手順は [ステップ 4. オブジェクトストレージをデプロイする](#ステップ-4-オブジェクトストレージをデプロイする)で詳しく説明されます。
+
+1. ScalarDB Analytics サーバー用の Kubernetes クラスターをデプロイしてください。
+
+   <Tabs groupId="environments" queryString>
+     <TabItem value="development" label="テスト/開発環境" default>
+       テストまたは開発目的では、ローカル Kubernetes クラスターとして minikube を使用できます。minikube のインストールと開始方法の詳細については、[minikube の公式ドキュメント](https://minikube.sigs.k8s.io/docs/start/)を参照してください。
+     </TabItem>
+     <TabItem value="production" label="本番/ステージング環境">
+       本番環境では、上記の ScalarDB Analytics サーバーの要件とシステムの要件 (セキュリティ、可用性、バックアップ/復旧、コスト、スケーラビリティなど) に基づいて Kubernetes クラスターをデプロイしてください。
+       <Tabs groupId="kubernetes" queryString>
+         <TabItem value="eks" label="EKS" default>
+           - **固定価格 (ライセンス持参) (コンテナオファー - サポートされている任意の Kubernetes プラットフォーム)** を選択した場合は、Amazon Elastic Kubernetes Service (EKS) を使用できます。
+           - [ステップ 1. ScalarDB Analytics の課金プランを決定する](#ステップ-1-scalardb-analytics-の課金プランを決定する)で**従量制課金 (コンテナオファー - AWS Marketplace)** を選択した場合は、以下を行う必要があります:
+             1. AWS ドキュメント [MeterUsage Region support for Amazon ECS and Amazon EKS](https://docs.aws.amazon.com/ja_jp/marketplace/latest/APIReference/metering-regions.html#meterusage-region-support-ecs-eks) に記載されているサポートされているリージョンで EKS をデプロイします。
+             1. EKS をデプロイした後、以下の2つのコマンドを実行します:
+                - `eksctl utils associate-iam-oidc-provider`
+
+                  ```console
+                  eksctl utils associate-iam-oidc-provider --region <REGION> --cluster <EKS_CLUSTER_NAME> --approve
+                  ```
+
+                - `eksctl create iamserviceaccount`
+
+                  ```console
+                  eksctl create iamserviceaccount \
+                      --name <SERVICE_ACCOUNT_NAME> \
+                      --namespace <NAMESPACE> \
+                      --region <REGION> \
+                      --cluster <EKS_CLUSTER_NAME> \
+                      --attach-policy-arn arn:aws:iam::aws:policy/AWSMarketplaceMeteringFullAccess \
+                      --approve \
+                      --override-existing-serviceaccounts
+                  ```
+
+                  [Kubernetes リソース命名規則](https://kubernetes.io/ja/docs/concepts/overview/working-with-objects/names/)に基づいて、`SERVICE_ACCOUNT_NAME` に任意の名前を設定できます。
+
+                    :::note
+
+                    後のステップでこのサービスアカウント名を指定するので、`SERVICE_ACCOUNT_NAME` に設定した値をメモしておいてください。
+
+                    :::
+         </TabItem>
+         <TabItem value="minikube" label="minikube">
+    :::important
+
+    本番環境では、サポートされている Kubernetes プラットフォームを使用する必要があります。サポートされている Kubernetes プラットフォームは[要件](../requirements.mdx#kubernetes)で確認できます。
+
+    :::
+         </TabItem>
+       </Tabs>
+     </TabItem>
+   </Tabs>
+
+## ステップ 3. バックエンドデータベースをデプロイする
+
+以下の要件とチェックポイントに基づいて、お好みのバックエンドデータベースをデプロイしてください。
+
+1. 使用するバックエンドデータベースを決定してください。
+   - ScalarDB Analytics サーバーでサポートされているバックエンドデータベースは[要件](../requirements.mdx)で確認できます。
+   - 特別な理由がない限り、慣れ親しんだデータベースを使用することをお勧めします。
+1. ScalarDB Analytics サーバー用のバックエンドデータベースの要件を確認してください。
+   - 各バックエンドデータベースの要件は[要件](../requirements.mdx)ページで確認できます。
+1. 環境にバックエンドデータベースをデプロイしてください。
+
+   <Tabs groupId="environments" queryString>
+          <TabItem value="development" label="テスト/開発環境" default>
+       テストまたは開発目的では、Kubernetes クラスター内にポッドとしてバックエンドデータベースをデプロイできます。例えば、PostgreSQL を使用する場合は、以下のようにデプロイできます:
+
+       1. 以下のコマンドを実行して Bitnami Helm リポジトリを追加してください:
+
+          ```console
+          helm repo add bitnami https://charts.bitnami.com/bitnami
+          ```
+
+       1. 以下のコマンドを実行して PostgreSQL をデプロイしてください:
+
+          ```console
+          helm install postgresql-scalardb-cluster bitnami/postgresql \
+            --set auth.postgresPassword=postgres \
+            --set primary.persistence.enabled=false
+          ```
+
+       1. 以下のコマンドを実行して PostgreSQL コンテナが実行されているかどうかを確認してください:
+
+          ```console
+          kubectl get pod
+          ```
+
+          以下の出力が表示されます:
+
+          ```console
+          NAME                            READY   STATUS    RESTARTS   AGE
+          postgresql-scalardb-cluster-0   1/1     Running   0          17s
+          ```
+     </TabItem>
+     <TabItem value="production" label="本番/ステージング環境">
+       本番環境では、上記の ScalarDB Analytics サーバーの要件とシステムの要件 (セキュリティ、可用性、バックアップ/復旧、コスト、スケーラビリティなど) に基づいてバックエンドデータベースをデプロイしてください。
+     </TabItem>
+   </Tabs>
+
+## ステップ 4. オブジェクトストレージをデプロイする
+
+以下の要件とチェックポイントに基づいてオブジェクトストレージをデプロイしてください。
+
+1. 使用するオブジェクトストレージを決定してください。
+   - ScalarDB Analytics サーバーのメータリング情報のデータストアとして [Amazon S3](https://aws.amazon.com/jp/s3/)、[Azure Blob Storage](https://azure.microsoft.com/ja-jp/products/storage/blobs)、または [Google の Cloud Storage](https://cloud.google.com/storage?hl=ja) を使用できます。
+   - [ステップ 2. Kubernetes クラスターをデプロイする](#ステップ-2-kubernetes-クラスターをデプロイする)で選択した Kubernetes クラスターと同じクラウドサービスプロバイダーが提供するオブジェクトストレージを使用することをお勧めします。例えば、EKS を選択した場合は、Amazon S3 を使用してください。
+
+1. ScalarDB Analytics サーバー用のオブジェクトストレージの要件を確認してください。
+   - ScalarDB Analytics サーバーがオブジェクトストレージに対して読み書きできるようにする必要があります。
+1. 環境にオブジェクトストレージをデプロイしてください。
+
+   <Tabs groupId="environments" queryString>
+     <TabItem value="development" label="テスト/開発環境" default>
+       テストまたは開発目的では、ScalarDB Analytics サーバーコンテナ内のファイルシステムにメータリング情報を保存できます。つまり、オブジェクトストレージを使用する必要はありません。この場合、プロパティファイルで `scalar.db.analytics.server.metering.storage.provider=filesystem` を設定する必要があります。詳細については、[ステップ 5. カスタム値ファイルを作成する](#ステップ-5-カスタム値ファイルを作成する)を参照してください。
+     </TabItem>
+     <TabItem value="production" label="本番/ステージング環境">
+       本番環境では、上記の ScalarDB Analytics サーバーの要件とシステムの要件 (セキュリティ、可用性、バックアップ/復旧、コスト、スケーラビリティなど) に基づいてオブジェクトストレージをデプロイしてください。
+     </TabItem>
+   </Tabs>
+
+## ステップ 5. カスタム値ファイルを作成する
+
+環境と前のステップでの決定に基づいて、カスタム値ファイル `scalardb-analytics-server.yaml` を作成してください。
+
+### 必須設定を設定する
+
+1. コンテナイメージとライセンス設定を設定してください
+
+   [ステップ 1. ScalarDB Analytics の課金プランを決定する](#ステップ-1-scalardb-analytics-の課金プランを決定する)で選択した課金プランに基づいて、`scalarDbAnalyticsServer.image.repository` にコンテナイメージ設定を設定してください。以下の課金プランのいずれかを選択して、この設定の例を参照してください。
+
+   <Tabs groupId="billing-plan" queryString>
+     <TabItem value="payg-container-offer-aws-marketplace" label="従量制課金 (コンテナオファー - AWS Marketplace)" default>
+     ```yaml
+     scalarDbAnalyticsServer:
+       image:
+         repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/scalar/scalardb-analytics-server-aws-payg
+     ```
+     </TabItem>
+     <TabItem value="fixed-price-byol-container-offer" label="固定価格 (ライセンス持参) (コンテナオファー - サポートされている任意の Kubernetes プラットフォーム)">
+     <WarningLicenseKeyContact product="ScalarDB Analytics サーバー" />
+     ```yaml
+     scalarDbAnalyticsServer:
+       image:
+         repository: ghcr.io/scalar-labs/scalardb-analytics-server-byol
+       properties: |
+         scalar.db.analytics.server.licensing.license_key=<YOUR_LICENSE_KEY>
+         scalar.db.analytics.server.licensing.license_check_cert_pem=-----BEGIN CERTIFICATE-----\nMIID...certificate content...\n-----END CERTIFICATE-----
+     ```
+     </TabItem>
+   </Tabs>
+
+1. サービスアカウント設定を設定してください
+
+   [ステップ 1. ScalarDB Analytics の課金プランを決定する](#ステップ-1-scalardb-analytics-の課金プランを決定する)で選択した課金プランに基づいて、`scalarDbAnalyticsServer.serviceAccount` にサービスアカウント設定を設定してください。以下の課金プランのいずれかを選択して、この設定の例を参照してください。
+
+   <Tabs groupId="billing-plan" queryString>
+     <TabItem value="payg-container-offer-aws-marketplace" label="従量制課金 (コンテナオファー - AWS Marketplace)" default>
+     ```yaml
+     scalarDbAnalyticsServer:
+       serviceAccount:
+         serviceAccountName: <SERVICE_ACCOUNT_NAME>
+         automountServiceAccountToken: true
+     ```
+
+     :::note
+
+     `<SERVICE_ACCOUNT_NAME>` を[ステップ 2. Kubernetes クラスターをデプロイする](#ステップ-2-kubernetes-クラスターをデプロイする)で `eksctl create iamserviceaccount` コマンドを使用して作成したサービスアカウントの名前に変更してください。
+
+     :::
+     </TabItem>
+     <TabItem value="fixed-price-byol-container-offer" label="固定価格 (ライセンス持参) (コンテナオファー - サポートされている任意の Kubernetes プラットフォーム)">
+     サービスアカウント設定を設定する必要はありません。
+     </TabItem>
+   </Tabs>
+
+1. データベース設定を設定してください
+
+   [ステップ 3. バックエンドデータベースをデプロイする](#ステップ-3-バックエンドデータベースをデプロイする)で選択したバックエンドデータベースに基づいて、`scalarDbAnalyticsServer.properties` にデータベース設定を設定してください。以下のデータベースのいずれかを選択して、これらの設定の例を参照してください。
+
+   <Tabs groupId="databases" queryString>
+     <TabItem value="postgresql" label="PostgreSQL" default>
+     ```yaml
+     scalarDbAnalyticsServer:
+       properties: |
+         scalar.db.analytics.server.db.url=jdbc:postgresql://<POSTGRESQL_SERVER_HOSTNAME>:<POSTGRESQL_SERVER_PORT>/<POSTGRESQL_DATABASE_NAME>
+         scalar.db.analytics.server.db.username=<POSTGRESQL_USERNAME>
+         scalar.db.analytics.server.db.password=<POSTGRESQL_PASSWORD>
+     ```
+     </TabItem>
+     <TabItem value="mysql" label="MySQL">
+     ```yaml
+     scalarDbAnalyticsServer:
+       properties: |
+         scalar.db.analytics.server.db.url=jdbc:mysql://<MYSQL_SERVER_HOSTNAME>:<MYSQL_SERVER_PORT>/<MYSQL_DATABASE_NAME>
+         scalar.db.analytics.server.db.username=<MYSQL_USERNAME>
+         scalar.db.analytics.server.db.password=<MYSQL_PASSWORD>
+     ```
+     </TabItem>
+     <TabItem value="sql-server" label="SQL Server">
+     ```yaml
+     scalarDbAnalyticsServer:
+       properties: |
+         scalar.db.analytics.server.db.url=jdbc:sqlserver://<SQL_SERVER_HOSTNAME>:<SQL_SERVER_PORT>;databaseName=<SQL_SERVER_DATABASE_NAME>;encrypt=true;trustServerCertificate=true
+         scalar.db.analytics.server.db.username=<SQL_SERVER_USERNAME>
+         scalar.db.analytics.server.db.password=<SQL_SERVER_PASSWORD>
+     ```
+     </TabItem>
+     <TabItem value="oracle" label="Oracle">
+     ```yaml
+     scalarDbAnalyticsServer:
+       properties: |
+         scalar.db.analytics.server.db.url=jdbc:oracle:thin:@//<ORACLE_SERVER_HOSTNAME>:<ORACLE_SERVER_PORT>/<PDB_NAME>
+         scalar.db.analytics.server.db.username=<ORACLE_USERNAME>
+         scalar.db.analytics.server.db.password=<ORACLE_PASSWORD>
+     ```
+     </TabItem>
+   </Tabs>
+
+1. オブジェクトストレージ設定を設定してください
+
+   [ステップ 4. オブジェクトストレージをデプロイする](#ステップ-4-オブジェクトストレージをデプロイする)で選択したオブジェクトストレージに基づいて、`scalarDbAnalyticsServer.properties` にオブジェクトストレージ設定を設定してください。以下のオブジェクトストレージのいずれかを選択して、これらの設定の例を参照してください。
+
+   <Tabs groupId="object-storages" queryString>
+     <TabItem value="amazon-s3" label="Amazon S3" default>
+     ```yaml
+     scalarDbAnalyticsServer:
+       properties: |
+         scalar.db.analytics.server.metering.storage.provider=aws-s3
+         scalar.db.analytics.server.metering.storage.accessKeyId=<YOUR_ACCESS_KEY>
+         scalar.db.analytics.server.metering.storage.secretAccessKey=<YOUR_SECRET_ACCESS_KEY>
+     ```
+     </TabItem>
+     <TabItem value="azure-blob-storage" label="Azure Blob Storage">
+     ```yaml
+     scalarDbAnalyticsServer:
+       properties: |
+         scalar.db.analytics.server.metering.storage.provider=azureblob
+         scalar.db.analytics.server.metering.storage.accessKeyId=<YOUR_ACCESS_KEY>
+         scalar.db.analytics.server.metering.storage.secretAccessKey=<YOUR_SECRET_ACCESS_KEY>
+     ```
+     </TabItem>
+     <TabItem value="cloud-storage" label="Cloud storage">
+     ```yaml
+     scalarDbAnalyticsServer:
+       properties: |
+         scalar.db.analytics.server.metering.storage.provider=google-cloud-storage
+         scalar.db.analytics.server.metering.storage.accessKeyId=<YOUR_ACCESS_KEY>
+         scalar.db.analytics.server.metering.storage.secretAccessKey=<YOUR_SECRET_ACCESS_KEY>
+     ```
+     </TabItem>
+     <TabItem value="filesystem" label="ファイルシステム">
+     :::note
+
+     `filesystem` は、テストまたは開発目的でのみ使用できます。ファイルシステムは本番環境での使用は推奨されません。
+
+     :::
+     ```yaml
+     scalarDbAnalyticsServer:
+       properties: |
+         scalar.db.analytics.server.metering.storage.provider=filesystem
+         scalar.db.analytics.server.metering.storage.path=/tmp/scalardb-analytics-metering
+     ```
+     </TabItem>
+   </Tabs>
+
+1. サービス設定を設定してください
+
+   ScalarDB Analytics サーバーの接続性に基づいて、`scalarDbAnalyticsServer.service.type` を設定する必要があります。以下の接続タイプのいずれかを選択して、この設定の例を参照してください。
+
+   <Tabs groupId="connectivity" queryString>
+     <TabItem value="external-k8s" label="Kubernetes クラスター外からのアクセス" default>
+     Spark アプリケーションが Kubernetes クラスター外から ScalarDB Analytics サーバーにアクセスする場合は、`scalarDbAnalyticsServer.service.type` を `LoadBalancer` に設定してください。
+
+     ```yaml
+     scalarDbAnalyticsServer:
+       service:
+         type: "LoadBalancer"
+     ```
+     </TabItem>
+     <TabItem value="internal-k8s" label="Kubernetes クラスター内からのアクセス">
+     Spark アプリケーションが Kubernetes クラスター内から ScalarDB Analytics サーバーにアクセスする場合は、`scalarDbAnalyticsServer.service.type` を `ClusterIP` に設定してください。
+
+     ```yaml
+     scalarDbAnalyticsServer:
+       service:
+         type: "ClusterIP"
+     ```
+     </TabItem>
+   </Tabs>
+
+1. 必須設定を確認してください
+
+   上記のステップを完了した後、例えば、環境に応じて以下の設定が必要です:
+
+   :::note
+
+   これらの設定は単なる例です。実際の設定はこれらの例と異なる場合があります。環境に基づいて設定を行ってください。
+
+   :::
+
+   <Tabs groupId="examples" queryString>
+     <TabItem value="example-1" label="BYOL / PostgreSQL / Azure Blob Storage / LoadBalancer" default>
+     ```yaml
+     scalarDbAnalyticsServer:
+       image:
+         repository: ghcr.io/scalar-labs/scalardb-analytics-server-byol
+       properties: |
+         # ライセンス設定
+         scalar.db.analytics.server.licensing.license_key=<YOUR_LICENSE_KEY>
+         scalar.db.analytics.server.licensing.license_check_cert_pem=-----BEGIN CERTIFICATE-----\nMIID...certificate content...\n-----END CERTIFICATE-----
+         # データベース設定
+         scalar.db.analytics.server.db.url=jdbc:postgresql://<POSTGRESQL_SERVER_HOSTNAME>:<POSTGRESQL_SERVER_PORT>/<POSTGRESQL_DATABASE_NAME>
+         scalar.db.analytics.server.db.username=<POSTGRESQL_USERNAME>
+         scalar.db.analytics.server.db.password=<POSTGRESQL_PASSWORD>
+         # オブジェクトストレージ設定
+         scalar.db.analytics.server.metering.storage.provider=azureblob
+         scalar.db.analytics.server.metering.storage.accessKeyId=<YOUR_ACCESS_KEY>
+         scalar.db.analytics.server.metering.storage.secretAccessKey=<YOUR_SECRET_ACCESS_KEY>
+       service:
+         type: "LoadBalancer"
+     ```
+     </TabItem>
+     <TabItem value="example-2" label="AWS Marketplace / MySQL / Amazon S3 / ClusterIP">
+     ```yaml
+     scalarDbAnalyticsServer:
+       image:
+         repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/scalar/scalardb-analytics-server-aws-payg
+       properties: |
+         # データベース設定
+         scalar.db.analytics.server.db.url=jdbc:mysql://<MYSQL_SERVER_HOSTNAME>:<MYSQL_SERVER_PORT>/<MYSQL_DATABASE_NAME>
+         scalar.db.analytics.server.db.username=<MYSQL_USERNAME>
+         scalar.db.analytics.server.db.password=<MYSQL_PASSWORD>
+         # オブジェクトストレージ設定
+         scalar.db.analytics.server.metering.storage.provider=aws-s3
+         scalar.db.analytics.server.metering.storage.accessKeyId=<YOUR_ACCESS_KEY>
+         scalar.db.analytics.server.metering.storage.secretAccessKey=<YOUR_SECRET_ACCESS_KEY>
+       service:
+         type: "ClusterIP"
+       serviceAccount:
+         serviceAccountName: "scalardb-analytics-payg-sa"
+         automountServiceAccountToken: true
+     ```
+     </TabItem>
+     <TabItem value="example-3" label="BYOL / SQL Server / ファイルシステム / ClusterIP">
+     :::note
+
+     `filesystem` は、テストまたは開発目的でのみ使用できます。ファイルシステムは本番環境での使用は推奨されません。
+
+     :::
+
+     ```yaml
+     scalarDbAnalyticsServer:
+       image:
+         repository: ghcr.io/scalar-labs/scalardb-analytics-server-byol
+       properties: |
+         # ライセンス設定
+         scalar.db.analytics.server.licensing.license_key=<YOUR_LICENSE_KEY>
+         scalar.db.analytics.server.licensing.license_check_cert_pem=-----BEGIN CERTIFICATE-----\nMIID...certificate content...\n-----END CERTIFICATE-----
+         # データベース設定
+         scalar.db.analytics.server.db.url=jdbc:sqlserver://<SQL_SERVER_HOSTNAME>:<SQL_SERVER_PORT>;databaseName=<SQL_SERVER_DATABASE_NAME>;encrypt=true;trustServerCertificate=true
+         scalar.db.analytics.server.db.username=<SQL_SERVER_USERNAME>
+         scalar.db.analytics.server.db.password=<SQL_SERVER_PASSWORD>
+         # ファイルシステム設定
+         scalar.db.analytics.server.metering.storage.provider=filesystem
+         scalar.db.analytics.server.metering.storage.path=/tmp/scalardb-analytics-metering
+       service:
+         type: "ClusterIP"
+     ```
+     </TabItem>
+   </Tabs>
+
+### オプション設定を設定する
+
+[オプションの設定](../helm-charts/configure-custom-values-scalardb-analytics.mdx#オプションの構成)でオプション設定を確認できます。必要に応じて環境に基づいてオプション設定を設定してください。
+
+## ステップ 6. Helm Chart を使用して ScalarDB Analytics サーバーをデプロイする
+
+[ステップ 5. カスタム値ファイルを作成する](#ステップ-5-カスタム値ファイルを作成する)で作成したカスタム値ファイル `scalardb-analytics-server.yaml` を使用して、`helm` コマンドで ScalarDB Analytics サーバーデプロイメントをデプロイ、アップグレード、またはアンインストールしてください。
+
+<HelmCommandUsage productName="ScalarDB Analytics サーバー" helmChartName="scalardb-analytics-server" />
+
+## ステップ 7. デプロイメントを確認する
+
+ScalarDB Analytics サーバーをデプロイまたはアップグレードした後、以下のポイントを確認してください。
+
+1. 以下のコマンドを実行して、ポッドのステータスが `Running` であることを確認してください:
+
+   ```console
+   kubectl get pod --namespace <KUBERNETES_NAMESPACE>
+   ```
+
+   :::note
+
+   `--namespace` オプションについては、`<KUBERNETES_NAMESPACE>` を ScalarDB Analytics サーバーをデプロイした Kubernetes 名前空間の名前に変更してください。
+
+   :::
+
+   例えば、以下のように `STATUS` 列に `Running`、`READY` 列に `1/1` と表示されます:
+
+   ```console
+   $ kubectl get pod
+   NAME                                         READY   STATUS    RESTARTS   AGE
+   scalardb-analytics-server-86767fff4c-p6nkq   1/1     Running   0          22m
+   ```
+
+1. サービスがエクスポートされているかどうかを確認してください。
+
+   ```console
+   kubectl get svc --namespace <KUBERNETES_NAMESPACE>
+   ```
+
+   :::note
+
+   `--namespace` オプションについては、`<KUBERNETES_NAMESPACE>` を ScalarDB Analytics サーバーをデプロイした Kubernetes 名前空間の名前に変更してください。
+
+   :::
+
+   <Tabs groupId="connectivity" queryString>
+     <TabItem value="external-k8s" label="Kubernetes クラスター外からのアクセス" default>
+     [ステップ 5. カスタム値ファイルを作成する](#ステップ-5-カスタム値ファイルを作成する)で `scalarDbAnalyticsServer.service.type` を `LoadBalancer` に設定した場合、以下のように `EXTERNAL-IP` 列に IP アドレスまたは FQDN (Kubernetes クラスターによって異なる) が表示されます:
+
+     ```console
+     $ kubectl get svc
+     NAME                        TYPE           CLUSTER-IP      EXTERNAL-IP   PORT(S)                           AGE
+     kubernetes                  ClusterIP      10.96.0.1       <none>        443/TCP                           4h54m
+     scalardb-analytics-server   LoadBalancer   10.98.116.121   127.0.0.1     11051:32619/TCP,11052:32598/TCP   2m43s
+     ```
+
+     :::note
+
+     テストまたは開発目的で minikube を使用している場合は、`LoadBalancer` サービスを公開するために [minikube tunnel](https://minikube.sigs.k8s.io/docs/commands/tunnel/) コマンドを実行する必要があります。
+
+     :::
+
+     </TabItem>
+     <TabItem value="internal-k8s" label="Kubernetes クラスター内からのアクセス">
+     [ステップ 5. カスタム値ファイルを作成する](#ステップ-5-カスタム値ファイルを作成する)で `scalarDbAnalyticsServer.service.type` を `ClusterIP` に設定した場合、以下のように `CLUSTER-IP` 列に IP アドレスが表示されます:
+     ```console
+     $ kubectl get svc
+     NAME                        TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)               AGE
+     kubernetes                  ClusterIP   10.96.0.1        <none>        443/TCP               4h56m
+     scalardb-analytics-server   ClusterIP   10.102.141.240   <none>        11051/TCP,11052/TCP   3s
+     ```
+     </TabItem>
+   </Tabs>
