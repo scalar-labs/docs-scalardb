@@ -1625,6 +1625,11 @@ const sidebars = {
           label: 'パブリッククラウド環境への ScalarDB Analytics のデプロイ',
         },
         {
+          type: 'doc',
+          id: 'scalardb-analytics/deploy-scalardb-analytics-server',
+          label: 'ScalarDB Analytics サーバーをデプロイ',
+        },
+        {
           type: 'category',
           key: 'deploy-reference-ja-jp-3.16',
           label: '詳細',
