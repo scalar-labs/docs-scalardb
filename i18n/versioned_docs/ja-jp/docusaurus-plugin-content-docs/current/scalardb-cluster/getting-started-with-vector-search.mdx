@@ -1,7 +1,7 @@
 ---
 tags:
   - Enterprise Premium
-  - Private Preview
+  - Public Preview
 displayed_sidebar: docsJapanese
 ---
 
@@ -14,7 +14,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 <TranslationBanner />
 
-ScalarDB Cluster は、アプリケーションがベクトルストアと統一された方法で対話できるように、ベクトルストアの抽象化を提供します。このページでは、この機能の概要と、それがユーザーにとってなぜ有益であるかについて説明します。
+ScalarDB Cluster は、アプリケーションがベクトルストア (埋め込みストア) と統一された方法で対話できるように、ベクトルストアの抽象化を提供します。この入門チュートリアルでは、ScalarDB Cluster でベクトル検索を実行する方法を説明します。
 
 ## ベクトルストアの抽象化とは何ですか?
 
@@ -79,6 +79,40 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
 
 さらに、使用する埋め込みストアと埋め込みモデルに応じて、設定ファイルにプロパティを追加する必要があります。
 
+:::note
+
+ScalarDB Cluster は複数の埋め込みストアと埋め込みモデルをサポートしています。複数の名前付きインスタンスを定義し、実行時に使用するインスタンスを選択できます。
+
+複数のインスタンスを設定するには、`scalar.db.embedding.stores` と `scalar.db.embedding.models` にコンマ区切りの名前リストを指定します。次に、`scalar.db.embedding.stores.<STORE_NAME>.` または `scalar.db.embedding.models.<MODEL_NAME>.` をプレフィックスとして使用して各インスタンスを設定します。
+
+例:
+
+```properties
+# 複数の埋め込みストアを定義します。
+scalar.db.embedding.stores=store1,store2
+
+# 最初のストアを設定します。
+scalar.db.embedding.stores.store1.type=in-memory
+
+# 2番目のストアを設定します。
+scalar.db.embedding.stores.store2.type=opensearch
+scalar.db.embedding.stores.store2.opensearch.server_url=<SERVER_URL>
+...
+
+# 複数の埋め込みモデルを定義します。
+scalar.db.embedding.models=model1,model2
+
+# 最初のモデルを設定します。
+scalar.db.embedding.models.model1.type=in-process
+
+# 2番目のモデルを設定します。
+scalar.db.embedding.models.model2.type=open-ai
+scalar.db.embedding.models.model2.open-ai.api_key=<API_KEY>
+...
+```
+
+:::
+
 使用する埋め込みストアを選択し、それに応じた設定手順に従ってください。
 
 <Tabs groupId="embedding-store" queryString>
@@ -88,7 +122,11 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
     インメモリ埋め込みストアを使用するには、設定ファイルに次のプロパティを追加します。
 
     ```properties
-    scalar.db.embedding.store.type=in-memory
+    # Define embedding store names (comma-separated list for multiple stores).
+    scalar.db.embedding.stores=my_store
+
+    # Configure the embedding store type.
+    scalar.db.embedding.stores.my_store.type=in-memory
     ```
   </TabItem>
   <TabItem value="opensearch" label="OpenSearch">
@@ -101,47 +139,55 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
         ネットワーク上で到達可能なローカルで実行されている OpenSearch クラスターの場合、設定ファイルに次のプロパティを追加します。
 
         ```properties
-        scalar.db.embedding.store.type=opensearch
+        # Define embedding store names (comma-separated list for multiple stores).
+        scalar.db.embedding.stores=my_store
+
+        # Configure the embedding store type.
+        scalar.db.embedding.stores.my_store.type=opensearch
 
         # OpenSearch Server URL.
-        scalar.db.embedding.store.opensearch.server_url=<SERVER_URL>
+        scalar.db.embedding.stores.my_store.opensearch.server_url=<SERVER_URL>
 
         # OpenSearch API key (optional).
-        scalar.db.embedding.store.opensearch.api_key=<API_KEY>
+        scalar.db.embedding.stores.my_store.opensearch.api_key=<API_KEY>
 
         # OpenSearch username (optional).
-        scalar.db.embedding.store.opensearch.user_name=<USER_NAME>
+        scalar.db.embedding.stores.my_store.opensearch.user_name=<USER_NAME>
 
         # OpenSearch password (optional).
-        scalar.db.embedding.store.opensearch.password=<PASSWORD>
+        scalar.db.embedding.stores.my_store.opensearch.password=<PASSWORD>
 
         # OpenSearch index name.
-        scalar.db.embedding.store.opensearch.index_name=<INDEX_NAME>
+        scalar.db.embedding.stores.my_store.opensearch.index_name=<INDEX_NAME>
         ```
       </TabItem>
       <TabItem value="aws" label="Running on AWS">
         AWS でフルマネージドサービスとして実行されている OpenSearch クラスターの場合、設定ファイルに次のプロパティを追加します。
 
         ```properties
-        scalar.db.embedding.store.type=opensearch
+        # Define embedding store names (comma-separated list for multiple stores).
+        scalar.db.embedding.stores=my_store
+
+        # Configure the embedding store type.
+        scalar.db.embedding.stores.my_store.type=opensearch
 
         # OpenSearch Server URL.
-        scalar.db.embedding.store.opensearch.server_url=<SERVER_URL>
+        scalar.db.embedding.stores.my_store.opensearch.server_url=<SERVER_URL>
 
         # The AWS signing service name, one of `es` (Amazon OpenSearch) or `aoss` (Amazon OpenSearch Serverless).
-        scalar.db.embedding.store.opensearch.service_name=<SERVICE_NAME>
+        scalar.db.embedding.stores.my_store.opensearch.service_name=<SERVICE_NAME>
 
         # The AWS region for which requests will be signed. This should typically match the region in `server_url`.
-        scalar.db.embedding.store.opensearch.region=<REGION>
+        scalar.db.embedding.stores.my_store.opensearch.region=<REGION>
 
         # The AWS access key ID.
-        scalar.db.embedding.store.opensearch.access_key_id=<ACCESS_KEY_ID>
+        scalar.db.embedding.stores.my_store.opensearch.access_key_id=<ACCESS_KEY_ID>
 
         # The AWS secret access key.
-        scalar.db.embedding.store.opensearch.secret_access_key=<SECRET_ACCESS_KEY>
+        scalar.db.embedding.stores.my_store.opensearch.secret_access_key=<SECRET_ACCESS_KEY>
 
         # OpenSearch index name.
-        scalar.db.embedding.store.opensearch.index_name=<INDEX_NAME>
+        scalar.db.embedding.stores.my_store.opensearch.index_name=<INDEX_NAME>
         ```
       </TabItem>
     </Tabs>
@@ -152,19 +198,26 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
     Azure Cosmos DB for NoSQL 埋め込みストアを使用するには、設定ファイルに次のプロパティを追加します。
 
     ```properties
-    scalar.db.embedding.store.type=azure-cosmos-nosql
+    # Define embedding store names (comma-separated list for multiple stores).
+    scalar.db.embedding.stores=my_store
+
+    # Configure the embedding store type.
+    scalar.db.embedding.stores.my_store.type=azure-cosmos-nosql
 
     # The Azure Cosmos DB endpoint that the SDK will connect to.
-    scalar.db.embedding.store.azure-cosmos-nosql.endpoint=<ENDPOINT>
+    scalar.db.embedding.stores.my_store.azure-cosmos-nosql.endpoint=<ENDPOINT>
 
     # A master key used to perform authentication for accessing resources. A read-only key can also be used only for read-only operations.
-    scalar.db.embedding.store.azure-cosmos-nosql.key=<KEY>
+    scalar.db.embedding.stores.my_store.azure-cosmos-nosql.key=<KEY>
 
     # The database name to be used.
-    scalar.db.embedding.store.azure-cosmos-nosql.database_name=<DATABASE_NAME>
+    scalar.db.embedding.stores.my_store.azure-cosmos-nosql.database_name=<DATABASE_NAME>
 
     # The container name to be used.
-    scalar.db.embedding.store.azure-cosmos-nosql.container_name=<CONTAINER_NAME>
+    scalar.db.embedding.stores.my_store.azure-cosmos-nosql.container_name=<CONTAINER_NAME>
+
+    # The dimensions of the embeddings.
+    scalar.db.embedding.stores.my_store.azure-cosmos-nosql.dimensions=<DIMENSIONS>
     ```
   </TabItem>
   <TabItem value="azure-ai-search" label="Azure AI Search">
@@ -173,15 +226,23 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
     Azure AI Search 埋め込みストアを使用するには、設定ファイルに次のプロパティを追加します。
 
     ```properties
-    scalar.db.embedding.store.type=azure-ai-search
+    # Define embedding store names (comma-separated list for multiple stores).
+    scalar.db.embedding.stores=my_store
+
+    # Configure the embedding store type.
+    scalar.db.embedding.stores.my_store.type=azure-ai-search
+
     # The Azure AI Search endpoint.
-    scalar.db.embedding.store.azure-ai-search.endpoint=<ENDPOINT>
+    scalar.db.embedding.stores.my_store.azure-ai-search.endpoint=<ENDPOINT>
 
     # The Azure AI Search API key.
-    scalar.db.embedding.store.azure-ai-search.api_key=<API_KEY>
+    scalar.db.embedding.stores.my_store.azure-ai-search.api_key=<API_KEY>
 
-    # The name of the index to be used. If no index is provided, the name of the default index to be used.
-    scalar.db.embedding.store.azure-ai-search.index_name=<INDEX_NAME>
+    # The name of the index to be used. If no index is provided, a default index name will be used.
+    scalar.db.embedding.stores.my_store.azure-ai-search.index_name=<INDEX_NAME>
+
+    # The dimensions of the embeddings.
+    scalar.db.embedding.stores.my_store.azure-ai-search.dimensions=<DIMENSIONS>
     ```
   </TabItem>
   <TabItem value="pgvector" label="pgvector">
@@ -190,25 +251,32 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
     pgvector 埋め込みストアを使用するには、設定ファイルに次のプロパティを追加します。
 
     ```properties
-    scalar.db.embedding.store.type=pgvector
+    # Define embedding store names (comma-separated list for multiple stores).
+    scalar.db.embedding.stores=my_store
+
+    # Configure the embedding store type.
+    scalar.db.embedding.stores.my_store.type=pgvector
 
     # The database host.
-    scalar.db.embedding.store.pgvector.host=<HOST>
+    scalar.db.embedding.stores.my_store.pgvector.host=<HOST>
 
     # The database port.
-    scalar.db.embedding.store.pgvector.port=<PORT>
+    scalar.db.embedding.stores.my_store.pgvector.port=<PORT>
 
     # The database user.
-    scalar.db.embedding.store.pgvector.user=<USER>
+    scalar.db.embedding.stores.my_store.pgvector.user=<USER>
 
     # The database password.
-    scalar.db.embedding.store.pgvector.password=<PASSWORD>
+    scalar.db.embedding.stores.my_store.pgvector.password=<PASSWORD>
 
     # The database name.
-    scalar.db.embedding.store.pgvector.database=<DATABASE>
+    scalar.db.embedding.stores.my_store.pgvector.database=<DATABASE>
 
     # The table name.
-    scalar.db.embedding.store.pgvector.table=<TABLE>
+    scalar.db.embedding.stores.my_store.pgvector.table=<TABLE>
+
+    # The dimensions of the embeddings.
+    scalar.db.embedding.stores.my_store.pgvector.dimensions=<DIMENSIONS>
     ```
   </TabItem>
 </Tabs>
@@ -222,7 +290,11 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
     In-process 埋め込みモデルを使用するには、設定ファイルに次のプロパティを追加します。
 
     ```properties
-    scalar.db.embedding.model.type=in-process
+    # Define embedding model names (comma-separated list for multiple models).
+    scalar.db.embedding.models=my_model
+
+    # Configure the embedding model type.
+    scalar.db.embedding.models.my_model.type=in-process
     ```
   </TabItem>
   <TabItem value="amazon-bedrock" label="Amazon Bedrock">
@@ -231,22 +303,26 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
     Amazon Bedrock 埋め込みモデルを使用するには、設定ファイルに次のプロパティを追加します。
 
     ```properties
-    scalar.db.embedding.model.type=bedrock-titan
+    # Define embedding model names (comma-separated list for multiple models).
+    scalar.db.embedding.models=my_model
+
+    # Configure the embedding model type.
+    scalar.db.embedding.models.my_model.type=bedrock-titan
 
     # The AWS region for which requests will be signed.
-    scalar.db.embedding.model.bedrock-titan.region=<REGION>
+    scalar.db.embedding.models.my_model.bedrock-titan.region=<REGION>
 
     # The AWS access key ID.
-    scalar.db.embedding.model.bedrock-titan.access_key_id=<ACCESS_KEY_ID>
+    scalar.db.embedding.models.my_model.bedrock-titan.access_key_id=<ACCESS_KEY_ID>
 
     # The AWS secret access key.
-    scalar.db.embedding.model.bedrock-titan.secret_access_key=<SECRET_ACCESS_KEY>
+    scalar.db.embedding.models.my_model.bedrock-titan.secret_access_key=<SECRET_ACCESS_KEY>
 
     # The model. Either `amazon.titan-embed-text-v1` or `amazon.titan-embed-text-v2:0`.
-    scalar.db.embedding.model.bedrock-titan.model=<MODEL>
+    scalar.db.embedding.models.my_model.bedrock-titan.model=<MODEL>
 
     # The dimensions.
-    scalar.db.embedding.model.bedrock-titan.dimensions=<DIMENSIONS>
+    scalar.db.embedding.models.my_model.bedrock-titan.dimensions=<DIMENSIONS>
     ```
   </TabItem>
   <TabItem value="azure-openai" label="Azure OpenAI">
@@ -255,19 +331,23 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
     Azure OpenAI 埋め込みモデルを使用するには、設定ファイルに次のプロパティを追加します。
 
     ```properties
-    scalar.db.embedding.model.type=azure-open-ai
+    # Define embedding model names (comma-separated list for multiple models).
+    scalar.db.embedding.models=my_model
+
+    # Configure the embedding model type.
+    scalar.db.embedding.models.my_model.type=azure-open-ai
 
     # The Azure OpenAI endpoint.
-    scalar.db.embedding.model.azure-open-ai.endpoint=<ENDPOINT>
+    scalar.db.embedding.models.my_model.azure-open-ai.endpoint=<ENDPOINT>
 
     # The Azure OpenAI API key.
-    scalar.db.embedding.model.azure-open-ai.api_key=<API_KEY>
+    scalar.db.embedding.models.my_model.azure-open-ai.api_key=<API_KEY>
 
     # The deployment name in Azure OpenAI.
-    scalar.db.embedding.model.azure-open-ai.deployment_name=<DEPLOYMENT_NAME>
+    scalar.db.embedding.models.my_model.azure-open-ai.deployment_name=<DEPLOYMENT_NAME>
 
     # The dimensions.
-    scalar.db.embedding.model.azure-open-ai.dimensions=<DIMENSIONS>
+    scalar.db.embedding.models.my_model.azure-open-ai.dimensions=<DIMENSIONS>
     ```
   </TabItem>
   <TabItem value="google-vertex-ai" label="Google Vertex AI">
@@ -276,25 +356,29 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
     Google Vertex AI 埋め込みモデルを使用するには、設定ファイルに次のプロパティを追加します。
 
     ```properties
-    scalar.db.embedding.model.type=vertex-ai
+    # Define embedding model names (comma-separated list for multiple models).
+    scalar.db.embedding.models=my_model
+
+    # Configure the embedding model type.
+    scalar.db.embedding.models.my_model.type=vertex-ai
 
     # The Google Cloud project.
-    scalar.db.embedding.model.vertex-ai.project=<PROJECT>
+    scalar.db.embedding.models.my_model.vertex-ai.project=<PROJECT>
 
     # The Google Cloud location.
-    scalar.db.embedding.model.vertex-ai.location=<LOCATION>
+    scalar.db.embedding.models.my_model.vertex-ai.location=<LOCATION>
 
     # The endpoint.
-    scalar.db.embedding.model.vertex-ai.endpoint=<ENDPOINT>
+    scalar.db.embedding.models.my_model.vertex-ai.endpoint=<ENDPOINT>
 
     # The publisher.
-    scalar.db.embedding.model.vertex-ai.publisher=<PUBLISHER>
+    scalar.db.embedding.models.my_model.vertex-ai.publisher=<PUBLISHER>
 
     # The model name.
-    scalar.db.embedding.model.vertex-ai.model_name=<MODEL_NAME>
+    scalar.db.embedding.models.my_model.vertex-ai.model_name=<MODEL_NAME>
 
     # The output dimensionality.
-    scalar.db.embedding.model.vertex-ai.output_dimensionality=<OUTPUT_DIMENSIONALITY>
+    scalar.db.embedding.models.my_model.vertex-ai.output_dimensionality=<OUTPUT_DIMENSIONALITY>
     ```
   </TabItem>
   <TabItem value="openai" label="OpenAI">
@@ -303,25 +387,29 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
     OpenAI 埋め込みモデルを使用するには、設定ファイルに次のプロパティを追加します。
 
     ```properties
-    scalar.db.embedding.model.type=open-ai
+    # Define embedding model names (comma-separated list for multiple models).
+    scalar.db.embedding.models=my_model
+
+    # Configure the embedding model type.
+    scalar.db.embedding.models.my_model.type=open-ai
 
     # The OpenAI API key.
-    scalar.db.embedding.model.open-ai.api_key=<API_KEY>
+    scalar.db.embedding.models.my_model.open-ai.api_key=<API_KEY>
 
     # The model name.
-    scalar.db.embedding.model.open-ai.model_name=<MODEL_NAME>
+    scalar.db.embedding.models.my_model.open-ai.model_name=<MODEL_NAME>
 
     # The base URL.
-    scalar.db.embedding.model.open-ai.base_url=<BASE_URL>
+    scalar.db.embedding.models.my_model.open-ai.base_url=<BASE_URL>
 
     # The organization ID.
-    scalar.db.embedding.model.open-ai.organization_id=<ORGANIZATION_ID>
+    scalar.db.embedding.models.my_model.open-ai.organization_id=<ORGANIZATION_ID>
 
     # The dimensions.
-    scalar.db.embedding.model.open-ai.dimensions=<DIMENSIONS>
+    scalar.db.embedding.models.my_model.open-ai.dimensions=<DIMENSIONS>
 
     # The user.
-    scalar.db.embedding.model.open-ai.user=<USER>
+    scalar.db.embedding.models.my_model.open-ai.user=<USER>
     ```
   </TabItem>
 </Tabs>
@@ -390,6 +478,8 @@ ScalarDB Cluster Embedding Java Client SDK ライブラリは [Maven Central Rep
 try (ScalarDbEmbeddingClientFactory scalarDbEmbeddingClientFactory =
     ScalarDbEmbeddingClientFactory.builder()
         .withProperty("scalar.db.embedding.client.contact_points", "indirect:localhost")
+        .withProperty("scalar.db.embedding.client.store", "my_store")
+        .withProperty("scalar.db.embedding.client.model", "my_model")
         .build()) {
   // Create an embedding store and an embedding model.
   EmbeddingStore<TextSegment> scalarDbEmbeddingStore =
@@ -432,15 +522,21 @@ try (ScalarDbEmbeddingClientFactory scalarDbEmbeddingClientFactory =
 
 #### `ScalarDbEmbeddingClientFactory` について
 
-コードスニペットに示されているように、`ScalarDbEmbeddingClientFactory` クラスはファクトリのインスタンスを作成するためのビルダーを提供します。ビルダーを使用すると、ファクトリのプロパティを設定できます。この例では、`withProperty()` メソッドを使用して、以下のようにファクトリの接続ポイントを設定しています:
+コードスニペットに示されているように、`ScalarDbEmbeddingClientFactory` クラスはファクトリのインスタンスを作成するためのビルダーを提供します。ビルダーを使用すると、ファクトリのプロパティを設定できます。この例では、`withProperty()` メソッドを使用して、以下のようにファクトリの接続ポイント、ストア名、モデル名を設定しています:
 
 ```java
 ScalarDbEmbeddingClientFactory scalarDbEmbeddingClientFactory = ScalarDbEmbeddingClientFactory.builder()
   .withProperty("scalar.db.embedding.client.contact_points", "indirect:localhost")
+  .withProperty("scalar.db.embedding.client.store", "my_store")
+  .withProperty("scalar.db.embedding.client.model", "my_model")
   .build();
 ```
 
+`scalar.db.embedding.client.store` と `scalar.db.embedding.client.model` プロパティは、サーバー設定で定義された使用する名前付き埋め込みストアと埋め込みモデルインスタンスを指定します。
+
 また、`withPropertiesFile()` メソッドを使用してプロパティファイルを設定することもできます。
+
+複数のベクトルストアと対話したい場合は、ファクトリの複数のインスタンスを作成してください。
 
 その後、以下のようにファクトリを使用して埋め込みストアと埋め込みモデルを作成できます:
 
@@ -450,7 +546,7 @@ EmbeddingStore<TextSegment> scalarDbEmbeddingStore =
 EmbeddingModel scalarDbEmbeddingModel = scalarDbEmbeddingClientFactory.createEmbeddingModel();
 ```
 
-これらのクラスのメソッドは内部的に ScalarDB Cluster に接続し、設定で指定された埋め込みストアと埋め込みモデルを使用して対話します。
+これらのクラスのメソッドは内部的に ScalarDB Cluster に接続し、設定で指定された埋め込みストアを埋め込みモデルを使用して対話します。
 
 アプリケーション内でベクトルストアと対話するには、`scalarDbEmbeddingStore` と `scalarDbEmbeddingModel` のインスタンスを再利用する必要があります。
 
@@ -462,6 +558,6 @@ EmbeddingModel scalarDbEmbeddingModel = scalarDbEmbeddingClientFactory.createEmb
 
 ## 追加の詳細
 
-ベクター検索機能は現在、プライベートプレビュー中です。詳細については、[お問い合わせ](https://www.scalar-labs.com/contact)いただくか、この機能が将来のバージョンで一般公開されるまでお待ちください。
+ベクトル検索機能は現在、パブリックプレビュー中です。詳細については、[お問い合わせ](https://www.scalar-labs.com/contact)ください。
 
 - [Javadoc](https://javadoc.io/doc/com.scalar-labs/scalardb-cluster-embedding-java-client-sdk/3.17.0/index.html)
