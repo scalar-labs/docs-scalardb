@@ -1210,29 +1210,23 @@ For details about how to configure Spring Data JDBC for ScalarDB, see [Configura
 - **Description:** Maximum size of metadata allowed to be received.
 - **Default value:** The gRPC default value
 
-#### Authentication and authorization configurations
+### Authentication and authorization configurations
 
 The following shows the authentication and authorization configurations for the ScalarDB Cluster client.
 
-##### `auth.enabled`
+#### `auth.enabled`
 
 - **Field:** `scalar.db.cluster.auth.enabled`
 - **Description:** Whether authentication and authorization are enabled.
 - **Default value:** `false`
 
-:::warning
-
-If you enable authentication and authorization, you will also need to set [`scalar.db.cross_partition_scan.enabled`](#cross-partition-scan-configurations) to `true` for the system namespace (`scalardb` by default). This is because the ABAC feature performs cross-partition scans internally.
-
-:::
-
-##### `auth.username`
+#### `auth.username`
 
 - **Field:** `scalar.db.sql.cluster_mode.username`
 - **Description:** The username of the client.
 - **Default value:** empty
 
-##### `auth.password`
+#### `auth.password`
 
 - **Field:** `scalar.db.sql.cluster_mode.password`
 - **Description:** The password of the client.
