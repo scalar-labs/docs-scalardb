@@ -668,7 +668,7 @@ Key key = Key.newBuilder()
 
 `Get` は、主キーで指定された単一のレコードを取得する操作です。
 
-まず `Get` オブジェクトを作成し、次に次のように `transaction.get()` メソッドを使用してオブジェクトを実行する必要があります。
+まず `Get` オブジェクトを作成し、次に以下のように `transaction.get()` メソッドを使用してオブジェクトを実行する必要があります。
 
 ```java
 // Create a `Get` operation.
@@ -1006,7 +1006,7 @@ List<Result> results = transaction.scan(scan);
 
 :::
 
-まず `Put` オブジェクトを作成し、次に次のように `transaction.put()` メソッドを使用してオブジェクトを実行する必要があります。
+まず `Put` オブジェクトを作成し、次に以下のように `transaction.put()` メソッドを使用してオブジェクトを実行する必要があります。
 
 ```java
 // Create a `Put` operation.
@@ -1070,7 +1070,7 @@ Put put =
 
 `Insert` は、トランザクションを通じて基礎となるストレージにエントリを挿入する操作です。エントリがすでに存在する場合は、競合エラーが発生します。
 
-まず `Insert` オブジェクトを作成し、次に次のように `transaction.insert()` メソッドを使用してオブジェクトを実行する必要があります。
+まず `Insert` オブジェクトを作成し、次に以下のように `transaction.insert()` メソッドを使用してオブジェクトを実行する必要があります。
 
 ```java
 // Create an `Insert` operation.
@@ -1095,7 +1095,7 @@ transaction.insert(insert);
 
 `Upsert` は、トランザクションを通じて基礎となるストレージにエントリを挿入したり、エントリを更新したりする操作です。エントリがすでに存在する場合は更新され、そうでない場合はエントリが挿入されます。
 
-まず `Upsert` オブジェクトを作成し、次に次のように `transaction.upsert()` メソッドを使用してオブジェクトを実行する必要があります。
+まず `Upsert` オブジェクトを作成し、次に以下のように `transaction.upsert()` メソッドを使用してオブジェクトを実行する必要があります。
 
 ```java
 // Create an `Upsert` operation.
@@ -1120,7 +1120,7 @@ transaction.upsert(upsert);
 
 `Update` は、トランザクションを通じて基礎となるストレージ内のエントリを更新する操作です。エントリが存在しない場合、操作によって変更は行われません。
 
-まず `Update` オブジェクトを作成し、次に次のように `transaction.update()` メソッドを使用してオブジェクトを実行する必要があります。
+まず `Update` オブジェクトを作成し、次に以下のように `transaction.update()` メソッドを使用してオブジェクトを実行する必要があります。
 
 ```java
 // Create an `Update` operation.
@@ -1151,7 +1151,7 @@ transaction.update(update);
 
 :::
 
-まず `Delete` オブジェクトを作成し、次に次のように `transaction.delete()` メソッドを使用してオブジェクトを実行する必要があります。
+まず `Delete` オブジェクトを作成し、次に以下のように `transaction.delete()` メソッドを使用してオブジェクトを実行する必要があります。
 
 ```java
 // Create a `Delete` operation.
@@ -1284,9 +1284,9 @@ MutationCondition updateIfExistsCondition = ConditionBuilder.updateIfExists();
 
 ##### Mutate 操作
 
-Mutate は、`Put`、`Insert`、`Upsert`、`Update`、`Delete` の複数の操作を実行する操作です。
+Mutate は、`Put`、`Insert`、`Upsert`、`Update`、`Delete` の複数のミューテーションを実行する操作です。
 
-まず Mutate オブジェクトを作成し、次に次のように `transaction.mutate()` メソッドを使用してオブジェクトを実行する必要があります。
+まずミューテーションオブジェクトを作成し、次に以下のように `transaction.mutate()` メソッドを使用してミューテーションを実行する必要があります。
 
 ```java
 // Create `Put` and `Delete` operations.
@@ -1314,8 +1314,64 @@ Delete delete =
         .clusteringKey(clusteringKeyForDelete)
         .build();
 
-// Execute the operations.
+// Execute the mutations.
 transaction.mutate(Arrays.asList(put, delete));
+```
+
+##### Batch 操作
+
+Batch は、`Get`、`Scan`、`Put`、`Insert`、`Upsert`、`Update`、`Delete` の複数の操作を実行する操作です。
+
+まず操作オブジェクトを作成し、次に以下のように `transaction.batch()` メソッドを使用して操作を実行する必要があります。
+
+```java
+// Create operation objects.
+Key partitionKey = Key.ofInt("c1", 10);
+
+Key clusteringKeyForGet = Key.of("c2", "aaa", "c3", 100L);
+
+Get get =
+    Get.newBuilder()
+        .namespace("ns")
+        .table("tbl")
+        .partitionKey(partitionKey)
+        .clusteringKey(clusteringKeyForGet)
+        .build();
+
+Scan scan = Scan.newBuilder().namespace("ns").table("tbl").partitionKey(partitionKey).build();
+
+Key clusteringKeyForInsert = Key.of("c2", "bbb", "c3", 200L);
+
+Insert insert =
+    Insert.newBuilder()
+        .namespace("ns")
+        .table("tbl")
+        .partitionKey(partitionKey)
+        .clusteringKey(clusteringKeyForInsert)
+        .floatValue("c4", 1.23F)
+        .doubleValue("c5", 4.56)
+        .build();
+
+Key clusteringKeyForDelete = Key.of("c2", "ccc", "c3", 300L);
+
+Delete delete =
+    Delete.newBuilder()
+        .namespace("ns")
+        .table("tbl")
+        .partitionKey(partitionKey)
+        .clusteringKey(clusteringKeyForDelete)
+        .build();
+
+// Execute the operations.
+List<BatchResult> batchResults = transaction.batch(Arrays.asList(get, scan, insert, delete));
+
+Optional<Result> getResult = batchResults.get(0).getGetResult(); // Result of the get
+
+...
+
+List<Result> scanResult = batchResults.get(1).getScanResult(); // Result of the scan
+
+...
 ```
 
 ##### CRUD 操作のデフォルト名前空間
@@ -1461,7 +1517,7 @@ ScalarDB で例外を処理する方法の詳細については、[例外の処�
 
 `Get` は、主キーで指定された単一のレコードを取得する操作です。
 
-最初に `Get` オブジェクトを作成し、次に次のように `transactionManager.get()` メソッドを使用してオブジェクトを実行する必要があります。
+最初に `Get` オブジェクトを作成し、次に以下のように `transactionManager.get()` メソッドを使用してオブジェクトを実行する必要があります。
 
 ```java
 // Create a `Get` operation.
@@ -1535,7 +1591,7 @@ try (TransactionManagerCrudOperable.Scanner scanner = transactionManager.getScan
 
 :::
 
-まず `Put` オブジェクトを作成し、次に次のように `transactionManager.put()` メソッドを使用してオブジェクトを実行する必要があります。
+まず `Put` オブジェクトを作成し、次に以下のように `transactionManager.put()` メソッドを使用してオブジェクトを実行する必要があります。
 
 ```java
 // Create a `Put` operation.
@@ -1562,7 +1618,7 @@ transactionManager.put(put);
 
 `Insert` は、トランザクションを通じて基礎となるストレージにエントリを挿入する操作です。エントリがすでに存在する場合は、競合エラーが発生します。
 
-まず `Insert` オブジェクトを作成し、次に次のように `transactionManager.insert()` メソッドを使用してオブジェクトを実行する必要があります。
+まず `Insert` オブジェクトを作成し、次に以下のように `transactionManager.insert()` メソッドを使用してオブジェクトを実行する必要があります。
 
 ```java
 // Create an `Insert` operation.
@@ -1589,7 +1645,7 @@ transactionManager.insert(insert);
 
 `Upsert` は、トランザクションを通じて基礎となるストレージにエントリを挿入するか、エントリを更新する操作です。エントリがすでに存在する場合は更新され、そうでない場合はエントリが挿入されます。
 
-まず `Upsert` オブジェクトを作成し、次に次のように `transactionManager.upsert()` メソッドを使用してオブジェクトを実行する必要があります。
+まず `Upsert` オブジェクトを作成し、次に以下のように `transactionManager.upsert()` メソッドを使用してオブジェクトを実行する必要があります。
 
 ```java
 // Create an `Upsert` operation.
@@ -1616,7 +1672,7 @@ transactionManager.upsert(upsert);
 
 `Update` は、トランザクションを通じて基礎となるストレージ内のエントリを更新する操作です。エントリが存在しない場合、操作によって変更は行われません。
 
-まず `Update` オブジェクトを作成し、次に次のように `transactionManager.update()` メソッドを使用してオブジェクトを実行する必要があります。
+まず `Update` オブジェクトを作成し、次に以下のように `transactionManager.update()` メソッドを使用してオブジェクトを実行する必要があります。
 
 ```java
 // Create an `Update` operation.
@@ -1643,7 +1699,7 @@ transactionManager.update(update);
 
 `Delete` は、主キーで指定されたレコードを削除する操作です。
 
-まず `Delete` オブジェクトを作成し、次に次のように `transaction.delete()` メソッドを使用してオブジェクトを実行する必要があります。
+まず `Delete` オブジェクトを作成し、次に以下のように `transaction.delete()` メソッドを使用してオブジェクトを実行する必要があります。
 
 ```java
 // Create a `Delete` operation.
@@ -1668,7 +1724,7 @@ transactionManager.delete(delete);
 
 Mutate は、複数のミューテーション (`Put`、`Insert`、`Upsert`、`Update`、および `Delete` 操作) を実行する操作です。
 
-まずミューテーションオブジェクトを作成し、次に次のように `transactionManager.mutate()` メソッドを使用してオブジェクトを実行する必要があります。
+まずミューテーションオブジェクトを作成し、次に以下のように `transactionManager.mutate()` メソッドを使用してミューテーションを実行する必要があります。
 
 ```java
 // Create `Put` and `Delete` operations.
@@ -1696,13 +1752,71 @@ Delete delete =
         .clusteringKey(clusteringKeyForDelete)
         .build();
 
-// Execute the operations.
+// Execute the mutations.
 transactionManager.mutate(Arrays.asList(put, delete));
 ```
 
 Mutate 操作の詳細については、[Mutate 操作](#mutate-操作)を参照してください。
 
 また、ScalarDB での例外の処理方法の詳細については、[例外の処理方法](#例外の処理方法)を参照してください。
+
+#### Batch 操作の実行
+
+Batch は、`Get`、`Scan`、`Put`、`Insert`、`Upsert`、`Update`、`Delete` の複数の操作を実行する操作です。
+
+まず操作オブジェクトを作成し、次に以下のように `transactionManager.batch()` メソッドを使用して操作を実行する必要があります。
+
+```java
+// Create operation objects.
+Key partitionKey = Key.ofInt("c1", 10);
+
+Key clusteringKeyForGet = Key.of("c2", "aaa", "c3", 100L);
+
+Get get =
+    Get.newBuilder()
+        .namespace("ns")
+        .table("tbl")
+        .partitionKey(partitionKey)
+        .clusteringKey(clusteringKeyForGet)
+        .build();
+
+Scan scan = Scan.newBuilder().namespace("ns").table("tbl").partitionKey(partitionKey).build();
+
+Key clusteringKeyForInsert = Key.of("c2", "bbb", "c3", 200L);
+
+Insert insert =
+    Insert.newBuilder()
+        .namespace("ns")
+        .table("tbl")
+        .partitionKey(partitionKey)
+        .clusteringKey(clusteringKeyForInsert)
+        .floatValue("c4", 1.23F)
+        .doubleValue("c5", 4.56)
+        .build();
+
+Key clusteringKeyForDelete = Key.of("c2", "ccc", "c3", 300L);
+
+Delete delete =
+    Delete.newBuilder()
+        .namespace("ns")
+        .table("tbl")
+        .partitionKey(partitionKey)
+        .clusteringKey(clusteringKeyForDelete)
+        .build();
+
+// Execute the operations.
+List<BatchResult> batchResults = transactionManager.batch(Arrays.asList(get, scan, insert, delete));
+
+Optional<Result> getResult = batchResults.get(0).getGetResult(); // Result of the get
+
+...
+
+List<Result> scanResult = batchResults.get(1).getScanResult(); // Result of the scan
+
+...
+```
+
+Batch 操作の詳細については、[Batch 操作](#batch-操作)を参照してください。
 
 ## 例外の処理方法
 
