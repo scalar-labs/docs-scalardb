@@ -104,6 +104,9 @@ admin.createNamespace("ns", options);
     | compaction-strategy  | Cassandra 圧縮戦略。`LCS`、`STCS`、または `TWCS` である必要があります。                                  | `STCS`            |
     | replication-factor   | Cassandra の複製係数。                                                                                   | 3                 |
   </TabItem>
+  <TabItem value="Object_Storage" label="Object Storage">
+    Object Storage には使用できるオプションはありません。
+  </TabItem>
 </Tabs>
 
 ### テーブルを作成する
@@ -161,6 +164,12 @@ admin.createIndex("ns", "tbl", "c5", ifNotExists);
 Map<String, String> options = ...;
 admin.createIndex("ns", "tbl", "c5", options);
 ```
+
+:::note
+
+Object Storage ではセカンダリインデックスを作成できません。
+
+:::
 
 ### テーブルに新しい列を追加する
 

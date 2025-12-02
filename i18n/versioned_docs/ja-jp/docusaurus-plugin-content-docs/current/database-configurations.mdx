@@ -85,6 +85,16 @@ ScalarDB は、CRUD 操作だけでなく、スキーマ、テーブル、イン
 
     - 該当なし。Cassandra は常にコミットされたレコードを返すため、Cassandra 固有の要件はありません。
   </TabItem>
+  <TabItem value="Object_Storage" label="Object Storage">
+    <h4>トランザクション</h4>
+
+    - すべての操作に単一のリージョンを使用します。Blob Storage の場合は、単一のプライマリリージョンを使用してください。
+    - 各ストレージに対して次のストレージクラスまたはアクセス層を選択します：
+      - **S3:** [S3 標準](https://aws.amazon.com/jp/s3/storage-classes/)
+      - **Blob Storage:** [ホットアクセス層](https://learn.microsoft.com/ja-jp/azure/storage/blobs/access-tiers-overview)
+      - **Cloud Storage:** [Standard ストレージ](https://docs.cloud.google.com/storage/docs/storage-classes?hl=ja)
+    - 上記以外のストレージクラスまたはアクセス層も使用可能ですが、上記のものは検証済みでサポートされています。
+  </TabItem>
 </Tabs>
 
 ## 推奨事項
@@ -119,5 +129,11 @@ DynamoDB はデフォルトで複数のアベイラビリティーゾーンに�
   </TabItem>
   <TabItem value="Cassandra" label="Cassandra">
     - スループットを高めるために、`concurrent_reads` と `concurrent_writes` を増やします。詳細については、[`concurrent_writes`](https://cassandra.apache.org/doc/stable/cassandra/configuration/cass_yaml_file.html#concurrent_writes) に関する Cassandra の公式ドキュメントを参照してください。
+  </TabItem>
+  <TabItem value="Object_Storage" label="Object Storage">
+    - ScalarDB のパーティションは Object Storage のオブジェクトにマップされるため、次のようにテーブルスキーマを設計することが推奨されます：
+      - レコードのサイズが大きい場合は、クラスタリングキーの定義を避けてください。
+      - Object Storage への読み取り操作の数を減らすために、頻繁に読み取られるレコードを同じパーティション内に配置してください。
+      - Object Storage での書き込み競合を避けるために、頻繁に書き込まれるレコードは異なるパーティションに配置してください。
   </TabItem>
 </Tabs>
