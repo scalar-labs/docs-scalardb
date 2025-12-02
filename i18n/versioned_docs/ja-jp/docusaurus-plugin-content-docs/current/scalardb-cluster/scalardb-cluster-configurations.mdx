@@ -117,6 +117,18 @@ ScalarDB Cluster では、次の一般的な設定が利用可能です。
 - **説明:** ScalarDB Cluster ノードは進行中のスキャナーを管理しています。このプロセスは、リソースリークを防ぐために、長時間アイドル状態のスキャナーを期限切れにします。この設定では、このスキャナー管理機能の有効期限をミリ秒単位で指定します。
 - **デフォルト値:** `60000` (60秒)
 
+##### `cluster.node.grpc.max_connection_age_millis`
+
+- **フィールド:** `scalar.db.cluster.node.grpc.max_connection_age_millis`
+- **説明:** チャネルが存在できる最大時間。古いコネクションをプロアクティブに閉じて更新し、サーバー間の不均衡を防ぐのに役立ちます。
+- **デフォルト値:** `Integer.MAX_VALUE` (無制限)
+
+##### `cluster.node.grpc.max_connection_age_grace_millis`
+
+- **フィールド:** `scalar.db.cluster.node.grpc.max_connection_age_grace_millis`
+- **説明:** チャネルが最大期間に到達した後の猶予期間。コネクションが閉じられる前に、進行中の RPC が完了するための猶予期間を提供します。
+- **デフォルト値:** `Integer.MAX_VALUE` (無制限)
+
 ### パフォーマンス関連の設定
 
 Consensus Commit トランザクションマネージャーでは、次のパフォーマンス関連の設定が利用できます。
@@ -1076,6 +1088,18 @@ ScalarDB Cluster で使用できる追加の設定は以下の通りです。
 - **フィールド:** `scalar.db.cluster.client.scan_fetch_size`
 - **説明:** クラスターからデータを取得するために `Scanner` で使用されるフェッチサイズ。これは、`Scanner` がクラスターから一度に取得するレコード数です。値を大きくすると、クラスターへの往復回数が減ってパフォーマンスが向上しますが、メモリ使用量も増加する可能性があります。
 - **デフォルト値:** `10`
+
+##### `cluster.client.piggyback_begin.enabled`
+
+- **フィールド:** `scalar.db.cluster.client.piggyback_begin.enabled`
+- **説明:** ピギーバック begin 機能が有効かどうか。最初の CRUD 操作までトランザクション begin を遅延させ、最初の操作と begin をピギーバックして、専用の begin RPC 呼び出しを削除します。
+- **デフォルト値:** `false`
+
+##### `cluster.client.write_buffering.enabled`
+
+- **フィールド:** `scalar.db.cluster.client.write_buffering.enabled`
+- **説明:** 書き込みバッファリング機能が有効かどうか。非条件書き込み操作 (挿入、アップサート、無条件 put/update/delete) をバッファリングし、バッチで実行することでRPC呼び出し数を減らします。
+- **デフォルト値:** `false`
 
 ### クライアント側ワイヤ暗号化の設定
 
