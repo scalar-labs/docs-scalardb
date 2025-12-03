@@ -293,6 +293,17 @@ The `--coordinator` option is specified because a table with `transaction` set t
 
 :::
   </TabItem>
+  <TabItem value="Db2" label="Db2">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```
+
+:::note
+
+The `--coordinator` option is specified because a table with `transaction` set to `true` exists in the schema. For details about configuring and loading a schema, see [ScalarDB Schema Loader](schema-loader.mdx).
+
+:::
+  </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     ```console
     java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator --no-backup --no-scaling
