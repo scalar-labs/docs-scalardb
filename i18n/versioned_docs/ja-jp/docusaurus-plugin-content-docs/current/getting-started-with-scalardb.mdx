@@ -298,6 +298,17 @@ Azure Cosmos DB アカウントの主キーまたはセカンダリキーを `sc
 
 :::
   </TabItem>
+  <TabItem value="Db2" label="Db2">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```
+
+:::note
+
+`transaction` が `true` に設定されたテーブルがスキーマ内に存在するため、`--coordinator` オプションが指定されています。スキーマの設定とロードの詳細については、[ScalarDB Schema Loader](schema-loader.mdx) を参照してください。
+
+:::
+  </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     ```console
     java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator --no-backup --no-scaling
