@@ -193,11 +193,22 @@ In addition, the following options are available:
 
 ## Common parameters
 
-| Name           | Description                                             | Default   |
-|:---------------|:--------------------------------------------------------|:----------|
-| `concurrency`  | Number of threads for benchmarking.                     | `1`       |
-| `run_for_sec`  | Duration of benchmark (in seconds).                     | `60`      |
-| `ramp_for_sec` | Duration of ramp-up time before benchmark (in seconds). | `0`       |
+The following parameters are common to all workloads.
+
+### `concurrency`
+
+- **Description:** Number of worker threads that concurrently execute benchmark transactions against the database. This parameter controls the level of parallelism during the actual benchmark execution phase. Increasing this value simulates more concurrent client accesses and higher workload intensity.
+- **Default value:** `1`
+
+### `run_for_sec`
+
+- **Description:** Duration of the benchmark execution phase (in seconds). This parameter defines how long the benchmark will run and submit transactions to the database.
+- **Default value:** `60`
+
+### `ramp_for_sec`
+
+- **Description:** Duration of the ramp-up period before the benchmark measurement phase begins (in seconds). During this warm-up period, the system executes transactions but does not record performance metrics. This allows the system to reach a steady state before collecting benchmark results.
+- **Default value:** `0`
 
 ## Workload-specific parameters
 
@@ -205,32 +216,100 @@ Select a benchmark to see its available workload parameters.
 
 <Tabs groupId="benchmarks" queryString>
   <TabItem value="TPC-C" label="TPC-C" default>
-    | Name                   | Description                                                                                                                                                                                                                          | Default   |
-    |:-----------------------|:-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|:----------|
-    | `num_warehouses`       | Number of warehouses (scale factor) for benchmarking.                                                                                                                                                                                | `1`       |
-    | `load_concurrency`     | Number of threads for loading.                                                                                                                                                                                                       | `1`       |
-    | `load_start_warehouse` | Start ID of loading warehouse. This option can be useful with `--skip-item-load` when loading large-scale data with multiple clients or adding additional warehouses.                                                                | `1`       |
-    | `load_end_warehouse`   | End ID of loading warehouse. You can use either `--num-warehouses` or `--end-warehouse` to specify the number of loading warehouses.                                                                                                 | `1`       |
-    | `skip_item_load`       | Whether or not to skip loading item table.                                                                                                                                                                                           | `false`   |
-    | `use_table_index`      | Whether or not to use a generic table-based secondary index instead of ScalarDB's secondary index.                                                                                                                                   | `false`   |
-    | `np_only`              | Run benchmark with only new-order and payment transactions (50% each).                                                                                                                                                               | `false`   |
-    | `rate_new_order`       | Percentage of new-order transactions. When specifying this percentage based on your needs, you must specify the percentages for all other rate parameters. In that case, the total of all rate parameters must equal 100 percent.    | N/A       |
-    | `rate_payment`         | Percentage of payment transactions. When specifying this percentage based on your needs, you must specify the percentages for all other rate parameters. In that case, the total of all rate parameters must equal 100 percent.      | N/A       |
-    | `rate_order_status`    | Percentage of order-status transactions. When specifying this percentage based on your needs, you must specify the percentages for all other rate parameters. In that case, the total of all rate parameters must equal 100 percent. | N/A       |
-    | `rate_delivery`        | Percentage of delivery transactions. When specifying this percentage based on your needs, you must specify the percentages for all other rate parameters. In that case, the total of all rate parameters must equal 100 percent.     | N/A       |
-    | `rate_stock_level`     | Percentage of stock-level transactions. When specifying this percentage based on your needs, you must specify the percentages for all other rate parameters. In that case, the total of all rate parameters must equal 100 percent.  | N/A       |
-    | `backoff`              | Sleep time in milliseconds inserted after a transaction is aborted due to a conflict.                                                                                                                                                | `0`       |
-  </TabItem>
-  <TabItem value="YCSB_multi-storage YCSB" label="YCSB and multi-storage YCSB">
-    | Name                    | Description                                                                       | Default                                       |
-    |:------------------------|:----------------------------------------------------------------------------------|:----------------------------------------------|
-    | `load_concurrency`      | Number of threads for loading.                                                    | `1`                                           |
-    | `load_batch_size`       | Number of put records in a single loading transaction.                            | `1`                                           |
-    | `load_overwrite`        | Whether or not to overwrite when loading records.                                 | `false`                                       |
-    | `ops_per_tx`            | Number of operations in a single transaction.                                     | `2` (Workloads A and C) <br /> `1` (Workload F) |
-    | `record_count`          | Number of records in the target table.                                            | `1000`                                        |
-    | `use_read_modify_write` | Whether or not to use read-modify-writes instead of blind writes in Workload A.   | `false`[^rmw]                                 |
+    <h3>`num_warehouses`</h3>
 
-    [^rmw]: The default value is `false` for `use_read_modify_write` since Workload A doesn't assume that the transaction reads the original record first. However, if you're using Consensus Commit as the transaction manager, you must set `use_read_modify_write` to `true`. This is because ScalarDB doesn't allow a blind write for an existing record.
+    - **Description:** Number of warehouses to create for the TPC-C benchmark workload. This value is the scale factor that determines the dataset size. Increasing this value creates a larger working set and enables enterprise-scale testing.
+    - **Default value:** `1`
+
+    <h3>`load_concurrency`</h3>
+
+    - **Description:** Number of parallel threads used to load initial benchmark data into the database. This parameter controls how fast the data-loading phase completes. Increasing this value can significantly reduce data-loading time, especially for larger numbers of warehouses. This is separate from the `concurrency` parameter used during benchmark execution.
+    - **Default value:** `1`
+
+    <h3>`load_start_warehouse`</h3>
+
+    - **Description:** Start ID of the warehouse range to load. This option can be useful with `skip_item_load` when loading large-scale data with multiple clients or adding additional warehouses.
+    - **Default value:** `1`
+
+    <h3>`load_end_warehouse`</h3>
+
+    - **Description:** End ID of the warehouse range to load. You can use either `num_warehouses` or `load_end_warehouse` to specify the number of loading warehouses.
+    - **Default value:** `1`
+
+    <h3>`skip_item_load`</h3>
+
+    - **Description:** If set to `true`, skips loading the item table. This can be useful when loading data with multiple clients, as the item table is shared across all warehouses and only needs to be loaded once.
+    - **Default value:** `false`
+
+    <h3>`use_table_index`</h3>
+
+    - **Description:** If set to `true`, uses a table-based secondary index instead of the secondary index of ScalarDB. The table-based secondary index builds its index using regular ScalarDB tables, allowing efficient lookups of specific customers or orders via partition keys. In contrast, the ScalarDB secondary index leverages the native secondary index feature of the underlying database, and thus its behavior depends on its implementation. Since secondary indexes in NoSQL databases such as Cassandra often require careful handling from a performance perspective, this option allows you to observe the performance characteristics of your target database when running workloads that involve secondary indexes.
+    - **Default value:** `false`
+
+    <h3>`np_only`</h3>
+
+    - **Description:** If set to `true`, runs the benchmark with only New-Order and Payment transactions (50% each), excluding other TPC-C transaction types. This setting can be useful for focused performance testing under a write-heavy workload without having long-running reads.
+    - **Default value:** `false`
+
+    <h3>`rate_new_order`</h3>
+
+    - **Description:** Percentage of New-Order transactions in the transaction mix. When specifying this percentage based on your needs, you must specify the percentages for all other rate parameters. In that case, the total of all rate parameters must equal 100%.
+    - **Default value:** N/A
+
+    <h3>`rate_payment`</h3>
+
+    - **Description:** Percentage of Payment transactions in the transaction mix. When specifying this percentage based on your needs, you must specify the percentages for all other rate parameters. In that case, the total of all rate parameters must equal 100%.
+    - **Default value:** N/A
+
+    <h3>`rate_order_status`</h3>
+
+    - **Description:** Percentage of Order-Status transactions in the transaction mix. When specifying this percentage based on your needs, you must specify the percentages for all other rate parameters. In that case, the total of all rate parameters must equal 100%.
+    - **Default value:** N/A
+
+    <h3>`rate_delivery`</h3>
+
+    - **Description:** Percentage of Delivery transactions in the transaction mix. When specifying this percentage based on your needs, you must specify the percentages for all other rate parameters. In that case, the total of all rate parameters must equal 100%.
+    - **Default value:** N/A
+
+    <h3>`rate_stock_level`</h3>
+
+    - **Description:** Percentage of Stock-Level transactions in the transaction mix. When specifying this percentage based on your needs, you must specify the percentages for all other rate parameters. In that case, the total of all rate parameters must equal 100%.
+    - **Default value:** N/A
+
+    <h3>`backoff`</h3>
+
+    - **Description:** Sleep time in milliseconds inserted after a transaction is aborted due to a conflict. This parameter can help reduce contention by introducing a delay before retrying failed transactions.
+    - **Default value:** `0`
+  </TabItem>
+  <TabItem value="ycsb-multi-storage-ycsb" label="YCSB and multi-storage YCSB">
+    <h3>`load_concurrency`</h3>
+
+    - **Description:** Number of parallel threads used to load initial benchmark data into the database. This parameter controls how fast the initial data-loading phase completes. Increasing this value can significantly reduce data-loading time for large datasets. This is separate from the `concurrency` parameter used during benchmark execution.
+    - **Default value:** `1`
+
+    <h3>`load_batch_size`</h3>
+
+    - **Description:** Number of records to insert within a single transaction during the initial data-loading phase. Larger batch sizes can improve loading performance by reducing the number of transactions, but may increase the execution time of each transaction.
+    - **Default value:** `1`
+
+    <h3>`load_overwrite`</h3>
+
+    - **Description:** If set to `true`, overwrites existing records when loading data. When set to `true`, the initial data-loading phase will update existing records instead of failing on conflicts.
+    - **Default value:** `false`
+
+    <h3>`ops_per_tx`</h3>
+
+    - **Description:** Number of read or write operations to execute within a single transaction. This parameter affects transaction size and execution time. Higher values create longer-running transactions.
+    - **Default value:** `2` (Workloads A and C), `1` (Workload F)
+
+    <h3>`record_count`</h3>
+
+    - **Description:** Number of records to create for the YCSB benchmark workload. This parameter determines the size of the dataset and affects the working-set size during benchmark execution.
+    - **Default value:** `1000`
+
+    <h3>`use_read_modify_write`</h3>
+
+    - **Description:** If set to `true`, uses read-modify-write operations instead of blind writes in Workload A. The default value is `true` because ScalarDB doesn't allow a blind write for an existing record when you're using the default transaction manager, Consensus Commit. Note that the original Workload A assumes `false`.
+    - **Default value:** `true`
   </TabItem>
 </Tabs>
