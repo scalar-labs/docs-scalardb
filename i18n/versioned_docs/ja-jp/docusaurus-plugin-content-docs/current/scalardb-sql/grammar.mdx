@@ -124,7 +124,7 @@ CREATE NAMESPACE [IF NOT EXISTS] <namespace name> [WITH creation_options]
 creation_options: <option name>=<option value> [AND <option name>=<option value>] ...
 ```
 
-`creation_options` の詳細については、[作成オプション](../api-guide.mdx#creation-options)を参照してください。
+- `creation_options` の詳細については、[作成オプション](../api-guide.mdx#creation-options)を参照してください。
 
 #### 例
 
@@ -182,6 +182,7 @@ creation_options: <option name>=<option value> [AND <option name>=<option value>
 ```
 
 - 主キー以外の列に `ENCRYPTED` を指定して、それらの列のデータを暗号化できます。
+- 作成オプションの詳細については、[作成オプション](../api-guide.mdx#作成オプション-1)を参照してください。
 
 1つのパーティションキー列と複数のクラスタリングキー列で構成される主キーを持つテーブルを作成します。
 
@@ -330,8 +331,10 @@ CreateTableStatement statement4 =
 #### 文法
 
 ```sql
-CREATE INDEX [IF NOT EXISTS] ON [<namespace name>.]<table name> (<column name>)
+CREATE INDEX [IF NOT EXISTS] ON [<namespace name>.]<table name> (<column name>) [WITH creation_options]
+creation_options: <option name>=<option value> [AND <option name>=<option value>] ...
 ```
+- `creation_options` の詳細については、[作成オプション](../api-guide.mdx#作成オプション-2)を参照してください。
 
 #### 例
 
