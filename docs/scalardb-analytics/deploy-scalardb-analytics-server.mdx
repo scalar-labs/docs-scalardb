@@ -282,7 +282,7 @@ Create your custom values file `scalardb-analytics-server.yaml` based on your en
      ```yaml
      scalarDbAnalyticsServer:
        properties: |
-         scalar.db.analytics.server.db.url=jdbc:postgresql://<POSTGRESQL_SERVER_HOSTNAME>:<POSTGRESQL_SERVER_PORT>/<POSTGRESQL_DATABASE_NAME>
+         scalar.db.analytics.server.db.contact_points=jdbc:postgresql://<POSTGRESQL_SERVER_HOSTNAME>:<POSTGRESQL_SERVER_PORT>/<POSTGRESQL_DATABASE_NAME>
          scalar.db.analytics.server.db.username=<POSTGRESQL_USERNAME>
          scalar.db.analytics.server.db.password=<POSTGRESQL_PASSWORD>
      ```
@@ -291,7 +291,7 @@ Create your custom values file `scalardb-analytics-server.yaml` based on your en
      ```yaml
      scalarDbAnalyticsServer:
        properties: |
-         scalar.db.analytics.server.db.url=jdbc:mysql://<MYSQL_SERVER_HOSTNAME>:<MYSQL_SERVER_PORT>/<MYSQL_DATABASE_NAME>
+         scalar.db.analytics.server.db.contact_points=jdbc:mysql://<MYSQL_SERVER_HOSTNAME>:<MYSQL_SERVER_PORT>/<MYSQL_DATABASE_NAME>
          scalar.db.analytics.server.db.username=<MYSQL_USERNAME>
          scalar.db.analytics.server.db.password=<MYSQL_PASSWORD>
      ```
@@ -300,7 +300,7 @@ Create your custom values file `scalardb-analytics-server.yaml` based on your en
      ```yaml
      scalarDbAnalyticsServer:
        properties: |
-         scalar.db.analytics.server.db.url=jdbc:sqlserver://<SQL_SERVER_HOSTNAME>:<SQL_SERVER_PORT>;databaseName=<SQL_SERVER_DATABASE_NAME>;encrypt=true;trustServerCertificate=true
+         scalar.db.analytics.server.db.contact_points=jdbc:sqlserver://<SQL_SERVER_HOSTNAME>:<SQL_SERVER_PORT>;databaseName=<SQL_SERVER_DATABASE_NAME>;encrypt=true;trustServerCertificate=true
          scalar.db.analytics.server.db.username=<SQL_SERVER_USERNAME>
          scalar.db.analytics.server.db.password=<SQL_SERVER_PASSWORD>
      ```
@@ -309,7 +309,7 @@ Create your custom values file `scalardb-analytics-server.yaml` based on your en
      ```yaml
      scalarDbAnalyticsServer:
        properties: |
-         scalar.db.analytics.server.db.url=jdbc:oracle:thin:@//<ORACLE_SERVER_HOSTNAME>:<ORACLE_SERVER_PORT>/<PDB_NAME>
+         scalar.db.analytics.server.db.contact_points=jdbc:oracle:thin:@//<ORACLE_SERVER_HOSTNAME>:<ORACLE_SERVER_PORT>/<PDB_NAME>
          scalar.db.analytics.server.db.username=<ORACLE_USERNAME>
          scalar.db.analytics.server.db.password=<ORACLE_PASSWORD>
      ```
@@ -409,7 +409,7 @@ Create your custom values file `scalardb-analytics-server.yaml` based on your en
          scalar.db.analytics.server.licensing.license_key=<YOUR_LICENSE_KEY>
          scalar.db.analytics.server.licensing.license_check_cert_pem=-----BEGIN CERTIFICATE-----\nMIID...certificate content...\n-----END CERTIFICATE-----
          # Database configurations
-         scalar.db.analytics.server.db.url=jdbc:postgresql://<POSTGRESQL_SERVER_HOSTNAME>:<POSTGRESQL_SERVER_PORT>/<POSTGRESQL_DATABASE_NAME>
+         scalar.db.analytics.server.db.contact_points=jdbc:postgresql://<POSTGRESQL_SERVER_HOSTNAME>:<POSTGRESQL_SERVER_PORT>/<POSTGRESQL_DATABASE_NAME>
          scalar.db.analytics.server.db.username=<POSTGRESQL_USERNAME>
          scalar.db.analytics.server.db.password=<POSTGRESQL_PASSWORD>
          # Object storage configurations
@@ -427,7 +427,7 @@ Create your custom values file `scalardb-analytics-server.yaml` based on your en
          repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/scalar/scalardb-analytics-server-aws-payg
        properties: |
          # Database configurations
-         scalar.db.analytics.server.db.url=jdbc:mysql://<MYSQL_SERVER_HOSTNAME>:<MYSQL_SERVER_PORT>/<MYSQL_DATABASE_NAME>
+         scalar.db.analytics.server.db.contact_points=jdbc:mysql://<MYSQL_SERVER_HOSTNAME>:<MYSQL_SERVER_PORT>/<MYSQL_DATABASE_NAME>
          scalar.db.analytics.server.db.username=<MYSQL_USERNAME>
          scalar.db.analytics.server.db.password=<MYSQL_PASSWORD>
          # Object storage configurations
@@ -457,7 +457,7 @@ Create your custom values file `scalardb-analytics-server.yaml` based on your en
          scalar.db.analytics.server.licensing.license_key=<YOUR_LICENSE_KEY>
          scalar.db.analytics.server.licensing.license_check_cert_pem=-----BEGIN CERTIFICATE-----\nMIID...certificate content...\n-----END CERTIFICATE-----
          # Database configurations
-         scalar.db.analytics.server.db.url=jdbc:sqlserver://<SQL_SERVER_HOSTNAME>:<SQL_SERVER_PORT>;databaseName=<SQL_SERVER_DATABASE_NAME>;encrypt=true;trustServerCertificate=true
+         scalar.db.analytics.server.db.contact_points=jdbc:sqlserver://<SQL_SERVER_HOSTNAME>:<SQL_SERVER_PORT>;databaseName=<SQL_SERVER_DATABASE_NAME>;encrypt=true;trustServerCertificate=true
          scalar.db.analytics.server.db.username=<SQL_SERVER_USERNAME>
          scalar.db.analytics.server.db.password=<SQL_SERVER_PASSWORD>
          # Filesystem configurations
