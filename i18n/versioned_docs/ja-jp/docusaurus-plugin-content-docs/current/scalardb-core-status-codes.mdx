@@ -640,7 +640,7 @@ The specified consistency level is not supported. Consistency level: %s
 **メッセージ**
 
 ```markdown
-Cannot encode a Text value that contains '\u0000'
+Cannot encode a Text value that contains '\\u0000'
 ```
 
 ### `DB-CORE-10081`
@@ -680,7 +680,7 @@ Storage not found. Storage: %s
 **メッセージ**
 
 ```markdown
-The namespace name is not acceptable. Namespace: %s
+The namespace name is not acceptable in SQLite. Namespace: %s
 ```
 
 ### `DB-CORE-10086`
@@ -688,7 +688,7 @@ The namespace name is not acceptable. Namespace: %s
 **メッセージ**
 
 ```markdown
-The table name is not acceptable. Table: %s
+The table name is not acceptable in SQLite. Table: %s
 ```
 
 ### `DB-CORE-10087`
@@ -696,7 +696,7 @@ The table name is not acceptable. Table: %s
 **メッセージ**
 
 ```markdown
-Importing tables is not allowed in the RDB engine. RDB engine: %s
+Importing tables is not allowed in SQLite
 ```
 
 ### `DB-CORE-10088`
@@ -800,7 +800,7 @@ A %s condition is not allowed on Delete operations
 **メッセージ**
 
 ```markdown
-The condition is not allowed to target transaction metadata columns. Column: %s
+The condition is not allowed to target transaction metadata columns. Table: %s; Column: %s
 ```
 
 ### `DB-CORE-10101`
@@ -1123,6 +1123,510 @@ The storage does not support mutations across multiple namespaces. Storage: %s; 
 Mutations across multiple storages are not allowed. Mutations: %s
 ```
 
+### `DB-CORE-10216`
+
+**メッセージ**
+
+```markdown
+Primary key columns cannot be dropped. Table: %s; Column: %s
+```
+
+### `DB-CORE-10217`
+
+**メッセージ**
+
+```markdown
+Cosmos DB does not support the feature for dropping columns
+```
+
+### `DB-CORE-10218`
+
+**メッセージ**
+
+```markdown
+DynamoDB does not support the feature for dropping columns
+```
+
+### `DB-CORE-10219`
+
+**メッセージ**
+
+```markdown
+Cosmos DB does not support the feature for renaming columns
+```
+
+### `DB-CORE-10220`
+
+**メッセージ**
+
+```markdown
+DynamoDB does not support the feature for renaming columns
+```
+
+### `DB-CORE-10221`
+
+**メッセージ**
+
+```markdown
+Cassandra does not support renaming non-primary key columns
+```
+
+### `DB-CORE-10222`
+
+**メッセージ**
+
+```markdown
+Db2 does not support renaming primary key or index key columns
+```
+
+### `DB-CORE-10223`
+
+**メッセージ**
+
+```markdown
+Import-related functionality is not supported in DynamoDB
+```
+
+### `DB-CORE-10224`
+
+**メッセージ**
+
+```markdown
+The BLOB type is supported only for the last column in the partition key in DynamoDB. Column: %s
+```
+
+### `DB-CORE-10225`
+
+**メッセージ**
+
+```markdown
+The BLOB type is not supported for clustering keys in DynamoDB. Column: %s
+```
+
+### `DB-CORE-10226`
+
+**メッセージ**
+
+```markdown
+The BOOLEAN type is not supported for index columns in DynamoDB. Column: %s
+```
+
+### `DB-CORE-10227`
+
+**メッセージ**
+
+```markdown
+The TIMESTAMP type is not supported in Cassandra. Column: %s
+```
+
+### `DB-CORE-10228`
+
+**メッセージ**
+
+```markdown
+With Db2, using a BLOB column as partition key, clustering key or secondary index is not supported.
+```
+
+### `DB-CORE-10229`
+
+**メッセージ**
+
+```markdown
+With Db2, setting an ordering on a BLOB column when using a cross partition scan operation is not supported. Ordering: %s
+```
+
+### `DB-CORE-10230`
+
+**メッセージ**
+
+```markdown
+Renaming tables is not supported in Cassandra
+```
+
+### `DB-CORE-10231`
+
+**メッセージ**
+
+```markdown
+Renaming tables is not supported in Cosmos DB
+```
+
+### `DB-CORE-10232`
+
+**メッセージ**
+
+```markdown
+Renaming tables is not supported in DynamoDB
+```
+
+### `DB-CORE-10233`
+
+**メッセージ**
+
+```markdown
+Altering primary key or index key column types is not supported. Table: %s; Column: %s
+```
+
+### `DB-CORE-10234`
+
+**メッセージ**
+
+```markdown
+Invalid column type conversion from %s to %s. Column: %s
+```
+
+### `DB-CORE-10235`
+
+**メッセージ**
+
+```markdown
+Cassandra does not support the feature for altering column types
+```
+
+### `DB-CORE-10236`
+
+**メッセージ**
+
+```markdown
+Cosmos DB does not support the feature for altering column types
+```
+
+### `DB-CORE-10237`
+
+**メッセージ**
+
+```markdown
+DynamoDB does not support the feature for altering column types
+```
+
+### `DB-CORE-10238`
+
+**メッセージ**
+
+```markdown
+SQLite does not support the feature for altering column types
+```
+
+### `DB-CORE-10239`
+
+**メッセージ**
+
+```markdown
+Oracle does not support column type conversion from %s to %s
+```
+
+### `DB-CORE-10240`
+
+**メッセージ**
+
+```markdown
+Db2 does not support column type conversion from %s to %s
+```
+
+### `DB-CORE-10241`
+
+**メッセージ**
+
+```markdown
+The operations are empty
+```
+
+### `DB-CORE-10242`
+
+**メッセージ**
+
+```markdown
+Multiple operations are not supported in single CRUD operation transactions
+```
+
+### `DB-CORE-10243`
+
+**メッセージ**
+
+```markdown
+This batch result doesn't have a get result
+```
+
+### `DB-CORE-10244`
+
+**メッセージ**
+
+```markdown
+This batch result doesn't have a scan result
+```
+
+### `DB-CORE-10245`
+
+**メッセージ**
+
+```markdown
+TiDB does not support column type conversion from %s to %s
+```
+
+### `DB-CORE-10246`
+
+**メッセージ**
+
+```markdown
+With Oracle, using a BLOB column as partition key, clustering key or secondary index is not supported.
+```
+
+### `DB-CORE-10247`
+
+**メッセージ**
+
+```markdown
+With Oracle, setting an ordering on a BLOB column when using a cross partition scan operation is not supported. Ordering: %s
+```
+
+### `DB-CORE-10248`
+
+**メッセージ**
+
+```markdown
+With Oracle, setting a condition on a BLOB column when using a selection operation is not supported. Condition: %s
+```
+
+### `DB-CORE-10249`
+
+**メッセージ**
+
+```markdown
+The namespace has non-ScalarDB tables and cannot be dropped. Namespace: %s; Tables in the namespace: %s
+```
+
+### `DB-CORE-10250`
+
+**メッセージ**
+
+```markdown
+Import-related functionality is not supported in Object Storage
+```
+
+### `DB-CORE-10251`
+
+**メッセージ**
+
+```markdown
+Index-related functionality is not supported in Object Storage
+```
+
+### `DB-CORE-10252`
+
+**メッセージ**
+
+```markdown
+Object Storage does not support the feature for dropping columns
+```
+
+### `DB-CORE-10253`
+
+**メッセージ**
+
+```markdown
+Object Storage does not support the feature for renaming columns
+```
+
+### `DB-CORE-10254`
+
+**メッセージ**
+
+```markdown
+Renaming tables is not supported in Object Storage
+```
+
+### `DB-CORE-10255`
+
+**メッセージ**
+
+```markdown
+Object Storage does not support the feature for altering column types
+```
+
+### `DB-CORE-10256`
+
+**メッセージ**
+
+```markdown
+Cross-partition scan with ordering is not supported in Object Storage
+```
+
+### `DB-CORE-10257`
+
+**メッセージ**
+
+```markdown
+The value of the column %s in the primary key contains an illegal character. Value: %s
+```
+
+### `DB-CORE-10258`
+
+**メッセージ**
+
+```markdown
+Specifying transaction metadata columns in the projection is not allowed. Table: %s; Column: %s
+```
+
+### `DB-CORE-10259`
+
+**メッセージ**
+
+```markdown
+Specifying transaction metadata columns in the ordering is not allowed. Table: %s; Column: %s
+```
+
+### `DB-CORE-10260`
+
+**メッセージ**
+
+```markdown
+Get operations by using an index is not allowed in the SERIALIZABLE isolation level
+```
+
+### `DB-CORE-10261`
+
+**メッセージ**
+
+```markdown
+Scan operations by using an index is not allowed in the SERIALIZABLE isolation level
+```
+
+### `DB-CORE-10262`
+
+**メッセージ**
+
+```markdown
+Conditions on indexed columns in cross-partition scan operations are not allowed in the SERIALIZABLE isolation level
+```
+
+### `DB-CORE-10263`
+
+**メッセージ**
+
+```markdown
+The service account key for Cloud Storage was not found.
+```
+
+### `DB-CORE-10264`
+
+**メッセージ**
+
+```markdown
+Failed to load the service account key for Cloud Storage.
+```
+
+### `DB-CORE-10265`
+
+**メッセージ**
+
+```markdown
+To support virtual tables, the atomicity unit of the storage must be at least at the namespace level. Storage: %s; Atomicity unit: %s
+```
+
+### `DB-CORE-10266`
+
+**メッセージ**
+
+```markdown
+The source tables must reside within the atomicity unit of the storage. Storage: %s; Atomicity unit: %s; Left source table: %s; Right source table: %s
+```
+
+### `DB-CORE-10267`
+
+**メッセージ**
+
+```markdown
+The virtual table functionality is not supported in DynamoDB
+```
+
+### `DB-CORE-10268`
+
+**メッセージ**
+
+```markdown
+The source tables must have the same primary key. Left source table: %s; Right source table: %s
+```
+
+### `DB-CORE-10269`
+
+**メッセージ**
+
+```markdown
+The source tables must have the same data types for primary key column. Column: %s; Left source table: %s; Right source table: %s
+```
+
+### `DB-CORE-10270`
+
+**メッセージ**
+
+```markdown
+The source tables must have the same clustering orders for clustering key column. Column: %s; Left source table: %s; Right source table: %s
+```
+
+### `DB-CORE-10271`
+
+**メッセージ**
+
+```markdown
+The source tables have conflicting non-key column names. Left source table: %s; Right source table: %s; Conflicting columns: %s
+```
+
+### `DB-CORE-10272`
+
+**メッセージ**
+
+```markdown
+Virtual tables cannot be used as source tables. Source table: %s
+```
+
+### `DB-CORE-10273`
+
+**メッセージ**
+
+```markdown
+The source tables must be in the same storage. Left source table: %s; Right source table: %s
+```
+
+### `DB-CORE-10274`
+
+**メッセージ**
+
+```markdown
+The virtual table must be in the same storage as its source tables. Virtual table: %s; Left source table: %s; Right source table: %s
+```
+
+### `DB-CORE-10275`
+
+**メッセージ**
+
+```markdown
+Source tables cannot be dropped while virtual tables depending on them exist. Source table: %s; Virtual tables: %s
+```
+
+### `DB-CORE-10276`
+
+**メッセージ**
+
+```markdown
+The DeleteIf IS_NULL condition for right source table columns is not allowed in LEFT_OUTER virtual tables. Virtual table: %s
+```
+
+### `DB-CORE-10277`
+
+**メッセージ**
+
+```markdown
+The transaction metadata decoupling feature is not supported in the storage. Storage %s
+```
+
+### `DB-CORE-10278`
+
+**メッセージ**
+
+```markdown
+The storage does not guarantee consistent reads for virtual tables. Depending on the storage configuration, you may be able to adjust the settings to enable consistent reads. Please refer to the storage configuration for details. Storage: %s
+```
+
 ## `DB-CORE-2xxxx` ステータスコード
 
 以下は、同時実行エラーカテゴリのステータスコードとメッセージです。
@@ -1236,7 +1740,7 @@ The %s condition of the %s operation is not satisfied. Targeting column(s): %s
 **メッセージ**
 
 ```markdown
-The record being prepared already exists
+The record being prepared already exists. Details: %s
 ```
 
 ### `DB-CORE-20014`
@@ -1244,7 +1748,7 @@ The record being prepared already exists
 **メッセージ**
 
 ```markdown
-A conflict occurred when preparing records
+A conflict occurred when preparing records. Details: %s
 ```
 
 ### `DB-CORE-20015`
@@ -1252,7 +1756,7 @@ A conflict occurred when preparing records
 **メッセージ**
 
 ```markdown
-The committing state in the coordinator failed. The transaction has been aborted
+The committing state in the coordinator failed. The transaction has been aborted. Details: %s
 ```
 
 ### `DB-CORE-20016`
@@ -1260,7 +1764,7 @@ The committing state in the coordinator failed. The transaction has been aborted
 **メッセージ**
 
 ```markdown
-A conflict occurred during implicit pre-read
+A conflict occurred during implicit pre-read. Details: %s
 ```
 
 ### `DB-CORE-20017`
@@ -1268,7 +1772,7 @@ A conflict occurred during implicit pre-read
 **メッセージ**
 
 ```markdown
-This record needs to be recovered
+This record needs to be recovered. Table: %s; Partition Key: %s; Clustering Key: %s; Transaction ID that wrote the record: %s
 ```
 
 ### `DB-CORE-20018`
@@ -1332,7 +1836,15 @@ A transaction conflict occurred in the Insert operation
 **メッセージ**
 
 ```markdown
-A conflict occurred when committing records
+A conflict occurred when committing records. Details: %s
+```
+
+### `DB-CORE-20027`
+
+**メッセージ**
+
+```markdown
+A transaction conflict occurred in the mutation. Details: %s
 ```
 
 ## `DB-CORE-3xxxx` ステータスコード
@@ -1632,7 +2144,7 @@ Beginning a transaction failed. Details: %s
 **メッセージ**
 
 ```markdown
-Preparing records failed
+Preparing records failed. Details: %s
 ```
 
 ### `DB-CORE-30037`
@@ -1640,7 +2152,7 @@ Preparing records failed
 **メッセージ**
 
 ```markdown
-Validation failed
+Validation failed. Details: %s
 ```
 
 ### `DB-CORE-30038`
@@ -1648,7 +2160,7 @@ Validation failed
 **メッセージ**
 
 ```markdown
-Executing implicit pre-read failed
+Executing implicit pre-read failed. Details: %s
 ```
 
 ### `DB-CORE-30039`
@@ -1656,7 +2168,7 @@ Executing implicit pre-read failed
 **メッセージ**
 
 ```markdown
-Reading a record from the underlying storage failed
+Reading a record from the underlying storage failed. Details: %s
 ```
 
 ### `DB-CORE-30040`
@@ -1664,7 +2176,7 @@ Reading a record from the underlying storage failed
 **メッセージ**
 
 ```markdown
-Scanning records from the underlying storage failed
+Scanning records from the underlying storage failed. Details: %s
 ```
 
 ### `DB-CORE-30041`
@@ -1712,7 +2224,7 @@ The Update operation failed. Details: %s
 **メッセージ**
 
 ```markdown
-Handling the before-preparation snapshot hook failed. Details: %s
+Handling the before-preparation hook failed. Details: %s
 ```
 
 ### `DB-CORE-30054`
@@ -1752,7 +2264,79 @@ Recovering records failed. Details: %s
 **メッセージ**
 
 ```markdown
-Committing records failed
+Committing records failed. Details: %s
+```
+
+### `DB-CORE-30059`
+
+**メッセージ**
+
+```markdown
+Dropping a column from the table failed. Table: %s; Column: %s
+```
+
+### `DB-CORE-30060`
+
+**メッセージ**
+
+```markdown
+Renaming a column failed. Table: %s; Old column name: %s; New column name: %s
+```
+
+### `DB-CORE-30061`
+
+**メッセージ**
+
+```markdown
+Renaming a table failed. Old table name: %s; New table name: %s
+```
+
+### `DB-CORE-30062`
+
+**メッセージ**
+
+```markdown
+Altering a column type failed. Table: %s; Column: %s; New column type: %s
+```
+
+### `DB-CORE-30063`
+
+**メッセージ**
+
+```markdown
+Getting the MySQL JDBC connection metadata failed. Details: %s
+```
+
+### `DB-CORE-30064`
+
+**メッセージ**
+
+```markdown
+An error occurred in the selection. Details: %s
+```
+
+### `DB-CORE-30065`
+
+**メッセージ**
+
+```markdown
+An error occurred in the mutation. Details: %s
+```
+
+### `DB-CORE-30066`
+
+**メッセージ**
+
+```markdown
+Creating the virtual table failed. Virtual table: %s; Left source table: %s; Right source table: %s
+```
+
+### `DB-CORE-30067`
+
+**メッセージ**
+
+```markdown
+Getting the virtual table information failed. Table: %s
 ```
 
 ## `DB-CORE-4xxxx` ステータスコード
@@ -1772,7 +2356,7 @@ Rolling back the transaction failed. Details: %s
 **メッセージ**
 
 ```markdown
-Committing state failed with NoMutationException, but the coordinator status does not exist
+Committing state failed with NoMutationException, but the coordinator status does not exist. Details: %s
 ```
 
 ### `DB-CORE-40002`
@@ -1780,7 +2364,7 @@ Committing state failed with NoMutationException, but the coordinator status doe
 **メッセージ**
 
 ```markdown
-The state cannot be retrieved
+The coordinator status cannot be retrieved. Details: %s
 ```
 
 ### `DB-CORE-40003`
@@ -1788,7 +2372,7 @@ The state cannot be retrieved
 **メッセージ**
 
 ```markdown
-The coordinator status is unknown
+The coordinator status is unknown. Details: %s
 ```
 
 ### `DB-CORE-40004`
@@ -1796,5 +2380,13 @@ The coordinator status is unknown
 **メッセージ**
 
 ```markdown
-Aborting state failed with NoMutationException, but the coordinator status does not exist
+Aborting state failed with NoMutationException, but the coordinator status does not exist. Details: %s
+```
+
+### `DB-CORE-40005`
+
+**メッセージ**
+
+```markdown
+One-phase committing records failed. Details: %s
 ```

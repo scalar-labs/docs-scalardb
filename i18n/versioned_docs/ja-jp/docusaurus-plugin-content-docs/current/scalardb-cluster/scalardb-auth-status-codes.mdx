@@ -141,7 +141,7 @@ You can't drop the current user %s
 **メッセージ**
 
 ```markdown
-Access denied: You can't grant the %s privilege because you don't have the same privilege on the table %s
+Access denied: You can't grant the %s privilege because you don't have the same privilege with GRANT OPTION on the table %s
 ```
 
 ### `DB-AUTH-10016`
@@ -149,7 +149,7 @@ Access denied: You can't grant the %s privilege because you don't have the same 
 **メッセージ**
 
 ```markdown
-Access denied: You can't grant the %s privilege because you don't have the same privilege on the namespace %s
+Access denied: You can't grant the %s privilege because you don't have the same privilege with GRANT OPTION on the namespace %s
 ```
 
 ### `DB-AUTH-10017`
@@ -157,7 +157,7 @@ Access denied: You can't grant the %s privilege because you don't have the same 
 **メッセージ**
 
 ```markdown
-Access denied: You can't revoke the %s privilege because you don't have the same privilege on the table %s
+Access denied: You can't revoke the %s privilege because you don't have the same privilege with GRANT OPTION on the table %s
 ```
 
 ### `DB-AUTH-10018`
@@ -165,7 +165,7 @@ Access denied: You can't revoke the %s privilege because you don't have the same
 **メッセージ**
 
 ```markdown
-Access denied: You can't revoke the %s privilege because you don't have the same privilege on the namespace %s
+Access denied: You can't revoke the %s privilege because you don't have the same privilege with GRANT OPTION on the namespace %s
 ```
 
 ### `DB-AUTH-10019`
@@ -174,6 +174,86 @@ Access denied: You can't revoke the %s privilege because you don't have the same
 
 ```markdown
 The operation does not have the target namespace or table name. Operation: %s
+```
+
+### `DB-AUTH-10020`
+
+**メッセージ**
+
+```markdown
+The table already exists. Table: %s
+```
+
+### `DB-AUTH-10021`
+
+**メッセージ**
+
+```markdown
+The role already exists. Role: %s
+```
+
+### `DB-AUTH-10022`
+
+**メッセージ**
+
+```markdown
+The role does not exist. Role: %s
+```
+
+### `DB-AUTH-10023`
+
+**メッセージ**
+
+```markdown
+Role not created because it would cause a role cycle to occur. Role: %s; GrantedRole: %s
+```
+
+### `DB-AUTH-10024`
+
+**メッセージ**
+
+```markdown
+Access denied: You must be a superuser or have the admin option to execute this operation. Role: %s
+```
+
+### `DB-AUTH-10025`
+
+**メッセージ**
+
+```markdown
+Access denied: You must be associated with the role %s
+```
+
+### `DB-AUTH-10026`
+
+**メッセージ**
+
+```markdown
+Access denied: You can't grant the %s privilege to the role %s because you don't have the same privilege with GRANT OPTION on the table %s
+```
+
+### `DB-AUTH-10027`
+
+**メッセージ**
+
+```markdown
+Access denied: You can't grant the %s privilege to the role %s because you don't have the same privilege with GRANT OPTION on the namespace %s
+```
+
+### `DB-AUTH-10028`
+
+**メッセージ**
+
+```markdown
+Access denied: You can't revoke the %s privilege from the role %s because you don't have the same privilege with GRANT OPTION on the table %s
+```
+
+### `DB-AUTH-10029`
+
+**メッセージ**
+
+```markdown
+Access denied: You can't revoke the %s privilege from the role %s because you don't have the same privilege with GRANT OPTION on the namespace %s
 ```
 
 ## `DB-AUTH-3xxxx` ステータスコード
@@ -306,4 +386,164 @@ Logging in failed. Username: %s
 
 ```markdown
 Logging out failed
+```
+
+### `DB-AUTH-30016`
+
+**メッセージ**
+
+```markdown
+Renaming table in privileges failed. Old table: %s; New table: %s
+```
+
+### `DB-AUTH-30017`
+
+**メッセージ**
+
+```markdown
+Creating a role failed. Role: %s
+```
+
+### `DB-AUTH-30018`
+
+**メッセージ**
+
+```markdown
+Dropping the role failed. Role: %s
+```
+
+### `DB-AUTH-30019`
+
+**メッセージ**
+
+```markdown
+Granting the role to the user failed. User: %s; Role: %s
+```
+
+### `DB-AUTH-30020`
+
+**メッセージ**
+
+```markdown
+Revoking the role from the user failed. User: %s; Role: %s
+```
+
+### `DB-AUTH-30021`
+
+**メッセージ**
+
+```markdown
+Revoking the admin option from the user failed. User: %s; Role: %s
+```
+
+### `DB-AUTH-30022`
+
+**メッセージ**
+
+```markdown
+Granting the role to the role failed. Role: %s; Granted role: %s
+```
+
+### `DB-AUTH-30023`
+
+**メッセージ**
+
+```markdown
+Revoking role from role failed. Role: %s; Granted role: %s
+```
+
+### `DB-AUTH-30024`
+
+**メッセージ**
+
+```markdown
+Revoking admin option from role failed. Role: %s; Granted role: %s
+```
+
+### `DB-AUTH-30025`
+
+**メッセージ**
+
+```markdown
+Getting the role failed. RoleName: %s
+```
+
+### `DB-AUTH-30026`
+
+**メッセージ**
+
+```markdown
+Getting roles failed
+```
+
+### `DB-AUTH-30027`
+
+**メッセージ**
+
+```markdown
+Getting role hierarchies failed. Role: %s
+```
+
+### `DB-AUTH-30028`
+
+**メッセージ**
+
+```markdown
+Getting users for role failed. Role: %s
+```
+
+### `DB-AUTH-30029`
+
+**メッセージ**
+
+```markdown
+Getting roles for the user failed. Username: %s
+```
+
+### `DB-AUTH-30030`
+
+**メッセージ**
+
+```markdown
+Getting role privileges failed. RoleName: %s; Namespace: %s
+```
+
+### `DB-AUTH-30031`
+
+**メッセージ**
+
+```markdown
+Getting role privileges failed. RoleName: %s; Table: %s
+```
+
+### `DB-AUTH-30032`
+
+**メッセージ**
+
+```markdown
+Granting privileges to the role failed. Role: %s; Namespace: %s; Privileges: %s
+```
+
+### `DB-AUTH-30033`
+
+**メッセージ**
+
+```markdown
+Granting privileges to the role failed. Role: %s; Table: %s; Privileges: %s
+```
+
+### `DB-AUTH-30034`
+
+**メッセージ**
+
+```markdown
+Revoking privileges from the role failed. Role: %s; Namespace: %s; Privileges: %s
+```
+
+### `DB-AUTH-30035`
+
+**メッセージ**
+
+```markdown
+Revoking privileges from the role failed. Role: %s; Table: %s; Privileges: %s
 ```
