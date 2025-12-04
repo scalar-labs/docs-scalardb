@@ -137,7 +137,7 @@ You can't drop the current user %s
 **Message**
 
 ```markdown
-Access denied: You can't grant the %s privilege because you don't have the same privilege on the table %s
+Access denied: You can't grant the %s privilege because you don't have the same privilege with GRANT OPTION on the table %s
 ```
 
 ### `DB-AUTH-10016`
@@ -145,7 +145,7 @@ Access denied: You can't grant the %s privilege because you don't have the same 
 **Message**
 
 ```markdown
-Access denied: You can't grant the %s privilege because you don't have the same privilege on the namespace %s
+Access denied: You can't grant the %s privilege because you don't have the same privilege with GRANT OPTION on the namespace %s
 ```
 
 ### `DB-AUTH-10017`
@@ -153,7 +153,7 @@ Access denied: You can't grant the %s privilege because you don't have the same 
 **Message**
 
 ```markdown
-Access denied: You can't revoke the %s privilege because you don't have the same privilege on the table %s
+Access denied: You can't revoke the %s privilege because you don't have the same privilege with GRANT OPTION on the table %s
 ```
 
 ### `DB-AUTH-10018`
@@ -161,7 +161,7 @@ Access denied: You can't revoke the %s privilege because you don't have the same
 **Message**
 
 ```markdown
-Access denied: You can't revoke the %s privilege because you don't have the same privilege on the namespace %s
+Access denied: You can't revoke the %s privilege because you don't have the same privilege with GRANT OPTION on the namespace %s
 ```
 
 ### `DB-AUTH-10019`
@@ -170,6 +170,86 @@ Access denied: You can't revoke the %s privilege because you don't have the same
 
 ```markdown
 The operation does not have the target namespace or table name. Operation: %s
+```
+
+### `DB-AUTH-10020`
+
+**Message**
+
+```markdown
+The table already exists. Table: %s
+```
+
+### `DB-AUTH-10021`
+
+**Message**
+
+```markdown
+The role already exists. Role: %s
+```
+
+### `DB-AUTH-10022`
+
+**Message**
+
+```markdown
+The role does not exist. Role: %s
+```
+
+### `DB-AUTH-10023`
+
+**Message**
+
+```markdown
+Role not created because it would cause a role cycle to occur. Role: %s; GrantedRole: %s
+```
+
+### `DB-AUTH-10024`
+
+**Message**
+
+```markdown
+Access denied: You must be a superuser or have the admin option to execute this operation. Role: %s
+```
+
+### `DB-AUTH-10025`
+
+**Message**
+
+```markdown
+Access denied: You must be associated with the role %s
+```
+
+### `DB-AUTH-10026`
+
+**Message**
+
+```markdown
+Access denied: You can't grant the %s privilege to the role %s because you don't have the same privilege with GRANT OPTION on the table %s
+```
+
+### `DB-AUTH-10027`
+
+**Message**
+
+```markdown
+Access denied: You can't grant the %s privilege to the role %s because you don't have the same privilege with GRANT OPTION on the namespace %s
+```
+
+### `DB-AUTH-10028`
+
+**Message**
+
+```markdown
+Access denied: You can't revoke the %s privilege from the role %s because you don't have the same privilege with GRANT OPTION on the table %s
+```
+
+### `DB-AUTH-10029`
+
+**Message**
+
+```markdown
+Access denied: You can't revoke the %s privilege from the role %s because you don't have the same privilege with GRANT OPTION on the namespace %s
 ```
 
 ## `DB-AUTH-3xxxx` status codes
@@ -302,4 +382,164 @@ Logging in failed. Username: %s
 
 ```markdown
 Logging out failed
+```
+
+### `DB-AUTH-30016`
+
+**Message**
+
+```markdown
+Renaming table in privileges failed. Old table: %s; New table: %s
+```
+
+### `DB-AUTH-30017`
+
+**Message**
+
+```markdown
+Creating a role failed. Role: %s
+```
+
+### `DB-AUTH-30018`
+
+**Message**
+
+```markdown
+Dropping the role failed. Role: %s
+```
+
+### `DB-AUTH-30019`
+
+**Message**
+
+```markdown
+Granting the role to the user failed. User: %s; Role: %s
+```
+
+### `DB-AUTH-30020`
+
+**Message**
+
+```markdown
+Revoking the role from the user failed. User: %s; Role: %s
+```
+
+### `DB-AUTH-30021`
+
+**Message**
+
+```markdown
+Revoking the admin option from the user failed. User: %s; Role: %s
+```
+
+### `DB-AUTH-30022`
+
+**Message**
+
+```markdown
+Granting the role to the role failed. Role: %s; Granted role: %s
+```
+
+### `DB-AUTH-30023`
+
+**Message**
+
+```markdown
+Revoking role from role failed. Role: %s; Granted role: %s
+```
+
+### `DB-AUTH-30024`
+
+**Message**
+
+```markdown
+Revoking admin option from role failed. Role: %s; Granted role: %s
+```
+
+### `DB-AUTH-30025`
+
+**Message**
+
+```markdown
+Getting the role failed. RoleName: %s
+```
+
+### `DB-AUTH-30026`
+
+**Message**
+
+```markdown
+Getting roles failed
+```
+
+### `DB-AUTH-30027`
+
+**Message**
+
+```markdown
+Getting role hierarchies failed. Role: %s
+```
+
+### `DB-AUTH-30028`
+
+**Message**
+
+```markdown
+Getting users for role failed. Role: %s
+```
+
+### `DB-AUTH-30029`
+
+**Message**
+
+```markdown
+Getting roles for the user failed. Username: %s
+```
+
+### `DB-AUTH-30030`
+
+**Message**
+
+```markdown
+Getting role privileges failed. RoleName: %s; Namespace: %s
+```
+
+### `DB-AUTH-30031`
+
+**Message**
+
+```markdown
+Getting role privileges failed. RoleName: %s; Table: %s
+```
+
+### `DB-AUTH-30032`
+
+**Message**
+
+```markdown
+Granting privileges to the role failed. Role: %s; Namespace: %s; Privileges: %s
+```
+
+### `DB-AUTH-30033`
+
+**Message**
+
+```markdown
+Granting privileges to the role failed. Role: %s; Table: %s; Privileges: %s
+```
+
+### `DB-AUTH-30034`
+
+**Message**
+
+```markdown
+Revoking privileges from the role failed. Role: %s; Namespace: %s; Privileges: %s
+```
+
+### `DB-AUTH-30035`
+
+**Message**
+
+```markdown
+Revoking privileges from the role failed. Role: %s; Table: %s; Privileges: %s
 ```
