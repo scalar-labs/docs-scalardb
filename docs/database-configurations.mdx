@@ -137,5 +137,6 @@ Since DynamoDB stores data in multiple availability zones by default, you don’
       - Avoid defining clustering keys if the sizes of records are large.
       - Place frequently read records in the same partition to reduce the number of read operations to Object Storage.
       - Place frequently written records in different partitions to avoid write conflicts in Object Storage.
+    - Configure a lifecycle rule to delete incomplete multipart uploads as described in [Configuring a bucket lifecycle configuration to delete incomplete multipart uploads](https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpu-abort-incomplete-mpu-lifecycle-config.html) when using S3.
   </TabItem>
 </Tabs>
