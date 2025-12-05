@@ -76,20 +76,16 @@ admin.createNamespace("ns", options);
 
 #### 作成オプション
 
-名前空間の作成やテーブルの作成などの作成操作では、オプション名と値のマップであるオプション (`Map<String, String>`) を指定できます。オプションを使用すると、ストレージアダプタ固有の設定ができます。
+名前空間の作成操作では、オプション名と値のマップであるオプション (`Map<String, String>`) を指定できます。オプションを使用すると、ストレージアダプタ固有の設定ができます。
 
 データベースを選択して、使用可能なオプションを確認します。
 
 <Tabs groupId="databases" queryString>
   <TabItem value="JDBC_databases" label="JDBC データベース" default>
-    JDBC データベースには使用できるオプションはありません。
+    使用できるオプションはありません。
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
-    | 名前       | 説明                                            | デフォルト |
-    |------------|-------------------------------------------------|------------|
-    | no-scaling | DynamoDB の自動スケーリングを無効にします。     | false      |
-    | no-backup  | DynamoDB の継続的なバックアップを無効にします。 | false      |
-    | ru         | 基本リソース単位。                              | 10         |
+    使用できるオプションはありません。
   </TabItem>
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     | 名前       | 説明                                                   | デフォルト |
@@ -101,8 +97,7 @@ admin.createNamespace("ns", options);
     | 名前                 | 説明                                                                                                     | デフォルト        |
     |----------------------|----------------------------------------------------------------------------------------------------------|-------------------|
     | replication-strategy | Cassandra レプリケーション戦略。`SimpleStrategy` または `NetworkTopologyStrategy` である必要があります。 | `SimpleStrategy`  |
-    | compaction-strategy  | Cassandra 圧縮戦略。`LCS`、`STCS`、または `TWCS` である必要があります。                                  | `STCS`            |
-    | replication-factor   | Cassandra の複製係数。                                                                                   | 3                 |
+    | replication-factor   | Cassandra の複製係数。                                                                                   | 1                 |
   </TabItem>
 </Tabs>
 
@@ -145,6 +140,33 @@ Map<String, String> options = ...;
 admin.createTable("ns", "tbl", tableMetadata, options);
 ```
 
+#### 作成オプション
+
+テーブルの作成操作では、オプション名と値のマップであるオプション (`Map<String, String>`) を指定できます。オプションを使用すると、ストレージアダプタ固有の設定ができます。
+
+データベースを選択して、使用可能なオプションを確認します。
+
+<Tabs groupId="databases" queryString>
+  <TabItem value="JDBC_databases" label="JDBC データベース" default>
+    使用できるオプションはありません。
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    | 名前        | 説明                                     | デフォルト |
+    |------------|------------------------------------------|----------|
+    | no-scaling | DynamoDB の自動スケーリングを無効にします。    | false    |
+    | no-backup  | DynamoDB の継続的なバックアップを無効にします。 | false    |
+    | ru         | 基本リソース単位。                          | 10       |
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    使用できるオプションはありません。
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    | 名前                 | 説明                                                             | デフォルト |
+    |---------------------|------------------------------------------------------------------|----------|
+    | compaction-strategy | Cassandra 圧縮戦略。`LCS`、`STCS`、または `TWCS` である必要があります。 | `STCS`   |
+  </TabItem>
+</Tabs>
+
 ### セカンダリインデックスを作成する
 
 セカンダリインデックスは次のように作成できます。
@@ -161,6 +183,30 @@ admin.createIndex("ns", "tbl", "c5", ifNotExists);
 Map<String, String> options = ...;
 admin.createIndex("ns", "tbl", "c5", options);
 ```
+
+#### 作成オプション
+
+セカンダリインデックスの作成操作では、オプション名と値のマップであるオプション (`Map<String, String>`) を指定できます。オプションを使用すると、ストレージアダプタ固有の設定ができます。
+
+データベースを選択して、使用可能なオプションを確認します。
+
+<Tabs groupId="databases" queryString>
+  <TabItem value="JDBC_databases" label="JDBC データベース" default>
+    使用できるオプションはありません。
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    | 名前        | 説明                                  | デフォルト |
+    |------------|---------------------------------------|----------|
+    | no-scaling | DynamoDB の自動スケーリングを無効にします。 | false    |
+    | ru         | 基本リソース単位。                       | 10       |
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    使用できるオプションはありません。
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    使用できるオプションはありません。
+  </TabItem>
+</Tabs>
 
 ### テーブルに新しい列を追加する
 
