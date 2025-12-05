@@ -444,6 +444,30 @@ scalar.db.contact_points=jdbc:postgresql:///<DATABASE_NAME>?socketFactory=com.go
     - **Field:** `scalar.db.password`
     - **Description:** AWS secret access key.
     - **Default value:** empty
+
+    <h4>`s3.multipart_upload_part_size_bytes`</h4>
+
+    - **Field:** `scalar.db.s3.multipart_upload_part_size_bytes`
+    - **Description:** The part size in bytes for multipart upload.
+    - **Default value:** The default value of [`minimumPartSizeInBytes`](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/s3/multipart/MultipartConfiguration.html#minimumPartSizeInBytes()) in the AWS SDK.
+
+    <h4>`s3.multipart_upload_max_concurrency`</h4>
+
+    - **Field:** `scalar.db.s3.multipart_upload_max_concurrency`
+    - **Description:** The maximum number of concurrent requests allowed for multipart upload.
+    - **Default value:** The default value of [`maxConcurrency`](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/http/crt/AwsCrtAsyncHttpClient.Builder.html#maxConcurrency(java.lang.Integer)) in the AWS SDK.
+
+    <h4>`s3.multipart_upload_threshold_size_bytes`</h4>
+
+    - **Field:** `scalar.db.s3.multipart_upload_threshold_size_bytes`
+    - **Description:** The threshold size in bytes to enable multipart upload. If the object size is greater than or equal to this value, multipart upload is used.
+    - **Default value:** The default value of [`thresholdInBytes`](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/s3/multipart/MultipartConfiguration.html#thresholdInBytes()) in the AWS SDK.
+
+    <h4>`s3.request_timeout_secs`</h4>
+
+    - **Field:** `scalar.db.s3.request_timeout_secs`
+    - **Description:** The request timeout in seconds for S3 operations set to [`apiCallTimeout`](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/core/client/config/ClientOverrideConfiguration.Builder.html#apiCallTimeout(java.time.Duration)) in the AWS SDK.
+    - **Default value:** empty (No timeout)
   </TabItem>
   <TabItem value="Blob_Storage" label="Blob Storage">
     The following configurations are available for Blob Storage.
@@ -470,6 +494,30 @@ scalar.db.contact_points=jdbc:postgresql:///<DATABASE_NAME>?socketFactory=com.go
     - **Field:** `scalar.db.password`
     - **Description:** Azure Storage account key.
     - **Default value:** empty
+
+    <h4>`blob_storage.parallel_upload_block_size_bytes`</h4>
+
+    - **Field:** `scalar.db.blob_storage.parallel_upload_block_size_bytes`
+    - **Description:** The block size in bytes for parallel upload.
+    - **Default value:** The default value of [`setBlockSizeLong`](https://learn.microsoft.com/en-us/java/api/com.azure.storage.blob.models.paralleltransferoptions?view=azure-java-stable#com-azure-storage-blob-models-paralleltransferoptions-setblocksizelong(java-lang-long)) in the Azure SDK.
+
+    <h4>`blob_storage.parallel_upload_max_concurrency`</h4>
+
+    - **Field:** `scalar.db.blob_storage.parallel_upload_max_concurrency`
+    - **Description:** The maximum number of concurrent requests allowed for parallel upload.
+    - **Default value:** The default value of [`setMaxConcurrency`](https://learn.microsoft.com/en-us/java/api/com.azure.storage.blob.models.paralleltransferoptions?view=azure-java-stable#com-azure-storage-blob-models-paralleltransferoptions-setmaxconcurrency(java-lang-integer)) in the Azure SDK.
+
+    <h4>`blob_storage.parallel_upload_threshold_size_bytes`</h4>
+
+    - **Field:** `scalar.db.blob_storage.parallel_upload_threshold_size_bytes`
+    - **Description:** The threshold size in bytes to enable parallel upload. If the object size is greater than this value, parallel upload is used.
+    - **Default value:** The default value of [`setMaxSingleUploadSizeLong`](https://learn.microsoft.com/en-us/java/api/com.azure.storage.blob.models.paralleltransferoptions?view=azure-java-stable#com-azure-storage-blob-models-paralleltransferoptions-setmaxsingleuploadsizelong(java-lang-long)) in the Azure SDK.
+
+    <h4>`blob_storage.request_timeout_secs`</h4>
+
+    - **Field:** `scalar.db.blob_storage.request_timeout_secs`
+    - **Description:** The request timeout in seconds for Blob Storage operations.
+    - **Default value:** empty (No timeout)
   </TabItem>
   <TabItem value="Cloud_Storage" label="Cloud Storage">
     The following configurations are available for Cloud Storage.
@@ -496,6 +544,12 @@ scalar.db.contact_points=jdbc:postgresql:///<DATABASE_NAME>?socketFactory=com.go
     - **Field:** `scalar.db.password`
     - **Description:** Google Cloud service account key in JSON format.
     - **Default value:** empty
+
+    <h4>`cloud_storage.upload_chunk_size_bytes`</h4>
+
+    - **Field:** `scalar.db.cloud_storage.upload_chunk_size_bytes`
+    - **Description:** The chunk size in bytes for upload.
+    - **Default value:** The default value of [`setChunkSize`](https://docs.cloud.google.com/java/docs/reference/google-cloud-core/latest/com.google.cloud.WriteChannel#com_google_cloud_WriteChannel_setChunkSize_int_) in the Google Cloud SDK.
   </TabItem>
 </Tabs>
 
