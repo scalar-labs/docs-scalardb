@@ -85,7 +85,8 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
 }
 ```
 
-インポートテーブルスキーマは、名前空間名、テーブル名、`transaction` フィールド、及び `override-columns-type` 任意フィルドで設定されます：
+インポートテーブルスキーマは、名前空間名、テーブル名、`transaction` フィールド、及び `override-columns-type` 任意フィルドで設定されます:
+
 - `transaction` フィールドは、テーブルがトランザクション用にインポートされるかどうかを示します。`transaction` フィールドを `true` に設定するか、`transaction` フィールドを指定しない場合、このツールは必要に応じてトランザクションメタデータを含むテーブルを作成します。`transaction` フィールドを `false` に設定すると、このツールはトランザクションメタデータを追加せずにテーブルをインポートします (つまり、[Storage API](run-non-transactional-storage-operations-through-primitive-crud-interface.mdx) を使用するテーブルの場合)。
 - `override-columns-type` フィールドは、デフォルトのデータ型マッピングをオーバーライドする列を示します。このフィールドは任意であり、型のオーバーライドが必要な列でのみ設定する必要があります。
 
@@ -286,7 +287,7 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
     | VARCHAR FOR BIT DATA  | BLOB                                   |                                    |
     | VARGRAPHIC            | TEXT                                   |                                    |
 
-    上記にリストされていないデータ型はサポートされていません。以下は、サポートされていない一般的なデータ型の例です：
+    上記にリストされていないデータ型はサポートされていません。以下は、サポートされていない一般的なデータ型の例です:
 
     - decimal
     - decfloat
@@ -321,6 +322,28 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
 </ol>
 
 :::
+
+## トランザクションメタデータ分離
+
+[トランザクションメタデータ分離](./consensus-commit.mdx#トランザクションメタデータ分離)を有効にすることで、トランザクションメタデータをアプリケーションデータから分離して管理できます。
+
+インポートされたテーブルでトランザクションメタデータをデカップリングするには、次の例に示すように、インポートスキーマファイルに `transaction-metadata-decoupling` フィールドを `true` の値で追加します:
+
+```json
+{
+  "sample_namespace.sample_table": {
+    "transaction-metadata-decoupling": true
+  }
+}
+```
+
+:::note
+
+インポートされたテーブル名は、元のテーブル名に `_scalardb` 接尾辞が追加されたものになるため、`<table_name>_scalardb` としてアクセスできます。
+
+:::
+
+トランザクションメタデータ分離の詳細については、[トランザクションメタデータ分離](./schema-loader.mdx#トランザクションメタデータ分離)を参照してください。
 
 ## アプリケーションでインポート機能を使用する
 
