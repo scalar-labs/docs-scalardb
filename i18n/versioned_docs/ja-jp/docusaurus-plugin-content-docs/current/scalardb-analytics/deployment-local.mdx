@@ -44,9 +44,9 @@ ScalarDB Analytics をローカル環境にデプロイする前に、以下の�
 
 最初に、すべてのコンポーネントがデプロイされる Kubernetes 環境をセットアップする必要があります。
 
-### ServiceAccount と ClusterRoleBinding を作成する
+### ServiceAccount と RoleBinding を作成する
 
-サービスアカウント (`ServiceAccount`) とクラスターロールバインディング (`ClusterRoleBinding`) を作成して、Spark ジョブが Kubernetes クラスター内のリソースを管理できるようにします。
+サービスアカウント (`ServiceAccount`) とロールバインディング (`RoleBinding`) を作成して、Spark ジョブが Kubernetes クラスター内のリソースを管理できるようにします。
 
 ```shell
 NAMESPACE=default
@@ -88,46 +88,6 @@ ScalarDB Analytics サーバーはカタログ情報を管理するために専�
 
 ScalarDB Analytics のバックエンドデータベースの構築に関しては、[ScalarDB Analytics カタログの作成](./create-scalardb-analytics-catalog.mdx)をご参照ください。
 
-### ScalarDB データソース用の設定ファイルを準備する
-
-ScalarDB 管理データソースを使用する場合、ScalarDB Analytics サーバーと Spark ドライバーの両方からアクセス可能な設定ファイルを提供する必要があります。
-
-この例では MySQL のみを使用していますが、後で他のデータベースを追加しやすくするため、意図的にマルチストレージ設定として構成されています。設定では、ストレージ名 `mysql` が MySQL データソースに割り当てられ、名前空間 `nsmy` がそれにマップされています。
-
-```shell
-cat <<EOF > scalardb.properties
-# Storage
-scalar.db.storage=multi-storage
-
-# Multi-storage settings
-scalar.db.multi_storage.storages=mysql
-
-# Namespace mapping
-scalar.db.multi_storage.namespace_mapping=nsmy:mysql
-
-# Default storage
-scalar.db.multi_storage.default_storage=mysql
-
-# Multi-storage: Define MySQL
-scalar.db.multi_storage.storages.mysql.storage=jdbc
-scalar.db.multi_storage.storages.mysql.contact_points=<MYSQL_URL>
-scalar.db.multi_storage.storages.mysql.username=<MYSQL_USERNAME>
-scalar.db.multi_storage.storages.mysql.password=<MYSQL_PASSWORD>
-EOF
-```
-
-:::note
-
-マルチストレージ設定の詳細については、[マルチストレージトランザクション](../multi-storage-transactions.mdx#how-to-configure-scalardb-to-support-multi-storage-transactions)を参照してください。
-
-:::
-
-次に、以下のコマンドを実行して、Kubernetes の `ConfigMap` として保存します。
-
-```shell
-kubectl create configmap scalardb-properties --from-file=./scalardb.properties
-```
-
 ### Scalar Helm Charts リポジトリを追加する
 
 以下のコマンドを実行して Scalar Helm Charts リポジトリを追加します。
@@ -149,7 +109,7 @@ scalarDbAnalyticsServer:
     scalar.db.analytics.server.catalog.port=11051
     scalar.db.analytics.server.metering.port=11052
 
-    scalar.db.analytics.server.db.url=<CATALOG_SERVER_BACKEND_DB_URL>
+    scalar.db.analytics.server.db.contact_points=<CATALOG_SERVER_BACKEND_DB_URL>
     scalar.db.analytics.server.db.username=<USERNAME_FOR_BACKEND_DB>
     scalar.db.analytics.server.db.password=<PASSWORD_FOR_BACKEND_DB>
 
@@ -163,13 +123,6 @@ scalarDbAnalyticsServer:
   service:
     type: LoadBalancer
 
-  extraVolumes:
-    - name: scalardb-properties
-      configMap:
-        name: scalardb-properties
-  extraVolumeMounts:
-    - name: scalardb-properties
-      mountPath: /tmp/scalar
 EOF
 ```
 
@@ -212,7 +165,7 @@ metadata:
 spec:
   containers:
     - name: analytics-server-cli
-      image: ghcr.io/scalar-labs/scalardb-analytics-cli:3.16.2
+      image: ghcr.io/scalar-labs/scalardb-analytics-cli:3.17.0
       command: ['sleep']
       args: ['inf']
   restartPolicy: Never
@@ -239,49 +192,86 @@ kubectl exec -it analytics-server-cli -- bash
 alias scalardb-analytics-cli="java -jar /scalardb-analytics-cli/scalardb-analytics-cli.jar"
 ```
 
-### データソース定義ファイルを準備する
+### ScalarDB データソース用の設定ファイルを準備する
 
-ScalarDB Analytics がアクセスするデータソースを JSON 形式で定義する必要があります。
+ScalarDB トランザクション管理下のデータソースを使用する場合、ScalarDB のプロパティ値を設定する必要があります。このガイドでは、ScalarDB プロパティファイルを ScalarDB Analytics サーバーに登録する方法について説明します。
 
-以下は、ScalarDB によって管理されるデータソースを定義する例です。`<CATALOG_NAME>` を希望するカタログ名に置き換えてください。ScalarDB 管理データソースを使用する場合、`type` 項目の値として `scalardb` を指定する必要があります。
+この例では MySQL のみを使用していますが、後で他のデータベースを追加しやすくするため、意図的にマルチストレージ設定として構成されています。設定では、ストレージ名 `mysql` が MySQL データソースに割り当てられ、名前空間 `nsmy` がそれにマップされています。
+
+```shell
+cat <<EOF > scalardb.properties
+# Storage
+scalar.db.storage=multi-storage
+
+# Multi-storage settings
+scalar.db.multi_storage.storages=mysql
+
+# Namespace mapping
+scalar.db.multi_storage.namespace_mapping=nsmy:mysql
+
+# Default storage
+scalar.db.multi_storage.default_storage=mysql
+
+# Multi-storage: Define MySQL
+scalar.db.multi_storage.storages.mysql.storage=jdbc
+scalar.db.multi_storage.storages.mysql.contact_points=<MYSQL_URL>
+scalar.db.multi_storage.storages.mysql.username=<MYSQL_USERNAME>
+scalar.db.multi_storage.storages.mysql.password=<MYSQL_PASSWORD>
+EOF
+```
 
 :::note
 
-`configPath` の値は、ScalarDB Analytics サーバーと Spark ドライバーの両方からアクセス可能な共通パスでなければなりません。この例では、Kubernetes の `ConfigMap` を使用して設定ファイルを共有し、関連する Pod にマウントしています。
+マルチストレージ設定の詳細については、[マルチストレージトランザクション](../multi-storage-transactions.mdx#how-to-configure-scalardb-to-support-multi-storage-transactions)を参照してください。
 
 :::
 
+### データソース定義ファイルを準備する
+
+ScalarDB Analytics がアクセスするデータソースを JSON 形式で定義する必要があります。以下は、ScalarDB によって管理されるデータソースを定義する例です。ScalarDB 管理データソースを使用する場合、`type` 項目を `scalardb` に設定し、`${file:<PATH>}` 構文を使用してプロパティファイルへのパスを指定する必要があります。`<PATH>` を実際の ScalarDB プロパティファイルのパスに置き換えてください（以下のように）:
+
 ```shell
-cat <<EOF > data_source_scalardb.json
+cat <<"EOF" > data_source_scalardb.json
 {
-    "catalog": <CATALOG_NAME>,
-    "name": "data_source_scalardb",
-    "type": "scalardb",
-    "provider": {
-        "configPath": "/tmp/scalar/scalardb.properties"
-    }
+  "type": "scalardb",
+  "configs": "${file:./scalardb.properties}"
 }
 EOF
 ```
 
-以下は、ScalarDB によって管理されない PostgreSQL データソースを定義する例です。`<CATALOG_NAME>` を希望するカタログ名に置き換えてください。PostgreSQL をデータソースとして使用する場合、`type` 項目の値として `postgres` を指定する必要があります。次に、以下のコマンドの角括弧内のコンテンツを、バックエンドデータベース接続の詳細に置き換えてコマンドを実行します。
+:::note
+
+`<PATH>` は絶対パスまたは相対パスのいずれかを指定できます。
+
+:::
+
+以下は、ScalarDB によって管理されない PostgreSQL データソースを定義する例です。PostgreSQL をデータソースとして使用する場合、`type` 項目の値として `postgresql` を指定する必要があります。次に、以下のコマンドの角括弧内のコンテンツを、バックエンドデータベース接続の詳細に置き換えてコマンドを実行します:
 
 ```shell
 cat <<EOF > data_source_postgres.json
 {
-    "catalog": <CATALOG_NAME>,
-    "name": "data_source_postgres",
-    "type": "postgres",
-    "provider": {
-        "host": <POSTGRES_HOST>,
-        "port": <PORT>,
-        "username": <USERNAME>,
-        "password": <PASSWORD>,
-        "database": <DATABASE>
-    }
+  "type": "postgresql",
+  "host": <POSTGRES_HOST>,
+  "port": "5432",
+  "username": <POSTGRES_USER_NAME>,
+  "password": <POSTGRES_PASSWORD>,
+  "database": <POSTGRES_DATABASE>
 }
 EOF
 ```
+
+:::note
+
+簡単にするため、このガイドでは Analytics Server のバックエンドデータベースと PostgreSQL データソースが共有されると想定しています。そのため、各プレースホルダーを以下のように設定します:
+
+- `<POSTGRES_HOST>`: `<CATALOG_SERVER_BACKEND_DB_URL>` の値
+- `<POSTGRES_USER_NAME>`: `<USERNAME_FOR_BACKEND_DB>` の値
+- `<POSTGRES_PASSWORD>`: `<PASSWORD_FOR_BACKEND_DB>` の値
+- `<POSTGRES_DATABASE>`: Analytics Server のバックエンドデータベースによって使用されるデータベース名
+
+Analytics Server のバックエンドデータベースとは別の PostgreSQL データソースを使用している場合は、各プレースホルダーを適切な値に設定してください。
+
+:::
 
 ### CLI ツール用の設定ファイルを作成する
 
@@ -310,16 +300,18 @@ scalardb-analytics-cli -c client.properties catalog create --catalog <CATALOG_NA
 
 次に、ScalarDB 管理と非 ScalarDB 管理の両方のデータソースを登録します。
 
-以下のコマンドを使用して ScalarDB 管理データソースを登録します。
+ScalarDB 管理データソースを登録するには、以下のコマンドを使用します。`<CATALOG_NAME>` と `<DATA_SOURCE_NAME>` を希望するカタログとデータソース名に置き換えてください。
 
 ```shell
-scalardb-analytics-cli -c client.properties data-source register --data-source-json=./data_source_scalardb.json
+scalardb-analytics-cli -c client.properties data-source register \
+  --catalog=<CATALOG_NAME> --data-source=<DATA_SOURCE_NAME> --provider-file=./data_source_scalardb.json
 ```
 
-以下のコマンドを使用して非 ScalarDB 管理データソースを登録します。
+非 ScalarDB 管理データソースを登録するには、以下のコマンドを使用します。`<CATALOG_NAME>` と `<DATA_SOURCE_NAME>` を希望するカタログとデータソース名に置き換えてください。
 
 ```shell
-scalardb-analytics-cli -c client.properties data-source register --data-source-json=./data_source_postgres.json
+scalardb-analytics-cli -c client.properties data-source register \
+  --catalog=<CATALOG_NAME> --data-source=<DATA_SOURCE_NAME> --provider-file=./data_source_postgres.json
 ```
 
 #### 追加の CLI コマンド
@@ -334,10 +326,10 @@ CLI ツールは、カタログとデータソースを管理するための追�
 
 Spark クライアント Pod のマニフェストファイルを作成します。
 
-次の例では、サービスアカウント名が `spark` に設定され、`ConfigMap` に保存された ScalarDB データソース設定ファイル (`scalardb-properties`) が `scalardb-properties` という名前のボリュームとしてマウントされています。以下のコマンドを実行して Spark クライアント Pod を設定します。
+次の例では、サービスアカウント名が `spark` に設定されています。以下のコマンドを実行して Spark クライアント Pod を設定します。
 
 ```shell
-cat<<'EOF' > spark-client.yaml
+cat <<'EOF' > spark-client.yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -349,13 +341,6 @@ spec:
       image: eclipse-temurin:21
       command: ['sleep']
       args: ['inf']
-      volumeMounts:
-      - name: scalardb-properties
-        mountPath: /tmp/scalar
-  volumes:
-    - name: scalardb-properties
-      configMap:
-        name: scalardb-properties
   restartPolicy: Never
   terminationGracePeriodSeconds: 0
 EOF
@@ -523,24 +508,14 @@ spec:
     - name: spark-jar-volume
       persistentVolumeClaim:
         claimName: ${PVC_NAME}
-    - name: scalardb-properties
-      configMap:
-        name: scalardb-properties
   containers:
     - name: spark-kubernetes-container
       volumeMounts:
         - mountPath: /opt/spark-jars
           name: spark-jar-volume
-        - mountPath: /tmp/scalar
-          name: scalardb-properties
 EOF
 ```
 
-:::note
-
-前述したように、ScalarDB Analytics サーバーと Spark ドライバーの両方が、同じパスで ScalarDB データソース設定ファイル (`scalardb.properties`) にアクセスする必要があります。そのため、この例では、`ConfigMap` に保存されたファイルを `/tmp/scalar` パスにマウントしています。
-
-:::
 
 <h4>`spark-submit` を実行する</h4>
 
@@ -586,9 +561,6 @@ kubectl delete pod spark-client analytics-server-cli
 ```shell
 # `spark` サービスアカウントを削除
 kubectl delete serviceaccount spark
-
-# `scalardb-properties` `ConfigMap` を削除
-kubectl delete configmap scalardb-properties
 
 # `spark-app-pvc` PVC を削除
 kubectl delete pvc spark-app-pvc
