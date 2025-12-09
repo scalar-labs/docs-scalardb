@@ -152,7 +152,7 @@ Consensus Commit トランザクションマネージャーでは、次のパフ
 
 ## ストレージ関連の設定
 
-ScalarDB には、複数のストレージ実装をサポートするストレージ（データベース）抽象化レイヤーがあります。`scalar.db.storage` プロパティを使用してストレージ実装を指定できます。
+ScalarDB には、複数のストレージ実装をサポートするストレージ (データベース) 抽象化レイヤーがあります。`scalar.db.storage` プロパティを使用してストレージ実装を指定できます。
 
 :::note
 
@@ -451,6 +451,30 @@ scalar.db.contact_points=jdbc:postgresql:///<DATABASE_NAME>?socketFactory=com.go
     - **フィールド:** `scalar.db.password`
     - **説明:** AWS シークレットアクセスキー。
     - **デフォルト値:** empty
+
+    <h4>`s3.multipart_upload_part_size_bytes`</h4>
+
+    - **フィールド:** `scalar.db.s3.multipart_upload_part_size_bytes`
+    - **説明:** マルチパートアップロードのパートサイズ (バイト単位)。
+    - **デフォルト値:** AWS SDK の [`minimumPartSizeInBytes`](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/s3/multipart/MultipartConfiguration.html#minimumPartSizeInBytes()) のデフォルト値。
+
+    <h4>`s3.multipart_upload_max_concurrency`</h4>
+
+    - **フィールド:** `scalar.db.s3.multipart_upload_max_concurrency`
+    - **説明:** マルチパートアップロードで許可される最大同時リクエスト数。
+    - **デフォルト値:** AWS SDK の [`maxConcurrency`](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/http/crt/AwsCrtAsyncHttpClient.Builder.html#maxConcurrency(java.lang.Integer)) のデフォルト値。
+
+    <h4>`s3.multipart_upload_threshold_size_bytes`</h4>
+
+    - **フィールド:** `scalar.db.s3.multipart_upload_threshold_size_bytes`
+    - **説明:** マルチパートアップロードを有効にするための閾値サイズ (バイト単位)。オブジェクトのサイズがこの値以上の場合、マルチパートアップロードが使用されます。
+    - **デフォルト値:** AWS SDK の [`thresholdInBytes`](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/services/s3/multipart/MultipartConfiguration.html#thresholdInBytes()) のデフォルト値。
+
+    <h4>`s3.request_timeout_secs`</h4>
+
+    - **フィールド:** `scalar.db.s3.request_timeout_secs`
+    - **説明:** AWS SDK の [`apiCallTimeout`](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/core/client/config/ClientOverrideConfiguration.Builder.html#apiCallTimeout(java.time.Duration)) に設定される S3 操作のリクエストタイムアウト (秒単位)。
+    - **デフォルト値:** empty (タイムアウトなし)
   </TabItem>
   <TabItem value="Blob_Storage" label="Blob Storage">
     Blob Storage では次の設定が利用可能です。
@@ -477,6 +501,30 @@ scalar.db.contact_points=jdbc:postgresql:///<DATABASE_NAME>?socketFactory=com.go
     - **フィールド:** `scalar.db.password`
     - **説明:** Azure Storage アカウントキー。
     - **デフォルト値:** empty
+
+    <h4>`blob_storage.parallel_upload_block_size_bytes`</h4>
+
+    - **フィールド:** `scalar.db.blob_storage.parallel_upload_block_size_bytes`
+    - **説明:** 並列アップロードのブロックサイズ (バイト単位)。
+    - **デフォルト値:** Azure SDK の [`setBlockSizeLong`](https://learn.microsoft.com/en-us/java/api/com.azure.storage.blob.models.paralleltransferoptions?view=azure-java-stable#com-azure-storage-blob-models-paralleltransferoptions-setblocksizelong(java-lang-long)) のデフォルト値。
+
+    <h4>`blob_storage.parallel_upload_max_concurrency`</h4>
+
+    - **フィールド:** `scalar.db.blob_storage.parallel_upload_max_concurrency`
+    - **説明:** 並列アップロードで許可される最大同時リクエスト数。
+    - **デフォルト値:** Azure SDK の [`setMaxConcurrency`](https://learn.microsoft.com/en-us/java/api/com.azure.storage.blob.models.paralleltransferoptions?view=azure-java-stable#com-azure-storage-blob-models-paralleltransferoptions-setmaxconcurrency(java-lang-integer)) のデフォルト値。
+
+    <h4>`blob_storage.parallel_upload_threshold_size_bytes`</h4>
+
+    - **フィールド:** `scalar.db.blob_storage.parallel_upload_threshold_size_bytes`
+    - **説明:** 並列アップロードを有効にするための閾値サイズ (バイト単位)。オブジェクトのサイズがこの値より大きい場合、並列アップロードが使用されます。
+    - **デフォルト値:** Azure SDK の [`setMaxSingleUploadSizeLong`](https://learn.microsoft.com/en-us/java/api/com.azure.storage.blob.models.paralleltransferoptions?view=azure-java-stable#com-azure-storage-blob-models-paralleltransferoptions-setmaxsingleuploadsizelong(java-lang-long)) のデフォルト値。
+
+    <h4>`blob_storage.request_timeout_secs`</h4>
+
+    - **フィールド:** `scalar.db.blob_storage.request_timeout_secs`
+    - **説明:** Blob Storage 操作のリクエストタイムアウト (秒単位)。
+    - **デフォルト値:** empty (タイムアウトなし)
   </TabItem>
   <TabItem value="Cloud_Storage" label="Cloud Storage">
     Cloud Storage では次の設定が利用可能です。
@@ -503,6 +551,12 @@ scalar.db.contact_points=jdbc:postgresql:///<DATABASE_NAME>?socketFactory=com.go
     - **フィールド:** `scalar.db.password`
     - **説明:** JSON 形式の Google Cloud サービスアカウントキー。
     - **デフォルト値:** empty
+
+    <h4>`cloud_storage.upload_chunk_size_bytes`</h4>
+
+    - **フィールド:** `scalar.db.cloud_storage.upload_chunk_size_bytes`
+    - **説明:** アップロードのチャンクサイズ (バイト単位)。
+    - **デフォルト値:** Google Cloud SDK の [`setChunkSize`](https://docs.cloud.google.com/java/docs/reference/google-cloud-core/latest/com.google.cloud.WriteChannel#com_google_cloud_WriteChannel_setChunkSize_int_) のデフォルト値。
   </TabItem>
 </Tabs>
 
@@ -518,7 +572,7 @@ ScalarDB は複数のストレージ実装の同時使用をサポートして�
 #### `multi_storage.storages`
 
 - **フィールド:** `scalar.db.multi_storage.storages`
-- **説明:** カンマ区切りのストレージ名（例: `cassandra,mysql`）。これらのストレージ名は、名前空間をストレージにマップするために `scalar.db.multi_storage.namespace_mapping` プロパティで使用されます。
+- **説明:** カンマ区切りのストレージ名 (例: `cassandra,mysql`)。これらのストレージ名は、名前空間をストレージにマップするために `scalar.db.multi_storage.namespace_mapping` プロパティで使用されます。
 - **デフォルト値:** empty
 
 #### `multi_storage.default_storage`
@@ -530,12 +584,12 @@ ScalarDB は複数のストレージ実装の同時使用をサポートして�
 #### `multi_storage.namespace_mapping`
 
 - **フィールド:** `scalar.db.multi_storage.namespace_mapping`
-- **説明:** 名前空間からストレージへのマッピング（例: `user:my_cassandra,coordinator:my_mysql`）。
+- **説明:** 名前空間からストレージへのマッピング (例: `user:my_cassandra,coordinator:my_mysql`)。
 - **デフォルト値:** empty
 
 :::tip
 
-ストレージ名（`<STORAGE_NAME_FOR_NAMESPACE>`）は、定義する必要がある任意の値です。マルチストレージ設定全体で一貫している限り、好きな名前を使用できます。
+ストレージ名 (`<STORAGE_NAME_FOR_NAMESPACE>`) は、定義する必要がある任意の値です。マルチストレージ設定全体で一貫している限り、好きな名前を使用できます。
 
 :::
 
