@@ -150,7 +150,7 @@ Select your database to see the options available:
   <TabItem value="JDBC_databases" label="JDBC databases" default>
     | Name       | Description                             | Default |
     |------------|-----------------------------------------|---------|
-    | transaction-metadata-decoupling | Enable [transaction metadata decoupling](./consensus-commit.mdx#transaction-metadata-decoupling), which manages the transaction metadata in a separate table from application data. | false   |
+    | transaction-metadata-decoupling | Enable [transaction metadata decoupling](./consensus-commit.mdx#transaction-metadata-decoupling) when using Consensus Commit, which manages the transaction metadata in a separate table from application data. | false   |
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     | Name       | Description                             | Default |
@@ -489,7 +489,7 @@ admin.importTable("ns", "tbl", options, overrideColumnsType);
 
 :::warning
 
-You should carefully plan to import a table to ScalarDB in production because it will add transaction metadata columns to your database tables and the ScalarDB metadata tables. In this case, there would also be several differences between your database and ScalarDB, as well as some limitations. For details, see [Importing Existing Tables to ScalarDB by Using ScalarDB Schema Loader](./schema-loader-import.mdx).
+When using Consensus Commit, you should carefully plan to import a table to ScalarDB in production because it will add transaction metadata columns to your database tables and the ScalarDB metadata tables. In this case, there would also be several differences between your database and ScalarDB, as well as some limitations. For details, see [Importing Existing Tables to ScalarDB by Using ScalarDB Schema Loader](./schema-loader-import.mdx).
 
 You can also enable *transaction metadata decoupling* by specifying the `transaction-metadata-decoupling` option to `true` to store transaction metadata in a separate table from application data. For details, see [Transaction Metadata Decoupling](./schema-loader.mdx#transaction-metadata-decoupling).
 

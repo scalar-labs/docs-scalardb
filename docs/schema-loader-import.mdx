@@ -83,6 +83,7 @@ The following is a sample schema for importing tables. For the sample schema fil
 ```
 
 The import table schema consists of a namespace name, a table name, a `transaction` field, and an optional `override-columns-type` field:
+
 - The `transaction` field indicates whether or not the table will be imported for transactions. If you set the `transaction` field to `true` or don't specify the `transaction` field, this tool will create a table with transaction metadata, if needed. If you set the `transaction` field to `false`, this tool will import a table without adding transaction metadata (that is, for a table using the [Storage API](run-non-transactional-storage-operations-through-primitive-crud-interface.mdx)).
 - The `override-columns-type` field indicates the columns for which you wish to override the default data-type mapping. This field is optional and only needs to be set with the columns requiring a type override. 
 
