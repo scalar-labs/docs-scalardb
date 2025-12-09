@@ -21,6 +21,8 @@ This page provides a list of error codes in ScalarDB Core.
 
 ## `CORE-1xxxx` status codes
 
+The following are status codes and messages for the user error category.
+
 ### `CORE-10000`
 
 **Message**
@@ -1205,7 +1207,369 @@ Invalid number specified for column %s in table %s in namespace %s
 Method null argument not allowed
 ```
 
+### `CORE-10153`
+
+**Message**
+
+```markdown
+The provided clustering key %s was not found
+```
+
+### `CORE-10154`
+
+**Message**
+
+```markdown
+The column '%s' was not found
+```
+
+### `CORE-10155`
+
+**Message**
+
+```markdown
+The provided partition key is incomplete. Required key: %s
+```
+
+### `CORE-10156`
+
+**Message**
+
+```markdown
+The provided clustering key order does not match the table schema. Required order: %s
+```
+
+### `CORE-10157`
+
+**Message**
+
+```markdown
+The provided partition key order does not match the table schema. Required order: %s
+```
+
+### `CORE-10165`
+
+**Message**
+
+```markdown
+Missing namespace or table: %s, %s
+```
+
+### `CORE-10166`
+
+**Message**
+
+```markdown
+Failed to retrieve table metadata. Details: %s
+```
+
+### `CORE-10167`
+
+**Message**
+
+```markdown
+Duplicate data mappings found for table '%s' in the control file
+```
+
+### `CORE-10168`
+
+**Message**
+
+```markdown
+No mapping found for column '%s' in table '%s' in the control file. Control file validation set at 'FULL'. All columns need to be mapped.
+```
+
+### `CORE-10169`
+
+**Message**
+
+```markdown
+The control file is missing data mappings
+```
+
+### `CORE-10170`
+
+**Message**
+
+```markdown
+The target column '%s' for source field '%s' could not be found in table '%s'
+```
+
+### `CORE-10171`
+
+**Message**
+
+```markdown
+The required partition key '%s' is missing in the control file mapping for table '%s'
+```
+
+### `CORE-10172`
+
+**Message**
+
+```markdown
+The required clustering key '%s' is missing in the control file mapping for table '%s'
+```
+
+### `CORE-10173`
+
+**Message**
+
+```markdown
+Duplicated data mappings found for column '%s' in table '%s'
+```
+
+### `CORE-10174`
+
+**Message**
+
+```markdown
+Missing required field or column mapping for clustering key %s
+```
+
+### `CORE-10175`
+
+**Message**
+
+```markdown
+Missing required field or column mapping for partition key %s
+```
+
+### `CORE-10176`
+
+**Message**
+
+```markdown
+Missing field or column mapping for %s
+```
+
+### `CORE-10177`
+
+**Message**
+
+```markdown
+Something went wrong while converting the ScalarDB values to strings. The table metadata and Value datatype probably do not match. Details: %s
+```
+
+### `CORE-10178`
+
+**Message**
+
+```markdown
+The provided file format is not supported : %s
+```
+
+### `CORE-10179`
+
+**Message**
+
+```markdown
+Could not find the partition key
+```
+
+### `CORE-10180`
+
+**Message**
+
+```markdown
+The source record needs to contain all fields if the UPSERT turns into an INSERT
+```
+
+### `CORE-10181`
+
+**Message**
+
+```markdown
+Record already exists
+```
+
+### `CORE-10182`
+
+**Message**
+
+```markdown
+Record was not found
+```
+
+### `CORE-10183`
+
+**Message**
+
+```markdown
+Could not find the clustering key
+```
+
+### `CORE-10184`
+
+**Message**
+
+```markdown
+No table metadata found
+```
+
+### `CORE-10185`
+
+**Message**
+
+```markdown
+The data mapping source field '%s' for table '%s' is missing in the json data record
+```
+
+### `CORE-10186`
+
+**Message**
+
+```markdown
+The CSV row: %s does not match header: %s.
+```
+
+### `CORE-10187`
+
+**Message**
+
+```markdown
+Expected JSON file content to be an array
+```
+
+### `CORE-10189`
+
+**Message**
+
+```markdown
+Missing option: either '--namespace' and'--table' or '--control-file' options must be specified.
+```
+
+### `CORE-10190`
+
+**Message**
+
+```markdown
+The file '%s' specified by the argument '%s' does not exist.
+```
+
+### `CORE-10191`
+
+**Message**
+
+```markdown
+Cannot write to the log directory: %s
+```
+
+### `CORE-10192`
+
+**Message**
+
+```markdown
+Failed to create the log directory: %s
+```
+
+### `CORE-10193`
+
+**Message**
+
+```markdown
+Failed to parse the control file: %s
+```
+
+### `CORE-10194`
+
+**Message**
+
+```markdown
+No permission to create or write files in the directory: %s
+```
+
+### `CORE-10195`
+
+**Message**
+
+```markdown
+Failed to create the directory: %s
+```
+
+### `CORE-10196`
+
+**Message**
+
+```markdown
+Path exists but is not a directory: %s
+```
+
+### `CORE-10197`
+
+**Message**
+
+```markdown
+File path must not be blank.
+```
+
+### `CORE-10198`
+
+**Message**
+
+```markdown
+File not found: %s
+```
+
+### `CORE-10199`
+
+**Message**
+
+```markdown
+Invalid date time value specified for column %s in table %s in namespace %s.
+```
+
+### `CORE-10200`
+
+**Message**
+
+```markdown
+Key-value cannot be null or empty
+```
+
+### `CORE-10201`
+
+**Message**
+
+```markdown
+Invalid key-value format: %s
+```
+
+### `CORE-10202`
+
+**Message**
+
+```markdown
+Value must not be null
+```
+
+### `CORE-10203`
+
+**Message**
+
+```markdown
+Delimiter must not be null
+```
+
+### `CORE-10204`
+
+**Message**
+
+```markdown
+Config file path must not be blank
+```
+
+### `CORE-10249`
+
+**Message**
+
+```markdown
+The namespace has non-ScalarDB tables and cannot be dropped. Namespace: %s; Tables in the namespace: %s
+```
+
 ## `CORE-2xxxx` status codes
+
+The following are status codes and messages for the concurrency error category.
 
 ### `CORE-20000`
 
@@ -1416,6 +1780,8 @@ A transaction conflict occurred in the Insert operation
 ```
 
 ## `CORE-3xxxx` status codes
+
+The following are status codes and messages for the internal error category.
 
 ### `CORE-30000`
 
@@ -1785,7 +2151,65 @@ The Upsert operation failed. Details: %s
 The Update operation failed. Details: %s
 ```
 
+### `CORE-30047`
+
+**Message**
+
+```markdown
+Something went wrong while trying to save the data. Details: %s
+```
+
+### `CORE-30048`
+
+**Message**
+
+```markdown
+Something went wrong while scanning. Are you sure you are running in the correct transaction mode? Details: %s
+```
+
+### `CORE-30049`
+
+**Message**
+
+```markdown
+Failed to read CSV file. Details: %s.
+```
+
+### `CORE-30050`
+
+**Message**
+
+```markdown
+Failed to CSV read header line. Details: %s.
+```
+
+### `CORE-30051`
+
+**Message**
+
+```markdown
+Data chunk processing was interrupted. Details: %s
+```
+
+### `CORE-30052`
+
+**Message**
+
+```markdown
+Failed to read JSON file. Details: %s.
+```
+
+### `CORE-30053`
+
+**Message**
+
+```markdown
+Failed to read JSON Lines file. Details: %s.
+```
+
 ## `CORE-4xxxx` status codes
+
+The following are status codes and messages for the unknown transaction status error category.
 
 ### `CORE-40000`
 
