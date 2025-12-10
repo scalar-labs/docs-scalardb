@@ -166,6 +166,52 @@ For a list of databases that ScalarDB supports, see [Databases](requirements.mdx
     scalar.db.password=db2inst1
     ```
   </TabItem>
+  <TabItem value="TiDB" label="TiDB">
+    <h3>Run TiDB locally</h3>
+    
+    You can run TiDB locally by using the TiUP tool. For installation instructions, see [Install TiUP](https://docs.pingcap.com/tidb/stable/tiup-overview/#install-tiup).
+
+    To start TiDB, run the following command:
+    
+    ```console
+    tiup playground v8.5 --without-monitor
+    ```
+
+    <h3>Configure ScalarDB</h3>
+
+    The **database.properties** file in the `scalardb-samples/scalardb-sample` directory contains database configurations for ScalarDB. Please uncomment the properties for TiDB in the **database.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For TiDB
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:mysql://localhost:4000/
+    scalar.db.username=root
+    scalar.db.password=
+    ```
+  </TabItem>
+  <TabItem value="AlloyDB" label="AlloyDB">
+    <h3>Run AlloyDB locally</h3>
+
+    You can run AlloyDB Omni in Docker Compose by using the `docker-compose.yml` file in the `scalardb-samples/scalardb-sample` directory.
+
+    To start AlloyDB Omni, run the following command:
+
+    ```console
+    docker compose up -d alloydb
+    ```
+
+    <h3>Configure ScalarDB</h3>
+
+    The **database.properties** file in the `scalardb-samples/scalardb-sample` directory contains database configurations for ScalarDB. Please uncomment the properties for AlloyDB in the **database.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For AlloyDB
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:postgresql://localhost:5432/
+    scalar.db.username=postgres
+    scalar.db.password=postgres
+    ```
+  </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     <h3>Run Amazon DynamoDB Local</h3>
 
@@ -294,6 +340,28 @@ The `--coordinator` option is specified because a table with `transaction` set t
 :::
   </TabItem>
   <TabItem value="Db2" label="Db2">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```
+
+:::note
+
+The `--coordinator` option is specified because a table with `transaction` set to `true` exists in the schema. For details about configuring and loading a schema, see [ScalarDB Schema Loader](schema-loader.mdx).
+
+:::
+  </TabItem>
+  <TabItem value="TiDB" label="TiDB">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```
+
+:::note
+
+The `--coordinator` option is specified because a table with `transaction` set to `true` exists in the schema. For details about configuring and loading a schema, see [ScalarDB Schema Loader](schema-loader.mdx).
+
+:::
+  </TabItem>
+  <TabItem value="AlloyDB" label="AlloyDB">
     ```console
     java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
     ```

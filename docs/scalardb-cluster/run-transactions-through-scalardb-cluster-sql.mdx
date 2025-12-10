@@ -163,6 +163,52 @@ For a list of databases that ScalarDB supports, see [Databases](../requirements.
     scalar.db.password=db2inst1
     ```
   </TabItem>
+  <TabItem value="TiDB" label="TiDB">
+    <h3>Run TiDB locally</h3>
+    
+    You can run TiDB locally by using the TiUP tool. For installation instructions, see [Install TiUP](https://docs.pingcap.com/tidb/stable/tiup-overview/#install-tiup).
+
+    To start TiDB, run the following command:
+    
+    ```console
+    tiup playground v8.5 --without-monitor
+    ```
+
+    <h3>Configure ScalarDB Cluster</h3>
+
+    The **scalardb-cluster-node.properties** file in the `scalardb-samples/scalardb-cluster-standalone-mode` directory contains database configurations for ScalarDB Cluster. Please uncomment the properties for TiDB in the **scalardb-cluster-node.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For TiDB
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:mysql://host.docker.internal:4000/
+    scalar.db.username=root
+    scalar.db.password=
+    ```
+  </TabItem>
+  <TabItem value="AlloyDB" label="AlloyDB">
+    <h3>Run AlloyDB locally</h3>
+
+    You can run AlloyDB Omni in Docker Compose by using the `docker-compose.yaml` file in the `scalardb-samples/scalardb-cluster-standalone-mode` directory.
+
+    To start AlloyDB Omni, run the following command:
+
+    ```console
+    docker compose up -d alloydb
+    ```
+
+    <h3>Configure ScalarDB Cluster</h3>
+
+    The **scalardb-cluster-node.properties** file in the `scalardb-samples/scalardb-cluster-standalone-mode` directory contains database configurations for ScalarDB Cluster. Please uncomment the properties for AlloyDB in the **scalardb-cluster-node.properties** file so that the configuration looks as follows:
+
+    ```properties
+    # For AlloyDB
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:postgresql://alloydb-1:5432/
+    scalar.db.username=postgres
+    scalar.db.password=postgres
+    ```
+  </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     <h3>Run Amazon DynamoDB Local</h3>
 
