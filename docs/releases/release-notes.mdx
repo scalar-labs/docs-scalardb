@@ -10,6 +10,51 @@ displayed_sidebar: docsEnglish
 
 This page includes a list of release notes for ScalarDB 3.17.
 
+## v3.17.1
+
+**Release date:** December 9, 2025
+
+### Summary
+
+This release mainly consists of several minor bug fixes and small improvements.
+
+### Community edition
+
+#### Enhancements
+
+- Added `AuthAdmin.getRole(roleName)`. ([#3238](https://github.com/scalar-labs/scalardb/pull/3238))
+
+#### Improvements
+
+- Added the `scalar.db.active_transaction_management.enabled` configuration option to enable/disable the active transaction management (default: `true`). ([#3233](https://github.com/scalar-labs/scalardb/pull/3233))
+
+#### Bug fixes
+
+- On Oracle, when importing a table with a column using the `NUMBER(1)` data type, which is usually used for BOOLEAN data, that column can now be mapped to ScalarDB BOOLEAN by using the ScalarDB Schema Loader `override-columns-type` setting. ([#3239](https://github.com/scalar-labs/scalardb/pull/3239))
+- Fixed option issues in Object Storage adapter. ([#3237](https://github.com/scalar-labs/scalardb/pull/3237))
+- Fix to increase the maximum allowed string length with Object Storage. ([#3248](https://github.com/scalar-labs/scalardb/pull/3248))
+- Updated the upper limit value displayed in the error message for data size limitation in Object Storage adapter. ([#3264](https://github.com/scalar-labs/scalardb/pull/3264))
+
+### Enterprise edition
+
+#### Enhancements
+
+##### ScalarDB Cluster
+
+- Added the `getRole()` API and equivalent to retrieve a single role by name.
+
+##### ScalarDB SQL
+
+- Added `Metadata.getRole(roleName)`.
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Made the `GRANT ROLE` command idempotent, allowing duplicate grants and upgrading to `WITH ADMIN OPTION` when re-granting.
+- Fixed a bug where the pause functionality did not work correctly when transactions expired.
+- Fixed a bug where ScalarDB Cluster cannot be deployed in the Omnistrate environment by upgrading scalar-metering.
+
 ## v3.17.0
 
 **Release date:** November 26, 2025
