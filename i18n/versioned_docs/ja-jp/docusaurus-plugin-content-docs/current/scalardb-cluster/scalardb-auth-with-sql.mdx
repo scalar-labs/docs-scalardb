@@ -225,7 +225,7 @@ services:
 
   scalardb-cluster-standalone:
     container_name: "scalardb-cluster-node"
-    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:3.17.0"
+    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:3.17.1"
     ports:
       - 60053:60053
       - 9080:9080
@@ -261,7 +261,7 @@ scalar.db.cluster.auth.enabled=true
 次に、次のコマンドを実行して SQL CLI を起動します。
 
 ```console
-java -jar scalardb-cluster-sql-cli-3.17.0-all.jar --config scalardb-cluster-sql-cli.properties
+java -jar scalardb-cluster-sql-cli-3.17.1-all.jar --config scalardb-cluster-sql-cli.properties
 ```
 
 ユーザー名とパスワードをそれぞれ `admin` と `admin` と入力します。
@@ -350,7 +350,7 @@ SHOW GRANTS FOR user1;
 `user1` としてログインし、SQL ステートメントを実行します。
 
 ```console
-java -jar scalardb-cluster-sql-cli-3.17.0-all.jar --config scalardb-cluster-sql-cli.properties
+java -jar scalardb-cluster-sql-cli-3.17.1-all.jar --config scalardb-cluster-sql-cli.properties
 ```
 
 ユーザー名とパスワードをそれぞれ `user1` と `user1` として入力します。
@@ -398,7 +398,7 @@ Error: Authorization error (PERMISSION_DENIED: SQL-10021: Access denied: You nee
 `admin` としてログインし、ロールの作成と管理を行います。
 
 ```console
-java -jar scalardb-cluster-sql-cli-3.17.0-all.jar --config scalardb-cluster-sql-cli.properties
+java -jar scalardb-cluster-sql-cli-3.17.1-all.jar --config scalardb-cluster-sql-cli.properties
 ```
 
 ユーザー名とパスワードをそれぞれ `admin` と `admin` として入力します。
@@ -473,7 +473,7 @@ SHOW GRANTS FOR user1;
 今度は、`user1` としてログインして、再び `DELETE` ステートメントを試してみます。
 
 ```console
-java -jar scalardb-cluster-sql-cli-3.17.0-all.jar --config scalardb-cluster-sql-cli.properties
+java -jar scalardb-cluster-sql-cli-3.17.1-all.jar --config scalardb-cluster-sql-cli.properties
 ```
 
 ユーザー名とパスワードをそれぞれ `user1` と `user1` として入力します。
