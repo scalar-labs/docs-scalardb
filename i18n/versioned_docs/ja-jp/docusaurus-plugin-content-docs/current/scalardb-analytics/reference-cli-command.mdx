@@ -65,14 +65,26 @@ scalardb-analytics-cli catalog describe --catalog-id <catalog-uuid>
 
 システムからカタログを削除します。カタログにデータソースが含まれている場合、`--cascade` オプションを使用してすべてのコンテンツを削除しない限り、操作は失敗します。
 
-空のカタログを削除する場合:
+カタログは名前または UUID で指定できます。
+
+空のカタログを名前で削除する場合:
+
 ```
 scalardb-analytics-cli catalog delete --catalog <catalog-name>
 ```
 
 `<catalog-name>` を削除したいカタログの名前に置き換えてください。
 
-カタログとそのすべてのコンテンツを削除する場合:
+カタログを ID で削除する場合:
+
+```
+scalardb-analytics-cli catalog delete --catalog-id <catalog-uuid>
+```
+
+`<catalog-uuid>` を削除したいカタログの UUID に置き換えてください。
+
+カタログとそのすべてのコンテンツ (データソースとその子要素) を削除する場合:
+
 ```
 scalardb-analytics-cli catalog delete --catalog <catalog-name> --cascade
 ```
@@ -83,15 +95,61 @@ scalardb-analytics-cli catalog delete --catalog <catalog-name> --cascade
 
 ### 新しいデータソースを登録
 
-データソース登録ファイルを使用してカタログに新しいデータソースを追加します。
+カタログ名、データソース名、プロバイダの設定情報を指定して、カタログに新しいデータソースを追加します。
 
 ```
-scalardb-analytics-cli data-source register --data-source-json <path-to-json>
+scalardb-analytics-cli data-source register --catalog <catalog-name> --data-source <data-source-name> <provider-option> [schema-option]
 ```
 
-`<path-to-json>` をデータソース登録ファイルのファイルパスに置き換えてください。
+以下を置き換えてください:
 
-`register` コマンドにはデータソース登録ファイルが必要です。ファイル形式については、[データソース登録ファイル形式](reference-data-source.mdx#データソース登録ファイル形式)セクションで説明されています。
+- `<catalog-name>` をデータソースを所有するカタログの名前に置き換えてください。
+- `<data-source-name>` を登録するデータソースの名前に置き換えてください。
+
+#### プロバイダオプション
+
+以下のオプションのいずれかを使用してプロバイダの設定情報を指定する必要があります:
+
+- `--provider-json <json>`: データソースプロバイダの設定情報を記述するインライン JSON ペイロード。
+- `--provider-file <path>`: データソースプロバイダの設定情報を記述する JSON ファイルのパス。
+- `--provider-stdin`: 標準入力からプロバイダの設定情報の JSON ペイロードを読み取ります。
+
+#### スキーマオプション
+
+DynamoDB などの自動スキーマ解決をサポートしないプロバイダの場合、以下の方法のいずれかを使用してスキーマ定義を手動で指定する必要があります:
+
+- `--schema-json <json>`: データソーススキーマを記述するインライン JSON ペイロード。
+- `--schema-file <path>`: データソーススキーマを記述する JSON ファイルのパス。
+
+:::note
+
+スキーマが必要かどうかはプロバイダタイプによって決まります。PostgreSQL や MySQL などの一部のプロバイダは、スキーマを自動的に解決し、手動でのスキーマ入力を受け付けません。DynamoDB などの他のプロバイダは、利用可能なスキーマオプションの1つを通じてスキーマを提供する必要があります。
+
+:::
+
+#### 例
+
+プロバイダの設定情報ファイルを使用してデータソースを登録する場合:
+
+```
+scalardb-analytics-cli data-source register --catalog my_catalog --data-source my_datasource --provider-file /path/to/provider.json
+```
+
+`/path/to/provider.json` をプロバイダの設定情報ファイルのパスに置き換えてください。
+
+インライン JSON を使用してデータソースを登録する場合:
+
+```
+scalardb-analytics-cli data-source register --catalog my_catalog --data-source my_datasource --provider-json '{"type":"postgresql","host":"localhost","port":5432,"database":"mydb","user":"user","password":"pass"}'
+```
+
+標準入力を使用してデータソースを登録する場合:
+
+```
+cat provider.json | scalardb-analytics-cli data-source register --catalog my_catalog --data-source my_datasource --provider-stdin
+```
+
+プロバイダの設定情報の JSON 形式については、[データソースリファレンス](reference-data-source.mdx)で説明されています。
 
 ### すべてのデータソースを一覧表示
 
@@ -127,7 +185,10 @@ scalardb-analytics-cli data-source describe --data-source-id <data-source-uuid>
 
 カタログからデータソースを削除します。データソースに名前空間が含まれている場合、`--cascade` オプションを使用してすべてのコンテンツを削除しない限り、操作は失敗します。
 
-空のデータソースを削除する場合:
+データソースは、カタログ内の名前または UUID で指定できます。
+
+空のデータソースを名前で削除する場合:
+
 ```
 scalardb-analytics-cli data-source delete --catalog <catalog-name> --data-source <data-source-name>
 ```
@@ -136,7 +197,16 @@ scalardb-analytics-cli data-source delete --catalog <catalog-name> --data-source
 - `<catalog-name>` をデータソースを含むカタログの名前
 - `<data-source-name>` を削除したいデータソースの名前
 
-データソースとそのすべてのコンテンツを削除する場合:
+データソースを ID で削除する場合:
+
+```
+scalardb-analytics-cli data-source delete --data-source-id <data-source-uuid>
+```
+
+`<data-source-uuid>` を削除したいデータソースの UUID に置き換えてください。
+
+データソースとそのすべてのコンテンツ (名前空間、テーブル、カラム) を削除する場合:
+
 ```
 scalardb-analytics-cli data-source delete --catalog <catalog-name> --data-source <data-source-name> --cascade
 ```
@@ -161,6 +231,7 @@ scalardb-analytics-cli namespace list --catalog <catalog-name>
 特定の名前空間の詳細情報を表示します。名前空間はデータソース内の名前または UUID で指定できます。ネストされた名前空間の場合、`.` を区切り文字として使用します (例: `--namespace parent.child`)。
 
 カタログ、データソース、名前空間名で指定する場合:
+
 ```
 scalardb-analytics-cli namespace describe --catalog <catalog-name> --data-source <data-source-name> --namespace <namespace-name>
 ```
@@ -171,6 +242,7 @@ scalardb-analytics-cli namespace describe --catalog <catalog-name> --data-source
 - `<namespace-name>` を表示したい名前空間の名前
 
 名前空間 ID で指定する場合:
+
 ```
 scalardb-analytics-cli namespace describe --namespace-id <namespace-uuid>
 ```
