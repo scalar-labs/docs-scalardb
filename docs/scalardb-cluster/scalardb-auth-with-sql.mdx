@@ -220,7 +220,7 @@ services:
 
   scalardb-cluster-standalone:
     container_name: "scalardb-cluster-node"
-    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:3.17.0"
+    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:3.17.1"
     ports:
       - 60053:60053
       - 9080:9080
@@ -258,7 +258,7 @@ scalar.db.cluster.auth.enabled=true
 Then, start the SQL CLI by running the following command.
 
 ```console
-java -jar scalardb-cluster-sql-cli-3.17.0-all.jar --config scalardb-cluster-sql-cli.properties
+java -jar scalardb-cluster-sql-cli-3.17.1-all.jar --config scalardb-cluster-sql-cli.properties
 ```
 
 Enter the username and password as `admin` and `admin`, respectively.
@@ -347,7 +347,7 @@ You can see that `user1` has been granted the `SELECT`, `INSERT`, and `UPDATE` p
 Log in as `user1` and execute SQL statements.
 
 ```console
-java -jar scalardb-cluster-sql-cli-3.17.0-all.jar --config scalardb-cluster-sql-cli.properties
+java -jar scalardb-cluster-sql-cli-3.17.1-all.jar --config scalardb-cluster-sql-cli.properties
 ```
 
 Enter the username and password as `user1` and `user1`, respectively.
@@ -395,7 +395,7 @@ You will see the above error message because `user1` doesn't have the `DELETE` p
 Log in as `admin` to create and manage roles.
 
 ```console
-java -jar scalardb-cluster-sql-cli-3.17.0-all.jar --config scalardb-cluster-sql-cli.properties
+java -jar scalardb-cluster-sql-cli-3.17.1-all.jar --config scalardb-cluster-sql-cli.properties
 ```
 
 Enter the username and password as `admin` and `admin`, respectively.
@@ -470,7 +470,7 @@ SHOW GRANTS FOR user1;
 Now, log in as `user1` and try the `DELETE` statement again.
 
 ```console
-java -jar scalardb-cluster-sql-cli-3.17.0-all.jar --config scalardb-cluster-sql-cli.properties
+java -jar scalardb-cluster-sql-cli-3.17.1-all.jar --config scalardb-cluster-sql-cli.properties
 ```
 
 Enter the username and password as `user1` and `user1`, respectively.
