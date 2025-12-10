@@ -36,7 +36,7 @@ ScalarDB Analytics サーバー設定ファイル (例: `scalardb-analytics-serv
 
 ```properties
 # メタデータデータベース設定 (必須)
-scalar.db.analytics.server.db.url=jdbc:postgresql://localhost:5432/scalardb_analytics
+scalar.db.analytics.server.db.contact_points=jdbc:postgresql://localhost:5432/scalardb_analytics
 scalar.db.analytics.server.db.username=analytics_user
 scalar.db.analytics.server.db.password=your_secure_password
 
@@ -178,7 +178,7 @@ scalardb-analytics-cli catalog list
 カタログは、データソースを整理するための論理的なコンテナとして機能します。最初のカタログを作成します: 
 
 ```console
-scalardb-analytics-cli catalog create production
+scalardb-analytics-cli catalog create --catalog production
 ```
 
 :::important
@@ -201,16 +201,12 @@ scalardb-analytics-cli catalog list
 
 ```json
 {
-  "catalog": "production",
-  "name": "postgres_customers",
-  "type": "postgres",
-  "provider": {
-    "host": "postgres.example.com",
-    "port": 5432,
-    "username": "analytics_user",
-    "password": "secure_password",
-    "database": "customers"
-  }
+  "type": "postgresql",
+  "host": "postgres.example.com",
+  "port": 5432,
+  "username": "analytics_user",
+  "password": "secure_password",
+  "database": "customers"
 }
 ```
 
@@ -219,7 +215,7 @@ scalardb-analytics-cli catalog list
 データソースを登録します: 
 
 ```console
-scalardb-analytics-cli data-source register --data-source-json postgres-datasource.json
+scalardb-analytics-cli data-source register --catalog production --data-source postgres_customers --provider-file postgres-datasource.json
 ```
 
 ### カタログの検証

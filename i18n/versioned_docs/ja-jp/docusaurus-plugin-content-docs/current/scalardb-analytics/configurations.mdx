@@ -28,9 +28,9 @@ ScalarDB Analytics は、設定が必要な 3 つの主要コンポーネント�
 
 カタログ情報を格納するメタデータデータベースを設定します。
 
-#### `db.url`
+#### `db.contact_points`
 
-- **フィールド:** `scalar.db.analytics.server.db.url`
+- **フィールド:** `scalar.db.analytics.server.db.contact_points`
 - **説明:** ScalarDB Analytics で使用されるメタデータデータベースの JDBC URL。
 
 #### `db.username`
@@ -266,7 +266,7 @@ Apache Spark で ScalarDB Analytics を使用するには、Spark 設定ファ�
 
 ```properties
 # メタデータデータベース
-scalar.db.analytics.server.db.url=jdbc:postgresql://localhost:5432/scalardb_analytics
+scalar.db.analytics.server.db.contact_points=jdbc:postgresql://localhost:5432/scalardb_analytics
 scalar.db.analytics.server.db.username=dev_user
 scalar.db.analytics.server.db.password=dev_password
 
@@ -302,7 +302,7 @@ spark.sql.catalog.analytics.server.host     localhost
 
 ```properties
 # メタデータデータベース
-scalar.db.analytics.server.db.url=jdbc:postgresql://db.internal:5432/scalardb_analytics_prod
+scalar.db.analytics.server.db.contact_points=jdbc:postgresql://db.internal:5432/scalardb_analytics_prod
 scalar.db.analytics.server.db.username=analytics_prod
 scalar.db.analytics.server.db.password=your_secure_password
 
