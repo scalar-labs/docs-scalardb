@@ -10,6 +10,33 @@ displayed_sidebar: docsEnglish
 
 This page includes a list of release notes for ScalarDB 3.16.
 
+## v3.16.3
+
+**Release date:** December 9, 2025
+
+### Summary
+
+This release mainly consists of several minor bug fixes and small improvements.
+
+### Community edition
+
+#### Improvements
+
+- Added the `scalar.db.active_transaction_management.enabled` configuration option to enable/disable the active transaction management (default: `true`). ([#3233](https://github.com/scalar-labs/scalardb/pull/3233))
+
+#### Bug fixes
+
+- On Oracle, when importing a table with a column using the `NUMBER(1)` data type, which is usually used for BOOLEAN data, that column can now be mapped to ScalarDB BOOLEAN by using the ScalarDB Schema Loader `override-columns-type` setting. ([#3239](https://github.com/scalar-labs/scalardb/pull/3239))
+
+### Enterprise edition
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Fixed a bug where the pause functionality did not work correctly when transactions expired.
+- Fixed a bug where ScalarDB Cluster cannot be deployed in the Omnistrate environment by upgrading scalar-metering.
+
 ## v3.16.2
 
 **Release date:** November 26, 2025
