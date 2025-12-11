@@ -14,6 +14,35 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 このページには、ScalarDB 3.13 のリリースノートのリストが含まれています。
 
+## v3.13.6
+
+**発売日:** 2025年11月26日
+
+### まとめ
+
+このリリースには、いくつかのバグ修正および脆弱性修正が含まれています。
+
+### Community edition
+
+#### 機能強化
+
+- Cassandra 4 および 5 の統合テストを追加しました。([#3143](https://github.com/scalar-labs/scalardb/pull/3143))
+
+#### バグの修正
+
+- セキュリティ問題を修正するために Cosmos DB ライブラリをアップグレードしました。[CVE-2025-55163](https://github.com/advisories/GHSA-prj3-ccx8-p6x4 "CVE-2025-55163") ([#3105](https://github.com/scalar-labs/scalardb/pull/3105))
+- セキュリティ問題を修正するために SQLServer ドライバーをアップグレードしました。[CVE-2025-59250](https://github.com/advisories/GHSA-m494-w24q-6f7w "CVE-2025-59250") ([#3223](https://github.com/scalar-labs/scalardb/pull/3223))
+
+### Enterprise edition
+
+#### バグの修正
+
+##### ScalarDB Cluster
+
+- 重複する列名が存在する場合に SQL API の `ResultSet` が不正な結果を返すバグを修正しました。
+- セキュリティ問題を修正するために gRPC ライブラリをアップグレードしました。[CVE-2025-55163](https://github.com/advisories/GHSA-prj3-ccx8-p6x4 "CVE-2025-55163")
+- セキュリティ問題を修正するために `grpc_health_probe` をアップグレードしました：[CVE-2025-47907](https://github.com/advisories/GHSA-j5pm-7495-qmr3 "CVE-2025-47907")、[CVE-2025-58183](https://github.com/advisories/GHSA-9gcr-gp5f-jw27 "CVE-2025-58183")、[CVE-2025-58186](https://github.com/advisories/GHSA-rjcg-56ph-3qvg "CVE-2025-58186")、[CVE-2025-58187](https://github.com/advisories/GHSA-frhw-mqj2-wxw2 "CVE-2025-58187")、および [CVE-2025-58188](https://github.com/advisories/GHSA-7wwx-xj66-r44x "CVE-2025-58188")。
+
 ## v3.13.5
 
 **発売日:** 2025年07月16日

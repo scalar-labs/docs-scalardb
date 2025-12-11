@@ -1,0 +1,858 @@
+---
+tags:
+  - Enterprise Option
+displayed_sidebar: docsJapanese
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# ScalarDB Analytics データソースリファレンス
+
+import WarningLicenseKeyContact from "/src/components/ja-jp/_warning-license-key-contact.mdx";
+import TranslationBanner from "/src/components/_translation-ja-jp.mdx";
+
+<TranslationBanner />
+
+このリファレンスガイドでは、ScalarDB Analytics のデータソース設定形式、プロバイダー固有の設定、およびデータ型マッピングに関する詳細情報を提供します。
+
+<WarningLicenseKeyContact product="ScalarDB Analytics" />
+
+## データソース登録ファイル形式
+
+データソースは、データソース登録ファイルを使用してCLIでカタログに登録されます。これらのファイルは以下の構造を持ちます。CLIコマンドの詳細については、[CLIコマンドリファレンス](./reference-cli-command.mdx)を参照してください。
+
+```json
+{
+  "catalog": "<catalog-name>", // データソースを登録するカタログ
+  "name": "<data-source-name>", // このデータソースの一意の名前
+  "type": "<database-type>", // データベースタイプ: postgres, mysql, scalardb, sqlserver, oracle, dynamodb, databricks, snowflake
+  "provider": {
+    // タイプ固有の接続設定
+    // 設定はデータベースタイプによって異なります
+  }
+}
+```
+
+`provider` セクションには、`type` フィールドに基づいたデータソース固有の接続設定が含まれます。
+
+## タイプ別のプロバイダー設定
+
+以下のセクションでは、サポートされている各データベースタイプのプロバイダー設定を示します:
+
+<Tabs groupId="data-source-type" queryString>
+  <TabItem value="scalardb" label="ScalarDB" default>
+
+<h3>設定</h3>
+
+ScalarDB の設定は以下の通りです。
+
+<h4>`configPath`</h4>
+
+- **フィールド:** `configPath`
+- **説明:** ScalarDB 設定ファイルへのパス。
+
+<h3>例</h3>
+
+```json
+{
+  "catalog": "production",
+  "name": "scalardb_source",
+  "type": "scalardb",
+  "provider": {
+    "configPath": "/path/to/scalardb.properties"
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="postgresql" label="PostgreSQL">
+
+<h3>設定</h3>
+
+PostgreSQL の設定は以下の通りです。
+
+<h4>`host`</h4>
+
+- **フィールド:** `host`
+- **説明:** PostgreSQL サーバーのホスト名。
+
+<h4>`port`</h4>
+
+- **フィールド:** `port`
+- **説明:** ポート番号。
+
+<h4>`username`</h4>
+
+- **フィールド:** `username`
+- **説明:** データベースユーザー。
+
+<h4>`password`</h4>
+
+- **フィールド:** `password`
+- **説明:** データベースパスワード。
+
+<h4>`database`</h4>
+
+- **フィールド:** `database`
+- **説明:** 接続するデータベース名。
+
+<h3>例</h3>
+
+```json
+{
+  "catalog": "production",
+  "name": "postgres_customers",
+  "type": "postgres",
+  "provider": {
+    "host": "postgres.example.com",
+    "port": 5432,
+    "username": "analytics_user",
+    "password": "secure_password",
+    "database": "customers"
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="mysql" label="MySQL">
+
+<h3>設定</h3>
+
+MySQL の設定は以下の通りです。
+
+<h4>`host`</h4>
+
+- **フィールド:** `host`
+- **説明:** MySQL サーバーのホスト名。
+
+<h4>`port`</h4>
+
+- **フィールド:** `port`
+- **説明:** ポート番号。
+
+<h4>`username`</h4>
+
+- **フィールド:** `username`
+- **説明:** データベースユーザー。
+
+<h4>`password`</h4>
+
+- **フィールド:** `password`
+- **説明:** データベースパスワード。
+
+<h4>`database`</h4>
+
+- **フィールド:** `database`
+- **説明:** インポートする特定のデータベース。省略した場合、すべてのデータベースがインポートされます。
+- **デフォルト値:** なし (すべてのデータベースをインポート)
+
+<h3>例</h3>
+
+```json
+{
+  "catalog": "production",
+  "name": "mysql_orders",
+  "type": "mysql",
+  "provider": {
+    "host": "mysql.example.com",
+    "port": 3306,
+    "username": "analytics_user",
+    "password": "secure_password",
+    "database": "orders" // オプション - 省略した場合、すべてのデータベースがインポートされます
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="oracle" label="Oracle">
+
+<h3>設定</h3>
+
+Oracle の設定は以下の通りです。
+
+<h4>`host`</h4>
+
+- **フィールド:** `host`
+- **説明:** Oracle サーバーのホスト名。
+
+<h4>`port`</h4>
+
+- **フィールド:** `port`
+- **説明:** ポート番号。
+
+<h4>`username`</h4>
+
+- **フィールド:** `username`
+- **説明:** データベースユーザー。
+
+<h4>`password`</h4>
+
+- **フィールド:** `password`
+- **説明:** データベースパスワード。
+
+<h4>`serviceName`</h4>
+
+- **フィールド:** `serviceName`
+- **説明:** Oracle サービス名。
+
+<h3>例</h3>
+
+```json
+{
+  "catalog": "production",
+  "name": "oracle_warehouse",
+  "type": "oracle",
+  "provider": {
+    "host": "oracle.example.com",
+    "port": 1521,
+    "username": "analytics_user",
+    "password": "secure_password",
+    "serviceName": "ORCL"
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="sql-server" label="SQL Server">
+
+<h3>設定</h3>
+
+SQL Server の設定は以下の通りです。
+
+<h4>`host`</h4>
+
+- **フィールド:** `host`
+- **説明:** SQL Server のホスト名。
+
+<h4>`port`</h4>
+
+- **フィールド:** `port`
+- **説明:** ポート番号。
+
+<h4>`username`</h4>
+
+- **フィールド:** `username`
+- **説明:** データベースユーザー。
+
+<h4>`password`</h4>
+
+- **フィールド:** `password`
+- **説明:** データベースパスワード。
+
+<h4>`database`</h4>
+
+- **フィールド:** `database`
+- **説明:** 接続する特定のデータベース。
+- **デフォルト値:** なし (デフォルトデータベースに接続)
+
+<h4>`secure`</h4>
+
+- **フィールド:** `secure`
+- **説明:** 暗号化を有効化。
+- **デフォルト値:** `false`
+
+<h3>例</h3>
+
+```json
+{
+  "catalog": "production",
+  "name": "sqlserver_analytics",
+  "type": "sqlserver",
+  "provider": {
+    "host": "sqlserver.example.com",
+    "port": 1433,
+    "username": "sa",
+    "password": "secure_password",
+    "database": "analytics", // オプション - 指定した場合、このデータベースのみがインポートされます
+    "secure": true // オプション - 暗号化を有効化
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="databricks" label="Databricks">
+
+<h3>設定</h3>
+
+Databricks (Databricks SQL/JDBC) の設定は以下の通りです。
+
+<h4>`host`</h4>
+
+- **フィールド:** `host`
+- **説明:** Databricks ワークスペースのホスト名（例: `adb-1234567890123.4.azuredatabricks.net`）。
+
+<h4>`port`</h4>
+
+- **フィールド:** `port`
+- **説明:** ポート番号。
+- **デフォルト値:** ドライバーのデフォルト。(任意)
+
+<h4>`httpPath`</h4>
+
+- **フィールド:** `httpPath`
+- **説明:** SQL ウェアハウスまたはクラスターの HTTP パス (例: `/sql/1.0/warehouses/xxxxxxxxxxxxxx`)。
+
+<h4>`oAuthClientId`</h4>
+
+- **フィールド:** `oAuthClientId`
+- **説明:** Databricks SQL/JDBC 認証用の OAuth マシン間 (M2M) サービスプリンシパルの UUID またはアプリケーション ID。
+
+<h4>`oAuthSecret`</h4>
+
+- **フィールド:** `oAuthSecret`
+- **説明:** Databricks SQL/JDBC 認証用の OAuth マシン間 (M2M) サービスプリンシパルのシークレット。
+
+<h4>`catalog`</h4>
+
+- **フィールド:** `catalog`
+- **説明:** 既定で使用するカタログ。(任意)
+
+<h3>例</h3>
+
+```json
+{
+  "catalog": "production",
+  "name": "databricks_analytics",
+  "type": "databricks",
+  "provider": {
+    "host": "adb-1234567890123.4.azuredatabricks.net",
+    "port": 443,
+    "httpPath": "/sql/1.0/warehouses/xxxxxxxxxxxxxx",
+    "oAuthClientId": "YOUR_CLIENT_ID",
+    "oAuthSecret": "YOUR_CLIENT_SECRET",
+    "catalog": "main"
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="snowflake" label="Snowflake">
+
+<h3>設定</h3>
+
+Snowflake の設定は以下の通りです。
+
+<h4>`account`</h4>
+
+- **フィールド:** `account`
+- **説明:** Snowflake アカウント識別子 (例: `xy12345.ap-northeast-1`)。
+
+<h4>`username`</h4>
+
+- **フィールド:** `username`
+- **説明:** Snowflake ユーザー。
+
+<h4>`password`</h4>
+
+- **フィールド:** `password`
+- **説明:** Snowflake ユーザーのプログラムアクセストークン。
+
+<h4>`database`</h4>
+
+- **フィールド:** `database`
+- **説明:** 解決/インポート対象とする既定のデータベース。(任意)
+
+<h3>例</h3>
+
+```json
+{
+  "catalog": "production",
+  "name": "snowflake_dwh",
+  "type": "snowflake",
+  "provider": {
+    "account": "YOUR-ACCOUNT",
+    "username": "analytics_user",
+    "password": "secure_password",
+    "database": "ANALYTICS"
+  }
+}
+```
+
+  </TabItem>
+
+  <TabItem value="dynamodb" label="DynamoDB">
+
+<h3>設定</h3>
+
+DynamoDB の設定は以下の通りです。
+
+:::note AWS 認証情報
+
+DynamoDB の認証は標準的な AWS SDK の認証情報プロバイダーチェーンを使用します。認証情報は以下の方法で設定できます:
+
+- 環境変数 (`AWS_ACCESS_KEY_ID`、`AWS_SECRET_ACCESS_KEY`)
+- AWS 認証情報ファイル (`~/.aws/credentials`)
+- IAM ロール (EC2、ECS、Lambda 上で実行する場合)
+- AWS SSO または AWS SDK がサポートするその他の認証情報プロバイダー
+
+詳細については、[AWS SDK の認証情報プロバイダーに関するドキュメント](https://docs.aws.amazon.com/sdk-for-java/latest/developer-guide/credentials.html)を参照してください。
+
+:::
+
+<h4>`region`</h4>
+
+- **フィールド:** `region`
+- **説明:** AWS リージョン (例: us-east-1) 。`region` または `endpoint` のいずれかを指定する必要があります (両方は指定できません)。
+
+<h4>`endpoint`</h4>
+
+- **フィールド:** `endpoint`
+- **説明:** カスタムエンドポイント URL。`region` または `endpoint` のいずれかを指定する必要があります (両方は指定できません)。
+
+<h4>`schema`</h4>
+
+- **フィールド:** `schema`
+- **説明:** 完全なスキーマ定義。DynamoDB はスキーマレスなので、完全なスキーマ定義を提供する必要があります。
+
+<h4>スキーマ構造</h4>
+
+schema フィールドには以下の構造が必要です:
+
+<h5>`.schema.namespaces[]`</h5>
+
+- **フィールド:** `.schema.namespaces[]`
+- **説明:** 名前空間定義の配列。
+
+<h5>`.schema.namespaces[].names[]`</h5>
+
+- **フィールド:** `.schema.namespaces[].names[]`
+- **説明:** 名前空間名の配列 (文字列)。
+
+<h5>`.schema.namespaces[].tables[]`</h5>
+
+- **フィールド:** `.schema.namespaces[].tables[]`
+- **説明:** テーブル定義の配列。
+
+<h5>`.schema.namespaces[].tables[].name`</h5>
+
+- **フィールド:** `.schema.namespaces[].tables[].name`
+- **説明:** テーブル名。
+
+<h5>`.schema.namespaces[].tables[].columns[]`</h5>
+
+- **フィールド:** `.schema.namespaces[].tables[].columns[]`
+- **説明:** カラム定義の配列。
+
+<h5>`.schema.namespaces[].tables[].columns[].name`</h5>
+
+- **フィールド:** `.schema.namespaces[].tables[].columns[].name`
+- **説明:** カラム名。
+
+<h5>`.schema.namespaces[].tables[].columns[].type`</h5>
+
+- **フィールド:** `.schema.namespaces[].tables[].columns[].type`
+- **説明:** データ型。
+
+<h5>`.schema.namespaces[].tables[].columns[].nullable`</h5>
+
+- **フィールド:** `.schema.namespaces[].tables[].columns[].nullable`
+- **説明:** カラムがnull値を含むことができるかどうか。
+- **デフォルト値:** `true`
+
+<h3>例</h3>
+
+```json
+{
+  "catalog": "production",
+  "name": "dynamodb_events",
+  "type": "dynamodb",
+  "provider": {
+    "region": "us-east-1",
+    "schema": {
+      "namespaces": [
+        {
+          "names": ["production"],
+          "tables": [
+            {
+              "name": "user_events",
+              "columns": [
+                { "name": "user_id", "type": "TEXT", "nullable": false },
+                {
+                  "name": "event_time",
+                  "type": "TIMESTAMP",
+                  "nullable": false
+                },
+                { "name": "event_type", "type": "TEXT" },
+                { "name": "event_data", "type": "TEXT" }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  }
+}
+```
+
+  </TabItem>
+</Tabs>
+
+## カタログ情報リファレンス
+
+このセクションでは、データソース別のカタログ構造マッピングとデータ型マッピングについて説明します。
+
+### データソース別のカタログ構造マッピング
+
+データソースを ScalarDB Analytics に登録する際、データソースのカタログ構造、すなわち名前空間、テーブル、列が解決され、ユニバーサルデータカタログに登録されます。データソースのカタログ構造を解決するために、データソース側の特定のオブジェクトがユニバーサルデータカタログオブジェクトにマッピングされます。
+
+#### カタログレベルのマッピング
+
+カタログレベルのマッピングは、データソースから名前空間名、テーブル名、および列名をユニバーサルデータカタログへのマッピングです。各データソースでのカタログレベルのマッピングを確認するには、データソースを選択してください。
+
+<Tabs groupId="data-source-type" queryString>
+  <TabItem value="scalardb" label="ScalarDB" default>
+    ScalarDB のカタログ構造は ScalarDB Analytics によって自動的に解決されます。カタログレベルのオブジェクトは以下のようにマッピングされます:
+
+    - ScalarDB 名前空間は名前空間にマッピングされます。したがって、ScalarDB データソースの名前空間は常に単一レベルで、名前空間名のみで構成されます。
+    - ScalarDB テーブルはテーブルにマッピングされます。
+    - ScalarDB 列は列にマッピングされます。
+
+  </TabItem>
+  <TabItem value="postgresql" label="PostgreSQL" default>
+    PostgreSQL のカタログ構造は ScalarDB Analytics によって自動的に解決されます。カタログレベルのオブジェクトは以下のようにマッピングされます:
+
+    - PostgreSQL スキーマは名前空間にマッピングされます。したがって、PostgreSQL データソースの名前空間は常に単一レベルで、スキーマ名のみで構成されます。
+        - ユーザー定義スキーマのみが名前空間にマッピングされます。以下のシステムスキーマは無視されます:
+          - `information_schema`
+          - `pg_catalog`
+    - PostgreSQL テーブルはテーブルにマッピングされます。
+    - PostgreSQL 列は列にマッピングされます。
+
+  </TabItem>
+  <TabItem value="mysql" label="MySQL">
+    MySQL のカタログ構造は ScalarDB Analytics によって自動的に解決されます。カタログレベルのオブジェクトは以下のようにマッピングされます:
+
+    - MySQL データベースは名前空間にマッピングされます。したがって、MySQL データソースの名前空間は常に単一レベルで、データベース名のみで構成されます。
+        - ユーザー定義データベースのみが名前空間にマッピングされます。以下のシステムデータベースは無視されます:
+            - `mysql`
+            - `sys`
+            - `information_schema`
+            - `performance_schema`
+    - MySQL テーブルはテーブルにマッピングされます。
+    - MySQL 列は列にマッピングされます。
+
+  </TabItem>
+  <TabItem value="oracle" label="Oracle">
+    Oracle のカタログ構造は ScalarDB Analytics によって自動的に解決されます。カタログレベルのオブジェクトは以下のようにマッピングされます:
+
+    - Oracle スキーマは名前空間にマッピングされます。したがって、Oracle データソースの名前空間は常に単一レベルで、スキーマ名のみで構成されます。
+        - ユーザー定義スキーマのみが名前空間にマッピングされます。以下のシステムスキーマは無視されます:
+            - `ANONYMOUS`
+            - `APPQOSSYS`
+            - `AUDSYS`
+            - `CTXSYS`
+            - `DBSNMP`
+            - `DGPDB_INT`
+            - `DBSFWUSER`
+            - `DVF`
+            - `DVSYS`
+            - `GGSYS`
+            - `GSMADMIN_INTERNAL`
+            - `GSMCATUSER`
+            - `GSMROOTUSER`
+            - `GSMUSER`
+            - `LBACSYS`
+            - `MDSYS`
+            - `OJVMSYS`
+            - `ORDDATA`
+            - `ORDPLUGINS`
+            - `ORDSYS`
+            - `OUTLN`
+            - `REMOTE_SCHEDULER_AGENT`
+            - `SI_INFORMTN_SCHEMA`
+            - `SYS`
+            - `SYS$UMF`
+            - `SYSBACKUP`
+            - `SYSDG`
+            - `SYSKM`
+            - `SYSRAC`
+            - `SYSTEM`
+            - `WMSYS`
+            - `XDB`
+            - `DIP`
+            - `MDDATA`
+            - `ORACLE_OCM`
+            - `XS$NULL`
+
+  </TabItem>
+  <TabItem value="sql-server" label="SQL Server">
+    SQL Server のカタログ構造は ScalarDB Analytics によって自動的に解決されます。カタログレベルのオブジェクトは以下のようにマッピングされます:
+
+    - SQL Server データベースとスキーマは共に名前空間にマッピングされます。したがって、SQL Server データソースの名前空間は常に2レベルで、データベース名とスキーマ名で構成されます。
+        - ユーザー定義データベースのみが名前空間にマッピングされます。以下のシステムデータベースは無視されます:
+            - `sys`
+            - `guest`
+            - `INFORMATION_SCHEMA`
+            - `db_accessadmin`
+            - `db_backupoperator`
+            - `db_datareader`
+            - `db_datawriter`
+            - `db_ddladmin`
+            - `db_denydatareader`
+            - `db_denydatawriter`
+            - `db_owner`
+            - `db_securityadmin`
+        - ユーザー定義スキーマのみが名前空間にマッピングされます。以下のシステムスキーマは無視されます:
+            - `master`
+            - `model`
+            - `msdb`
+            - `tempdb`
+    - SQL Server テーブルはテーブルにマッピングされます。
+    - SQL Server 列は列にマッピングされます。
+
+  </TabItem>
+
+  <TabItem value="databricks" label="Databricks">
+    Databricks のカタログ構造は ScalarDB Analytics によって自動的に解決されます。カタログレベルのオブジェクトは以下のようにマッピングされます：
+
+    - Databricks の各カタログ・スキーマペアは ScalarDB Analytics の名前空間にマッピングされます。したがって、Databricks データソースの名前空間は常に2レベルで、カタログ名とスキーマ名で構成されます。
+        - 以下のシステム カタログ/スキーマは無視されます：
+            - **カタログ:** `system`
+            - **スキーマ:** `information_schema`, `global_temp`, `sys`, `routines`
+    - Databricks のテーブルはテーブルにマッピングされます。
+    - Databricks の列は列にマッピングされます。
+
+  </TabItem>
+  <TabItem value="snowflake" label="Snowflake">
+    Snowflake のカタログ構造は ScalarDB Analytics によって自動的に解決されます。カタログレベルのオブジェクトは以下のようにマッピングされます：
+
+    - Snowflake の各データベース・スキーマペアは ScalarDB Analytics の名前空間にマッピングされます。したがって、Snowflake データソースの名前空間は常に2レベルで、データベース名とスキーマ名で構成されます。
+        - 以下のシステム データベース/スキーマは無視されます：
+            - **データベース:** `SNOWFLAKE`
+            - **スキーマ:** `INFORMATION_SCHEMA`
+    - Snowflake のテーブルはテーブルにマッピングされます。
+    - Snowflake の列は列にマッピングされます。
+
+  </TabItem>
+  <TabItem value="dynamodb" label="DynamoDB">
+    DynamoDB はスキーマレスであるため、DynamoDB データソースを登録する際に以下のような形式の JSON を使用してカタログ構造を明示的に指定する必要があります:
+
+    ```json
+    {
+        "namespaces": [
+            {
+                "name": "<NAMESPACE_NAME>",
+                "tables": [
+                    {
+                        "name": "<TABLE_NAME>",
+                        "columns": [
+                            {
+                                "name": "<COLUMN_NAME>",
+                                "type": "<COLUMN_TYPE>"
+                            },
+                            ...
+                        ]
+                    },
+                    ...
+                ]
+            },
+            ...
+        ]
+    }
+    ```
+
+    指定した JSON では、任意の名前空間名を使用できますが、テーブル名は DynamoDB のテーブル名と一致する必要があり、列名と型は DynamoDB のフィールド名と型と一致する必要があります。
+
+  </TabItem>
+</Tabs>
+
+### データ型マッピング
+
+以下のセクションでは、各データソースのネイティブ型が ScalarDB Analytics 型にどのようにマッピングされるかを示します:
+
+:::warning
+
+以下のマッピングテーブルに含まれていないデータ型の列は、データソース登録時に無視されます。これらの列は ScalarDB Analytics カタログに表示されず、クエリすることもできません。無視された列の情報は ScalarDB Analytics サーバーログに記録されます。
+
+:::
+
+<Tabs groupId="data-source-type" queryString>
+  <TabItem value="scalardb" label="ScalarDB" default>
+
+| **ScalarDB データ型** | **ScalarDB Analytics データ型** |
+| :-------------------- | :------------------------------ |
+| `BOOLEAN`             | `BOOLEAN`                       |
+| `INT`                 | `INT`                           |
+| `BIGINT`              | `BIGINT`                        |
+| `FLOAT`               | `FLOAT`                         |
+| `DOUBLE`              | `DOUBLE`                        |
+| `TEXT`                | `TEXT`                          |
+| `BLOB`                | `BLOB`                          |
+| `DATE`                | `DATE`                          |
+| `TIME`                | `TIME`                          |
+| `TIMESTAMP`           | `TIMESTAMP`                     |
+| `TIMESTAMPTZ`         | `TIMESTAMPTZ`                   |
+
+  </TabItem>
+  <TabItem value="postgresql" label="PostgreSQL">
+
+| **PostgreSQL データ型**       | **ScalarDB Analytics データ型** |
+| :---------------------------- | :------------------------------ |
+| `integer`                     | `INT`                           |
+| `bigint`                      | `BIGINT`                        |
+| `real`                        | `FLOAT`                         |
+| `double precision`            | `DOUBLE`                        |
+| `smallserial`                 | `SMALLINT`                      |
+| `serial`                      | `INT`                           |
+| `bigserial`                   | `BIGINT`                        |
+| `char`                        | `TEXT`                          |
+| `varchar`                     | `TEXT`                          |
+| `text`                        | `TEXT`                          |
+| `bpchar`                      | `TEXT`                          |
+| `boolean`                     | `BOOLEAN`                       |
+| `bytea`                       | `BLOB`                          |
+| `date`                        | `DATE`                          |
+| `time`                        | `TIME`                          |
+| `time with time zone`         | `TIME`                          |
+| `time without time zone`      | `TIME`                          |
+| `timestamp`                   | `TIMESTAMP`                     |
+| `timestamp with time zone`    | `TIMESTAMPTZ`                   |
+| `timestamp without time zone` | `TIMESTAMP`                     |
+
+  </TabItem>
+  <TabItem value="mysql" label="MySQL">
+
+| **MySQL データ型**   | **ScalarDB Analytics データ型** |
+| :------------------- | :------------------------------ |
+| `bit`                | `BOOLEAN`                       |
+| `bit(1)`             | `BOOLEAN`                       |
+| `bit(x)` if _x >= 2_ | `BLOB`                          |
+| `tinyint`            | `SMALLINT`                      |
+| `tinyint(1)`         | `BOOLEAN`                       |
+| `boolean`            | `BOOLEAN`                       |
+| `smallint`           | `SMALLINT`                      |
+| `smallint unsigned`  | `INT`                           |
+| `mediumint`          | `INT`                           |
+| `mediumint unsigned` | `INT`                           |
+| `int`                | `INT`                           |
+| `int unsigned`       | `BIGINT`                        |
+| `bigint`             | `BIGINT`                        |
+| `float`              | `FLOAT`                         |
+| `double`             | `DOUBLE`                        |
+| `real`               | `DOUBLE`                        |
+| `char`               | `TEXT`                          |
+| `varchar`            | `TEXT`                          |
+| `text`               | `TEXT`                          |
+| `binary`             | `BLOB`                          |
+| `varbinary`          | `BLOB`                          |
+| `blob`               | `BLOB`                          |
+| `date`               | `DATE`                          |
+| `time`               | `TIME`                          |
+| `datetime`           | `TIMESTAMP`                     |
+| `timestamp`          | `TIMESTAMPTZ`                   |
+
+  </TabItem>
+  <TabItem value="oracle" label="Oracle">
+
+| **Oracle データ型**              | **ScalarDB Analytics データ型** |
+| :------------------------------- | :------------------------------ |
+| `NUMBER` if _scale = 0_          | `BIGINT`                        |
+| `NUMBER` if _scale > 0_          | `DOUBLE`                        |
+| `FLOAT` if _precision ≤ 53_      | `DOUBLE`                        |
+| `BINARY_FLOAT`                   | `FLOAT`                         |
+| `BINARY_DOUBLE`                  | `DOUBLE`                        |
+| `CHAR`                           | `TEXT`                          |
+| `NCHAR`                          | `TEXT`                          |
+| `VARCHAR2`                       | `TEXT`                          |
+| `NVARCHAR2`                      | `TEXT`                          |
+| `CLOB`                           | `TEXT`                          |
+| `NCLOB`                          | `TEXT`                          |
+| `BLOB`                           | `BLOB`                          |
+| `BOOLEAN`                        | `BOOLEAN`                       |
+| `DATE`                           | `DATE`                          |
+| `TIMESTAMP`                      | `TIMESTAMPTZ`                   |
+| `TIMESTAMP WITH TIME ZONE`       | `TIMESTAMPTZ`                   |
+| `TIMESTAMP WITH LOCAL TIME ZONE` | `TIMESTAMP`                     |
+| `RAW`                            | `BLOB`                          |
+
+  </TabItem>
+  <TabItem value="sql-server" label="SQL Server">
+
+| **SQL Server データ型** | **ScalarDB Analytics データ型** |
+| :---------------------- | :------------------------------ |
+| `bit`                   | `BOOLEAN`                       |
+| `tinyint`               | `SMALLINT`                      |
+| `smallint`              | `SMALLINT`                      |
+| `int`                   | `INT`                           |
+| `bigint`                | `BIGINT`                        |
+| `real`                  | `FLOAT`                         |
+| `float`                 | `DOUBLE`                        |
+| `float(n)` if _n ≤ 24_  | `FLOAT`                         |
+| `float(n)` if _n ≥ 25_  | `DOUBLE`                        |
+| `binary`                | `BLOB`                          |
+| `varbinary`             | `BLOB`                          |
+| `char`                  | `TEXT`                          |
+| `varchar`               | `TEXT`                          |
+| `nchar`                 | `TEXT`                          |
+| `nvarchar`              | `TEXT`                          |
+| `ntext`                 | `TEXT`                          |
+| `text`                  | `TEXT`                          |
+| `date`                  | `DATE`                          |
+| `time`                  | `TIME`                          |
+| `datetime`              | `TIMESTAMP`                     |
+| `datetime2`             | `TIMESTAMP`                     |
+| `smalldatetime`         | `TIMESTAMP`                     |
+| `datetimeoffset`        | `TIMESTAMPTZ`                   |
+
+  </TabItem>
+  <TabItem value="databricks" label="Databricks">
+
+| **Databricks SQL データ型** | **ScalarDB Analytics データ型**                                                     |
+| :-------------------------- | :---------------------------------------------------------------------------------- |
+| `TINYINT`                   | `SMALLINT`                                                                          |
+| `SMALLINT`                  | `SMALLINT`                                                                          |
+| `INT` / `INTEGER`           | `INT`                                                                               |
+| `BIGINT`                    | `BIGINT`                                                                            |
+| `FLOAT`                     | `FLOAT`                                                                             |
+| `DOUBLE`                    | `DOUBLE`                                                                            |
+| `DECIMAL(p,0)`              | `BYTE` (p ≤ 2), `SMALLINT` (3–4), `INT` (5–9), `BIGINT` (10–18), `DECIMAL` (p > 18) |
+| `STRING` / `VARCHAR`        | `TEXT`                                                                              |
+| `BINARY`                    | `BLOB`                                                                              |
+| `BOOLEAN`                   | `BOOLEAN`                                                                           |
+| `DATE`                      | `DATE`                                                                              |
+| `TIMESTAMP`                 | `TIMESTAMPTZ`                                                                       |
+| `TIMESTAMP_NTZ`             | `TIMESTAMP`                                                                         |
+
+  </TabItem>
+  <TabItem value="snowflake" label="Snowflake">
+
+| **Snowflake データ型**                                                                                                       | **ScalarDB Analytics データ型**                                                     |
+| :--------------------------------------------------------------------------------------------------------------------------- | :---------------------------------------------------------------------------------- |
+| `NUMBER(p,0)`                                                                                                                | `BYTE` (p ≤ 2), `SMALLINT` (3–4), `INT` (5–9), `BIGINT` (10–18), `DECIMAL` (p > 18) |
+| `NUMBER` / `NUMERIC`                                                                                                         | `DECIMAL`                                                                           |
+| `INT` / `INTEGER` / `BIGINT` / `SMALLINT` / `TINYINT` / `BYTEINT`                                                            | `DECIMAL`                                                                           |
+| `FLOAT` / `FLOAT4` / `FLOAT8` / `DOUBLE` / `DOUBLE PRECISION` / `REAL`                                                       | `DOUBLE`                                                                            |
+| `VARCHAR` / `STRING` / `TEXT` / `NVARCHAR` / `NVARCHAR2` / `CHAR VARYING` / `NCHAR VARYING` / `CHAR` / `CHARACTER` / `NCHAR` | `TEXT`                                                                              |
+| `BINARY` / `VARBINARY`                                                                                                       | `BLOB`                                                                              |
+| `BOOLEAN`                                                                                                                    | `BOOLEAN`                                                                           |
+| `DATE`                                                                                                                       | `DATE`                                                                              |
+| `TIME`                                                                                                                       | `TIME`                                                                              |
+| `TIMESTAMP_NTZ` / `DATETIME`                                                                                                 | `TIMESTAMP`                                                                         |
+| `TIMESTAMP_LTZ`                                                                                                              | `TIMESTAMPTZ`                                                                       |
+| `TIMESTAMP_TZ`                                                                                                               | `TIMESTAMPTZ`                                                                       |
+
+  </TabItem>
+  <TabItem value="dynamodb" label="DynamoDB">
+
+| **DynamoDB データ型** | **ScalarDB Analytics データ型** |
+| :-------------------- | :------------------------------ |
+| `String`              | `TEXT`                          |
+| `Number`              | `DOUBLE`                        |
+| `Binary`              | `BLOB`                          |
+| `Boolean`             | `BOOLEAN`                       |
+| `Null`                | `NULL`                          |
+| `String Set`          | `TEXT`                          |
+| `Number Set`          | `TEXT`                          |
+| `Binary Set`          | `TEXT`                          |
+| `List`                | `TEXT`                          |
+| `Map`                 | `TEXT`                          |
+
+:::note
+
+DynamoDB の複合データ型 (String Set、Number Set、Binary Set、List、Map) は互換性のために `TEXT` にマッピングされます。実際の値は ScalarDB Analytics クエリで JSON 文字列としてシリアル化されます。
+
+:::
+
+  </TabItem>
+</Tabs>

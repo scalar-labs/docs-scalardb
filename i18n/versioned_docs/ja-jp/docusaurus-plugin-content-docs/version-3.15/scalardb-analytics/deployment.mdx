@@ -125,95 +125,78 @@ Databricks は Apache Spark の修正版を提供しており、オリジナル�
 
 :::
 
-<h4>Databricks クラスターの起動</h4>
+<h4>ScalarDB Analytics ライブラリ JAR を読み込むための init script の準備</h4>
 
-ScalarDB Analytics は Databricks の汎用クラスターとジョブコンピュートクラスターで動作します。クラスターを起動するとき、ScalarDB Analytics を有効にするために以下のようにクラスターを設定する必要があります：
+1. Maven リポジトリから ScalarDB Analytics ライブラリ JAR ファイルをダウンロードします。Spark、Scala、ScalarDB のバージョンに基づいて適切な JAR ファイルを選択してください:
+   - [scalardb-analytics-spark-all-3.4_2.13 (Spark v3.4, Scala v2.13)](https://repo1.maven.org/maven2/com/scalar-labs/scalardb-analytics-spark-all-3.4_2.13/)
+   - [scalardb-analytics-spark-all-3.5_2.13 (Spark v3.5, Scala v2.13)](https://repo1.maven.org/maven2/com/scalar-labs/scalardb-analytics-spark-all-3.5_2.13/)
+   - [scalardb-analytics-spark-all-3.4_2.12 (Spark v3.4, Scala v2.12)](https://repo1.maven.org/maven2/com/scalar-labs/scalardb-analytics-spark-all-3.4_2.12/)
+   - [scalardb-analytics-spark-all-3.5_2.12 (Spark v3.5, Scala v2.12)](https://repo1.maven.org/maven2/com/scalar-labs/scalardb-analytics-spark-all-3.5_2.12/)
+2. JAR ファイルを Databricks ワークスペースにアップロードします。
+3. 以下のような init script を作成し、`<PATH_TO_YOUR_JAR_FILE_IN_WORKSPACE>` を Databricks ワークスペース内の JAR ファイルのパスに置き換えてください:
 
-1. Databricks CLI を使用して、ライセンス証明書とライセンスキーをクラスターに保存します。
+    ```bash
+    #!/bin/bash
 
-```console
-databricks secrets create-scope scalardb-analytics-secret # 任意のシークレットスコープ名を使用できます
-cat license_key.json | databricks secrets put-secret scalardb-analytics-secret license-key
-cat license_cert.pem | databricks secrets put-secret scalardb-analytics-secret license-cert
-```
+    # Target directories
+    TARGET_DIRECTORIES=("/databricks/jars" "/databricks/hive_metastore_jars")
+    JAR_PATH="<PATH_TO_YOUR_JAR_FILE_IN_WORKSPACE>"
 
-:::note
+    # Copy the JAR file to the target directories
+    for TARGET_DIR in "${TARGET_DIRECTORIES[@]}"; do
+     mkdir -p "$TARGET_DIR"
+     cp "$JAR_PATH" "$TARGET_DIR/"
+    done
+    ```
 
-Databricks CLI のインストールと使用方法の詳細については、[Databricks CLI ドキュメント](https://docs.databricks.com/en/dev-tools/cli/index.html)を参照してください。
+4. init script を Databricks ワークスペースにアップロードします。
 
-:::
+<h4>Databricks コンピュートの起動</h4>
 
-2. クラスターモードに「No isolation shared」を選択します。（これは必須です。ScalarDB Analytics はこのクラスターモードでのみ動作します。）
-3. Spark 3.4以降をサポートする適切な Databricks ランタイムバージョンを選択します。
-4. 「詳細オプション」>「Spark 設定」を以下のように設定します。`<CATALOG_NAME>` を使用したいカタログの名前に置き換えてください：
+ScalarDB Analytics は Databricks の汎用コンピュートで動作します。コンピュートを起動する際、ScalarDB Analytics を有効にするために以下のようにコンピュートを設定する必要があります:
 
-```
-spark.sql.catalog.<CATALOG_NAME> com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog
-spark.sql.extensions com.scalar.db.analytics.spark.extension.ScalarDbAnalyticsExtensions
-spark.sql.catalog.<CATALOG_NAME>.license.key {{secrets/scalardb-analytics-secret/license-key}}
-spark.sql.catalog.<CATALOG_NAME>.license.cert_pem {{secrets/scalardb-analytics-secret/license-pem}}
-```
+1. `Compute` メニューで `Create compute` を選択します。
+2. `Policy` ドロップダウンメニューから `Unrestricted` を選択します。
+3. Spark 3.4 または 3.5 をサポートする適切な Databricks ランタイムバージョンを選択します。
+4. `Advanced` セクションに移動します。`Access mode` タブで、アクセスモードとして `Manual` を選択し、`No isolation shared` を選択します。
+5. `Advanced` セクションで、`Spark` タブを選択し、`Spark config` に以下の設定を入力します:
 
-:::note
+    ```
+    spark.extraListeners com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener
+    spark.sql.catalog.<CATALOG_NAME> com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog
+    spark.sql.catalog.<CATALOG_NAME>.server.host <CATALOG_SERVER_HOST>
+    spark.sql.catalog.<CATALOG_NAME>.server.catalog.port 11051
+    spark.sql.catalog.<CATALOG_NAME>.server.metering.port 11052
+    ```
 
-データソースも設定する必要があります。詳細については、[ScalarDB Analytics のセットアップのための Spark 設定](./run-analytical-queries.mdx#scalardb-analytics-のセットアップのための-spark-設定)を参照してください。
+    プレースホルダーを置き換えてください:
 
-:::
+    - `<CATALOG_NAME>`: カタログの名前。これは ScalarDB Analytics サーバー上で作成されたカタログと一致する必要があります。
+    - `<CATALOG_SERVER_HOST>`: ScalarDB Analytics サーバーのホストアドレス
 
-:::note
-
-前のステップで異なるシークレット名を指定した場合は、上記の設定でシークレット名を必ず置き換えてください。
-
-:::
-
-5. Maven 依存関係として、起動したクラスターに ScalarDB Analytics のライブラリを追加します。ライブラリの追加方法の詳細については、[Databricks クラスターライブラリドキュメント](https://docs.databricks.com/en/libraries/cluster-libraries.html)を参照してください。
+6. `Advanced` セクションで、`init scripts` タブを選択し、アップロードしたワークスペース内の init script のパスを指定します。
+7. `Create` を選択します。
 
 <h4>Spark Driver を介した分析クエリの実行</h4>
 
-適切に設定された Databricks クラスターで Spark アプリケーションを Databricks Notebook または Databricks Jobs で実行して、ScalarDB Analytics 内のテーブルにアクセスできます。Spark アプリケーションを実行するには、Pyspark、Scala、または Spark SQL アプリケーションを Databricks Notebook に移行するか、Databricks Jobs を使用して Spark アプリケーションを実行できます。ScalarDB Analytics は Notebook、Python、JAR、および SQL のタスクタイプで動作します。
+適切に設定された Databricks コンピュートで Spark アプリケーションを Databricks Notebook または Databricks Jobs で実行して、ScalarDB Analytics 内のテーブルにアクセスできます。Spark アプリケーションを実行するには、Pyspark、Scala、または Spark SQL アプリケーションを Databricks Notebook に移行するか、Databricks Jobs を使用して Spark アプリケーションを実行できます。ScalarDB Analytics は Notebook、Python、JAR、および SQL のタスクタイプで動作します。
 
-Databricks Jobs の使用方法の詳細については、[Databricks Jobs ドキュメント](https://docs.databricks.com/en/jobs/index.html)を参照してください。
+Databricks Jobs の使用方法の詳細については、[Databricks ジョブのドキュメント](https://docs.databricks.com/aws/ja/jobs)を参照してください。
 
 <h4>JDBC ドライバーを介した分析クエリの実行</h4>
 
-Databricks はクラスター上で SQL ジョブを実行するための JDBC をサポートしています。以下のような追加設定を行うことで、ScalarDB Analytics で SQL を使用して Spark アプリケーションを実行できます：
-
-1. Maven リポジトリから ScalarDB Analytics ライブラリの JAR ファイルをダウンロードします。
-2. JAR ファイルを Databricks ワークスペースにアップロードします。
-3. Maven 依存関係の代わりに、ライブラリとして JAR ファイルをクラスターに追加します。
-4. 以下のように初期化スクリプトを作成します。`<PATH_TO_YOUR_JAR_FILE_IN_WORKSPACE>` を Databricks ワークスペース内の JAR ファイルのパスに置き換えてください：
-
-```bash
-#!/bin/bash
-
-# Target directories
-TARGET_DIRECTORIES=("/databricks/jars" "/databricks/hive_metastore_jars")
-JAR_PATH="<PATH_TO_YOUR_JAR_FILE_IN_WORKSPACE>
-
-# Copy the JAR file to the target directories
-for TARGET_DIR in "${TARGET_DIRECTORIES[@]}"; do
-  mkdir -p "$TARGET_DIR"
-  cp "$JAR_PATH" "$TARGET_DIR/"
-done
-```
-
-5. 初期化スクリプトを Databricks ワークスペースにアップロードします。
-6. クラスターを起動するときに、「詳細オプション」>「初期化スクリプト」にスクリプトを追加します。
-
-クラスターが起動した後、クラスター詳細ページの「詳細オプション」>「JDBC/ODBC」タブでクラスターの JDBC URL を取得できます。
-
-JDBC を使用して Databricks クラスターに接続するには、アプリケーションの依存関係に Databricks JDBC ドライバーを追加する必要があります。例えば、Gradle を使用している場合は、`build.gradle` ファイルに次の依存関係を追加できます：
+Databricks はコンピュート上で SQL ジョブを実行するための JDBC をサポートしています。コンピュートが起動した後、`Advanced` > `JDBC/ODBC` タブでコンピュートの JDBC URL を取得できます。JDBC を使用してコンピュートに接続するには、アプリケーションの依存関係に Databricks JDBC ドライバーを追加する必要があります。例えば、Gradle を使用している場合は、使用したい Databricks JDBC ドライバーのバージョンで `<DRIVER_VERSION>` を置き換えて、`build.gradle` ファイルに以下の依存関係を追加できます:
 
 ```groovy
-implementation("com.databricks:databricks-jdbc:0.9.6-oss")
+implementation("com.databricks:databricks-jdbc:<DRIVER_VERSION>")
 ```
 
-その後、JDBC アプリケーションで一般的なように、JDBC URL（`<YOUR_CLUSTERS_JDBC_URL>`）を使用して JDBC で Databricks クラスターに接続できます。
+その後、JDBC アプリケーションで一般的なように、JDBC URL (`<YOUR_COMPUTE_JDBC_URL>`) を使用して JDBC でコンピュートに接続できます。
 
 ```java
 Class.forName("com.databricks.client.jdbc.Driver");
-String url = "<YOUR_CLUSTERS_JDBC_URL>";
-Connection conn = DriverManager.getConnection(url)
+String url = "<YOUR_COMPUTE_JDBC_URL>";
+Connection conn = DriverManager.getConnection(url);
 ```
 
 Databricks で JDBC を使用する方法の詳細については、[Databricks JDBC ドライバードキュメント](https://docs.databricks.com/en/integrations/jdbc/index.html)を参照してください。

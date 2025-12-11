@@ -83,6 +83,7 @@ The following is a sample schema for importing tables. For the sample schema fil
 ```
 
 The import table schema consists of a namespace name, a table name, a `transaction` field, and an optional `override-columns-type` field:
+
 - The `transaction` field indicates whether or not the table will be imported for transactions. If you set the `transaction` field to `true` or don't specify the `transaction` field, this tool will create a table with transaction metadata, if needed. If you set the `transaction` field to `false`, this tool will import a table without adding transaction metadata (that is, for a table using the [Storage API](run-non-transactional-storage-operations-through-primitive-crud-interface.mdx)).
 - The `override-columns-type` field indicates the columns for which you wish to override the default data-type mapping. This field is optional and only needs to be set with the columns requiring a type override. 
 
@@ -91,8 +92,8 @@ The import table schema consists of a namespace name, a table name, a `transacti
 The following table shows the supported data types in each JDBC database and their mapping to the ScalarDB data types. Select your database and check if your existing tables can be imported.
 
 <Tabs groupId="databases" queryString>
-  <TabItem value="MySQL_MariaDB" label="MySQL and MariaDB" default>
-    | MySQL        | ScalarDB                            | Notes                                                                                                               |
+  <TabItem value="MySQL_MariaDB_TiDB" label="MySQL, MariaDB, and TiDB" default>
+    | MySQL/MariaDB/TiDB | ScalarDB                      | Notes                                                                                                               |
     |--------------|-------------------------------------|---------------------------------------------------------------------------------------------------------------------|
     | bigint       | BIGINT                              | See warning [1](#1) below.                                                                                          |
     | binary       | BLOB                                |                                                                                                                     |
@@ -134,8 +135,8 @@ The following table shows the supported data types in each JDBC database and the
     - set
     - year
   </TabItem>
-  <TabItem value="PostgreSQL_YugabyteDB" label="PostgreSQL and YugabyteDB">
-    | PostgreSQL/YugabyteDB    | ScalarDB    | Notes                      |
+  <TabItem value="PostgreSQL_YugabyteDB_AlloyDB" label="PostgreSQL, YugabyteDB, and AlloyDB">
+    | PostgreSQL/YugabyteDB/AlloyDB    | ScalarDB    | Notes                      |
     |--------------------------|-------------|----------------------------|
     | bigint                   | BIGINT      | See warning [1](#1) below. |
     | boolean                  | BOOLEAN     |                            |
@@ -311,9 +312,34 @@ The following table shows the supported data types in each JDBC database and the
   <li>
     <a name="6"></a>The underlying storage type can be mapped to several ScalarDB data types. To override the default mapping, use the `override-columns-type` field in the import schema file. For an example, see [Sample import schema file](#sample-import-schema-file).
   </li>
+  <li>
+    <a name="7"></a>ScalarDB does not support altering SQL Server `image` columns imported as ScalarDB `BLOB` columns to change their data types to `TEXT`.
+  </li>
 </ol>
 
 :::
+
+## Decoupling transaction metadata
+
+You can separately manage the transaction metadata from application data by enabling [transaction metadata decoupling](./consensus-commit.mdx#transaction-metadata-decoupling).
+
+To decouple transaction metadata for an imported table, add the `transaction-metadata-decoupling` field with a value of `true` in the import schema file, as shown in the following example:
+
+```json
+{
+  "sample_namespace.sample_table": {
+    "transaction-metadata-decoupling": true
+  }
+}
+```
+
+:::note
+
+The imported table name is the original table name with the `_scalardb` suffix appended, so you can access it as `<table_name>_scalardb`.
+
+:::
+
+For details about transaction metadata decoupling, see [Transaction metadata decoupling](./schema-loader.mdx#transaction-metadata-decoupling).
 
 ## Use import function in your application
 

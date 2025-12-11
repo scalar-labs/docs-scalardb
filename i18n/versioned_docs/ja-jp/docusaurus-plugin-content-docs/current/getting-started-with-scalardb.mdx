@@ -102,6 +102,52 @@ ScalarDB がサポートするデータベースの一覧については、[デ�
     scalar.db.password=postgres
     ```
   </TabItem>
+  <TabItem value="TiDB" label="TiDB">
+    <h3>TiDB をローカルで実行する</h3>
+    
+    TiUP ツールを使用して TiDB をローカルで実行できます。インストール手順については、[TiUP のインストール](https://docs.pingcap.com/ja/tidb/stable/tiup-overview/#install-tiup)を参照してください。
+
+    TiDB を起動するには、次のコマンドを実行します。
+    
+    ```console
+    tiup playground v8.5 --without-monitor
+    ```
+
+    <h3>ScalarDB を設定する</h3>
+
+    `scalardb-samples/scalardb-sample` ディレクトリの **database.properties** ファイルには、ScalarDB のデータベース設定が含まれています。**database.properties** ファイル内の TiDB のプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For TiDB
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:mysql://localhost:4000/
+    scalar.db.username=root
+    scalar.db.password=
+    ```
+  </TabItem>
+  <TabItem value="AlloyDB" label="AlloyDB">
+    <h3>AlloyDB をローカルで実行する</h3>
+
+    `scalardb-samples/scalardb-sample` ディレクトリの `docker-compose.yml` ファイルを使用して、Docker Compose で AlloyDB Omni を実行できます。
+
+    AlloyDB Omni を起動するには、次のコマンドを実行します。
+
+    ```console
+    docker compose up -d alloydb
+    ```
+
+    <h3>ScalarDB を設定する</h3>
+
+    `scalardb-samples/scalardb-sample` ディレクトリの **database.properties** ファイルには、ScalarDB のデータベース設定が含まれています。**database.properties** ファイル内の AlloyDB のプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For AlloyDB
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:postgresql://localhost:5432/
+    scalar.db.username=postgres
+    scalar.db.password=postgres
+    ```
+  </TabItem>
   <TabItem value="Oracle Database" label="Oracle Database">
     <h3>Oracle Database をローカルで実行する</h3>
 
@@ -276,6 +322,28 @@ Azure Cosmos DB アカウントの主キーまたはセカンダリキーを `sc
 
 :::
   </TabItem>
+  <TabItem value="TiDB" label="TiDB">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```
+
+:::note
+
+`transaction` が `true` に設定されたテーブルがスキーマに存在するため、`--coordinator` オプションが指定されています。スキーマの設定と読み込みの詳細については、[ScalarDB  Schema Loader](schema-loader.mdx) を参照してください。
+
+:::
+  </TabItem>
+  <TabItem value="AlloyDB" label="AlloyDB">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```
+
+:::note
+
+`transaction` が `true` に設定されたテーブルがスキーマに存在するため、`--coordinator` オプションが指定されています。スキーマの設定と読み込みの詳細については、[ScalarDB  Schema Loader](schema-loader.mdx) を参照してください。
+
+:::
+  </TabItem>
   <TabItem value="Oracle Database" label="Oracle Database">
     ```console
     java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
@@ -288,6 +356,17 @@ Azure Cosmos DB アカウントの主キーまたはセカンダリキーを `sc
 :::
   </TabItem>
   <TabItem value="SQL Server" label="SQL Server">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```
+
+:::note
+
+`transaction` が `true` に設定されたテーブルがスキーマ内に存在するため、`--coordinator` オプションが指定されています。スキーマの設定とロードの詳細については、[ScalarDB Schema Loader](schema-loader.mdx) を参照してください。
+
+:::
+  </TabItem>
+  <TabItem value="Db2" label="Db2">
     ```console
     java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
     ```

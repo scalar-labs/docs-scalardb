@@ -545,19 +545,19 @@ Cosmos DB for NoSQL の自動スケーリングは、このオプションが `4
 
 次の表は、ScalarDB でサポートされているデータ型と、他のデータベースのデータ型へのマッピングを示しています。
 
-| ScalarDB    | Cassandra                    | Cosmos DB for NoSQL | Db2                  | DynamoDB | MySQL/MariaDB | PostgreSQL/YugabyteDB    | Oracle                   | SQL Server      | SQLite  |
-|-------------|------------------------------|---------------------|----------------------|----------|---------------|--------------------------|--------------------------|-----------------|---------|
-| BOOLEAN     | boolean                      | boolean (JSON)      | BOOLEAN              | BOOL     | boolean       | boolean                  | number(1)                | bit             | boolean |
-| INT         | int                          | number (JSON)       | INT                  | N        | int           | int                      | number(10)               | int             | int     |
-| BIGINT      | bigint                       | number (JSON)       | BIGINT               | N        | bigint        | bigint                   | number(16)               | bigint          | bigint  |
-| FLOAT       | float                        | number (JSON)       | REAL                 | N        | real          | real                     | binary_float             | float(24)       | float   |
-| DOUBLE      | double                       | number (JSON)       | DOUBLE               | N        | double        | double precision         | binary_double            | float           | double  |
-| TEXT        | text                         | string (JSON)       | VARCHAR(32672)       | S        | longtext      | text                     | varchar2(4000)           | varchar(8000)   | text    |
-| BLOB        | blob                         | string (JSON)       | VARBINARY(32672)     | B        | longblob      | bytea                    | RAW(2000)                | varbinary(8000) | blob    |
-| DATE        | date                         | number (JSON)       | DATE                 | N        | date          | date                     | date                     | date            | int     |
-| TIME        | time                         | number (JSON)       | TIMESTAMP            | N        | time          | time                     | timestamp                | time            | bigint  |
-| TIMESTAMP   | <em>サポートされていません</em>  | number (JSON)       | TIMESTAMP            | N        | datetime      | timestamp                | timestamp                | datetime2       | bigint  |
-| TIMESTAMPTZ | timestamp                    | number (JSON)       | TIMESTAMP            | N        | datetime      | timestamp with time zone | timestamp with time zone | datetimeoffset  | bigint  |
+| ScalarDB    | Cassandra                    | Cosmos DB for NoSQL | Db2                  | DynamoDB | MySQL/MariaDB/TiDB | PostgreSQL/YugabyteDB/AlloyDB | Oracle                   | SQL Server      | SQLite  | Object Storage |
+|-------------|------------------------------|---------------------|----------------------|----------|---------------|--------------------------|--------------------------|-----------------|---------|----------------|
+| BOOLEAN     | boolean                      | boolean (JSON)      | BOOLEAN              | BOOL     | boolean       | boolean                  | number(1)                | bit             | boolean | boolean (JSON) |
+| INT         | int                          | number (JSON)       | INT                  | N        | int           | int                      | number(10)               | int             | int     | number (JSON)  |
+| BIGINT      | bigint                       | number (JSON)       | BIGINT               | N        | bigint        | bigint                   | number(16)               | bigint          | bigint  | number (JSON)  |
+| FLOAT       | float                        | number (JSON)       | REAL                 | N        | real          | real                     | binary_float             | float(24)       | float   | number (JSON)  |
+| DOUBLE      | double                       | number (JSON)       | DOUBLE               | N        | double        | double precision         | binary_double            | float           | double  | number (JSON)  |
+| TEXT        | text                         | string (JSON)       | VARCHAR(32672)       | S        | longtext      | text                     | varchar2(4000)           | varchar(8000)   | text    | string (JSON)  |
+| BLOB        | blob                         | string (JSON)       | BLOB(2G)             | B        | longblob      | bytea                    | BLOB                     | varbinary(8000) | blob    | string (JSON)  |
+| DATE        | date                         | number (JSON)       | DATE                 | N        | date          | date                     | date                     | date            | int     | number (JSON)  |
+| TIME        | time                         | number (JSON)       | TIMESTAMP            | N        | time          | time                     | timestamp                | time            | bigint  | number (JSON)  |
+| TIMESTAMP   | <em>サポートされていません</em>  | number (JSON)       | TIMESTAMP            | N        | datetime      | timestamp                | timestamp                | datetime2       | bigint  | number (JSON)  |
+| TIMESTAMPTZ | timestamp                    | number (JSON)       | TIMESTAMP            | N        | datetime      | timestamp with time zone | timestamp with time zone | datetimeoffset  | bigint  | number (JSON)  |
 
 :::note
 
@@ -567,10 +567,10 @@ TIMESTAMP はタイムゾーン情報のない日付と時刻を表しますが�
 
 ただし、JDBC データベースの次のデータ型は、主キーまたはセカンダリインデックスキーとして使用される場合、異なる方法で変換されます。これは、RDB データ型の制限によるものです。MySQL および Oracle の場合、キー列の合計サイズの制限を満たす限り、列サイズ (最小 64 バイト) を変更できます。詳細については、[基盤となるストレージまたはデータベースの設定](configurations.mdx#基盤となるストレージまたはデータベースの設定) を参照してください。
 
-| ScalarDB | MySQL/MariaDB  | PostgreSQL/YugabyteDB | Oracle        | Db2            |
+| ScalarDB | MySQL/MariaDB/TiDB  | PostgreSQL/YugabyteDB/AlloyDB | Oracle        | Db2            |
 |----------|----------------|-----------------------|---------------|----------------|
 | TEXT     | VARCHAR(128)   | VARCHAR(10485760)     | VARCHAR2(128) | VARCHAR(128)   |
-| BLOB     | VARBINARY(128) |                       | RAW(128)      | VARBINARY(128) |
+| BLOB     | VARBINARY(128) |                       |               |                |
 
 次のデータ型には、基盤になるデータベースに関係なく、値の範囲と精度があります。
 
@@ -582,19 +582,94 @@ TIMESTAMP はタイムゾーン情報のない日付と時刻を表しますが�
 | TIMESTAMP    | 1000-01-01 00:00:00.000   | 9999-12-31 23:59:59.999   | 1 ミリ秒        |
 | TIMESTAMPTZ  | 1000-01-01 00:00:00.000 Z | 9999-12-31 23:59:59.999 Z | 1 ミリ秒        |
 
-:::note
+このデータ型マッピングがアプリケーションと一致しない場合は、このツールを使用してテーブルを作成した後、テーブルを変更してデータ型を変更してください。
+
+### データ型の制限事項
+
+Db2 BLOB 型は、パーティションキー、クラスタリングキー、セカンダリインデックスキー、またはクロスパーティションスキャン操作の順序付け列として使用できません。
+
+Oracle BLOB 型は、パーティションキー、クラスタリングキー、セカンダリインデックスキー、Get または Scan 操作の WHERE 条件の列、またはクロスパーティションスキャン操作の順序付け列として使用できません。
 
 YugabyteDB には、浮動小数点型 (FLOAT および DOUBLE) が主キー、クラスタリングキー、またはセカンダリインデックスキーとして正しく機能しないという制限があります。
 
-:::
+Object Storage では、1.5 GiB を超える BLOB 型データを格納することはできません。
 
-このデータ型マッピングがアプリケーションと一致しない場合は、このツールを使用してテーブルを作成した後、テーブルを変更してデータ型を変更してください。
+## Consensus Commit の内部トランザクションメタデータ
 
-## Consensus Commit の内部メタデータ
-
-Consensus Commit トランザクションマネージャーは、トランザクションを適切に処理するために、実際のレコードとともに保存されるメタデータ (トランザクション ID、レコードバージョン、トランザクションステータスなど) を管理します。
+Consensus Commit トランザクションマネージャーは、トランザクションを適切に処理するために、実際のレコードとともに保存されるトランザクションメタデータ (トランザクション ID、レコードバージョン、トランザクションステータスなど) を管理します。
 
 したがって、アプリケーションに必要な列とともに、メタデータ用の追加列をスキーマに定義する必要があります。さらに、Consensus Commit トランザクションマネージャーを使用する場合、このツールはメタデータを含むテーブルを作成します。
+
+### トランザクションメタデータ分離
+
+[トランザクションメタデータ分離](./consensus-commit.mdx#トランザクションメタデータ分離)を有効にすることで、アプリケーションデータとは別にトランザクションメタデータを管理できます。
+
+#### トランザクションメタデータ分離で新しいテーブルを作成する
+
+トランザクションメタデータ分離で新しいテーブルを作成する場合、まずスキーマファイルに `"transaction-metadata-decoupling": true` を追加してオプションを有効にし、その後テーブルを作成する必要があります。
+
+次にスキーマファイルの例を示します。
+
+```json
+{
+  "sample_db.sample_table": {
+    "transaction-metadata-decoupling": true,
+    "partition-key": [
+      "c1"
+    ],
+    "clustering-key": [
+      "c4"
+    ],
+    "columns": {
+      "c1": "INT",
+      "c2": "TEXT",
+      "c3": "INT",
+      "c4": "INT"
+    }
+  }
+}
+```
+
+ScalarDB は、スキーマで定義されたテーブルごとに内部的に2つのテーブルを作成します。データテーブルとトランザクションメタデータテーブルは次のとおりです。
+
+| テーブル                      | 説明                                                                                                              |
+|----------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| `<table_name>_data`        | ユーザーデータを格納するアプリケーションテーブル                                                                                  |
+| `<table_name>_tx_metadata` | トランザクション関連のメタデータと非プライマリキー列のビフォアイメージ列を格納するトランザクションメタデータテーブル |
+
+その後、`INNER JOIN` を使用してデータテーブルとトランザクションメタデータテーブルを結合した仮想テーブルとして、テーブル `<table_name>` にアクセスできます。
+
+#### トランザクションメタデータ分離で既存テーブルをインポートする
+
+トランザクションメタデータ分離で既存のテーブルをインポートする場合も、スキーマファイルに `"transaction-metadata-decoupling": true` を追加してオプションを有効にし、その後テーブルをインポートする必要があります。
+
+次にスキーマファイルの例を示します。
+
+```json
+{
+  "sample_db.sample_table": {
+    "transaction-metadata-decoupling": true
+  }
+}
+```
+
+ScalarDB は、既存のテーブルをデータテーブルと想定し、次のようにトランザクションメタデータテーブルのみを作成します。
+
+| テーブル                      | 説明                                                                                                              |
+|----------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| `<table_name>`             | 元のアプリケーションテーブル（変更されません）                                                                                   |
+| `<table_name>_tx_metadata` | トランザクション関連のメタデータと非プライマリキー列のビフォアイメージ列を格納するトランザクションメタデータテーブル |
+
+その後、`LEFT OUTER JOIN` を使用してデータテーブルとトランザクションメタデータテーブルを結合した仮想テーブルとして、テーブル `<table_name>_scalardb` にアクセスできます。
+
+#### 制限事項
+
+現在、トランザクションメタデータ分離を使用する場合、次の操作はサポートされていません。
+
+- テーブルの修復
+- 列の追加または削除
+- テーブル名の変更
+- 列の型の変更
 
 ## アプリケーションで Schema Loader を使用する
 
@@ -698,7 +773,7 @@ SchemaLoader.unload(properties, serializedSchemaJson, deleteCoordinatorTables);
 SchemaLoader.upgrade(properties, upgradeOptions);
 ```
 
-### Import tables
+### テーブルのインポート
 
 [サンプルスキーマファイル](#サンプルスキーマファイル)に示されているのと同様の方法で、`--import` オプションとインポート固有のスキーマファイルを使用して、既存の JDBC データベーステーブルを ScalarDB にインポートできます。詳細については、[ScalarDB Schema Loader を使用して既存のテーブルを ScalarDB にインポートする](./schema-loader-import.mdx)を参照してください。
 

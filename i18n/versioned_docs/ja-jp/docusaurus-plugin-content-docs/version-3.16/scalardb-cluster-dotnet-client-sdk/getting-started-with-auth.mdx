@@ -1,0 +1,71 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Cluster .NET Client SDK を使用した認証と認可をはじめよう
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+ScalarDB Cluster .NET Client SDK は [認証と認可](../scalardb-cluster/scalardb-auth-with-sql.mdx)をサポートしており、これにより ScalarDB Cluster へのリクエストを認証および認可できます。
+
+## SDK をインストールする
+
+ScalarDB Cluster と同じメジャーバージョンとマイナーバージョンの [SDK](https://www.nuget.org/packages/ScalarDB.Client) を .NET プロジェクトにインストールします。組み込みの NuGet パッケージマネージャーを使用してこれを行うことができます。`<MAJOR>.<MINOR>` を使用しているバージョンに置き換えます。
+
+```console
+dotnet add package ScalarDB.Client --version '<MAJOR>.<MINOR>.*'
+```
+
+## 設定ファイルで資格情報を設定する
+
+設定ファイルの資格情報を次のように設定し、山括弧内の内容を置き換えてください。
+
+```json
+{
+  "ScalarDbOptions": {
+    "Address": "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
+    "HopLimit": 10,
+    "AuthEnabled": true,
+    "Username": "<USERNAME>",
+    "Password": "<PASSWORD>"
+  }
+}
+```
+
+設定ファイルやクライアントを設定するその他の方法の詳細については、[クライアント設定](common-reference.mdx#クライアント設定)を参照してください。
+
+## トランザクションマネージャーを取得する
+
+次のように `TransactionFactory` を使用して、トランザクションマネージャーまたはトランザクション管理オブジェクトを取得する必要があります。`<GET_TRANSACTION_MANAGER>` を `GetTransactionManager()`、`GetTwoPhaseCommitTransactionManager()`、`GetSqlTransactionManager()`、または `GetSqlTwoPhaseCommitTransactionManager()` に置き換えてください。
+
+```c#
+// Pass the path to the settings file.
+var factory = TransactionFactory.Create("scalardb-options.json");
+
+// To get a transaction manager
+using var manager = factory.<GET_TRANSACTION_MANAGER>();
+
+// To get a transaction admin
+using var admin = factory.GetTransactionAdmin();
+```
+
+提供された資格情報を使用して `TransactionFactory` から作成されたトランザクションマネージャーまたはトランザクション管理オブジェクトは、ScalarDB Cluster に自動的にログインし、通信できます。
+
+## ワイヤ暗号化
+
+[ワイヤ暗号化](../scalardb-cluster/scalardb-auth-with-sql.mdx#ワイヤ暗号化) もサポートされています。次のように `Address` を `https` で始まる URL に設定することで有効にできます。
+
+```json
+{
+  "ScalarDbOptions": {
+    "Address": "https://<HOSTNAME_OR_IP_ADDRESS>:<PORT>"
+  }
+}
+```
+
+設定ファイルやクライアントを設定するその他の方法の詳細については、[クライアント設定](common-reference.mdx#クライアント設定)を参照してください。

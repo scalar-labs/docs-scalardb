@@ -24,9 +24,9 @@ The server is configured using a standard Java properties file (for example, `sc
 
 Configure the metadata database that stores catalog information.
 
-#### `db.url`
+#### `db.contact_points`
 
-- **Field:** `scalar.db.analytics.server.db.url`
+- **Field:** `scalar.db.analytics.server.db.contact_points`
 - **Description:** The JDBC URL for the metadata database used by ScalarDB Analytics.
 
 #### `db.username`
@@ -199,7 +199,7 @@ The following is a list of configurations for the catalog.
 #### `spark.sql.catalog.<catalog-name>`
 
 - **Field:** `spark.sql.catalog.<catalog-name>`
-- **Description:** Register the ScalarDB Analytics catalog implementation. Replace `<catalog-name>` with the exact name of the catalog created in ScalarDB Analytics server. Use `com.scalar.db.analytics.spark.ScalarDBAnalyticsCatalog` as the value.
+- **Description:** Register the ScalarDB Analytics catalog implementation. Replace `<catalog-name>` with the exact name of the catalog created in ScalarDB Analytics server. Use `com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog` as the value.
 
 :::important
 
@@ -262,7 +262,7 @@ The following are examples of configurations for the server, CLI client, and Spa
 
 ```properties
 # Metadata database
-scalar.db.analytics.server.db.url=jdbc:postgresql://localhost:5432/scalardb_analytics
+scalar.db.analytics.server.db.contact_points=jdbc:postgresql://localhost:5432/scalardb_analytics
 scalar.db.analytics.server.db.username=dev_user
 scalar.db.analytics.server.db.password=dev_password
 
@@ -284,9 +284,9 @@ scalar.db.analytics.client.server.host=localhost
 #### Spark configuration (`spark-defaults.conf`)
 
 ```properties
-spark.jars.packages                         com.scalar-labs:scalardb-analytics-spark-all-3.5_2.12:3.16.2
+spark.jars.packages                         com.scalar-labs:scalardb-analytics-spark-all-3.5_2.12:3.17.1
 spark.extraListeners                        com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener
-spark.sql.catalog.analytics                 com.scalar.db.analytics.spark.ScalarDBAnalyticsCatalog
+spark.sql.catalog.analytics                 com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog
 spark.sql.catalog.analytics.server.host     localhost
 ```
 
@@ -298,7 +298,7 @@ The following are examples of configurations for TLS, CLI client, and Spark in p
 
 ```properties
 # Metadata database
-scalar.db.analytics.server.db.url=jdbc:postgresql://db.internal:5432/scalardb_analytics_prod
+scalar.db.analytics.server.db.contact_points=jdbc:postgresql://db.internal:5432/scalardb_analytics_prod
 scalar.db.analytics.server.db.username=analytics_prod
 scalar.db.analytics.server.db.password=your_secure_password
 
@@ -334,9 +334,9 @@ scalar.db.analytics.client.server.tls.ca_root_cert_path=/path/to/cert.pem
 #### Spark configuration (`spark-defaults.conf`)
 
 ```properties
-spark.jars.packages                                     com.scalar-labs:scalardb-analytics-spark-all-3.5_2.12:3.16.2
+spark.jars.packages                                     com.scalar-labs:scalardb-analytics-spark-all-3.5_2.12:3.17.1
 spark.extraListeners                                    com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener
-spark.sql.catalog.analytics                             com.scalar.db.analytics.spark.ScalarDBAnalyticsCatalog
+spark.sql.catalog.analytics                             com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog
 spark.sql.catalog.analytics.server.host                 analytics.example.com
 spark.sql.catalog.analytics.server.tls.enabled          true
 spark.sql.catalog.analytics.server.tls.ca_root_cert_path /path/to/cert.pem

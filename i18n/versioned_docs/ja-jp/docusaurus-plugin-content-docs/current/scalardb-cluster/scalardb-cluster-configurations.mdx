@@ -66,7 +66,7 @@ ScalarDB Cluster では、次の一般的な設定が利用可能です。
 ##### `cluster.node.decommissioning_duration_secs`
 
 - **フィールド:** `scalar.db.cluster.node.decommissioning_duration_secs`
-- **説明:** ScalarDB Cluster ノード終了時に実際に廃止されるまでの期間（秒単位）。
+- **説明:** ScalarDB Cluster ノード終了時に実際に廃止されるまでの期間 (秒単位)。
 - **デフォルト値:** `30`
 
 ##### `cluster.node.grpc.max_inbound_message_size`
@@ -96,7 +96,7 @@ ScalarDB Cluster では、次の一般的な設定が利用可能です。
 ##### `cluster.grpc.deadline_duration_millis`
 
 - **フィールド:** `scalar.db.cluster.grpc.deadline_duration_millis`
-- **説明:** gRPC の期限期間（ミリ秒単位）。
+- **説明:** gRPC の期限期間 (ミリ秒単位)。
 - **デフォルト値:** `60000` (60秒)
 
 ##### `cluster.node.standalone_mode.enabled`
@@ -116,6 +116,18 @@ ScalarDB Cluster では、次の一般的な設定が利用可能です。
 - **フィールド:** `scalar.db.cluster.node.scanner_management.expiration_time_millis`
 - **説明:** ScalarDB Cluster ノードは進行中のスキャナーを管理しています。このプロセスは、リソースリークを防ぐために、長時間アイドル状態のスキャナーを期限切れにします。この設定では、このスキャナー管理機能の有効期限をミリ秒単位で指定します。
 - **デフォルト値:** `60000` (60秒)
+
+##### `cluster.node.grpc.max_connection_age_millis`
+
+- **フィールド:** `scalar.db.cluster.node.grpc.max_connection_age_millis`
+- **説明:** チャネルが存在できる最大時間。古いコネクションをプロアクティブに閉じて更新し、サーバー間の不均衡を防ぐのに役立ちます。
+- **デフォルト値:** `Integer.MAX_VALUE` (無制限)
+
+##### `cluster.node.grpc.max_connection_age_grace_millis`
+
+- **フィールド:** `scalar.db.cluster.node.grpc.max_connection_age_grace_millis`
+- **説明:** チャネルが最大期間に到達した後の猶予期間。コネクションが閉じられる前に、進行中の RPC が完了するための猶予期間を提供します。
+- **デフォルト値:** `Integer.MAX_VALUE` (無制限)
 
 ### パフォーマンス関連の設定
 
@@ -225,7 +237,7 @@ Consensus Commit トランザクションマネージャーでは、次のパフ
 
 ### ストレージ関連の設定
 
-ScalarDB には、複数のストレージ実装をサポートするストレージ（データベース）抽象化レイヤーがあります。`scalar.db.storage` プロパティを使用してストレージ実装を指定できます。
+ScalarDB には、複数のストレージ実装をサポートするストレージ (データベース) 抽象化レイヤーがあります。`scalar.db.storage` プロパティを使用してストレージ実装を指定できます。
 
 :::note
 
@@ -472,7 +484,7 @@ ScalarDB は複数のストレージ実装の同時使用をサポートして�
 ##### `multi_storage.storages`
 
 - **フィールド:** `scalar.db.multi_storage.storages`
-- **説明:** カンマ区切りのストレージ名（例: `cassandra,mysql`）。これらのストレージ名は、名前空間をストレージにマップするために `scalar.db.multi_storage.namespace_mapping` プロパティで使用されます。
+- **説明:** カンマ区切りのストレージ名 (例: `cassandra,mysql`)。これらのストレージ名は、名前空間をストレージにマップするために `scalar.db.multi_storage.namespace_mapping` プロパティで使用されます。
 - **デフォルト値:** empty
 
 ##### `multi_storage.default_storage`
@@ -484,12 +496,12 @@ ScalarDB は複数のストレージ実装の同時使用をサポートして�
 ##### `multi_storage.namespace_mapping`
 
 - **フィールド:** `scalar.db.multi_storage.namespace_mapping`
-- **説明:** 名前空間からストレージへのマッピング（例: `user:my_cassandra,coordinator:my_mysql`）。
+- **説明:** 名前空間からストレージへのマッピング (例: `user:my_cassandra,coordinator:my_mysql`)。
 - **デフォルト値:** empty
 
 :::tip
 
-ストレージ名（`<STORAGE_NAME_FOR_NAMESPACE>`）は、定義する必要がある任意の値です。マルチストレージ設定全体で一貫している限り、好きな名前を使用できます。
+ストレージ名 (`<STORAGE_NAME_FOR_NAMESPACE>`) は、定義する必要がある任意の値です。マルチストレージ設定全体で一貫している限り、好きな名前を使用できます。
 
 :::
 
@@ -546,7 +558,7 @@ ScalarDB は複数のストレージ実装の同時使用をサポートして�
 
 ## ScalarDB Cluster GraphQL の設定
 
-ScalarDB Cluster GraphQL の設定は次のとおりです。
+ScalarDB Cluster GraphQL の設定は以下の通りです。
 
 ##### `graphql.enabled`
 
@@ -606,7 +618,7 @@ curl -X POST http://localhost:8080/graphql/update-graphql-schema
 
 ### SQL 関連の設定
 
-ScalarDB Cluster SQL の設定は次のとおりです。
+ScalarDB Cluster SQL の設定は以下の通りです。
 
 ##### `sql.enabled`
 
@@ -638,9 +650,189 @@ ScalarDB Cluster SQL の設定は次のとおりです。
 - **説明:** デフォルトの名前空間名。SQL ステートメントで名前空間名を指定しない場合は、この値が使用されます。
 - **デフォルト値:** 
 
+### 認証と認可の設定
+
+ScalarDB Cluster の認証と認可の設定は以下の通りです。
+
+#### `auth.enabled`
+
+- **フィールド:** `scalar.db.cluster.auth.enabled`
+- **説明:** 認証と認可が有効になっているかどうか。
+- **デフォルト値:** `false`
+
+:::warning
+
+認証と認可を有効にする場合は、システム名前空間（デフォルトでは `scalardb`）に対して [`scalar.db.cross_partition_scan.enabled`](#パーティション間スキャン設定) を `true` に設定する必要があります。これは、ABAC 機能が内部的にクロスパーティションスキャンを実行するためです。
+
+:::
+
+#### `auth.cache_expiration_time_millis`
+
+- **フィールド:** `scalar.db.cluster.auth.cache_expiration_time_millis`
+- **説明:** 認証と認可情報のキャッシュ有効期限時間 (ミリ秒単位)。
+- **デフォルト値:** `60000` (1分)
+
+#### `auth.auth_token_expiration_time_minutes`
+
+- **フィールド:** `scalar.db.cluster.auth.auth_token_expiration_time_minutes`
+- **説明:** 認証と認可トークンの有効期限時間 (分単位)。
+- **デフォルト値:** `1440` (1日)
+
+#### `auth.auth_token_gc_thread_interval_minutes`
+
+- **フィールド:** `scalar.db.cluster.auth.auth_token_gc_thread_interval_minutes`
+- **説明:** 認証と認可トークンのガベージコレクション (GC) スレッドの間隔 (分単位)。
+- **デフォルト値:** `360` (6時間)
+
+#### `auth.pepper`
+
+- **フィールド:** `scalar.db.cluster.auth.pepper`
+- **説明:** ハッシュ化の前にパスワードに追加される秘密値。指定されていない場合、パスワードはペッパーなしでハッシュ化されます。
+- **デフォルト値:** empty
+
+### 保存時データ暗号化設定
+
+ScalarDB Cluster で保存時のデータを暗号化するための設定は以下の通りです。
+
+保存時のデータ暗号化の詳細については、[保存データの暗号化](./encrypt-data-at-rest.mdx)を参照してください。
+
+#### `cluster.encryption.enabled`
+
+- **フィールド:** `scalar.db.cluster.encryption.enabled`
+- **説明:** ScalarDB が保存時のデータを暗号化するかどうか。
+- **デフォルト値:** `false`
+
+#### `cluster.encryption.type`
+
+- **フィールド:** `scalar.db.cluster.encryption.type`
+- **説明:** 暗号化実装タイプ。`vault`（HashiCorp Vault 暗号化用）または `self`（自己暗号化用）のいずれかを指定できます。
+- **デフォルト値:** empty
+
+#### `cluster.encryption.delete_data_encryption_key_on_drop_table.enabled`
+
+- **フィールド:** `scalar.db.cluster.encryption.delete_data_encryption_key_on_drop_table.enabled`
+- **説明:** テーブルを削除する際にデータ暗号化キー (DEK) を削除するかどうか。
+- **デフォルト値:** `false`
+
+#### HashiCorp Vault 暗号化設定
+
+HashiCorp Vault 暗号化（`scalar.db.cluster.encryption.type=vault`）を使用する場合の設定は以下の通りです。
+
+##### `cluster.encryption.vault.key_type`
+
+- **フィールド:** `scalar.db.cluster.encryption.vault.key_type`
+- **説明:** キーの種類。現在、`aes128-gcm96`、`aes256-gcm96`、`chacha20-poly1305` がサポートされています。キーの種類の詳細については、[Key types](https://developer.hashicorp.com/vault/docs/secrets/transit#key-types) を参照してください。
+- **デフォルト値:** `aes128-gcm96`
+
+##### `cluster.encryption.vault.associated_data_required`
+
+- **フィールド:** `scalar.db.cluster.encryption.vault.associated_data_required`
+- **説明:** AEAD 暗号化で関連データが必要かどうか。
+- **デフォルト値:** `false`
+
+##### `cluster.encryption.vault.address`
+
+- **フィールド:** `scalar.db.cluster.encryption.vault.address`
+- **説明:** HashiCorp Vault サーバーのアドレス。
+- **デフォルト値:** empty
+
+##### `cluster.encryption.vault.token`
+
+- **フィールド:** `scalar.db.cluster.encryption.vault.token`
+- **説明:** HashiCorp Vault で認証するためのトークン。
+- **デフォルト値:** empty
+
+##### `cluster.encryption.vault.namespace`
+
+- **フィールド:** `scalar.db.cluster.encryption.vault.namespace`
+- **説明:** HashiCorp Vault の名前空間。この設定はオプションです。
+- **デフォルト値:** empty
+
+##### `cluster.encryption.vault.transit_secrets_engine_path`
+
+- **フィールド:** `scalar.db.cluster.encryption.vault.transit_secrets_engine_path`
+- **説明:** transit シークレットエンジンのパス。
+- **デフォルト値:** `transit`
+
+##### `cluster.encryption.vault.column_batch_size`
+
+- **フィールド:** `scalar.db.cluster.encryption.vault.column_batch_size`
+- **説明:** HashiCorp Vault サーバーへの単一リクエストに含まれる列数。
+- **デフォルト値:** `64`
+
+#### 自己暗号化設定
+
+自己暗号化（`scalar.db.cluster.encryption.type=self`）を使用する場合の設定は以下の通りです。
+
+##### `cluster.encryption.self.key_type`
+
+- **フィールド:** `scalar.db.cluster.encryption.self.key_type`
+- **説明:** キーの種類。現在、`AES128_GCM`、`AES256_GCM`、`AES128_EAX`、`AES256_EAX`、`AES128_CTR_HMAC_SHA256`、`AES256_CTR_HMAC_SHA256`、`CHACHA20_POLY1305`、`XCHACHA20_POLY1305` がサポートされています。キーの種類の詳細については、[キータイプを選択する](https://developers.google.com/tink/aead?hl=ja#choose_a_key_type)を参照してください。
+- **デフォルト値:** `AES128_GCM`
+
+##### `cluster.encryption.self.associated_data_required`
+
+- **フィールド:** `scalar.db.cluster.encryption.self.associated_data_required`
+- **説明:** AEAD 暗号化で関連データが必要かどうか。
+- **デフォルト値:** `false`
+
+##### `cluster.encryption.self.kubernetes.secret.namespace_name`
+
+- **フィールド:** `scalar.db.cluster.encryption.self.kubernetes.secret.namespace_name`
+- **説明:** Kubernetes Secrets の名前空間名。
+- **デフォルト値:** `default`
+
+##### `cluster.encryption.self.data_encryption_key_cache_expiration_time`
+
+- **フィールド:** `scalar.db.cluster.encryption.self.data_encryption_key_cache_expiration_time`
+- **説明:** DEK キャッシュの有効期限時間（ミリ秒単位）。
+- **デフォルト値:** `60000` (60秒)
+
+### ワイヤ暗号化設定
+
+ScalarDB Cluster でワイヤ通信を暗号化するための設定は以下の通りです。
+
+ワイヤ通信の暗号化の詳細については、[ワイヤ通信の暗号化](./encrypt-wire-communications.mdx)を参照してください。
+
+#### `cluster.tls.enabled`
+
+- **フィールド:** `scalar.db.cluster.tls.enabled`
+- **説明:** ワイヤ暗号化 (TLS) が有効になっているかどうか。
+- **デフォルト値:** `false`
+
+#### `cluster.tls.ca_root_cert_pem`
+
+- **フィールド:** `scalar.db.cluster.tls.ca_root_cert_pem`
+- **説明:** TLS 通信用のカスタム CA ルート証明書 (PEM データ)。
+- **デフォルト値:** empty
+
+#### `cluster.tls.ca_root_cert_path`
+
+- **フィールド:** `scalar.db.cluster.tls.ca_root_cert_path`
+- **説明:** TLS 通信用のカスタム CA ルート証明書 (ファイルパス)。
+- **デフォルト値:** empty
+
+#### `cluster.tls.override_authority`
+
+- **フィールド:** `scalar.db.cluster.tls.override_authority`
+- **説明:** TLS 通信用のカスタムオーソリティ。実際に接続されるホストは変更されません。これはテスト用に意図されていますが、DNS オーバーライドの代替手段として、テスト以外でも安全に使用できます。たとえば、`scalar.db.cluster.node.tls.cert_chain_path` に設定した証明書チェーンファイルで提示されるホスト名を指定できます。
+- **デフォルト値:** empty
+
+#### `cluster.node.tls.cert_chain_path`
+
+- **フィールド:** `scalar.db.cluster.node.tls.cert_chain_path`
+- **説明:** TLS 通信に使用される証明書チェーンファイル。
+- **デフォルト値:** empty
+
+#### `cluster.node.tls.private_key_path`
+
+- **フィールド:** `scalar.db.cluster.node.tls.private_key_path`
+- **説明:** TLS 通信に使用される秘密鍵ファイル。
+- **デフォルト値:** empty
+
 ### ABAC 設定
 
-属性ベースアクセス制御 (ABAC) の設定は次のとおりです。
+属性ベースアクセス制御 (ABAC) の設定は以下の通りです。
 
 :::warning
 
@@ -659,7 +851,7 @@ ScalarDB Cluster SQL の設定は次のとおりです。
 ABAC機能を有効にする場合は、以下を行う必要があります:
 
 - 認証と認可を有効にします。詳細については、[ユーザーの認証と認可](./scalardb-auth-with-sql.mdx)を参照してください。
-- システム名前空間（デフォルトでは `scalardb`）に対して [`scalar.db.cross_partition_scan.enabled`](#パーティション間スキャン設定) を `true` に設定します。これは、ABAC 機能が内部的にクロスパーティションスキャンを実行するためです。
+- システム名前空間 (デフォルトでは `scalardb`) に対して [`scalar.db.cross_partition_scan.enabled`](#パーティション間スキャン設定) を `true` に設定します。これは、ABAC 機能が内部的にクロスパーティションスキャンを実行するためです。
 
 :::
 
@@ -669,9 +861,159 @@ ABAC機能を有効にする場合は、以下を行う必要があります:
 - **説明:** ABAC メタデータキャッシュのキャッシュ有効期限時間 (ミリ秒)。ABAC メタデータ (ポリシー設定など) を更新した場合、変更が適用されるまで、この有効期限時間に達するまで待つ必要がある場合があります。このプロパティを低い数値に設定すると、バックエンドデータベースへのアクセス数が増加し、パフォーマンスが低下する可能性があります。
 - **デフォルト値:** `60000` (1分)
 
+### リモートレプリケーション設定
+
+ScalarDB Cluster のリモートレプリケーションに利用できる設定は以下の通りです。リモートレプリケーションは、高可用性とワークロード分散のために、リモートサイトへのデータレプリケーションを有効にします。
+
+リモートレプリケーションの使用に関する詳細については、[高可用性のためのデータレプリケーション](./remote-replication.mdx)を参照してください。
+
+#### ベースレプリケーション設定
+
+以下の設定は、ScalarDB Cluster における全体的なリモートレプリケーション設定に適用されます。
+
+##### `partition_count`
+
+- **フィールド:** `scalar.db.replication.partition_count`
+- **説明:** `transaction_groups` テーブルのパーティション数。レプリケーションデータベース内のテーブルは、パフォーマンスとスケーラビリティのためにパーティション化され、書き込み操作はパーティション間に均等に分散されます。このフィールドは、プライマリサイトとバックアップサイト間で同一である必要があります。
+- **デフォルト値:** `256`
+
+:::warning
+
+パーティション数の変更には、両サイトで ScalarDB Cluster を再起動する必要があります。
+
+:::
+
+##### `repl_db.namespace`
+
+- **フィールド:** `scalar.db.replication.repl_db.namespace`
+- **説明:** レプリケーションテーブルの名前空間名。このフィールドは、プライマリサイトとバックアップサイト間で同一である必要があります。
+- **デフォルト値:** `replication`
+
+##### `record_table_suffix`
+
+- **フィールド:** `scalar.db.replication.record_table_suffix`
+- **説明:** レプリケーションレコードメタデータテーブルの接尾辞。
+- **デフォルト値:** `__records`
+
+#### LogWriter 設定 (プライマリサイト)
+
+LogWriter 設定は、トランザクションコミット中にレプリケーションデータベースで書き込み操作がどのようにキャプチャおよび保存されるかを制御します。
+
+##### `log_writer.enabled`
+
+- **フィールド:** `scalar.db.replication.log_writer.enabled`
+- **説明:** LogWriter 機能が有効かどうか。
+- **デフォルト値:** `false`
+
+##### `log_writer.compression_type`
+
+- **フィールド:** `scalar.db.replication.log_writer.compression_type`
+- **説明:** レプリケーションデータベースに保存される書き込み操作の圧縮タイプ。利用可能な値: `NONE`、`GZIP`。
+- **デフォルト値:** `GZIP`
+
+##### `log_writer.group_commit.retention.time_millis`
+
+- **フィールド:** `scalar.db.replication.log_writer.group_commit.retention.time_millis`
+- **説明:** レプリケーションデータベースのトランザクショングループをコミットするまでの最大待機時間。
+- **デフォルト値:** `100` (100ミリ秒)
+
+##### `log_writer.group_commit.retention.values`
+
+- **フィールド:** `scalar.db.replication.log_writer.group_commit.retention.values`
+- **説明:** レプリケーションデータベース用にまとめてバッチ処理するトランザクションの最大数。
+- **デフォルト値:** `32`
+
+##### `log_writer.group_commit.timeout_check_interval_millis`
+
+- **フィールド:** `scalar.db.replication.log_writer.group_commit.timeout_check_interval_millis`
+- **説明:** レプリケーションデータベースのグループコミットタイムアウトをチェックする間隔。
+- **デフォルト値:** `20` (20ミリ秒)
+
+##### `log_writer.group_commit.max_thread_pool_size`
+
+- **フィールド:** `scalar.db.replication.log_writer.group_commit.max_thread_pool_size`
+- **説明:** レプリケーションデータベースのグループコミット処理の最大スレッドプールサイズ。
+- **デフォルト値:** `4096`
+
+#### LogApplier 設定 (バックアップサイト)
+
+LogApplier 設定は、レプリケーションデータがどのように処理され、バックアップサイトテーブルに適用されるかを制御します。
+
+##### `log_applier.enabled`
+
+- **フィールド:** `scalar.db.replication.log_applier.enabled`
+- **説明:** LogApplier 機能が有効かどうか。
+- **デフォルト値:** `false`
+
+##### `log_applier.transaction.expiration_millis`
+
+- **フィールド:** `scalar.db.replication.log_applier.transaction.expiration_millis`
+- **説明:** プライマリサイトからレプリケーションデータベースにレプリケートされたトランザクションの有効期限時間 (ミリ秒)。
+- **デフォルト値:** `30000` (30秒)
+
+##### `log_applier.transaction_group_scanner.threads`
+
+- **フィールド:** `scalar.db.replication.log_applier.transaction_group_scanner.threads`
+- **説明:** レプリケーションデータベース内のトランザクショングループ用のスキャナースレッド数。
+- **デフォルト値:** `16`
+
+##### `log_applier.transaction_group_scanner.fetch_size`
+
+- **フィールド:** `scalar.db.replication.log_applier.transaction_group_scanner.fetch_size`
+- **説明:** レプリケーションデータベースから各スキャン操作で取得するトランザクショングループレコードの数。
+- **デフォルト値:** `32`
+
+##### `log_applier.transaction_group_scanner.wait_millis`
+
+- **フィールド:** `scalar.db.replication.log_applier.transaction_group_scanner.wait_millis`
+- **説明:** レプリケーションデータベース内のトランザクショングループのスキャン間の待機時間 (ミリ秒)。この値を増やすとスキャン頻度は減少しますが、レプリケーション遅延が増加する可能性があります。
+- **デフォルト値:** `1000` (1秒)
+
+##### `log_applier.transaction_group_scanner.dedup.expiration_millis`
+
+- **フィールド:** `scalar.db.replication.log_applier.transaction_group_scanner.dedup.expiration_millis`
+- **説明:** トランザクショングループ重複排除キャッシュの有効期限時間。LogApplier は、レプリケーションデータベースから同じトランザクショングループを再処理することを避けるためにこのキャッシュを使用します。
+- **デフォルト値:** `10000` (10秒)
+
+##### `log_applier.transaction_handler.threads`
+
+- **フィールド:** `scalar.db.replication.log_applier.transaction_handler.threads`
+- **説明:** LogApplier トランザクション処理のスレッド数。この値を増やすとレプリケーションパフォーマンスが向上する可能性がありますが、リソース消費量も増加します。
+- **デフォルト値:** `128`
+
+##### `log_applier.max_record_version`
+
+- **フィールド:** `scalar.db.replication.log_applier.max_record_version`
+- **説明:** 整数オーバーフローを防ぐための最大レコードバージョン (開発用)。
+- **デフォルト値:** `Integer.MAX_VALUE - 1000` (`Integer.MAX_VALUE` は 2,147,483,647)
+
+##### `log_applier.write_operation.expiration_millis`
+
+- **フィールド:** `scalar.db.replication.log_applier.write_operation.expiration_millis`
+- **説明:** レプリケーションレコードメタデータテーブルに保存される書き込み操作メタデータの有効期限時間 (ミリ秒)。この時間が経過すると、期限切れのメタデータはガベージコレクションの対象となります。
+- **デフォルト値:** `86400000` (1日)
+
+##### `log_applier.replication_status_service.threads`
+
+- **フィールド:** `scalar.db.replication.log_applier.replication_status_service.threads`
+- **説明:** レプリケーションステータスサービスのスレッド数。
+- **デフォルト値:** `16`
+
+##### `log_applier.coordinator_state_cache.expiration_millis`
+
+- **フィールド:** `scalar.db.replication.log_applier.coordinator_state_cache.expiration_millis`
+- **説明:** コーディネーターステートキャッシュの有効期限時間 (ミリ秒)。LogApplier は、Coordinator データベースへのルックアップを減らすために Coordinator データベースからトランザクション状態をキャッシュします。値を小さくすると、Coordinator データベースに対するチェックがより頻繁になります。
+- **デフォルト値:** `30000` (30秒)
+
+##### `log_applier.coordinator_state_cache.size`
+
+- **フィールド:** `scalar.db.replication.log_applier.coordinator_state_cache.size`
+- **説明:** コーディネーターステートキャッシュ内のエントリの最大数。このキャッシュは、Coordinator データベースへのルックアップを最適化するためにトランザクション状態を保存します。
+- **デフォルト値:** `1000`
+
 ## その他の ScalarDB Cluster 設定
 
-ScalarDB Cluster で使用できる追加の設定は次のとおりです。
+ScalarDB Cluster で使用できる追加の設定は以下の通りです。
 
 ##### `metadata.cache_expiration_time_secs`
 
@@ -705,47 +1047,89 @@ ScalarDB Cluster で使用できる追加の設定は次のとおりです。
 
 次の表は、ScalarDB Cluster クライアントの一般的な設定を示しています。
 
-##### `transaction_manager`
+#### `transaction_manager`
 
 - **フィールド:** `scalar.db.transaction_manager`
 - **説明:** `cluster` を指定する必要があります。
 - **デフォルト値:** -
 
-##### `contact_points`
+#### `contact_points`
 
 - **フィールド:** `scalar.db.contact_points`
 - **説明:** クラスターの接続先。`indirect` クライアントモードを使用する場合は、`indirect:<LOAD_BALANCER_IP_ADDRESS>` 形式を使用して、クラスターノードの前にあるロードバランサーの IP アドレスを指定します。`direct-kubernetes` クライアントモードを使用する場合は、`direct-kubernetes:<NAMESPACE_NAME>/<ENDPOINT_NAME>` または `direct-kubernetes:<ENDPOINT_NAME>` 形式を使用して、メンバーシップ情報を取得するための名前空間名 (オプション) と [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) の名前を指定します。名前空間名を指定しない場合、クライアントは `default` 名前空間を使用します。
 - **デフォルト値:** 
 
-##### `contact_port`
+#### `contact_port`
 
 - **フィールド:** `scalar.db.contact_port`
 - **説明:** 接続先のポート番号。
 - **デフォルト値:** `60053`
 
-##### `cluster.grpc.deadline_duration_millis`
+#### `cluster.grpc.deadline_duration_millis`
 
 - **フィールド:** `scalar.db.cluster.grpc.deadline_duration_millis`
 - **説明:** gRPC の期限期間 (ミリ秒単位)。
 - **デフォルト値:** `60000` (60秒)
 
-##### `cluster.grpc.max_inbound_message_size`
+#### `cluster.grpc.max_inbound_message_size`
 
 - **フィールド:** `scalar.db.cluster.grpc.max_inbound_message_size`
 - **説明:** 単一の gRPC フレームに許可される最大メッセージサイズ。
 - **デフォルト値:** gRPC のデフォルト値
 
-##### `cluster.grpc.max_inbound_metadata_size`
+#### `cluster.grpc.max_inbound_metadata_size`
 
 - **フィールド:** `scalar.db.cluster.grpc.max_inbound_metadata_size`
 - **説明:** 受信できるメタデータの最大サイズ。
 - **デフォルト値:** gRPC のデフォルト値
 
-##### `cluster.client.scan_fetch_size`
+#### `cluster.client.scan_fetch_size`
 
 - **フィールド:** `scalar.db.cluster.client.scan_fetch_size`
 - **説明:** クラスターからデータを取得するために `Scanner` で使用されるフェッチサイズ。これは、`Scanner` がクラスターから一度に取得するレコード数です。値を大きくすると、クラスターへの往復回数が減ってパフォーマンスが向上しますが、メモリ使用量も増加する可能性があります。
 - **デフォルト値:** `10`
+
+##### `cluster.client.piggyback_begin.enabled`
+
+- **フィールド:** `scalar.db.cluster.client.piggyback_begin.enabled`
+- **説明:** ピギーバック begin 機能が有効かどうか。最初の CRUD 操作までトランザクション begin を遅延させ、最初の操作と begin をピギーバックして、専用の begin RPC 呼び出しを削除します。
+- **デフォルト値:** `false`
+
+##### `cluster.client.write_buffering.enabled`
+
+- **フィールド:** `scalar.db.cluster.client.write_buffering.enabled`
+- **説明:** 書き込みバッファリング機能が有効かどうか。非条件書き込み操作 (挿入、アップサート、無条件 put/update/delete) をバッファリングし、バッチで実行することでRPC呼び出し数を減らします。
+- **デフォルト値:** `false`
+
+### クライアント側ワイヤ暗号化の設定
+
+クライアント側暗号化に利用できる設定は以下の通りです。
+
+ワイヤ通信の暗号化の詳細については、[ワイヤ通信の暗号化](./encrypt-wire-communications.mdx)を参照してください。
+
+#### `cluster.tls.enabled`
+
+- **フィールド:** `scalar.db.cluster.tls.enabled`
+- **説明:** クライアントでワイヤ暗号化 (TLS) が有効になっているかどうか。
+- **デフォルト値:** `false`
+
+#### `cluster.tls.ca_root_cert_pem`
+
+- **フィールド:** `scalar.db.cluster.tls.ca_root_cert_pem`
+- **説明:** TLS 通信用のカスタム CA ルート証明書 (PEM データ)。
+- **デフォルト値:** empty
+
+#### `cluster.tls.ca_root_cert_path`
+
+- **フィールド:** `scalar.db.cluster.tls.ca_root_cert_path`
+- **説明:** TLS 通信用のカスタム CA ルート証明書 (ファイルパス)。
+- **デフォルト値:** empty
+
+#### `cluster.tls.override_authority`
+
+- **フィールド:** `scalar.db.cluster.tls.override_authority`
+- **説明:** TLS 通信用のカスタムオーソリティ。実際に接続されるホストは変更されません。これはテスト用に意図されていますが、DNS オーバーライドの代替手段として、テスト以外でも安全に使用できます。たとえば、`scalar.db.cluster.node.tls.cert_chain_path` に設定した証明書チェーンファイルで提示されるホスト名を指定できます。これは、クラスターの TLS 証明書のパスです。
+- **デフォルト値:** empty
 
 たとえば、`indirect` クライアントモードを使用し、ロードバランサーの IP アドレスが `192.168.10.1` の場合、次のようにクライアントを設定できます。
 
@@ -765,47 +1149,19 @@ scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
 
 次の表は、ScalarDB Cluster SQL クライアントの設定を示しています。
 
-##### `sql.cluster_mode.contact_points`
+#### `sql.connection_mode`
+
+- **フィールド:** `scalar.db.sql.connection_mode`
+- **説明:** `cluster` を指定する必要があります。
+- **デフォルト値:** empty
+
+#### `sql.cluster_mode.contact_points`
 
 - **フィールド:** `scalar.db.sql.cluster_mode.contact_points`
 - **説明:** クラスターの接続先。`indirect` クライアントモードを使用する場合は、`indirect:<LOAD_BALANCER_IP_ADDRESS>` 形式を使用して、クラスターノードの前にあるロードバランサーの IP アドレスを指定します。`direct-kubernetes` クライアントモードを使用する場合は、`direct-kubernetes:<NAMESPACE_NAME>/<ENDPOINT_NAME>` または `direct-kubernetes:<ENDPOINT_NAME>` 形式を使用して、メンバーシップ情報を取得するための名前空間名 (オプション) と [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) の名前を指定します。名前空間名を指定しない場合、クライアントは `default` 名前空間を使用します。
-- **デフォルト値:** 
+- **デフォルト値:** empty
 
-##### `sql.cluster_mode.contact_port`
-
-- **フィールド:** `scalar.db.sql.cluster_mode.contact_port`
-- **説明:** 接続先のポート番号。
-- **デフォルト値:** `60053`
-
-##### `sql.default_transaction_mode`
-
-- **フィールド:** `scalar.db.sql.default_transaction_mode`
-- **説明:** デフォルトのトランザクションモード。`TRANSACTION` または `TWO_PHASE_COMMIT_TRANSACTION` を設定できます。
-- **デフォルト値:** `TRANSACTION`
-
-##### `sql.default_namespace_name`
-
-- **フィールド:** `scalar.db.sql.default_namespace_name`
-- **説明:** デフォルトの名前空間名。SQL ステートメントで名前空間名を指定しない場合は、この値が使用されます。
-- **デフォルト値:** 
-
-##### `cluster.grpc.deadline_duration_millis`
-
-- **フィールド:** `scalar.db.cluster.grpc.deadline_duration_millis`
-- **説明:** gRPC の期限期間 (ミリ秒単位)。
-- **デフォルト値:** `60000` (60秒)
-
-##### `cluster.grpc.max_inbound_message_size`
-
-- **フィールド:** `scalar.db.cluster.grpc.max_inbound_message_size`
-- **説明:** 単一の gRPC フレームに許可される最大メッセージサイズ。
-- **デフォルト値:** gRPC のデフォルト値
-
-##### `cluster.grpc.max_inbound_metadata_size`
-
-- **フィールド:** `scalar.db.cluster.grpc.max_inbound_metadata_size`
-- **説明:** 受信できるメタデータの最大サイズ。
-- **デフォルト値:** gRPC のデフォルト値
+:::note
 
 たとえば、`indirect` クライアントモードを使用し、ロードバランサーの IP アドレスが `192.168.10.1` の場合、次のようにクライアントを設定できます。
 
@@ -824,6 +1180,66 @@ scalar.db.sql.cluster_mode.contact_points=direct-kubernetes:ns/scalardb-cluster
 ScalarDB JDBC の設定方法の詳細については、[JDBC 接続 URL](../scalardb-sql/jdbc-guide.mdx#jdbc-接続-url) を参照してください。
 
 Spring Data JDBC for ScalarDB の設定方法の詳細については、[設定](../scalardb-sql/spring-data-guide.mdx#設定)を参照してください。
+
+:::
+
+#### `sql.cluster_mode.contact_port`
+
+- **フィールド:** `scalar.db.sql.cluster_mode.contact_port`
+- **説明:** 接続先のポート番号。
+- **デフォルト値:** `60053`
+
+#### `sql.default_transaction_mode`
+
+- **フィールド:** `scalar.db.sql.default_transaction_mode`
+- **説明:** デフォルトのトランザクションモード。`TRANSACTION` または `TWO_PHASE_COMMIT_TRANSACTION` を設定できます。
+- **デフォルト値:** `TRANSACTION`
+
+#### `sql.default_namespace_name`
+
+- **フィールド:** `scalar.db.sql.default_namespace_name`
+- **説明:** デフォルトの名前空間名。SQL ステートメントで名前空間名を指定しない場合は、この値が使用されます。
+- **デフォルト値:** 
+
+#### `cluster.grpc.deadline_duration_millis`
+
+- **フィールド:** `scalar.db.cluster.grpc.deadline_duration_millis`
+- **説明:** gRPC の期限期間 (ミリ秒単位)。
+- **デフォルト値:** `60000` (60秒)
+
+#### `cluster.grpc.max_inbound_message_size`
+
+- **フィールド:** `scalar.db.cluster.grpc.max_inbound_message_size`
+- **説明:** 単一の gRPC フレームに許可される最大メッセージサイズ。
+- **デフォルト値:** gRPC のデフォルト値
+
+#### `cluster.grpc.max_inbound_metadata_size`
+
+- **フィールド:** `scalar.db.cluster.grpc.max_inbound_metadata_size`
+- **説明:** 受信できるメタデータの最大サイズ。
+- **デフォルト値:** gRPC のデフォルト値
+
+### 認証と認可の設定
+
+ScalarDB Cluster クライアントの認証と認可の設定は以下の通りです。
+
+#### `auth.enabled`
+
+- **フィールド:** `scalar.db.cluster.auth.enabled`
+- **説明:** 認証と認可が有効になっているかどうか。
+- **デフォルト値:** `false`
+
+#### `auth.username`
+
+- **フィールド:** `scalar.db.sql.cluster_mode.username`
+- **説明:** クライアントのユーザー名。
+- **デフォルト値:** empty
+
+#### `auth.password`
+
+- **フィールド:** `scalar.db.sql.cluster_mode.password`
+- **説明:** クライアントのパスワード。
+- **デフォルト値:** empty
 
 ## 設定例 - アプリ、ScalarDB Cluster、データベース
 
@@ -855,4 +1271,4 @@ scalar.db.contact_points=indirect:<SCALARDB_CLUSTER_CONTACT_POINT>
 
 クライアント設定の詳細については、[ScalarDB Cluster クライアント設定](#クライアント設定) を参照してください。
 
-[^1]: アプリケーションのアクセスパターンを考慮し、アプリケーションで使用するストレージと同じストレージを使用して、いくつかのバリエーション（例：デフォルト値の75%と125%）でパフォーマンスをベンチマークし、最適な設定を決定することをお勧めします。適切な設定は、これらの要素に強く依存して決まります。また、最適な組み合わせを決定するために、これらのパラメータの組み合わせをベンチマークすることも重要です（例：最初に `slot_capacity:20` と `group_size_fix_timeout_millis:40`、次に `slot_capacity:30` と `group_size_fix_timeout_millis:40`、3番目に `slot_capacity:20` と `group_size_fix_timeout_millis:80`）。
+[^1]: アプリケーションのアクセスパターンを考慮し、アプリケーションで使用するストレージと同じストレージを使用して、いくつかのバリエーション (例: デフォルト値の75%と125%) でパフォーマンスをベンチマークし、最適な設定を決定することをお勧めします。適切な設定は、これらの要素に強く依存して決まります。また、最適な組み合わせを決定するために、これらのパラメータの組み合わせをベンチマークすることも重要です (例: 最初に `slot_capacity:20` と `group_size_fix_timeout_millis:40`、次に `slot_capacity:30` と `group_size_fix_timeout_millis:40`、3番目に `slot_capacity:20` と `group_size_fix_timeout_millis:80`)。

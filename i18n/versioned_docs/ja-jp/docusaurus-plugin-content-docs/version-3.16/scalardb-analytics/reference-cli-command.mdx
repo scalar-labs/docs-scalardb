@@ -1,0 +1,215 @@
+---
+tags:
+  - Enterprise Option
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Analytics CLI コマンドリファレンス
+
+import TranslationBanner from "/src/components/_translation-ja-jp.mdx";
+
+<TranslationBanner />
+
+ScalarDB Analytics CLI は階層構造のコマンドを使用します:
+
+```
+scalardb-analytics-cli <resource> <operation> [options]
+```
+
+利用可能なリソース:
+
+- **catalog:** データソースを整理するためのトップレベルコンテナ
+- **data-source:** カタログ内に登録された外部データベース
+- **namespace:** データベース固有の組織単位
+- **table:** 名前空間内のデータベーステーブル
+
+## カタログ操作
+
+このセクションでは、新しいカタログの作成、すべてのカタログの一覧表示、カタログの詳細表示、およびカタログの削除方法について説明します。
+
+### 新しいカタログを作成
+
+新しいカタログの作成は以下のように行います。`<catalog-name>` を作成するカタログの名前に置き換えてください。
+
+```
+scalardb-analytics-cli catalog create --catalog <catalog-name>
+```
+
+### すべてのカタログを一覧表示
+
+システム内のすべての既存カタログを表示します。
+
+```
+scalardb-analytics-cli catalog list
+```
+
+### カタログの詳細を表示
+
+特定のカタログの詳細情報を表示します。カタログは名前または UUID で指定できます。
+
+カタログ名で指定する場合:
+```
+scalardb-analytics-cli catalog describe --catalog <catalog-name>
+```
+
+`<catalog-name>` を表示したいカタログの名前に置き換えてください。
+
+カタログ ID で指定する場合:
+```
+scalardb-analytics-cli catalog describe --catalog-id <catalog-uuid>
+```
+
+`<catalog-uuid>` を表示したいカタログの UUID に置き換えてください。
+
+### カタログを削除
+
+システムからカタログを削除します。カタログにデータソースが含まれている場合、`--cascade` オプションを使用してすべてのコンテンツを削除しない限り、操作は失敗します。
+
+空のカタログを削除する場合:
+```
+scalardb-analytics-cli catalog delete --catalog <catalog-name>
+```
+
+`<catalog-name>` を削除したいカタログの名前に置き換えてください。
+
+カタログとそのすべてのコンテンツを削除する場合:
+```
+scalardb-analytics-cli catalog delete --catalog <catalog-name> --cascade
+```
+
+## データソース操作
+
+このセクションでは、新しいデータソースの登録、すべてのデータソースの一覧表示、データソースの詳細表示、およびデータソースの削除方法について説明します。
+
+### 新しいデータソースを登録
+
+データソース登録ファイルを使用してカタログに新しいデータソースを追加します。
+
+```
+scalardb-analytics-cli data-source register --data-source-json <path-to-json>
+```
+
+`<path-to-json>` をデータソース登録ファイルのファイルパスに置き換えてください。
+
+`register` コマンドにはデータソース登録ファイルが必要です。ファイル形式については、[データソース登録ファイル形式](reference-data-source.mdx#データソース登録ファイル形式)セクションで説明されています。
+
+### すべてのデータソースを一覧表示
+
+特定のカタログ内のすべてのデータソースを表示します。
+
+```
+scalardb-analytics-cli data-source list --catalog <catalog-name>
+```
+
+`<catalog-name>` をデータソースを一覧表示したいカタログの名前に置き換えてください。
+
+### データソースの詳細を表示
+
+特定のデータソースの詳細情報を表示します。データソースはカタログ内の名前または UUID で指定できます。
+
+カタログとデータソース名で指定する場合:
+```
+scalardb-analytics-cli data-source describe --catalog <catalog-name> --data-source <data-source-name>
+```
+
+以下を置き換えてください:
+- `<catalog-name>` をデータソースを含むカタログの名前
+- `<data-source-name>` を表示したいデータソースの名前
+
+データソース ID で指定する場合:
+```
+scalardb-analytics-cli data-source describe --data-source-id <data-source-uuid>
+```
+
+`<data-source-uuid>` を表示したいデータソースの UUID に置き換えてください。
+
+### データソースを削除
+
+カタログからデータソースを削除します。データソースに名前空間が含まれている場合、`--cascade` オプションを使用してすべてのコンテンツを削除しない限り、操作は失敗します。
+
+空のデータソースを削除する場合:
+```
+scalardb-analytics-cli data-source delete --catalog <catalog-name> --data-source <data-source-name>
+```
+
+以下を置き換えてください:
+- `<catalog-name>` をデータソースを含むカタログの名前
+- `<data-source-name>` を削除したいデータソースの名前
+
+データソースとそのすべてのコンテンツを削除する場合:
+```
+scalardb-analytics-cli data-source delete --catalog <catalog-name> --data-source <data-source-name> --cascade
+```
+
+## 名前空間操作
+
+このセクションでは、すべての名前空間の一覧表示と名前空間の詳細表示方法について説明します。
+
+### すべての名前空間を一覧表示
+
+特定のカタログ内のすべての名前空間を表示します。
+
+```
+scalardb-analytics-cli namespace list --catalog <catalog-name>
+```
+
+以下を置き換えてください:
+- `<catalog-name>` を名前空間を一覧表示したいカタログの名前
+
+### 名前空間の詳細を表示
+
+特定の名前空間の詳細情報を表示します。名前空間はデータソース内の名前または UUID で指定できます。ネストされた名前空間の場合、`.` を区切り文字として使用します (例: `--namespace parent.child`)。
+
+カタログ、データソース、名前空間名で指定する場合:
+```
+scalardb-analytics-cli namespace describe --catalog <catalog-name> --data-source <data-source-name> --namespace <namespace-name>
+```
+
+以下を置き換えてください:
+- `<catalog-name>` をデータソースを含むカタログの名前
+- `<data-source-name>` を名前空間を含むデータソースの名前
+- `<namespace-name>` を表示したい名前空間の名前
+
+名前空間 ID で指定する場合:
+```
+scalardb-analytics-cli namespace describe --namespace-id <namespace-uuid>
+```
+
+`<namespace-uuid>` を表示したい名前空間の UUID に置き換えてください。
+
+## テーブル操作
+
+このセクションでは、すべてのテーブルの一覧表示とテーブルスキーマの表示方法について説明します。
+
+### すべてのテーブルを一覧表示
+
+特定のカタログ内のすべてのテーブルを表示します。
+
+```
+scalardb-analytics-cli table list --catalog <catalog-name>
+```
+
+以下を置き換えてください:
+- `<catalog-name>` をデータソースを含むカタログの名前
+
+### テーブルスキーマを表示
+
+特定のテーブルのすべてのカラムを含むスキーマ情報を表示します。テーブルは名前空間内の名前または UUID で指定できます。ネストされた名前空間の場合、`.` を区切り文字として使用します (例: `--namespace parent.child`)。
+
+カタログ、データソース、名前空間、テーブル名で指定する場合:
+```
+scalardb-analytics-cli table describe --catalog <catalog-name> --data-source <data-source-name> --namespace <namespace-name> --table <table-name>
+```
+
+以下を置き換えてください:
+- `<catalog-name>` をデータソースを含むカタログの名前
+- `<data-source-name>` を名前空間を含むデータソースの名前
+- `<namespace-name>` をテーブルを含む名前空間の名前
+- `<table-name>` を表示したいテーブルの名前
+
+テーブル ID で指定する場合:
+```
+scalardb-analytics-cli table describe --table-id <table-uuid>
+```
+
+`<table-uuid>` を表示したいテーブルの UUID に置き換えてください。

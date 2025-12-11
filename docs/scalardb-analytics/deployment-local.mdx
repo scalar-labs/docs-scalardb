@@ -16,7 +16,7 @@ This guide explains how to deploy ScalarDB Analytics to a local Kubernetes clust
 
 Before deploying ScalarDB Analytics to a local environment, ensure that you have the following tools installed:
 
-- Kubernetes cluster (this guide assumes you're using [minikube](https://minikube.sigs.k8s.io/docs/start/?arch=%2Fmacos%2Farm64%2Fstable%2Fbinary+download))
+- Kubernetes cluster (this guide assumes you're using [minikube](https://minikube.sigs.k8s.io/docs/start/))
 - [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
 - [Helm](https://helm.sh/docs/intro/install/)
 
@@ -28,7 +28,7 @@ The following is an example architecture described in this guide.
 
 ![Example architecture](images/scalardb-analytics-local-deployment-architecture.jpg)
 
-This guide assumes a Kubernetes cluster running on minikube. In this setup, PostgreSQL is treated as an external data source not managed by ScalarDB transactions, while MySQL is treated as a data source managed by ScalarDB transactions (ScalarDB-managed data source). The ScalarDB Analytics server is deployed as a Pod by using a Helm Chart. A separate Pod is also created to serve as the client for running Spark commands. Additionally, the CLI tool used to operate the ScalarDB Analytics server is provided as a container image and runs on a separate Pod.
+This guide assumes a Kubernetes cluster running on minikube. In this setup, PostgreSQL is treated as an external data source not managed by ScalarDB transactions, while MySQL is treated as a data source managed by ScalarDB transactions (ScalarDB-managed data source). The ScalarDB Analytics server is deployed as a Pod by using a Helm Chart. The ScalarDB Analytics server uses a dedicated backend database to manage catalog information. For simplicity, in this guide, the backend database used to store catalog information will be created on the PostgreSQL instance mentioned above. A separate Pod is also created to serve as the client for running Spark commands. Additionally, the CLI tool used to operate the ScalarDB Analytics server is provided as a container image and runs on a separate Pod.
 
 :::note
 
@@ -40,9 +40,9 @@ Please set up each data source yourself, referring to resources such as [How to 
 
 You first need to set up the Kubernetes environment where all components will be deployed.
 
-### Create ServiceAccount and ClusterRoleBinding
+### Create ServiceAccount and RoleBinding
 
-Create a service account (`ServiceAccount`) and a cluster role binding (`ClusterRoleBinding`) to allow Spark jobs to manage resources within the Kubernetes cluster.
+Create a service account (`ServiceAccount`) and a role binding (`RoleBinding`) to allow Spark jobs to manage resources within the Kubernetes cluster.
 
 ```shell
 NAMESPACE=default
@@ -56,9 +56,10 @@ metadata:
   namespace: ${NAMESPACE}
 ---
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: RoleBinding
 metadata:
   name: spark-role
+  namespace: ${NAMESPACE}
 roleRef:
   kind: ClusterRole
   name: cluster-admin
@@ -76,45 +77,11 @@ You can change the `NAMESPACE` and `SERVICE_ACCOUNT_NAME` environment variables 
 
 In this step, you will deploy the ScalarDB Analytics server to the Kubernetes environment using the Helm Chart provided by Scalar.
 
-### Prepare a configuration file for the ScalarDB data source
+### Deploy a backend database for a ScalarDB Analytics server
 
-When using a ScalarDB-managed data source, you must provide a configuration file accessible to both the ScalarDB Analytics server and the Spark driver.
+The ScalarDB Analytics server uses a dedicated backend database to manage catalog information. For simplicity, in this guide, the backend database is set up on PostgreSQL, used as an external data source outside ScalarDB transaction management.
 
-This example uses only MySQL but is intentionally configured as a multi-storage setup to simplify adding other databases later. As configured, the storage name `mysql` is assigned to the MySQL data source, and the namespace `nsmy` is mapped to it.
-
-```shell
-cat <<EOF > scalardb.properties
-# Storage
-scalar.db.storage=multi-storage
-
-# Multi-storage settings
-scalar.db.multi_storage.storages=mysql
-
-# Namespace mapping
-scalar.db.multi_storage.namespace_mapping=nsmy:mysql
-
-# Default storage
-scalar.db.multi_storage.default_storage=mysql
-
-# Multi-storage: Define MySQL
-scalar.db.multi_storage.storages.mysql.storage=jdbc
-scalar.db.multi_storage.storages.mysql.contact_points=<MYSQL_URL>
-scalar.db.multi_storage.storages.mysql.username=<MYSQL_USERNAME>
-scalar.db.multi_storage.storages.mysql.password=<MYSQL_PASSWORD>
-EOF
-```
-
-:::note
-
-For details about multi-storage configurations, see [Multi-Storage Transactions](../multi-storage-transactions.mdx#how-to-configure-scalardb-to-support-multi-storage-transactions).
-
-:::
-
-Then, store it as a `ConfigMap` in Kubernetes by running the following command:
-
-```shell
-kubectl create configmap scalardb-properties --from-file=./scalardb.properties
-```
+For detailed instructions on setting up the backend database for ScalarDB Analytics, please see [Create a ScalarDB Analytics Catalog](./create-scalardb-analytics-catalog.mdx).
 
 ### Add the Scalar Helm Charts repository
 
@@ -137,7 +104,7 @@ scalarDbAnalyticsServer:
     scalar.db.analytics.server.catalog.port=11051
     scalar.db.analytics.server.metering.port=11052
 
-    scalar.db.analytics.server.db.url=<CATALOG_SERVER_BACKEND_DB_URL>
+    scalar.db.analytics.server.db.contact_points=<CATALOG_SERVER_BACKEND_DB_URL>
     scalar.db.analytics.server.db.username=<USERNAME_FOR_BACKEND_DB>
     scalar.db.analytics.server.db.password=<PASSWORD_FOR_BACKEND_DB>
 
@@ -150,14 +117,6 @@ scalarDbAnalyticsServer:
 
   service:
     type: LoadBalancer
-
-  extraVolumes:
-    - name: scalardb-properties
-      configMap:
-        name: scalardb-properties
-  extraVolumeMounts:
-    - name: scalardb-properties
-      mountPath: /tmp/scalar
 EOF
 ```
 
@@ -200,7 +159,7 @@ metadata:
 spec:
   containers:
     - name: analytics-server-cli
-      image: ghcr.io/scalar-labs/scalardb-analytics-cli:3.16.2
+      image: ghcr.io/scalar-labs/scalardb-analytics-cli:3.17.1
       command: ['sleep']
       args: ['inf']
   restartPolicy: Never
@@ -227,49 +186,86 @@ Set up an alias for the CLI tool to simplify command execution by running the fo
 alias scalardb-analytics-cli="java -jar /scalardb-analytics-cli/scalardb-analytics-cli.jar"
 ```
 
-### Prepare data source definition files
+### Prepare a configuration file for the ScalarDB data source
 
-You must define the data sources that ScalarDB Analytics accesses in JSON format.
+When you use a data source under ScalarDB transaction management, you need to provide properties for ScalarDB. This guide explains how to register the ScalarDB properties file to the ScalarDB Analytics server.
 
-The following is an example of defining a data source managed by ScalarDB. You must specify `scalardb` as the value of `type` item when using the ScalarDB-managed data source.
+This example uses only MySQL but is intentionally configured as a multi-storage setup to simplify adding other databases later. As configured, the storage name `mysql` is assigned to the MySQL data source, and the namespace `nsmy` is mapped to it.
+
+```shell
+cat <<EOF > scalardb.properties
+# Storage
+scalar.db.storage=multi-storage
+
+# Multi-storage settings
+scalar.db.multi_storage.storages=mysql
+
+# Namespace mapping
+scalar.db.multi_storage.namespace_mapping=nsmy:mysql
+
+# Default storage
+scalar.db.multi_storage.default_storage=mysql
+
+# Multi-storage: Define MySQL
+scalar.db.multi_storage.storages.mysql.storage=jdbc
+scalar.db.multi_storage.storages.mysql.contact_points=<MYSQL_URL>
+scalar.db.multi_storage.storages.mysql.username=<MYSQL_USERNAME>
+scalar.db.multi_storage.storages.mysql.password=<MYSQL_PASSWORD>
+EOF
+```
 
 :::note
 
-The `configPath` value must be a common path accessible from both the ScalarDB Analytics server and the Spark driver. This example uses `ConfigMap` in Kubernetes to share the configuration file and mounts it into the relevant Pods.
+For details about multi-storage configurations, see [Multi-Storage Transactions](../multi-storage-transactions.mdx#how-to-configure-scalardb-to-support-multi-storage-transactions).
 
 :::
 
+### Prepare data source definition files
+
+You must define the data sources that ScalarDB Analytics accesses in JSON format. The following is an example of defining a data source managed by ScalarDB. When using a ScalarDB-managed data source, you must set the `type` item to `scalardb` and specify the path to the properties file by using the `${file:<PATH>}` syntax. Please Replace `<PATH>` with the actual path to the ScalarDB properties file, as shown below:
+
 ```shell
-cat <<EOF > data_source_scalardb.json
+cat <<"EOF" > data_source_scalardb.json
 {
-    "catalog": "mycatalog",
-    "name": "data_source_scalardb",
-    "type": "scalardb",
-    "provider": {
-        "configPath": "/tmp/scalar/scalardb.properties"
-    }
+  "type": "scalardb",
+  "configs": "${file:./scalardb.properties}"
 }
 EOF
 ```
 
-The following is an example of defining a PostgreSQL data source that is not managed by ScalarDB. You must specify `postgres` as the value of `type` item when using PostgreSQL as the data source. Then, replace the contents in the command below in angle brackets with details about your backend DB connection and run the command:
+:::note
+
+You can specify `<PATH>` as either an absolute path or a relative path.
+
+:::
+
+The following is an example of defining a PostgreSQL data source that is not managed by ScalarDB. You must specify `postgresql` as the value of `type` item when using PostgreSQL as the data source. Then, replace the contents in the command below in angle brackets with details about your backend database connection and run the command:
 
 ```shell
 cat <<EOF > data_source_postgres.json
 {
-    "catalog": "mycatalog",
-    "name": "data_source_postgres",
-    "type": "postgres",
-    "provider": {
-        "host": <POSTGRES_HOST>,
-        "port": <PORT>,
-        "username": <USERNAME>,
-        "password": <PASSWORD>,
-        "database": <DATABASE>
-    }
+  "type": "postgresql",
+  "host": <POSTGRES_HOST>,
+  "port": "5432",
+  "username": <POSTGRES_USER_NAME>,
+  "password": <POSTGRES_PASSWORD>,
+  "database": <POSTGRES_DATABASE>
 }
 EOF
 ```
+
+:::note
+
+For simplicity, this guide assumes that the Analytics Server’s backend database and the PostgreSQL data source are shared. Accordingly, set each placeholder as follows:
+
+- `<POSTGRES_HOST>`: the value of `<CATALOG_SERVER_BACKEND_DB_URL>`
+- `<POSTGRES_USER_NAME>`: the value of `<USERNAME_FOR_BACKEND_DB>`
+- `<POSTGRES_PASSWORD>`: the value of `<PASSWORD_FOR_BACKEND_DB>`
+- `<POSTGRES_DATABASE>`: the database name used by the Analytics Server’s backend database
+
+If you are using a PostgreSQL data source that is separate from the Analytics Server’s backend database, make sure to set each placeholder to the appropriate value.
+
+:::
 
 ### Create a configuration file for the CLI tool
 
@@ -298,16 +294,18 @@ scalardb-analytics-cli -c client.properties catalog create --catalog <CATALOG_NA
 
 Next, register the data sources for both ScalarDB-managed and non–ScalarDB-managed.
 
-Register a ScalarDB-managed data source by using the following command.
+Register a ScalarDB-managed data source by using the following command. Replace `<CATALOG_NAME>` and `<DATA_SOURCE_NAME>` with your desired catalog and data source name.
 
 ```shell
-scalardb-analytics-cli -c client.properties data-source register --data-source-json=./data_source_scalardb.json
+scalardb-analytics-cli -c client.properties data-source register \
+  --catalog=<CATALOG_NAME> --data-source=<DATA_SOURCE_NAME> --provider-file=./data_source_scalardb.json
 ```
 
-Register a non-ScalarDB-managed data source by using the following command.
+Register a non-ScalarDB-managed data source by using the following command. Replace `<CATALOG_NAME>` and `<DATA_SOURCE_NAME>` with your desired catalog and data source name.
 
 ```shell
-scalardb-analytics-cli -c client.properties data-source register --data-source-json=./data_source_postgres.json
+scalardb-analytics-cli -c client.properties data-source register \
+  --catalog=<CATALOG_NAME> --data-source=<DATA_SOURCE_NAME> --provider-file=./data_source_postgres.json
 ```
 
 #### Additional CLI Commands
@@ -322,10 +320,10 @@ In this step, you will deploy a Spark client Pod and set it up to run Spark jobs
 
 Create a manifest file for the Spark client Pod.
 
-In the following example, the service account name is set to `spark`, and the ScalarDB data source configuration file (`scalardb-properties`), stored in `ConfigMap`, is mounted as a volume named `scalardb-properties`. Configure the Spark client Pod by running the following command:
+In the following example, the service account name is set to `spark`. Configure the Spark client Pod by running the following command:
 
 ```shell
-cat<<'EOF' > spark-client.yaml
+cat <<'EOF' > spark-client.yaml
 apiVersion: v1
 kind: Pod
 metadata:
@@ -337,13 +335,6 @@ spec:
       image: eclipse-temurin:21
       command: ['sleep']
       args: ['inf']
-      volumeMounts:
-      - name: scalardb-properties
-        mountPath: /tmp/scalar
-  volumes:
-    - name: scalardb-properties
-      configMap:
-        name: scalardb-properties
   restartPolicy: Never
   terminationGracePeriodSeconds: 0
 EOF
@@ -357,7 +348,7 @@ kubectl apply -f spark-client.yaml
 
 ### Set up the Spark client Pod
 
-Access the Spark client pod via a shell session by running the following command:
+Access the Spark client Pod via a shell session by running the following command:
 
 ```shell
 kubectl exec -it spark-client -- bash
@@ -366,7 +357,7 @@ kubectl exec -it spark-client -- bash
 Install the Spark binary files and navigate to their directory by running the following command:
 
 ```shell
-VERSION=3.5.6
+VERSION=3.5.7
 
 curl -O https://dlcdn.apache.org/spark/spark-${VERSION}/spark-${VERSION}-bin-hadoop3.tgz
 tar xzf spark-${VERSION}-bin-hadoop3.tgz
@@ -377,8 +368,6 @@ Create a `spark-defaults.conf` file by changing the content in the angle bracket
 
 ```shell
 cat <<EOF > ./conf/spark-defaults.conf
-spark.sql.extensions com.scalar.db.analytics.spark.extension.ScalarDbAnalyticsExtensions
-
 spark.jars.packages com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>
 
 spark.sql.catalog.<CATALOG_NAME> com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog
@@ -410,7 +399,7 @@ At this point, the Spark client Pod has been set up and is ready to run Spark jo
 
 :::note
 
-ScalarDB Analytics currently uses Apache Spark as its query engine. It can leverage Spark’s native Kubernetes deployment mode, which enables dynamic provisioning of Spark driver and executor Pods at runtime. To use the Kubernetes deployment mode, you need to specify the Kubernetes API server (`k8s://...`) in the `--master` option of the spark commands.
+ScalarDB Analytics currently uses Apache Spark as its query engine. It can leverage Spark's native Kubernetes deployment mode, which enables dynamic provisioning of Spark driver and executor Pods at runtime. To use the Kubernetes deployment mode, you need to specify the Kubernetes API server (`k8s://...`) in the `--master` option of the spark commands.
 
 :::
 
@@ -423,7 +412,7 @@ You can run Spark SQL by running a command like the following:
 ```shell
 ./bin/spark-sql \
 --master k8s://https://kubernetes.default.svc \
---conf spark.kubernetes.container.image=docker.io/bitnami/spark:3.5 \
+--conf spark.kubernetes.container.image=apache/spark:3.5.7-scala2.12-java11-python3-r-ubuntu \
 --conf spark.driver.host=$(hostname -i)
 ```
   </TabItem>
@@ -500,7 +489,7 @@ kubectl delete pod spark-pvc-loader
 
 <h4>Create a Pod template</h4>
 
-To create a Pod template for the dynamically generated Spark driver and executor Pods, log in to the Spark client pod and run the following command:
+To create a Pod template for the dynamically generated Spark driver and executor Pods, log in to the Spark client Pod and run the following command:
 
 ```shell
 PVC_NAME=spark-app-pvc
@@ -514,24 +503,13 @@ spec:
     - name: spark-jar-volume
       persistentVolumeClaim:
         claimName: ${PVC_NAME}
-    - name: scalardb-properties
-      configMap:
-        name: scalardb-properties
   containers:
     - name: spark-kubernetes-container
       volumeMounts:
         - mountPath: /opt/spark-jars
           name: spark-jar-volume
-        - mountPath: /tmp/scalar
-          name: scalardb-properties
 EOF
 ```
-
-:::note
-
-As mentioned earlier, both the ScalarDB Analytics server and the Spark driver need to access the ScalarDB data source configuration file (`scalardb.properties`) at the same path. Therefore, in this example, the file stored in `ConfigMap` is mounted at the `/tmp/scalar` path.
-
-:::
 
 <h4>Execute `spark-submit`</h4>
 
@@ -543,7 +521,7 @@ Run the application as a Spark job by using a command like the following:
 --deploy-mode cluster \
 --name analytics-sample-job \
 --class com.example.TestApp \
---conf spark.kubernetes.container.image=docker.io/bitnami/spark:3.5 \
+--conf spark.kubernetes.container.image=apache/spark:3.5.7-scala2.12-java11-python3-r-ubuntu \
 --conf spark.kubernetes.namespace=default \
 --conf spark.kubernetes.authenticate.driver.serviceAccountName=spark \
 --conf spark.kubernetes.driver.podTemplateFile=./spark-pod-template.yaml \
@@ -577,9 +555,6 @@ Also, you can remove the other Kubernetes resources you created by running the f
 ```shell
 # Delete the `spark` service account
 kubectl delete serviceaccount spark
-
-# Delete `scalardb-properties` `ConfigMap`
-kubectl delete configmap scalardb-properties
 
 # Delete the `spark-app-pvc` PVC
 kubectl delete pvc spark-app-pvc

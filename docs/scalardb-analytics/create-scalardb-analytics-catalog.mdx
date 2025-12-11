@@ -33,7 +33,7 @@ Create a ScalarDB Analytics server configuration file (for example, `scalardb-an
 
 ```properties
 # Metadata database configuration (required)
-scalar.db.analytics.server.db.url=jdbc:postgresql://localhost:5432/scalardb_analytics
+scalar.db.analytics.server.db.contact_points=jdbc:postgresql://localhost:5432/scalardb_analytics
 scalar.db.analytics.server.db.username=analytics_user
 scalar.db.analytics.server.db.password=your_secure_password
 
@@ -175,7 +175,7 @@ This section describes how to create a catalog container, add data sources to yo
 A catalog serves as a logical container for organizing data sources. Create your first catalog:
 
 ```console
-scalardb-analytics-cli catalog create production
+scalardb-analytics-cli catalog create --catalog production
 ```
 
 :::important
@@ -198,16 +198,12 @@ Create `postgres-datasource.json`:
 
 ```json
 {
-  "catalog": "production",
-  "name": "postgres_customers",
-  "type": "postgres",
-  "provider": {
-    "host": "postgres.example.com",
-    "port": 5432,
-    "username": "analytics_user",
-    "password": "secure_password",
-    "database": "customers"
-  }
+  "type": "postgresql",
+  "host": "postgres.example.com",
+  "port": 5432,
+  "username": "analytics_user",
+  "password": "secure_password",
+  "database": "customers"
 }
 ```
 
@@ -216,7 +212,7 @@ For detailed configuration options and examples for other database types (MySQL,
 Register the data source:
 
 ```console
-scalardb-analytics-cli data-source register --data-source-json postgres-datasource.json
+scalardb-analytics-cli data-source register --catalog production --data-source postgres_customers --provider-file postgres-datasource.json
 ```
 
 ### Verify your catalog

@@ -34,6 +34,13 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
   - [DROP USER](#drop-user)
   - [GRANT](#grant)
   - [REVOKE](#revoke)
+  - [CREATE ROLE](#create-role)
+  - [DROP ROLE](#drop-role)
+  - [GRANT ... TO ROLE](#grant--to-role)
+  - [REVOKE ... FROM ROLE](#revoke--from-role)
+  - [GRANT ROLE](#grant-role)
+  - [REVOKE ROLE](#revoke-role)
+  - [REVOKE ADMIN OPTION](#revoke-admin-option)
   - [CREATE ABAC_POLICY](#create-abac_policy)
   - [ENABLE ABAC_POLICY](#enable-abac_policy)
   - [DISABLE ABAC_POLICY](#disable-abac_policy)
@@ -73,6 +80,9 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
   - [RESUME](#resume)
   - [SHOW USERS](#show-users)
   - [SHOW GRANTS](#show-grants)
+  - [SHOW ROLES](#show-roles)
+  - [SHOW ROLE USERS](#show-role-users)
+  - [SHOW ROLE GRANTS](#show-role-grants)
   - [SHOW ABAC_POLICY](#show-abac_policy)
   - [SHOW ABAC_POLICIES](#show-abac_policies)
   - [SHOW ABAC_LEVEL](#show-abac_level)
@@ -114,7 +124,7 @@ CREATE NAMESPACE [IF NOT EXISTS] <namespace name> [WITH creation_options]
 creation_options: <option name>=<option value> [AND <option name>=<option value>] ...
 ```
 
-`creation_options` の詳細については、[作成オプション](../api-guide.mdx#creation-options)を参照してください。
+- `creation_options` の詳細については、[作成オプション](../api-guide.mdx#creation-options)を参照してください。
 
 #### 例
 
@@ -172,6 +182,7 @@ creation_options: <option name>=<option value> [AND <option name>=<option value>
 ```
 
 - 主キー以外の列に `ENCRYPTED` を指定して、それらの列のデータを暗号化できます。
+- 作成オプションの詳細については、[作成オプション](../api-guide.mdx#作成オプション-1)を参照してください。
 
 1つのパーティションキー列と複数のクラスタリングキー列で構成される主キーを持つテーブルを作成します。
 
@@ -311,15 +322,19 @@ CreateTableStatement statement4 =
 
 :::note
 
-暗号化された列にセカンダリインデックスを作成することはできません。
+次の場合、テーブルにセカンダリインデックスを作成することはできません:
+- 列が暗号化されている場合。
+- テーブルが Object Storage 上にある場合。
 
 :::
 
 #### 文法
 
 ```sql
-CREATE INDEX [IF NOT EXISTS] ON [<namespace name>.]<table name> (<column name>)
+CREATE INDEX [IF NOT EXISTS] ON [<namespace name>.]<table name> (<column name>) [WITH creation_options]
+creation_options: <option name>=<option value> [AND <option name>=<option value>] ...
 ```
+- `creation_options` の詳細については、[作成オプション](../api-guide.mdx#作成オプション-2)を参照してください。
 
 #### 例
 
@@ -592,29 +607,23 @@ DropCoordinatorTablesStatement statement2 =
 
 `ALTER TABLE` コマンドはテーブルを変更します (例: 列の追加)。
 
-:::warning
+#### ADD COLUMN
 
-テーブルに新しい列を追加する場合は、基盤となるストレージによって実行時間が大きく異なる可能性があるため、慎重に検討する必要があります。特にデータベースが本番環境で実行されている場合は、以下の点を考慮して適切に計画を立ててください。
+`ADD COLUMN` サブコマンドは、テーブルに新しい列を追加します。
 
-- **Cosmos DB for NoSQL および DynamoDB の場合:** テーブルスキーマは変更されないため、列の追加はほぼ瞬時に行われます。別のテーブルに格納されているテーブルメタデータのみが更新されます。
-- **Cassandra の場合:** 列を追加すると、スキーマメタデータのみが更新され、既存のスキーマレコードは変更されません。クラスタートポロジが実行時間の主な要因です。スキーマメタデータの変更は、ゴシッププロトコルを介して各クラスターノードに共有されます。このため、クラスターが大きいほど、すべてのノードが更新されるまでの時間が長くなります。
-- **リレーショナルデータベース (MySQL、Oracle など) の場合:** 列の追加は実行にそれほど時間がかかりません。
-
-:::
-
-#### 文法
+##### 文法
 
 ```sql
-ALTER TABLE [<namespace name>.]<table name> ADD [COLUMN] <column name> data_type [ENCRYPTED]
+ALTER TABLE [<namespace name>.]<table name> ADD [COLUMN] [IF NOT EXISTS] <column name> data_type [ENCRYPTED]
 
 data_type: BOOLEAN | INT | BIGINT | FLOAT | DOUBLE | TEXT | BLOB | DATE | TIME | TIMESTAMP | TIMESTAMPTZ
 ```
 
 - 列に `ENCRYPTED` を指定して、その列のデータを暗号化できます。
 
-#### 例
+##### 例
 
-`ALTER TABLE` の例は次のとおりです。
+`ADD COLUMN` の例は次のとおりです。
 
 ```sql
 -- Add a new column "new_col" to "ns.tbl"
@@ -622,9 +631,12 @@ ALTER TABLE ns.tbl ADD COLUMN new_col INT;
 
 -- Add a new encrypted column "new_col" to "ns.tbl"
 ALTER TABLE ns.tbl ADD COLUMN new_col TEXT ENCRYPTED;
+
+-- Add a new column only if it does not already exist
+ALTER TABLE ns.tbl ADD COLUMN IF NOT EXISTS new_col INT;
 ```
 
-`ALTER TABLE` のステートメントオブジェクトを構築する例は次のとおりです。
+`ADD COLUMN` のステートメントオブジェクトを構築する例は次のとおりです。
 
 ```java
 // Add a new column "new_col" to "ns.tbl"
@@ -634,7 +646,190 @@ AlterTableAddColumnStatement statement1 =
 // Add a new encrypted column "new_col" to "ns.tbl"
 AlterTableAddColumnStatement statement2 =
     StatementBuilder.alterTable("ns", "tbl").addColumn("new_col", DataType.TEXT, true).build();
+
+// Add a new column only if it does not already exist
+AlterTableAddColumnStatement statement3 =
+    StatementBuilder.alterTable("ns", "tbl").addColumn("new_col", DataType.INT).ifNotExists().build();
 ```
+
+:::warning
+
+テーブルに新しい列を追加する場合は、基盤となるストレージによって実行時間が大きく異なる可能性があるため、慎重に検討する必要があります。特にデータベースが本番環境で実行されている場合は、以下の点を考慮して適切に計画を立ててください。
+
+- **Cosmos DB for NoSQL および DynamoDB の場合:** テーブルスキーマは変更されないため、列の追加はほぼ瞬時に行われます。別のテーブルに格納されているテーブルメタデータのみが更新されます。
+- **Cassandra の場合:** 列を追加すると、スキーマメタデータのみが更新され、既存のスキーマレコードは変更されません。クラスタートポロジが実行時間の主な要因です。スキーマメタデータの変更は、ゴシッププロトコルを介して各クラスターノードに共有されます。このため、クラスターが大きいほど、すべてのノードが更新されるまでの時間が長くなります。
+- **リレーショナルデータベース (MySQL、Oracle など) の場合:** 列の追加は、データベースエンジンによってはテーブルの再構築を引き起こす可能性があります。そのような場合、実行に長時間かかることがあります。
+
+:::
+
+#### DROP COLUMN
+
+`DROP COLUMN` サブコマンドは、テーブルから列を削除します。
+
+##### 文法
+
+```sql
+ALTER TABLE [<namespace name>.]<table name> DROP [COLUMN] [IF EXISTS] <column name>
+```
+
+##### 例
+
+`DROP COLUMN` の例は次のとおりです。
+
+```sql
+-- Drop a column "col1" from "ns.tbl"
+ALTER TABLE ns.tbl DROP COLUMN col1;
+
+-- Drop a column "col1" from "ns.tbl" only if it exists
+ALTER TABLE ns.tbl DROP COLUMN IF EXISTS col1;
+```
+
+`DROP COLUMN` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Drop a column "col1" from "ns.tbl"
+AlterTableDropColumnStatement statement1 =
+    StatementBuilder.alterTable("ns", "tbl").dropColumn("col1").build();
+// Drop a column "col1" from "ns.tbl" only if it exists
+AlterTableDropColumnStatement statement2 =
+    StatementBuilder.alterTable("ns", "tbl").dropColumn("col1").ifExists().build();
+```
+
+:::note
+
+次の場合、テーブルから列を削除することはできません。
+
+- 列がパーティションキーまたはクラスタリングキーの一部である場合。
+- テーブルが Cassandra を除く非 JDBC データベース上にある場合。
+
+:::
+
+:::warning
+
+テーブルから列を削除する場合は、基盤となるストレージによって実行時間が大きく異なる可能性があるため、慎重に検討する必要があります。特にデータベースが本番環境で実行されている場合は、以下の点を考慮して適切に計画を立ててください。
+
+- **Cassandra の場合:** 列を削除すると、スキーマメタデータのみが更新され、実際のデータは次のコンパクション時に削除されます。クラスタートポロジが実行時間の主な要因です。スキーマメタデータの変更は、ゴシッププロトコルを介して各クラスターノードに共有されます。このため、クラスターが大きいほど、すべてのノードが更新されるまでの時間が長くなります。
+- **リレーショナルデータベース (MySQL、Oracle など) の場合:** 列の削除は、基盤となるリレーショナルデータベースに `ALTER TABLE ... DROP COLUMN` を発行し、データベースによってはテーブルの再構築を引き起こす可能性があります。そのような場合、実行に長時間かかることがあります。
+
+:::
+
+#### RENAME COLUMN
+
+`RENAME COLUMN` サブコマンドは、テーブル内の列の名前を変更します。
+
+##### 文法
+
+```sql
+ALTER TABLE [<namespace name>.]<table name> RENAME COLUMN <old column name> TO <new column name>
+```
+
+##### 例
+
+`RENAME COLUMN` の例は次のとおりです。
+
+```sql
+-- Rename a column "old_col" to "new_col" in "ns.tbl"
+ALTER TABLE ns.tbl RENAME COLUMN old_col TO new_col;
+```
+
+`RENAME COLUMN` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Rename a column "old_col" to "new_col" in "ns.tbl"
+AlterTableRenameColumnStatement statement1 =
+    StatementBuilder.alterTable("ns", "tbl").renameColumn("old_col", "new_col").build();
+```
+
+:::note
+
+次の場合、テーブルの列の名前を変更することはできません。
+
+- テーブルが Cassandra を除く非 JDBC データベース上にある場合。
+- Cassandra の場合、列がパーティションキーまたはクラスタリングキーの一部でない場合。
+- Db2 の場合、列がパーティションキー、クラスタリングキー、またはセカンダリインデックスキーの一部である場合。
+
+:::
+
+#### RENAME TO
+
+`RENAME TO` サブコマンドは、テーブルの名前を変更します。
+
+##### 文法
+
+```sql
+ALTER TABLE [<namespace name>.]<table name> RENAME TO <new table name>
+```
+
+##### 例
+
+`RENAME TO` の例は次のとおりです。
+
+```sql
+-- Rename a table "tbl" to "new_tbl" in namespace "ns"
+ALTER TABLE ns.tbl RENAME TO new_tbl;
+```
+
+`RENAME TO` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Rename a table "tbl" to "new_tbl" in namespace "ns"
+AlterTableRenameToStatement statement1 =
+    StatementBuilder.alterTable("ns", "tbl").renameTo("new_tbl").build();
+```
+
+:::note
+
+非 JDBC データベースではテーブルの名前を変更することはできません。
+
+:::
+
+#### ALTER COLUMN SET DATA TYPE
+
+`ALTER COLUMN SET DATA TYPE` サブコマンドは、テーブル内の列のデータ型を変更します。
+
+##### 文法
+
+```sql
+ALTER TABLE [<namespace name>.]<table name> ALTER [COLUMN] <column name> [SET DATA] TYPE data_type;
+data_type: BOOLEAN | INT | BIGINT | FLOAT | DOUBLE | TEXT | BLOB | DATE | TIME | TIMESTAMP | TIMESTAMPTZ
+```
+
+##### 例
+
+`ALTER COLUMN SET DATA TYPE` の例は次のとおりです。
+
+```sql
+-- Change the data type of a column "col1" to BIGINT in "ns.tbl"
+ALTER TABLE ns.tbl ALTER COLUMN col1 SET DATA TYPE BIGINT;
+```
+
+`ALTER COLUMN SET DATA TYPE` のステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// Change the data type of a column "col1" to BIGINT in "ns.tbl"
+AlterTableAlterColumnStatement statement1 =
+    StatementBuilder.alterTable("ns", "tbl").alterColumnType("col1", DataType.BIGINT).build();
+```
+
+:::note
+
+次の場合、テーブルの列のデータ型を変更することはできません。
+
+- 列がパーティションキー、クラスタリングキー、またはセカンダリインデックスキーの一部である場合。
+- テーブルが非 JDBC データベース上または SQLite 上にある場合。
+- INT から BIGINT、FLOAT から DOUBLE、および任意のデータから TEXT への変換以外の変換が指定されている場合。
+- Oracle の場合、INT から BIGINT 以外の変換が指定されている場合。
+- Db2 および TiDB の場合、BLOB から TEXT への変換が指定されている場合。
+
+:::
+
+:::warning
+
+列の型を変更する場合は、基盤となるストレージによって実行時間が大きく異なる可能性があるため、慎重に検討する必要があります。特にデータベースが本番環境で実行されている場合は、以下の点を考慮して適切に計画を立ててください。
+
+- **リレーショナルデータベース (MySQL、Oracle など) の場合:** 列の変更は、基盤となるリレーショナルデータベースに `ALTER TABLE ... ALTER COLUMN` または `ALTER TABLE ... MODIFY` を発行し、データベースによってはテーブルの再構築を引き起こす可能性があります。そのような場合、実行に長時間かかることがあります。
+
+:::
 
 ## DML
 
@@ -661,17 +856,25 @@ AlterTableAddColumnStatement statement2 =
 SELECT projection [, projection] ...
   FROM [<namespace name>.]<table name> [AS <alias>] [join_specification [join_specification] ...]
   [WHERE and_predicates [OR and_predicates ...] | or_predicates [AND or_predicates ...]]
-  [ORDER BY identifier [order] [, identifier [order]] ...]
+  [GROUP BY identifier [, identifier] ...]
+  [HAVING having_condition]
+  [ORDER BY order_key [order] [, order_key [order]] ...]
   [LIMIT <limit>]
   [WITH operation_attributes_or_abac_read_tags]
 
-projection: * | identifier [AS <alias>]
+identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
+aggregate_function: <aggregate function name>(* | <column name> | <literal>)
+projection: * | identifier [AS <alias>] | aggregate_function [AS <alias>]
 join_specification: [INNER] JOIN [<namespace name>.]<table name> [AS <alias>] ON join_predicate [AND join_predicate] ... | {LEFT|RIGHT} [OUTER] JOIN [<namespace name>.]<table name> [AS <alias>] ON join_predicate [AND join_predicate] ...
 join_predicate: identifier = identifier
 and_predicates: predicate | (predicate [AND predicate ...])
 or_predicates: predicate | (predicate [OR predicate ...])
 predicate: identifier operator <literal> | identifier BETWEEN <literal> AND <literal> | identifier [NOT] LIKE <pattern> [ESCAPE <escape character>] | identifier IS [NOT] NULL
-identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
+having_condition: having_and_predicates [OR having_and_predicates ...] | having_or_predicates [AND having_or_predicates ...]
+having_and_predicates: having_predicate | (having_predicate [AND having_predicate ...])
+having_or_predicates: having_predicate | (having_predicate [OR having_predicate ...])
+having_predicate: (identifier | aggregate_function | <alias>) operator <literal> | (identifier | aggregate_function | <alias>) BETWEEN <literal> AND <literal> | (identifier | aggregate_function | <alias>) [NOT] LIKE <pattern> [ESCAPE <escape character>] | (identifier | aggregate_function | <alias>) IS [NOT] NULL
+order_key: identifier | aggregate_function | <alias>
 operator: = | <> | != | > | >= | < | <=
 order: ASC | DESC
 operation_attributes_or_abac_read_tags: operation_attribute_or_abac_read_tag [AND operation_attribute_or_abac_read_tag] ...
@@ -708,9 +911,31 @@ abac_read_tag: ABAC_READ_TAG <abac read tag> FOR [POLICY] <abac policy name>
   - `ESCAPE` 句を指定してエスケープ文字を変更できます。
   - 空のエスケープ文字 `ESCAPE ''` を指定してエスケープ文字を無効にすることができます。
 
+`GROUP BY` 句:
+
+- 指定された列で同じ値を持つ行をグループ化します。
+- `SELECT` 句の列は、`GROUP BY` 句に含まれるか集約関数で使用される必要があります。
+
+`HAVING` 句:
+
+- 集約関数の結果に基づいてグループをフィルタリングします。
+- 集約関数を直接参照するか、エイリアスで参照できます。
+- 述語は `having_and_predicates` の OR 形式（論理和標準形と呼ばれます）または `having_or_predicates` の AND 形式（論理積標準形と呼ばれます）である必要があります。
+- 複数の述語を持つ複数の `having_and_predicates` または `having_or_predicates` を接続する場合は、`having_and_predicates` と `having_or_predicates` を括弧で囲む必要があります。
+
+集約関数:
+
+- サポートされている関数: `COUNT`、`SUM`、`AVG`、`MIN`、`MAX`。
+- `COUNT(*)` は全ての行をカウントし、`COUNT(<column name>)` は非 null 値をカウントします。結果の型は `BIGINT` です。
+- `SUM` は数値型（`INT`、`BIGINT`、`FLOAT`、`DOUBLE`）を受け入れます。`INT` と `BIGINT` に対して `BIGINT` を返し、`FLOAT` と `DOUBLE` に対して `DOUBLE` を返します。
+- `AVG` は数値型を受け入れます。`DOUBLE` を返します。
+- `MIN` は比較可能な任意の型を受け入れます。同じ型を返します。
+- `MAX` は比較可能な任意の型を受け入れます。同じ型を返します。
+- `COUNT` のみが `*` を引数として受け入れます。
+
 `ORDER BY` 句:
 
-- `ORDER BY` 句の任意の列に `order` を指定できます。
+- `ORDER BY` 句の任意の列、集約関数、またはエイリアスに `order` を指定できます。
 - `order` を省略すると、デフォルトの順序 `ASC` が使用されます。
 - `ORDER BY` 句では暗号化された列を指定できません。
 
@@ -1177,6 +1402,114 @@ SelectStatement statement13 =
 ```
 
 `JOIN` 句を使用する例については、[パーティションスキャンとインデックススキャンの例](#パーティションスキャンとインデックススキャンの例)を参照してください。
+
+#### 集約クエリの例
+
+次のようなテーブルがあるとします。
+
+```sql
+CREATE TABLE ns.user (
+  id INT,
+  name TEXT,
+  age INT,
+  height FLOAT,
+  PRIMARY KEY (id)
+);
+```
+
+集約クエリの例は次のとおりです。
+
+```sql
+-- 集約関数を使用
+SELECT COUNT(*) FROM ns.user;
+
+-- GROUP BY を使用
+SELECT age, COUNT(*) FROM ns.user GROUP BY age;
+
+-- 複数の集約関数を使用
+SELECT age, COUNT(height), SUM(height), AVG(height), MIN(height), MAX(height) FROM ns.user GROUP BY age;
+
+-- 集約関数のエイリアスと HAVING を使用
+SELECT age, COUNT(*) AS cnt FROM ns.user GROUP BY age HAVING cnt > 1;
+
+-- HAVING で集約関数を直接使用
+SELECT age, COUNT(*) FROM ns.user GROUP BY age HAVING COUNT(*) > 1;
+
+-- GROUP BY、WHERE、ORDER BY でエイリアスを使用、および LIMIT を使用
+SELECT age, SUM(height) AS total_height FROM ns.user WHERE name LIKE 'A%' GROUP BY age ORDER BY total_height DESC LIMIT 10;
+```
+
+集約クエリのステートメントオブジェクトを構築する例は次のとおりです。
+
+```java
+// 集約関数を使用
+SelectStatement statement1 =
+    StatementBuilder.select(
+            Projection.function(
+                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))))
+        .from("ns", "user")
+        .build();
+
+// GROUP BY を使用
+SelectStatement statement2 =
+    StatementBuilder.select(
+            Projection.column("age"),
+            Projection.function(
+                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))))
+        .from("ns", "user")
+        .groupBy(ColumnRef.of("age"))
+        .build();
+
+// 複数の集約関数を使用
+SelectStatement statement3 =
+    StatementBuilder.select(
+            Projection.column("age"),
+            Projection.function(
+                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
+            Projection.function(
+                FunctionRef.of("SUM", ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
+            Projection.function(
+                FunctionRef.of("AVG", ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
+            Projection.function(
+                FunctionRef.of("MIN", ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
+            Projection.function(
+                FunctionRef.of("MAX", ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))))
+        .from("ns", "user")
+        .groupBy(ColumnRef.of("age"))
+        .build();
+
+// 集約関数のエイリアスと HAVING を使用
+SelectStatement statement4 =
+    StatementBuilder.select(
+            Projection.column("age"),
+            Projection.function(
+                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))).as("cnt"))
+        .from("ns", "user")
+        .groupBy(ColumnRef.of("age"))
+        .having(HavingPredicate.column("cnt").isGreaterThan(Value.of(1L)))
+        .build();
+
+// HAVING で集約関数を直接使用
+SelectStatement statement5 =
+    StatementBuilder.select(Projection.column("age"), Projection.function(FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))))
+        .from("ns", "user")
+        .groupBy(ColumnRef.of("age"))
+        .having(HavingPredicate.function(FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))).isGreaterThan(Value.of(1L)))
+        .build();
+
+// GROUP BY、WHERE、ORDER BY でエイリアスを使用、および LIMIT を使用
+SelectStatement statement6 =
+    StatementBuilder.select(
+            Projection.column("age"),
+            Projection.function(
+                    FunctionRef.of("SUM", ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))).as("total_height"))
+        .from("ns", "user")
+        .where(Predicate.column("name").isLike(Value.of("A%")))
+        .groupBy(ColumnRef.of("age"))
+        .orderBy(Ordering.column("total_height").desc())
+        .limit(10)
+        .build();
+```
 
 ### INSERT
 
@@ -2057,15 +2390,15 @@ DropUserStatement statement = StatementBuilder.dropUser("user1").build();
 #### 文法
 
 ```sql
-GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON [TABLE] <table name> [, <table name>] ... TO [USER] <username> [, <username>] ... [WITH GRANT OPTION]
-GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON NAMESPACE <namespace name> [, <namespace name>] ... TO [USER] <username> [, <username>] ... [WITH GRANT OPTION]
+GRANT privilege [, privilege] ... ON [TABLE] <table name> [, <table name>] ... TO [USER] <username> [, <username>] ... [WITH GRANT OPTION]
+GRANT privilege [, privilege] ... ON NAMESPACE <namespace name> [, <namespace name>] ... TO [USER] <username> [, <username>] ... [WITH GRANT OPTION]
 
-privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER
+privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER | ALL [PRIVILEGES] | GRANT OPTION
 ```
 
 - `INSERT` 権限と `UPDATE` 権限を一緒に付与する必要があります。
 - ユーザーに `UPDATE` 権限または `DELETE` 権限を付与するには、対象ユーザーに `SELECT` 権限が必要です。
-- `WITH GRANT OPTION` オプションを指定すると、ユーザーは他のユーザーに権限を付与できます。
+- `WITH GRANT OPTION` オプションまたは `GRANT OPTION` 権限を指定すると、ユーザーは他のユーザーやロールに権限を付与できます。
 
 #### 例
 
@@ -2130,12 +2463,10 @@ GrantStatement statement5 =
 #### 文法
 
 ```sql
-REVOKE {privilege [, privilege] ... | ALL [PRIVILEGES]} [, GRANT OPTION] ON [TABLE] <table name> [, <table name>] ... FROM [USER] <username> [, <username>] ...
-REVOKE GRANT OPTION ON [TABLE] <table name> [, <table name>] ... FROM [USER] <username> [, <username>] ...
-REVOKE {privilege [, privilege] ... | ALL [PRIVILEGES]} [, GRANT OPTION] ON NAMESPACE <namespace name> [, <namespace name>] ... FROM [USER] <username> [, <username>] ...
-REVOKE GRANT OPTION ON NAMESPACE <namespace name> [, <namespace name>] ... FROM [USER] <username> [, <username>] ...
+REVOKE privilege [, privilege] ... ON [TABLE] <table name> [, <table name>] ... FROM [USER] <username> [, <username>] ...
+REVOKE privilege [, privilege] ... ON NAMESPACE <namespace name> [, <namespace name>] ... FROM [USER] <username> [, <username>] ...
 
-privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER
+privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER | ALL [PRIVILEGES] | GRANT OPTION
 ```
 
 - `INSERT` 権限と `UPDATE` 権限は同時に取り消す必要があります。
@@ -2193,6 +2524,315 @@ RevokeStatement statement5 =
         .onNamespace("ns")
         .fromUser("user1")
         .build();
+```
+
+### CREATE ROLE
+
+`CREATE ROLE` コマンドは、指定されたロール名で新しいロールを作成します。
+
+#### 文法
+
+```sql
+CREATE ROLE <role name>
+```
+
+#### 例
+
+`CREATE ROLE` の例を以下に示します。
+
+```sql
+-- ロールを作成します。
+CREATE ROLE role1;
+```
+
+`CREATE ROLE` のステートメントオブジェクトを構築する例を以下に示します。
+
+```java
+// ロールを作成します。
+CreateRoleStatement statement = StatementBuilder.createRole("role1").build();
+```
+
+### DROP ROLE
+
+`DROP ROLE` コマンドは、指定されたロールを削除します。
+
+#### 文法
+
+```sql
+DROP ROLE <role name>
+```
+
+#### 例
+
+`DROP ROLE` の例を以下に示します。
+
+```sql
+-- ロールを削除します。
+DROP ROLE role1;
+```
+
+`DROP ROLE` のステートメントオブジェクトを構築する例を以下に示します。
+
+```java
+// ロールを削除します。
+DropRoleStatement statement = StatementBuilder.dropRole("role1").build();
+```
+
+### GRANT ... TO ROLE
+
+`GRANT ... TO ROLE` コマンドは、指定されたロールに権限を付与します。
+
+#### 文法
+
+```sql
+GRANT privilege [, privilege] ... ON [TABLE] <table name> [, <table name>] ... TO ROLE <role name> [, <role name>] ... [WITH GRANT OPTION]
+GRANT privilege [, privilege] ... ON NAMESPACE <namespace name> [, <namespace name>] ... TO ROLE <role name> [, <role name>] ... [WITH GRANT OPTION]
+
+privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER | ALL [PRIVILEGES] | GRANT OPTION
+```
+
+- `INSERT` 権限と `UPDATE` 権限は一緒に付与する必要があります。
+- ロールに `UPDATE` または `DELETE` 権限を付与するには、対象ロールが `SELECT` 権限を持つ必要があります。
+- `WITH GRANT OPTION` オプションまたは `GRANT OPTION` 権限を指定すると、そのロールを持つユーザーは他のユーザーやロールに権限を付与できます。
+
+#### 例
+
+`GRANT ... TO ROLE` の例を以下に示します。
+
+```sql
+-- テーブルの SELECT 権限をロールに付与します。
+GRANT SELECT ON ns.tbl TO ROLE role1;
+
+-- テーブルの SELECT 権限をロールに付与します。
+GRANT SELECT ON ns.tbl1, ns.tbl2 TO ROLE role1, role2;
+
+-- ネームスペース内のすべてのテーブルの SELECT 権限をロールに付与します。
+GRANT SELECT ON NAMESPACE ns TO ROLE role1;
+
+-- テーブルのすべての権限と GRANT OPTION をロールに付与します。
+GRANT ALL ON ns.tbl TO ROLE role1 WITH GRANT OPTION;
+```
+
+`GRANT ... TO ROLE` のステートメントオブジェクトを構築する例を以下に示します。
+
+```java
+// テーブルの SELECT 権限をロールに付与します。
+GrantPrivilegeToRoleStatement statement1 =
+    StatementBuilder.grantToRole(Privilege.SELECT).onTable("ns", "tbl").toRole("role1").build();
+
+// テーブルの SELECT 権限をロールに付与します。
+GrantPrivilegeToRoleStatement statement2 =
+    StatementBuilder.grantToRole(Privilege.SELECT)
+        .onTable("ns", "tbl1", "ns", "tbl2")
+        .toRole("role1", "role2")
+        .build();
+
+// ネームスペース内のすべてのテーブルの SELECT 権限をロールに付与します。
+GrantPrivilegeToRoleStatement statement3 =
+    StatementBuilder.grantToRole(Privilege.SELECT).onNamespace("ns").toRole("role1").build();
+
+// テーブルのすべての権限と GRANT OPTION をロールに付与します。
+GrantPrivilegeToRoleStatement statement4 =
+    StatementBuilder.grantToRole(Privilege.values())
+        .onTable("ns", "tbl")
+        .toRole("role1")
+        .withGrantOption()
+        .build();
+```
+
+### REVOKE ... FROM ROLE
+
+`REVOKE ... FROM ROLE` コマンドは、指定されたロールから権限を取り消します。
+
+#### 文法
+
+```sql
+REVOKE privilege [, privilege] ... ON [TABLE] <table name> [, <table name>] ... FROM ROLE <role name> [, <role name>] ...
+REVOKE privilege [, privilege] ... ON NAMESPACE <namespace name> [, <namespace name>] ... FROM ROLE <role name> [, <role name>] ...
+
+privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER | ALL [PRIVILEGES] | GRANT OPTION
+```
+
+- `INSERT` 権限と `UPDATE` 権限は一緒に取り消す必要があります。
+- 対象ロールが `UPDATE` または `DELETE` 権限を持つ場合、そのロールから `SELECT` 権限を取り消すことはできません。
+
+#### 例
+
+`REVOKE ... FROM ROLE` の例を以下に示します。
+
+```sql
+-- ロールからテーブルの SELECT 権限を取り消します。
+REVOKE SELECT ON ns.tbl FROM ROLE role1;
+
+-- ロールからテーブルの SELECT 権限を取り消します。
+REVOKE SELECT ON ns.tbl1, ns.tbl2 FROM ROLE role1, role2;
+
+-- ロールからネームスペース内のすべてのテーブルの SELECT 権限を取り消します。
+REVOKE SELECT ON NAMESPACE ns FROM ROLE role1;
+
+-- ロールからテーブルのすべての権限と GRANT OPTION を取り消します。
+REVOKE ALL, GRANT OPTION ON ns.tbl FROM ROLE role1;
+```
+
+`REVOKE ... FROM ROLE` のステートメントオブジェクトを構築する例を以下に示します。
+
+```java
+// ロールからテーブルの SELECT 権限を取り消します。
+RevokePrivilegeFromRoleStatement statement1 =
+    StatementBuilder.revokeFromRole(Privilege.SELECT).onTable("ns", "tbl").fromRole("role1").build();
+
+// ロールからテーブルの SELECT 権限を取り消します。
+RevokePrivilegeFromRoleStatement statement2 =
+    StatementBuilder.revokeFromRole(Privilege.SELECT)
+        .onTable("ns", "tbl1", "ns", "tbl2")
+        .fromRole("role1", "role2")
+        .build();
+
+// ロールからネームスペース内のすべてのテーブルの SELECT 権限を取り消します。
+RevokePrivilegeFromRoleStatement statement3 =
+    StatementBuilder.revokeFromRole(Privilege.SELECT).onNamespace("ns").fromRole("role1").build();
+
+// ロールからテーブルのすべての権限と GRANT OPTION を取り消します。
+RevokePrivilegeFromRoleStatement statement4 =
+    StatementBuilder.revokeFromRole(Privilege.values())
+        .onTable("ns", "tbl")
+        .fromRole("role1")
+        .build();
+```
+
+### GRANT ROLE
+
+`GRANT ROLE` コマンドは、指定されたユーザーまたはロールにロールを付与します。
+
+#### 文法
+
+```sql
+GRANT ROLE <role name> [, <role name>] ... TO [USER] <username> [, <username>] ... [WITH ADMIN OPTION]
+GRANT ROLE <role name> [, <role name>] ... TO ROLE <role name> [, <role name>] ... [WITH ADMIN OPTION]
+```
+
+- `WITH ADMIN OPTION` オプションを指定すると、付与先は他のユーザーやロールにそのロールを付与できます。
+
+#### 例
+
+`GRANT ROLE` の例を以下に示します。
+
+```sql
+-- ユーザーにロールを付与します。
+GRANT ROLE role1 TO user1;
+
+-- ユーザーにロールを付与します。
+GRANT ROLE role1, role2 TO user1, user2;
+
+-- ADMIN OPTION と共にユーザーにロールを付与します。
+GRANT ROLE role1 TO user1 WITH ADMIN OPTION;
+
+-- 別のロールにロールを付与します。
+GRANT ROLE role1 TO ROLE role2;
+
+-- ADMIN OPTION と共に別のロールにロールを付与します。
+GRANT ROLE role1 TO ROLE role2 WITH ADMIN OPTION;
+```
+
+`GRANT ROLE` のステートメントオブジェクトを構築する例を以下に示します。
+
+```java
+// ユーザーにロールを付与します。
+GrantRoleToUserStatement statement1 =
+    StatementBuilder.grantRole("role1").toUser("user1").build();
+
+// ユーザーにロールを付与します。
+GrantRoleToUserStatement statement2 =
+    StatementBuilder.grantRole("role1", "role2").toUser("user1", "user2").build();
+
+// ADMIN OPTION と共にユーザーにロールを付与します。
+GrantRoleToUserStatement statement3 =
+    StatementBuilder.grantRole("role1").toUser("user1").withAdminOption().build();
+
+// 別のロールにロールを付与します。
+GrantRoleToRoleStatement statement4 =
+    StatementBuilder.grantRole("role1").toRole("role2").build();
+
+// ADMIN OPTION と共に別のロールにロールを付与します。
+GrantRoleToRoleStatement statement5 =
+    StatementBuilder.grantRole("role1").toRole("role2").withAdminOption().build();
+```
+
+### REVOKE ROLE
+
+`REVOKE ROLE` コマンドは、指定されたユーザーまたはロールからロールを取り消します。
+
+#### 文法
+
+```sql
+REVOKE ROLE <role name> [, <role name>] ... FROM [USER] <username> [, <username>] ...
+REVOKE ROLE <role name> [, <role name>] ... FROM ROLE <role name> [, <role name>] ...
+```
+
+#### 例
+
+`REVOKE ROLE` の例を以下に示します。
+
+```sql
+-- ユーザーからロールを取り消します。
+REVOKE ROLE role1 FROM user1;
+
+-- ユーザーからロールを取り消します。
+REVOKE ROLE role1, role2 FROM user1, user2;
+
+-- 別のロールからロールを取り消します。
+REVOKE ROLE role1 FROM ROLE role2;
+```
+
+`REVOKE ROLE` のステートメントオブジェクトを構築する例を以下に示します。
+
+```java
+// ユーザーからロールを取り消します。
+RevokeRoleFromUserStatement statement1 =
+    StatementBuilder.revokeRole("role1").fromUser("user1").build();
+
+// ユーザーからロールを取り消します。
+RevokeRoleFromUserStatement statement2 =
+    StatementBuilder.revokeRole("role1", "role2").fromUser("user1", "user2").build();
+
+// 別のロールからロールを取り消します。
+RevokeRoleFromRoleStatement statement3 =
+    StatementBuilder.revokeRole("role1").fromRole("role2").build();
+```
+
+### REVOKE ADMIN OPTION
+
+`REVOKE ADMIN OPTION` コマンドは、指定されたユーザーまたはロールからロールの管理者オプションを取り消します。付与先はロールを保持しますが、他者にそれを付与することはできなくなります。
+
+#### 文法
+
+```sql
+REVOKE ADMIN OPTION FOR ROLE <role name> [, <role name>] ... FROM [USER] <username> [, <username>] ...
+REVOKE ADMIN OPTION FOR ROLE <role name> [, <role name>] ... FROM ROLE <role name> [, <role name>] ...
+```
+
+#### 例
+
+`REVOKE ADMIN OPTION` の例を以下に示します。
+
+```sql
+-- ユーザーからロールの ADMIN OPTION を取り消します。
+REVOKE ADMIN OPTION FOR ROLE role1 FROM user1;
+
+-- 別のロールからロールの ADMIN OPTION を取り消します。
+REVOKE ADMIN OPTION FOR ROLE role1 FROM ROLE role2;
+```
+
+`REVOKE ADMIN OPTION` のステートメントオブジェクトを構築する例を以下に示します。
+
+```java
+// ユーザーからロールの ADMIN OPTION を取り消します。
+RevokeAdminOptionForRoleFromUserStatement statement1 =
+    StatementBuilder.revokeAdminOptionForRole("role1").fromUser("user1").build();
+
+// 別のロールからロールの ADMIN OPTION を取り消します。
+RevokeAdminOptionForRoleFromRoleStatement statement2 =
+    StatementBuilder.revokeAdminOptionForRole("role1").fromRole("role2").build();
 ```
 
 ### CREATE ABAC_POLICY
@@ -3336,6 +3976,8 @@ ShowUsersStatement statement = StatementBuilder.showUsers().build();
 - `name`: `TEXT` - タイプに応じて名前空間名またはテーブル名
 - `type`: `TEXT` - オブジェクトのタイプ (`NAMESPACE` または `TABLE`)
 - `privilege`: `TEXT` - 権限
+- `grantedToUser`: `BOOLEAN` - 権限がユーザーに直接付与されているかどうか
+- `rolesProvidingPrivilege`: `TEXT` - この権限をユーザーに提供するロールのカンマ区切りリスト
 
 #### 文法
 
@@ -3367,6 +4009,116 @@ ShowGrantsStatement statement1 = StatementBuilder.showGrants().build();
 
 // Show privileges granted to user1
 ShowGrantsStatement statement2 = StatementBuilder.showGrants().forUser("user1").build();
+```
+
+### SHOW ROLES
+
+`SHOW ROLES` コマンドは、すべてのロールまたは指定されたユーザーに付与されているロールを表示します。
+
+すべてのロールを表示する場合 (`SHOW ROLES`)、このコマンドは以下の列を返します。
+
+- `roleName`: `TEXT` - ロール名
+- `grantedRoles`: `TEXT` - このロールに付与されているロール (カンマ区切り、管理者オプション付きの付与の場合は `(admin option)` サフィックス付き)
+
+ユーザーに直接またはロール階層を通じて利用可能なすべてのロールを表示する場合 (`SHOW ROLES FOR`)、このコマンドは以下の列を返します。
+
+- `roleName`: `TEXT` - ロール名
+- `adminOptionOnUser`: `BOOLEAN` - このロールが管理者オプション付きでユーザーに直接付与されているかどうか
+- `grantedRoles`: `TEXT` - このロールに付与されているロール (カンマ区切り、管理者オプション付きの付与の場合は `(admin option)` サフィックス付き)
+
+#### 文法
+
+```sql
+-- すべてのロールを表示
+SHOW ROLES
+
+-- 指定されたユーザーに付与されたロールを表示
+SHOW ROLES FOR [USER] <username>
+```
+
+#### 例
+
+`SHOW ROLES` の例を以下に示します。
+
+```sql
+-- すべてのロールを表示
+SHOW ROLES;
+
+-- user1 に付与されたロールを表示
+SHOW ROLES FOR user1;
+```
+
+`SHOW ROLES` のステートメントオブジェクトを構築する例を以下に示します。
+
+```java
+// すべてのロールを表示
+ShowRolesStatement statement1 = StatementBuilder.showRoles().build();
+
+// user1 に付与されたロールを表示
+ShowRolesStatement statement2 = StatementBuilder.showRoles().forUser("user1").build();
+```
+
+### SHOW ROLE USERS
+
+`SHOW ROLE USERS` コマンドは、指定されたロールが直接付与されているユーザーを表示します。
+
+このコマンドは以下の列を返します。
+
+- `username`: `TEXT` - ユーザー名
+- `adminOption`: `BOOLEAN` - ユーザーがそのロールの ADMIN OPTION を持つかどうか
+
+#### 文法
+
+```sql
+SHOW ROLE USERS FOR <role name>
+```
+
+#### 例
+
+`SHOW ROLE USERS` の例を以下に示します。
+
+```sql
+-- role1 を付与されているユーザーを表示
+SHOW ROLE USERS FOR role1;
+```
+
+`SHOW ROLE USERS` のステートメントオブジェクトを構築する例を以下に示します。
+
+```java
+// role1 を付与されているユーザーを表示
+ShowRoleUsersStatement statement = StatementBuilder.showRoleUsers("role1").build();
+```
+
+### SHOW ROLE GRANTS
+
+`SHOW ROLE GRANTS` コマンドは、指定されたロールに直接付与されている権限を表示します。
+
+このコマンドは以下の列を返します。
+
+- `name`: `TEXT` - タイプに応じてネームスペース名またはテーブル名
+- `type`: `TEXT` - オブジェクトのタイプ (`NAMESPACE` または `TABLE` のいずれか)
+- `privilege`: `TEXT` - 権限
+
+#### 文法
+
+```sql
+SHOW ROLE GRANTS FOR <role name>
+```
+
+#### 例
+
+`SHOW ROLE GRANTS`の例を以下に示します。
+
+```sql
+-- role1 に付与されている権限を表示
+SHOW ROLE GRANTS FOR role1;
+```
+
+`SHOW ROLE GRANTS` のステートメントオブジェクトを構築する例を以下に示します。
+
+```java
+// role1 に付与されている権限を表示
+ShowRoleGrantsStatement statement = StatementBuilder.showRoleGrants("role1").build();
 ```
 
 ### SHOW ABAC_POLICY

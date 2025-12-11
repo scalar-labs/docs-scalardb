@@ -75,28 +75,34 @@ const config = {
               },
               */
               current: { // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
-                label: '3.16',
+                label: '3.17',
                 path: 'latest', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
                 banner: 'none',
-                className: '3.16.1',
+                className: '3.17.1',
+              },
+              "3.16": { // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
+                label: '3.16',
+                path: '3.16', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
+                banner: 'none',
+                className: '3.16.3',
               },
               "3.15": { // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
                 label: '3.15',
                 path: '3.15', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
                 banner: 'none',
-                className: '3.15.5',
+                className: '3.15.6',
               },
               "3.14": { // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
                 label: '3.14',
                 path: '3.14', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
                 banner: 'none',
-                className: '3.14.4',
+                className: '3.14.5',
               },
               "3.13": {
                 label: '3.13',
                 path: '3.13',
                 banner: 'none',
-                className: '3.13.5',
+                className: '3.13.6',
               },
               "3.12": {
                 label: '3.12',
@@ -169,7 +175,7 @@ const config = {
 
   // The following versions have Japanese docs, so the language dropdown should be displayed only when visitors are reading these versions of docs.
   customFields: {
-    allowedLanguageDropdownVersions: ["current", "latest", "3.15", "3.14", "3.13"],
+    allowedLanguageDropdownVersions: ["current", "latest", "3.16", "3.15", "3.14", "3.13"],
   },
 
   plugins: [
@@ -185,10 +191,6 @@ const config = {
           {
             to: '/docs/latest/releases/release-support-policy',
             from: '/docs/releases/release-support-policy',
-          },
-          { // As of version 3.16, the redirect for this doc in Japanese is at i18n/versioned_docs/ja-jp/docusaurus-plugin-content-docs/current/scalardb-analytics/index.html. This redirect can be removed when version 3.17 has been released.
-            to: '/docs/latest/scalardb-analytics/design',
-            from: '/docs/latest/scalardb-analytics',
           },
           {
             to: '/docs/latest/scalardb-analytics/quickstart',
@@ -565,7 +567,7 @@ const config = {
       announcementBar: {
         id: 'new_version',
         content:
-          'Announcing the release of ScalarDB 3.16!🚀 For details on what\'s included in this new version, see the <a target="_self" href="/docs/latest/releases/release-notes?utm_source=docs-site&utm_medium=announcementbar">release notes</a>.',
+          'Announcing the release of ScalarDB 3.17!🚀 For details on what\'s included in this new version, see the <a target="_self" href="/docs/latest/releases/release-notes?utm_source=docs-site&utm_medium=announcementbar">release notes</a>.',
           // 'Announcing the release of ScalarDB X.X!🚀 For details on what\'s included in this new version, see the <a target="_self" href="/docs/latest/releases/release-notes?utm_source=docs-site&utm_medium=announcementbar">release notes</a>',
         backgroundColor: '#2673BB',
         textColor: '#FFFFFF',

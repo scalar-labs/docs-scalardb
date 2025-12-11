@@ -1,7 +1,7 @@
 ---
 tags:
   - Enterprise Premium
-  - Private Preview
+  - Public Preview
 displayed_sidebar: docsEnglish
 ---
 
@@ -45,7 +45,7 @@ This tutorial explains how to run vector search in ScalarDB Cluster.
 
 ### Prerequisites
 
-- OpenJDK LTS version (8, 11, 17, or 21) from [Eclipse Temurin](https://adoptium.net/temurin/releases/)
+- OpenJDK LTS version (17 or 21) from [Eclipse Temurin](https://adoptium.net/temurin/releases/)
 - [Docker](https://www.docker.com/get-started/) 20.10 or later with [Docker Compose](https://docs.docker.com/compose/install/) V2 or later
 
 :::note
@@ -76,16 +76,54 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
 
 Additionally, you need to add the properties for the embedding store and the embedding model to the configuration file, depending on the embedding store and the embedding model you want to use.
 
+:::note
+
+ScalarDB Cluster supports multiple embedding stores and embedding models. You can define multiple named instances and select which ones to use at runtime.
+
+To configure multiple instances, specify a comma-separated list of names in `scalar.db.embedding.stores` and `scalar.db.embedding.models`. Then, configure each instance by using `scalar.db.embedding.stores.<STORE_NAME>.` or `scalar.db.embedding.models.<MODEL_NAME>.` as a prefix.
+
+For example:
+
+```properties
+# Define multiple embedding stores.
+scalar.db.embedding.stores=store1,store2
+
+# Configure the first store.
+scalar.db.embedding.stores.store1.type=in-memory
+
+# Configure the second store.
+scalar.db.embedding.stores.store2.type=opensearch
+scalar.db.embedding.stores.store2.opensearch.server_url=<SERVER_URL>
+...
+
+# Define multiple embedding models.
+scalar.db.embedding.models=model1,model2
+
+# Configure the first model.
+scalar.db.embedding.models.model1.type=in-process
+
+# Configure the second model.
+scalar.db.embedding.models.model2.type=open-ai
+scalar.db.embedding.models.model2.open-ai.api_key=<API_KEY>
+...
+```
+
+:::
+
 Select the embedding store that you want to use, and follow the instructions to configure it.
 
 <Tabs groupId="embedding-store" queryString>
   <TabItem value="in-memory" label="In-memory" default>
     The in-memory embedding store is a basic in-memory implementation. This embedding store is useful for fast prototyping and simple use cases.
 
-    To use the in-memory embedding store, add the following property to the configuration file:
+    To use the in-memory embedding store, add the following properties to the configuration file:
 
     ```properties
-    scalar.db.embedding.store.type=in-memory
+    # Define embedding store names (comma-separated list for multiple stores).
+    scalar.db.embedding.stores=my_store
+
+    # Configure the embedding store type.
+    scalar.db.embedding.stores.my_store.type=in-memory
     ```
   </TabItem>
   <TabItem value="opensearch" label="OpenSearch">
@@ -98,47 +136,55 @@ Select the embedding store that you want to use, and follow the instructions to 
         For OpenSearch clusters that are running locally and are reachable on the network, add the following properties to the configuration file:
 
         ```properties
-        scalar.db.embedding.store.type=opensearch
+        # Define embedding store names (comma-separated list for multiple stores).
+        scalar.db.embedding.stores=my_store
+
+        # Configure the embedding store type.
+        scalar.db.embedding.stores.my_store.type=opensearch
 
         # OpenSearch Server URL.
-        scalar.db.embedding.store.opensearch.server_url=<SERVER_URL>
+        scalar.db.embedding.stores.my_store.opensearch.server_url=<SERVER_URL>
 
         # OpenSearch API key (optional).
-        scalar.db.embedding.store.opensearch.api_key=<API_KEY>
+        scalar.db.embedding.stores.my_store.opensearch.api_key=<API_KEY>
 
         # OpenSearch username (optional).
-        scalar.db.embedding.store.opensearch.user_name=<USER_NAME>
+        scalar.db.embedding.stores.my_store.opensearch.user_name=<USER_NAME>
 
         # OpenSearch password (optional).
-        scalar.db.embedding.store.opensearch.password=<PASSWORD>
+        scalar.db.embedding.stores.my_store.opensearch.password=<PASSWORD>
 
         # OpenSearch index name.
-        scalar.db.embedding.store.opensearch.index_name=<INDEX_NAME>
+        scalar.db.embedding.stores.my_store.opensearch.index_name=<INDEX_NAME>
         ```
       </TabItem>
       <TabItem value="aws" label="Running on AWS">
         For OpenSearch clusters that are running as a fully managed service on AWS, add the following properties to the configuration file:
-        
+
         ```properties
-        scalar.db.embedding.store.type=opensearch
+        # Define embedding store names (comma-separated list for multiple stores).
+        scalar.db.embedding.stores=my_store
+
+        # Configure the embedding store type.
+        scalar.db.embedding.stores.my_store.type=opensearch
 
         # OpenSearch Server URL.
-        scalar.db.embedding.store.opensearch.server_url=<SERVER_URL>
+        scalar.db.embedding.stores.my_store.opensearch.server_url=<SERVER_URL>
 
         # The AWS signing service name, one of `es` (Amazon OpenSearch) or `aoss` (Amazon OpenSearch Serverless).
-        scalar.db.embedding.store.opensearch.service_name=<SERVICE_NAME>
+        scalar.db.embedding.stores.my_store.opensearch.service_name=<SERVICE_NAME>
 
         # The AWS region for which requests will be signed. This should typically match the region in `server_url`.
-        scalar.db.embedding.store.opensearch.region=<REGION>
+        scalar.db.embedding.stores.my_store.opensearch.region=<REGION>
 
         # The AWS access key ID.
-        scalar.db.embedding.store.opensearch.access_key_id=<ACCESS_KEY_ID>
+        scalar.db.embedding.stores.my_store.opensearch.access_key_id=<ACCESS_KEY_ID>
 
         # The AWS secret access key.
-        scalar.db.embedding.store.opensearch.secret_access_key=<SECRET_ACCESS_KEY>
+        scalar.db.embedding.stores.my_store.opensearch.secret_access_key=<SECRET_ACCESS_KEY>
 
         # OpenSearch index name.
-        scalar.db.embedding.store.opensearch.index_name=<INDEX_NAME>
+        scalar.db.embedding.stores.my_store.opensearch.index_name=<INDEX_NAME>
         ```
       </TabItem>
     </Tabs>
@@ -149,19 +195,26 @@ Select the embedding store that you want to use, and follow the instructions to 
     To use the Azure Cosmos DB for NoSQL embedding store, add the following properties to the configuration file:
 
     ```properties
-    scalar.db.embedding.store.type=azure-cosmos-nosql
+    # Define embedding store names (comma-separated list for multiple stores).
+    scalar.db.embedding.stores=my_store
+
+    # Configure the embedding store type.
+    scalar.db.embedding.stores.my_store.type=azure-cosmos-nosql
 
     # The Azure Cosmos DB endpoint that the SDK will connect to.
-    scalar.db.embedding.store.azure-cosmos-nosql.endpoint=<ENDPOINT>
+    scalar.db.embedding.stores.my_store.azure-cosmos-nosql.endpoint=<ENDPOINT>
 
     # A master key used to perform authentication for accessing resources. A read-only key can also be used only for read-only operations.
-    scalar.db.embedding.store.azure-cosmos-nosql.key=<KEY>
+    scalar.db.embedding.stores.my_store.azure-cosmos-nosql.key=<KEY>
 
     # The database name to be used.
-    scalar.db.embedding.store.azure-cosmos-nosql.database_name=<DATABASE_NAME>
+    scalar.db.embedding.stores.my_store.azure-cosmos-nosql.database_name=<DATABASE_NAME>
 
     # The container name to be used.
-    scalar.db.embedding.store.azure-cosmos-nosql.container_name=<CONTAINER_NAME>
+    scalar.db.embedding.stores.my_store.azure-cosmos-nosql.container_name=<CONTAINER_NAME>
+
+    # The dimensions of the embeddings.
+    scalar.db.embedding.stores.my_store.azure-cosmos-nosql.dimensions=<DIMENSIONS>
     ```
   </TabItem>
   <TabItem value="azure-ai-search" label="Azure AI Search">
@@ -170,15 +223,23 @@ Select the embedding store that you want to use, and follow the instructions to 
     To use the Azure AI Search embedding store, add the following properties to the configuration file:
 
     ```properties
-    scalar.db.embedding.store.type=azure-ai-search
+    # Define embedding store names (comma-separated list for multiple stores).
+    scalar.db.embedding.stores=my_store
+
+    # Configure the embedding store type.
+    scalar.db.embedding.stores.my_store.type=azure-ai-search
+
     # The Azure AI Search endpoint.
-    scalar.db.embedding.store.azure-ai-search.endpoint=<ENDPOINT>
+    scalar.db.embedding.stores.my_store.azure-ai-search.endpoint=<ENDPOINT>
 
     # The Azure AI Search API key.
-    scalar.db.embedding.store.azure-ai-search.api_key=<API_KEY>
+    scalar.db.embedding.stores.my_store.azure-ai-search.api_key=<API_KEY>
 
-    # The name of the index to be used. If no index is provided, the name of the default index to be used.
-    scalar.db.embedding.store.azure-ai-search.index_name=<INDEX_NAME>
+    # The name of the index to be used. If no index is provided, the default index name will be used.
+    scalar.db.embedding.stores.my_store.azure-ai-search.index_name=<INDEX_NAME>
+
+    # The dimensions of the embeddings.
+    scalar.db.embedding.stores.my_store.azure-ai-search.dimensions=<DIMENSIONS>
     ```
   </TabItem>
   <TabItem value="pgvector" label="pgvector">
@@ -187,25 +248,32 @@ Select the embedding store that you want to use, and follow the instructions to 
     To use the pgvector embedding store, add the following properties to the configuration file:
 
     ```properties
-    scalar.db.embedding.store.type=pgvector
+    # Define embedding store names (comma-separated list for multiple stores).
+    scalar.db.embedding.stores=my_store
+
+    # Configure the embedding store type.
+    scalar.db.embedding.stores.my_store.type=pgvector
 
     # The database host.
-    scalar.db.embedding.store.pgvector.host=<HOST>
+    scalar.db.embedding.stores.my_store.pgvector.host=<HOST>
 
     # The database port.
-    scalar.db.embedding.store.pgvector.port=<PORT>
+    scalar.db.embedding.stores.my_store.pgvector.port=<PORT>
 
     # The database user.
-    scalar.db.embedding.store.pgvector.user=<USER>
+    scalar.db.embedding.stores.my_store.pgvector.user=<USER>
 
     # The database password.
-    scalar.db.embedding.store.pgvector.password=<PASSWORD>
+    scalar.db.embedding.stores.my_store.pgvector.password=<PASSWORD>
 
     # The database name.
-    scalar.db.embedding.store.pgvector.database=<DATABASE>
+    scalar.db.embedding.stores.my_store.pgvector.database=<DATABASE>
 
     # The table name.
-    scalar.db.embedding.store.pgvector.table=<TABLE>
+    scalar.db.embedding.stores.my_store.pgvector.table=<TABLE>
+
+    # The dimensions of the embeddings.
+    scalar.db.embedding.stores.my_store.pgvector.dimensions=<DIMENSIONS>
     ```
   </TabItem>
 </Tabs>
@@ -216,10 +284,14 @@ Select the embedding model that you want to use, and follow the instructions to 
   <TabItem value="in-process" label="In-process" default>
     The in-process embedding model is a local embedding model powered by [ONNX runtime](https://onnxruntime.ai/docs/get-started/with-java.html) and is running in the ScalarDB Cluster process. This embedding model is useful for fast prototyping and simple use cases.
 
-    To use the in-process embedding model, add the following property to the configuration file:
+    To use the in-process embedding model, add the following properties to the configuration file:
 
     ```properties
-    scalar.db.embedding.model.type=in-process
+    # Define embedding model names (comma-separated list for multiple models).
+    scalar.db.embedding.models=my_model
+
+    # Configure the embedding model type.
+    scalar.db.embedding.models.my_model.type=in-process
     ```
   </TabItem>
   <TabItem value="amazon-bedrock" label="Amazon Bedrock">
@@ -228,22 +300,26 @@ Select the embedding model that you want to use, and follow the instructions to 
     To use the Amazon Bedrock embedding model, add the following properties to the configuration file:
 
     ```properties
-    scalar.db.embedding.model.type=bedrock-titan
+    # Define embedding model names (comma-separated list for multiple models).
+    scalar.db.embedding.models=my_model
+
+    # Configure the embedding model type.
+    scalar.db.embedding.models.my_model.type=bedrock-titan
 
     # The AWS region for which requests will be signed.
-    scalar.db.embedding.model.bedrock-titan.region=<REGION>
+    scalar.db.embedding.models.my_model.bedrock-titan.region=<REGION>
 
     # The AWS access key ID.
-    scalar.db.embedding.model.bedrock-titan.access_key_id=<ACCESS_KEY_ID>
+    scalar.db.embedding.models.my_model.bedrock-titan.access_key_id=<ACCESS_KEY_ID>
 
     # The AWS secret access key.
-    scalar.db.embedding.model.bedrock-titan.secret_access_key=<SECRET_ACCESS_KEY>
+    scalar.db.embedding.models.my_model.bedrock-titan.secret_access_key=<SECRET_ACCESS_KEY>
 
     # The model. Either `amazon.titan-embed-text-v1` or `amazon.titan-embed-text-v2:0`.
-    scalar.db.embedding.model.bedrock-titan.model=<MODEL>
+    scalar.db.embedding.models.my_model.bedrock-titan.model=<MODEL>
 
     # The dimensions.
-    scalar.db.embedding.model.bedrock-titan.dimensions=<DIMENSIONS>
+    scalar.db.embedding.models.my_model.bedrock-titan.dimensions=<DIMENSIONS>
     ```
   </TabItem>
   <TabItem value="azure-openai" label="Azure OpenAI">
@@ -252,19 +328,23 @@ Select the embedding model that you want to use, and follow the instructions to 
     To use the Azure OpenAI embedding model, add the following properties to the configuration file:
 
     ```properties
-    scalar.db.embedding.model.type=azure-open-ai
+    # Define embedding model names (comma-separated list for multiple models).
+    scalar.db.embedding.models=my_model
+
+    # Configure the embedding model type.
+    scalar.db.embedding.models.my_model.type=azure-open-ai
 
     # The Azure OpenAI endpoint.
-    scalar.db.embedding.model.azure-open-ai.endpoint=<ENDPOINT>
+    scalar.db.embedding.models.my_model.azure-open-ai.endpoint=<ENDPOINT>
 
     # The Azure OpenAI API key.
-    scalar.db.embedding.model.azure-open-ai.api_key=<API_KEY>
+    scalar.db.embedding.models.my_model.azure-open-ai.api_key=<API_KEY>
 
     # The deployment name in Azure OpenAI.
-    scalar.db.embedding.model.azure-open-ai.deployment_name=<DEPLOYMENT_NAME>
+    scalar.db.embedding.models.my_model.azure-open-ai.deployment_name=<DEPLOYMENT_NAME>
 
     # The dimensions.
-    scalar.db.embedding.model.azure-open-ai.dimensions=<DIMENSIONS>
+    scalar.db.embedding.models.my_model.azure-open-ai.dimensions=<DIMENSIONS>
     ```
   </TabItem>
   <TabItem value="google-vertex-ai" label="Google Vertex AI">
@@ -273,25 +353,29 @@ Select the embedding model that you want to use, and follow the instructions to 
     To use the Google Vertex AI embedding model, add the following properties to the configuration file:
 
     ```properties
-    scalar.db.embedding.model.type=vertex-ai
+    # Define embedding model names (comma-separated list for multiple models).
+    scalar.db.embedding.models=my_model
+
+    # Configure the embedding model type.
+    scalar.db.embedding.models.my_model.type=vertex-ai
 
     # The Google Cloud project.
-    scalar.db.embedding.model.vertex-ai.project=<PROJECT>
+    scalar.db.embedding.models.my_model.vertex-ai.project=<PROJECT>
 
     # The Google Cloud location.
-    scalar.db.embedding.model.vertex-ai.location=<LOCATION>
+    scalar.db.embedding.models.my_model.vertex-ai.location=<LOCATION>
 
     # The endpoint.
-    scalar.db.embedding.model.vertex-ai.endpoint=<ENDPOINT>
+    scalar.db.embedding.models.my_model.vertex-ai.endpoint=<ENDPOINT>
 
     # The publisher.
-    scalar.db.embedding.model.vertex-ai.publisher=<PUBLISHER>
+    scalar.db.embedding.models.my_model.vertex-ai.publisher=<PUBLISHER>
 
     # The model name.
-    scalar.db.embedding.model.vertex-ai.model_name=<MODEL_NAME>
+    scalar.db.embedding.models.my_model.vertex-ai.model_name=<MODEL_NAME>
 
     # The output dimensionality.
-    scalar.db.embedding.model.vertex-ai.output_dimensionality=<OUTPUT_DIMENSIONALITY>
+    scalar.db.embedding.models.my_model.vertex-ai.output_dimensionality=<OUTPUT_DIMENSIONALITY>
     ```
   </TabItem>
   <TabItem value="openai" label="OpenAI">
@@ -300,25 +384,29 @@ Select the embedding model that you want to use, and follow the instructions to 
     To use the OpenAI embedding model, add the following properties to the configuration file:
 
     ```properties
-    scalar.db.embedding.model.type=open-ai
+    # Define embedding model names (comma-separated list for multiple models).
+    scalar.db.embedding.models=my_model
+
+    # Configure the embedding model type.
+    scalar.db.embedding.models.my_model.type=open-ai
 
     # The OpenAI API key.
-    scalar.db.embedding.model.open-ai.api_key=<API_KEY>
+    scalar.db.embedding.models.my_model.open-ai.api_key=<API_KEY>
 
     # The model name.
-    scalar.db.embedding.model.open-ai.model_name=<MODEL_NAME>
+    scalar.db.embedding.models.my_model.open-ai.model_name=<MODEL_NAME>
 
     # The base URL.
-    scalar.db.embedding.model.open-ai.base_url=<BASE_URL>
+    scalar.db.embedding.models.my_model.open-ai.base_url=<BASE_URL>
 
     # The organization ID.
-    scalar.db.embedding.model.open-ai.organization_id=<ORGANIZATION_ID>
+    scalar.db.embedding.models.my_model.open-ai.organization_id=<ORGANIZATION_ID>
 
     # The dimensions.
-    scalar.db.embedding.model.open-ai.dimensions=<DIMENSIONS>
+    scalar.db.embedding.models.my_model.open-ai.dimensions=<DIMENSIONS>
 
     # The user.
-    scalar.db.embedding.model.open-ai.user=<USER>
+    scalar.db.embedding.models.my_model.open-ai.user=<USER>
     ```
   </TabItem>
 </Tabs>
@@ -331,7 +419,7 @@ Create the following configuration file as `docker-compose.yaml`.
 services:
   scalardb-cluster-standalone:
     container_name: "scalardb-cluster-node"
-    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:3.16.0"
+    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:3.17.1"
     ports:
       - 60053:60053
       - 9080:9080
@@ -361,7 +449,7 @@ Select your build tool, and follow the instructions to add the build dependency 
 
     ```gradle
     dependencies {
-      implementation 'com.scalar-labs:scalardb-cluster-embedding-java-client-sdk:3.16.0'
+      implementation 'com.scalar-labs:scalardb-cluster-embedding-java-client-sdk:3.17.1'
     }
     ```
   </TabItem>
@@ -372,7 +460,7 @@ Select your build tool, and follow the instructions to add the build dependency 
     <dependency>
       <groupId>com.scalar-labs</groupId>
       <artifactId>scalardb-cluster-embedding-java-client-sdk</artifactId>
-      <version>3.16.0</version>
+      <version>3.17.1</version>
     </dependency>
     ```
   </TabItem>
@@ -386,6 +474,8 @@ Create a new Java class and add the following code to run the sample code.
 try (ScalarDbEmbeddingClientFactory scalarDbEmbeddingClientFactory =
     ScalarDbEmbeddingClientFactory.builder()
         .withProperty("scalar.db.embedding.client.contact_points", "indirect:localhost")
+        .withProperty("scalar.db.embedding.client.store", "my_store")
+        .withProperty("scalar.db.embedding.client.model", "my_model")
         .build()) {
   // Create an embedding store and an embedding model.
   EmbeddingStore<TextSegment> scalarDbEmbeddingStore =
@@ -428,15 +518,21 @@ Except for the part of the code that creates an embedding store and an embedding
 
 #### About `ScalarDbEmbeddingClientFactory`
 
-As shown in the code snippet, the `ScalarDbEmbeddingClientFactory` class provides a builder to create an instance of the factory. The builder allows you to set properties for the factory. In this example, the `withProperty()` method is used to set the contact points for the factory as follows:
+As shown in the code snippet, the `ScalarDbEmbeddingClientFactory` class provides a builder to create an instance of the factory. The builder allows you to set properties for the factory. In this example, the `withProperty()` method is used to set the contact points, store name, and model name for the factory as follows:
 
 ```java
 ScalarDbEmbeddingClientFactory scalarDbEmbeddingClientFactory = ScalarDbEmbeddingClientFactory.builder()
   .withProperty("scalar.db.embedding.client.contact_points", "indirect:localhost")
+  .withProperty("scalar.db.embedding.client.store", "my_store")
+  .withProperty("scalar.db.embedding.client.model", "my_model")
   .build();
 ```
 
+The `scalar.db.embedding.client.store` and `scalar.db.embedding.client.model` properties specify which named embedding store and embedding model instances to use, as defined in the server configuration.
+
 You can also set a properties file by using the `withPropertiesFile()` method.
+
+If you want to interact with multiple vector stores, create multiple instances of the factory.
 
 Then, you can create an embedding store and an embedding model by using the factory as follows:
 
@@ -458,6 +554,6 @@ The `ScalarDbEmbeddingClientFactory` instance should be closed after use to rele
 
 ## Additional details
 
-The vector search feature is currently in Private Preview. For more details, please [contact us](https://www.scalar-labs.com/contact) or wait for this feature to become publicly available in a future version.
+The vector search feature is currently in Public Preview. For more details, please [contact us](https://www.scalar-labs.com/contact).
 
-- [Javadoc](https://javadoc.io/doc/com.scalar-labs/scalardb-cluster-embedding-java-client-sdk/3.16.0/index.html)
+- [Javadoc](https://javadoc.io/doc/com.scalar-labs/scalardb-cluster-embedding-java-client-sdk/3.17.1/index.html)

@@ -36,7 +36,7 @@ scalar.db.cluster.node.standalone_mode.enabled=true
 git clone https://github.com/scalar-labs/scalardb-samples
 ```
 
-次に、次のコマンドを実行して、必要なファイルが含まれているディレクトリに移動します。
+次に、以下のコマンドを実行して、必要なファイルが含まれているディレクトリに移動します。
 
 ```console
 cd scalardb-samples/scalardb-cluster-standalone-mode/
@@ -212,6 +212,35 @@ Azure Cosmos DB アカウントの主キーまたはセカンダリキーを `sc
     scalar.db.contact_points=cassandra-1
     scalar.db.username=cassandra
     scalar.db.password=cassandra
+    ```
+  </TabItem>
+  <TabItem value="Blob_Storage" label="Blob Storage">
+    <h3>Azurite を実行する</h3>
+
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの `docker-compose.yaml` ファイルを使用して、Blob Storage のローカルエミュレーターである Azurite を Docker Compose で実行できます。
+
+    Blob Storage を起動するには、次のコマンドを実行します。
+    
+    ```console
+    docker compose up -d blobstorage
+    ```
+
+    次に、以下のコマンドを実行して、`test-container` という名前のコンテナを作成します。
+    
+    ```console
+    docker compose up blobstorage-container-creator
+    ```
+
+    <h3>ScalarDB Cluster を設定する</h3>
+
+    `scalardb-samples/scalardb-cluster-standalone-mode` ディレクトリの **scalardb-cluster-node.properties** ファイルには、ScalarDB Cluster のデータベース設定が含まれています。**scalardb-cluster-node.properties** ファイル内の Blob Storage のプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For Blob Storage
+    scalar.db.storage=blob-storage
+    scalar.db.contact_points=http://blobstorage-1:10000/test/test-container
+    scalar.db.username=test
+    scalar.db.password=test
     ```
   </TabItem>
 </Tabs>

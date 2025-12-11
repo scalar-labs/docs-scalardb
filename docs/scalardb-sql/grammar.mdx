@@ -30,6 +30,13 @@ displayed_sidebar: docsEnglish
   - [DROP USER](#drop-user)
   - [GRANT](#grant)
   - [REVOKE](#revoke)
+  - [CREATE ROLE](#create-role)
+  - [DROP ROLE](#drop-role)
+  - [GRANT ... TO ROLE](#grant--to-role)
+  - [REVOKE ... FROM ROLE](#revoke--from-role)
+  - [GRANT ROLE](#grant-role)
+  - [REVOKE ROLE](#revoke-role)
+  - [REVOKE ADMIN OPTION](#revoke-admin-option)
 - Others
   - [USE](#use)
   - [BEGIN](#begin)
@@ -48,6 +55,9 @@ displayed_sidebar: docsEnglish
   - [RESUME](#resume)
   - [SHOW USERS](#show-users)
   - [SHOW GRANTS](#show-grants)
+  - [SHOW ROLES](#show-roles)
+  - [SHOW ROLE USERS](#show-role-users)
+  - [SHOW ROLE GRANTS](#show-role-grants)
 - Literal
   - [Text](#text)
   - [Numeric](#numeric)
@@ -77,7 +87,7 @@ CREATE NAMESPACE [IF NOT EXISTS] <namespace name> [WITH creation_options]
 creation_options: <option name>=<option value> [AND <option name>=<option value>] ...
 ```
 
-For details about `creation_options`, see [Creation options](../api-guide.mdx#creation-options).
+- For details about `creation_options`, see [Creation options](../api-guide.mdx#creation-options).
 
 #### Examples
 
@@ -134,6 +144,7 @@ creation_options: <option name>=<option value> [AND <option name>=<option value>
 ```
 
 - You can specify `ENCRYPTED` for non-primary-key columns to encrypt the data in those columns.
+- For details about `creation_options`, see [Creation options](../api-guide.mdx#creation-options-1).
 
 Create a table with a primary key that is composed of one partition key column and multiple clustering key columns:
 ```sql
@@ -271,15 +282,22 @@ The `CREATE INDEX` command creates a secondary index on a table.
 
 :::note
 
-You cannot create a secondary index on encrypted columns.
+You cannot create a secondary index on a table in the following cases:
+
+- The columns are encrypted.
+- The table is on Object Storage.
 
 :::
 
 #### Grammar
 
 ```sql
-CREATE INDEX [IF NOT EXISTS] ON [<namespace name>.]<table name> (<column name>)
+CREATE INDEX [IF NOT EXISTS] ON [<namespace name>.]<table name> (<column name>) [WITH creation_options]
+
+creation_options: <option name>=<option value> [AND <option name>=<option value>] ...
 ```
+
+- For details about `creation_options`, see [Creation options](../api-guide.mdx#creation-options-2).
 
 #### Examples
 
@@ -552,29 +570,23 @@ DropCoordinatorTablesStatement statement2 =
 
 The `ALTER TABLE` command alters a table (ex. adding a column).
 
-:::warning
+#### ADD COLUMN
 
-You should carefully consider adding a new column to a table because the execution time may vary greatly depending on the underlying storage. Please plan accordingly and consider the following, especially if the database runs in production:
+The `ADD COLUMN` subcommand adds a new column to a table.
 
-- **For Cosmos DB for NoSQL and DynamoDB:** Adding a column is almost instantaneous as the table schema is not modified. Only the table metadata stored in a separate table is updated.
-- **For Cassandra:** Adding a column will only update the schema metadata and will not modify the existing schema records. The cluster topology is the main factor for the execution time. Changes to the schema metadata are shared to each cluster node via a gossip protocol. Because of this, the larger the cluster, the longer it will take for all nodes to be updated.
-- **For relational databases (MySQL, Oracle, etc.):** Adding a column shouldn't take a long time to execute.
-
-:::
-
-#### Grammar
+##### Grammar
 
 ```sql
-ALTER TABLE [<namespace name>.]<table name> ADD [COLUMN] <column name> data_type [ENCRYPTED]
+ALTER TABLE [<namespace name>.]<table name> ADD [COLUMN] [IF NOT EXISTS] <column name> data_type [ENCRYPTED]
 
 data_type: BOOLEAN | INT | BIGINT | FLOAT | DOUBLE | TEXT | BLOB | DATE | TIME | TIMESTAMP | TIMESTAMPTZ
 ```
 
 - You can specify `ENCRYPTED` for the column to encrypt the data in that column.
 
-#### Examples
+##### Examples
 
-Examples of `ALTER TABLE` are as follows:
+Examples of `ADD COLUMN` are as follows:
 
 ```sql
 -- Add a new column "new_col" to "ns.tbl"
@@ -582,9 +594,12 @@ ALTER TABLE ns.tbl ADD COLUMN new_col INT;
 
 -- Add a new encrypted column "new_col" to "ns.tbl"
 ALTER TABLE ns.tbl ADD COLUMN new_col TEXT ENCRYPTED;
+
+-- Add a new column only if it does not already exist
+ALTER TABLE ns.tbl ADD COLUMN IF NOT EXISTS new_col INT;
 ```
 
-Examples of building statement objects for `ALTER TABLE` are as follows:
+Examples of building statement objects for `ADD COLUMN` are as follows:
 
 ```java
 // Add a new column "new_col" to "ns.tbl"
@@ -594,7 +609,190 @@ AlterTableAddColumnStatement statement1 =
 // Add a new encrypted column "new_col" to "ns.tbl"
 AlterTableAddColumnStatement statement2 =
     StatementBuilder.alterTable("ns", "tbl").addColumn("new_col", DataType.TEXT, true).build();
+
+// Add a new column only if it does not already exist
+AlterTableAddColumnStatement statement3 =
+    StatementBuilder.alterTable("ns", "tbl").addColumn("new_col", DataType.INT).ifNotExists().build();
 ```
+
+:::warning
+
+You should carefully consider adding a new column to a table because the execution time may vary greatly depending on the underlying storage. Please plan accordingly and consider the following, especially if the database runs in production:
+
+- **For Cosmos DB for NoSQL and DynamoDB:** Adding a column is almost instantaneous as the table schema is not modified. Only the table metadata stored in a separate table is updated.
+- **For Cassandra:** Adding a column will only update the schema metadata and will not modify the existing schema records. The cluster topology is the main factor for the execution time. Changes to the schema metadata are shared to each cluster node via a gossip protocol. Because of this, the larger the cluster, the longer it will take for all nodes to be updated.
+- **For relational databases (MySQL, Oracle, etc.):** Adding a column can cause a table rebuild depending on the database engine. In such cases, it can take a long time to execute.
+
+:::
+
+#### DROP COLUMN
+
+The `DROP COLUMN` subcommand drops a column from a table.
+
+##### Grammar
+
+```sql
+ALTER TABLE [<namespace name>.]<table name> DROP [COLUMN] [IF EXISTS] <column name>
+```
+
+##### Examples
+
+Examples of `DROP COLUMN` are as follows:
+
+```sql
+-- Drop a column "col1" from "ns.tbl"
+ALTER TABLE ns.tbl DROP COLUMN col1;
+
+-- Drop a column "col1" from "ns.tbl" only if it exists
+ALTER TABLE ns.tbl DROP COLUMN IF EXISTS col1;
+```
+
+Examples of building statement objects for `DROP COLUMN` are as follows:
+
+```java
+// Drop a column "col1" from "ns.tbl"
+AlterTableDropColumnStatement statement1 =
+    StatementBuilder.alterTable("ns", "tbl").dropColumn("col1").build();
+// Drop a column "col1" from "ns.tbl" only if it exists
+AlterTableDropColumnStatement statement2 =
+    StatementBuilder.alterTable("ns", "tbl").dropColumn("col1").ifExists().build();
+```
+
+:::note
+
+You cannot drop a column from a table in the following cases:
+
+- The column is part of the partition key or clustering key.
+- The table is on a non-JDBC database except for Cassandra.
+
+:::
+
+:::warning
+
+You should carefully consider dropping a column from a table because the execution time may vary greatly depending on the underlying storage. Please plan accordingly and consider the following, especially if the database runs in production:
+
+- **For Cassandra:** Dropping a column will only update the schema metadata and the actual data will be removed during the next compaction. The cluster topology is the main factor for the execution time. Changes to the schema metadata are shared to each cluster node via a gossip protocol. Because of this, the larger the cluster, the longer it will take for all nodes to be updated.
+- **For relational databases (MySQL, Oracle, etc.):** Dropping a column issues `ALTER TABLE ... DROP COLUMN` to the underlying relational databases and could trigger a table rebuild depending on the database. In such cases, it can take a long time to execute.
+
+:::
+
+#### RENAME COLUMN
+
+The `RENAME COLUMN` subcommand renames a column in a table.
+
+##### Grammar
+
+```sql
+ALTER TABLE [<namespace name>.]<table name> RENAME COLUMN <old column name> TO <new column name>
+```
+
+##### Examples
+
+An example of `RENAME COLUMN` is as follows:
+
+```sql
+-- Rename a column "old_col" to "new_col" in "ns.tbl"
+ALTER TABLE ns.tbl RENAME COLUMN old_col TO new_col;
+```
+
+An example of building statement objects for `RENAME COLUMN` is as follows:
+
+```java
+// Rename a column "old_col" to "new_col" in "ns.tbl"
+AlterTableRenameColumnStatement statement1 =
+    StatementBuilder.alterTable("ns", "tbl").renameColumn("old_col", "new_col").build();
+```
+
+:::note
+
+You cannot rename a column of a table in the following cases:
+
+- The table is on a non-JDBC database except for Cassandra.
+- For Cassandra, the column is not part of the partition key or clustering key.
+- For Db2, the column is part of the partition key, clustering key, or secondary index key.
+
+:::
+
+#### RENAME TO
+
+The `RENAME TO` subcommand renames a table.
+
+##### Grammar
+
+```sql
+ALTER TABLE [<namespace name>.]<table name> RENAME TO <new table name>
+```
+
+##### Examples
+
+An example of `RENAME TO` is as follows:
+
+```sql
+-- Rename a table "tbl" to "new_tbl" in namespace "ns"
+ALTER TABLE ns.tbl RENAME TO new_tbl;
+```
+
+An example of building statement objects for `RENAME TO` is as follows:
+
+```java
+// Rename a table "tbl" to "new_tbl" in namespace "ns"
+AlterTableRenameToStatement statement1 =
+    StatementBuilder.alterTable("ns", "tbl").renameTo("new_tbl").build();
+```
+
+:::note
+
+You cannot rename a table on non-JDBC databases.
+
+:::
+
+#### ALTER COLUMN SET DATA TYPE
+
+The `ALTER COLUMN SET DATA TYPE` subcommand changes the data type of a column in a table.
+
+##### Grammar
+
+```sql
+ALTER TABLE [<namespace name>.]<table name> ALTER [COLUMN] <column name> [SET DATA] TYPE data_type;
+data_type: BOOLEAN | INT | BIGINT | FLOAT | DOUBLE | TEXT | BLOB | DATE | TIME | TIMESTAMP | TIMESTAMPTZ
+```
+
+##### Examples
+
+An example of `ALTER COLUMN SET DATA TYPE` is as follows:
+
+```sql
+-- Change the data type of a column "col1" to BIGINT in "ns.tbl"
+ALTER TABLE ns.tbl ALTER COLUMN col1 SET DATA TYPE BIGINT;
+```
+
+An example of building statement objects for `ALTER COLUMN SET DATA TYPE` is as follows:
+
+```java
+// Change the data type of a column "col1" to BIGINT in "ns.tbl"
+AlterTableAlterColumnStatement statement1 =
+    StatementBuilder.alterTable("ns", "tbl").alterColumnType("col1", DataType.BIGINT).build();
+```
+
+:::note
+
+You cannot alter a column data type of a table in the following cases:
+
+- The column is part of the partition key, clustering key, or secondary index key.
+- The table is on a non-JDBC database or on SQLite.
+- The conversions other than from INT to BIGINT, FLOAT to DOUBLE, and from any data to TEXT are specified.
+- For Oracle, the conversions except for from INT to BIGINT are specified.
+- For Db2 and TiDB, the conversion from BLOB to TEXT is specified.
+
+:::
+
+:::warning
+
+You should carefully consider altering a column type because the execution time may vary greatly depending on the underlying storage. Please plan accordingly and consider the following, especially if the database runs in production:
+
+- **For relational databases (MySQL, Oracle, etc.):** Altering a column issues `ALTER TABLE ... ALTER COLUMN`  or `ALTER TABLE ... MODIFY` to the underlying relational databases and could trigger a table rebuild depending on the database. In such cases, it can take a long time to execute.
+
+:::
 
 ## DML
 
@@ -621,18 +819,27 @@ For non-JDBC databases, transactions could be executed at read-committed snapsho
 SELECT projection [, projection] ...
   FROM [<namespace name>.]<table name> [AS <alias>] [join_specification [join_specification] ...]
   [WHERE and_predicates [OR and_predicates ...] | or_predicates [AND or_predicates ...]]
-  [ORDER BY identifier [order] [, identifier [order]] ...]
+  [GROUP BY identifier [, identifier] ...]
+  [HAVING having_condition]
+  [ORDER BY order_key [order] [, order_key [order]] ...]
   [LIMIT <limit>]
   [WITH operation_attributes]
 
-projection: * | identifier [AS <alias>]
+projection: * | identifier [AS <alias>] | aggregate_function [AS <alias>]
+identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
+aggregate_function: <aggregate function name>(* | <column name> | <literal>)
 join_specification: [INNER] JOIN [<namespace name>.]<table name> [AS <alias>] ON join_predicate [AND join_predicate] ... | {LEFT|RIGHT} [OUTER] JOIN [<namespace name>.]<table name> [AS <alias>] ON join_predicate [AND join_predicate] ...
 join_predicate: identifier = identifier
 and_predicates: predicate | (predicate [AND predicate ...])
 or_predicates: predicate | (predicate [OR predicate ...])
 predicate: identifier operator <literal> | identifier BETWEEN <literal> AND <literal> | identifier [NOT] LIKE <pattern> [ESCAPE <escape character>] | identifier IS [NOT] NULL
-identifier: [[<namespace name>.]<table name>.]<column name> | [alias.]<column name>
 operator: = | <> | != | > | >= | < | <=
+having_condition: having_and_predicates [OR having_and_predicates ...] | having_or_predicates [AND having_or_predicates ...]
+having_and_predicates: having_predicate | (having_predicate [AND having_predicate ...])
+having_or_predicates: having_predicate | (having_predicate [OR having_predicate ...])
+having_predicate: having_key operator <literal> | having_key BETWEEN <literal> AND <literal> | having_key [NOT] LIKE <pattern> [ESCAPE <escape character>] | having_key IS [NOT] NULL
+having_key: identifier | aggregate_function | <alias>
+order_key: identifier | aggregate_function | <alias>
 order: ASC | DESC
 operation_attributes: operation_attribute [AND operation_attribute] ...
 operation_attribute: <operation attribute name>=<operation attribute value>
@@ -666,9 +873,32 @@ operation_attribute: <operation attribute name>=<operation attribute value>
   - You can change the escape character by specifying the `ESCAPE` clause.
   - You can disable the escape character by specifying an empty escape character, `ESCAPE ''`.
 
+`GROUP BY` clause:
+
+- Groups rows that have the same values in the specified columns.
+- Columns in the `SELECT` clause must either appear in the `GROUP BY` clause or be used with an aggregate function.
+
+`HAVING` clause:
+
+- Filters groups based on aggregate function results.
+- Can reference aggregate functions directly or by alias.
+- Predicates must be an OR-wise of `having_and_predicates` (known as disjunctive normal form) or an AND-wise of `having_or_predicates` (known as conjunctive normal form).
+- When connecting multiple `having_and_predicates` or `having_or_predicates`, which have more than one predicate, you need to put parentheses around `having_and_predicates` and `having_or_predicates`.
+- Supports comparison operators (`=`, `<>`, `!=`, `>`, `>=`, `<`, `<=`), `BETWEEN`, `LIKE`, and `IS [NOT] NULL` predicates.
+
+Aggregate functions:
+
+- Supported functions: `COUNT`, `SUM`, `AVG`, `MIN`, `MAX`.
+- `COUNT(*)` counts all rows; `COUNT(<column name>)` counts non-null values. The result type is `BIGINT`.
+- `SUM` accepts numeric types (`INT`, `BIGINT`, `FLOAT`, `DOUBLE`). It returns `BIGINT` for `INT` and `BIGINT`, and `DOUBLE` for `FLOAT` and `DOUBLE`.
+- `AVG` accepts numeric types (`INT`, `BIGINT`, `FLOAT`, `DOUBLE`). Returns `DOUBLE`.
+- `MIN` accepts any comparable type. Returns the same type.
+- `MAX` accepts any comparable type. Returns the same type.
+- Only `COUNT` supports `*` as an argument.
+
 `ORDER BY` clause:
 
-- You can specify `order` for any columns in the `ORDER BY` clause.
+- You can specify `order` for columns, aggregate functions, or aliases in the `ORDER BY` clause.
 - If you omit `order`, the default order `ASC` will be used.
 - You cannot specify encrypted columns in the `ORDER BY` clause.
 
@@ -1106,6 +1336,134 @@ SelectStatement statement13 =
 ```
 
 For examples that use the `JOIN` clause, see [Examples of partition scans and index scans](#examples-of-partition-scans-and-index-scans).
+
+#### Examples of aggregation queries
+
+If you have the following table, for example:
+
+```sql
+CREATE TABLE ns.user (
+  id INT,
+  name TEXT,
+  age INT,
+  height FLOAT,
+  PRIMARY KEY (id)
+)
+```
+
+Examples of `SELECT` with aggregation are as follows:
+
+```sql
+-- With aggregate function
+SELECT COUNT(*) FROM ns.user;
+
+-- With GROUP BY
+SELECT age, COUNT(*) FROM ns.user GROUP BY age;
+
+-- With multiple aggregate functions
+SELECT age, COUNT(height), SUM(height), AVG(height), MIN(height), MAX(height) FROM ns.user GROUP BY age;
+
+-- With aggregate function alias and HAVING
+SELECT age, COUNT(*) AS cnt FROM ns.user GROUP BY age HAVING cnt > 1;
+
+-- With HAVING using aggregate function directly
+SELECT age, COUNT(*) FROM ns.user GROUP BY age HAVING COUNT(*) > 1;
+
+-- With GROUP BY, WHERE, ORDER BY using alias, and LIMIT
+SELECT age, SUM(height) AS total_height FROM ns.user WHERE name LIKE 'A%' GROUP BY age ORDER BY total_height DESC LIMIT 10;
+```
+
+Examples of building statement objects for `SELECT` with aggregation are as follows:
+
+```java
+// With aggregate function
+SelectStatement statement1 =
+    StatementBuilder.select(
+            Projection.function(
+                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))))
+        .from("ns", "user")
+        .build();
+
+// With GROUP BY
+SelectStatement statement2 =
+    StatementBuilder.select(
+            Projection.column("age"),
+            Projection.function(
+                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))))
+        .from("ns", "user")
+        .groupBy(ColumnRef.of("age"))
+        .build();
+
+// With multiple aggregate functions
+SelectStatement statement3 =
+    StatementBuilder.select(
+            Projection.column("age"),
+            Projection.function(
+                FunctionRef.of(
+                    "COUNT",
+                    ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
+            Projection.function(
+                FunctionRef.of(
+                    "SUM",
+                    ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
+            Projection.function(
+                FunctionRef.of(
+                    "AVG",
+                    ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
+            Projection.function(
+                FunctionRef.of(
+                    "MIN",
+                    ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
+            Projection.function(
+                FunctionRef.of(
+                    "MAX",
+                    ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))))
+        .from("ns", "user")
+        .groupBy(ColumnRef.of("age"))
+        .build();
+
+// With aggregate function alias and HAVING
+SelectStatement statement4 =
+    StatementBuilder.select(
+            Projection.column("age"),
+            Projection.function(
+                    FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create())))
+                .as("cnt"))
+        .from("ns", "user")
+        .groupBy(ColumnRef.of("age"))
+        .having(HavingPredicate.column("cnt").isGreaterThan(Value.of(1L)))
+        .build();
+
+// With HAVING using aggregate function directly
+SelectStatement statement5 =
+    StatementBuilder.select(
+            Projection.column("age"),
+            Projection.function(
+                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))))
+        .from("ns", "user")
+        .groupBy(ColumnRef.of("age"))
+        .having(
+            HavingPredicate.function(
+                    FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create())))
+                .isGreaterThan(Value.of(1L)))
+        .build();
+
+// With GROUP BY, WHERE, ORDER BY using alias, and LIMIT
+SelectStatement statement6 =
+    StatementBuilder.select(
+            Projection.column("age"),
+            Projection.function(
+                    FunctionRef.of(
+                        "SUM",
+                        ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height")))))
+                .as("total_height"))
+        .from("ns", "user")
+        .where(Predicate.column("name").isLike(Value.of("A%")))
+        .groupBy(ColumnRef.of("age"))
+        .orderBy(Ordering.column("total_height").desc())
+        .limit(10)
+        .build();
+```
 
 ### INSERT
 
@@ -1881,15 +2239,15 @@ The `GRANT` command grants privileges to the specified user.
 #### Grammar
 
 ```sql
-GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON [TABLE] <table name> [, <table name>] ... TO [USER] <username> [, <username>] ... [WITH GRANT OPTION]
-GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON NAMESPACE <namespace name> [, <namespace name>] ... TO [USER] <username> [, <username>] ... [WITH GRANT OPTION]
+GRANT privilege [, privilege] ... ON [TABLE] <table name> [, <table name>] ... TO [USER] <username> [, <username>] ... [WITH GRANT OPTION]
+GRANT privilege [, privilege] ... ON NAMESPACE <namespace name> [, <namespace name>] ... TO [USER] <username> [, <username>] ... [WITH GRANT OPTION]
 
-privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER  
+privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER | ALL [PRIVILEGES] | GRANT OPTION
 ```
 
 - You must grant `INSERT` and `UPDATE` privileges together.
 - To grant a user the `UPDATE` or `DELETE` privilege, the target user must have the `SELECT` privilege.
-- If you specify the `WITH GRANT OPTION` option, the user can grant privileges to other users.
+- If you specify the `WITH GRANT OPTION` option or the `GRANT OPTION` privilege, the user can grant privileges to other users or roles.
 
 #### Examples
 
@@ -1954,12 +2312,10 @@ The `REVOKE` command revokes privileges from the specified user.
 #### Grammar
 
 ```sql
-REVOKE {privilege [, privilege] ... | ALL [PRIVILEGES]} [, GRANT OPTION] ON [TABLE] <table name> [, <table name>] ... FROM [USER] <username> [, <username>] ...
-REVOKE GRANT OPTION ON [TABLE] <table name> [, <table name>] ... FROM [USER] <username> [, <username>] ...
-REVOKE {privilege [, privilege] ... | ALL [PRIVILEGES]} [, GRANT OPTION] ON NAMESPACE <namespace name> [, <namespace name>] ... FROM [USER] <username> [, <username>] ...
-REVOKE GRANT OPTION ON NAMESPACE <namespace name> [, <namespace name>] ... FROM [USER] <username> [, <username>] ...
+REVOKE privilege [, privilege] ... ON [TABLE] <table name> [, <table name>] ... FROM [USER] <username> [, <username>] ...
+REVOKE privilege [, privilege] ... ON NAMESPACE <namespace name> [, <namespace name>] ... FROM [USER] <username> [, <username>] ...
 
-privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER  
+privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER
 ```
 
 - You must revoke `INSERT` and `UPDATE` privileges together.
@@ -2017,6 +2373,317 @@ RevokeStatement statement5 =
         .onNamespace("ns")
         .fromUser("user1")
         .build();
+```
+
+### CREATE ROLE
+
+The `CREATE ROLE` command creates a new role with the specified role name.
+
+#### Grammar
+
+```sql
+CREATE ROLE <role name>
+```
+
+#### Examples
+
+An example of `CREATE ROLE` is as follows:
+
+```sql
+-- Create a role.
+CREATE ROLE role1;
+```
+
+An example of building statement objects for `CREATE ROLE` is as follows:
+
+```java
+// Create a role.
+CreateRoleStatement statement = StatementBuilder.createRole("role1").build();
+```
+
+### DROP ROLE
+
+The `DROP ROLE` command deletes the specified role.
+
+#### Grammar
+
+```sql
+DROP ROLE <role name>
+```
+
+#### Examples
+
+An example of `DROP ROLE` is as follows:
+
+```sql
+-- Delete a role.
+DROP ROLE role1;
+```
+
+An example of building statement objects for `DROP ROLE` is as follows:
+
+```java
+// Delete a role.
+DropRoleStatement statement = StatementBuilder.dropRole("role1").build();
+```
+
+### GRANT ... TO ROLE
+
+The `GRANT ... TO ROLE` command grants privileges to the specified role.
+
+#### Grammar
+
+```sql
+GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON [TABLE] <table name> [, <table name>] ... TO ROLE <role name> [, <role name>] ... [WITH GRANT OPTION]
+GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON NAMESPACE <namespace name> [, <namespace name>] ... TO ROLE <role name> [, <role name>] ... [WITH GRANT OPTION]
+
+privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER
+```
+
+- You must grant `INSERT` and `UPDATE` privileges together.
+- To grant a role the `UPDATE` or `DELETE` privilege, the target role must have the `SELECT` privilege.
+- If you specify the `WITH GRANT OPTION` option, any user who has the role can grant privileges to other users or roles.
+
+#### Examples
+
+Examples of `GRANT ... TO ROLE` are as follows:
+
+```sql
+-- Grant the SELECT privilege on a table to a role.
+GRANT SELECT ON ns.tbl TO ROLE role1;
+
+-- Grant the SELECT privilege on tables to roles.
+GRANT SELECT ON ns.tbl1, ns.tbl2 TO ROLE role1, role2;
+
+-- Grant the SELECT privilege on all tables in a namespace to a role.
+GRANT SELECT ON NAMESPACE ns TO ROLE role1;
+
+-- Grant all privileges and GRANT OPTION on a table to a role.
+GRANT ALL ON ns.tbl TO ROLE role1 WITH GRANT OPTION;
+```
+
+Examples of building statement objects for `GRANT ... TO ROLE` are as follows:
+
+```java
+// Grant the SELECT privilege on a table to a role.
+GrantPrivilegeToRoleStatement statement1 =
+    StatementBuilder.grantToRole(Privilege.SELECT).onTable("ns", "tbl").toRole("role1").build();
+
+// Grant the SELECT privilege on tables to roles.
+GrantPrivilegeToRoleStatement statement2 =
+    StatementBuilder.grantToRole(Privilege.SELECT)
+        .onTable("ns", "tbl1", "ns", "tbl2")
+        .toRole("role1", "role2")
+        .build();
+
+// Grant the SELECT privilege on all tables in a namespace to a role.
+GrantPrivilegeToRoleStatement statement3 =
+    StatementBuilder.grantToRole(Privilege.SELECT).onNamespace("ns").toRole("role1").build();
+
+// Grant all privileges and GRANT OPTION on a table to a role.
+GrantPrivilegeToRoleStatement statement4 =
+    StatementBuilder.grantToRole(Privilege.values())
+        .onTable("ns", "tbl")
+        .toRole("role1")
+        .withGrantOption()
+        .build();
+```
+
+### REVOKE ... FROM ROLE
+
+The `REVOKE ... FROM ROLE` command revokes privileges from the specified role.
+
+#### Grammar
+
+```sql
+REVOKE {privilege [, privilege] ... | ALL [PRIVILEGES]} [, GRANT OPTION] ON [TABLE] <table name> [, <table name>] ... FROM ROLE <role name> [, <role name>] ...
+REVOKE GRANT OPTION ON [TABLE] <table name> [, <table name>] ... FROM ROLE <role name> [, <role name>] ...
+REVOKE {privilege [, privilege] ... | ALL [PRIVILEGES]} [, GRANT OPTION] ON NAMESPACE <namespace name> [, <namespace name>] ... FROM ROLE <role name> [, <role name>] ...
+REVOKE GRANT OPTION ON NAMESPACE <namespace name> [, <namespace name>] ... FROM ROLE <role name> [, <role name>] ...
+
+privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER
+```
+
+- You must revoke `INSERT` and `UPDATE` privileges together.
+- If the target role has the `UPDATE` or `DELETE` privilege, you cannot revoke the `SELECT` privilege from it.
+
+#### Examples
+
+Examples of `REVOKE ... FROM ROLE` are as follows:
+
+```sql
+-- Revoke the SELECT privilege on a table from a role.
+REVOKE SELECT ON ns.tbl FROM ROLE role1;
+
+-- Revoke the SELECT privilege on tables from roles.
+REVOKE SELECT ON ns.tbl1, ns.tbl2 FROM ROLE role1, role2;
+
+-- Revoke the SELECT privilege on all tables in a namespace from a role.
+REVOKE SELECT ON NAMESPACE ns FROM ROLE role1;
+
+-- Revoke all privileges and GRANT OPTION on a table from a role.
+REVOKE ALL, GRANT OPTION ON ns.tbl FROM ROLE role1;
+```
+
+Examples of building statement objects for `REVOKE ... FROM ROLE` are as follows:
+
+```java
+// Revoke the SELECT privilege on a table from a role.
+RevokePrivilegeFromRoleStatement statement1 =
+    StatementBuilder.revokeFromRole(Privilege.SELECT).onTable("ns", "tbl").fromRole("role1").build();
+
+// Revoke the SELECT privilege on tables from roles.
+RevokePrivilegeFromRoleStatement statement2 =
+    StatementBuilder.revokeFromRole(Privilege.SELECT)
+        .onTable("ns", "tbl1", "ns", "tbl2")
+        .fromRole("role1", "role2")
+        .build();
+
+// Revoke the SELECT privilege on all tables in a namespace from a role.
+RevokePrivilegeFromRoleStatement statement3 =
+    StatementBuilder.revokeFromRole(Privilege.SELECT).onNamespace("ns").fromRole("role1").build();
+
+// Revoke all privileges and GRANT OPTION on a table from a role.
+RevokePrivilegeFromRoleStatement statement4 =
+    StatementBuilder.revokeFromRole(Privilege.values())
+        .onTable("ns", "tbl")
+        .fromRole("role1")
+        .build();
+```
+
+### GRANT ROLE
+
+The `GRANT ROLE` command grants roles to the specified users or roles.
+
+#### Grammar
+
+```sql
+GRANT ROLE <role name> [, <role name>] ... TO [USER] <username> [, <username>] ... [WITH ADMIN OPTION]
+GRANT ROLE <role name> [, <role name>] ... TO ROLE <role name> [, <role name>] ... [WITH ADMIN OPTION]
+```
+
+- If you specify the `WITH ADMIN OPTION` option, the grantee can grant the role to other users or roles.
+
+#### Examples
+
+Examples of `GRANT ROLE` are as follows:
+
+```sql
+-- Grant a role to a user.
+GRANT ROLE role1 TO user1;
+
+-- Grant roles to users.
+GRANT ROLE role1, role2 TO user1, user2;
+
+-- Grant a role to a user with ADMIN OPTION.
+GRANT ROLE role1 TO user1 WITH ADMIN OPTION;
+
+-- Grant a role to another role.
+GRANT ROLE role1 TO ROLE role2;
+
+-- Grant a role to another role with ADMIN OPTION.
+GRANT ROLE role1 TO ROLE role2 WITH ADMIN OPTION;
+```
+
+Examples of building statement objects for `GRANT ROLE` are as follows:
+
+```java
+// Grant a role to a user.
+GrantRoleToUserStatement statement1 =
+    StatementBuilder.grantRole("role1").toUser("user1").build();
+
+// Grant roles to users.
+GrantRoleToUserStatement statement2 =
+    StatementBuilder.grantRole("role1", "role2").toUser("user1", "user2").build();
+
+// Grant a role to a user with ADMIN OPTION.
+GrantRoleToUserStatement statement3 =
+    StatementBuilder.grantRole("role1").toUser("user1").withAdminOption().build();
+
+// Grant a role to another role.
+GrantRoleToRoleStatement statement4 =
+    StatementBuilder.grantRole("role1").toRole("role2").build();
+
+// Grant a role to another role with ADMIN OPTION.
+GrantRoleToRoleStatement statement5 =
+    StatementBuilder.grantRole("role1").toRole("role2").withAdminOption().build();
+```
+
+### REVOKE ROLE
+
+The `REVOKE ROLE` command revokes roles from the specified users or roles.
+
+#### Grammar
+
+```sql
+REVOKE ROLE <role name> [, <role name>] ... FROM [USER] <username> [, <username>] ...
+REVOKE ROLE <role name> [, <role name>] ... FROM ROLE <role name> [, <role name>] ...
+```
+
+#### Examples
+
+Examples of `REVOKE ROLE` are as follows:
+
+```sql
+-- Revoke a role from a user.
+REVOKE ROLE role1 FROM user1;
+
+-- Revoke roles from users.
+REVOKE ROLE role1, role2 FROM user1, user2;
+
+-- Revoke a role from another role.
+REVOKE ROLE role1 FROM ROLE role2;
+```
+
+Examples of building statement objects for `REVOKE ROLE` are as follows:
+
+```java
+// Revoke a role from a user.
+RevokeRoleFromUserStatement statement1 =
+    StatementBuilder.revokeRole("role1").fromUser("user1").build();
+
+// Revoke roles from users.
+RevokeRoleFromUserStatement statement2 =
+    StatementBuilder.revokeRole("role1", "role2").fromUser("user1", "user2").build();
+
+// Revoke a role from another role.
+RevokeRoleFromRoleStatement statement3 =
+    StatementBuilder.revokeRole("role1").fromRole("role2").build();
+```
+
+### REVOKE ADMIN OPTION
+
+The `REVOKE ADMIN OPTION` command revokes the admin option for roles from the specified users or roles. The grantee keeps the roles but can no longer grant them to others.
+
+#### Grammar
+
+```sql
+REVOKE ADMIN OPTION FOR ROLE <role name> [, <role name>] ... FROM [USER] <username> [, <username>] ...
+REVOKE ADMIN OPTION FOR ROLE <role name> [, <role name>] ... FROM ROLE <role name> [, <role name>] ...
+```
+
+#### Examples
+
+Examples of `REVOKE ADMIN OPTION` are as follows:
+
+```sql
+-- Revoke the admin option for a role from a user.
+REVOKE ADMIN OPTION FOR ROLE role1 FROM user1;
+
+-- Revoke the admin option for a role from another role.
+REVOKE ADMIN OPTION FOR ROLE role1 FROM ROLE role2;
+```
+
+Examples of building statement objects for `REVOKE ADMIN OPTION` are as follows:
+
+```java
+// Revoke the admin option for a role from a user.
+RevokeAdminOptionForRoleFromUserStatement statement1 =
+    StatementBuilder.revokeAdminOptionForRole("role1").fromUser("user1").build();
+
+// Revoke the admin option for a role from another role.
+RevokeAdminOptionForRoleFromRoleStatement statement2 =
+    StatementBuilder.revokeAdminOptionForRole("role1").fromRole("role2").build();
 ```
 
 ## Others
@@ -2488,6 +3155,116 @@ ShowGrantsStatement statement1 = StatementBuilder.showGrants().build();
 
 // Show privileges granted to user1
 ShowGrantsStatement statement2 = StatementBuilder.showGrants().forUser("user1").build();
+```
+
+### SHOW ROLES
+
+The `SHOW ROLES` command shows all roles or the roles granted to the specified user.
+
+When showing all roles (`SHOW ROLES`), this command returns the following columns:
+
+- `roleName`: `TEXT` - a role name
+- `grantedRoles`: `TEXT` - the roles granted to this role (comma-separated, with `(admin option)` suffix if the grant includes admin option)
+
+When showing all roles available to the user directly or through role hierarchy (`SHOW ROLES FOR`), this command returns the following columns:
+
+- `roleName`: `TEXT` - a role name
+- `adminOptionOnUser`: `BOOLEAN` - whether this role was directly granted to the user with admin option
+- `grantedRoles`: `TEXT` - the roles granted to this role (comma-separated, with `(admin option)` suffix if the grant includes admin option)
+
+#### Grammar
+
+```sql
+-- Show all roles
+SHOW ROLES
+
+-- Show roles granted to the specified user
+SHOW ROLES FOR [USER] <username>
+```
+
+#### Examples
+
+Examples of `SHOW ROLES` are as follows:
+
+```sql
+-- Show all roles
+SHOW ROLES;
+
+-- Show roles granted to user1
+SHOW ROLES FOR user1;
+```
+
+Examples of building statement objects for `SHOW ROLES` are as follows:
+
+```java
+// Show all roles
+ShowRolesStatement statement1 = StatementBuilder.showRoles().build();
+
+// Show roles granted to user1
+ShowRolesStatement statement2 = StatementBuilder.showRoles().forUser("user1").build();
+```
+
+### SHOW ROLE USERS
+
+The `SHOW ROLE USERS` command shows the users the specified role is directly granted to.
+
+This command returns the following columns:
+
+- `username`: `TEXT` - a username
+- `adminOption`: `BOOLEAN` - whether the user has admin option for the role
+
+#### Grammar
+
+```sql
+SHOW ROLE USERS FOR <role name>
+```
+
+#### Examples
+
+An example of `SHOW ROLE USERS` is as follows:
+
+```sql
+-- Show users who have been granted role1
+SHOW ROLE USERS FOR role1;
+```
+
+An example of building statement objects for `SHOW ROLE USERS` is as follows:
+
+```java
+// Show users who have been granted role1
+ShowRoleUsersStatement statement = StatementBuilder.showRoleUsers("role1").build();
+```
+
+### SHOW ROLE GRANTS
+
+The `SHOW ROLE GRANTS` command shows the privileges directly granted to the specified role.
+
+This command returns the following columns:
+
+- `name`: `TEXT` - a namespace name or a table name, depending on the type
+- `type`: `TEXT` - the type of the object (either `NAMESPACE` or `TABLE`)
+- `privilege`: `TEXT` - a privilege
+
+#### Grammar
+
+```sql
+SHOW ROLE GRANTS FOR <role name>
+```
+
+#### Examples
+
+An example of `SHOW ROLE GRANTS` is as follows:
+
+```sql
+-- Show privileges granted to role1
+SHOW ROLE GRANTS FOR role1;
+```
+
+An example of building statement objects for `SHOW ROLE GRANTS` is as follows:
+
+```java
+// Show privileges granted to role1
+ShowRoleGrantsStatement statement = StatementBuilder.showRoleGrants("role1").build();
 ```
 
 ## Literal

@@ -118,6 +118,18 @@ The following node-related configurations are available for ScalarDB Cluster.
 - **Description:** ScalarDB Cluster nodes maintain in-progress scanners. This process expires scanners that have been idle for an extended period to prevent resource leaks. This configuration specifies the expiration time of this scanner management feature in milliseconds.
 - **Default value:** `60000` (60 seconds)
 
+##### `cluster.node.grpc.max_connection_age_millis`
+
+- **Field:** `scalar.db.cluster.node.grpc.max_connection_age_millis`
+- **Description:** Maximum time that a channel may exist. It helps proactively close and refresh old connections to prevent imbalance across servers.
+- **Default value:** `Integer.MAX_VALUE` (Infinite)
+
+##### `cluster.node.grpc.max_connection_age_grace_millis`
+
+- **Field:** `scalar.db.cluster.node.grpc.max_connection_age_grace_millis`
+- **Description:** Grace period after the channel reaches its max age. It provides a grace period for ongoing RPCs to complete before the connection is closed.
+- **Default value:** `Integer.MAX_VALUE` (Infinite)
+
 ### Performance-related configurations
 
 The following performance-related configurations are available for the Consensus Commit transaction manager.
@@ -706,6 +718,296 @@ If you enable authentication and authorization, you will also need to set [`scal
 - **Description:** A secret value added to a password before hashing. If not specified, the password is hashed without pepper.
 - **Default value:** empty
 
+### Data-at-rest encryption configurations
+
+The following configurations are available for encrypting data at rest in ScalarDB Cluster.
+
+For details about encrypting data at rest, see [Encrypt Data at Rest](./encrypt-data-at-rest.mdx).
+
+#### `cluster.encryption.enabled`
+
+- **Field:** `scalar.db.cluster.encryption.enabled`
+- **Description:** Whether ScalarDB encrypts data at rest.
+- **Default value:** `false`
+
+#### `cluster.encryption.type`
+
+- **Field:** `scalar.db.cluster.encryption.type`
+- **Description:** Encryption implementation type. Either `vault` (for HashiCorp Vault encryption) or `self` (for self-encryption) can be specified.
+- **Default value:** empty
+
+#### `cluster.encryption.delete_data_encryption_key_on_drop_table.enabled`
+
+- **Field:** `scalar.db.cluster.encryption.delete_data_encryption_key_on_drop_table.enabled`
+- **Description:** Whether to delete the data encryption key (DEK) when dropping a table.
+- **Default value:** `false`
+
+#### HashiCorp Vault encryption configurations
+
+The following configurations are available when using HashiCorp Vault encryption (`scalar.db.cluster.encryption.type=vault`).
+
+##### `cluster.encryption.vault.key_type`
+
+- **Field:** `scalar.db.cluster.encryption.vault.key_type`
+- **Description:** The key type. Currently, `aes128-gcm96`, `aes256-gcm96`, and `chacha20-poly1305` are supported. For details about the key types, see [Key types](https://developer.hashicorp.com/vault/docs/secrets/transit#key-types).
+- **Default value:** `aes128-gcm96`
+
+##### `cluster.encryption.vault.associated_data_required`
+
+- **Field:** `scalar.db.cluster.encryption.vault.associated_data_required`
+- **Description:** Whether associated data is required for AEAD encryption.
+- **Default value:** `false`
+
+##### `cluster.encryption.vault.address`
+
+- **Field:** `scalar.db.cluster.encryption.vault.address`
+- **Description:** The address of the HashiCorp Vault server.
+- **Default value:** empty
+
+##### `cluster.encryption.vault.token`
+
+- **Field:** `scalar.db.cluster.encryption.vault.token`
+- **Description:** The token to authenticate with HashiCorp Vault.
+- **Default value:** empty
+
+##### `cluster.encryption.vault.namespace`
+
+- **Field:** `scalar.db.cluster.encryption.vault.namespace`
+- **Description:** The namespace of the HashiCorp Vault. This configuration is optional.
+- **Default value:** empty
+
+##### `cluster.encryption.vault.transit_secrets_engine_path`
+
+- **Field:** `scalar.db.cluster.encryption.vault.transit_secrets_engine_path`
+- **Description:** The path of the transit secrets engine.
+- **Default value:** `transit`
+
+##### `cluster.encryption.vault.column_batch_size`
+
+- **Field:** `scalar.db.cluster.encryption.vault.column_batch_size`
+- **Description:** The number of columns to be included in a single request to the HashiCorp Vault server.
+- **Default value:** `64`
+
+#### Self-encryption configurations
+
+The following configurations are available when using self-encryption (`scalar.db.cluster.encryption.type=self`).
+
+##### `cluster.encryption.self.key_type`
+
+- **Field:** `scalar.db.cluster.encryption.self.key_type`
+- **Description:** The key type. Currently, `AES128_GCM`, `AES256_GCM`, `AES128_EAX`, `AES256_EAX`, `AES128_CTR_HMAC_SHA256`, `AES256_CTR_HMAC_SHA256`, `CHACHA20_POLY1305`, and `XCHACHA20_POLY1305` are supported. For details about the key types, see [Choose a key type](https://developers.google.com/tink/aead#choose_a_key_type).
+- **Default value:** `AES128_GCM`
+
+##### `cluster.encryption.self.associated_data_required`
+
+- **Field:** `scalar.db.cluster.encryption.self.associated_data_required`
+- **Description:** Whether associated data is required for AEAD encryption.
+- **Default value:** `false`
+
+##### `cluster.encryption.self.kubernetes.secret.namespace_name`
+
+- **Field:** `scalar.db.cluster.encryption.self.kubernetes.secret.namespace_name`
+- **Description:** The namespace name of the Kubernetes Secrets.
+- **Default value:** `default`
+
+##### `cluster.encryption.self.data_encryption_key_cache_expiration_time`
+
+- **Field:** `scalar.db.cluster.encryption.self.data_encryption_key_cache_expiration_time`
+- **Description:** The expiration time of the DEK cache in milliseconds.
+- **Default value:** `60000` (60 seconds)
+
+### Wire encryption configurations
+
+The following configurations are available for encrypting wire communications in ScalarDB Cluster.
+
+For details about encrypting wire communications, see [Encrypt Wire Communications](./encrypt-wire-communications.mdx).
+
+#### `cluster.tls.enabled`
+
+- **Field:** `scalar.db.cluster.tls.enabled`
+- **Description:** Whether wire encryption (TLS) is enabled.
+- **Default value:** `false`
+
+#### `cluster.tls.ca_root_cert_pem`
+
+- **Field:** `scalar.db.cluster.tls.ca_root_cert_pem`
+- **Description:** The custom CA root certificate (PEM data) for TLS communication.
+- **Default value:** empty
+
+#### `cluster.tls.ca_root_cert_path`
+
+- **Field:** `scalar.db.cluster.tls.ca_root_cert_path`
+- **Description:** The custom CA root certificate (file path) for TLS communication.
+- **Default value:** empty
+
+#### `cluster.tls.override_authority`
+
+- **Field:** `scalar.db.cluster.tls.override_authority`
+- **Description:** The custom authority for TLS communication. This doesn't change what host is actually connected. This is intended for testing, but may safely be used outside of tests as an alternative to DNS overrides. For example, you can specify the hostname presented in the certificate chain file that you set for `scalar.db.cluster.node.tls.cert_chain_path`.
+- **Default value:** empty
+
+#### `cluster.node.tls.cert_chain_path`
+
+- **Field:** `scalar.db.cluster.node.tls.cert_chain_path`
+- **Description:** The certificate chain file used for TLS communication.
+- **Default value:** empty
+
+#### `cluster.node.tls.private_key_path`
+
+- **Field:** `scalar.db.cluster.node.tls.private_key_path`
+- **Description:** The private key file used for TLS communication.
+- **Default value:** empty
+
+### Remote replication configurations
+
+The following configurations are available for remote replication in ScalarDB Cluster. Remote replication enables data replication to remote sites for high availability and workload distribution.
+
+For details about using remote replication, see [Replicate Data for High Availability](./remote-replication.mdx).
+
+#### Base replication configurations
+
+The following configurations apply to the overall remote replication setup in ScalarDB Cluster.
+
+##### `partition_count`
+
+- **Field:** `scalar.db.replication.partition_count`
+- **Description:** Number of partitions for the `transaction_groups` table. The tables in the replication database are partitioned for performance and scalability, and write operations are distributed evenly across partitions. This field must be identical between primary and backup sites.
+- **Default value:** `256`
+
+:::warning
+
+Changing the partition count requires restarting ScalarDB Clusters in both sites.
+
+:::
+
+##### `repl_db.namespace`
+
+- **Field:** `scalar.db.replication.repl_db.namespace`
+- **Description:** Namespace name of replication tables. This field must be identical between primary and backup sites.
+- **Default value:** `replication`
+
+##### `record_table_suffix`
+
+- **Field:** `scalar.db.replication.record_table_suffix`
+- **Description:** Suffix for replication record metadata tables.
+- **Default value:** `__records`
+
+#### LogWriter configurations (primary site)
+
+LogWriter configurations control how write operations are captured and stored in the replication database during transaction commits.
+
+##### `log_writer.enabled`
+
+- **Field:** `scalar.db.replication.log_writer.enabled`
+- **Description:** Enable or disable LogWriter functionality.
+- **Default value:** `false`
+
+##### `log_writer.compression_type`
+
+- **Field:** `scalar.db.replication.log_writer.compression_type`
+- **Description:** Compression type for stored write operations in the replication database. Available values: `NONE`, `GZIP`.
+- **Default value:** `GZIP`
+
+##### `log_writer.group_commit.retention.time_millis`
+
+- **Field:** `scalar.db.replication.log_writer.group_commit.retention.time_millis`
+- **Description:** Maximum time to wait before committing a transaction group for the replication database.
+- **Default value:** `100` (100 milliseconds)
+
+##### `log_writer.group_commit.retention.values`
+
+- **Field:** `scalar.db.replication.log_writer.group_commit.retention.values`
+- **Description:** Maximum number of transactions to batch together for the replication database.
+- **Default value:** `32`
+
+##### `log_writer.group_commit.timeout_check_interval_millis`
+
+- **Field:** `scalar.db.replication.log_writer.group_commit.timeout_check_interval_millis`
+- **Description:** Interval for checking group commit timeouts for the replication database.
+- **Default value:** `20` (20 milliseconds)
+
+##### `log_writer.group_commit.max_thread_pool_size`
+
+- **Field:** `scalar.db.replication.log_writer.group_commit.max_thread_pool_size`
+- **Description:** Maximum thread pool size for group commit processing for the replication database.
+- **Default value:** `4096`
+
+#### LogApplier configurations (backup site)
+
+LogApplier configurations control how replication data is processed and applied to the backup site tables.
+
+##### `log_applier.enabled`
+
+- **Field:** `scalar.db.replication.log_applier.enabled`
+- **Description:** Enable or disable LogApplier functionality.
+- **Default value:** `false`
+
+##### `log_applier.transaction.expiration_millis`
+
+- **Field:** `scalar.db.replication.log_applier.transaction.expiration_millis`
+- **Description:** Expiration time in milliseconds for transactions replicated to the replication database from the primary site.
+- **Default value:** `30000` (30 seconds)
+
+##### `log_applier.transaction_group_scanner.threads`
+
+- **Field:** `scalar.db.replication.log_applier.transaction_group_scanner.threads`
+- **Description:** Number of scanner threads for transaction groups in the replication database.
+- **Default value:** `16`
+
+##### `log_applier.transaction_group_scanner.fetch_size`
+
+- **Field:** `scalar.db.replication.log_applier.transaction_group_scanner.fetch_size`
+- **Description:** Number of transaction group records to fetch in each scan operation from the replication database.
+- **Default value:** `32`
+
+##### `log_applier.transaction_group_scanner.wait_millis`
+
+- **Field:** `scalar.db.replication.log_applier.transaction_group_scanner.wait_millis`
+- **Description:** Wait time in milliseconds between scans of transaction groups in the replication database. Increasing this value reduces scan frequency but may increase replication latency.
+- **Default value:** `1000` (1 second)
+
+##### `log_applier.transaction_group_scanner.dedup.expiration_millis`
+
+- **Field:** `scalar.db.replication.log_applier.transaction_group_scanner.dedup.expiration_millis`
+- **Description:** Expiration time for transaction group deduplication cache. LogApplier uses this cache to avoid reprocessing the same transaction groups from the replication database.
+- **Default value:** `10000` (10 seconds)
+
+##### `log_applier.transaction_handler.threads`
+
+- **Field:** `scalar.db.replication.log_applier.transaction_handler.threads`
+- **Description:** Number of threads for LogApplier transaction handling. Increasing this value may improve replication performance but increases resource consumption.
+- **Default value:** `128`
+
+##### `log_applier.max_record_version`
+
+- **Field:** `scalar.db.replication.log_applier.max_record_version`
+- **Description:** Maximum record version to prevent integer overflow (for development use).
+- **Default value:** `Integer.MAX_VALUE - 1000` (where `Integer.MAX_VALUE` is 2,147,483,647)  
+
+##### `log_applier.write_operation.expiration_millis`
+
+- **Field:** `scalar.db.replication.log_applier.write_operation.expiration_millis`
+- **Description:** Expiration time in milliseconds for write operation metadata stored in the replication record metadata tables. After this time, expired metadata is eligible for garbage collection.
+- **Default value:** `86400000` (1 day)
+
+##### `log_applier.replication_status_service.threads`
+
+- **Field:** `scalar.db.replication.log_applier.replication_status_service.threads`
+- **Description:** Number of threads for replication status service.
+- **Default value:** `16`
+
+##### `log_applier.coordinator_state_cache.expiration_millis`
+
+- **Field:** `scalar.db.replication.log_applier.coordinator_state_cache.expiration_millis`
+- **Description:** Expiration time in milliseconds for the coordinator state cache. LogApplier caches transaction states from the Coordinator database to reduce lookups. A lower value means more frequent checks against the Coordinator database.
+- **Default value:** `30000` (30 seconds)
+
+##### `log_applier.coordinator_state_cache.size`
+
+- **Field:** `scalar.db.replication.log_applier.coordinator_state_cache.size`
+- **Description:** Maximum number of entries in the coordinator state cache. This cache stores transaction states to optimize lookups to the Coordinator database.
+- **Default value:** `1000`
+
 ### Other ScalarDB Cluster configurations
 
 The following are additional configurations available for ScalarDB Cluster.
@@ -802,6 +1104,62 @@ scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
 - **Description:** The fetch size used for `Scanner` to fetch data from the cluster. This is the number of records that `Scanner` fetches at once from the cluster. A larger value can improve performance by reducing the number of round trips to the cluster, but it may also increase memory usage.
 - **Default value:** `10`
 
+#### `cluster.client.piggyback_begin.enabled`
+
+- **Field:** `scalar.db.cluster.client.piggyback_begin.enabled`
+- **Description:** Whether the piggyback-begin feature is enabled. It delays transaction begin until the first CRUD operation, piggybacking the begin with the first operation to eliminate a dedicated begin RPC call.
+- **Default value:** `false`
+
+#### `cluster.client.write_buffering.enabled`
+
+- **Field:** `scalar.db.cluster.client.write_buffering.enabled`
+- **Description:** Whether the write-buffering feature is enabled. It buffers non-conditional write operations (inserts, upserts, unconditional puts/updates/deletes) and executes them in batches to reduce the number of RPC calls.
+- **Default value:** `false`
+
+### Configurations for client-side wire encryption
+
+The following configurations are available for client-side wire encryption.
+
+For details about encrypting wire communications, see [Encrypt Wire Communications](./encrypt-wire-communications.mdx).
+
+#### `cluster.tls.enabled`
+
+- **Field:** `scalar.db.cluster.tls.enabled`
+- **Description:** Whether wire encryption (TLS) is enabled for the client.
+- **Default value:** `false`
+
+#### `cluster.tls.ca_root_cert_pem`
+
+- **Field:** `scalar.db.cluster.tls.ca_root_cert_pem`
+- **Description:** The custom CA root certificate (PEM data) for TLS communication.
+- **Default value:** empty
+
+#### `cluster.tls.ca_root_cert_path`
+
+- **Field:** `scalar.db.cluster.tls.ca_root_cert_path`
+- **Description:** The custom CA root certificate (file path) for TLS communication.
+- **Default value:** empty
+
+#### `cluster.tls.override_authority`
+
+- **Field:** `scalar.db.cluster.tls.override_authority`
+- **Description:** The custom authority for TLS communication. This doesn't change what host is actually connected. This is intended for testing, but may safely be used outside of tests as an alternative to DNS overrides. For example, you can specify the hostname presented in the certificate chain file that you set for `scalar.db.cluster.node.tls.cert_chain_path`, which is the path for the cluster's TLS certificate.
+- **Default value:** empty
+
+For example, if you use the `indirect` client mode and the load balancer IP address is `192.168.10.1`, you can configure the client as follows:
+
+```properties
+scalar.db.transaction_manager=cluster
+scalar.db.contact_points=indirect:192.168.10.1
+```
+
+Or if you use the `direct-kubernetes` client mode, with the namespace of the endpoint as `ns` and the endpoint name as `scalardb-cluster`, you can configure the client as follows:
+
+```properties
+scalar.db.transaction_manager=cluster
+scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
+```
+
 ### Configurations for the SQL interface
 
 The following shows the configurations for the ScalarDB Cluster SQL client.
@@ -876,29 +1234,23 @@ For details about how to configure Spring Data JDBC for ScalarDB, see [Configura
 - **Description:** Maximum size of metadata allowed to be received.
 - **Default value:** The gRPC default value
 
-#### Authentication and authorization configurations
+### Authentication and authorization configurations
 
 The following shows the authentication and authorization configurations for the ScalarDB Cluster client.
 
-##### `auth.enabled`
+#### `auth.enabled`
 
 - **Field:** `scalar.db.cluster.auth.enabled`
 - **Description:** Whether authentication and authorization are enabled.
 - **Default value:** `false`
 
-:::warning
-
-If you enable authentication and authorization, you will also need to set [`scalar.db.cross_partition_scan.enabled`](#cross-partition-scan-configurations) to `true` for the system namespace (`scalardb` by default). This is because the ABAC feature performs cross-partition scans internally.
-
-:::
-
-##### `auth.username`
+#### `auth.username`
 
 - **Field:** `scalar.db.sql.cluster_mode.username`
 - **Description:** The username of the client.
 - **Default value:** empty
 
-##### `auth.password`
+#### `auth.password`
 
 - **Field:** `scalar.db.sql.cluster_mode.password`
 - **Description:** The password of the client.

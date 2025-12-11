@@ -77,7 +77,7 @@ CREATE NAMESPACE [IF NOT EXISTS] <namespace name> [WITH creation_options]
 creation_options: <option name>=<option value> [AND <option name>=<option value>] ...
 ```
 
-For details about `creation_options`, see [Creation options](../api-guide.mdx#creation-options).
+- For details about `creation_options`, see [Creation options](../api-guide.mdx#creation-options).
 
 #### Examples
 
@@ -134,6 +134,7 @@ creation_options: <option name>=<option value> [AND <option name>=<option value>
 ```
 
 - You can specify `ENCRYPTED` for non-primary-key columns to encrypt the data in those columns.
+- For details about `creation_options`, see [Creation options](../api-guide.mdx#creation-options-1).
 
 Create a table with a primary key that is composed of one partition key column and multiple clustering key columns:
 ```sql
@@ -278,8 +279,12 @@ You cannot create a secondary index on encrypted columns.
 #### Grammar
 
 ```sql
-CREATE INDEX [IF NOT EXISTS] ON [<namespace name>.]<table name> (<column name>)
+CREATE INDEX [IF NOT EXISTS] ON [<namespace name>.]<table name> (<column name>) [WITH creation_options]
+
+creation_options: <option name>=<option value> [AND <option name>=<option value>] ...
 ```
+
+- For details about `creation_options`, see [Creation options](../api-guide.mdx#creation-options-2).
 
 #### Examples
 

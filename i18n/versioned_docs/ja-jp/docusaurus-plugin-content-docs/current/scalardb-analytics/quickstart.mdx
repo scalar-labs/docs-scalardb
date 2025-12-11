@@ -101,7 +101,7 @@ ScalarDB が管理するデータベースを登録します:
 
 ```console
 docker compose run --rm scalardb-analytics-cli data-source register \
-  --data-source-json /config/data-sources/scalardb.json
+  --catalog=sample_catalog --data-source=scalardb --provider-file=/config/data-sources/scalardb.json
 ```
 
 これにより、ScalarDB が管理する Cassandra と MySQL の両方のテーブルが登録されます。
@@ -112,7 +112,7 @@ PostgreSQL データベースを登録します:
 
 ```console
 docker compose run --rm scalardb-analytics-cli data-source register \
-  --data-source-json /config/data-sources/postgres.json
+  --catalog=sample_catalog --data-source=postgres --provider-file=/config/data-sources/postgres.json
 ```
 
 ## ステップ 4: Spark SQL コンソールを起動する
