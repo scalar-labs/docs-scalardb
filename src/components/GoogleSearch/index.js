@@ -56,7 +56,7 @@ export default function GoogleSearch() {
     const googleSearchUrl = `https://www.google.com/search?q=${siteUrl}/${versionPath}+${encodeURIComponent(searchQuery.trim())}`;
 
     window.open(googleSearchUrl, '_blank', 'noopener,noreferrer');
-  }, [searchQuery, getCurrentVersion, getCurrentLanguage]);
+  }, [searchQuery, getCurrentVersion, getCurrentLanguage, siteConfig.url]);
 
   const handleInputChange = useCallback((e) => {
     setSearchQuery(e.target.value);
