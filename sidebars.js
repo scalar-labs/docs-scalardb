@@ -966,6 +966,11 @@ const sidebars = {
               id: 'scalardb-cluster/scalardb-abac-status-codes',
               label: 'Attributed-Based Access Control',
             },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/scalardb-encryption-status-codes',
+              label: 'Encryption',
+            },
           ],
         },
       ],
@@ -1948,6 +1953,11 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/scalardb-abac-status-codes',
               label: '属性ベースのアクセス制御',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/scalardb-encryption-status-codes',
+              label: '暗号化',
             },
           ],
         },
