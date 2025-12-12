@@ -1,0 +1,300 @@
+---
+tags:
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# 暗号化エラーコード
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このページでは、暗号化に関連するエラーコードの一覧を示します。
+
+## エラーコードのクラスと説明
+
+| クラス                 | 説明                       |
+|:----------------------|:--------------------------|
+| `DB-ENCRYPTION-1xxxx` | ユーザーエラーカテゴリのエラー |
+| `DB-ENCRYPTION-3xxxx` | 内部エラーカテゴリのエラー    |
+
+## `DB-ENCRYPTION-1xxxx` ステータスコード
+
+以下は、ユーザーエラーカテゴリのステータスコードとメッセージです。
+
+### `DB-ENCRYPTION-10000`
+
+**メッセージ**
+
+```markdown
+The partition key column cannot be encrypted. Column: %s
+```
+
+### `DB-ENCRYPTION-10001`
+
+**メッセージ**
+
+```markdown
+The clustering key column cannot be encrypted. Column: %s
+```
+
+### `DB-ENCRYPTION-10002`
+
+**メッセージ**
+
+```markdown
+The indexed column cannot be encrypted. Column: %s
+```
+
+### `DB-ENCRYPTION-10003`
+
+**メッセージ**
+
+```markdown
+The encrypted column cannot be specified as an index column. Column: %s
+```
+
+### `DB-ENCRYPTION-10004`
+
+**メッセージ**
+
+```markdown
+The operation does not have the target namespace or table name. Operation: %s
+```
+
+### `DB-ENCRYPTION-10005`
+
+**メッセージ**
+
+```markdown
+The column value is not properly specified. Column: %s, Operation: %s
+```
+
+### `DB-ENCRYPTION-10006`
+
+**メッセージ**
+
+```markdown
+The property for the encryption type ("scalar.db.cluster.encryption.type") is not set
+```
+
+### `DB-ENCRYPTION-10007`
+
+**メッセージ**
+
+```markdown
+Unknown encryption type: %s
+```
+
+### `DB-ENCRYPTION-10008`
+
+**メッセージ**
+
+```markdown
+The property for the address of the Vault server ("scalar.db.cluster.encryption.vault.address") is not set
+```
+
+### `DB-ENCRYPTION-10009`
+
+**メッセージ**
+
+```markdown
+The property for the token for the Vault server ("scalar.db.cluster.encryption.vault.token") is not set
+```
+
+### `DB-ENCRYPTION-10010`
+
+**メッセージ**
+
+```markdown
+The encrypted column cannot be specified in the condition. Column: %s, Operation: %s
+```
+
+### `DB-ENCRYPTION-10011`
+
+**メッセージ**
+
+```markdown
+The encrypted column cannot be specified in the ordering. Column: %s, Operation: %s
+```
+
+### `DB-ENCRYPTION-10012`
+
+**メッセージ**
+
+```markdown
+The key type specified by the property "scalar.db.cluster.encryption.vault.key_type" is not supported. The supported key types are "aes128-gcm96", "aes256-gcm96", and "chacha20-poly1305". Key type: %s
+```
+
+### `DB-ENCRYPTION-10013`
+
+**メッセージ**
+
+```markdown
+The key type specified by the property "scalar.db.cluster.encryption.self.key_type" is not supported. The supported key types are "AES128_GCM", "AES256_GCM", "AES128_EAX", "AES256_EAX", "AES128_CTR_HMAC_SHA256", "AES256_CTR_HMAC_SHA256", "CHACHA20_POLY1305", and "XCHACHA20_POLY1305". Key type: %s
+```
+
+## `DB-ENCRYPTION-3xxxx` ステータスコード
+
+以下は、内部エラーカテゴリのステータスコードとメッセージです。
+
+### `DB-ENCRYPTION-30000`
+
+**メッセージ**
+
+```markdown
+Retrieving encrypted columns failed. Table: %s
+```
+
+### `DB-ENCRYPTION-30001`
+
+**メッセージ**
+
+```markdown
+Registering encrypted columns failed. Columns: %s, Table: %s
+```
+
+### `DB-ENCRYPTION-30002`
+
+**メッセージ**
+
+```markdown
+Unregistering encrypted columns failed. Table: %s
+```
+
+### `DB-ENCRYPTION-30003`
+
+**メッセージ**
+
+```markdown
+Creating a data encryption key failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30004`
+
+**メッセージ**
+
+```markdown
+Checking the existence of a data encryption key failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30005`
+
+**メッセージ**
+
+```markdown
+Updating the configuration of a data encryption key failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30006`
+
+**メッセージ**
+
+```markdown
+Deleting a data encryption key failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30007`
+
+**メッセージ**
+
+```markdown
+Encrypting data failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30008`
+
+**メッセージ**
+
+```markdown
+Decrypting data failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30009`
+
+**メッセージ**
+
+```markdown
+HTTP GET request failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30010`
+
+**メッセージ**
+
+```markdown
+HTTP POST request failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30011`
+
+**メッセージ**
+
+```markdown
+HTTP DELETE request failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30012`
+
+**メッセージ**
+
+```markdown
+Registering the AEAD configuration failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30013`
+
+**メッセージ**
+
+```markdown
+Getting the AEAD primitive failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30014`
+
+**メッセージ**
+
+```markdown
+Getting the Kubernetes API client failed
+```
+
+### `DB-ENCRYPTION-30015`
+
+**メッセージ**
+
+```markdown
+Registering a data encryption key to the Kubernetes secret failed. Namespace: %s; Name: %s; Code: %d; Response Headers: %s; Response Body: %s
+```
+
+### `DB-ENCRYPTION-30016`
+
+**メッセージ**
+
+```markdown
+Checking the existence of a data encryption key in the Kubernetes secret failed. Namespace: %s; Name: %s; Code: %d; Response Headers: %s; Response Body: %s
+```
+
+### `DB-ENCRYPTION-30017`
+
+**メッセージ**
+
+```markdown
+Deleting a data encryption key in the Kubernetes secret failed. Namespace: %s; Name: %s; Code: %d; Response Headers: %s; Response Body: %s
+```
+
+### `DB-ENCRYPTION-30018`
+
+**メッセージ**
+
+```markdown
+Parsing a data encryption key failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30019`
+
+**メッセージ**
+
+```markdown
+Reading a data encryption key in the Kubernetes secret failed. Namespace: %s; Name: %s; Code: %d; Response Headers: %s; Response Body: %s
+```
