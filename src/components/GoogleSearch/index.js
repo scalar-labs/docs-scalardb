@@ -47,10 +47,11 @@ export default function GoogleSearch() {
     const currentLanguage = getCurrentLanguage();
 
     // Use different site URLs based on language
-    const siteUrl = currentLanguage === 'ja-jp' 
-      ? 'site%3Ascalardb.scalar-labs.com/ja-jp/docs'
-      : 'site%3Ascalardb.scalar-labs.com/docs';
-    
+    const hostname = new URL(siteConfig.url).hostname;
+    const siteUrl = currentLanguage === 'ja-jp'
+      ? `site%3A${hostname}/ja-jp/docs`
+      : `site%3A${hostname}/docs`;
+
     const versionPath = currentVersion === 'latest' ? 'latest' : currentVersion;
     const googleSearchUrl = `https://www.google.com/search?q=${siteUrl}/${versionPath}+${encodeURIComponent(searchQuery.trim())}`;
 
