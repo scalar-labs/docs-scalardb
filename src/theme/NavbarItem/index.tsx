@@ -7,7 +7,7 @@ import GoogleSearch from '../../components/GoogleSearch';
 import { getNotifications, detectLanguage } from '../../data/notifications';
 
 type Props = WrapperProps<typeof NavbarItemType> & {
-  type?: string | 'custom-NotificationBell' | 'custom-GoogleSearch';
+  type?: string;
   notifications?: any[];
 };
 
