@@ -971,6 +971,11 @@ const sidebars = {
               id: 'scalardb-cluster/scalardb-encryption-status-codes',
               label: 'Encryption',
             },
+            {
+              "type": "doc",
+              "id": "scalardb-cluster/scalardb-remote-replication-status-codes",
+              "label": "Remote Replication",
+            }
           ],
         },
       ],
@@ -1959,6 +1964,11 @@ const sidebars = {
               id: 'scalardb-cluster/scalardb-encryption-status-codes',
               label: '暗号化',
             },
+            {
+              "type": "doc",
+              "id": "scalardb-cluster/scalardb-remote-replication-status-codes",
+              "label": "リモートレプリケーション"
+            }
           ],
         },
       ],
