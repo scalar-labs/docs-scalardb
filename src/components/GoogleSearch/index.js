@@ -62,7 +62,7 @@ export default function GoogleSearch() {
     setSearchQuery(e.target.value);
   }, []);
 
-  const handleKeyPress = useCallback((e) => {
+  const handleKeyDown = useCallback((e) => {
     if (e.key === 'Enter') {
       handleSearch(e);
     }
@@ -103,7 +103,7 @@ export default function GoogleSearch() {
             placeholder={getPlaceholderText()}
             value={searchQuery}
             onChange={handleInputChange}
-            onKeyDown={handleKeyPress}
+            onKeyDown={handleKeyDown}
             className="googleSearchInput"
             aria-label="Search documentation with Google"
           />
