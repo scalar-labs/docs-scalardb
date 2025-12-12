@@ -45,7 +45,7 @@ export default function GoogleSearch() {
 
     const currentVersion = getCurrentVersion();
     const currentLanguage = getCurrentLanguage();
-    
+
     // Use different site URLs based on language
     const siteUrl = currentLanguage === 'ja-jp' 
       ? 'site%3Ascalardb.scalar-labs.com/ja-jp/docs'
@@ -53,7 +53,7 @@ export default function GoogleSearch() {
     
     const versionPath = currentVersion === 'latest' ? 'latest' : currentVersion;
     const googleSearchUrl = `https://www.google.com/search?q=${siteUrl}/${versionPath}+${encodeURIComponent(searchQuery.trim())}`;
-    
+
     window.open(googleSearchUrl, '_blank', 'noopener,noreferrer');
   }, [searchQuery, getCurrentVersion, getCurrentLanguage]);
 
