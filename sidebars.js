@@ -968,6 +968,11 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'scalardb-cluster/scalardb-embedding-store-status-codes',
+              label: 'Embedding Store',
+            },
+            {
+              type: 'doc',
               id: 'scalardb-cluster/scalardb-encryption-status-codes',
               label: 'Encryption',
             },
@@ -1958,6 +1963,11 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-cluster/scalardb-abac-status-codes',
               label: '属性ベースのアクセス制御',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/scalardb-embedding-store-status-codes',
+              label: '埋め込みストア',
             },
             {
               type: 'doc',
