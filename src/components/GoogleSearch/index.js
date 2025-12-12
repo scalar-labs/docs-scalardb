@@ -103,7 +103,7 @@ export default function GoogleSearch() {
             placeholder={getPlaceholderText()}
             value={searchQuery}
             onChange={handleInputChange}
-            onKeyPress={handleKeyPress}
+            onKeyDown={handleKeyPress}
             className="googleSearchInput"
             aria-label="Search documentation with Google"
           />
