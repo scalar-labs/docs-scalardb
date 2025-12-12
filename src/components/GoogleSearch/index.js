@@ -17,7 +17,7 @@ export default function GoogleSearch() {
     }
     
     // Check for versioned docs (for example, /docs/3.15/, /docs/3.14/, etc.)
-    const versionMatch = path.match(/\/docs\/(\d+\.\d+)\//);
+    const versionMatch = path.match(/(?:\/ja-jp)?\/docs\/(\d+\.\d+)\//);
     if (versionMatch) {
       return versionMatch[1];
     }
