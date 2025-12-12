@@ -958,13 +958,13 @@ const sidebars = {
             },
             {
               type: 'doc',
-              id: 'scalardb-cluster/scalardb-auth-status-codes',
-              label: 'Authentication and Authorization',
+              id: 'scalardb-cluster/scalardb-abac-status-codes',
+              label: 'Attributed-Based Access Control',
             },
             {
               type: 'doc',
-              id: 'scalardb-cluster/scalardb-abac-status-codes',
-              label: 'Attributed-Based Access Control',
+              id: 'scalardb-cluster/scalardb-auth-status-codes',
+              label: 'Authentication and Authorization',
             },
             {
               type: 'doc',
@@ -1956,13 +1956,13 @@ const sidebars = {
             },
             {
               type: 'doc',
-              id: 'scalardb-cluster/scalardb-auth-status-codes',
-              label: '認証と認可',
+              id: 'scalardb-cluster/scalardb-abac-status-codes',
+              label: '属性ベースのアクセス制御',
             },
             {
               type: 'doc',
-              id: 'scalardb-cluster/scalardb-abac-status-codes',
-              label: '属性ベースのアクセス制御',
+              id: 'scalardb-cluster/scalardb-auth-status-codes',
+              label: '認証と認可',
             },
             {
               type: 'doc',
