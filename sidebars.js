@@ -958,14 +958,29 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'scalardb-cluster/scalardb-abac-status-codes',
+              label: 'Attributed-Based Access Control',
+            },
+            {
+              type: 'doc',
               id: 'scalardb-cluster/scalardb-auth-status-codes',
               label: 'Authentication and Authorization',
             },
             {
               type: 'doc',
-              id: 'scalardb-cluster/scalardb-abac-status-codes',
-              label: 'Attributed-Based Access Control',
+              id: 'scalardb-cluster/scalardb-embedding-store-status-codes',
+              label: 'Embedding Store',
             },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/scalardb-encryption-status-codes',
+              label: 'Encryption',
+            },
+            {
+              "type": "doc",
+              "id": "scalardb-cluster/scalardb-remote-replication-status-codes",
+              "label": "Remote Replication",
+            }
           ],
         },
       ],
@@ -1941,14 +1956,29 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'scalardb-cluster/scalardb-abac-status-codes',
+              label: '属性ベースのアクセス制御',
+            },
+            {
+              type: 'doc',
               id: 'scalardb-cluster/scalardb-auth-status-codes',
               label: '認証と認可',
             },
             {
               type: 'doc',
-              id: 'scalardb-cluster/scalardb-abac-status-codes',
-              label: '属性ベースのアクセス制御',
+              id: 'scalardb-cluster/scalardb-embedding-store-status-codes',
+              label: '埋め込みストア',
             },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/scalardb-encryption-status-codes',
+              label: '暗号化',
+            },
+            {
+              "type": "doc",
+              "id": "scalardb-cluster/scalardb-remote-replication-status-codes",
+              "label": "リモートレプリケーション"
+            }
           ],
         },
       ],
