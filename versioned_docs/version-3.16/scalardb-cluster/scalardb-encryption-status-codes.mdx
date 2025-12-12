@@ -1,0 +1,296 @@
+---
+tags:
+  - Enterprise Premium
+displayed_sidebar: docsEnglish
+---
+
+# Encryption Error Codes
+
+This page provides a list of error codes related to encryption.
+
+## Error code classes and descriptions
+
+| Class                | Description                            |
+|:---------------------|:---------------------------------------|
+| `DB-ENCRYPTION-1xxxx` | Errors for the user error category     |
+| `DB-ENCRYPTION-3xxxx` | Errors for the internal error category |
+
+## `DB-ENCRYPTION-1xxxx` status codes
+
+The following are status codes and messages for the user error category.
+
+### `DB-ENCRYPTION-10000`
+
+**Message**
+
+```markdown
+The partition key column cannot be encrypted. Column: %s
+```
+
+### `DB-ENCRYPTION-10001`
+
+**Message**
+
+```markdown
+The clustering key column cannot be encrypted. Column: %s
+```
+
+### `DB-ENCRYPTION-10002`
+
+**Message**
+
+```markdown
+The indexed column cannot be encrypted. Column: %s
+```
+
+### `DB-ENCRYPTION-10003`
+
+**Message**
+
+```markdown
+The encrypted column cannot be specified as an index column. Column: %s
+```
+
+### `DB-ENCRYPTION-10004`
+
+**Message**
+
+```markdown
+The operation does not have the target namespace or table name. Operation: %s
+```
+
+### `DB-ENCRYPTION-10005`
+
+**Message**
+
+```markdown
+The column value is not properly specified. Column: %s, Operation: %s
+```
+
+### `DB-ENCRYPTION-10006`
+
+**Message**
+
+```markdown
+The property for the encryption type ("scalar.db.cluster.encryption.type") is not set
+```
+
+### `DB-ENCRYPTION-10007`
+
+**Message**
+
+```markdown
+Unknown encryption type: %s
+```
+
+### `DB-ENCRYPTION-10008`
+
+**Message**
+
+```markdown
+The property for the address of the Vault server ("scalar.db.cluster.encryption.vault.address") is not set
+```
+
+### `DB-ENCRYPTION-10009`
+
+**Message**
+
+```markdown
+The property for the token for the Vault server ("scalar.db.cluster.encryption.vault.token") is not set
+```
+
+### `DB-ENCRYPTION-10010`
+
+**Message**
+
+```markdown
+The encrypted column cannot be specified in the condition. Column: %s, Operation: %s
+```
+
+### `DB-ENCRYPTION-10011`
+
+**Message**
+
+```markdown
+The encrypted column cannot be specified in the ordering. Column: %s, Operation: %s
+```
+
+### `DB-ENCRYPTION-10012`
+
+**Message**
+
+```markdown
+The key type specified by the property "scalar.db.cluster.encryption.vault.key_type" is not supported. The supported key types are "aes128-gcm96", "aes256-gcm96", and "chacha20-poly1305". Key type: %s
+```
+
+### `DB-ENCRYPTION-10013`
+
+**Message**
+
+```markdown
+The key type specified by the property "scalar.db.cluster.encryption.self.key_type" is not supported. The supported key types are "AES128_GCM", "AES256_GCM", "AES128_EAX", "AES256_EAX", "AES128_CTR_HMAC_SHA256", "AES256_CTR_HMAC_SHA256", "CHACHA20_POLY1305", and "XCHACHA20_POLY1305". Key type: %s
+```
+
+## `DB-ENCRYPTION-3xxxx` status codes
+
+The following are status codes and messages for the internal error category.
+
+### `DB-ENCRYPTION-30000`
+
+**Message**
+
+```markdown
+Retrieving encrypted columns failed. Table: %s
+```
+
+### `DB-ENCRYPTION-30001`
+
+**Message**
+
+```markdown
+Registering encrypted columns failed. Columns: %s, Table: %s
+```
+
+### `DB-ENCRYPTION-30002`
+
+**Message**
+
+```markdown
+Unregistering encrypted columns failed. Table: %s
+```
+
+### `DB-ENCRYPTION-30003`
+
+**Message**
+
+```markdown
+Creating a data encryption key failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30004`
+
+**Message**
+
+```markdown
+Checking the existence of a data encryption key failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30005`
+
+**Message**
+
+```markdown
+Updating the configuration of a data encryption key failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30006`
+
+**Message**
+
+```markdown
+Deleting a data encryption key failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30007`
+
+**Message**
+
+```markdown
+Encrypting data failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30008`
+
+**Message**
+
+```markdown
+Decrypting data failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30009`
+
+**Message**
+
+```markdown
+HTTP GET request failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30010`
+
+**Message**
+
+```markdown
+HTTP POST request failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30011`
+
+**Message**
+
+```markdown
+HTTP DELETE request failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30012`
+
+**Message**
+
+```markdown
+Registering the AEAD configuration failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30013`
+
+**Message**
+
+```markdown
+Getting the AEAD primitive failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30014`
+
+**Message**
+
+```markdown
+Getting the Kubernetes API client failed
+```
+
+### `DB-ENCRYPTION-30015`
+
+**Message**
+
+```markdown
+Registering a data encryption key to the Kubernetes secret failed. Namespace: %s; Name: %s; Code: %d; Response Headers: %s; Response Body: %s
+```
+
+### `DB-ENCRYPTION-30016`
+
+**Message**
+
+```markdown
+Checking the existence of a data encryption key in the Kubernetes secret failed. Namespace: %s; Name: %s; Code: %d; Response Headers: %s; Response Body: %s
+```
+
+### `DB-ENCRYPTION-30017`
+
+**Message**
+
+```markdown
+Deleting a data encryption key in the Kubernetes secret failed. Namespace: %s; Name: %s; Code: %d; Response Headers: %s; Response Body: %s
+```
+
+### `DB-ENCRYPTION-30018`
+
+**Message**
+
+```markdown
+Parsing a data encryption key failed. Details: %s
+```
+
+### `DB-ENCRYPTION-30019`
+
+**Message**
+
+```markdown
+Reading a data encryption key in the Kubernetes secret failed. Namespace: %s; Name: %s; Code: %d; Response Headers: %s; Response Body: %s
+```
