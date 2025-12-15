@@ -14,6 +14,17 @@ const notificationsList = [
   // },
   {
     message: {
+      en: 'Configure role-based access control in ScalarDB Cluster 3.17',
+      ja: 'ScalarDB Cluster 3.17 でロールベースのアクセス制御を設定する'
+    },
+    url: {
+      en: 'scalardb-cluster/scalardb-auth-with-sql#roles?utm_source=docs-site&utm_medium=notifications',
+      ja: 'scalardb-cluster/scalardb-auth-with-sql#%E3%83%AD%E3%83%BC%E3%83%AB?utm_source=docs-site&utm_medium=notifications'
+    },
+    unread: true
+  },
+  {
+    message: {
       en: 'Learn about transaction metadata decoupling in ScalarDB 3.17',
       ja: 'ScalarDB 3.17 でトランザクションメタデータ分離について学ぶ'
     },
