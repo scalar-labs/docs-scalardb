@@ -21,22 +21,22 @@ const recentFeatures = [
     name: '最近の機能',
     categoryLinks: [
       // Links should be to docs about features that have been introduced in this version or the previous version.
-      // To add a link, use the format ['link1', 'link2']. Links should be relative to the docs directory and not be anchor links.
+      // To add a link, use the format ['link1', 'link2']. Links should be relative to the docs directory.
       // To add a label, use the format ['label1', 'label2'].
       {
         cell: 0, // First cell
+        links: ['consensus-commit#%E3%83%88%E3%83%A9%E3%83%B3%E3%82%B6%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF%E5%88%86%E9%9B%A2'],
+        labels: ['トランザクションメタデータ分離']
+      },
+      {
+        cell: 1, // Second cell
         links: ['scalardb-cluster/remote-replication'],
         labels: ['高可用性のためのデータレプリケーション']
       },
       {
-        cell: 1, // Second cell
+        cell: 2, // Third cell
         links: ['scalardb-mcp-server/getting-started-with-scalardb-mcp-server'],
         labels: ['ScalarDB MCP Server をはじめよう']
-      },
-      {
-        cell: 2, // Third cell
-        links: ['scalardb-cluster/getting-started-with-vector-search'],
-        labels: ['ScalarDB Cluster でベクトル検索をはじめよう']
       }
     ]
   }

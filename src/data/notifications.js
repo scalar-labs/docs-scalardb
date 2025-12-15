@@ -3,15 +3,37 @@
 const notificationsList = [
   // {
   //   message: {
-  //     en: 'Blog post: Explore the exciting new features in ScalarDB 3.16',
-  //     ja: 'ブログ記事: データベースエンジニアリングの最新トレンドとベストプラクティスを学ぶ DBEM #7 のハイライト'
+  //     en: 'XXX',
+  //     ja: 'XXX'
   //   },
   //   url: {
-  //     en: 'XXX_?utm_source=docs-site&utm_medium=notifications',
-  //     ja: 'XXX_?utm_source=docs-site&utm_medium=notifications'
+  //     en: 'XXX?utm_source=docs-site&utm_medium=notifications',
+  //     ja: 'XXX?utm_source=docs-site&utm_medium=notifications'
   //   },
   //   unread: true
   // },
+  {
+    message: {
+      en: 'Learn about transaction metadata decoupling in ScalarDB 3.17',
+      ja: 'ScalarDB 3.17 でトランザクションメタデータ分離について学ぶ'
+    },
+    url: {
+      en: 'consensus-commit?utm_source=docs-site&utm_medium=notifications#transaction-metadata-decoupling',
+      ja: 'consensus-commit?utm_source=docs-site&utm_medium=notifications#%E3%83%88%E3%83%A9%E3%83%B3%E3%82%B6%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF%E5%88%86%E9%9B%A2'
+    },
+    unread: true
+  },
+  {
+    message: {
+      en: 'Configure role-based access control in ScalarDB Cluster 3.17',
+      ja: 'ScalarDB Cluster 3.17 でロールベースのアクセス制御を設定する'
+    },
+    url: {
+      en: 'scalardb-cluster/scalardb-auth-with-sql?utm_source=docs-site&utm_medium=notifications#roles',
+      ja: 'scalardb-cluster/scalardb-auth-with-sql?utm_source=docs-site&utm_medium=notifications#%E3%83%AD%E3%83%BC%E3%83%AB'
+    },
+    unread: true
+  },
   {
     message: {
       en: 'Query databases by using natural language with ScalarDB MCP Server',
@@ -25,23 +47,12 @@ const notificationsList = [
   },
   {
     message: {
-      en: 'Replicate data for high availability in ScalarDB 3.16',
-      ja: 'ScalarDB 3.16 で高可用性のためのデータレプリケーションを行う'
+      en: 'Replicate data for high availability',
+      ja: '高可用性のためのデータレプリケーションを行う'
     },
     url: {
       en: 'scalardb-cluster/remote-replication?utm_source=docs-site&utm_medium=notifications',
       ja: 'scalardb-cluster/remote-replication?utm_source=docs-site&utm_medium=notifications'
-    },
-    unread: true
-  },
-  {
-    message: {
-      en: 'Discover how to implement vector search capabilities with ScalarDB Cluster',
-      ja: 'ScalarDB Cluster でベクトル検索機能を実装する方法を学ぶ'
-    },
-    url: {
-      en: 'scalardb-cluster/getting-started-with-vector-search?utm_source=docs-site&utm_medium=notifications',
-      ja: 'scalardb-cluster/getting-started-with-vector-search?utm_source=docs-site&utm_medium=notifications'
     },
     unread: true
   }

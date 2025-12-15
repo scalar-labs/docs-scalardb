@@ -21,22 +21,22 @@ const recentFeatures = [
     name: 'Recent features',
     categoryLinks: [
       // Links should be to docs about features that have been introduced in this version or the previous version.
-      // To add a link, use the format ['link1', 'link2']. Links should be relative to the docs directory and not be anchor links.
+      // To add a link, use the format ['link1', 'link2']. Links should be relative to the docs directory.
       // To add a label, use the format ['label1', 'label2'].
       {
         cell: 0, // First cell
+        links: ['consensus-commit#transaction-metadata-decoupling'],
+        labels: ['Transaction Metadata Decoupling']
+      },
+      {
+        cell: 1, // Second cell
         links: ['scalardb-cluster/remote-replication'],
         labels: ['Replicate Data for High Availability']
       },
       {
-        cell: 1, // Second cell
+        cell: 2, // Third cell
         links: ['scalardb-mcp-server/getting-started-with-scalardb-mcp-server'],
         labels: ['Getting Started with ScalarDB MCP Server']
-      },
-      {
-        cell: 2, // Third cell
-        links: ['scalardb-cluster/getting-started-with-vector-search'],
-        labels: ['Getting Started with ScalarDB Cluster for Vector Search']
       }
     ]
   }
