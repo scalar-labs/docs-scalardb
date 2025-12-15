@@ -18,8 +18,8 @@ const notificationsList = [
       ja: 'ScalarDB 3.17 でトランザクションメタデータ分離について学ぶ'
     },
     url: {
-      en: 'consensus-commit#transaction-metadata-decoupling?utm_source=docs-site&utm_medium=notifications',
-      ja: 'consensus-commit#%E3%83%88%E3%83%A9%E3%83%B3%E3%82%B6%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF%E5%88%86%E9%9B%A2?utm_source=docs-site&utm_medium=notifications'
+      en: 'consensus-commit?utm_source=docs-site&utm_medium=notifications#transaction-metadata-decoupling',
+      ja: 'consensus-commit?utm_source=docs-site&utm_medium=notifications#%E3%83%88%E3%83%A9%E3%83%B3%E3%82%B6%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF%E5%88%86%E9%9B%A2'
     },
     unread: true
   },
@@ -29,8 +29,8 @@ const notificationsList = [
       ja: 'ScalarDB Cluster 3.17 でロールベースのアクセス制御を設定する'
     },
     url: {
-      en: 'scalardb-cluster/scalardb-auth-with-sql#roles?utm_source=docs-site&utm_medium=notifications',
-      ja: 'scalardb-cluster/scalardb-auth-with-sql#%E3%83%AD%E3%83%BC%E3%83%AB?utm_source=docs-site&utm_medium=notifications'
+      en: 'scalardb-cluster/scalardb-auth-with-sql?utm_source=docs-site&utm_medium=notifications#roles',
+      ja: 'scalardb-cluster/scalardb-auth-with-sql?utm_source=docs-site&utm_medium=notifications#%E3%83%AD%E3%83%BC%E3%83%AB'
     },
     unread: true
   },
