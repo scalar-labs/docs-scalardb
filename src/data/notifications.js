@@ -3,12 +3,12 @@
 const notificationsList = [
   // {
   //   message: {
-  //     en: 'Blog post: Explore the exciting new features in ScalarDB 3.16',
-  //     ja: 'ブログ記事: データベースエンジニアリングの最新トレンドとベストプラクティスを学ぶ DBEM #7 のハイライト'
+  //     en: 'XXX',
+  //     ja: 'XXX'
   //   },
   //   url: {
-  //     en: 'XXX_?utm_source=docs-site&utm_medium=notifications',
-  //     ja: 'XXX_?utm_source=docs-site&utm_medium=notifications'
+  //     en: 'XXX?utm_source=docs-site&utm_medium=notifications',
+  //     ja: 'XXX?utm_source=docs-site&utm_medium=notifications'
   //   },
   //   unread: true
   // },
