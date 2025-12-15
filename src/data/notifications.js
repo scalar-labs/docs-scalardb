@@ -25,8 +25,8 @@ const notificationsList = [
   },
   {
     message: {
-      en: 'Replicate data for high availability in ScalarDB 3.16',
-      ja: 'ScalarDB 3.16 で高可用性のためのデータレプリケーションを行う'
+      en: 'Replicate data for high availability',
+      ja: '高可用性のためのデータレプリケーションを行う'
     },
     url: {
       en: 'scalardb-cluster/remote-replication?utm_source=docs-site&utm_medium=notifications',
