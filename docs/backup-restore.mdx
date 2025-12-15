@@ -119,6 +119,21 @@ The backup methods by database listed below are just examples of some of the dat
   <TabItem value="YugabyteDB_Managed" label="YugabyteDB Managed" default>
     You can perform on-demand backups or scheduled backups during a paused duration. For details on performing backups, see [YugabyteDB Managed: Back up and restore clusters](https://docs.yugabyte.com/preview/yugabyte-cloud/cloud-clusters/backup-clusters/).
   </TabItem>
+  <TabItem value="S3" label="S3">
+    You can create a backup of your bucket by using AWS Backup during a pause duration. For details, see [Amazon S3 backups](https://docs.aws.amazon.com/aws-backup/latest/devguide/s3-backups.html).
+
+    To specify a transactionally consistent restore point, pause your ScalarDB Cluster or your application that is using ScalarDB as described in [Back up with explicit pausing](#back-up-with-explicit-pausing).
+  </TabItem>
+  <TabItem value="Blob_Storage" label="Blob Storage">
+    You can create a backup of your container by using Azure Backup during a pause duration. For details, see [Overview of Azure Blob backup](https://learn.microsoft.com/en-us/azure/backup/blob-backup-overview).
+
+    To specify a transactionally consistent restore point, pause your ScalarDB Cluster or your application that is using ScalarDB as described in [Back up with explicit pausing](#back-up-with-explicit-pausing).
+  </TabItem>
+  <TabItem value="Cloud_Storage" label="Cloud Storage">
+    You can create a copy of your bucket, for example by using [Storage Transfer Service](https://docs.cloud.google.com/storage-transfer/docs/overview). For details, see [Transfer between Cloud Storage buckets](https://docs.cloud.google.com/storage-transfer/docs/cloud-storage-to-cloud-storage).
+
+    To specify a transactionally consistent restore point, pause your ScalarDB Cluster or your application that is using ScalarDB as described in [Back up with explicit pausing](#back-up-with-explicit-pausing).
+  </TabItem>
 </Tabs>
 
 ## Restore a backup
@@ -180,5 +195,14 @@ The restore methods by database listed below are just examples of some of the da
   </TabItem>
   <TabItem value="Db2" label="Db2">
     Use the `restore` command. For details, on restoring the database, see [Db2: Restore overview](https://www.ibm.com/docs/en/db2/12.1.0?topic=recovery-restore).
+  </TabItem>
+  <TabItem value="S3" label="S3">
+    If you used AWS Backup to create a backup of your bucket, follow [Restore S3 data using AWS Backup](https://docs.aws.amazon.com/aws-backup/latest/devguide/restoring-s3.html).
+  </TabItem>
+  <TabItem value="Blob_Storage" label="Blob Storage">
+    If you used Azure Backup to create a backup of your container, follow [Restore Azure Blobs](https://learn.microsoft.com/en-us/azure/backup/blob-restore?tabs=operational-backup).
+  </TabItem>
+  <TabItem value="Cloud_Storage" label="Cloud Storage">
+    Use a copied bucket as a new bucket by updating the value of the `scalar.db.contact_points` property in the ScalarDB configuration.
   </TabItem>
 </Tabs>
