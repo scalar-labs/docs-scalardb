@@ -25,18 +25,18 @@ const recentFeatures = [
       // To add a label, use the format ['label1', 'label2'].
       {
         cell: 0, // First cell
+        links: ['XXX'],
+        labels: ['XXX']
+      },
+      {
+        cell: 1, // Second cell
         links: ['scalardb-cluster/remote-replication'],
         labels: ['Replicate Data for High Availability']
       },
       {
-        cell: 1, // Second cell
+        cell: 2, // Third cell
         links: ['scalardb-mcp-server/getting-started-with-scalardb-mcp-server'],
         labels: ['Getting Started with ScalarDB MCP Server']
-      },
-      {
-        cell: 2, // Third cell
-        links: ['scalardb-cluster/getting-started-with-vector-search'],
-        labels: ['Getting Started with ScalarDB Cluster for Vector Search']
       }
     ]
   }
