@@ -25,8 +25,8 @@ const recentFeatures = [
       // To add a label, use the format ['label1', 'label2'].
       {
         cell: 0, // First cell
-        links: ['XXX'],
-        labels: ['XXX']
+        links: ['consensus-commit#transaction-metadata-decoupling'],
+        labels: ['Transaction Metadata Decoupling']
       },
       {
         cell: 1, // Second cell
