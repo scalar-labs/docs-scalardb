@@ -198,7 +198,8 @@ The following table shows the supported data types in each JDBC database and the
     | long raw                       | BLOB                                |                            |
     | nchar                          | TEXT                                | See warning [2](#2) below. |
     | nclob                          | TEXT                                |                            |
-    | number                         | BIGINT / DOUBLE                     | See warning [5](#5) below. |
+    | number(p,s), with p ≠ 1        | BIGINT / DOUBLE                     | See warning [5](#5) below. |
+    | number(1,0)                    | BIGINT (default), BOOLEAN           | See warning [6](#6) below. |
     | nvarchar2                      | TEXT                                | See warning [2](#2) below. |
     | raw                            | BLOB                                | See warning [2](#2) below. |
     | timestamp                      | TIMESTAMP (default) and TIME        | See warning [6](#6) below. |
