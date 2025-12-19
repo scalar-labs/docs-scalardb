@@ -201,7 +201,8 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
 | long raw                       | BLOB                              |                                     |
 | nchar                          | TEXT                              | 下記の警告 [2](#2) を参照してください。  |
 | nclob                          | TEXT                              |                                     |
-| number                         | BIGINT / DOUBLE                   | 下記の警告 [5](#5) を参照してください。  |
+| number(p,s), p ≠ 1の場合       | BIGINT / DOUBLE                   | 下記の警告 [5](#5) を参照してください。  |
+| number(1,0)                    | BIGINT (デフォルト), BOOLEAN      | 下記の警告 [6](#6) を参照してください。  |
 | nvarchar2                      | TEXT                              | 下記の警告 [2](#2) を参照してください。  |
 | raw                            | BLOB                              | 下記の警告 [2](#2) を参照してください。  |
 | timestamp                      | TIMESTAMP (デフォルト)、TIME        | 下記の警告 [6](#6) を参照してください。 |
