@@ -251,109 +251,109 @@ ScalarDB には、複数のストレージ実装をサポートするストレ�
   <TabItem value="JDBC_databases" label="JDBC databases" default>
     JDBC データベースでは次の設定を使用できます。
 
-    ##### `storage`
+    <h4>`storage`</h4>
 
     - **フィールド:** `scalar.db.storage`
     - **説明:** `jdbc` を指定する必要があります。
     - **デフォルト値:** -
 
-    ##### `contact_points`
+    <h4>`contact_points`</h4>
 
     - **フィールド:** `scalar.db.contact_points`
     - **説明:** JDBC 接続 URL。
     - **デフォルト値:** 
 
-    ##### `username`
+    <h4>`username`</h4>
 
     - **フィールド:** `scalar.db.username`
     - **説明:** データベースにアクセスするためのユーザー名。
     - **デフォルト値:** 
 
-    ##### `password`
+    <h4>`password`</h4>
 
     - **フィールド:** `scalar.db.password`
     - **説明:** データベースにアクセスするためのパスワード。
     - **デフォルト値:** 
 
-    ##### `jdbc.connection_pool.min_idle`
+    <h4>`jdbc.connection_pool.min_idle`</h4>
 
     - **フィールド:** `scalar.db.jdbc.connection_pool.min_idle`
     - **説明:** コネクションプール内のアイドルコネクションの最小数。
     - **デフォルト値:** `20`
 
-    ##### `jdbc.connection_pool.max_idle`
+    <h4>`jdbc.connection_pool.max_idle`</h4>
 
     - **フィールド:** `scalar.db.jdbc.connection_pool.max_idle`
     - **説明:** コネクションプール内でアイドル状態のままにできるコネクションの最大数。
     - **デフォルト値:** `50`
 
-    ##### `jdbc.connection_pool.max_total`
+    <h4>`jdbc.connection_pool.max_total`</h4>
 
     - **フィールド:** `scalar.db.jdbc.connection_pool.max_total`
     - **説明:** コネクションプールで同時にアクティブにできるアイドルコネクションと利用中コネクションの最大合計数。制限がない場合は負の値を使用します。
     - **デフォルト値:** `200`
 
-    ##### `jdbc.prepared_statements_pool.enabled`
+    <h4>`jdbc.prepared_statements_pool.enabled`</h4>
 
     - **フィールド:** `scalar.db.jdbc.prepared_statements_pool.enabled`
     - **説明:** このプロパティを `true` に設定すると、準備されたステートメントのプールが有効になります。
     - **デフォルト値:** `false`
 
-    ##### `jdbc.prepared_statements_pool.max_open`
+    <h4>`jdbc.prepared_statements_pool.max_open`</h4>
 
     - **フィールド:** `scalar.db.jdbc.prepared_statements_pool.max_open`
     - **説明:** ステートメントプールから同時に割り当てることができるオープンステートメントの最大数。制限がない場合は負の値を使用します。
     - **デフォルト値:** `-1`
 
-    ##### `jdbc.isolation_level`
+    <h4>`jdbc.isolation_level`</h4>
 
     - **フィールド:** `scalar.db.jdbc.isolation_level`
     - **説明:** JDBC の分離レベル。`READ_COMMITTED`、`REPEATABLE_READ`、または `SERIALIZABLE` を指定できます。
     - **デフォルト値:** 基盤データベース固有
 
-    ##### `jdbc.table_metadata.connection_pool.min_idle`
+    <h4>`jdbc.table_metadata.connection_pool.min_idle`</h4>
 
     - **フィールド:** `scalar.db.jdbc.table_metadata.connection_pool.min_idle`
     - **説明:** テーブルメタデータのコネクションプール内のアイドルコネクションの最小数。
     - **デフォルト値:** `5`
 
-    ##### `jdbc.table_metadata.connection_pool.max_idle`
+    <h4>`jdbc.table_metadata.connection_pool.max_idle`</h4>
 
     - **フィールド:** `scalar.db.jdbc.table_metadata.connection_pool.max_idle`
     - **説明:** テーブルメタデータのコネクションプール内でアイドル状態のままにできるコネクションの最大数。
     - **デフォルト値:** `10`
 
-    ##### `jdbc.table_metadata.connection_pool.max_total`
+    <h4>`jdbc.table_metadata.connection_pool.max_total`</h4>
 
     - **フィールド:** `scalar.db.jdbc.table_metadata.connection_pool.max_total`
     - **説明:** テーブルメタデータのコネクションプールで同時にアクティブにできるアイドルコネクションと利用中コネクションの最大合計数。制限がない場合は負の値を使用します。
     - **デフォルト値:** `25`
 
-    ##### `jdbc.admin.connection_pool.min_idle`
+    <h4>`jdbc.admin.connection_pool.min_idle`</h4>
 
     - **フィールド:** `scalar.db.jdbc.admin.connection_pool.min_idle`
     - **説明:** 管理者のコネクションプール内のアイドルコネクションの最小数。
     - **デフォルト値:** `5`
 
-    ##### `jdbc.admin.connection_pool.max_idle`
+    <h4>`jdbc.admin.connection_pool.max_idle`</h4>
 
     - **フィールド:** `scalar.db.jdbc.admin.connection_pool.max_idle`
     - **説明:** 管理者のコネクションプール内でアイドル状態のままにできるコネクションの最大数。
     - **デフォルト値:** `10`
 
-    ##### `jdbc.admin.connection_pool.max_total`
+    <h4>`jdbc.admin.connection_pool.max_total`</h4>
 
     - **フィールド:** `scalar.db.jdbc.admin.connection_pool.max_total`
     - **説明:** 管理者のコネクションプールで同時にアクティブにできるアイドルコネクションと利用中コネクションの最大合計数。制限がない場合は負の値を使用します。
     - **デフォルト値:** `25`
 
-    ##### `jdbc.db2.variable_key_column_size`
+    <h4>`jdbc.db2.variable_key_column_size`</h4>
 
     - **フィールド:** `scalar.db.jdbc.db2.variable_key_column_size`
     - **説明:** IBM Db2 で主キーまたはセカンダリキーとして使用される場合の TEXT 列と BLOB 列の列サイズ。最小 64 バイト。
     - **デフォルト値:** `128`
 
-    ##### `jdbc.db2.time_column.default_date_component`
+    <h4>`jdbc.db2.time_column.default_date_component`</h4>
 
     - **フィールド:** `scalar.db.jdbc.db2.time_column.default_date_component`
     - **説明:** IBM Db2 で `TIME` データを格納するために使用される日付コンポーネントの値。ScalarDB の `TIME` 型データを格納するために IBM Db2 の TIMESTAMP 型が使用されるため (小数秒の精度を提供するため)、ScalarDB は比較と並べ替えを容易にするために、同じ日付コンポーネント値を持つ `TIME` データを保存します。
@@ -374,37 +374,37 @@ scalar.db.contact_points=jdbc:sqlite:<SQLITE_DB_FILE_PATH>?busy_timeout=10000
 <TabItem value="DynamoDB" label="DynamoDB">
 DynamoDB では次の設定が利用可能です。
 
-    ##### `storage`
+    <h4>`storage`</h4>
 
     - **フィールド:** `scalar.db.storage`
     - **説明:** `dynamo` を指定する必要があります。
     - **デフォルト値:** -
 
-    ##### `contact_points`
+    <h4>`contact_points`</h4>
 
     - **フィールド:** `scalar.db.contact_points`
     - **説明:** ScalarDB が通信する AWS リージョン (例: `us-east-1`)。
     - **デフォルト値:** 
 
-    ##### `username`
+    <h4>`username`</h4>
 
     - **フィールド:** `scalar.db.username`
     - **説明:** AWS とやり取りするユーザーを識別するために使用される AWS アクセスキー。
     - **デフォルト値:** 
 
-    ##### `password`
+    <h4>`password`</h4>
 
     - **フィールド:** `scalar.db.password`
     - **説明:** AWS と対話するユーザーを認証するために使用される AWS シークレットアクセスキー。
     - **デフォルト値:** 
 
-    ##### `dynamo.endpoint_override`
+    <h4>`dynamo.endpoint_override`</h4>
 
     - **フィールド:** `scalar.db.dynamo.endpoint_override`
     - **説明:** ScalarDB が通信する Amazon DynamoDB エンドポイント。これは主に、AWS サービスではなくローカルインスタンスでのテストに使用されます。
     - **デフォルト値:** 
 
-    ##### `dynamo.namespace.prefix`
+    <h4>`dynamo.namespace.prefix`</h4>
 
     - **フィールド:** `scalar.db.dynamo.namespace.prefix`
     - **説明:** ユーザー名前空間とメタデータ名前空間名のプレフィックス。AWS では単一の AWS リージョン内で一意のテーブル名を持つ必要があるため、単一の AWS リージョン内で複数の ScalarDB 環境 (開発、本番など) を使用する場合に便利です。
@@ -413,25 +413,25 @@ DynamoDB では次の設定が利用可能です。
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     CosmosDB for NoSQL では次の設定が利用可能です。
 
-    ##### `storage`
+    <h4>`storage`</h4>
 
     - **フィールド:** `scalar.db.storage`
     - **説明:** `cosmos` を指定する必要があります。
     - **デフォルト値:** -
 
-    ##### `contact_points`
+    <h4>`contact_points`</h4>
 
     - **フィールド:** `scalar.db.contact_points`
     - **説明:** ScalarDB が通信する NoSQL エンドポイント用の Azure Cosmos DB。
     - **デフォルト値:** 
 
-    ##### `password`
+    <h4>`password`</h4>
 
     - **フィールド:** `scalar.db.password`
     - **説明:** Azure Cosmos DB for NoSQL にアクセスするための認証を実行するために使用されるマスターキーまたは読み取り専用キーのいずれか。
     - **デフォルト値:** 
 
-    ##### `cosmos.consistency_level`
+    <h4>`cosmos.consistency_level`</h4>
 
     - **フィールド:** `scalar.db.cosmos.consistency_level`
     - **説明:** Cosmos DB 操作に使用される一貫性レベル。`STRONG` または `BOUNDED_STALENESS` を指定できます。
@@ -440,31 +440,31 @@ DynamoDB では次の設定が利用可能です。
   <TabItem value="Cassandra" label="Cassandra">
     Cassandra では次の設定が利用可能です。
 
-    ##### `storage`
+    <h4>`storage`</h4>
 
     - **フィールド:** `scalar.db.storage`
     - **説明:** `cassandra` を指定する必要があります。
     - **デフォルト値:** -
 
-    ##### `contact_points`
+    <h4>`contact_points`</h4>
 
     - **フィールド:** `scalar.db.contact_points`
     - **説明:** カンマで区切られた連絡先。
     - **デフォルト値:** 
 
-    ##### `contact_port`
+    <h4>`contact_port`</h4>
 
     - **フィールド:** `scalar.db.contact_port`
     - **説明:** すべての連絡先ポイントのポート番号。
     - **デフォルト値:** 
 
-    ##### `username`
+    <h4>`username`</h4>
 
     - **フィールド:** `scalar.db.username`
     - **説明:** データベースにアクセスするためのユーザー名。
     - **デフォルト値:** 
 
-    ##### `password`
+    <h4>`password`</h4>
 
     - **フィールド:** `scalar.db.password`
     - **説明:** データベースにアクセスするためのパスワード。
@@ -516,7 +516,7 @@ ScalarDB は複数のストレージ実装の同時使用をサポートして�
 
 各ストレージで使用可能なプロパティの詳細については、[ストレージ関連の設定](#ストレージ関連の設定)を参照してください。
 
-##### パーティション間スキャン設定
+#### パーティション間スキャン設定
 
 以下で説明するようにパーティション間スキャンオプションを有効にすると、`Scan` 操作でパーティション全体のすべてのレコードを取得できます。さらに、`cross_partition_scan.filtering` と `cross_partition_scan.ordering` をそれぞれ有効にすることで、パーティション間 `Scan` 操作で任意の条件と順序を指定できます。現在、順序付けオプション付きのパーティション間スキャンは、JDBC データベースでのみ使用できます。フィルタリングと順序付けを有効にするには、`scalar.db.cross_partition_scan.enabled` を `true` に設定する必要があります。
 
@@ -546,7 +546,7 @@ ScalarDB は複数のストレージ実装の同時使用をサポートして�
 - **説明:** パーティション間スキャンで順序付けを有効にします。
 - **デフォルト値:** `false`
 
-##### スキャンフェッチサイズ
+#### スキャンフェッチサイズ
 
 ストレージのスキャン操作でフェッチサイズを次のプロパティで設定できます。
 
@@ -1089,13 +1089,13 @@ ScalarDB Cluster で使用できる追加の設定は以下の通りです。
 - **説明:** クラスターからデータを取得するために `Scanner` で使用されるフェッチサイズ。これは、`Scanner` がクラスターから一度に取得するレコード数です。値を大きくすると、クラスターへの往復回数が減ってパフォーマンスが向上しますが、メモリ使用量も増加する可能性があります。
 - **デフォルト値:** `10`
 
-##### `cluster.client.piggyback_begin.enabled`
+#### `cluster.client.piggyback_begin.enabled`
 
 - **フィールド:** `scalar.db.cluster.client.piggyback_begin.enabled`
 - **説明:** ピギーバック begin 機能が有効かどうか。最初の CRUD 操作までトランザクション begin を遅延させ、最初の操作と begin をピギーバックして、専用の begin RPC 呼び出しを削除します。
 - **デフォルト値:** `false`
 
-##### `cluster.client.write_buffering.enabled`
+#### `cluster.client.write_buffering.enabled`
 
 - **フィールド:** `scalar.db.cluster.client.write_buffering.enabled`
 - **説明:** 書き込みバッファリング機能が有効かどうか。非条件書き込み操作 (挿入、アップサート、無条件 put/update/delete) をバッファリングし、バッチで実行することでRPC呼び出し数を減らします。
