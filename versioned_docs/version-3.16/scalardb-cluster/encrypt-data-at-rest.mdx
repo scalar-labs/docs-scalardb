@@ -65,6 +65,12 @@ You also need to configure the following properties:
 | `scalar.db.cluster.encryption.vault.transit_secrets_engine_path` | The path of the transit secrets engine.                                                                                                                                                                                 | `transit`      |
 | `scalar.db.cluster.encryption.vault.column_batch_size`           | The number of columns to be included in a single request to the HashiCorp Vault server.                                                                                                                                 | `64`           |
 
+:::note
+
+Currently, ScalarDB supports only the token auth method. There are plans to implement additional, more secure auth methods, such as AppRole, OIDC, and Kubernetes auth, in the future.
+
+:::
+
 ### Self-encryption
 
 In self-encryption, ScalarDB manages data encryption keys (DEKs) and performs encryption and decryption. ScalarDB generates a DEK for each table when creating the table and stores it in Kubernetes Secrets.
