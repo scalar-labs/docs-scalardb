@@ -122,6 +122,21 @@ ScalarDB が未処理のリクエストを排出し、新しいリクエスト�
   <TabItem value="YugabyteDB_Managed" label="YugabyteDB Managed">
     一時停止期間中にオンデマンドバックアップまたはスケジュールされたバックアップを実行できます。バックアップの実行の詳細については、[YugabyteDB Managed: Back up and restore clusters](https://docs.yugabyte.com/preview/yugabyte-cloud/cloud-clusters/backup-clusters/) を参照してください。
   </TabItem>
+  <TabItem value="S3" label="S3">
+    一時停止期間中に AWS Backup を使用してバケットのバックアップを作成できます。詳細については、[Amazon S3 バックアップ](https://docs.aws.amazon.com/ja_jp/aws-backup/latest/devguide/s3-backups.html)を参照してください。
+
+    トランザクション的に一貫性のある復元ポイントを指定するには、[明示的に一時停止してバックアップする](#明示的に一時停止してバックアップする)の説明に従って、ScalarDB Cluster または ScalarDB を使用しているアプリケーションを一時停止します。
+  </TabItem>
+  <TabItem value="Blob_Storage" label="Blob Storage">
+    一時停止期間中に Azure Backup を使用してコンテナーのバックアップを作成できます。詳細については、[Azure BLOB バックアップの概要](https://learn.microsoft.com/ja-jp/azure/backup/blob-backup-overview?tabs=operational-backup)を参照してください。
+
+    トランザクション的に一貫性のある復元ポイントを指定するには、[明示的に一時停止してバックアップする](#明示的に一時停止してバックアップする)の説明に従って、ScalarDB Cluster または ScalarDB を使用しているアプリケーションを一時停止します。
+  </TabItem>
+  <TabItem value="Cloud_Storage" label="Cloud Storage">
+    一時停止期間中に、たとえば [Storage Transfer Service](https://docs.cloud.google.com/storage-transfer/docs/overview?hl=ja) を使用してバケットのコピーを作成できます。詳細については、[Cloud Storage バケット間の転送](https://docs.cloud.google.com/storage-transfer/docs/cloud-storage-to-cloud-storage?hl=ja)を参照してください。
+
+    トランザクション的に一貫性のある復元ポイントを指定するには、[明示的に一時停止してバックアップする](#明示的に一時停止してバックアップする)の説明に従って、ScalarDB Cluster または ScalarDB を使用しているアプリケーションを一時停止します。
+  </TabItem>
 </Tabs>
 
 ## バックアップを復元する
@@ -183,5 +198,14 @@ ScalarDB が未処理のリクエストを排出し、新しいリクエスト�
   </TabItem>
   <TabItem value="Db2" label="Db2">
     `restore` コマンドを使用します。データベースの復元の詳細については、[Db2: リストアの概要](https://www.ibm.com/docs/ja/db2/12.1.0?topic=recovery-restore) を参照してください。
+  </TabItem>
+  <TabItem value="S3" label="S3">
+    AWS Backup を使用してバケットのバックアップを作成した場合は、[AWS Backup を使用した S3 データの復元](https://docs.aws.amazon.com/ja_jp/aws-backup/latest/devguide/restoring-s3.html)に従ってください。バックアップを別バケットに復元する場合、ScalarDB 設定の `scalar.db.contact_points` プロパティの値を更新して、コピーされたバケットを新しいバケットとして使用します。
+  </TabItem>
+  <TabItem value="Blob_Storage" label="Blob Storage">
+    Azure Backup を使用してコンテナーのバックアップを作成した場合は、[Azure の BLOB を復元する](https://learn.microsoft.com/ja-jp/azure/backup/blob-restore?tabs=operational-backup)に従ってください。バックアップを別コンテナーに復元する場合、ScalarDB 設定の `scalar.db.contact_points` プロパティの値を更新して、コピーされたコンテナーを新しいコンテナーとして使用します。
+  </TabItem>
+  <TabItem value="Cloud_Storage" label="Cloud Storage">
+    ScalarDB 設定の `scalar.db.contact_points` プロパティの値を更新して、コピーされたバケットを新しいバケットとして使用します。
   </TabItem>
 </Tabs>
