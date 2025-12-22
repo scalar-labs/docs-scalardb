@@ -197,10 +197,10 @@ The restore methods by database listed below are just examples of some of the da
     Use the `restore` command. For details, on restoring the database, see [Db2: Restore overview](https://www.ibm.com/docs/en/db2/12.1.0?topic=recovery-restore).
   </TabItem>
   <TabItem value="S3" label="S3">
-    If you used AWS Backup to create a backup of your bucket, follow [Restore S3 data using AWS Backup](https://docs.aws.amazon.com/aws-backup/latest/devguide/restoring-s3.html).
+    If you used AWS Backup to create a backup of your bucket, follow [Restore S3 data using AWS Backup](https://docs.aws.amazon.com/aws-backup/latest/devguide/restoring-s3.html). When you restore the backup to another bucket, you need to update the value of the `scalar.db.contact_points` property in the ScalarDB configuration to point to the new bucket.
   </TabItem>
   <TabItem value="Blob_Storage" label="Blob Storage">
-    If you used Azure Backup to create a backup of your container, follow [Restore Azure Blobs](https://learn.microsoft.com/en-us/azure/backup/blob-restore?tabs=operational-backup).
+    If you used Azure Backup to create a backup of your container, follow [Restore Azure Blobs](https://learn.microsoft.com/en-us/azure/backup/blob-restore?tabs=operational-backup). When you restore the backup to another container, you need to update the value of the `scalar.db.contact_points` property in the ScalarDB configuration to point to the new container.
   </TabItem>
   <TabItem value="Cloud_Storage" label="Cloud Storage">
     Use a copied bucket as a new bucket by updating the value of the `scalar.db.contact_points` property in the ScalarDB configuration.
