@@ -82,3 +82,20 @@ public class OrderController: ControllerBase
 ```
 
 Although these examples are for WebApi projects, the examples will work in a similar way in GrpcService projects.
+
+## Use read-only transactions
+
+ScalarDB Cluster supports read-only transactions for distributed and SQL transaction managers. After injecting `IDistributedTransactionManager` or `ISqlTransactionManager`, call `BeginReadOnlyAsync`/`BeginReadOnly` to hint to the server that only read operations will be performed:
+
+```c#
+var tran = await distributedTransactionManager.BeginReadOnlyAsync();
+// Execute only read operations inside this transaction
+await tran.GetAsync(get);
+await tran.CommitAsync();
+```
+
+:::note
+
+Read-only mode is *not* supported for two-phase commit transaction managers (`ITwoPhaseCommitTransactionManager`, `ISqlTwoPhaseCommitTransactionManager`). Calling `BeginReadOnly*` on those managers throws `NotSupportedException`.
+
+:::
