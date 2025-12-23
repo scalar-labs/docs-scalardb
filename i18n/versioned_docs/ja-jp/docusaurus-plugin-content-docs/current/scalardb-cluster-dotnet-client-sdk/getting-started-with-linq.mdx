@@ -312,6 +312,20 @@ LINQ クエリと `AddAsync`、`UpdateAsync`、および `RemoveAsync` メソッ
 await _myDbContext.BeginTransactionAsync();
 ```
 
+### 新しい読み取り専用トランザクションを開始する
+
+トランザクション内で読み取り操作 (`AddAsync`、`UpdateAsync`、または `RemoveAsync` を伴わない LINQ クエリ) のみを実行する場合、次のように読み取り専用トランザクションを開始できます。
+
+```c#
+await _myDbContext.BeginReadOnlyTransactionAsync();
+```
+
+:::note
+
+読み取り専用トランザクションは、書き込み操作が発行されないことを前提として、読み取り専用モードなしで開始された読み取りトランザクションよりも効率的に処理されます。そのため、読み取り専用トランザクション内で書き込み操作 (`AddAsync`、`UpdateAsync`、または `RemoveAsync`) を実行しようとするとエラーになります。読み取り専用モードは、2フェーズコミットインターフェースを使用したトランザクションではサポートされていません。
+
+:::
+
 ### 2フェーズコミットインターフェースで新しいトランザクションを開始する
 
 ```c#
