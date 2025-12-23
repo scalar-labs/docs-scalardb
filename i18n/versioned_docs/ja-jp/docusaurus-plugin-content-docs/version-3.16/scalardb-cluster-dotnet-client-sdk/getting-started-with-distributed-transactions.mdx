@@ -75,6 +75,20 @@ var transaction = manager.Resume(transactionIdString);
 
 :::
 
+### 読み取り専用トランザクションを開始する
+
+トランザクション内で読み取り操作 (`GetAsync` および `ScanAsync`) のみを実行する場合、次のように読み取り専用トランザクションを開始できます。
+
+```c#
+var transaction = await manager.BeginReadOnlyAsync();
+```
+
+:::note
+
+読み取り専用トランザクションは読み取り操作専用に最適化されています。読み取り専用トランザクション内で書き込み操作 (`InsertAsync`、`UpsertAsync`、`UpdateAsync`、`DeleteAsync`、または `MutateAsync`) を実行しようとするとエラーになります。
+
+:::
+
 トランザクションをコミットする準備ができたら、次のようにトランザクションの `CommitAsync` メソッドを呼び出すことができます。
 
 ```c#
