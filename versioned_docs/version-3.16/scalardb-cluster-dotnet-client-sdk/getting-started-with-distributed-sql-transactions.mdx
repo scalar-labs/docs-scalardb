@@ -116,6 +116,20 @@ The `Resume` method doesn't have an asynchronous version because it only creates
 
 :::
 
+### Begin a read-only transaction
+
+If you perform only read operations (that is, `SELECT` statements) in a transaction, you can begin a read-only transaction as follows:
+
+```c#
+var transaction = await manager.BeginReadOnlyAsync();
+```
+
+:::note
+
+Read-only transactions are processed more efficiently than read transactions begun without the read-only mode by assuming no write operations are issued within them. Therefore, attempting to perform write operations (`INSERT`, `UPDATE`, or `DELETE` statements) in a read-only transaction will result in an error.
+
+:::
+
 The transaction has the same `ExecuteAsync` method as the transaction manager. That method can be used to execute SQL statements.
 
 When a transaction is ready to be committed, you can call the `CommitAsync` method of the transaction as follows:
