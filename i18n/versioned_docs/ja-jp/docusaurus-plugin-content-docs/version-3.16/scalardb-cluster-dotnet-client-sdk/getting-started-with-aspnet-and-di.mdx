@@ -86,3 +86,20 @@ public class OrderController: ControllerBase
 ```
 
 これらの例は WebApi プロジェクト用ですが、GrpcService プロジェクトでも同様に動作します。
+
+## 読み取り専用トランザクションを使用する
+
+ScalarDB Cluster は、分散トランザクションマネージャーおよび SQL トランザクションマネージャーに対して読み取り専用トランザクションをサポートしています。`IDistributedTransactionManager` または `ISqlTransactionManager` を注入した後、`BeginReadOnlyAsync`/`BeginReadOnly` を呼び出して、読み取り操作のみが実行されることをサーバーに示すことができます。
+
+```c#
+var tran = await distributedTransactionManager.BeginReadOnlyAsync();
+// このトランザクション内では読み取り操作のみを実行します
+await tran.GetAsync(get);
+await tran.CommitAsync();
+```
+
+:::note
+
+読み取り専用モードは、2フェーズコミットトランザクションマネージャー (`ITwoPhaseCommitTransactionManager`、`ISqlTwoPhaseCommitTransactionManager`) ではサポートされて*いません*。これらのマネージャーで `BeginReadOnly*` を呼び出すと `NotSupportedException` がスローされます。
+
+:::
