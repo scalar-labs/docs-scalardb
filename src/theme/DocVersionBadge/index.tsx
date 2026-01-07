@@ -10,7 +10,7 @@ import clsx from 'clsx';
 import Translate from '@docusaurus/Translate';
 import {ThemeClassNames} from '@docusaurus/theme-common';
 import {useDocsVersion, useDoc} from '@docusaurus/plugin-content-docs/client';
-import {useLocation} from '@docusaurus/router';
+import {useLocation} from '@docusaurus/router';  
 import type {Props} from '@theme/DocVersionBadge';
 import TagsListInline from '@theme/TagsListInline';
 // Import the original mapper
@@ -31,14 +31,14 @@ export default function DocVersionBadge({
   const location = useLocation();
 
   const versionMetadata = useDocsVersion();
-  
-  // Detect current language and version, then construct the proper features URL
-  const versionMatch = location.pathname.match(/\/(ja-jp\/)?docs\/([^/]+)(\/.*)?/);
-  const isJapanese = versionMatch && versionMatch[1] === 'ja-jp/';
-  const currentVersion = versionMatch ? versionMatch[2] : 'latest';
-  
-  const featuresUrl = isJapanese 
-    ? `/ja-jp/docs/${currentVersion}/features` 
+
+  // Detect current language and version, then construct the proper features URL.
+  const isJapanese = location.pathname.startsWith('/ja-jp/');
+  const versionMatch = location.pathname.match(/docs\/([^/]+)/);
+  const currentVersion = versionMatch ? versionMatch[1] : 'latest';
+
+  const featuresUrl = isJapanese
+    ? `/ja-jp/docs/${currentVersion}/features`
     : `/docs/${currentVersion}/features`;
 
   if (versionMetadata.badge) {
