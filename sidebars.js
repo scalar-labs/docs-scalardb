@@ -625,7 +625,6 @@ const sidebars = {
           id: 'scalardb-cluster/setup-scalardb-cluster-on-kubernetes-by-using-helm-chart',
           label: 'Deploy ScalarDB Cluster Locally',
         },
-
         {
           type: 'doc',
           id: 'scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS',
