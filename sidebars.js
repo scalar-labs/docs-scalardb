@@ -625,11 +625,15 @@ const sidebars = {
           id: 'scalardb-cluster/setup-scalardb-cluster-on-kubernetes-by-using-helm-chart',
           label: 'Deploy ScalarDB Cluster Locally',
         },
-
         {
           type: 'doc',
           id: 'scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS',
           label: 'Deploy ScalarDB Cluster on Amazon EKS',
+        },
+        {
+          type: 'doc',
+          id: 'scalardb-cluster/deploy-scalardb-cluster-google-marketplace',
+          label: 'Deploy ScalarDB Cluster on Google Marketplace',
         },
         {
           type: 'doc',
@@ -1633,6 +1637,11 @@ const sidebars = {
           type: 'doc',
           id: 'scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS',
           label: 'Amazon EKS に ScalarDB Cluster をデプロイ',
+        },
+        {
+          type: 'doc',
+          id: 'scalardb-cluster/deploy-scalardb-cluster-google-marketplace',
+          label: 'Google Marketplace を通じた ScalarDB Cluster のデプロイ',
         },
         {
           type: 'doc',

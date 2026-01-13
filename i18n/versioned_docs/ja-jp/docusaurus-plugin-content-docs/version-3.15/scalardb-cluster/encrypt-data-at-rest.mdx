@@ -68,6 +68,12 @@ HashiCorp Vault 暗号化を使用するには、ScalarDB Cluster ノード設�
 | `scalar.db.cluster.encryption.vault.transit_secrets_engine_path` | トランジットシークレットエンジンのパス。                                                                                                                                                                                 | `transit`      |
 | `scalar.db.cluster.encryption.vault.column_batch_size`           | HashiCorp Vault サーバーへの単一のリクエストに含まれる列の数。                                                                                                                                                          | `64`           |
 
+:::note
+
+現在、ScalarDB はトークン認証方式のみをサポートしています。将来的には、AppRole、OIDC、Kubernetes 認証などの、より安全な認証方式の実装が予定されています。
+
+:::
+
 ### 自己暗号化
 
 自己暗号化では、ScalarDB がデータ暗号化キー (DEK) を管理し、暗号化と復号を実行します。ScalarDB はテーブルの作成時にテーブルごとに DEK を生成し、Kubernetes Secrets に保存します。

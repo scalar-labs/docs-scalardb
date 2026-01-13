@@ -71,6 +71,20 @@ The `Resume` method doesn't have an asynchronous version because it only creates
 
 :::
 
+### Begin a read-only transaction
+
+If you perform only read operations (that is, `GetAsync` and `ScanAsync`) in a transaction, you can begin a read-only transaction as follows:
+
+```c#
+var transaction = await manager.BeginReadOnlyAsync();
+```
+
+:::note
+
+Read-only transactions are optimized for read operations only. Attempting to perform write operations (`InsertAsync`, `UpsertAsync`, `UpdateAsync`, `DeleteAsync`, or `MutateAsync`) in a read-only transaction will result in an error.
+
+:::
+
 When a transaction is ready to be committed, you can call the `CommitAsync` method of the transaction as follows:
 
 ```c#
@@ -213,6 +227,191 @@ var scan =
 ```
 
 The arbitrary conditions that a retrieved record must meet can also be set for a scan operation in the same way as for a [get operation](getting-started-with-distributed-transactions.mdx#getasync-method-example).
+
+### Use a scanner to retrieve large datasets
+
+The `ScanAsync` method returns all results at once, which can be memory intensive for large datasets. To handle large datasets more efficiently, you can use a scanner that streams results from the cluster and enables incremental processing.
+
+#### Create a scanner
+
+You can create a scanner from a transaction by using the `CreateScannerAsync` method:
+
+```c#
+using ScalarDB.Client.Builders;
+using ScalarDB.Client.Core;
+
+// ...
+
+var scan = new ScanBuilder()
+    .SetNamespaceName("ns")
+    .SetTableName("items")
+    .SetScanType(ScanOperationType.ScanAll)
+    .Build();
+
+await using var scanner = await transaction.CreateScannerAsync(scan);
+```
+
+:::note
+
+The scanner must be disposed of after use to release server-side resources. If the scanner's lifetime is limited to a single scope, use `await using` (or `using` for synchronous code) for automatic cleanup. If you need to return a scanner from a method or manage its lifetime across multiple scopes, call `DisposeAsync()` (or `Dispose()`) explicitly when done.
+
+:::
+
+#### Retrieve results one by one
+
+Use the `OneAsync` method to retrieve results one at a time:
+
+```c#
+await using var scanner = await transaction.CreateScannerAsync(scan);
+
+while (true)
+{
+    var result = await scanner.OneAsync();
+    if (result == null)
+        break;
+
+    // Process the result.
+    var itemId = result.GetValue<int>("item_id");
+    Console.WriteLine($"Item ID: {itemId}");
+}
+```
+
+If there are no more results, `OneAsync` returns `null`. Subsequent calls to `OneAsync` after receiving `null` will continue to return `null`.
+
+#### Retrieve all remaining results
+
+Use the `AllAsync` method to retrieve all remaining results at once:
+
+```c#
+await using var scanner = await transaction.CreateScannerAsync(scan);
+
+var results = await scanner.AllAsync();
+foreach (var result in results)
+{
+    // Process each result.
+    var itemId = result.GetValue<int>("item_id");
+    Console.WriteLine($"Item ID: {itemId}");
+}
+```
+
+:::note
+
+If you have already retrieved some results by using `OneAsync`, the `AllAsync` method will return only the remaining results that have not yet been retrieved.
+
+:::
+
+#### Configure scanner fetch size
+
+You can configure the default fetch size for scanner operations by using `ScalarDbOptions`. The fetch size determines how many records are fetched from the server in each batch:
+
+```c#
+var scalarDbOptions = new ScalarDbOptions
+{
+    Address = "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
+    ScannerFetchSize = 20  // Default is 10.
+};
+```
+
+#### Use a scanner with scan options
+
+The scanner supports all scan options available in `ScanBuilder`.
+
+##### Scan with limit
+
+```c#
+using ScalarDB.Client.Builders;
+using ScalarDB.Client.Core;
+
+// ...
+
+var scanWithLimit = new ScanBuilder()
+    .SetNamespaceName("ns")
+    .SetTableName("items")
+    .SetScanType(ScanOperationType.ScanAll)
+    .SetLimit(100)  // Limit to 100 results.
+    .Build();
+
+await using var scanner = await transaction.CreateScannerAsync(scanWithLimit);
+var results = await scanner.AllAsync();
+```
+
+##### Scan with clustering key range
+
+```c#
+using ScalarDB.Client.Builders;
+using ScalarDB.Client.Core;
+
+// ...
+
+var scanWithRange = new ScanBuilder()
+    .SetNamespaceName("ns")
+    .SetTableName("statements")
+    .SetScanType(ScanOperationType.Scan)
+    .AddPartitionKey("order_id", "1")
+    .AddStartClusteringKey("item_id", 2)
+    .SetStartInclusive(true)
+    .AddEndClusteringKey("item_id", 8)
+    .SetEndInclusive(true)
+    .Build();
+
+await using var scanner = await transaction.CreateScannerAsync(scanWithRange);
+```
+
+#### Close the scanner
+
+The scanner implements both `IDisposable` and `IAsyncDisposable`. The recommended approach is to use `await using` (or `using` for synchronous code) for automatic disposal:
+
+```c#
+await using var scanner = await transaction.CreateScannerAsync(scan);
+// The scanner is automatically closed when leaving the scope.
+```
+
+If you need to close the scanner explicitly, you can use the `CloseAsync` method:
+
+```c#
+var scanner = await transaction.CreateScannerAsync(scan);
+try
+{
+    var result = await scanner.OneAsync();
+    // Process result...
+}
+finally
+{
+    await scanner.CloseAsync();
+}
+```
+
+#### Synchronous API
+
+All scanner methods have synchronous versions:
+
+```c#
+using var scanner = transaction.CreateScanner(scan);
+
+// Retrieve one result.
+var result = scanner.One();
+
+// Retrieve all remaining results.
+var results = scanner.All();
+
+// Close the scanner.
+scanner.Close();
+```
+
+#### Scanner vs. ScanAsync
+
+| Feature | Scanner | ScanAsync |
+|---------|---------|-----------|
+| Memory usage | Low (streaming) | Higher (all results in memory) |
+| Use case | Large datasets | Small to medium datasets |
+| Result retrieval | Incremental (`OneAsync`) or all at once (`AllAsync`) | All at once |
+| Resource management | Requires explicit disposal | Automatic |
+
+:::note
+
+For details on handling exceptions during scanner and other transaction operations, see [Exception Handling in the ScalarDB Cluster .NET Client SDK](exception-handling.mdx).
+
+:::
 
 ### `InsertAsync` method example
 

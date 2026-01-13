@@ -105,9 +105,9 @@ const config = {
                 className: '3.13.6',
               },
               "3.12": {
-                label: '3.12',
+                label: '3.12 (unsupported)',
                 path: '3.12',
-                banner: 'none',
+                banner: 'unmaintained',
                 className: '3.12.8',
               },
               "3.11": {

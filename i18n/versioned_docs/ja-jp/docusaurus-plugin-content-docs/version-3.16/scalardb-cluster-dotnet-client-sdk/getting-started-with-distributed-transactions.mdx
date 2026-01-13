@@ -75,6 +75,20 @@ var transaction = manager.Resume(transactionIdString);
 
 :::
 
+### 読み取り専用トランザクションを開始する
+
+トランザクション内で読み取り操作 (`GetAsync` および `ScanAsync`) のみを実行する場合、次のように読み取り専用トランザクションを開始できます。
+
+```c#
+var transaction = await manager.BeginReadOnlyAsync();
+```
+
+:::note
+
+読み取り専用トランザクションは読み取り操作専用に最適化されています。読み取り専用トランザクション内で書き込み操作 (`InsertAsync`、`UpsertAsync`、`UpdateAsync`、`DeleteAsync`、または `MutateAsync`) を実行しようとするとエラーになります。
+
+:::
+
 トランザクションをコミットする準備ができたら、次のようにトランザクションの `CommitAsync` メソッドを呼び出すことができます。
 
 ```c#
@@ -216,6 +230,191 @@ var scan =
 ```
 
 取得されたレコードが満たす必要のある任意の条件は、[get 操作](getting-started-with-distributed-transactions.mdx#getasync-メソッドの例)の場合と同様に、スキャン操作に対しても設定できます。
+
+### Scanner を使用して大規模データセットを取得する
+
+`ScanAsync` メソッドはすべての結果を一度に返すため、大規模なデータセットではメモリを大量に消費する可能性があります。大規模なデータセットをより効率的に処理するには、クラスターから結果をストリーミングし、段階的に処理できる Scanner を使用できます。
+
+#### Scanner を作成する
+
+`CreateScannerAsync` メソッドを使用して、トランザクションから Scanner を作成できます。
+
+```c#
+using ScalarDB.Client.Builders;
+using ScalarDB.Client.Core;
+
+// ...
+
+var scan = new ScanBuilder()
+    .SetNamespaceName("ns")
+    .SetTableName("items")
+    .SetScanType(ScanOperationType.ScanAll)
+    .Build();
+
+await using var scanner = await transaction.CreateScannerAsync(scan);
+```
+
+:::note
+
+Scanner は、サーバー側のリソースを解放するために使用後に破棄する必要があります。Scanner のライフタイムが単一のスコープに限定されている場合は、自動クリーンアップのために `await using` (同期コードの場合は `using`) を使用してください。Scanner をメソッドから返す必要がある場合や、複数のスコープにまたがってライフタイムを管理する必要がある場合は、使用終了時に `DisposeAsync()` (または `Dispose()`) を明示的に呼び出してください。
+
+:::
+
+#### 結果を1つずつ取得する
+
+`OneAsync` メソッドを使用して、結果を1つずつ取得します。
+
+```c#
+await using var scanner = await transaction.CreateScannerAsync(scan);
+
+while (true)
+{
+    var result = await scanner.OneAsync();
+    if (result == null)
+        break;
+
+    // 結果を処理する。
+    var itemId = result.GetValue<int>("item_id");
+    Console.WriteLine($"Item ID: {itemId}");
+}
+```
+
+結果がなくなると、`OneAsync` は `null` を返します。`null` を受け取った後に `OneAsync` を呼び出しても、引き続き `null` が返されます。
+
+#### 残りのすべての結果を取得する
+
+`AllAsync` メソッドを使用して、残りのすべての結果を一度に取得します。
+
+```c#
+await using var scanner = await transaction.CreateScannerAsync(scan);
+
+var results = await scanner.AllAsync();
+foreach (var result in results)
+{
+    // 各結果を処理する。
+    var itemId = result.GetValue<int>("item_id");
+    Console.WriteLine($"Item ID: {itemId}");
+}
+```
+
+:::note
+
+`OneAsync` を使用して一部の結果を既に取得している場合、`AllAsync` メソッドはまだ取得されていない残りの結果のみを返します。
+
+:::
+
+#### Scanner のフェッチサイズを設定する
+
+`ScalarDbOptions` を使用して、Scanner 操作のデフォルトのフェッチサイズを設定できます。フェッチサイズは、各バッチでサーバーからフェッチされるレコードの数を決定します。
+
+```c#
+var scalarDbOptions = new ScalarDbOptions
+{
+    Address = "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
+    ScannerFetchSize = 20  // デフォルトは 10。
+};
+```
+
+#### スキャンオプション付きの Scanner を使用する
+
+Scanner は `ScanBuilder` で使用可能なすべてのスキャンオプションをサポートしています。
+
+##### 制限付きスキャン
+
+```c#
+using ScalarDB.Client.Builders;
+using ScalarDB.Client.Core;
+
+// ...
+
+var scanWithLimit = new ScanBuilder()
+    .SetNamespaceName("ns")
+    .SetTableName("items")
+    .SetScanType(ScanOperationType.ScanAll)
+    .SetLimit(100)  // 結果を100件に制限。
+    .Build();
+
+await using var scanner = await transaction.CreateScannerAsync(scanWithLimit);
+var results = await scanner.AllAsync();
+```
+
+##### クラスタリングキー範囲付きスキャン
+
+```c#
+using ScalarDB.Client.Builders;
+using ScalarDB.Client.Core;
+
+// ...
+
+var scanWithRange = new ScanBuilder()
+    .SetNamespaceName("ns")
+    .SetTableName("statements")
+    .SetScanType(ScanOperationType.Scan)
+    .AddPartitionKey("order_id", "1")
+    .AddStartClusteringKey("item_id", 2)
+    .SetStartInclusive(true)
+    .AddEndClusteringKey("item_id", 8)
+    .SetEndInclusive(true)
+    .Build();
+
+await using var scanner = await transaction.CreateScannerAsync(scanWithRange);
+```
+
+#### Scanner を閉じる
+
+Scanner は `IDisposable` と `IAsyncDisposable` の両方を実装しています。自動破棄のために `await using` (同期コードの場合は `using`) を使用することを推奨します。
+
+```c#
+await using var scanner = await transaction.CreateScannerAsync(scan);
+// スコープを離れると Scanner は自動的に閉じられます。
+```
+
+明示的に Scanner を閉じる必要がある場合は、`CloseAsync` メソッドを使用できます。
+
+```c#
+var scanner = await transaction.CreateScannerAsync(scan);
+try
+{
+    var result = await scanner.OneAsync();
+    // 結果を処理...
+}
+finally
+{
+    await scanner.CloseAsync();
+}
+```
+
+#### 同期 API
+
+すべての Scanner メソッドには同期バージョンがあります。
+
+```c#
+using var scanner = transaction.CreateScanner(scan);
+
+// 1つの結果を取得。
+var result = scanner.One();
+
+// 残りのすべての結果を取得。
+var results = scanner.All();
+
+// Scanner を閉じる。
+scanner.Close();
+```
+
+#### Scanner と ScanAsync の比較
+
+| 機能 | Scanner | ScanAsync |
+|------|---------|-----------|
+| メモリ使用量 | 低 (ストリーミング) | 高 (すべての結果がメモリに) |
+| ユースケース | 大規模データセット | 小規模から中規模のデータセット |
+| 結果の取得 | 段階的 (`OneAsync`) または一括 (`AllAsync`) | 一括 |
+| リソース管理 | 明示的な破棄が必要 | 自動 |
+
+:::note
+
+Scanner やその他のトランザクション操作中の例外処理の詳細については、[ScalarDB Cluster .NET Client SDK での例外処理](exception-handling.mdx)を参照してください。
+
+:::
 
 ### `InsertAsync` メソッドの例
 

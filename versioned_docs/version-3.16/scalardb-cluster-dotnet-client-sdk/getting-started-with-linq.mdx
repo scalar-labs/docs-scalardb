@@ -308,6 +308,20 @@ LINQ queries and `AddAsync`, `UpdateAsync`, and `RemoveAsync` methods can be exe
 await _myDbContext.BeginTransactionAsync();
 ```
 
+### Begin a new read-only transaction
+
+If you perform only read operations (that is, LINQ queries without `AddAsync`, `UpdateAsync`, or `RemoveAsync`) in a transaction, you can begin a read-only transaction as follows:
+
+```c#
+await _myDbContext.BeginReadOnlyTransactionAsync();
+```
+
+:::note
+
+Read-only transactions are processed more efficiently than read transactions begun without the read-only mode by assuming no write operations are issued within them. Therefore, attempting to perform write operations (`AddAsync`, `UpdateAsync`, or `RemoveAsync`) in a read-only transaction will result in an error. Read-only mode is not supported for transactions with the two-phase commit interface.
+
+:::
+
 ### Begin a new transaction with the two-phase commit interface
 
 ```c#
