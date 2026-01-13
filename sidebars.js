@@ -1640,6 +1640,11 @@ const sidebars = {
         },
         {
           type: 'doc',
+          id: 'scalardb-cluster/deploy-scalardb-cluster-google-marketplace',
+          label: 'Google Marketplace を通じた ScalarDB Cluster のデプロイ',
+        },
+        {
+          type: 'doc',
           id: 'scalardb-analytics/deployment',
           label: 'パブリッククラウド環境への ScalarDB Analytics のデプロイ',
         },
