@@ -630,8 +630,20 @@ Since Spark and Scala may be incompatible among different minor versions, the li
 
 For using the library on Spark, the following JREs are verified and supported:
 
-- **[Oracle JDK](https://www.oracle.com/java/):** 11, 17 or 21 (LTS versions)
-- **[OpenJDK](https://openjdk.org/) ([Eclipse Temurin](https://adoptium.net/temurin/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/)):** 11, 17 or 21 (LTS versions)
+- **[Oracle JDK](https://www.oracle.com/java/):** 8, 11, or 17 (LTS versions)
+- **[OpenJDK](https://openjdk.org/) ([Eclipse Temurin](https://adoptium.net/temurin/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft Build of OpenJDK](https://learn.microsoft.com/en-us/java/openjdk/)):** 8, 11, or 17 (LTS versions)
+
+:::note
+
+For reference, the following shows the relationship between Spark versions and supported Java runtime versions on major cloud services:
+
+- **Azure Synapse Analytics:** Spark 3.5 (Java 17); Spark 3.4 (Java 11)
+- **Amazon EMR:** EMR 7.x: Spark 3.5 (Java 17); EMR 6.x: Spark 3.4 (Java 8)
+- **Databricks:** Runtime 16.4 LTS: Spark 3.5 (Java 17); Runtime 15.4 LTS: Spark 3.5 (Java 8); Runtime 14.3 LTS: Spark 3.5 (Java 8); Runtime 13.3 LTS: Spark 3.4 (Java 8)
+
+For detailed information, please refer to the documentation for the cloud service you are using.
+
+:::
 
 For running ScalarDB Analytics CLI, the following JREs are verified and supported:
 
