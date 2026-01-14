@@ -9,7 +9,7 @@ import TabItem from "@theme/TabItem";
 
 # Deploy ScalarDB Analytics in Public Cloud Environments
 
-This guide explains how to deploy ScalarDB Analytics in a public cloud environment. ScalarDB Analytics consists of two main components: a ScalarDB Analytics server and Apache Spark. In this guide, you can choose either Amazon EMR or Databricks for the Spark environment.
+This guide explains how to deploy ScalarDB Analytics in a public cloud environment. ScalarDB Analytics consists of two main components: a ScalarDB Analytics server and Apache Spark. In this guide, you can choose Amazon EMR, Databricks, or Azure Synapse Analytics for the Spark environment.
 
 For details about ScalarDB Analytics, refer to [ScalarDB Analytics Design](./design.mdx).
 
@@ -37,6 +37,7 @@ ScalarDB Analytics supports the following managed Spark services and application
 | ----------------------- | ------------ | ------------- | ---- |
 | Amazon EMR (EMR on EC2) | ✅           | ✅            | ❌   |
 | Databricks              | ✅           | ❌            | ✅   |
+| Azure Synapse Analytics | ✅           | ❌            | ❌   |
 
 ### Configure and deploy
 
@@ -213,6 +214,165 @@ Connection conn = DriverManager.getConnection(url);
 ```
 
 For more details on how to use JDBC with Databricks, refer to the [Databricks JDBC Driver documentation](https://docs.databricks.com/en/integrations/jdbc/index.html).
+
+  </TabItem>
+  <TabItem value="synapse" label="Azure Synapse Analytics">
+
+<h3>Use Azure Synapse Analytics</h3>
+
+You can use Azure Synapse Analytics to run analytical queries through ScalarDB Analytics. For the basics of Azure Synapse Analytics, please refer to the [Azure Synapse Analytics documentation](https://learn.microsoft.com/en-us/azure/synapse-analytics/).
+
+:::note
+
+Azure Synapse Analytics uses serverless Apache Spark pools to run Spark workloads. For more details about Spark pools, see [Apache Spark in Azure Synapse Analytics](https://learn.microsoft.com/en-us/azure/synapse-analytics/spark/apache-spark-overview).
+
+:::
+
+<h4>Prerequisites</h4>
+
+Before configuring ScalarDB Analytics on Azure Synapse, ensure the following requirements are met.
+
+<h5>Synapse workspace</h5>
+
+A Synapse workspace is a collaboration environment for analytics in Azure. You must create a Synapse workspace before you run Spark workloads. For more details about creating a Synapse workspace, see [Quickstart: Create a Synapse workspace](https://learn.microsoft.com/en-us/azure/synapse-analytics/quickstart-create-workspace).
+
+:::note
+
+This guide assumes that you have created a Synapse workspace with a Managed Virtual Network enabled. A Managed Virtual Network is recommended for network isolation and security. For more details, see [Azure Synapse Analytics Managed Virtual Network](https://learn.microsoft.com/en-us/azure/synapse-analytics/security/synapse-workspace-managed-vnet).
+
+:::
+
+<h5>Storage permissions</h5>
+
+If you plan to run a Spark driver application, both the **Synapse workspace managed identity** and the **user account** that submits the job require the `Storage Blob Data Contributor` role on the storage account. This role must be assigned by a subscription owner or user access administrator.
+
+<h4>ScalarDB Analytics configuration</h4>
+
+To enable ScalarDB Analytics, add the following configuration to the Spark pool configuration in Synapse Studio.
+
+1. Go to **Synapse Studio**, select manage **Manage**, and choose **Apache Spark pools**.
+2. Select your Spark pool, and then select **Apache Spark configuration**.
+3. Create a new configuration or edit an existing one with the following properties:
+
+   ```text
+   spark.jars.packages com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>
+   spark.extraListeners com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener
+   spark.sql.catalog.<CATALOG_NAME> com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog
+   spark.sql.catalog.<CATALOG_NAME>.server.host <CATALOG_SERVER_IP>
+   spark.sql.catalog.<CATALOG_NAME>.server.catalog.port 11051
+   spark.sql.catalog.<CATALOG_NAME>.server.metering.port 11052
+   ```
+
+The following describes what you should change the content in the angle brackets to:
+
+- `<SPARK_VERSION>`: The version of Spark (`3.4` or `3.5`).
+- `<SCALA_VERSION>`: The version of Scala used to build Spark (`2.12` or `2.13`).
+- `<SCALARDB_ANALYTICS_VERSION>`: The version of ScalarDB Analytics.
+- `<CATALOG_NAME>`: The name of the catalog. This must match a catalog created on the ScalarDB Analytics server.
+- `<CATALOG_SERVER_IP>`: The IP address of your Managed Private Endpoint for the ScalarDB Analytics server.
+
+<h4>Set up private connectivity</h4>
+
+ScalarDB Analytics requires network connectivity from the Managed Virtual Network of the Synapse workspace to both the ScalarDB Analytics server and data sources. To establish this connectivity, you must use a Private Link Service and Managed Private Endpoints as follows:
+
+1. **Connectivity between the Synapse workspace and the ScalarDB Analytics server:** Create a Private Link Service for the Internal Load Balancer in Azure Kubernetes Service (AKS), then create a Managed Private Endpoint in the Managed Virtual Network of the Synapse workspace.
+2. **Connectivity between the Synapse workspace and data sources:** Create a Managed Private Endpoint in the Managed Virtual Network of the Synapse workspace directly to each data source (for example, Azure Database for PostgreSQL).
+
+:::caution
+
+If you are using Azure Database for PostgreSQL Flexible Server, it must be created with **Public access** mode. VNet integration mode does not support adding private endpoints after creation. For more details, see the [Networking](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/how-to-networking) section of the Azure Database for PostgreSQL documentation.
+
+:::
+
+<h5>Create a Private Link Service for the ScalarDB Analytics server</h5>
+
+To create an Internal Load Balancer for the ScalarDB Analytics server, set `scalarDbAnalyticsServer.service.type` to `LoadBalancer` in your custom values file for the Helm chart.
+
+:::note
+
+The Helm chart includes the `service.beta.kubernetes.io/azure-load-balancer-internal: "true"` annotation by default, so the Load Balancer will be created as an Internal Load Balancer.
+
+:::
+
+After deploying with this configuration, proceed with the following steps.
+
+1. Verify that an internal IP address is assigned to the ScalarDB Analytics server service:
+
+   ```console
+   kubectl get svc -n <NAMESPACE> <SCALARDB_ANALYTICS_SERVICE_NAME>
+   ```
+
+   Replace `<NAMESPACE>` with the namespace where ScalarDB Analytics server is deployed and `<SCALARDB_ANALYTICS_SERVICE_NAME>` with the name of the service (for example, `scalardb-analytics-server`). Confirm that the service has a private IP address (for example, `10.x.x.x`) assigned in the `EXTERNAL-IP` column. For Internal Load Balancer services, the `EXTERNAL-IP` shows a private IP address instead of a public IP.
+
+2. Create a Private Link Service in Azure Portal:
+   1. Go to **Private Link**, select **Private Link Services**, and choose **Create**.
+   2. Select the Internal Load Balancer for the ScalarDB Analytics server service.
+   3. Configure the Source NAT subnet and access security.
+
+3. Create a Managed Private Endpoint in Synapse Studio:
+   1. Go to **Manage**, select **Managed private endpoints**, and choose **New**.
+   2. Select **Private Link Service**, and then choose the Private Link Service you created.
+   3. After creation, approve the connection in the Private Link Service settings.
+
+4. Note the IP address of the Managed Private Endpoint for use in Spark configuration.
+
+<h5>Create a Managed Private Endpoint for the data source</h5>
+
+1. In Synapse Studio, go to **Manage**, select **Managed private endpoints**, and choose **New**.
+2. Select your database type (for example, **Azure Database for PostgreSQL Flexible Server**).
+3. Select your database server, and then create the endpoint.
+4. Approve the connection in the database server's networking settings:
+   1. Go to **Azure Portal**, select **Your database server**, choose **Networking**, and select **Private access**.
+   2. Select the pending connection, and then approve it.
+
+<h4>Run analytical queries via the Spark driver</h4>
+
+To run Spark driver applications:
+
+1. Upload your Spark driver application JAR to Azure Data Lake Storage Gen2.
+2. Go to **Develop**, and select **New Spark job definition**.
+3. Configure the job:
+   - **Language:** Spark (Scala/Java)
+   - **Main class:** Your application's main class
+   - **Main definition file:** Path to your JAR file (for example, `abfss://<CONTAINER>@<STORAGE>.dfs.core.windows.net/path/to/app.jar`)
+     - `<CONTAINER>`: Your Azure Data Lake Storage Gen2 container name
+     - `<STORAGE>`: Your Azure storage account name
+   - **Spark pool:** Your configured Spark pool
+4. Submit the job.
+
+:::note
+
+Make sure the required permissions are set as described in the [Prerequisites](#prerequisites) section.
+
+:::
+
+<h4>Run interactive queries using Synapse notebooks</h4>
+
+After configuring the Spark pool, you can run interactive queries by using Synapse notebooks.
+
+1. Go to **Synapse Studio**, select **Develop**, and choose **New notebook**.
+2. Attach the configured Spark pool.
+3. Run SQL queries by using the `%%sql` magic command:
+
+   ```sql
+   %%sql
+   -- List available catalogs
+   SHOW CATALOGS
+   ```
+
+   ```sql
+   %%sql
+   -- List databases in ScalarDB catalog
+   SHOW DATABASES IN <CATALOG_NAME>
+   ```
+
+   ```sql
+   %%sql
+   -- Query data
+   SELECT * FROM <CATALOG_NAME>.<DATA_SOURCE_NAME>.<NAMESPACE_NAME>.<TABLE_NAME> LIMIT 10
+   ```
+
+   Replace the above angle brackets with your actual catalog, data source, namespace, and table names configured in the ScalarDB Analytics server.
 
   </TabItem>
 </Tabs>
