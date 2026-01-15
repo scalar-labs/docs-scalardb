@@ -104,53 +104,6 @@ const config = {
                 banner: 'none',
                 className: '3.13.6',
               },
-              "3.12": {
-                label: '3.12 (unsupported)',
-                path: '3.12',
-                banner: 'unmaintained',
-                className: '3.12.8',
-              },
-              "3.11": {
-                label: '3.11 (unsupported)',
-                path: '3.11',
-                banner: 'unmaintained',
-                className: '3.11.6',
-              },
-              "3.10": {
-                label: '3.10 (unsupported)',
-                path: '3.10',
-                banner: 'unmaintained',
-              },
-              "3.9": {
-                label: '3.9 (unsupported)',
-                path: '3.9',
-                banner: 'unmaintained',
-              },
-              "3.8": {
-                label: '3.8 (unsupported)',
-                path: '3.8',
-                banner: 'unmaintained',
-              },
-              "3.7": {
-                label: '3.7 (unsupported)',
-                path: '3.7',
-                banner: 'unmaintained',
-              },
-              "3.6": {
-                label: '3.6 (unsupported)',
-                path: '3.6',
-                banner: 'unmaintained',
-              },
-              "3.5": {
-                label: '3.5 (unsupported)',
-                path: '3.5',
-                banner: 'unmaintained',
-              },
-              "3.4": {
-                label: '3.4 (unsupported)',
-                path: '3.4',
-                banner: 'unmaintained',
-              },
             },
           },
           googleTagManager: {
