@@ -12,25 +12,25 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 <TranslationBanner />
 
-このガイドでは、パブリッククラウド環境に ScalarDB Analytics をデプロイする方法について説明します。ScalarDB Analytics は2つの主要なコンポーネントで構成されています: ScalarDB Analytics サーバーと Apache Spark です。このガイドでは、Spark 環境として Amazon EMR または Databricks を選択できます。
+このガイドでは、パブリッククラウド環境に ScalarDB Analytics をデプロイする方法について説明します。ScalarDB Analytics は2つの主要なコンポーネントで構成されています: ScalarDB Analytics サーバーと Apache Spark です。このガイドでは、Spark 環境として Amazon EMR、Databricks、または Azure Synapse Analytics を選択できます。
 
 詳細については、[ScalarDB Analytics の設計](./design.mdx)を参照してください。
 
-## ScalarDB Analytics server のデプロイ
+## ScalarDB Analytics サーバーのデプロイ
 
-ScalarDB Analytics には、メタデータとデータソース接続を管理する catalog server が必要です。Catalog server は、Kubernetes クラスター上で Helm Chart を使用してデプロイする必要があります。
+ScalarDB Analytics には、メタデータとデータソース接続を管理するカタログサーバーが必要です。カタログサーバーは、Kubernetes クラスター上で Helm Chart を使用してデプロイする必要があります。
 
 詳細なデプロイ手順については、[AWS Marketplace を通じて Scalar 製品をインストールする方法](../scalar-kubernetes/AwsMarketplaceGuide?products=scalardb-analytics-server)を参照してください。
 
-Catalog server をデプロイした後、Spark 設定のために以下の情報をメモしてください:
+カタログサーバーをデプロイした後、Spark 設定のために以下の情報をメモしてください:
 
-- catalog server のホストアドレス
+- カタログサーバーのホストアドレス
 - カタログポート (デフォルト: 11051)
 - メータリングポート (デフォルト: 11052)
 
 ## Spark と ScalarDB Analytics のデプロイ
 
-Catalog server をデプロイした後、マネージド Spark サービスを使用して Spark と ScalarDB Analytics を設定およびデプロイできます。
+カタログサーバーをデプロイした後、マネージド Spark サービスを使用して Spark と ScalarDB Analytics を設定およびデプロイできます。
 
 ### サポートされているマネージド Spark サービスとそのアプリケーションタイプ
 
@@ -40,6 +40,7 @@ ScalarDB Analytics は以下のマネージド Spark サービスとアプリケ
 | -------------------------- | ------------ | ------------- | ---- |
 | Amazon EMR (EMR on EC2)    | ✅           | ✅            | ❌   |
 | Databricks                 | ✅           | ❌            | ✅   |
+| Azure Synapse Analytics    | ✅           | ❌            | ❌   |
 
 ### 設定とデプロイ
 
@@ -54,7 +55,7 @@ ScalarDB Analytics を通じて分析クエリを実行するために Amazon EM
 
 <h4>ScalarDB Analytics の設定</h4>
 
-ScalarDB Analytics を有効にするには、EMR クラスターを起動するときにソフトウェア設定に次の構成を追加する必要があります。括弧内の内容を必ず置き換えてください:
+ScalarDB Analytics を有効にするには、EMR クラスターを起動するときにソフトウェア設定に次の設定を追加する必要があります。括弧内の内容を必ず置き換えてください:
 
 ```json
 [
@@ -90,7 +91,7 @@ EMR Spark クラスターが起動した後、ssh を使用して EMR クラス�
 
 Spark Connect を使用して、起動した EMR クラスターを使用して Spark アプリケーションをリモートで実行できます。
 
-まず、[Spark ドライバーアプリケーション](./run-analytical-queries.mdx?spark-application-type=spark-driver#spark-アプリケーションの開発)と同じようにソフトウェア設定を構成する必要があります。また、Spark Connect を有効にするために次の設定も行う必要があります。
+まず、[Spark ドライバーアプリケーション](./run-analytical-queries.mdx?spark-application-type=spark-driver#spark-アプリケーションの開発)と同じようにソフトウェア設定を設定する必要があります。また、Spark Connect を有効にするために次の設定も行う必要があります。
 
 <h5>Spark Connect サーバーのインバウンドトラフィックを許可する</h5>
 
@@ -216,6 +217,165 @@ Connection conn = DriverManager.getConnection(url);
 ```
 
 Databricks で JDBC を使用する方法の詳細については、[Databricks JDBC ドライバードキュメント](https://docs.databricks.com/en/integrations/jdbc/index.html)を参照してください。
+
+  </TabItem>
+  <TabItem value="synapse" label="Azure Synapse Analytics">
+
+<h3>Azure Synapse Analytics の使用</h3>
+
+ScalarDB Analytics を通じて分析クエリを実行するために Azure Synapse Analytics を使用できます。Azure Synapse Analytics の基本については、[Azure Synapse Analytics ドキュメント](https://learn.microsoft.com/ja-jp/azure/synapse-analytics/)を参照してください。
+
+:::note
+
+Azure Synapse Analytics では、Spark ワークロードを実行するためにサーバーレス Apache Spark プールを使用します。Spark プールの詳細については、[Azure Synapse Analytics の Apache Spark](https://learn.microsoft.com/ja-jp/azure/synapse-analytics/spark/apache-spark-overview) を参照してください。
+
+:::
+
+<h4>前提条件</h4>
+
+Azure Synapse で ScalarDB Analytics を設定する前に、以下の要件が満たされていることを確認してください。
+
+<h5>Synapse ワークスペース</h5>
+
+Synapse ワークスペースは、Azure での分析のためのコラボレーション環境です。Spark ワークロードを実行する前に、Synapse ワークスペースを作成する必要があります。Synapse ワークスペースの作成の詳細については、[クイックスタート: Synapse ワークスペースの作成](https://learn.microsoft.com/ja-jp/azure/synapse-analytics/quickstart-create-workspace)を参照してください。
+
+:::note
+
+このガイドでは、マネージド仮想ネットワークが有効化された Synapse ワークスペースが作成されていることを前提としています。マネージド仮想ネットワークは、ネットワークの分離とセキュリティのために推奨されています。詳細については、[Azure Synapse Analytics マネージド仮想ネットワーク](https://learn.microsoft.com/ja-jp/azure/synapse-analytics/security/synapse-workspace-managed-vnet)を参照してください。
+
+:::
+
+<h5>ストレージの権限</h5>
+
+Spark ドライバーアプリケーションを実行する予定がある場合、ジョブを送信する **Synapse ワークスペースのマネージド ID** と**ユーザーアカウント**の両方に、ストレージアカウントの `Storage Blob Data Contributor` ロールが必要です。このロールは、サブスクリプション所有者またはユーザーアクセス管理者によって割り当てられる必要があります。
+
+<h4>ScalarDB Analytics の設定</h4>
+
+ScalarDB Analytics を有効にするには、Synapse Studio の Spark プール設定に以下の設定を追加します。
+
+1. **Synapse Studio** に移動し、**管理**を選択し、**Apache Spark プール**を選択します。
+2. Spark プールを選択し、**Apache Spark 設定**を選択します。
+3. 以下のプロパティで新しい設定を作成するか、既存のものを編集します。
+
+   ```text
+   spark.jars.packages com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>
+   spark.extraListeners com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener
+   spark.sql.catalog.<CATALOG_NAME> com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog
+   spark.sql.catalog.<CATALOG_NAME>.server.host <CATALOG_SERVER_IP>
+   spark.sql.catalog.<CATALOG_NAME>.server.catalog.port 11051
+   spark.sql.catalog.<CATALOG_NAME>.server.metering.port 11052
+   ```
+
+以下は、山括弧内の内容を何に変更すべきかを説明します。
+
+- `<SPARK_VERSION>`: Spark のバージョン (`3.4` または `3.5`)。
+- `<SCALA_VERSION>`: Spark のビルドに使用される Scala のバージョン (`2.12` または `2.13`)。
+- `<SCALARDB_ANALYTICS_VERSION>`: ScalarDB Analytics のバージョン。
+- `<CATALOG_NAME>`: カタログの名前。これは ScalarDB Analytics サーバー上で作成されたカタログと一致する必要があります。
+- `<CATALOG_SERVER_IP>`: ScalarDB Analytics サーバーのマネージドプライベートエンドポイントの IP アドレス。
+
+<h4>プライベート接続の設定</h4>
+
+ScalarDB Analytics では、Synapse ワークスペースのマネージド仮想ネットワークから ScalarDB Analytics サーバーとデータソースの両方へのネットワーク接続が必要です。この接続を確立するには、以下のように Private Link Service とマネージドプライベートエンドポイントを使用する必要があります。
+
+1. **Synapse ワークスペースと ScalarDB Analytics サーバー間の接続:** Azure Kubernetes Service (AKS) の内部ロードバランサー用の Private Link Service を作成し、Synapse ワークスペースのマネージド仮想ネットワークにマネージドプライベートエンドポイントを作成します。
+2. **Synapse ワークスペースとデータソース間の接続:** Synapse ワークスペースのマネージド仮想ネットワークから各データソース (例: Azure Database for PostgreSQL) に直接マネージドプライベートエンドポイントを作成します。
+
+:::caution
+
+Azure Database for PostgreSQL Flexible Server を使用している場合は、**パブリックアクセス**モードで作成する必要があります。VNet 統合モードでは、作成後にプライベートエンドポイントの追加をサポートしていません。詳細については、Azure Database for PostgreSQL ドキュメントの[ネットワーク](https://learn.microsoft.com/ja-jp/azure/postgresql/flexible-server/how-to-networking)セクションを参照してください。
+
+:::
+
+<h5>ScalarDB Analytics サーバー用の Private Link Service の作成</h5>
+
+ScalarDB Analytics サーバー用の内部ロードバランサーを作成するには、Helm Chart のカスタムバリューファイルで`scalarDbAnalyticsServer.service.type` を `LoadBalancer` に設定します。
+
+:::note
+
+Helm Chart には、デフォルトで `service.beta.kubernetes.io/azure-load-balancer-internal: "true"` アノテーションが含まれているため、ロードバランサーは内部ロードバランサーとして作成されます。
+
+:::
+
+この設定でデプロイした後、以下の手順に従ってください。
+
+1. ScalarDB Analytics サーバーサービスに内部 IP アドレスが割り当てられていることを確認します。
+
+   ```console
+   kubectl get svc -n <NAMESPACE> <SCALARDB_ANALYTICS_SERVICE_NAME>
+   ```
+
+   `<NAMESPACE>` を ScalarDB Analytics サーバーがデプロイされている名前空間に、`<SCALARDB_ANALYTICS_SERVICE_NAME>` をサービス名 (例: `scalardb-analytics-server`) に置き換えてください。サービスの `EXTERNAL-IP` 列にプライベート IP アドレス (例: `10.x.x.x`) が割り当てられていることを確認してください。内部ロードバランサーサービスの場合、`EXTERNAL-IP` にはパブリック IP ではなくプライベート IP アドレスが表示されます。
+
+2. Azure ポータルで Private Link Serviceを作成します。
+   1. **Private Link** に移動し、**Private Link Services** を選択し、**作成**を選択します。
+   2. ScalarDB Analytics サーバーサービス用の内部ロードバランサーを選択します。
+   3. ソース NAT サブネットとアクセスセキュリティを設定します。
+
+3. Synapse Studio でマネージドプライベートエンドポイントを作成します。
+   1. **管理**に移動し、**マネージドプライベートエンドポイント**を選択し、**新規**を選択します。
+   2. **Private Link Service** を選択し、作成した Private Link Service を選択します。
+   3. 作成後、Private Link Service の設定で接続を承認します。
+
+4. Spark 設定で使用するためにマネージドプライベートエンドポイントの IP アドレスをメモします。
+
+<h5>データソース用のマネージドプライベートエンドポイントの作成</h5>
+
+1. Synapse Studio で、**管理**に移動し、**マネージドプライベートエンドポイント**を選択し、**新規**を選択します。
+2. データベースタイプ (例: **Azure Database for PostgreSQL Flexible Server**) を選択します。
+3. データベースサーバーを選択し、エンドポイントを作成します。
+4. データベースサーバーのネットワーク設定で接続を承認します。
+   1. **Azure ポータル**に移動し、**データベースサーバー**を選択し、**ネットワーク**を選択し、**プライベートアクセス**を選択します。
+   2. 保留中の接続を選択し、承認します。
+
+<h4>Spark ドライバーを介した分析クエリの実行</h4>
+
+Spark ドライバーアプリケーションを実行するには:
+
+1. Spark ドライバーアプリケーション JAR を Azure Data Lake Storage Gen2 にアップロードします。
+2. **開発**に移動し、**新しい Spark ジョブ定義**を選択します。
+3. ジョブを設定します。
+   - **言語:** Spark (Scala/Java)
+   - **メインクラス:** アプリケーションのメインクラス
+   - **メイン定義ファイル:** JAR ファイルへのパス (例: `abfss://<CONTAINER>@<STORAGE>.dfs.core.windows.net/path/to/app.jar`)
+     - `<CONTAINER>`: Azure Data Lake Storage Gen2 コンテナ名
+     - `<STORAGE>`: Azure ストレージアカウント名
+   - **Spark プール:** 設定した Spark プール
+4. ジョブを送信します。
+
+:::note
+
+[前提条件](#前提条件)セクションで説明されている必要な権限が設定されていることを確認してください。
+
+:::
+
+<h4>Synapse ノートブックを使用したインタラクティブクエリの実行</h4>
+
+Spark プールを設定した後、Synapse ノートブックを使用してインタラクティブクエリを実行できます。
+
+1. **Synapse Studio** に移動し、**開発**を選択し、**新しいノートブック**を選択します。
+2. 設定した Spark プールをアタッチします。
+3. `%%sql`マジックコマンドを使用してSQLクエリを実行します。
+
+   ```sql
+   %%sql
+   -- 利用可能なカタログを一覧表示
+   SHOW CATALOGS
+   ```
+
+   ```sql
+   %%sql
+   -- ScalarDB カタログ内のデータベースを一覧表示
+   SHOW DATABASES IN <CATALOG_NAME>
+   ```
+
+   ```sql
+   %%sql
+   -- データをクエリ
+   SELECT * FROM <CATALOG_NAME>.<DATA_SOURCE_NAME>.<NAMESPACE_NAME>.<TABLE_NAME> LIMIT 10
+   ```
+
+   上記の角括弧を、ScalarDB Analytics サーバーで設定されている実際のカタログ、データソース、名前空間、テーブル名に置き換えてください。
 
   </TabItem>
 </Tabs>
