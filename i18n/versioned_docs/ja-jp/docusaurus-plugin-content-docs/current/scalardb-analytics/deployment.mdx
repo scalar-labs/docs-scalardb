@@ -12,7 +12,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 <TranslationBanner />
 
-このガイドでは、パブリッククラウド環境に ScalarDB Analytics をデプロイする方法について説明します。ScalarDB Analytics は2つの主要なコンポーネントで構成されています: ScalarDB Analytics サーバーと Apache Spark です。このガイドでは、Spark 環境として Amazon EMR、Databricks、または Azure Synapse Analytics を選択できます。
+このガイドでは、パブリッククラウド環境に ScalarDB Analytics をデプロイする方法について説明します。ScalarDB Analytics は2つの主要なコンポーネントで構成されています: ScalarDB Analytics サーバーと Apache Spark です。このガイドでは、Spark 環境として Amazon EMR、Databricks、Azure Synapse Analytics、または Google Cloud Dataproc を選択できます。
 
 詳細については、[ScalarDB Analytics の設計](./design.mdx)を参照してください。
 
@@ -41,6 +41,7 @@ ScalarDB Analytics は以下のマネージド Spark サービスとアプリケ
 | Amazon EMR (EMR on EC2)    | ✅           | ✅            | ❌   |
 | Databricks                 | ✅           | ❌            | ✅   |
 | Azure Synapse Analytics    | ✅           | ❌            | ❌   |
+| Google Cloud Dataproc      | ✅           | ✅            | ❌   |
 
 ### 設定とデプロイ
 
@@ -49,11 +50,9 @@ ScalarDB Analytics は以下のマネージド Spark サービスとアプリケ
 <Tabs groupId="cloud-service" queryString>
   <TabItem value="emr" label="Amazon EMR">
 
-<h3>Amazon EMR の使用</h3>
-
 ScalarDB Analytics を通じて分析クエリを実行するために Amazon EMR (EMR on EC2) を使用できます。EMR クラスターを起動する基本については、[AWS EMR on EC2 ドキュメント](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-plan.html)を参照してください。
 
-<h4>ScalarDB Analytics の設定</h4>
+<h3>ScalarDB Analytics の設定</h3>
 
 ScalarDB Analytics を有効にするには、EMR クラスターを起動するときにソフトウェア設定に次の設定を追加する必要があります。括弧内の内容を必ず置き換えてください:
 
@@ -83,23 +82,23 @@ ScalarDB Analytics を有効にするには、EMR クラスターを起動する
 
 詳細については、[ScalarDB Analytics のセットアップのための Spark 設定](./run-analytical-queries.mdx#scalardb-analytics-のセットアップのための-spark-設定)を参照してください。
 
-<h4>Spark ドライバーを介した分析クエリの実行</h4>
+<h3>Spark ドライバーを介した分析クエリの実行</h3>
 
 EMR Spark クラスターが起動した後、ssh を使用して EMR クラスターのプライマリノードに接続し、Spark アプリケーションを実行できます。Spark ドライバーアプリケーションの作成方法の詳細については、[Spark ドライバーアプリケーション](./run-analytical-queries.mdx?spark-application-type=spark-driver#spark-アプリケーションの開発)を参照してください。
 
-<h4>Spark Connect を介した分析クエリの実行</h4>
+<h3>Spark Connect を介した分析クエリの実行</h3>
 
 Spark Connect を使用して、起動した EMR クラスターを使用して Spark アプリケーションをリモートで実行できます。
 
 まず、[Spark ドライバーアプリケーション](./run-analytical-queries.mdx?spark-application-type=spark-driver#spark-アプリケーションの開発)と同じようにソフトウェア設定を設定する必要があります。また、Spark Connect を有効にするために次の設定も行う必要があります。
 
-<h5>Spark Connect サーバーのインバウンドトラフィックを許可する</h5>
+<h4>Spark Connect サーバーのインバウンドトラフィックを許可する</h4>
 
 1. Spark Connect サーバーのインバウンドトラフィックを許可するセキュリティグループを作成します (デフォルトはポート15001)。
 2. 「Amazon EMR サービスロール」のロールがセキュリティグループを EMR クラスターのプライマリノードにアタッチできるようにします。
 3. EMR クラスターを起動するときに、「追加のセキュリティグループ」としてセキュリティグループを EMR クラスターのプライマリノードに追加します。
 
-<h5>ブートストラップアクションを介した Spark Connect サーバーの起動</h5>
+<h4>ブートストラップアクションを介した Spark Connect サーバーの起動</h4>
 
 1. 次のように Spark Connect サーバーを起動するためのスクリプトファイルを作成します:
 
@@ -124,7 +123,7 @@ sudo -u spark /usr/lib/spark/sbin/start-connect-server.sh --packages org.apache.
 3. 「Amazon の EMR 用 EC2 インスタンスプロファイル」のロールがS3にアップロードされたスクリプトファイルにアクセスできるようにします。
 4. EMR クラスターを起動するときに、アップロードされたスクリプトファイルを「ブートストラップアクション」に追加します。
 
-<h5>分析クエリの実行</h5>
+<h4>分析クエリの実行</h4>
 
 Spark Connect サーバーのリモート URL (`sc://<PRIMARY_NODE_PUBLIC_HOSTNAME>:15001`) を使用して、どこからでも Spark Connect を介して Spark アプリケーションを実行できます。
 
@@ -132,8 +131,6 @@ Spark Connect を使用した Spark アプリケーションの作成方法の�
 
   </TabItem>
   <TabItem value="databricks" label="Databricks">
-<h3>Databricks の使用</h3>
-
 ScalarDB Analytics を通じて分析クエリを実行するために Databricks を使用できます。
 
 :::note
@@ -142,7 +139,7 @@ Databricks は Apache Spark の修正版を提供しており、オリジナル�
 
 :::
 
-<h4>ScalarDB Analytics ライブラリ JAR を読み込むための init script の準備</h4>
+<h3>ScalarDB Analytics ライブラリ JAR を読み込むための init script の準備</h3>
 
 1. Maven リポジトリから ScalarDB Analytics ライブラリ JAR ファイルをダウンロードします。Spark、Scala、ScalarDB のバージョンに基づいて適切な JAR ファイルを選択してください:
    - [scalardb-analytics-spark-all-3.4_2.13 (Spark v3.4, Scala v2.13)](https://repo1.maven.org/maven2/com/scalar-labs/scalardb-analytics-spark-all-3.4_2.13/)
@@ -168,7 +165,7 @@ Databricks は Apache Spark の修正版を提供しており、オリジナル�
 
 4. init script を Databricks ワークスペースにアップロードします。
 
-<h4>Databricks コンピュートの起動</h4>
+<h3>Databricks コンピュートの起動</h3>
 
 ScalarDB Analytics は Databricks の汎用コンピュートで動作します。コンピュートを起動する際、ScalarDB Analytics を有効にするために以下のようにコンピュートを設定する必要があります:
 
@@ -194,13 +191,13 @@ ScalarDB Analytics は Databricks の汎用コンピュートで動作します�
 6. `Advanced` セクションで、`init scripts` タブを選択し、アップロードしたワークスペース内の init script のパスを指定します。
 7. `Create` を選択します。
 
-<h4>Spark ドライバーを介した分析クエリの実行</h4>
+<h3>Spark ドライバーを介した分析クエリの実行</h3>
 
 適切に設定された Databricks コンピュートで Spark アプリケーションを Databricks Notebook または Databricks Jobs で実行して、ScalarDB Analytics 内のテーブルにアクセスできます。Spark アプリケーションを実行するには、Pyspark、Scala、または Spark SQL アプリケーションを Databricks Notebook に移行するか、Databricks Jobs を使用して Spark アプリケーションを実行できます。ScalarDB Analytics は Notebook、Python、JAR、および SQL のタスクタイプで動作します。
 
 Databricks Jobs の使用方法の詳細については、[Databricks ジョブのドキュメント](https://docs.databricks.com/aws/ja/jobs)を参照してください。
 
-<h4>JDBC ドライバーを介した分析クエリの実行</h4>
+<h3>JDBC ドライバーを介した分析クエリの実行</h3>
 
 Databricks はコンピュート上で SQL ジョブを実行するための JDBC をサポートしています。コンピュートが起動した後、`Advanced` > `JDBC/ODBC` タブでコンピュートの JDBC URL を取得できます。JDBC を使用してコンピュートに接続するには、アプリケーションの依存関係に Databricks JDBC ドライバーを追加する必要があります。例えば、Gradle を使用している場合は、使用したい Databricks JDBC ドライバーのバージョンで `<DRIVER_VERSION>` を置き換えて、`build.gradle` ファイルに以下の依存関係を追加できます:
 
@@ -376,6 +373,347 @@ Spark プールを設定した後、Synapse ノートブックを使用してイ
    ```
 
    上記の角括弧を、ScalarDB Analytics サーバーで設定されている実際のカタログ、データソース、名前空間、テーブル名に置き換えてください。
+
+  </TabItem>
+  <TabItem value="dataproc" label="Google Cloud Dataproc">
+
+ScalarDB Analytics を通じて分析クエリを実行するために Google Cloud Dataproc を使用できます。Dataproc は Compute ベースのクラスタと Serverless の両方を提供しており、ScalarDB Analytics は両方に対応しています。
+
+Dataproc の基本については、[Google Cloud Dataproc ドキュメント](https://cloud.google.com/dataproc/docs)を参照してください。
+
+<h3>Google Cloud 環境のセットアップ</h3>
+
+ScalarDB Analytics を Dataproc で使用するには、まず Google Cloud 環境をセットアップする必要があります: VPC の作成、ScalarDB Analytics サーバー用データベースインスタンスの作成、Google Kubernetes Engine (GKE) クラスタの作成、ScalarDB Analytics サーバーのデプロイを行います。
+
+<h4>VPC の作成</h4>
+
+デフォルトでは、ScalarDB Analytics サーバーの Helm Chart は、LoadBalancer サービスの External IP に VPC 内のプライベート IP を割り当てるように設定します。また、Cloud SQL もプライベート IP でアクセスすることを推奨します。そのため、プライベート IP でアクセスするための VPC を作成する必要があります。
+
+VPC のファイアウォールルールで以下のポートを許可してください:
+
+- **Dataproc 内部通信用:** TCP 0-65535、UDP 0-65535、ICMP (サブネット内のみ)
+- **Identity-Aware Proxy (IAP) 経由 SSH 用:** TCP 22
+- **Cloud SQL 用:** 使用する DB に対応したポート (サブネット内のみ)
+
+以下は VPC、サブネット、ファイアウォールルールを作成する例です:
+
+```bash
+# VPC の作成
+gcloud compute networks create <VPC_NAME> \
+  --subnet-mode=custom \
+  --project=<PROJECT_ID>
+
+# サブネットの作成
+gcloud compute networks subnets create <SUBNET_NAME> \
+  --network=<VPC_NAME> \
+  --region=<REGION> \
+  --range=10.0.0.0/20 \
+  --project=<PROJECT_ID>
+
+# Dataproc 内部通信用
+gcloud compute firewall-rules create <VPC_NAME>-allow-internal \
+  --network=<VPC_NAME> \
+  --allow=tcp:0-65535,udp:0-65535,icmp \
+  --source-ranges=10.0.0.0/20 \
+  --project=<PROJECT_ID>
+
+# IAP 経由 SSH 用
+gcloud compute firewall-rules create <VPC_NAME>-allow-iap-ssh \
+  --network=<VPC_NAME> \
+  --allow=tcp:22 \
+  --source-ranges=35.235.240.0/20 \
+  --project=<PROJECT_ID>
+
+# Cloud SQL 用 (PostgreSQL の例)
+gcloud compute firewall-rules create <VPC_NAME>-allow-postgres \
+  --network=<VPC_NAME> \
+  --allow=tcp:5432 \
+  --source-ranges=10.0.0.0/20 \
+  --project=<PROJECT_ID>
+```
+
+以下の値を置き換えてください:
+
+- `<VPC_NAME>`: 任意の VPC 名
+- `<SUBNET_NAME>`: 任意のサブネット名
+- `<PROJECT_ID>`: Google Cloud プロジェクト ID
+- `<REGION>`: リージョン (例: `us-west1`)
+
+VPC とファイアウォールルールの詳細については、[VPC ネットワークの作成と管理](https://cloud.google.com/vpc/docs/create-modify-vpc-networks)および [IAP を使用した SSH 接続](https://cloud.google.com/iap/docs/using-tcp-forwarding)を参照してください。
+
+<h4>ScalarDB Analytics サーバー用データベースインスタンスの作成</h4>
+
+ScalarDB Analytics サーバーにはバックエンドデータベースが必要です。このセクションでは Cloud SQL を使用したセットアップ方法を説明します。要件に応じて他のデータベースを使用することもできます。
+
+Google Cloud は Private IP での接続を推奨しています。このガイドでは Private IP での接続を有効にします。
+
+Private IP を使用するには、事前に VPC で Private Service Access を設定する必要があります。詳細については、[プライベート サービス アクセスの構成](https://cloud.google.com/vpc/docs/configure-private-services-access)を参照してください。
+
+以下は Private IP を有効にした Cloud SQL インスタンスを作成する例です:
+
+```bash
+gcloud sql instances create <INSTANCE_NAME> \
+  --database-version=POSTGRES_15 \
+  --tier=db-custom-2-4096 \
+  --region=<REGION> \
+  --network=projects/<PROJECT_ID>/global/networks/<VPC_NAME> \
+  --no-assign-ip \
+  --project=<PROJECT_ID>
+```
+
+以下の値を置き換えてください:
+
+- `<INSTANCE_NAME>`: 任意の Cloud SQL インスタンス名
+- `<REGION>`: リージョン (例: `us-west1`)
+- `<PROJECT_ID>`: Google Cloud プロジェクト ID
+- `<VPC_NAME>`: VPC 名
+
+インスタンス作成後、データベースとユーザーを作成します:
+
+```bash
+# データベースの作成
+gcloud sql databases create <DB_NAME> \
+  --instance=<INSTANCE_NAME> \
+  --project=<PROJECT_ID>
+
+# ユーザーの作成
+gcloud sql users create <DB_USERNAME> \
+  --instance=<INSTANCE_NAME> \
+  --password=<DB_PASSWORD> \
+  --project=<PROJECT_ID>
+```
+
+詳細については、[Cloud SQL のプライベート IP の構成](https://cloud.google.com/sql/docs/postgres/configure-private-ip)を参照してください。
+
+<h4>GKE での ScalarDB Analytics サーバーのデプロイ</h4>
+
+以下の手順で GKE に ScalarDB Analytics サーバーをデプロイします。
+
+**1. GKE Autopilot クラスタを作成する**
+
+ScalarDB Analytics サーバーをデプロイするための GKE Autopilot クラスタを作成します。VPC セクションで作成したサブネットを使用すると、LoadBalancer の External IP は VPC 内のプライベート IP になります。
+
+```bash
+gcloud container clusters create-auto <GKE_CLUSTER_NAME> \
+  --region=<REGION> \
+  --network=<VPC_NAME> \
+  --subnetwork=<SUBNET_NAME> \
+  --project=<PROJECT_ID>
+```
+
+以下の値を置き換えてください:
+
+- `<GKE_CLUSTER_NAME>`: 任意の GKE クラスタ名
+- `<REGION>`: リージョン (例: `us-west1`)
+- `<VPC_NAME>`: VPC セクションで作成した VPC 名
+- `<SUBNET_NAME>`: VPC セクションで作成したサブネット名
+- `<PROJECT_ID>`: Google Cloud プロジェクト ID
+
+クラスタの作成後、kubectl がクラスタに接続できるように認証情報を取得します:
+
+```bash
+gcloud container clusters get-credentials <GKE_CLUSTER_NAME> \
+  --region=<REGION> \
+  --project=<PROJECT_ID>
+```
+
+**2. Cloud SQL Auth Proxy Operator をインストールする**
+
+Cloud SQL をバックエンドデータベースとして使用する場合、Google Cloud は Cloud SQL Auth Proxy を使用した接続を推奨しています。ScalarDB Analytics サーバーの Helm Chart は sidecar コンテナの追加に対応していないため、このガイドでは Cloud SQL Auth Proxy Operator を使用して sidecar コンテナをデプロイします。
+
+[Cloud SQL Proxy Operator を使用して接続する](https://cloud.google.com/sql/docs/postgres/connect-proxy-operator)に従って、GKE クラスタに Cloud SQL Auth Proxy Operator をインストールします。
+
+**3. AuthProxyWorkload リソースを作成する**
+
+ScalarDB Analytics サーバーの Deployment に Cloud SQL Auth Proxy sidecar を注入するための AuthProxyWorkload リソースを作成します。このリソースの `workloadSelector` に一致する Deployment がデプロイされると、自動的に Cloud SQL Auth Proxy の sidecar コンテナが追加されます。
+
+以下は AuthProxyWorkload の設定例です:
+
+```yaml
+apiVersion: cloudsql.cloud.google.com/v1
+kind: AuthProxyWorkload
+metadata:
+  name: scalardb-analytics-server-cloudsql-auth-proxy
+spec:
+  workloadSelector:
+    kind: "Deployment"
+    name: "scalardb-analytics-server"
+  instances:
+    - connectionString: "<INSTANCE_CONNECTION_NAME>"
+      portEnvName: "DB_PORT"
+      hostEnvName: "INSTANCE_HOST"
+```
+
+以下の値を置き換えてください:
+
+- `<INSTANCE_CONNECTION_NAME>`: Cloud SQL のインスタンス接続名。以下のコマンドで取得できます:
+
+  ```bash
+  gcloud sql instances describe <INSTANCE_NAME> \
+    --project=<PROJECT_ID> \
+    --format="value(connectionName)"
+  ```
+
+以下のコマンドで AuthProxyWorkload リソースを作成します:
+
+```bash
+kubectl apply -f auth-proxy-workload.yaml
+```
+
+**4. ScalarDB Analytics サーバーをデプロイする**
+
+[ScalarDB Analytics サーバーをデプロイする](./deploy-scalardb-analytics-server.mdx)に従って、Helm を使用して ScalarDB Analytics サーバーをデプロイします。
+
+Cloud SQL Auth Proxy を使用する場合、データベースへの接続は sidecar コンテナ経由で行われます。AuthProxyWorkload で設定した環境変数 `INSTANCE_HOST` と `DB_PORT` を使用して接続先を指定します。
+
+以下は Helm の values ファイルの例です:
+
+```yaml
+scalarDbAnalyticsServer:
+  image:
+    repository: ghcr.io/scalar-labs/scalardb-analytics-server-byol
+  properties: |
+    # ライセンス設定
+    scalar.db.analytics.server.licensing.license_key=<YOUR_LICENSE_KEY>
+    scalar.db.analytics.server.licensing.license_check_cert_pem=<YOUR_LICENSE_CHECK_CERT_PEM>
+
+    # データベース設定
+    scalar.db.analytics.server.db.contact_points=jdbc:postgresql://${INSTANCE_HOST}:${DB_PORT}/<DB_NAME>
+    scalar.db.analytics.server.db.username=<DB_USERNAME>
+    scalar.db.analytics.server.db.password=<DB_PASSWORD>
+
+    # メータリングストレージ設定
+    scalar.db.analytics.server.metering.storage.provider=google-cloud-storage
+    scalar.db.analytics.server.metering.storage.bucket_name=<BUCKET_NAME>
+    scalar.db.analytics.server.metering.storage.accessKeyId=<GCS_ACCESS_KEY>
+    scalar.db.analytics.server.metering.storage.secretAccessKey=<GCS_SECRET_KEY>
+  serviceAccount:
+    serviceAccountName: scalardb-analytics-server
+```
+
+以下の値を置き換えてください:
+
+- `<YOUR_LICENSE_KEY>`: ライセンスキー
+- `<YOUR_LICENSE_CHECK_CERT_PEM>`: ライセンス検証用の証明書
+- `<DB_NAME>`: Cloud SQL セクションで作成したデータベース名
+- `<DB_USERNAME>`: データベースのユーザー名
+- `<DB_PASSWORD>`: データベースのパスワード
+- `<BUCKET_NAME>`: メータリング情報を保存する Cloud Storage のバケット名。バケットの作成方法については、[バケットの作成](https://cloud.google.com/storage/docs/creating-buckets)を参照してください。
+- `<GCS_ACCESS_KEY>`: Cloud Storage の HMAC アクセスキー
+- `<GCS_SECRET_KEY>`: Cloud Storage の HMAC シークレットキー。HMAC キーの作成方法については、[HMAC キーの管理](https://cloud.google.com/storage/docs/authentication/managing-hmackeys)を参照してください。
+
+**5. ScalarDB Analytics サーバーのホストアドレスを確認する**
+
+デプロイ後、以下のコマンドで ScalarDB Analytics サーバーの LoadBalancer の External IP を確認します。この IP アドレスは、後続の Dataproc セクションで `<CATALOG_SERVER_HOST>` として使用します。
+
+```bash
+kubectl get svc scalardb-analytics-server
+```
+
+出力例:
+
+```
+NAME                        TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)                           AGE
+scalardb-analytics-server   LoadBalancer   10.98.116.121   203.0.113.10    11051:32619/TCP,11052:32598/TCP   2m43s
+```
+
+`EXTERNAL-IP` 列に表示される IP アドレス（例: `203.0.113.10`）が `<CATALOG_SERVER_HOST>` の値です。
+
+<h3>Dataproc クラスタのセットアップ</h3>
+
+以下のコマンドで Dataproc Compute クラスタを作成できます:
+
+```bash
+gcloud dataproc clusters create <CLUSTER_NAME> \
+  --region=<REGION> \
+  --subnet=projects/<PROJECT_ID>/regions/<REGION>/subnetworks/<SUBNET_NAME> \
+  --properties=spark:spark.jars.packages=com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION> \
+  --properties=spark:spark.extraListeners=com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener \
+  --properties=spark:spark.sql.catalog.<CATALOG_NAME>=com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog \
+  --properties=spark:spark.sql.catalog.<CATALOG_NAME>.server.host=<CATALOG_SERVER_HOST> \
+  --properties=spark:spark.sql.catalog.<CATALOG_NAME>.server.catalog.port=11051 \
+  --properties=spark:spark.sql.catalog.<CATALOG_NAME>.server.metering.port=11052 \
+  --project=<PROJECT_ID>
+```
+
+以下の値を置き換えてください:
+
+- `<CLUSTER_NAME>`: 任意の Dataproc クラスタ名
+- `<CATALOG_NAME>`: 任意のカタログ名。ScalarDB Analytics サーバー上で作成するカタログ名と一致させる必要があります。
+- `<REGION>`: リージョン (例: `us-west1`)
+- `<PROJECT_ID>`: Google Cloud プロジェクト ID
+- `<SUBNET_NAME>`: VPC セクションで作成したサブネット名
+- `<SPARK_VERSION>`: Spark のバージョン (例: `3.5` または `3.4`)。[Dataproc のバージョン一覧](https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-version-clusters)を参照してください。
+- `<SCALA_VERSION>`: Spark のビルドに使用される Scala のバージョン (例: `2.13` または `2.12`)
+- `<SCALARDB_ANALYTICS_VERSION>`: ScalarDB Analytics のバージョン (例: `3.17.0`)
+- `<CATALOG_SERVER_HOST>`: GKE セクションで確認した ScalarDB Analytics サーバーのホストアドレス
+
+クラスタを作成した後、IAP 経由で SSH 接続してクラスタ上で `spark-shell` や `spark-sql` を使用して分析クエリを実行できます:
+
+```bash
+gcloud compute ssh <CLUSTER_NAME>-m \
+  --zone=<ZONE> \
+  --tunnel-through-iap \
+  --project=<PROJECT_ID>
+```
+
+以下の値を置き換えてください:
+
+- `<CLUSTER_NAME>`: 作成した Dataproc クラスタ名
+- `<ZONE>`: クラスタのプライマリノードが存在するゾーン (例: `us-west1-a`)
+- `<PROJECT_ID>`: Google Cloud プロジェクト ID
+
+Dataproc Compute クラスタは標準的な Apache Spark 環境を提供するため、通常の方法で Spark アプリケーションを実行できます。詳細については、[Apache Spark ドキュメント](https://spark.apache.org/docs/latest/submitting-applications.html)を参照してください。
+
+Spark ドライバーアプリケーションの詳細については、[Spark ドライバーアプリケーション](./run-analytical-queries.mdx?spark-application-type=spark-driver#spark-アプリケーションの開発)を参照してください。
+
+<h3>Dataproc Serverless のセットアップ</h3>
+
+Dataproc Serverless は Spark Connect ベースのサービスです。現在、Python クライアントのみが提供されているため、ノートブックまたは Python クライアントから利用する必要があります。
+
+以下は Python での設定例です:
+
+```python
+from google.cloud.dataproc_spark_connect import DataprocSparkSession
+from google.cloud.dataproc_v1 import Session
+
+session_config = Session()
+session_config.environment_config.execution_config.subnetwork_uri = "projects/<PROJECT_ID>/regions/<REGION>/subnetworks/<SUBNET_NAME>"
+spark = (
+    DataprocSparkSession.builder.projectId("<PROJECT_ID>")
+    .location("<REGION>")
+    .dataprocSessionConfig(session_config)
+    .config(
+        "spark.jars.packages",
+        "com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>",
+    )
+    .config(
+        "spark.extraListeners",
+        "com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener",
+    )
+    .config(
+        "spark.sql.catalog.<CATALOG_NAME>",
+        "com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog",
+    )
+    .config("spark.sql.catalog.<CATALOG_NAME>.server.host", "<CATALOG_SERVER_HOST>")
+    .config("spark.sql.catalog.<CATALOG_NAME>.server.catalog.port", "11051")
+    .config("spark.sql.catalog.<CATALOG_NAME>.server.metering.port", "11052")
+    .getOrCreate()
+)
+```
+
+以下の値を置き換えてください:
+
+- `<CATALOG_NAME>`: 任意のカタログ名。ScalarDB Analytics サーバー上で作成するカタログ名と一致させる必要があります。
+- `<PROJECT_ID>`: Google Cloud プロジェクト ID
+- `<REGION>`: リージョン (例: `us-west1`)
+- `<SUBNET_NAME>`: VPC セクションで作成したサブネット名
+- `<SPARK_VERSION>`: Spark のバージョン (例: `3.5` または `3.4`)
+- `<SCALA_VERSION>`: Spark のビルドに使用される Scala のバージョン (例: `2.13` または `2.12`)
+- `<SCALARDB_ANALYTICS_VERSION>`: ScalarDB Analytics のバージョン (例: `3.17.0`)
+- `<CATALOG_SERVER_HOST>`: GKE セクションで確認した ScalarDB Analytics サーバーのホストアドレス
+
+Spark Connect アプリケーションの詳細については、[Spark Connect アプリケーション](./run-analytical-queries.mdx?spark-application-type=spark-connect#spark-アプリケーションの開発)および [Dataproc Serverless for Spark ドキュメント](https://cloud.google.com/dataproc-serverless/docs)を参照してください。
 
   </TabItem>
 </Tabs>
