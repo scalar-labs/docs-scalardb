@@ -104,53 +104,6 @@ const config = {
                 banner: 'none',
                 className: '3.13.6',
               },
-              "3.12": {
-                label: '3.12 (unsupported)',
-                path: '3.12',
-                banner: 'unmaintained',
-                className: '3.12.8',
-              },
-              "3.11": {
-                label: '3.11 (unsupported)',
-                path: '3.11',
-                banner: 'unmaintained',
-                className: '3.11.6',
-              },
-              "3.10": {
-                label: '3.10 (unsupported)',
-                path: '3.10',
-                banner: 'unmaintained',
-              },
-              "3.9": {
-                label: '3.9 (unsupported)',
-                path: '3.9',
-                banner: 'unmaintained',
-              },
-              "3.8": {
-                label: '3.8 (unsupported)',
-                path: '3.8',
-                banner: 'unmaintained',
-              },
-              "3.7": {
-                label: '3.7 (unsupported)',
-                path: '3.7',
-                banner: 'unmaintained',
-              },
-              "3.6": {
-                label: '3.6 (unsupported)',
-                path: '3.6',
-                banner: 'unmaintained',
-              },
-              "3.5": {
-                label: '3.5 (unsupported)',
-                path: '3.5',
-                banner: 'unmaintained',
-              },
-              "3.4": {
-                label: '3.4 (unsupported)',
-                path: '3.4',
-                banner: 'unmaintained',
-              },
             },
           },
           googleTagManager: {
@@ -221,10 +174,6 @@ const config = {
             from: '/docs/3.13/storage-abstraction',
           },
           {
-            to: '/docs/3.12/run-non-transactional-storage-operations-through-primitive-crud-interface',
-            from: '/docs/3.12/storage-abstraction',
-          },
-          {
             to: '/docs/latest/requirements#databases',
             from: '/docs/latest/scalardb-supported-databases',
           },
@@ -233,48 +182,12 @@ const config = {
             from: '/docs/3.13/scalardb-supported-databases',
           },
           {
-            to: '/docs/3.12/requirements#databases',
-            from: '/docs/3.12/scalardb-supported-databases',
-          },
-          {
-            to: '/docs/3.11/requirements#databases',
-            from: '/docs/3.11/scalardb-supported-databases',
-          },
-          {
-            to: '/docs/3.10/requirements#databases',
-            from: '/docs/3.10/scalardb-supported-databases',
-          },
-          {
-            to: '/docs/3.9/requirements#databases',
-            from: '/docs/3.9/scalardb-supported-databases',
-          },
-          {
-            to: '/docs/3.12/requirements#databases',
-            from: '/docs/3.12/scalardb-supported-databases',
-          },
-          {
             to: '/docs/latest/helm-charts/getting-started-scalar-manager',
             from: '/docs/latest/helm-charts/how-to-deploy-scalar-manager',
           },
           {
-            to: '/docs/3.12/helm-charts/getting-started-scalar-manager',
-            from: '/docs/3.12/helm-charts/how-to-deploy-scalar-manager',
-          },
-          {
-            to: '/docs/3.11/helm-charts/getting-started-scalar-manager',
-            from: '/docs/3.11/helm-charts/how-to-deploy-scalar-manager',
-          },
-          {
-            to: '/docs/3.10/helm-charts/getting-started-scalar-manager',
-            from: '/docs/3.10/helm-charts/how-to-deploy-scalar-manager',
-          },
-          {
             to: '/docs/latest/scalardb-cluster-dotnet-client-sdk',
             from: '/docs/latest/scalardb-cluster-dotnet-client-sdk/overview',
-          },
-          {
-            to: '/docs/3.12/scalardb-cluster-dotnet-client-sdk',
-            from: '/docs/3.12/scalardb-cluster-dotnet-client-sdk/overview',
           },
         ],
         createRedirects(existingPath) {
