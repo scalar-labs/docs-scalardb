@@ -1116,6 +1116,30 @@ scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
 - **Description:** Whether the write-buffering feature is enabled. It buffers non-conditional write operations (inserts, upserts, unconditional puts/updates/deletes) and executes them in batches to reduce the number of RPC calls.
 - **Default value:** `false`
 
+#### Authentication and authorization configurations
+
+The following shows the authentication and authorization configurations for the ScalarDB Cluster client when using the primitive interface.
+
+When you run applications or tools that use the Java client SDK and the primitive interface (such as the [ScalarDB Cluster Schema Loader](./developer-guide-for-scalardb-cluster-with-java-api.mdx#schema-loader-for-cluster) or [ScalarDB Benchmarking Tools](../scalardb-benchmarks/README.mdx)), you need to set the following configurations in your client-side `database.properties` file, especially if authentication and authorization are enabled on the cluster.
+
+##### `auth.enabled`
+
+- **Field:** `scalar.db.cluster.auth.enabled`
+- **Description:** Whether authentication and authorization are enabled.
+- **Default value:** `false`
+
+##### `username`
+
+- **Field:** `scalar.db.username`
+- **Description:** Username to access ScalarDB Cluster.
+- **Default value:** empty
+
+##### `password`
+
+- **Field:** `scalar.db.password`
+- **Description:** Password to access ScalarDB Cluster.
+- **Default value:** empty
+
 ### Configurations for client-side wire encryption
 
 The following configurations are available for client-side wire encryption.
