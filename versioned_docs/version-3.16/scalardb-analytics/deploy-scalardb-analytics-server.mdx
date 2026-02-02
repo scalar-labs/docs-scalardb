@@ -18,14 +18,14 @@ This document explains how to deploy a ScalarDB Analytics server in your local o
 You can get the ScalarDB Analytics server in several ways:
 
 <Tabs groupId="billing-plan" queryString>
-  <TabItem value="pay-as-you-go" label="Pay as you go" default>
-    You can use ScalarDB Analytics in a pay-as-you-go plan. In this case, you will pay the license fee based on your query usage.
+  <TabItem value="pay-as-you-go" label="PAYG" default>
+    You can use ScalarDB Analytics in a pay-as-you-go (PAYG) plan. In this case, you will pay the license fee based on your query usage.
     <Tabs groupId="cloud" queryString>
       <TabItem value="aws" label="AWS Marketplace" default>
-        You can use ScalarDB Analytics in the pay-as-you-go plan in AWS Marketplace.
+        You can use ScalarDB Analytics in a PAYG plan in AWS Marketplace.
         <Tabs groupId="offering" queryString>
           <TabItem value="container" label="Container offer" default>
-            To deploy the ScalarDB Analytics server from AWS Marketplace with a pay-as-you-go plan:
+            To deploy the ScalarDB Analytics server from AWS Marketplace with a PAYG plan:
 
             1. Go to the AWS Marketplace page [ScalarDB Analytics server](https://aws.amazon.com/marketplace/pp/prodview-53ik57autkmci).
             1. Subscribe to the ScalarDB Analytics server.
@@ -46,15 +46,13 @@ After subscribing, you'll have permission to pull the container image of the Sca
       </TabItem>
     </Tabs>
   </TabItem>
-  <TabItem value="fixed-price-byol" label="Fixed price (bring your own license)">
-    You can use ScalarDB Analytics at a fixed price. In this case, you will pay the fixed license fee based on your contract, with an upper limit on the queries you can run.
+  <TabItem value="bring-your-own-license" label="BYOL">
+    You can use ScalarDB Analytics in a bring-your-own-license (BYOL) plan. In this case, you will pay the license fee based on your contract, with an upper limit on the queries you can run.
     <Tabs groupId="cloud" queryString>
-      <TabItem value="any-supported-kubernetes" label="Any supported Kubernetes platform" default>
-        You can use ScalarDB Analytics at a fixed price on any supported Kubernetes platforms. You can see the supported Kubernetes platforms in [Requirements](../requirements.mdx#kubernetes).
-        <Tabs groupId="offering" queryString>
-          <TabItem value="container" label="Container offer" default>
-            <WarningLicenseKeyContact product="ScalarDB Analytics server" />
-            You can deploy the ScalarDB Analytics server by using a container image with a license key that is provided at a fixed price, also known as bring your own license (BYOL). You can pull the container image of the ScalarDB Analytics server from the following container registry.
+      <TabItem value="supported-kubernetes" label="Supported Kubernetes platform" default>
+        You can use ScalarDB Analytics in a BYOL plan on supported Kubernetes platforms. You can see the supported Kubernetes platforms in [Requirements](../requirements.mdx#kubernetes).
+        <WarningLicenseKeyContact product="ScalarDB Analytics server" />
+        You can deploy the ScalarDB Analytics server by using a container image with a license key that is provided in a BYOL plan. You can pull the container image of the ScalarDB Analytics server from the following container registry.
 
 :::note
 
@@ -62,11 +60,12 @@ You will specify this container registry in a later step, so keep note of it.
 
 :::
 
-            ```console
-            ghcr.io/scalar-labs/scalardb-analytics-server-byol
-            ```
-          </TabItem>
-        </Tabs>
+        ```console
+        ghcr.io/scalar-labs/scalardb-analytics-server-byol
+        ```
+      </TabItem>
+      <TabItem value="other-platforms" label="Other platforms">
+        If you want to use other platforms, please [contact us](https://www.scalar-labs.com/contact-us).
       </TabItem>
     </Tabs>
   </TabItem>
@@ -78,8 +77,8 @@ Deploy a cluster on your preferred Kubernetes platform based on the following re
 
 1. Decide which Kubernetes platform to use based on the billing plan and purpose.
 
-   - If you chose **Pay as you go (container offer - AWS Marketplace)** in [Step 1. Select a billing plan for ScalarDB Analytics](#step-1-select-a-billing-plan-for-scalardb-analytics), you need to deploy Amazon Elastic Kubernetes Service (EKS) in the supported regions. The supported regions will be referred to in a later step.
-   - If you chose **Fixed price w/bring your own license (container offer - any supported Kubernetes platform)** in [Step 1. Select a billing plan for ScalarDB Analytics](#step-1-select-a-billing-plan-for-scalardb-analytics), you can use any of the supported Kubernetes platforms.
+   - If you chose **PAYG (container offer - AWS Marketplace)** in [Step 1. Select a billing plan for ScalarDB Analytics](#step-1-select-a-billing-plan-for-scalardb-analytics), you need to deploy Amazon Elastic Kubernetes Service (EKS) in the supported regions. The supported regions will be referred to in a later step.
+   - If you chose **BYOL (container offer - supported Kubernetes platform)** in [Step 1. Select a billing plan for ScalarDB Analytics](#step-1-select-a-billing-plan-for-scalardb-analytics), you can use the supported Kubernetes platforms.
 
      :::note
 
@@ -108,8 +107,8 @@ Deploy a cluster on your preferred Kubernetes platform based on the following re
        For production environments, please deploy the Kubernetes cluster based on the above requirements of the ScalarDB Analytics server and your system's requirements, for example, security, availability, backup/restore, cost, and scalability amongst your other requirements.
        <Tabs groupId="kubernetes" queryString>
          <TabItem value="eks" label="EKS" default>
-           - If you chose **Fixed price w/ bring your own license (container offer - any supported Kubernetes platform)**, you can use Amazon Elastic Kubernetes Service (EKS).
-           - If you chose **Pay as you go (container offer - AWS Marketplace)** in [Step 1. Select a billing plan for ScalarDB Analytics](#step-1-select-a-billing-plan-for-scalardb-analytics), you need to do the following:
+           - If you chose **BYOL (container offer - supported Kubernetes platform)**, you can use Amazon Elastic Kubernetes Service (EKS).
+           - If you chose **PAYG (container offer - AWS Marketplace)** in [Step 1. Select a billing plan for ScalarDB Analytics](#step-1-select-a-billing-plan-for-scalardb-analytics), you need to do the following:
              1. Deploy EKS in supported regions that are described in the AWS documentation [MeterUsage Region support for Amazon ECS and Amazon EKS](https://docs.aws.amazon.com/marketplace/latest/APIReference/metering-regions.html#meterusage-region-support-ecs-eks).
              1. Run the following two commands after you deploy EKS:
                 - `eksctl utils associate-iam-oidc-provider`
@@ -229,14 +228,14 @@ Create your custom values file `scalardb-analytics-server.yaml` based on your en
    Based on the billing plan you chose in [Step 1. Select a billing plan for ScalarDB Analytics](#step-1-select-a-billing-plan-for-scalardb-analytics), set the container image configuration to `scalarDbAnalyticsServer.image.repository`. Select one of the following billing plans to see an example of this configuration.
 
    <Tabs groupId="billing-plan" queryString>
-     <TabItem value="payg-container-offer-aws-marketplace" label="Pay as you go (container offer - AWS Marketplace)" default>
+     <TabItem value="payg-container-offer-aws-marketplace" label="PAYG (container offer - AWS Marketplace)" default>
      ```yaml
      scalarDbAnalyticsServer:
        image:
          repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/scalar/scalardb-analytics-server-aws-payg
      ```
      </TabItem>
-     <TabItem value="fixed-price-byol-container-offer" label="Fixed price w/bring your own license (container offer - any supported Kubernetes platform)">
+     <TabItem value="byol-container-offer" label="BYOL (container offer - supported Kubernetes platform)">
      <WarningLicenseKeyContact product="ScalarDB Analytics server" />
      ```yaml
      scalarDbAnalyticsServer:
@@ -254,7 +253,7 @@ Create your custom values file `scalardb-analytics-server.yaml` based on your en
    Based on the billing plan you chose in [Step 1. Select a billing plan for ScalarDB Analytics](#step-1-select-a-billing-plan-for-scalardb-analytics), set the service account configurations to `scalarDbAnalyticsServer.serviceAccount`. Select one of the following billing plans to see an example of this configuration.
 
    <Tabs groupId="billing-plan" queryString>
-     <TabItem value="payg-container-offer-aws-marketplace" label="Pay as you go (container offer - AWS Marketplace)" default>
+     <TabItem value="payg-container-offer-aws-marketplace" label="PAYG (container offer - AWS Marketplace)" default>
      ```yaml
      scalarDbAnalyticsServer:
        serviceAccount:
@@ -268,7 +267,7 @@ Create your custom values file `scalardb-analytics-server.yaml` based on your en
 
      :::
      </TabItem>
-     <TabItem value="fixed-price-byol-container-offer" label="Fixed price w/bring your own license (container offer - any supported Kubernetes platform)">
+     <TabItem value="byol-container-offer" label="BYOL (container offer - supported Kubernetes platform)">
      You don't need to set a service account configuration.
      </TabItem>
    </Tabs>
