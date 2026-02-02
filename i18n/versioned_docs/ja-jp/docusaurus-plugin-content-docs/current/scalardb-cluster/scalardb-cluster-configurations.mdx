@@ -1101,6 +1101,30 @@ ScalarDB Cluster で使用できる追加の設定は以下の通りです。
 - **説明:** 書き込みバッファリング機能が有効かどうか。非条件書き込み操作 (挿入、アップサート、無条件 put/update/delete) をバッファリングし、バッチで実行することでRPC呼び出し数を減らします。
 - **デフォルト値:** `false`
 
+#### 認証と認可の設定
+
+以下は、プリミティブインターフェースを使用する ScalarDB Cluster クライアントの認証と認可の設定です。
+
+Java client SDK とプリミティブインターフェースを使用するアプリケーションやツール([クラスター用 Schema Loader](./developer-guide-for-scalardb-cluster-with-java-api.mdx#クラスター用-schema-loader) や [ScalarDB ベンチマークツール](../scalardb-benchmarks/README.mdx)など) を実行する場合、特にクラスターで認証と認可が有効になっている場合は、クライアント側の `database.properties` ファイルに次の設定を行う必要があります。
+
+##### `auth.enabled`
+
+- **フィールド:** `scalar.db.cluster.auth.enabled`
+- **説明:** 認証と認可が有効になっているかどうか。
+- **デフォルト値:** `false`
+
+##### `username`
+
+- **フィールド:** `scalar.db.username`
+- **説明:** ScalarDB Cluster にアクセスするためのユーザー名。
+- **デフォルト値:** empty
+
+##### `password`
+
+- **フィールド:** `scalar.db.password`
+- **説明:** ScalarDB Cluster にアクセスするためのパスワード。
+- **デフォルト値:** empty
+
 ### クライアント側ワイヤ暗号化の設定
 
 クライアント側暗号化に利用できる設定は以下の通りです。
