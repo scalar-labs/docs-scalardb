@@ -30,9 +30,62 @@ ScalarDB Analytics をローカル環境にデプロイする前に、以下の�
 
 以下は、このガイドで説明するアーキテクチャ例です。
 
-![アーキテクチャ例](images/scalardb-analytics-local-deployment-architecture.jpg)
+```mermaid
+flowchart TB
+    User(("User"))
 
-このガイドでは、minikube 上で実行される Kubernetes クラスターを前提としています。この構成では、PostgreSQL は ScalarDB トランザクションによって管理されない外部データソースとして扱われ、MySQL は ScalarDB トランザクションによって管理されるデータソース (ScalarDB 管理データソース) として扱われます。ScalarDB Analytics サーバーは Helm Chart を使用して Pod としてデプロイされます。ScalarDB Analytics サーバーはカタログ情報を管理するために専用のバックエンドデータベースを利用します。このガイドでは構成を簡単にするため、カタログ情報を格納するバックエンドデータベースは、前述の PostgreSQL 上に作成します。Spark コマンドを実行するためのクライアントとして機能する個別の Pod も作成されます。さらに、ScalarDB Analytics サーバーを操作するために使用される CLI ツールは、コンテナイメージとして提供され、個別の Pod 上で実行されます。
+    subgraph K8s["Kubernetes cluster"]
+        subgraph ControlPlane["Kubernetes control plane"]
+            APIServer("Kubernetes API server")
+        end
+
+        subgraph PVC["PVC"]
+            JAR[📄 Application's JAR]
+        end
+
+        Client["Client"]
+        AnalyticsServer["Analytics server"]
+        CLITool["CLI tool"]
+
+        subgraph Spark["Spark"]
+          Driver["Driver"]
+          Executor1["Executor"]
+        end
+
+        PostgreSQLBackend[("PostgreSQL<br>(Analytics server backend)")]
+        PostgreSQLNonManaged[("PostgreSQL<br>(Non-ScalarDB managed)")]
+        MySQLManaged[("MySQL<br>(ScalarDB managed)")]
+
+    end
+
+    User --> Client
+    User -->|"Deploy via Helm Chart"| AnalyticsServer
+    User --> CLITool
+    Client -->|"spark-submit, spark-sql"| APIServer
+
+    APIServer -->|"Create"| Driver
+    APIServer -->|"Create"| Executor1
+
+    Driver -->|"gRPC"| AnalyticsServer
+    CLITool -->|"Create catalogs,<br>Register data sources,<br>etc."| AnalyticsServer
+
+    JAR --> Driver
+    Driver <--> Executor1
+
+    Executor1 --> PostgreSQLNonManaged
+    Executor1 --> MySQLManaged
+    AnalyticsServer --> PostgreSQLBackend
+
+    style K8s fill:#F5F5F5
+    style User fill:#FFFFFF
+    style ControlPlane fill:#FFFFFF
+    style PVC fill:#FFFFFF
+    style APIServer fill:#FFFFFF
+    style JAR fill:#FFFFFF
+    style Spark fill:#F5F5FF
+```
+
+このガイドでは、minikube 上で実行される Kubernetes クラスターを前提としています。この構成では、PostgreSQL は ScalarDB トランザクションによって管理されない外部データソースとして扱われ、MySQL は ScalarDB トランザクションによって管理されるデータソース (ScalarDB 管理データソース) として扱われます。これらのデータソースは両方ともユーザーデータを格納します。ScalarDB Analytics サーバーは Helm Chart を使用して Pod としてデプロイされます。ScalarDB Analytics サーバーは、カタログデータを格納するために専用のバックエンドデータベースを使用します。Spark コマンドを実行するためのクライアントとして機能する個別の Pod も作成されます。さらに、ScalarDB Analytics サーバーを操作するために使用される CLI ツールは、コンテナイメージとして提供され、個別の Pod 上で実行されます。
 
 :::note
 
@@ -83,10 +136,34 @@ EOF
 
 ### ScalarDB Analytics サーバーのバックエンドデータベースをデプロイする
 
-ScalarDB Analytics サーバーはカタログ情報を管理するために専用のバックエンドデータベースを使用します。
-このガイドでは構成を簡単にするために ScalarDB トランザクションの管理外の外部データソースである PostgreSQL 上にバックエンドデータベースを作成しています。
+ScalarDB Analytics サーバーは、カタログ情報を管理するために専用のバックエンドデータベースを使用します。このガイドでは、バックエンドデータベースとして専用の PostgreSQL インスタンスを使用します。
 
-ScalarDB Analytics のバックエンドデータベースの構築に関しては、[ScalarDB Analytics カタログの作成](./create-scalardb-analytics-catalog.mdx)をご参照ください。
+Bitnami Helm Chart を使用して、Kubernetes クラスター上に PostgreSQL をデプロイできます。以下のコマンドを実行して、Bitnami Helm Charts リポジトリを追加します。
+
+```shell
+helm repo add bitnami https://charts.bitnami.com/bitnami
+```
+
+以下のコマンドを実行して PostgreSQL をデプロイします。
+
+```shell
+helm install postgresql-scalardb-analytics bitnami/postgresql \
+  --set auth.postgresPassword=postgres \
+  --set primary.persistence.enabled=false
+```
+
+以下のコマンドを実行して PostgreSQL の Pod が動作しているかどうかを確認します。
+
+```shell
+kubectl get pod
+```
+
+以下のような出力が表示され、PostgreSQL の Pod が `Running` 状態になっている必要があります。
+
+```console
+NAME                             READY   STATUS    RESTARTS   AGE
+postgresql-scalardb-analytics-0  1/1     Running   0          10s
+```
 
 ### Scalar Helm Charts リポジトリを追加する
 
@@ -119,14 +196,10 @@ scalarDbAnalyticsServer:
 
     scalar.db.analytics.server.licensing.license_key=<YOUR_LICENSE_KEY>
     scalar.db.analytics.server.licensing.license_check_cert_pem=<YOUR_LICENSE_CERT_PEM>
-
-  service:
-    type: LoadBalancer
-
 EOF
 ```
 
-以下は、角括弧内のコンテンツを変更すべき内容について説明しています。
+角括弧内の内容は以下のように変更してください:
 
 - `<CATALOG_SERVER_BACKEND_DB_URL>`: ScalarDB Analytics サーバーのバックエンドデータベースの JDBC 接続文字列。
 - `<USERNAME_FOR_BACKEND_DB>`: バックエンドデータベースのユーザー名。
@@ -147,6 +220,8 @@ EOF
 ```shell
 helm install scalardb-analytics-server scalar-labs/scalardb-analytics-server -f analytics-server-custom-values.yaml
 ```
+
+ScalarDB Analytics サーバーのデプロイの詳細については、[ScalarDB Analytics サーバーのデプロイ](./deploy-scalardb-analytics-server.mdx)を参照してください。
 
 ## ステップ 3: CLI ツールを使用してカタログとデータソースを設定する
 
@@ -245,7 +320,7 @@ EOF
 
 :::
 
-以下は、ScalarDB によって管理されない PostgreSQL データソースを定義する例です。PostgreSQL をデータソースとして使用する場合、`type` 項目の値として `postgresql` を指定する必要があります。次に、以下のコマンドの角括弧内のコンテンツを、バックエンドデータベース接続の詳細に置き換えてコマンドを実行します:
+以下は、ScalarDB によって管理されない PostgreSQL データソースを定義する例です。PostgreSQL をデータソースとして使用する場合、`type` 項目の値として `postgresql` を指定する必要があります。次に、以下のコマンドの角括弧で囲まれたプレースホルダーの値を PostgreSQL データソースの適切な値に置き換えてコマンドを実行します。
 
 ```shell
 cat <<EOF > data_source_postgres.json
@@ -260,22 +335,19 @@ cat <<EOF > data_source_postgres.json
 EOF
 ```
 
-:::note
-
-簡単にするため、このガイドでは Analytics Server のバックエンドデータベースと PostgreSQL データソースが共有されると想定しています。そのため、各プレースホルダーを以下のように設定します:
-
-- `<POSTGRES_HOST>`: `<CATALOG_SERVER_BACKEND_DB_URL>` の値
-- `<POSTGRES_USER_NAME>`: `<USERNAME_FOR_BACKEND_DB>` の値
-- `<POSTGRES_PASSWORD>`: `<PASSWORD_FOR_BACKEND_DB>` の値
-- `<POSTGRES_DATABASE>`: Analytics Server のバックエンドデータベースによって使用されるデータベース名
-
-Analytics Server のバックエンドデータベースとは別の PostgreSQL データソースを使用している場合は、各プレースホルダーを適切な値に設定してください。
-
-:::
-
 ### CLI ツール用の設定ファイルを作成する
 
-以下のコマンドを実行して、ScalarDB Analytics CLI ツール用の設定ファイル (`client.properties`) を作成します。`<ANALYTICS_SERVER_HOST>` を ScalarDB Analytics サーバーのホスト名または IP アドレスに置き換えてください。
+ScalarDB Analytics CLI ツール用の設定ファイル (`client.properties`) を作成します。
+
+CLI ツールから ScalarDB Analytics サーバーに接続するには、サーバーのホスト名または IP アドレスが必要です。以下のコマンドを実行して、ScalarDB Analytics サーバー用の Service の `CLUSTER-IP` を確認することで IP アドレスを取得できます。
+
+```shell
+$ kubectl get svc scalardb-analytics-server
+NAME                        TYPE        CLUSTER-IP    EXTERNAL-IP   PORT(S)               AGE
+scalardb-analytics-server   ClusterIP   10.97.81.28   <none>        11051/TCP,11052/TCP   40s
+```
+
+次に、以下のコマンドを実行して設定ファイルを作成し、`<ANALYTICS_SERVER_HOST>` を取得した `CLUSTER-IP` の値に置き換えます。
 
 ```shell
 cat <<EOF > client.properties
@@ -391,7 +463,7 @@ EOF
 - `<SCALA_VERSION>`: Spark をビルドするために使用される Scala のバージョン。
 - `<SCALARDB_ANALYTICS_VERSION>`: ScalarDB Analytics のバージョン。
 - `<CATALOG_NAME>`: カタログの名前。
-- `<ANALYTICS_SERVER_HOST>`: ScalarDB Analytics サーバーのホスト名または IP アドレス。
+- `<ANALYTICS_SERVER_HOST>`: ScalarDB Analytics サーバー用の Service の `CLUSTER-IP`。
 
 詳細については、[ScalarDB Analytics のセットアップのための Spark 設定](./run-analytical-queries.mdx#set-up-scalardb-analytics-in-the-spark-configuration)を参照してください。
 
@@ -547,7 +619,7 @@ local:///opt/spark-jars/app.jar
 以下のコマンドを実行して ScalarDB Analytics サーバーを削除します。
 
 ```shell
-helm uninstall scalardb-analytics-server
+helm uninstall scalardb-analytics-server postgresql-scalardb-analytics
 ```
 
 さらに、以下のコマンドを実行してデプロイした Pod を削除できます。
