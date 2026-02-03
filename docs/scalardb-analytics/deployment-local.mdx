@@ -26,7 +26,6 @@ Before deploying ScalarDB Analytics to a local environment, ensure that you have
 
 The following is an example architecture described in this guide.
 
-<div style={{ maxWidth: '700px', margin: '0 auto' }}>
 ```mermaid
 flowchart TB
     User(("User"))
@@ -81,7 +80,6 @@ flowchart TB
     style JAR fill:#FFFFFF
     style Spark fill:#F5F5FF
 ```
-</div>
 
 This guide assumes a Kubernetes cluster running on minikube. In this setup, PostgreSQL is treated as an external data source not managed by ScalarDB transactions, while MySQL is treated as a data source managed by ScalarDB transactions (ScalarDB-managed data source). Both of these data sources store user data. The ScalarDB Analytics server is deployed as a Pod by using a Helm Chart. The ScalarDB Analytics server uses a dedicated backend database to store catalog data. A separate Pod is also created to serve as the client for running Spark commands. Additionally, the CLI tool used to operate the ScalarDB Analytics server is provided as a container image and runs on a separate Pod.
 
