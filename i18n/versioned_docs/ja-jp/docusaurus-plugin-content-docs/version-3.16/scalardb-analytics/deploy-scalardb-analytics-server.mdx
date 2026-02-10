@@ -21,14 +21,14 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 ScalarDB Analytics サーバーは複数の方法で取得できます。
 
 <Tabs groupId="billing-plan" queryString>
-  <TabItem value="pay-as-you-go" label="従量制課金" default>
-    ScalarDB Analytics を従量制課金プランで使用できます。この場合、クエリの使用量に基づいてライセンス料を支払います。
+  <TabItem value="pay-as-you-go" label="PAYG" default>
+    ScalarDB Analytics を PAYG (pay-as-you-go) プランで使用できます。この場合、クエリの使用量に基づいてライセンス料を支払います。
     <Tabs groupId="cloud" queryString>
       <TabItem value="aws" label="AWS Marketplace" default>
-        AWS Marketplace で従量制課金プランで ScalarDB Analytics を使用できます。
+        AWS Marketplace で PAYG プランで ScalarDB Analytics を使用できます。
         <Tabs groupId="offering" queryString>
           <TabItem value="container" label="コンテナオファー" default>
-            AWS Marketplace から従量制課金プランで ScalarDB Analytics サーバーをデプロイするには:
+            AWS Marketplace から PAYG プランで ScalarDB Analytics サーバーをデプロイするには:
 
             1. AWS Marketplace ページ [ScalarDB Analytics サーバー](https://aws.amazon.com/marketplace/pp/prodview-53ik57autkmci) にアクセスします。
             1. ScalarDB Analytics サーバーをサブスクライブします。
@@ -37,7 +37,7 @@ ScalarDB Analytics サーバーは複数の方法で取得できます。
 
 :::tip
 
-サブスクライブ後、以下のコンテナレジストリから ScalarDB Analytics サーバーのコンテナイメージをプルする権限が得られます。後のステップでこのコンテナレジストリを指定してコンテナイメージをプルするので、メモしておいてください。
+サブスクライブ後、以下のコンテナレジストリから ScalarDB Analytics サーバーのコンテナイメージを取得する権限が得られます。後のステップでこのコンテナレジストリを指定してコンテナイメージを取得するので、メモしておいてください。
 
 ```console
 709825985650.dkr.ecr.us-east-1.amazonaws.com/scalar/scalardb-analytics-server-aws-payg
@@ -49,15 +49,13 @@ ScalarDB Analytics サーバーは複数の方法で取得できます。
       </TabItem>
     </Tabs>
   </TabItem>
-  <TabItem value="fixed-price-byil" label="固定価格 (ライセンス持参)">
-    ScalarDB Analytics を固定価格プランで使用できます。この場合、契約に基づいて固定ライセンス料を支払い、実行できるクエリ数に上限があります。
+  <TabItem value="bring-your-own-license" label="BYOL">
+    ScalarDB Analytics を BYOL プランで使用できます。この場合、契約に基づいて固定ライセンス料を支払い、実行できるクエリ数に上限があります。
     <Tabs groupId="cloud" queryString>
-      <TabItem value="any-supported-kubernetes" label="サポートされている任意の Kubernetes プラットフォーム" default>
-        サポートされている任意の Kubernetes プラットフォームで固定価格プランで ScalarDB Analytics を使用できます。サポートされている Kubernetes プラットフォームは[要件](../requirements.mdx#kubernetes)で確認できます。
-        <Tabs groupId="offering" queryString>
-          <TabItem value="container" label="コンテナオファー" default>
-            <WarningLicenseKeyContact product="ScalarDB Analytics サーバー" />
-            ライセンス持参 (BYOL) とも呼ばれる固定価格で提供されるライセンスキーを使用してコンテナイメージで ScalarDB Analytics サーバーをデプロイできます。以下のコンテナレジストリから ScalarDB Analytics サーバーのコンテナイメージをプルできます。
+      <TabItem value="supported-kubernetes" label="サポートされている Kubernetes プラットフォーム" default>
+        BYOL プランの ScalarDB Analytics をサポートされている Kubernetes プラットフォーム上で使用できます。サポートされている Kubernetes プラットフォームは[要件](../requirements.mdx#kubernetes)で確認できます。
+        <WarningLicenseKeyContact product="ScalarDB Analytics サーバー" />
+        BYOL プランで提供されるライセンスキーを使用して ScalarDB Analytics サーバーのコンテナイメージをデプロイできます。以下のコンテナレジストリから ScalarDB Analytics サーバーのコンテナイメージを取得できます。
 
 :::note
 
@@ -65,11 +63,12 @@ ScalarDB Analytics サーバーは複数の方法で取得できます。
 
 :::
 
-            ```console
-            ghcr.io/scalar-labs/scalardb-analytics-server-byol
-            ```
-          </TabItem>
-        </Tabs>
+        ```console
+        ghcr.io/scalar-labs/scalardb-analytics-server-byol
+        ```
+      </TabItem>
+      <TabItem value="other-platforms" label="その他のプラットフォーム">
+        その他のプラットフォームをご希望の場合は、[お問い合わせ](https://www.scalar-labs.com/contact-us)ください。
       </TabItem>
     </Tabs>
   </TabItem>
@@ -81,8 +80,8 @@ ScalarDB Analytics サーバーは複数の方法で取得できます。
 
 1. 課金プランと目的に基づいて使用する Kubernetes プラットフォームを決定してください。
 
-   - [ステップ 1. ScalarDB Analytics の課金プランを決定する](#ステップ-1-scalardb-analytics-の課金プランを決定する)で**従量制課金 (コンテナオファー - AWS Marketplace)** を選択した場合は、サポートされているリージョンで Amazon Elastic Kubernetes Service (EKS) をデプロイする必要があります。サポートされているリージョンは後のステップで参照されます。 
-   - [ステップ 1. ScalarDB Analytics の課金プランを決定する](#ステップ-1-scalardb-analytics-の課金プランを決定する)で**固定価格 (ライセンス持参) (コンテナオファー - サポートされている任意の Kubernetes プラットフォーム)** を選択した場合は、サポートされている任意の Kubernetes プラットフォームを使用できます。
+   - [ステップ 1. ScalarDB Analytics の課金プランを決定する](#ステップ-1-scalardb-analytics-の課金プランを決定する)で **PAYG (コンテナオファー - AWS Marketplace)** を選択した場合は、サポートされているリージョンで Amazon Elastic Kubernetes Service (EKS) をデプロイする必要があります。サポートされているリージョンは後のステップで参照されます。
+   - [ステップ 1. ScalarDB Analytics の課金プランを決定する](#ステップ-1-scalardb-analytics-の課金プランを決定する)で **BYOL (コンテナオファー - サポートされている Kubernetes プラットフォーム)** を選択した場合は、サポートされている Kubernetes プラットフォームを使用できます。
 
      :::note
 
@@ -93,8 +92,8 @@ ScalarDB Analytics サーバーは複数の方法で取得できます。
 1. ScalarDB Analytics サーバー用の Kubernetes クラスターの一般的な推奨事項と要件を確認してください。
 
    - 推奨事項
-     - 少なくとも 2 つの CPU と 4 GB のメモリを持つワーカーノードを使用することを推奨します。
-       - 現在、ScalarDB Analytics サーバーにはクラスタリング機能がありません。そのため、ワーカーノードは 1 つで十分です。
+     - 少なくとも2つの CPU と 4 GB のメモリを持つワーカーノードを使用することを推奨します。
+       - 現在、ScalarDB Analytics サーバーにはクラスタリング機能がありません。そのため、ワーカーノードは1つで十分です。
        - Kubernetes クラスター自体を高可用性にしたい場合は、複数のワーカーノードでデプロイできます。
    - 要件
      - Spark アプリケーションが Kubernetes クラスターにデプロイされた ScalarDB Analytics サーバーにネットワーク的に接続できるようにする必要があります。ScalarDB Analytics サーバーが使用するポートについては、[要件](../requirements.mdx)を参照してください。
@@ -111,8 +110,8 @@ ScalarDB Analytics サーバーは複数の方法で取得できます。
        本番環境では、上記の ScalarDB Analytics サーバーの要件とシステムの要件 (セキュリティ、可用性、バックアップ/復旧、コスト、スケーラビリティなど) に基づいて Kubernetes クラスターをデプロイしてください。
        <Tabs groupId="kubernetes" queryString>
          <TabItem value="eks" label="EKS" default>
-           - **固定価格 (ライセンス持参) (コンテナオファー - サポートされている任意の Kubernetes プラットフォーム)** を選択した場合は、Amazon Elastic Kubernetes Service (EKS) を使用できます。
-           - [ステップ 1. ScalarDB Analytics の課金プランを決定する](#ステップ-1-scalardb-analytics-の課金プランを決定する)で**従量制課金 (コンテナオファー - AWS Marketplace)** を選択した場合は、以下を行う必要があります:
+           - **BYOL (コンテナオファー - サポートされている Kubernetes プラットフォーム)** を選択した場合は、Amazon Elastic Kubernetes Service (EKS) を使用できます。
+           - [ステップ 1. ScalarDB Analytics の課金プランを決定する](#ステップ-1-scalardb-analytics-の課金プランを決定する)で **PAYG (コンテナオファー - AWS Marketplace)** を選択した場合は、以下を行う必要があります:
              1. AWS ドキュメント [MeterUsage Region support for Amazon ECS and Amazon EKS](https://docs.aws.amazon.com/ja_jp/marketplace/latest/APIReference/metering-regions.html#meterusage-region-support-ecs-eks) に記載されているサポートされているリージョンで EKS をデプロイします。
              1. EKS をデプロイした後、以下の2つのコマンドを実行します:
                 - `eksctl utils associate-iam-oidc-provider`
@@ -232,14 +231,14 @@ ScalarDB Analytics サーバーは複数の方法で取得できます。
    [ステップ 1. ScalarDB Analytics の課金プランを決定する](#ステップ-1-scalardb-analytics-の課金プランを決定する)で選択した課金プランに基づいて、`scalarDbAnalyticsServer.image.repository` にコンテナイメージ設定を設定してください。以下の課金プランのいずれかを選択して、この設定の例を参照してください。
 
    <Tabs groupId="billing-plan" queryString>
-     <TabItem value="payg-container-offer-aws-marketplace" label="従量制課金 (コンテナオファー - AWS Marketplace)" default>
+     <TabItem value="payg-container-offer-aws-marketplace" label="PAYG (コンテナオファー - AWS Marketplace)" default>
      ```yaml
      scalarDbAnalyticsServer:
        image:
          repository: 709825985650.dkr.ecr.us-east-1.amazonaws.com/scalar/scalardb-analytics-server-aws-payg
      ```
      </TabItem>
-     <TabItem value="fixed-price-byol-container-offer" label="固定価格 (ライセンス持参) (コンテナオファー - サポートされている任意の Kubernetes プラットフォーム)">
+     <TabItem value="byol-container-offer" label="BYOL (コンテナオファー - サポートされている Kubernetes プラットフォーム)">
      <WarningLicenseKeyContact product="ScalarDB Analytics サーバー" />
      ```yaml
      scalarDbAnalyticsServer:
@@ -257,7 +256,7 @@ ScalarDB Analytics サーバーは複数の方法で取得できます。
    [ステップ 1. ScalarDB Analytics の課金プランを決定する](#ステップ-1-scalardb-analytics-の課金プランを決定する)で選択した課金プランに基づいて、`scalarDbAnalyticsServer.serviceAccount` にサービスアカウント設定を設定してください。以下の課金プランのいずれかを選択して、この設定の例を参照してください。
 
    <Tabs groupId="billing-plan" queryString>
-     <TabItem value="payg-container-offer-aws-marketplace" label="従量制課金 (コンテナオファー - AWS Marketplace)" default>
+     <TabItem value="payg-container-offer-aws-marketplace" label="PAYG (コンテナオファー - AWS Marketplace)" default>
      ```yaml
      scalarDbAnalyticsServer:
        serviceAccount:
@@ -271,7 +270,7 @@ ScalarDB Analytics サーバーは複数の方法で取得できます。
 
      :::
      </TabItem>
-     <TabItem value="fixed-price-byol-container-offer" label="固定価格 (ライセンス持参) (コンテナオファー - サポートされている任意の Kubernetes プラットフォーム)">
+     <TabItem value="byol-container-offer" label="BYOL (コンテナオファー - サポートされている Kubernetes プラットフォーム)">
      サービスアカウント設定を設定する必要はありません。
      </TabItem>
    </Tabs>
