@@ -270,6 +270,12 @@ For details on how to configure each database, see [Configurations for the Under
 
 ScalarDB requires specific permissions to perform its operations on the underlying databases.
 
+:::note
+
+ScalarDB assumes that the same underlying database user account is used for all administrative and CRUD operations.
+
+:::
+
 #### Oracle Database
 
 If you're using Oracle Database, the following privileges must be granted. 
@@ -324,16 +330,14 @@ If you're using Oracle Database, the following privileges must be granted.
 
 #### IBM Db2
 
-If you're using Db2, the following authorities must be granted. 
+If you're using Db2, the following authority must be granted. 
 
 <Tabs groupId="db2-versions" queryString>
   <TabItem value="db2-12.1" label="Db2 12.1" default>
     - `DBADM`
-    - `DATAACCESS`
   </TabItem>
   <TabItem value="db2-11.5" label="Db2 11.5">
     - `DBADM`
-    - `DATAACCESS`
   </TabItem>
 </Tabs>
 
@@ -366,23 +370,23 @@ If you're using MySQL, the following privileges must be granted.
 
 #### PostgreSQL
 
-If you're using PostgreSQL, the following database role must be granted. 
+If you're using PostgreSQL, the following database privilege must be granted. 
 
 <Tabs groupId="postgresql-versions" queryString>
   <TabItem value="postgresql-17" label="PostgreSQL 17" default>
-    - `SUPERUSER`
+    - `CREATE`
   </TabItem>
   <TabItem value="postgresql-16" label="PostgreSQL 16">
-    - `SUPERUSER`
+    - `CREATE`
   </TabItem>
   <TabItem value="postgresql-15" label="PostgreSQL 15">
-    - `SUPERUSER`
+    - `CREATE`
   </TabItem>
   <TabItem value="postgresql-14" label="PostgreSQL 14">
-    - `SUPERUSER`
+    - `CREATE`
   </TabItem>
   <TabItem value="postgresql-13" label="PostgreSQL 13">
-    - `SUPERUSER`
+    - `CREATE`
   </TabItem>
 </Tabs>
 
@@ -415,31 +419,28 @@ If you're using MariaDB, the following privileges must be granted.
 
 #### SQL Server
 
-If you're using SQL Server, the following database roles must be granted. 
+If you're using SQL Server, the following database permissions must be granted. 
 
 <Tabs groupId="sqlserver-versions" queryString>
   <TabItem value="sqlserver-2022" label="SQL Server 2022" default>
-    - `db_ddladmin`
-    - `db_datareader`
-    - `db_datawriter`
+    - `CREATE SCHEMA`
+    - `CREATE TABLE`
   </TabItem>
   <TabItem value="sqlserver-2019" label="SQL Server 2019">
-    - `db_ddladmin`
-    - `db_datareader`
-    - `db_datawriter`
+    - `CREATE SCHEMA`
+    - `CREATE TABLE`
   </TabItem>
   <TabItem value="sqlserver-2017" label="SQL Server 2017">
-    - `db_ddladmin`
-    - `db_datareader`
-    - `db_datawriter`
+    - `CREATE SCHEMA`
+    - `CREATE TABLE`
   </TabItem>
 </Tabs>
 
 #### YugabyteDB
 
-If you're using YugabyteDB, the following database role must be granted. 
+If you're using YugabyteDB, the following database privilege must be granted. 
 
-- `SUPERUSER`
+- `CREATE`
 
 #### Amazon DynamoDB
 
@@ -470,7 +471,21 @@ If you're using Amazon DynamoDB, the following actions must be granted.
 If you're using Apache Cassandra, the following privileges must be granted. 
 
 <Tabs groupId="cassandra-versions" queryString>
-  <TabItem value="cassandra-3.11" label="Cassandra 3.11" default>
+  <TabItem value="cassandra-5.0" label="Cassandra 5.0" default>
+    - `CREATE`
+    - `DROP`
+    - `ALTER`
+    - `SELECT`
+    - `MODIFY`
+  </TabItem>
+  <TabItem value="cassandra-4.1" label="Cassandra 4.1">
+    - `CREATE`
+    - `DROP`
+    - `ALTER`
+    - `SELECT`
+    - `MODIFY`
+  </TabItem>
+  <TabItem value="cassandra-3.11" label="Cassandra 3.11">
     - `CREATE`
     - `DROP`
     - `ALTER`
