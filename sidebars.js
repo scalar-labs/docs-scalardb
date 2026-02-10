@@ -632,8 +632,8 @@ const sidebars = {
         },
         {
           type: 'doc',
-          id: 'scalardb-cluster/deploy-scalardb-cluster-google-marketplace',
-          label: 'Deploy ScalarDB Cluster on Google Marketplace',
+          id: 'scalardb-cluster/deploy-scalardb-cluster-google-cloud-marketplace',
+          label: 'Deploy ScalarDB Cluster on Google Cloud Marketplace',
         },
         {
           type: 'doc',
