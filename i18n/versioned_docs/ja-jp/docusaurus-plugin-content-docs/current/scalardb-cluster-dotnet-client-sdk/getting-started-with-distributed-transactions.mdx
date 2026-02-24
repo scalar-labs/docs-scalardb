@@ -85,7 +85,7 @@ var transaction = await manager.BeginReadOnlyAsync();
 
 :::note
 
-読み取り専用トランザクションは読み取り操作専用に最適化されています。読み取り専用トランザクション内で書き込み操作 (`InsertAsync`、`UpsertAsync`、`UpdateAsync`、`DeleteAsync`、または `MutateAsync`) を実行しようとするとエラーになります。
+読み取り専用トランザクションは読み取り操作専用に最適化されています。読み取り専用トランザクション内で書き込み操作 (`InsertAsync`、`UpsertAsync`、`UpdateAsync`、`DeleteAsync`、`MutateAsync`、または書き込み操作を含む `BatchAsync`) を実行しようとするとエラーになります。
 
 :::
 
@@ -522,8 +522,74 @@ var mutations = new IMutation[]
 await transaction.MutateAsync(mutations);
 ```
 
-:::note
+### `BatchAsync` メソッドの例
 
-`InsertAsync`、`UpsertAsync`、`UpdateAsync`、`DeleteAsync`、または `MutateAsync` メソッドを使用してデータを変更するには、まず `GetAsync` または `ScanAsync` メソッドを使用してデータを取得する必要があります。
+`BatchAsync` メソッドを使用すると、読み取り操作と書き込み操作の両方を含む複数の操作を1回のリクエストで実行できます。これにより、ネットワークラウンドトリップが削減され、パフォーマンスが向上します。このメソッドは次のように使用できます。
 
-:::
+```c#
+using ScalarDB.Client.Core;
+
+// ...
+
+var operations = new IOperation[]
+{
+    new GetBuilder()
+        .SetNamespaceName("ns")
+        .SetTableName("statements")
+        .AddPartitionKey("order_id", "1")
+        .AddClusteringKey("item_id", 2)
+        .Build(),
+    new ScanBuilder()
+        .SetNamespaceName("ns")
+        .SetTableName("statements")
+        .AddPartitionKey("order_id", "2")
+        .Build(),
+    new InsertBuilder()
+        .SetNamespaceName("ns")
+        .SetTableName("statements")
+        .AddPartitionKey("order_id", "3")
+        .AddClusteringKey("item_id", 1)
+        .AddColumn("count", 5)
+        .Build(),
+    new DeleteBuilder()
+        .SetNamespaceName("ns")
+        .SetTableName("statements")
+        .AddPartitionKey("order_id", "4")
+        .AddClusteringKey("item_id", 1)
+        .Build()
+};
+
+var results = await transaction.BatchAsync(operations);
+```
+
+結果は入力操作と同じ順序で返されます。各結果は、型チェックプロパティを使用して次のように確認できます。
+
+```c#
+for (var i = 0; i < results.Count; i++)
+{
+    var result = results[i];
+
+    if (result.IsGetResult)
+    {
+        // レコードが見つからなかった場合、GetResult は null になります。
+        if (result.GetResult != null)
+        {
+            var count = result.GetResult.GetValue<int>("count");
+        }
+    }
+    else if (result.IsScanResult)
+    {
+        foreach (var record in result.ScanResults)
+        {
+            var itemId = record.GetValue<int>("item_id");
+        }
+    }
+    else if (result.IsInsertResult || result.IsUpsertResult
+             || result.IsUpdateResult || result.IsDeleteResult)
+    {
+        // ミューテーション操作はデータを返しません。
+    }
+}
+```
+
+`BatchAsync` でサポートされている操作タイプは、`Get`、`Scan`、`Insert`、`Upsert`、`Update`、`Delete` です。
