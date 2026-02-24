@@ -81,7 +81,7 @@ var transaction = await manager.BeginReadOnlyAsync();
 
 :::note
 
-Read-only transactions are optimized for read operations only. Attempting to perform write operations (`InsertAsync`, `UpsertAsync`, `UpdateAsync`, `DeleteAsync`, or `MutateAsync`) in a read-only transaction will result in an error.
+Read-only transactions are optimized for read operations only. Attempting to perform write operations (`InsertAsync`, `UpsertAsync`, `UpdateAsync`, `DeleteAsync`, `MutateAsync`, or `BatchAsync` with write operations) in a read-only transaction will result in an error.
 
 :::
 
@@ -521,8 +521,74 @@ var mutations = new IMutation[]
 await transaction.MutateAsync(mutations);
 ```
 
-:::note
+### `BatchAsync` method example
 
-To modify data by using the `InsertAsync`, `UpsertAsync`, `UpdateAsync`, `DeleteAsync`, or `MutateAsync` method, the data must be retrieved first by using the `GetAsync` or `ScanAsync` method.
+The `BatchAsync` method allows you to execute multiple operations, including both read and write operations, in a single request. This can improve performance by reducing network round trips. You can use this method as follows:
 
-:::
+```c#
+using ScalarDB.Client.Core;
+
+// ...
+
+var operations = new IOperation[]
+{
+    new GetBuilder()
+        .SetNamespaceName("ns")
+        .SetTableName("statements")
+        .AddPartitionKey("order_id", "1")
+        .AddClusteringKey("item_id", 2)
+        .Build(),
+    new ScanBuilder()
+        .SetNamespaceName("ns")
+        .SetTableName("statements")
+        .AddPartitionKey("order_id", "2")
+        .Build(),
+    new InsertBuilder()
+        .SetNamespaceName("ns")
+        .SetTableName("statements")
+        .AddPartitionKey("order_id", "3")
+        .AddClusteringKey("item_id", 1)
+        .AddColumn("count", 5)
+        .Build(),
+    new DeleteBuilder()
+        .SetNamespaceName("ns")
+        .SetTableName("statements")
+        .AddPartitionKey("order_id", "4")
+        .AddClusteringKey("item_id", 1)
+        .Build()
+};
+
+var results = await transaction.BatchAsync(operations);
+```
+
+The results are returned in the same order as the input operations. You can inspect each result by using the type-checking properties as follows:
+
+```c#
+for (var i = 0; i < results.Count; i++)
+{
+    var result = results[i];
+
+    if (result.IsGetResult)
+    {
+        // GetResult is null if the record was not found.
+        if (result.GetResult != null)
+        {
+            var count = result.GetResult.GetValue<int>("count");
+        }
+    }
+    else if (result.IsScanResult)
+    {
+        foreach (var record in result.ScanResults)
+        {
+            var itemId = record.GetValue<int>("item_id");
+        }
+    }
+    else if (result.IsInsertResult || result.IsUpsertResult
+             || result.IsUpdateResult || result.IsDeleteResult)
+    {
+        // Mutation operations don't return data.
+    }
+}
+```
+
+The supported operation types for `BatchAsync` are `Get`, `Scan`, `Insert`, `Upsert`, `Update`, and `Delete`.
