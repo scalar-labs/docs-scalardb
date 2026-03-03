@@ -68,8 +68,8 @@ public class Statement
     [Column("item_id", Order = 2)]
     public int ItemId { get; set; }
 
-    [Column("count", Order = 3)]
-    public int Count { get; set; }
+    [Column("quantity", Order = 3)]
+    public int Quantity { get; set; }
 }
 
 [Table("order_service.items")]
@@ -145,9 +145,9 @@ After receiving `MyDbContext` in your controller, you can query its properties b
 ```c#
 from stat in _myDbContext.Statements
 join item in _myDbContext.Items on stat.ItemId equals item.Id
-where stat.Count > 2 && item.Name.Contains("apple")
-orderby stat.Count descending, stat.ItemId
-select new { item.Name, stat.Count };
+where stat.Quantity > 2 && item.Name.Contains("apple")
+orderby stat.Quantity descending, stat.ItemId
+select new { item.Name, stat.Quantity };
 ```
 
 ### Use method syntax
@@ -174,17 +174,117 @@ from i in items.DefaultIfEmpty()
 select new { ItemName = i != null ? i.Name : "" }
 ```
 
-The following methods are supported:
+### Use the `GroupBy` method to group and aggregate data
+
+```c#
+// Group by single key with count
+_myDbContext.Statements
+            .GroupBy(stat => stat.ItemId)
+            .Select(g => new { ItemId = g.Key, Count = g.Count() });
+```
+
+```c#
+// Group by composite key
+_myDbContext.Statements
+            .GroupBy(stat => new { stat.ItemId, stat.OrderId })
+            .Select(g => new
+            {
+                ItemId = g.Key.ItemId,
+                OrderId = g.Key.OrderId,
+                Count = g.Count()
+            });
+```
+
+```c#
+// With WHERE before GROUP BY
+_myDbContext.Statements
+            .Where(stat => stat.Quantity > 0)
+            .GroupBy(stat => stat.ItemId)
+            .Select(g => new { ItemId = g.Key, Total = g.Sum(x => x.Quantity) });
+```
+
+```c#
+// With HAVING clause (Where after GroupBy filters groups)
+_myDbContext.Statements
+            .GroupBy(stat => stat.ItemId)
+            .Where(g => g.Count() > 5)
+            .Select(g => new { ItemId = g.Key, Count = g.Count() });
+```
+
+```c#
+// With multiple aggregate functions
+_myDbContext.Statements
+            .GroupBy(stat => stat.ItemId)
+            .Select(g => new
+            {
+                ItemId = g.Key,
+                Count = g.Count(),
+                TotalQuantity = g.Sum(x => x.Quantity),
+                AverageQuantity = g.Average(x => x.Quantity),
+                MinQuantity = g.Min(x => x.Quantity),
+                MaxQuantity = g.Max(x => x.Quantity)
+            });
+```
+
+```c#
+// Aggregate all data by using a constant key to retrieve multiple aggregates in a single query
+_myDbContext.Statements
+            .GroupBy(_ => 1)
+            .Select(g => new
+            {
+                Count = g.Count(),
+                TotalQuantity = g.Sum(x => x.Quantity),
+                AverageQuantity = g.Average(x => x.Quantity),
+                MinQuantity = g.Min(x => x.Quantity),
+                MaxQuantity = g.Max(x => x.Quantity)
+            });
+```
+
+### Use standalone aggregate methods without `GroupBy`
+
+```c#
+// Count all records
+_myDbContext.Statements.Count();
+```
+
+```c#
+// Count with a condition
+_myDbContext.Statements.Count(stat => stat.Quantity > 0);
+```
+
+```c#
+// Other standalone aggregate functions
+_myDbContext.Statements.Sum(stat => stat.Quantity);
+_myDbContext.Statements.Average(stat => stat.Quantity);
+_myDbContext.Statements.Min(stat => stat.Quantity);
+_myDbContext.Statements.Max(stat => stat.Quantity);
+```
+
+The following methods are translated into SQL and executed remotely on the cluster. For chainable methods, any unsupported methods that follow will fall back to being executed locally in memory by using LINQ to Objects. Terminal methods like `First`/`FirstOrDefault` and standalone aggregate methods return a result directly.
 
 - `Select`
 - `Where`
 - `Join`
 - `GroupJoin`
-- `First`/`FirstOrDefault`
+- `GroupBy`
 - `Skip`
 - `Take`
 - `OrderBy`/`OrderByDescending`
 - `ThenBy`/`ThenByDescending`
+- `First`/`FirstOrDefault`
+- `Count`/`LongCount`
+- `Sum`
+- `Average`
+- `Min`
+- `Max`
+
+The following aggregate functions are supported inside `Select` after `GroupBy`:
+
+- `Count`/`LongCount`
+- `Sum`
+- `Average`
+- `Min`
+- `Max`
 
 The following `String` methods are supported inside the predicates of `Where` and `First`/`FirstOrDefault` methods:
 
@@ -232,7 +332,7 @@ If `Skip` is specified before `Take` or `First`/`FirstOrDefault`, the number tha
       stat => stat.ItemId,
       item => item.Id,
       (stat, item) => new { ItemName = convertToSomething(item.Name),
-                            ItemCount = stat.Count.ToString() })
+                            ItemQuantity = stat.Quantity.ToString() })
 ```
 
 - Method calls are not supported inside the key-selecting lambdas of `Join` and `GroupJoin`.
@@ -241,8 +341,8 @@ If `Skip` is specified before `Take` or `First`/`FirstOrDefault`, the number tha
 
 ```c#
 var firstQuery = from stat in _myDbContext.Statements
-                 where stat.Count > 2
-                 select new { stat.Count };
+                 where stat.Quantity > 2
+                 select new { stat.Quantity };
 
 var secondQuery = from item in _myDbContext.Items
                   where item.Price > 6
@@ -250,7 +350,7 @@ var secondQuery = from item in _myDbContext.Items
 
 var finalQuery = from first in firstQuery
                  from second in secondQuery
-                 select new { first.Count, second.Name };
+                 select new { first.Quantity, second.Name };
 
 // 1. firstQuery will be executed against the cluster.
 // 2. secondQuery will be executed against the cluster for each object (row) from 1.
@@ -260,6 +360,9 @@ var result = finalQuery.ToArray();
 
 - Method calls are not supported inside `OrderBy`/`OrderByDescending` or `ThenBy`/`ThenByDescending`.
 - Only overloads of `Contains`, `StartsWith`, and `EndsWith` methods that have a single string argument are supported inside `Where` and `First`/`FirstOrDefault`.
+- The following methods are not translated to SQL after `GroupBy` and will fall back to being executed locally in memory by using LINQ to Objects: `OrderBy`/`OrderByDescending`, `ThenBy`/`ThenByDescending`, `Skip`, `Take`, `First`/`FirstOrDefault`, `Join`, and `GroupJoin`.
+- Nested `GroupBy` (calling `GroupBy` after another `GroupBy`) is not translated to SQL. The second `GroupBy` will fall back to being executed locally in memory by using LINQ to Objects.
+- `Count` with a predicate (for example, `g.Count(x => x.Quantity > 5)`) is not supported inside `Select` or `Where` (HAVING) after `GroupBy`. To filter rows before grouping, use `Where` before `GroupBy` instead.
 
 ## Modify data in a cluster by using `ScalarDbContext`
 
@@ -272,7 +375,7 @@ var statement = new Statement
                 {
                     OrderId = "2",
                     ItemId = 4,
-                    Count = 8
+                    Quantity = 8
                 };
 await _myDbContext.Statements.AddAsync(statement);
 ```
@@ -284,7 +387,7 @@ var statement = _myDbContext.Statements.First(stat => stat.Id == 1);
 
 // ...
 
-statement.Count = 10;        
+statement.Quantity = 10;
 await _myDbContext.Statements.UpdateAsync(statement);
 ```
 
