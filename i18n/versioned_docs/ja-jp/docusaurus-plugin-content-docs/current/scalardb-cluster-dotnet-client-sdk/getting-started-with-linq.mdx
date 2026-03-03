@@ -72,8 +72,8 @@ public class Statement
     [Column("item_id", Order = 2)]
     public int ItemId { get; set; }
 
-    [Column("count", Order = 3)]
-    public int Count { get; set; }
+    [Column("quantity", Order = 3)]
+    public int Quantity { get; set; }
 }
 
 [Table("order_service.items")]
@@ -149,9 +149,9 @@ public class OrderController: ControllerBase
 ```c#
 from stat in _myDbContext.Statements
 join item in _myDbContext.Items on stat.ItemId equals item.Id
-where stat.Count > 2 && item.Name.Contains("apple")
-orderby stat.Count descending, stat.ItemId
-select new { item.Name, stat.Count };
+where stat.Quantity > 2 && item.Name.Contains("apple")
+orderby stat.Quantity descending, stat.ItemId
+select new { item.Name, stat.Quantity };
 ```
 
 ### メソッド構文を使用する
@@ -178,17 +178,117 @@ from i in items.DefaultIfEmpty()
 select new { ItemName = i != null ? i.Name : "" }
 ```
 
-以下のメソッドがサポートされています:
+### `GroupBy` メソッドを使用してデータをグループ化および集計する
+
+```c#
+// 単一キーによるグループ化とカウント
+_myDbContext.Statements
+            .GroupBy(stat => stat.ItemId)
+            .Select(g => new { ItemId = g.Key, Count = g.Count() });
+```
+
+```c#
+// 複合キーによるグループ化
+_myDbContext.Statements
+            .GroupBy(stat => new { stat.ItemId, stat.OrderId })
+            .Select(g => new
+            {
+                ItemId = g.Key.ItemId,
+                OrderId = g.Key.OrderId,
+                Count = g.Count()
+            });
+```
+
+```c#
+// GROUP BY の前に WHERE を使用
+_myDbContext.Statements
+            .Where(stat => stat.Quantity > 0)
+            .GroupBy(stat => stat.ItemId)
+            .Select(g => new { ItemId = g.Key, Total = g.Sum(x => x.Quantity) });
+```
+
+```c#
+// HAVING 句を使用 (GroupBy の後の Where はグループをフィルタリングする)
+_myDbContext.Statements
+            .GroupBy(stat => stat.ItemId)
+            .Where(g => g.Count() > 5)
+            .Select(g => new { ItemId = g.Key, Count = g.Count() });
+```
+
+```c#
+// 複数の集計関数を使用
+_myDbContext.Statements
+            .GroupBy(stat => stat.ItemId)
+            .Select(g => new
+            {
+                ItemId = g.Key,
+                Count = g.Count(),
+                TotalQuantity = g.Sum(x => x.Quantity),
+                AverageQuantity = g.Average(x => x.Quantity),
+                MinQuantity = g.Min(x => x.Quantity),
+                MaxQuantity = g.Max(x => x.Quantity)
+            });
+```
+
+```c#
+// 定数キーを使用して、複数の集計結果を1つのクエリで取得
+_myDbContext.Statements
+            .GroupBy(_ => 1)
+            .Select(g => new
+            {
+                Count = g.Count(),
+                TotalQuantity = g.Sum(x => x.Quantity),
+                AverageQuantity = g.Average(x => x.Quantity),
+                MinQuantity = g.Min(x => x.Quantity),
+                MaxQuantity = g.Max(x => x.Quantity)
+            });
+```
+
+### `GroupBy` を使用せずにスタンドアロンの集計メソッドを使用する
+
+```c#
+// すべてのレコードをカウント
+_myDbContext.Statements.Count();
+```
+
+```c#
+// 条件付きでカウント
+_myDbContext.Statements.Count(stat => stat.Quantity > 0);
+```
+
+```c#
+// その他のスタンドアロン集計関数
+_myDbContext.Statements.Sum(stat => stat.Quantity);
+_myDbContext.Statements.Average(stat => stat.Quantity);
+_myDbContext.Statements.Min(stat => stat.Quantity);
+_myDbContext.Statements.Max(stat => stat.Quantity);
+```
+
+以下のメソッドは SQL に変換され、クラスター上でリモート実行されます。チェーン可能なメソッドの場合、サポートされていないメソッドがこれらの後に続くと、LINQ to Objects を使用してローカルのメモリ内で実行されます。`First`/`FirstOrDefault` やスタンドアロン集計メソッドなどのターミナルメソッドは、結果を直接返します。
 
 - `Select`
 - `Where`
 - `Join`
 - `GroupJoin`
-- `First`/`FirstOrDefault`
+- `GroupBy`
 - `Skip`
 - `Take`
 - `OrderBy`/`OrderByDescending`
 - `ThenBy`/`ThenByDescending`
+- `First`/`FirstOrDefault`
+- `Count`/`LongCount`
+- `Sum`
+- `Average`
+- `Min`
+- `Max`
+
+`GroupBy` の後の `Select` 内では、以下の集計関数がサポートされています:
+
+- `Count`/`LongCount`
+- `Sum`
+- `Average`
+- `Min`
+- `Max`
 
 次の `String` メソッドは、`Where` メソッドと `First`/`FirstOrDefault` メソッドの述語内でサポートされています。
 
@@ -236,7 +336,7 @@ _myDbContext.Statements
       stat => stat.ItemId,
       item => item.Id,
       (stat, item) => new { ItemName = convertToSomething(item.Name),
-                            ItemCount = stat.Count.ToString() })
+                            ItemQuantity = stat.Quantity.ToString() })
 ```
 
 - `Join` および `GroupJoin` のキー選択ラムダ内では、メソッド呼び出しはサポートされていません。
@@ -245,8 +345,8 @@ _myDbContext.Statements
 
 ```c#
 var firstQuery = from stat in _myDbContext.Statements
-                 where stat.Count > 2
-                 select new { stat.Count };
+                 where stat.Quantity > 2
+                 select new { stat.Quantity };
 
 var secondQuery = from item in _myDbContext.Items
                   where item.Price > 6
@@ -254,7 +354,7 @@ var secondQuery = from item in _myDbContext.Items
 
 var finalQuery = from first in firstQuery
                  from second in secondQuery
-                 select new { first.Count, second.Name };
+                 select new { first.Quantity, second.Name };
 
 // 1. firstQuery will be executed against the cluster.
 // 2. secondQuery will be executed against the cluster for each object (row) from 1.
@@ -264,6 +364,9 @@ var result = finalQuery.ToArray();
 
 - メソッド呼び出しは、`OrderBy`/`OrderByDescending` または `ThenBy`/`ThenByDescending` 内ではサポートされていません。
 - `Where` および `First`/`FirstOrDefault` 内では、単一の文字列引数を持つ `Contains`、`StartsWith`、および `EndsWith` メソッドのオーバーロードのみがサポートされています。
+- `GroupBy` の後では、以下のメソッドは SQL に変換されず、LINQ to Objects を使用してメモリ内でローカルに実行されます: `OrderBy`/`OrderByDescending`、`ThenBy`/`ThenByDescending`、`Skip`、`Take`、`First`/`FirstOrDefault`、`Join`、`GroupJoin`。
+- ネストされた `GroupBy` (別の `GroupBy` の後に `GroupBy` を呼び出すこと) は SQL に変換されません。2 つ目の `GroupBy` は、LINQ to Objects を使用してメモリ内でローカルに実行されます。
+- 述語付きの `Count` (例: `g.Count(x => x.Quantity > 5)`) は、`GroupBy` の後の `Select` や `Where` (HAVING) 内ではサポートされていません。グループ化の前に行をフィルタリングするには、代わりに `GroupBy` の前に `Where` を使用してください。
 
 ## `ScalarDbContext` を使用してクラスター内のデータを変更する
 
@@ -276,7 +379,7 @@ var statement = new Statement
                 {
                     OrderId = "2",
                     ItemId = 4,
-                    Count = 8
+                    Quantity = 8
                 };
 await _myDbContext.Statements.AddAsync(statement);
 ```
@@ -288,7 +391,7 @@ var statement = _myDbContext.Statements.First(stat => stat.Id == 1);
 
 // ...
 
-statement.Count = 10;
+statement.Quantity = 10;
 await _myDbContext.Statements.UpdateAsync(statement);
 ```
 
