@@ -8,28 +8,10 @@ import styles from './styles.module.css';
 const FeatureList = [
   {
     // Svg: require('@site/static/img/image.svg').default,
-    title: 'Universal',
+    title: 'Tamper evident',
     description: (
       <>
-        Enable transactions to span multiple different databases.
-      </>
-    ),
-  },
-  {
-    // Svg: require('@site/static/img/image.svg').default,
-    title: 'Scalable',
-    description: (
-      <>
-        Linearly scale performance and availability.
-      </>
-    ),
-  },
-  {
-    // Svg: require('@site/static/img/image.svg').default,
-    title: 'Correct',
-    description: (
-      <>
-        Ensure that your data is always correctly managed with ACID.
+        Make your data tamper evident.
       </>
     ),
   },
@@ -44,10 +26,28 @@ const FeatureList = [
   },
   {
     // Svg: require('@site/static/img/image.svg').default,
+    title: 'Scalable',
+    description: (
+      <>
+        Linearly scale performance and availability.
+      </>
+    ),
+  },
+  {
+    // Svg: require('@site/static/img/image.svg').default,
     title: 'Database agnostic',
     description: (
       <>
         No dependency on particular database products.
+      </>
+    ),
+  },
+  {
+    // Svg: require('@site/static/img/image.svg').default,
+    title: 'Correctness',
+    description: (
+      <>
+        Ensure that your data is always correctly managed with ACID.
       </>
     ),
   },
