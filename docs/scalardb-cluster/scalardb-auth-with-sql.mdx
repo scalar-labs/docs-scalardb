@@ -81,13 +81,19 @@ The following tables show which privileges are required for each type of operati
 
 #### DML
 
-| Command  | Superuser required | Required privileges   |
-|----------|--------------------|-----------------------|
-| `SELECT` |                    | `SELECT`              |
-| `INSERT` |                    | `INSERT`              |
-| `UPSERT` |                    | `INSERT`              |
-| `UPDATE` |                    | `SELECT` and `UPDATE` |
-| `DELETE` |                    | `SELECT` and `DELETE` |
+| Command  | Superuser required | Required privileges             |
+|----------|--------------------|---------------------------------|
+| `SELECT` |                    | `SELECT`                        |
+| `INSERT` |                    | `SELECT`, `INSERT`, and `UPDATE` |
+| `UPSERT` |                    | `SELECT`, `INSERT`, and `UPDATE` |
+| `UPDATE` |                    | `SELECT`, `INSERT`, and `UPDATE` |
+| `DELETE` |                    | `SELECT` and `DELETE`            |
+
+:::note
+
+ScalarDB initially offered only the `Put` operation, which corresponds to `UPSERT`, for writing data. As a result, there is only one internal write permission. Consequently, the permissions needed for `INSERT`, `UPDATE`, and `UPSERT` are the same; all of them require the `SELECT` privilege. In the future, ScalarDB plans to provide finer-grained write permissions.
+
+:::
 
 #### DCL
 
@@ -147,14 +153,6 @@ In addition to the configuration in the [ScalarDB Cluster SQL client configurati
 |---------------------------------------|-----------------------------|---------|
 | `scalar.db.sql.cluster_mode.username` | The username of the client. |         |
 | `scalar.db.sql.cluster_mode.password` | The password of the client. |         |
-
-## Limitations
-
-There are some limitations to the privileges granted or revoked in authentication and authorization:
-
-- You must grant or revoke `INSERT` and `UPDATE` privileges together.
-- To grant a user the `UPDATE` or `DELETE` privilege, the target user must have the `SELECT` privilege.
-- If the target user has the `INSERT` or `UPDATE` privilege, you cannot revoke the `SELECT` privilege from them.
 
 ## Wire encryption
 
