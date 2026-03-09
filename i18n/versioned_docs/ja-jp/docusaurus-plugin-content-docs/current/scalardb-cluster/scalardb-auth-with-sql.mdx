@@ -67,6 +67,55 @@ ScalarDB Cluster では、きめ細かい認証と認可を実行できます。
 
 次の表は、各タイプの操作に必要な権限を示しています:
 
+#### DDL
+
+| コマンド                        | スーパーユーザー権限が必要か | 必要な権限           |
+|-------------------------------|-----------------------|---------------------|
+| `CREATE NAMESPACE`            | `true`                |                     |
+| `DROP NAMESPACE`              | `true`                |                     |
+| `CREATE TABLE`                |                       | `CREATE`            |
+| `DROP TABLE`                  |                       | `DROP`              |
+| `CREATE INDEX`                |                       | `CREATE`            |
+| `DROP INDEX`                  |                       | `DROP`              |
+| `TRUNCATE TABLE`              |                       | `TRUNCATE`          |
+| `ALTER TABLE`                 |                       | `ALTER`             |
+| `CREATE COORDINATOR TABLES`   | `true`                |                     |
+| `DROP COORDINATOR TABLES`     | `true`                |                     |
+| `TRUNCATE COORDINATOR TABLES` | `true`                |                     |
+
+#### DML
+
+| コマンド   | スーパーユーザー権限が必要か | 必要な権限                   |
+|----------|------------------------|-----------------------------|
+| `SELECT` |                        | `SELECT`                    |
+| `INSERT` |                        | `SELECT`、`INSERT`、`UPDATE` |
+| `UPSERT` |                        | `SELECT`、`INSERT`、`UPDATE` |
+| `UPDATE` |                        | `SELECT`、`INSERT`、`UPDATE` |
+| `DELETE` |                        | `SELECT`、`DELETE`           |
+
+:::note
+
+ScalarDB では最初、データを書き込むために `UPSERT` に対応する `Put` 操作のみが提供されていました。その結果、内部的には一つの書き込み権限しか存在しません。そのため、`INSERT`、`UPDATE`、`UPSERT` に必要な権限は同じであり、すべて `SELECT` 権限が必要です。将来的には、ScalarDB はより細かい書き込み権限の提供を予定しています。
+
+:::
+
+#### DCL
+
+| コマンド               | スーパーユーザー権限が必要か                      | 必要な権限                                                                                |
+|----------------------|---------------------------------------------|-----------------------------------------------------------------------------------------|
+| `CREATE USER`        | `true`                                      |                                                                                         |
+| `ALTER USER`         | `true` (ユーザーは自分のパスワードを変更できます。) |                                                                                         |
+| `DROP USER`          | `true`                                      |                                                                                         |
+| `GRANT`              |                                             | `GRANT` (ユーザーは自分が持っている権限のみを付与できます。)                                     |
+| `REVOKE`             |                                             | `GRANT` (ユーザーは自分が持っている権限のみを取り消すことができます。)                           |
+| `CREATE ROLE`        | `true`                                      |                                                                                         |
+| `DROP ROLE`          | `true`                                      |                                                                                         |
+| `GRANT ... TO ROLE`  |                                             | `GRANT` (ユーザーは自分が持っている権限のみを付与できます。)                                     |
+| `REVOKE ... FROM ROLE` |                                             | `GRANT` (ユーザーは自分が持っている権限のみを取り消すことができます。)                           |
+| `GRANT ROLE`         |                                             | ロールの `ADMIN OPTION` (ユーザーはそれらのロールのみを付与できます。)                           |
+| `REVOKE ROLE`        |                                             | ロールの `ADMIN OPTION` (ユーザーはそれらのロールのみを取り消すことができます。)                  |
+| `REVOKE ADMIN OPTION` |                                             | ロールの `ADMIN OPTION` (ユーザーはそれらのロールの `ADMIN OPTION` のみを取り消すことができます。) |
+
 ## 設定
 
 このセクションでは、認証と認可に使用できる設定について説明します。
@@ -108,58 +157,6 @@ ScalarDB Cluster では、きめ細かい認証と認可を実行できます。
 |---------------------------------------|-----------------------------|---------|
 | `scalar.db.sql.cluster_mode.username` | クライアントのユーザー名。 |         |
 | `scalar.db.sql.cluster_mode.password` | クライアントのパスワード。 |         |
-
-
-### DDL
-
-| コマンド                        | スーパーユーザーが必要です | 必要な権限           |
-|-------------------------------|-----------------------|---------------------|
-| `CREATE NAMESPACE`            | `true`                |                     |
-| `DROP NAMESPACE`              | `true`                |                     |
-| `CREATE TABLE`                |                       | `CREATE`            |
-| `DROP TABLE`                  |                       | `DROP`              |
-| `CREATE INDEX`                |                       | `CREATE`            |
-| `DROP INDEX`                  |                       | `DROP`              |
-| `TRUNCATE TABLE`              |                       | `TRUNCATE`          |
-| `ALTER TABLE`                 |                       | `ALTER`             |
-| `CREATE COORDINATOR TABLES`   | `true`                |                     |
-| `DROP COORDINATOR TABLES`     | `true`                |                     |
-| `TRUNCATE COORDINATOR TABLES` | `true`                |                     |
-
-### DML
-
-| コマンド   | スーパーユーザーが必要です | 必要な権限             |
-|----------|------------------------|----------------------|
-| `SELECT` |                        | `SELECT`             |
-| `INSERT` |                        | `INSERT`             |
-| `UPSERT` |                        | `INSERT`             |
-| `UPDATE` |                        | `SELECT` と `UPDATE` |
-| `DELETE` |                        | `SELECT` と `DELETE` |
-
-### DCL
-
-| コマンド               | スーパーユーザーが必要です                      | 必要な権限                                                                                |
-|----------------------|---------------------------------------------|-----------------------------------------------------------------------------------------|
-| `CREATE USER`        | `true`                                      |                                                                                         |
-| `ALTER USER`         | `true` (ユーザーは自分のパスワードを変更できます。) |                                                                                         |
-| `DROP USER`          | `true`                                      |                                                                                         |
-| `GRANT`              |                                             | `GRANT` (ユーザーは自分が持っている権限のみを付与できます。)                                     |
-| `REVOKE`             |                                             | `GRANT` (ユーザーは自分が持っている権限のみを取り消すことができます。)                           |
-| `CREATE ROLE`        | `true`                                      |                                                                                         |
-| `DROP ROLE`          | `true`                                      |                                                                                         |
-| `GRANT ... TO ROLE`  |                                             | `GRANT` (ユーザーは自分が持っている権限のみを付与できます。)                                     |
-| `REVOKE ... FROM ROLE` |                                             | `GRANT` (ユーザーは自分が持っている権限のみを取り消すことができます。)                           |
-| `GRANT ROLE`         |                                             | ロールの `ADMIN OPTION` (ユーザーはそれらのロールのみを付与できます。)                           |
-| `REVOKE ROLE`        |                                             | ロールの `ADMIN OPTION` (ユーザーはそれらのロールのみを取り消すことができます。)                  |
-| `REVOKE ADMIN OPTION` |                                             | ロールの `ADMIN OPTION` (ユーザーはそれらのロールの `ADMIN OPTION` のみを取り消すことができます。) |
-
-## 制限事項
-
-認証と認可で付与または取り消される権限には、いくつかの制限があります:
-
-- `INSERT` 権限と `UPDATE` 権限は、一緒に付与または取り消す必要があります。
-- ユーザーに `UPDATE` 権限または `DELETE` 権限を付与するには、対象ユーザーに `SELECT` 権限が必要です。
-- 対象ユーザーに `INSERT` 権限または `UPDATE` 権限がある場合、そのユーザーから `SELECT` 権限を取り消すことはできません。
 
 ## ワイヤ暗号化
 
