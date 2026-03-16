@@ -19,6 +19,24 @@ export default function GoogleAIModeSearch() {
   const [isClosing, setIsClosing] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Utility function for auto-resizing textarea
+  const autoResizeTextarea = useCallback(() => {
+    const textarea = textareaRef.current;
+    if (textarea) {
+      textarea.style.height = 'auto';
+      // Force reflow to ensure content is rendered
+      textarea.offsetHeight;
+      const newHeight = Math.min(textarea.scrollHeight, MAX_TEXTAREA_HEIGHT_PX);
+      textarea.style.height = newHeight + 'px';
+      // Show scrollbar when content exceeds max height
+      if (textarea.scrollHeight > MAX_TEXTAREA_HEIGHT_PX) {
+        textarea.style.overflowY = 'auto';
+      } else {
+        textarea.style.overflowY = 'hidden';
+      }
+    }
+  }, []);
+
   // Extract version from the current URL path
   const getCurrentVersion = useCallback(() => {
     const path = location.pathname;
@@ -72,22 +90,9 @@ export default function GoogleAIModeSearch() {
     // Don't reset search query - keep existing text
     // Resize textarea to fit existing content when opening
     setTimeout(() => {
-      const textarea = textareaRef.current;
-      if (textarea) {
-        textarea.style.height = 'auto';
-        // Force reflow to ensure content is rendered
-        textarea.offsetHeight;
-        const newHeight = Math.min(textarea.scrollHeight, MAX_TEXTAREA_HEIGHT_PX);
-        textarea.style.height = newHeight + 'px';
-        // Show scrollbar when content exceeds max height
-        if (textarea.scrollHeight > MAX_TEXTAREA_HEIGHT_PX) {
-          textarea.style.overflowY = 'auto';
-        } else {
-          textarea.style.overflowY = 'hidden';
-        }
-      }
+      autoResizeTextarea();
     }, TEXTAREA_RESIZE_TIMEOUT_MS);
-  }, []);
+  }, [autoResizeTextarea]);
 
   const closeModal = useCallback(() => {
     setIsClosing(true);
@@ -132,20 +137,13 @@ export default function GoogleAIModeSearch() {
   const handleInputChange = useCallback((e) => {
     setSearchQuery(e.target.value);
 
-    // Auto-resize textarea
+    // Auto-resize textarea using utility function
     const textarea = textareaRef.current;
     if (textarea) {
       textarea.style.height = `${TEXTAREA_INITIAL_HEIGHT_PX}px`;
-      const newHeight = Math.min(textarea.scrollHeight, MAX_TEXTAREA_HEIGHT_PX);
-      textarea.style.height = newHeight + 'px';
-      // Show scrollbar when content exceeds max height
-      if (textarea.scrollHeight > MAX_TEXTAREA_HEIGHT_PX) {
-        textarea.style.overflowY = 'auto';
-      } else {
-        textarea.style.overflowY = 'hidden';
-      }
+      autoResizeTextarea();
     }
-  }, []);
+  }, [autoResizeTextarea]);
 
   const handleKeyDown = useCallback((e) => {
     if (e.key === 'Enter') {
