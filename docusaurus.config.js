@@ -133,14 +133,14 @@ const config = {
     // These pre-written queries are used in the Google AI Mode feature. Update these queries as needed when new features are added or when you want to highlight specific features in the Google AI Mode. For more information, see /src/components/GoogleAIModeSearch/index.js.
     prewrittenQueries: [
       'What is ScalarDB and how does it work?',
+      'How do I get started with ScalarDB?',
       'How do I develop applications with ScalarDB?',
-      'How do I set up authentication in ScalarDB?',
       'How do I deploy ScalarDB?',
     ],
     prewrittenQueriesJa: [
       'ScalarDB とは何ですか？どのように動作しますか？',
+      'ScalarDB を使い始めるにはどうすればよいですか？',
       'ScalarDB でアプリケーションをどう開発しますか？',
-      'ScalarDB で認証を設定するにはどうすればよいですか？',
       'ScalarDB をどのようにデプロイできますか？',
     ],
   },
