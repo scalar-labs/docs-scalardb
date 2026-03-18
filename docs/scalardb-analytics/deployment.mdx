@@ -33,12 +33,12 @@ After deploying the catalog server, you can configure and deploy Spark with Scal
 
 ScalarDB Analytics supports the following managed Spark services and application types.
 
-| Public Cloud Service    | Spark Driver | Spark Connect | JDBC |
-| ----------------------- | ------------ | ------------- | ---- |
-| Amazon EMR (EMR on EC2) | ✅           | ✅            | ❌   |
-| Databricks              | ✅           | ❌            | ✅   |
-| Azure Synapse Analytics | ✅           | ❌            | ❌   |
-| Google Cloud Dataproc   | ✅           | ✅            | ❌   |
+| Public Cloud Service    | Spark Driver | Spark Connect | Notebook | JDBC |
+| ----------------------- | ------------ | ------------- | -------- | ---- |
+| Amazon EMR (EMR on EC2) | ✅           | ✅            | ✅       | ❌   |
+| Databricks              | ✅           | ❌            | ✅       | ✅   |
+| Azure Synapse Analytics | ✅           | ❌            | ✅       | ❌   |
+| Google Cloud Dataproc   | ✅           | ✅            | ✅       | ❌   |
 
 ### Configure and deploy
 
@@ -124,6 +124,38 @@ You can run your Spark application via Spark Connect from anywhere by using the 
 
 For details on how to create a Spark application by using Spark Connect, refer to [Spark Connect application](./run-analytical-queries.mdx?spark-application-type=spark-connect#develop-a-spark-application).
 
+<h3>Run interactive queries by using notebooks</h3>
+
+You can also use EMR Studio notebooks to run interactive queries through ScalarDB Analytics. EMR Studio provides a managed Jupyter notebook environment that can be attached to your EMR cluster.
+
+For details on how to set up and use EMR Studio notebooks, refer to the [Amazon EMR Studio documentation](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-studio.html).
+
+After attaching a notebook to the EMR cluster that is configured with ScalarDB Analytics, you can run SQL queries by using the `%%sql` magic command.
+
+To list the available catalogs, run the following command: 
+
+```sql
+%%sql
+-- List available catalogs
+SHOW CATALOGS
+```
+
+To list the databases in the ScalarDB catalog, run the following command, replacing `<CATALOG_NAME>` with your actual catalog name configured in the ScalarDB Analytics server.
+  
+```sql
+%%sql
+-- List databases in ScalarDB catalog
+SHOW DATABASES IN <CATALOG_NAME>
+```
+
+To query the data, run the following command, replacing the placeholders in angle brackets with your actual catalog, data source, namespace, and table names configured in the ScalarDB Analytics server.
+
+```sql
+%%sql
+-- Query data
+SELECT * FROM <CATALOG_NAME>.<DATA_SOURCE_NAME>.<NAMESPACE_NAME>.<TABLE_NAME> LIMIT 10
+```
+
   </TabItem>
   <TabItem value="databricks" label="Databricks">
 
@@ -189,10 +221,38 @@ ScalarDB Analytics works with all-purpose compute on Databricks. When you launch
 
 <h3>Run analytical queries via the Spark driver</h3>
 
-You can run your Spark application on the properly configured Databricks compute with Databricks Notebook or Databricks Jobs to access the tables in ScalarDB Analytics. To run the Spark application, you can migrate your Pyspark, Scala, or Spark SQL application to Databricks Notebook, or use Databricks Jobs to run your Spark application. ScalarDB Analytics works with task types for Notebook, Python, JAR, and SQL.
+You can run your Spark application on the properly configured Databricks compute with Databricks Jobs to access the tables in ScalarDB Analytics. ScalarDB Analytics works with Databricks Jobs task types for Python, JAR, SQL, and Notebook. See the following section for details on using notebooks.
 
 For more details on how to use Databricks Jobs, refer to the [Databricks Jobs documentation](https://docs.databricks.com/en/jobs/index.html).
 
+<h3>Run interactive queries by using notebooks</h3>
+
+You can also use Databricks notebooks to run interactive queries through ScalarDB Analytics. After launching the compute that is configured with ScalarDB Analytics, you can create a notebook and attach it to the compute.
+
+For details on how to use Databricks notebooks, refer to the [Databricks notebooks documentation](https://docs.databricks.com/en/notebooks/index.html).
+
+After attaching a notebook to the compute, you can run SQL queries as follows.
+
+To list the available catalogs, run the following command:
+
+```sql
+-- List available catalogs
+SHOW CATALOGS
+```
+
+To list the databases in the ScalarDB catalog, run the following command, replacing `<CATALOG_NAME>` with your actual catalog name configured in the ScalarDB Analytics server.
+
+```sql
+-- List databases in ScalarDB catalog
+SHOW DATABASES IN <CATALOG_NAME>
+```
+
+To query the data, run the following command, replacing the placeholders in angle brackets with your actual catalog, data source, namespace, and table names configured in the ScalarDB Analytics server.
+
+```sql
+-- Query data
+SELECT * FROM <CATALOG_NAME>.<DATA_SOURCE_NAME>.<NAMESPACE_NAME>.<TABLE_NAME> LIMIT 10
+```
 <h3>Run analytical queries via the JDBC driver</h3>
 
 Databricks supports JDBC to run SQL jobs on compute.
@@ -343,34 +403,35 @@ Make sure the required permissions are set as described in the [Prerequisites](#
 
 :::
 
-<h4>Run interactive queries using Synapse notebooks</h4>
+<h4>Run interactive queries by using notebooks</h4>
 
-After configuring the Spark pool, you can run interactive queries by using Synapse notebooks.
+You can also use Azure Synapse Analytics notebooks to run interactive queries through ScalarDB Analytics. After configuring the Spark pool, you can create a notebook and attach it to the Spark pool.
 
-1. Go to **Synapse Studio**, select **Develop**, and choose **New notebook**.
-2. Attach the configured Spark pool.
-3. Run SQL queries by using the `%%sql` magic command:
+For details on how to use Azure Synapse Analytics notebooks, refer to the [Azure Synapse Analytics notebooks documentation](https://learn.microsoft.com/en-us/azure/synapse-analytics/spark/apache-spark-notebook-concept).
 
-   ```sql
-   %%sql
-   -- List available catalogs
-   SHOW CATALOGS
-   ```
+After attaching a notebook to the Spark pool, you can run SQL queries as follows.
 
-   ```sql
-   %%sql
-   -- List databases in ScalarDB catalog
-   SHOW DATABASES IN <CATALOG_NAME>
-   ```
+To list the available catalogs, run the following command:
 
-   ```sql
-   %%sql
-   -- Query data
-   SELECT * FROM <CATALOG_NAME>.<DATA_SOURCE_NAME>.<NAMESPACE_NAME>.<TABLE_NAME> LIMIT 10
-   ```
+To list the databases in the ScalarDB catalog, run the following command, replacing `<CATALOG_NAME>` with your actual catalog name configured in the ScalarDB Analytics server.
 
-   Replace the above angle brackets with your actual catalog, data source, namespace, and table names configured in the ScalarDB Analytics server.
+```sql
+-- List available catalogs
+SHOW CATALOGS
+```
 
+To list the databases in the ScalarDB catalog, run the following command, replacing `<CATALOG_NAME>` with your actual catalog name configured in the ScalarDB Analytics server.
+
+```sql
+-- List databases in ScalarDB catalog
+```
+
+To query the data, run the following command, replacing the placeholders in angle brackets with your actual catalog, data source, namespace, and table names configured in the ScalarDB Analytics server.
+
+```sql
+-- Query data
+SELECT * FROM <CATALOG_NAME>.<DATA_SOURCE_NAME>.<NAMESPACE_NAME>.<TABLE_NAME> LIMIT 10
+```
   </TabItem>
   <TabItem value="dataproc" label="Google Cloud Dataproc">
 
@@ -664,6 +725,37 @@ Since Dataproc Compute clusters provide a standard Apache Spark environment, you
 
 For details on Spark driver applications, refer to [Spark driver application](./run-analytical-queries.mdx?spark-application-type=spark-driver#develop-a-spark-application).
 
+<h3>Run interactive queries by using notebooks</h3>
+
+You can also use Jupyter notebooks on Dataproc Compute clusters to run interactive queries through ScalarDB Analytics. To enable Jupyter notebooks, add the `--optional-components=JUPYTER` flag and enable the Component Gateway when creating the cluster.
+
+For details on how to use Jupyter notebooks on Dataproc, refer to the [Dataproc Jupyter component documentation](https://cloud.google.com/dataproc/docs/concepts/components/jupyter).
+
+After accessing the Jupyter notebook through the Component Gateway, you can run SQL queries by using the `%%sql` magic command.
+
+To list the available catalogs, run the following command:
+
+```sql
+%%sql
+-- List available catalogs
+SHOW CATALOGS
+```
+
+To list the databases in the ScalarDB catalog, run the following command, replacing `<CATALOG_NAME>` with your actual catalog name configured in the ScalarDB Analytics server.
+
+```sql
+%%sql
+-- List databases in ScalarDB catalog
+SHOW DATABASES IN <CATALOG_NAME>
+```
+
+To query the data, run the following command, replacing the placeholders in angle brackets with your actual catalog, data source, namespace, and table names configured in the ScalarDB Analytics server.
+
+```sql
+%%sql
+-- Query data
+SELECT * FROM <CATALOG_NAME>.<DATA_SOURCE_NAME>.<NAMESPACE_NAME>.<TABLE_NAME> LIMIT 10
+```
 <h3>Set up Dataproc Serverless</h3>
 
 Dataproc Serverless is a Spark Connect-based service. Currently, only Python clients are provided, so you must use it from notebooks or Python clients.
