@@ -2037,7 +2037,7 @@ const sidebars = {
         {
           type: "doc",
           id: "learning-paths",
-          label: "ScalarDB Learning Paths",
+          label: "ScalarDB 学習パス",
         },
       ],
     },
