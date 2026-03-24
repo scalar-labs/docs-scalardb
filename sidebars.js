@@ -1026,6 +1026,11 @@ const sidebars = {
             },
           ],
         },
+        {
+          type: "doc",
+          id: "learning-paths",
+          label: "ScalarDB Learning Paths",
+        },
       ],
     },
   ],
@@ -2028,6 +2033,11 @@ const sidebars = {
           type: 'doc',
           id: 'scalar-licensing/index',
           label: '製品ライセンスキーの設定',
+        },
+        {
+          type: "doc",
+          id: "learning-paths",
+          label: "ScalarDB Learning Paths",
         },
       ],
     },
