@@ -153,6 +153,11 @@ const sidebars = {
           ],
         },
         {
+          type: 'doc',
+          id: 'getting-started-with-benchmarking-scalardb',
+          label: 'Try Benchmarking ScalarDB',
+        },
+        {
           type: 'category',
           label: 'Try Running Analytical Queries Through ScalarDB Analytics',
           collapsible: true,
