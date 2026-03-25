@@ -180,7 +180,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          key: 'quickstart-reference-en-us-3.16',
+          key: 'quickstart-reference-en-us-3.17',
           label: 'Reference',
           collapsible: true,
           items: [
@@ -223,19 +223,19 @@ const sidebars = {
             },
             {
               type: 'category',
-              key: 'develop-transactions-crud-interface-en-us-3.16',
+              key: 'develop-transactions-crud-interface-en-us-3.17',
               label: 'Run Through the CRUD Interface',
               collapsible: true,
               items: [
                 {
                   type: 'doc',
-                  key: 'develop-transactions-scalardb-core-en-us-3.16',
+                  key: 'develop-transactions-scalardb-core-en-us-3.17',
                   id: 'run-transactions-through-scalardb-core-library',
                   label: 'Use the ScalarDB Core Library',
                 },
                 {
                   type: 'doc',
-                  key: 'develop-transactions-scalardb-cluster-en-us-3.16',
+                  key: 'develop-transactions-scalardb-cluster-en-us-3.17',
                   id: 'scalardb-cluster/run-transactions-through-scalardb-cluster',
                   label: 'Use ScalarDB Cluster',
                 },
@@ -243,7 +243,7 @@ const sidebars = {
             },
             {
               type: 'doc',
-              key: 'develop-transactions-sql-interface-en-us-3.16',
+              key: 'develop-transactions-sql-interface-en-us-3.17',
               id: 'scalardb-cluster/run-transactions-through-scalardb-cluster-sql',
               label: 'Run Through the SQL Interface',
             },
@@ -292,19 +292,19 @@ const sidebars = {
           items: [
             {
               type: 'category',
-              key: 'develop-non-transactional-crud-interface-en-us-3.16',
+              key: 'develop-non-transactional-crud-interface-en-us-3.17',
               label: 'Run Through the CRUD Interface',
               collapsible: true,
               items: [
                 {
                   type: 'doc',
-                  key: 'develop-non-transactional-scalardb-core-en-us-3.16',
+                  key: 'develop-non-transactional-scalardb-core-en-us-3.17',
                   id: 'run-non-transactional-storage-operations-through-library',
                   label: 'Use the ScalarDB Core Library',
                 },
                 {
                   type: 'doc',
-                  key: 'develop-non-transactional-scalardb-cluster-en-us-3.16',
+                  key: 'develop-non-transactional-scalardb-cluster-en-us-3.17',
                   id: 'scalardb-cluster/run-non-transactional-storage-operations-through-scalardb-cluster',
                   label: 'Use ScalarDB Cluster',
                 },
@@ -312,7 +312,7 @@ const sidebars = {
             },
             {
               type: 'doc',
-              key: 'develop-non-transactional-sql-interface-en-us-3.16',
+              key: 'develop-non-transactional-sql-interface-en-us-3.17',
               id: 'scalardb-cluster/run-non-transactional-storage-operations-through-sql-interface',
               label: 'Run Through the SQL Interface',
             },
@@ -355,7 +355,7 @@ const sidebars = {
           items: [
             {
               type: 'doc',
-              key: 'develop-sample-multi-storage-transactions-en-us-3.16',
+              key: 'develop-sample-multi-storage-transactions-en-us-3.17',
               id: 'scalardb-samples/multi-storage-transaction-sample/README',
               label: 'Multi-Storage Transactions',
             },
@@ -378,7 +378,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          key: 'develop-reference-en-us-3.16',
+          key: 'develop-reference-en-us-3.17',
           label: 'Reference',
           collapsible: true,
           items: [
@@ -394,19 +394,19 @@ const sidebars = {
             },
             {
               type: 'doc',
-              key: 'develop-api-guide-en-us-3.16',
+              key: 'develop-api-guide-en-us-3.17',
               id: 'api-guide',
               label: 'API Guide',
             },
             {
               type: 'doc',
-              key: 'develop-two-phase-commit-en-us-3.16',
+              key: 'develop-two-phase-commit-en-us-3.17',
               id: 'two-phase-commit-transactions',
               label: 'Two-Phase Commit Transactions',
             },
             {
               type: 'doc',
-              key: 'develop-multi-storage-transactions-en-us-3.16',
+              key: 'develop-multi-storage-transactions-en-us-3.17',
               id: 'multi-storage-transactions',
               label: 'Multi-Storage Transactions',
             },
@@ -422,7 +422,7 @@ const sidebars = {
             },
             {
               type: 'doc',
-              key: 'develop-scalardb-cluster-en-us-3.16',
+              key: 'develop-scalardb-cluster-en-us-3.17',
               id: 'scalardb-cluster/index',
               label: 'ScalarDB Cluster',
             },
@@ -458,7 +458,7 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
-                  key: 'develop-sql-overview-en-us-3.16',
+                  key: 'develop-sql-overview-en-us-3.17',
                   id: 'scalardb-sql/index',
                   label: 'Overview',
                 },
@@ -469,7 +469,7 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
-                  key: 'develop-sql-api-guide-en-us-3.16',
+                  key: 'develop-sql-api-guide-en-us-3.17',
                   id: 'scalardb-sql/sql-api-guide',
                   label: 'API Guide',
                 },			
@@ -497,13 +497,13 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
-                  key: 'develop-graphql-overview-en-us-3.16',
+                  key: 'develop-graphql-overview-en-us-3.17',
                   id: 'scalardb-graphql/index',
                   label: 'Overview',
                 },
                 {
                   type: 'doc',
-                  key: 'develop-graphql-two-phase-commit-en-us-3.16',
+                  key: 'develop-graphql-two-phase-commit-en-us-3.17',
                   id: 'scalardb-graphql/how-to-run-two-phase-commit-transaction',
                   label: 'Two-Phase Commit Transactions',
                 },
@@ -538,7 +538,7 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
-                  key: 'develop-dotnet-overview-en-us-3.16',
+                  key: 'develop-dotnet-overview-en-us-3.17',
                   id: 'scalardb-cluster-dotnet-client-sdk/index',
                   label: 'Overview',
                 },
@@ -574,7 +574,7 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
-                  key: 'develop-dotnet-two-phase-commit-en-us-3.16',
+                  key: 'develop-dotnet-two-phase-commit-en-us-3.17',
                   id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-two-phase-commit-transactions',
                   label: 'Two-Phase Commit Transactions',
                 },
@@ -657,7 +657,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          key: 'deploy-reference-en-us-3.16',
+          key: 'deploy-reference-en-us-3.17',
           label: 'Reference',
           collapsible: true,
           items: [
@@ -941,7 +941,7 @@ const sidebars = {
             },
             {
               type: 'doc',
-              key: 'troubleshoot-scalardb-cluster-en-us-3.16',
+              key: 'troubleshoot-scalardb-cluster-en-us-3.17',
               id: 'scalardb-cluster/scalardb-cluster-status-codes',
               label: 'ScalarDB Cluster',
             },
@@ -996,7 +996,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      key: 'reference-en-us-3.16',
+      key: 'reference-en-us-3.17',
       label: 'Reference',
       collapsible: true,
       items: [
@@ -1197,7 +1197,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          key: 'quickstart-reference-ja-jp-3.16',
+          key: 'quickstart-reference-ja-jp-3.17',
           label: '関連情報',
           collapsible: true,
           items: [
@@ -1240,19 +1240,19 @@ const sidebars = {
             },
             {
               type: 'category',
-              key: 'develop-transactions-crud-interface-ja-jp-3.16',
+              key: 'develop-transactions-crud-interface-ja-jp-3.17',
               label: 'CRUD インターフェースを使用して実行',
               collapsible: true,
               items: [
                 {
                   type: 'doc',
-                  key: 'develop-transactions-scalardb-core-ja-jp-3.16',
+                  key: 'develop-transactions-scalardb-core-ja-jp-3.17',
                   id: 'run-transactions-through-scalardb-core-library',
                   label: 'ScalarDB Core ライブラリーを使用',
                 },
                 {
                   type: 'doc',
-                  key: 'develop-transactions-scalardb-cluster-ja-jp-3.16',
+                  key: 'develop-transactions-scalardb-cluster-ja-jp-3.17',
                   id: 'scalardb-cluster/run-transactions-through-scalardb-cluster',
                   label: 'ScalarDB Cluster を使用',
                 },
@@ -1260,7 +1260,7 @@ const sidebars = {
             },
             {
               type: 'doc',
-              key: 'develop-transactions-sql-interface-ja-jp-3.16',
+              key: 'develop-transactions-sql-interface-ja-jp-3.17',
               id: 'scalardb-cluster/run-transactions-through-scalardb-cluster-sql',
               label: 'SQL インターフェースを使用して実行',
             },
@@ -1321,19 +1321,19 @@ const sidebars = {
           items: [
             {
               type: 'category',
-              key: 'develop-non-transactional-crud-interface-ja-jp-3.16',
+              key: 'develop-non-transactional-crud-interface-ja-jp-3.17',
               label: 'CRUD インターフェースを使用して実行',
               collapsible: true,
               items: [
                 {
                   type: 'doc',
-                  key: 'develop-non-transactional-scalardb-core-ja-jp-3.16',
+                  key: 'develop-non-transactional-scalardb-core-ja-jp-3.17',
                   id: 'run-non-transactional-storage-operations-through-library',
                   label: 'ScalarDB Core ライブラリーを使用',
                 },
                 {
                   type: 'doc',
-                  key: 'develop-non-transactional-scalardb-cluster-ja-jp-3.16',
+                  key: 'develop-non-transactional-scalardb-cluster-ja-jp-3.17',
                   id: 'scalardb-cluster/run-non-transactional-storage-operations-through-scalardb-cluster',
                   label: 'ScalarDB Cluster を使用',
                 },
@@ -1341,7 +1341,7 @@ const sidebars = {
             },
             {
               type: 'doc',
-              key: 'develop-non-transactional-sql-interface-ja-jp-3.16',
+              key: 'develop-non-transactional-sql-interface-ja-jp-3.17',
               id: 'scalardb-cluster/run-non-transactional-storage-operations-through-sql-interface',
               label: 'SQL インターフェースを使用して実行',
             },
@@ -1384,7 +1384,7 @@ const sidebars = {
           items: [
             {
               type: 'doc',
-              key: 'develop-sample-multi-storage-transactions-ja-jp-3.16',
+              key: 'develop-sample-multi-storage-transactions-ja-jp-3.17',
               id: 'scalardb-samples/multi-storage-transaction-sample/README',
               label: 'マルチストレージトランザクション',
             },
@@ -1407,7 +1407,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          key: 'develop-reference-ja-jp-3.16',
+          key: 'develop-reference-ja-jp-3.17',
           label: '詳細',
           collapsible: true,
           items: [
@@ -1423,19 +1423,19 @@ const sidebars = {
             },
             {
               type: 'doc',
-              key: 'develop-api-guide-ja-jp-3.16',
+              key: 'develop-api-guide-ja-jp-3.17',
               id: 'api-guide',
               label: 'API ガイド',
             },
             {
               type: 'doc',
-              key: 'develop-two-phase-commit-ja-jp-3.16',
+              key: 'develop-two-phase-commit-ja-jp-3.17',
               id: 'two-phase-commit-transactions',
               label: '2フェーズコミットトランザクション',
             },
             {
               type: 'doc',
-              key: 'develop-multi-storage-transactions-ja-jp-3.16',
+              key: 'develop-multi-storage-transactions-ja-jp-3.17',
               id: 'multi-storage-transactions',
               label: 'マルチストレージトランザクション',
             },
@@ -1451,7 +1451,7 @@ const sidebars = {
             },
             {
               type: 'doc',
-              key: 'develop-scalardb-cluster-ja-jp-3.16',
+              key: 'develop-scalardb-cluster-ja-jp-3.17',
               id: 'scalardb-cluster/index',
               label: 'ScalarDB Cluster',
             },
@@ -1487,7 +1487,7 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
-                  key: 'develop-sql-overview-ja-jp-3.16',
+                  key: 'develop-sql-overview-ja-jp-3.17',
                   id: 'scalardb-sql/index',
                   label: '概要',
                 },
@@ -1498,7 +1498,7 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
-                  key: 'develop-sql-api-guide-ja-jp-3.16',
+                  key: 'develop-sql-api-guide-ja-jp-3.17',
                   id: 'scalardb-sql/sql-api-guide',
                   label: 'API ガイド',
                 },			
@@ -1526,13 +1526,13 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
-                  key: 'develop-graphql-overview-ja-jp-3.16',
+                  key: 'develop-graphql-overview-ja-jp-3.17',
                   id: 'scalardb-graphql/index',
                   label: '概要',
                 },
                 {
                   type: 'doc',
-                  key: 'develop-graphql-two-phase-commit-ja-jp-3.16',
+                  key: 'develop-graphql-two-phase-commit-ja-jp-3.17',
                   id: 'scalardb-graphql/how-to-run-two-phase-commit-transaction',
                   label: '2フェーズコミットトランザクション',
                 },
@@ -1567,7 +1567,7 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
-                  key: 'develop-dotnet-overview-ja-jp-3.16',
+                  key: 'develop-dotnet-overview-ja-jp-3.17',
                   id: 'scalardb-cluster-dotnet-client-sdk/index',
                   label: '概要',
                 },
@@ -1603,7 +1603,7 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
-                  key: 'develop-dotnet-two-phase-commit-ja-jp-3.16',
+                  key: 'develop-dotnet-two-phase-commit-ja-jp-3.17',
                   id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-two-phase-commit-transactions',
                   label: '2フェーズコミットトランザクション',
                 },
@@ -1681,7 +1681,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          key: 'deploy-reference-ja-jp-3.16',
+          key: 'deploy-reference-ja-jp-3.17',
           label: '詳細',
           collapsible: true,
           items: [
@@ -1965,7 +1965,7 @@ const sidebars = {
             },
             {
               type: 'doc',
-              key: 'troubleshoot-scalardb-cluster-ja-jp-3.16',
+              key: 'troubleshoot-scalardb-cluster-ja-jp-3.17',
               id: 'scalardb-cluster/scalardb-cluster-status-codes',
               label: 'ScalarDB Cluster',
             },
@@ -2020,7 +2020,7 @@ const sidebars = {
     },
     {
       type: 'category',
-      key: 'reference-ja-jp-3.16',
+      key: 'reference-ja-jp-3.17',
       label: '関連情報',
       collapsible: true,
       items: [
