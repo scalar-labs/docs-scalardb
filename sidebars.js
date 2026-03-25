@@ -2035,9 +2035,25 @@ const sidebars = {
           label: 'ScalarDB Analytics の設計',
         },
         {
-          type: 'doc',
-          id: 'scalar-licensing/index',
-          label: '製品ライセンスキーの設定',
+          type: 'category',
+          label: 'ライセンスキーの設定',
+          collapsible: true,
+          link: {
+            type: 'doc',
+            id: 'scalar-licensing/index',
+          },
+          items: [
+            {
+              type: 'doc',
+              id: 'scalar-licensing/commercial',
+              label: '商用ライセンスキーの設定',
+            },
+            {
+              type: 'doc',
+              id: 'scalar-licensing/trial',
+              label: '試用ライセンスキーの設定',
+            },
+          ],
         },
         {
           type: "doc",
