@@ -1031,12 +1031,12 @@ const sidebars = {
             },
           ],
         },
-        {
-          type: "doc",
-          id: "learning-paths",
-          label: "ScalarDB Learning Paths",
-        },
       ],
+    },
+    {
+      type: "doc",
+      id: "learning-paths",
+      label: "ScalarDB Learning Paths",
     },
   ],
 
@@ -2055,12 +2055,12 @@ const sidebars = {
             },
           ],
         },
-        {
-          type: "doc",
-          id: "learning-paths",
-          label: "ScalarDB 学習パス",
-        },
       ],
+    },
+    {
+      type: "doc",
+      id: "learning-paths",
+      label: "ScalarDB 学習パス",
     },
   ],
 };
