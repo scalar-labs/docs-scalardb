@@ -2,16 +2,19 @@
 tags:
   - Enterprise Standard
   - Enterprise Premium
+  - Enterprise Option
 displayed_sidebar: docsEnglish
 ---
 
 # How to Configure a Trial License Key
 
-You can use the following trial license keys for ScalarDB Enterprise Premium and ScalarDB Analytics. If you have a commercial license key, please refer to [How to Configure a Product License Key](./index.mdx) to configure your license key.
+You can use the following trial license keys for ScalarDB Enterprise Standard/Premium and ScalarDB Analytics. If you have a commercial license key, please refer to [How to Configure a Commercial License Key](./commercial.mdx) to configure your license key.
+
+To run ScalarDB Enterprise Standard/Premium or ScalarDB Analytics, you must create a `.properties` file and add the trial license key and the certificate to the file. In your `.properties` file, copy one of the following configurations, based on the product you're using, and paste the contents in the `.properties` file.
 
 :::warning
 
-- This key is valid for evaluation purposes only.
+- These licensing keys are valid for evaluation purposes only.
 - When using a trial license, ScalarDB Cluster and/or ScalarDB Analytics must be connected to the Internet to validate the license and check its expiration.
 - The trial license key is updated periodically. For production use, please [contact us](https://www.scalar-labs.com/contact) to obtain a commercial license.
 
@@ -19,11 +22,11 @@ You can use the following trial license keys for ScalarDB Enterprise Premium and
 
 :::note
 
-ScalarDB Core is available as an open-source software under the Apache 2.0 License on [GitHub](https://github.com/scalar-labs/scalardb).
+ScalarDB Core is available as open-source software under the Apache 2.0 License on [GitHub](https://github.com/scalar-labs/scalardb).
 
 :::
 
-## ScalarDB Enterprise Premium
+## ScalarDB Enterprise Standard/Premium
 
 ```properties
 scalar.db.cluster.node.licensing.license_key={"organization_name":"Trial","product_name":"ScalarDB Cluster","product_version":3,"license_type":"trial","signature":"MEYCIQDoYXyiOxtQhyT0+PbsrYZFjP6l1AO/FWmgC+tEi/rQNAIhALhyP40VRzOEBF431pDTFrqazR2puxyVSPEP2XRWpG80","expiration_date_time":"2026-05-18T10:30:09.324+09:00[Asia/Tokyo]"}
