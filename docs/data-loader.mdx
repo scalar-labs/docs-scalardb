@@ -15,32 +15,350 @@ ScalarDB Data Loader is a utility tool enabling you to import and export data wi
 
 Data Loader provides structured import and export processes with validation, error handling, and detailed logging to help you safely move data in and out of ScalarDB.
 
+## Choose the right configuration based on your use case
+
+Use the following decision tree to determine which configuration pattern is appropriate for your use case:
+
+```mermaid
+
+flowchart LR
+
+    A["Using Consensus Commit or Single CRUD?"] -->|Consensus Commit| B["Using ScalarDB Cluster?"]
+
+    A -->|Single CRUD| C["Using ScalarDB Cluster?"]
+
+
+    B -->|Yes| D["Import/Export large amount of data?"]
+
+    B -->|No| E["C) Access databases directly"]
+
+
+    D -->|Yes| F["A) Access databases directly"]
+
+    D -->|No| G["B) Access databases through ScalarDB Cluster"]
+
+
+    C -->|Yes| H["Import/Export large amount of data?"]
+
+    C -->|No| I["F) Access databases directly"]
+
+
+    H -->|Yes| J["D) Access databases directly"]
+
+    H -->|No| K["E) Access databases through ScalarDB Cluster"]
+
+    click E "?config-pattern=pattern-ac#configuration-patterns" "Go to Pattern A/C"
+    click F "?config-pattern=pattern-ac#configuration-patterns" "Go to Pattern A/C"
+    click G "?config-pattern=pattern-b#configuration-patterns" "Go to Pattern B"
+    click I "?config-pattern=pattern-df#configuration-patterns" "Go to Pattern D/F"
+    click J "?config-pattern=pattern-df#configuration-patterns" "Go to Pattern D/F"
+    click K "?config-pattern=pattern-e#configuration-patterns" "Go to Pattern E"
+
+    classDef clickable fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#1a73e8
+    class E,F,G,I,J,K clickable
+
+```
+
 :::note
 
-- Data Loader is currently built upon ScalarDB Core, so it can only import and export data directly to and from the backend databases. Therefore, it cannot import and export data through ScalarDB Cluster.
+When using Consensus Commit, if you want SERIALIZABLE isolation, stop the cluster. If you can accept READ COMMITTED isolation, you don't need to stop the cluster.
 
 :::
 
+
+### Configuration patterns {#configuration-patterns}
+
+Based on the decision tree, select your configuration pattern:
+
+<Tabs groupId="config-pattern" queryString>
+  <TabItem value="pattern-ac" label="A/C: Access databases directly" default>
+
+Use this pattern when you need Consensus Commit transactions and are accessing databases directly (either because you don't have ScalarDB Cluster, or you have large amounts of data to import/export). Rows are imported by using transactional operations, ensuring ACID properties. By default, up to 100 put operations are grouped into a single transaction. You can adjust this by using the `--transaction-size` option.
+
+**Client configuration** (scalardb.properties for Data Loader):
+
+```properties
+# Transaction manager for direct database access with Consensus Commit
+scalar.db.transaction_manager=consensus-commit
+
+# Storage configuration (example for PostgreSQL)
+scalar.db.storage=jdbc
+scalar.db.contact_points=jdbc:postgresql://<DATABASE_HOST>:5432/<DATABASE_NAME>
+scalar.db.username=<USERNAME>
+scalar.db.password=<PASSWORD>
+```
+
+For other database configurations, see [ScalarDB Configurations](./configurations.mdx).
+
+When running import commands, use `--mode TRANSACTION`. The `--mode` argument is not required for export commands.
+
+:::note
+
+When using the Consensus Commit transaction manager, each transaction group (100 records by default) meets ACID guarantees, but the overall import or export operation is not atomic. If interrupted, some groups may be committed while others are not. Use the log files to identify and retry failed records.
+
+:::
+
+:::warning
+
+To ensure data consistency:
+- **With ScalarDB Cluster (Pattern A):** Stop the cluster during the import or export operation.
+- **Without ScalarDB Cluster (Pattern C):** Stop other processes that update the databases during the operation.
+
+:::
+
+  </TabItem>
+  <TabItem value="pattern-b" label="B: Access databases through ScalarDB Cluster">
+
+Use this pattern when you have ScalarDB Cluster configured for Consensus Commit transactions and are not importing or exporting large amounts of data.
+
+**Client configuration** (scalardb.properties for Data Loader):
+
+```properties
+# Transaction manager for connecting to ScalarDB Cluster
+scalar.db.transaction_manager=cluster
+
+# Contact point of the cluster (use your load balancer address)
+scalar.db.contact_points=indirect:<SCALARDB_CLUSTER_HOST>
+
+# Optional: Port number (default is 60053)
+scalar.db.contact_port=60053
+```
+
+Replace `<SCALARDB_CLUSTER_HOST>` with your ScalarDB Cluster endpoint (for example, `localhost` or `192.168.10.1`).
+
+**Cluster configuration** (scalardb-cluster-node.properties):
+
+```properties
+# Transaction manager on the cluster side
+scalar.db.transaction_manager=consensus-commit
+
+# Isolation level (SNAPSHOT, SERIALIZABLE, or READ_COMMITTED)
+scalar.db.consensus_commit.isolation_level=SNAPSHOT
+
+# Storage configuration (example for PostgreSQL)
+scalar.db.storage=jdbc
+scalar.db.contact_points=jdbc:postgresql://<DATABASE_HOST>:5432/<DATABASE_NAME>
+scalar.db.username=<USERNAME>
+scalar.db.password=<PASSWORD>
+```
+
+For other database configurations, see [ScalarDB Cluster Configurations](./scalardb-cluster/scalardb-cluster-configurations.mdx).
+
+When running import commands, use `--mode TRANSACTION`. The `--mode` argument is not required for export commands.
+
+:::warning
+
+To ensure data consistency, stop other processes that update the databases through ScalarDB Cluster during the import or export operation.
+
+:::
+
+  </TabItem>
+  <TabItem value="pattern-df" label="D/F: Access databases directly">
+
+Use this pattern when you need non-transactional storage operations and are accessing databases directly (either because you don't have ScalarDB Cluster, or you have large amounts of data to import/export).
+
+**Client configuration** (scalardb.properties for Data Loader):
+
+```properties
+# Transaction manager for direct database access (non-transactional)
+scalar.db.transaction_manager=single-crud-operation
+
+# Storage configuration (example for PostgreSQL)
+scalar.db.storage=jdbc
+scalar.db.contact_points=jdbc:postgresql://<DATABASE_HOST>:5432/<DATABASE_NAME>
+scalar.db.username=<USERNAME>
+scalar.db.password=<PASSWORD>
+```
+
+For other database configurations, see [ScalarDB Configurations](./configurations.mdx).
+
+When running import commands, use `--mode STORAGE`. The `--mode` argument is not required for export commands.
+
+  </TabItem>
+  <TabItem value="pattern-e" label="E: Access databases through ScalarDB Cluster">
+
+Use this pattern when you have ScalarDB Cluster configured for non-transactional storage operations and are not importing or exporting large amounts of data.
+
+**Client configuration** (scalardb.properties for Data Loader):
+
+```properties
+# Transaction manager for connecting to ScalarDB Cluster
+scalar.db.transaction_manager=cluster
+
+# Contact point of the cluster (use your load balancer address)
+scalar.db.contact_points=indirect:<SCALARDB_CLUSTER_HOST>
+
+# Optional: Port number (default is 60053)
+scalar.db.contact_port=60053
+```
+
+Replace `<SCALARDB_CLUSTER_HOST>` with your ScalarDB Cluster endpoint (for example, `localhost` or `192.168.10.1`).
+
+**Cluster configuration** (scalardb-cluster-node.properties):
+
+```properties
+# Transaction manager on the cluster side (non-transactional)
+scalar.db.transaction_manager=single-crud-operation
+
+# Storage configuration (example for PostgreSQL)
+scalar.db.storage=jdbc
+scalar.db.contact_points=jdbc:postgresql://<DATABASE_HOST>:5432/<DATABASE_NAME>
+scalar.db.username=<USERNAME>
+scalar.db.password=<PASSWORD>
+```
+
+For other database configurations, see [ScalarDB Cluster Configurations](./scalardb-cluster/scalardb-cluster-configurations.mdx).
+
+When running import commands, use `--mode STORAGE`. The `--mode` argument is not required for export commands.
+
+  </TabItem>
+</Tabs>
+
 ## Prerequisites
 
-Before using Data Loader, make sure you have the following:
+<Tabs groupId="access-mode" queryString>
+  <TabItem value="cluster" label="ScalarDB Cluster" default>
 
-One of the following Java Development Kits (JDKs):
+Before using Data Loader with ScalarDB Cluster, make sure you have the following:
+
+- One of the following Java Development Kits (JDKs):
   - Oracle JDK: 8, 11, 17, or 21 (LTS versions)
   - OpenJDK (Eclipse Temurin, Amazon Corretto, or Microsoft Build of OpenJDK): 8, 11, 17, or 21 (LTS versions)
-- A valid **`scalardb.properties`** configuration file with your database connection settings
-- Access to your database with appropriate permissions for read and write operations. For details about the required permissions, see [Database permission requirements](requirements.mdx#database-permission-requirements).
+- A valid **`scalardb.properties`** file configured with ScalarDB Cluster connection settings (cluster endpoint and port)
+- A running ScalarDB Cluster instance and network access to cluster endpoints
+
+</TabItem>
+<TabItem value="direct" label="Direct database access">
+
+Before using Data Loader with direct database access, make sure you have the following:
+
+- One of the following Java Development Kits (JDKs):
+  - Oracle JDK: 8, 11, 17, or 21 (LTS versions)
+  - OpenJDK (Eclipse Temurin, Amazon Corretto, or Microsoft Build of OpenJDK): 8, 11, 17, or 21 (LTS versions)
+- A valid **`scalardb.properties`** file configured with direct database connection settings
+- Database permissions for read and write operations (see [Database permission requirements](./requirements.mdx#database-permission-requirements))
+
+</TabItem>
+</Tabs>
 
 ## Set up Data Loader
 
-1. Download the latest Data Loader release from the [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) page.
-2. Verify the installation by running the following command, replacing `<VERSION>` with the version number:
+<Tabs groupId="access-mode" queryString>
+  <TabItem value="cluster" label="ScalarDB Cluster" default>
+
+Select your preferred method to set up Data Loader, and follow the instructions.
+
+<Tabs groupId="data_loader_setup" queryString>
+  <TabItem value="Fat_JAR" label="Fat JAR" default>
+
+Download **`scalardb-cluster-data-loader-<VERSION>-all.jar`** from the [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) page.
+
+Verify the installation by running the following command, replacing `<VERSION>` with the version number:
+
+```console
+java -jar scalardb-cluster-data-loader-<VERSION>-all.jar --help
+```
+
+If successful, you'll see the list of available commands and options.
+
+  </TabItem>
+  <TabItem value="Docker_container" label="Docker container">
+
+You can pull the Docker image from the [Scalar container registry](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-cluster-data-loader-cli) by running the following command, replacing the contents in the angle brackets as described:
+
+```console
+docker pull ghcr.io/scalar-labs/scalardb-cluster-data-loader-cli:<VERSION>
+```
+
+You can run Data Loader commands by using the container. The following example shows how to verify the installation:
+
+```console
+docker run --rm ghcr.io/scalar-labs/scalardb-cluster-data-loader-cli:<VERSION> --help
+```
+
+If successful, you'll see the list of available commands and options.
+
+:::note
+
+All command examples in this documentation use the JAR file syntax. You can run the same commands with the container by replacing `java -jar scalardb-cluster-data-loader-<VERSION>-all.jar` with the Docker equivalent and mounting your local files as volumes. For example:
+
+```console
+# JAR syntax
+java -jar scalardb-cluster-data-loader-<VERSION>-all.jar import \
+  --config scalardb.properties --file data.json ...
+
+# Docker equivalent
+docker run --rm \
+  -v ./scalardb.properties:/scalardb.properties \
+  -v ./data.json:/data.json \
+  ghcr.io/scalar-labs/scalardb-cluster-data-loader-cli:<VERSION> \
+  import --config /scalardb.properties --file /data.json ...
+```
+
+:::
+
+  </TabItem>
+</Tabs>
+
+</TabItem>
+<TabItem value="direct" label="Direct database access">
+
+Select your preferred method to set up Data Loader, and follow the instructions.
+
+<Tabs groupId="data_loader_setup" queryString>
+  <TabItem value="Fat_JAR" label="Fat JAR" default>
+
+Download **`scalardb-data-loader-<VERSION>.jar`** from the [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) page.
+
+Verify the installation by running the following command, replacing `<VERSION>` with the version number:
 
 ```console
 java -jar scalardb-data-loader-<VERSION>.jar --help
 ```
 
 If successful, you'll see the list of available commands and options.
+
+  </TabItem>
+  <TabItem value="Docker_container" label="Docker container">
+
+You can pull the Docker image from the [Scalar container registry](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-data-loader-cli) by running the following command, replacing the contents in the angle brackets as described:
+
+```console
+docker pull ghcr.io/scalar-labs/scalardb-data-loader-cli:<VERSION>
+```
+
+You can run Data Loader commands by using the container. The following example shows how to verify the installation:
+
+```console
+docker run --rm ghcr.io/scalar-labs/scalardb-data-loader-cli:<VERSION> --help
+```
+
+If successful, you'll see the list of available commands and options.
+
+:::note
+
+All command examples in this documentation use the JAR file syntax. You can run the same commands with the container by replacing `java -jar scalardb-data-loader-<VERSION>.jar` with the Docker equivalent and mounting your local files as volumes. For example:
+
+```console
+# JAR syntax
+java -jar scalardb-data-loader-<VERSION>.jar import \
+  --config scalardb.properties --file data.json ...
+
+# Docker equivalent
+docker run --rm \
+  -v ./scalardb.properties:/scalardb.properties \
+  -v ./data.json:/data.json \
+  ghcr.io/scalar-labs/scalardb-data-loader-cli:<VERSION> \
+  import --config /scalardb.properties --file /data.json ...
+```
+
+:::
+
+  </TabItem>
+</Tabs>
+
+</TabItem>
+</Tabs>
 
 ## Importing data
 
@@ -58,13 +376,34 @@ Data Loader supports three file formats: JSON, JSONL (JSON Lines), and CSV. The 
 
     To import a JSON file into your table, run the following command, replacing the contents of the angle brackets as described:
 
-    ```console
-    java -jar scalardb-data-loader-<VERSION>.jar import \
-      --config scalardb.properties \
-      --namespace <NAMESPACE_NAME> \
-      --table <TABLE_NAME> \
-      --file <FILE_PATH>.json
-    ```
+<Tabs groupId="access-mode" queryString>
+  <TabItem value="cluster" label="ScalarDB Cluster" default>
+
+```console
+java -jar scalardb-cluster-data-loader-<VERSION>-all.jar import \
+  --config scalardb.properties \
+  --mode TRANSACTION \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --file <FILE_PATH>.json \
+  --format JSON
+```
+
+  </TabItem>
+  <TabItem value="direct" label="Direct database access">
+
+```console
+java -jar scalardb-data-loader-<VERSION>.jar import \
+  --config scalardb.properties \
+  --mode TRANSACTION \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --file <FILE_PATH>.json \
+  --format JSON
+```
+
+  </TabItem>
+</Tabs>
 
     This command imports the JSON file into the specified table using default settings (INSERT mode, automatic field mapping).
 
@@ -90,14 +429,34 @@ Data Loader supports three file formats: JSON, JSONL (JSON Lines), and CSV. The 
 
     To import a JSONL file into your table, run the following command, replacing the contents of the angle brackets as described:
 
-    ```console
-    java -jar scalardb-data-loader-<VERSION>.jar import \
-      --config scalardb.properties \
-      --namespace <NAMESPACE_NAME> \
-      --table <TABLE_NAME> \
-      --file <FILE_PATH>.jsonl \
-      --format JSONL
-    ```
+<Tabs groupId="access-mode" queryString>
+  <TabItem value="cluster" label="ScalarDB Cluster" default>
+
+```console
+java -jar scalardb-cluster-data-loader-<VERSION>-all.jar import \
+  --config scalardb.properties \
+  --mode TRANSACTION \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --file <FILE_PATH>.jsonl \
+  --format JSONL
+```
+
+  </TabItem>
+  <TabItem value="direct" label="Direct database access">
+
+```console
+java -jar scalardb-data-loader-<VERSION>.jar import \
+  --config scalardb.properties \
+  --mode TRANSACTION \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --file <FILE_PATH>.jsonl \
+  --format JSONL
+```
+
+  </TabItem>
+</Tabs>
 
     This command imports the JSONL file into the specified table using default settings (INSERT mode, automatic field mapping).
 
@@ -113,14 +472,34 @@ Data Loader supports three file formats: JSON, JSONL (JSON Lines), and CSV. The 
 
     To import a CSV file into your table, run the following command, replacing the contents of the angle brackets as described:
 
-    ```console
-    java -jar scalardb-data-loader-<VERSION>.jar import \
-      --config scalardb.properties \
-      --namespace <NAMESPACE_NAME> \
-      --table <TABLE_NAME> \
-      --file <FILE_PATH>.csv \
-      --format CSV
-    ```
+<Tabs groupId="access-mode" queryString>
+  <TabItem value="cluster" label="ScalarDB Cluster" default>
+
+```console
+java -jar scalardb-cluster-data-loader-<VERSION>-all.jar import \
+  --config scalardb.properties \
+  --mode TRANSACTION \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --file <FILE_PATH>.csv \
+  --format CSV
+```
+
+  </TabItem>
+  <TabItem value="direct" label="Direct database access">
+
+```console
+java -jar scalardb-data-loader-<VERSION>.jar import \
+  --config scalardb.properties \
+  --mode TRANSACTION \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --file <FILE_PATH>.csv \
+  --format CSV
+```
+
+  </TabItem>
+</Tabs>
 
     This command imports the CSV file into the specified table using default settings (INSERT mode, automatic field mapping).
 
@@ -140,6 +519,15 @@ The CSV file must include a header row with column names that match your table c
   </TabItem>
 </Tabs>
 
+:::warning
+
+When importing data by using direct database access, keep the following in mind to ensure data consistency:
+
+- **With ScalarDB Cluster in your environment:** Stop the cluster during the operation.
+- **Without ScalarDB Cluster:** Stop other processes that update the databases during the operation.
+
+:::
+
 ### Common import scenarios
 
 This section describes common import scenarios.
@@ -148,14 +536,36 @@ This section describes common import scenarios.
 
 To update existing records instead of inserting new ones, run the following command, replacing the contents of the angle brackets as described:
 
+<Tabs groupId="access-mode" queryString>
+  <TabItem value="cluster" label="ScalarDB Cluster" default>
+
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar import \
+java -jar scalardb-cluster-data-loader-<VERSION>-all.jar import \
   --config scalardb.properties \
+  --mode TRANSACTION \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
   --file <FILE_PATH>.json \
+  --format JSON \
   --import-mode UPDATE
 ```
+
+  </TabItem>
+  <TabItem value="direct" label="Direct database access">
+
+```console
+java -jar scalardb-data-loader-<VERSION>.jar import \
+  --config scalardb.properties \
+  --mode TRANSACTION \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --file <FILE_PATH>.json \
+  --format JSON \
+  --import-mode UPDATE
+```
+
+  </TabItem>
+</Tabs>
 
 #### Import with custom field mapping using a control file
 
@@ -163,26 +573,67 @@ If your source file fields don't match your table column names, you can use a co
 
 To import with custom field mapping using a control file, run the following command, replacing the contents of the angle brackets as described:
 
+<Tabs groupId="access-mode" queryString>
+  <TabItem value="cluster" label="ScalarDB Cluster" default>
+
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar import \
+java -jar scalardb-cluster-data-loader-<VERSION>-all.jar import \
   --config scalardb.properties \
-  --file <FILE>.json \
+  --mode TRANSACTION \
+  --file <FILE_PATH>.json \
+  --format JSON \
   --control-file <CONTROL_FILE>.json
 ```
 
-#### Import CSV data with a custom delimiter
-
-To import CSV data with a custom delimiter, run the following command, replacing the contents of the angle brackets as described
+  </TabItem>
+  <TabItem value="direct" label="Direct database access">
 
 ```console
 java -jar scalardb-data-loader-<VERSION>.jar import \
   --config scalardb.properties \
+  --mode TRANSACTION \
+  --file <FILE_PATH>.json \
+  --format JSON \
+  --control-file <CONTROL_FILE>.json
+```
+
+  </TabItem>
+</Tabs>
+
+#### Import CSV data with a custom delimiter
+
+To import CSV data with a custom delimiter, run the following command, replacing the contents of the angle brackets as described:
+
+<Tabs groupId="access-mode" queryString>
+  <TabItem value="cluster" label="ScalarDB Cluster" default>
+
+```console
+java -jar scalardb-cluster-data-loader-<VERSION>-all.jar import \
+  --config scalardb.properties \
+  --mode TRANSACTION \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
   --file <FILE_PATH>.csv \
   --format CSV \
   --delimiter ";"
 ```
+
+  </TabItem>
+  <TabItem value="direct" label="Direct database access">
+
+```console
+java -jar scalardb-data-loader-<VERSION>.jar import \
+  --config scalardb.properties \
+  --mode TRANSACTION \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --file <FILE_PATH>.csv \
+  --format CSV \
+  --delimiter ";"
+```
+
+  </TabItem>
+</Tabs>
 
 ### Configuring your import
 
@@ -202,30 +653,14 @@ When using INSERT mode, you must have matching fields in the source file for eac
 
 :::
 
-#### ScalarDB modes
-
-Based on your schema type, you can use one of the following modes:
-
-- **`TRANSACTION`:** Use this mode for databases that have [transaction metadata](consensus-commit.mdx#distributed-wal) in their schemas. Rows are imported by using transactional operations, ensuring ACID properties and data consistency. By default, up to 100 put operations are grouped into a single transaction. You can adjust this by using the `--transaction-size` option.
-
-  :::note
-
-  When using `TRANSACTION` mode, each transaction group (that includes 100 records by default) meets ACID guarantees, but the overall import or export operation is not atomic. If interrupted, some groups may be committed while others are not. Use the log files to identify and retry failed records.
-
-  :::
-
-- **`STORAGE` (default):** Use this mode for databases that do not have [transaction metadata](consensus-commit.mdx#distributed-wal) in their schemas. This mode performs direct database imports by using non-transactional storage operations for better performance, without full ACID guarantees.
-
-For additional configuration options including validation, logging, and performance tuning, see the [Command-line flags](#command-line-flags) section below.
-
 ### Command-line flags
 
 The following is a list of flags (options) that can be used with the import function in Data Loader:
 
 | Flag                         | Description                                                  | Usage                                                       |
 | ---------------------------- | ------------------------------------------------------------ | ----------------------------------------------------------- |
-| `--mode`                       | The mode in which ScalarDB is running. Supported modes are `STORAGE` and `TRANSACTION`. If omitted, the default value is `STORAGE`. | `scalardb-data-loader --mode TRANSACTION`                   |
-| `--config`                     | The path to the `.properties` file for ScalarDB. If omitted, the tool looks for a file named `scalardb.properties` in the current folder. | `scalardb-data-loader --config scalardb.properties`         |
+| `--mode`                       | The access mode for Data Loader. Required. Supported modes are `STORAGE` (single CRUD) and `TRANSACTION` (Consensus Commit). When using ScalarDB Cluster, the mode must match the `scalar.db.transaction_manager` setting in the Cluster configuration. When accessing databases directly, the mode must match the `scalar.db.transaction_manager` setting. | `scalardb-data-loader --mode TRANSACTION`                   |
+| `--config`                     | The path to the `.properties` file for ScalarDB. This file should contain either cluster connection settings or direct database connection settings, depending on your chosen access pattern. If omitted, the tool looks for a file named `scalardb.properties` in the current folder. | `scalardb-data-loader --config scalardb.properties`         |
 | `--namespace`                  | The namespace to import table data to. Required when no control file is provided. | `scalardb-data-loader --namespace namespace`                |
 | `--table`                      | The name of the table to import data to. Required when no control file is provided. | `scalardb-data-loader --table tableName`                    |
 | `--import-mode`                | Mode to import data into the ScalarDB table. Supported modes are `INSERT`, `UPDATE`, and `UPSERT`. Optional. The default value is `INSERT`. | `scalardb-data-loader --import-mode UPDATE`                 |
@@ -245,7 +680,7 @@ The following is a list of flags (options) that can be used with the import func
 | `--data-chunk-size`            | Number of records to load into memory for processing before moving to the next batch. This controls memory usage, not transaction boundaries. Optional. The default value is `500`. | `scalardb-data-loader --data-chunk-size 1000`               |
 | `--data-chunk-queue-size`      | Maximum queue size for loaded records waiting to be processed. Optional. The default value is `256`. | `scalardb-data-loader --data-chunk-queue-size 100`          |
 | `--split-log-mode`             | Split log file into multiple files based on data chunks. Optional. The default value is `false`. | `scalardb-data-loader --split-log-mode`                     |
-| `--transaction-size`           | Group size of put operations per transaction commit. Specifies how many records are committed together in a single transaction. Only supported in `TRANSACTION` mode. Optional. The default value is `100`. | `scalardb-data-loader --transaction-size 200`               |
+| `--transaction-size`           | Group size of put operations per transaction commit. Specifies how many records are committed together in a single transaction. Only supported when using Consensus Commit. Optional. The default value is `100`. | `scalardb-data-loader --transaction-size 200`               |
 
 ### Data mapping
 
@@ -468,6 +903,12 @@ In ScalarDB `TRANSACTION` mode, attempting to update the same target data in fas
 
 This section explains how to use the export function in Data Loader.
 
+:::note
+
+Export operations use the same access patterns and configuration as imports. See the [Configuration patterns](#configuration-patterns) section for details on configuring Data Loader for ScalarDB Cluster access or direct database access.
+
+:::
+
 ### Basic export example
 
 The simplest way to export data is to export an entire table. Data Loader performs a ScalarDB scan operation and exports the results to a file.
@@ -480,13 +921,30 @@ Data Loader supports three export formats: JSON, JSONL (JSON Lines), and CSV. Th
 
     To export a table to JSON format, run the following command, replacing the contents of the angle brackets as described:
 
-    ```console
-    java -jar scalardb-data-loader-<VERSION>.jar export \
-      --config scalardb.properties \
-      --namespace <NAMESPACE_NAME> \
-      --table <TABLE_NAME> \
-      --format json
-    ```
+<Tabs groupId="access-mode" queryString>
+  <TabItem value="cluster" label="ScalarDB Cluster" default>
+
+```console
+java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
+  --config scalardb.properties \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --format JSON
+```
+
+  </TabItem>
+  <TabItem value="direct" label="Direct database access">
+
+```console
+java -jar scalardb-data-loader-<VERSION>.jar export \
+  --config scalardb.properties \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --format JSON
+```
+
+  </TabItem>
+</Tabs>
 
     This command exports all data from the specified table to a JSON file in the current directory. The output file will be automatically named by using the format `export.<namespace>.<table>.<timestamp>.json`.
 
@@ -512,13 +970,30 @@ Data Loader supports three export formats: JSON, JSONL (JSON Lines), and CSV. Th
 
     To export a table to JSONL (JSON Lines) format, run the following command, replacing the contents of the angle brackets as described:
 
-    ```console
-    java -jar scalardb-data-loader-<VERSION>.jar export \
-      --config scalardb.properties \
-      --namespace <NAMESPACE_NAME> \
-      --table <TABLE_NAME> \
-      --format jsonl
-    ```
+<Tabs groupId="access-mode" queryString>
+  <TabItem value="cluster" label="ScalarDB Cluster" default>
+
+```console
+java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
+  --config scalardb.properties \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --format JSONL
+```
+
+  </TabItem>
+  <TabItem value="direct" label="Direct database access">
+
+```console
+java -jar scalardb-data-loader-<VERSION>.jar export \
+  --config scalardb.properties \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --format JSONL
+```
+
+  </TabItem>
+</Tabs>
 
     This command exports all data from the specified table to a JSONL file in the current directory. The output file will be automatically named by using the format `export.<namespace>.<table>.<timestamp>.jsonl`.
 
@@ -534,13 +1009,30 @@ Data Loader supports three export formats: JSON, JSONL (JSON Lines), and CSV. Th
 
     To export a table to CSV format, run the following command, replacing the contents of the angle brackets as described:
 
-    ```console
-    java -jar scalardb-data-loader-<VERSION>.jar export \
-      --config scalardb.properties \
-      --namespace <NAMESPACE_NAME> \
-      --table <TABLE_NAME> \
-      --format csv
-    ```
+<Tabs groupId="access-mode" queryString>
+  <TabItem value="cluster" label="ScalarDB Cluster" default>
+
+```console
+java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
+  --config scalardb.properties \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --format CSV
+```
+
+  </TabItem>
+  <TabItem value="direct" label="Direct database access">
+
+```console
+java -jar scalardb-data-loader-<VERSION>.jar export \
+  --config scalardb.properties \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --format CSV
+```
+
+  </TabItem>
+</Tabs>
 
     This command exports all data from the specified table to a CSV file in the current directory. The output file will be automatically named by using the format `export.<namespace>.<table>.<timestamp>.csv`.
 
@@ -560,6 +1052,32 @@ By default, CSV exports include a header row with column names. Use the `--no-he
   </TabItem>
 </Tabs>
 
+:::warning
+
+When exporting data by using direct database access, keep the following in mind to ensure data consistency:
+
+- **With ScalarDB Cluster in your environment:** Stop the cluster during the operation.
+- **Without ScalarDB Cluster:** Stop other processes that update the databases during the operation.
+
+:::
+
+:::warning[For full table exports only]
+
+To export an entire table without specifying a partition key (full table scan), you must enable cross-partition scanning:
+
+- **With ScalarDB Cluster:** Enable cross-partition scanning in your ScalarDB Cluster configuration.
+- **Without ScalarDB Cluster (direct database access):** Enable cross-partition scanning in your `scalardb.properties` file:
+
+```properties
+scalar.db.cross_partition_scan.enabled=true
+```
+
+If this setting is not enabled, full table exports will fail. For details about this configuration, see [Cross-partition scan configurations](./configurations.mdx#cross-partition-scan-configurations).
+
+When exporting a specific partition by using `--partition-key`, cross-partition scanning is not needed.
+
+:::
+
 ### Common export scenarios
 
 The following are some common data-exporting scenarios.
@@ -568,18 +1086,50 @@ The following are some common data-exporting scenarios.
 
 To export data to a specific file and format, run the following command, replacing the contents of the angle brackets as described:
 
+<Tabs groupId="access-mode" queryString>
+  <TabItem value="cluster" label="ScalarDB Cluster" default>
+
+```console
+java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
+  --config scalardb.properties \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --output-file <OUTPUT_FILE_PATH>.csv \
+  --format CSV
+```
+
+  </TabItem>
+  <TabItem value="direct" label="Direct database access">
+
 ```console
 java -jar scalardb-data-loader-<VERSION>.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
   --output-file <OUTPUT_FILE_PATH>.csv \
-  --format csv
+  --format CSV
 ```
+
+  </TabItem>
+</Tabs>
 
 #### Export specific columns only
 
 To export specific columns only, run the following command, replacing the contents of the angle brackets as described:
+
+<Tabs groupId="access-mode" queryString>
+  <TabItem value="cluster" label="ScalarDB Cluster" default>
+
+```console
+java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
+  --config scalardb.properties \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --projection <COLUMN1>,<COLUMN2>,<COLUMN3>
+```
+
+  </TabItem>
+  <TabItem value="direct" label="Direct database access">
 
 ```console
 java -jar scalardb-data-loader-<VERSION>.jar export \
@@ -589,9 +1139,26 @@ java -jar scalardb-data-loader-<VERSION>.jar export \
   --projection <COLUMN1>,<COLUMN2>,<COLUMN3>
 ```
 
+  </TabItem>
+</Tabs>
+
 #### Export data for a specific partition key
 
 To export data for a specific partition key, run the following command, replacing the contents of the angle brackets as described:
+
+<Tabs groupId="access-mode" queryString>
+  <TabItem value="cluster" label="ScalarDB Cluster" default>
+
+```console
+java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
+  --config scalardb.properties \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --partition-key <KEY_NAME>=<VALUE>
+```
+
+  </TabItem>
+  <TabItem value="direct" label="Direct database access">
 
 ```console
 java -jar scalardb-data-loader-<VERSION>.jar export \
@@ -601,9 +1168,26 @@ java -jar scalardb-data-loader-<VERSION>.jar export \
   --partition-key <KEY_NAME>=<VALUE>
 ```
 
+  </TabItem>
+</Tabs>
+
 #### Export with a row limit
 
 To export with a row limit, run the following command, replacing the contents of the angle brackets as described:
+
+<Tabs groupId="access-mode" queryString>
+  <TabItem value="cluster" label="ScalarDB Cluster" default>
+
+```console
+java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
+  --config scalardb.properties \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --limit 1000
+```
+
+  </TabItem>
+  <TabItem value="direct" label="Direct database access">
 
 ```console
 java -jar scalardb-data-loader-<VERSION>.jar export \
@@ -613,13 +1197,16 @@ java -jar scalardb-data-loader-<VERSION>.jar export \
   --limit 1000
 ```
 
+  </TabItem>
+</Tabs>
+
 ### Command-line flags
 
 The following is a list of flags (options) that can be used with the export function in Data Loader:
 
 | Flag                     | Description                                                  | Usage                                                  |
 | ------------------------ | ------------------------------------------------------------ | ------------------------------------------------------ |
-| `--config`                 | The path to the `.properties` file for ScalarDB. If omitted, the tool looks for a file named `scalardb.properties` in the current folder. | `scalardb-data-loader --config scalardb.properties`    |
+| `--config`                 | The path to the `.properties` file for ScalarDB. This file should contain either cluster connection settings or direct database connection settings, depending on your chosen access pattern. If omitted, the tool looks for a file named `scalardb.properties` in the current folder. | `scalardb-data-loader --config scalardb.properties`    |
 | `--namespace`              | The namespace to export table data from. Required.               | `scalardb-data-loader --namespace namespace`           |
 | `--table`                  | The name of the table to export data from. Required.                 | `scalardb-data-loader --table tableName`               |
 | `--partition-key`          | A specific partition key to export data from. Specify in the format `key=value`. By default, this option exports all data from the specified table. | `scalardb-data-loader --partition-key id=100`          |
@@ -633,7 +1220,6 @@ The following is a list of flags (options) that can be used with the export func
 | `--output-dir`             | Directory where the exported file should be saved. The default is the current directory.<br /><br />Note: Data Loader doesn't create the output directory for you, so the directory needs to already exist. | `scalardb-data-loader --output-dir ./exports`          |
 | `--output-file`            | The name of the output file for the exported data. If omitted, the tool will save the file with the following name format:<br />`export.<namespace>.<table>.<timestamp>.<format>` | `scalardb-data-loader --output-file output.json`       |
 | `--format`                 | Format of the exported data file. Supported formats are `JSON`, `JSONL`, and `CSV`. The default value is `JSON`. | `scalardb-data-loader --format CSV`                    |
-| `--include-metadata`       | Include transaction metadata in the exported data. The default value is `false`. | `scalardb-data-loader --include-metadata`              |
 | `--delimiter`              | **(CSV only)** Delimiter character for CSV files. The default delimiter is a comma. | `scalardb-data-loader --delimiter ";"`                 |
 | `--no-header`              | **(CSV only)** Exclude header row in CSV files. The default value is `false`. | `scalardb-data-loader --no-header`                     |
 | `--pretty-print`           | **(JSON/JSONL only)** Pretty-print JSON output. The default value is `false`. | `scalardb-data-loader --pretty-print`                  |
