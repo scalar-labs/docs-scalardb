@@ -65,6 +65,33 @@ ScalarDB の設定は以下の通りです。
 }
 ```
 
+  <h3>データアクセス方法</h3>
+
+ScalarDB Analytics は ScalarDB Cluster を経由せず、ScalarDB Core ライブラリを直接使用して ScalarDB からデータを読み取ります。そのため、ScalarDB Cluster でのみ利用可能な機能 (暗号化など) は ScalarDB データソースでは使用できません。
+
+<h3>スキャン動作</h3>
+
+ScalarDB データソースは、内部的に [`Scan` オペレーションの `all()`](../api-guide.mdx#scan-操作) を使用してデータを読み取ります。このオペレーションには [クロスパーティションスキャン設定](../configurations.mdx#クロスパーティションスキャン設定)を有効にする必要があります。フィルタリングとオーダリングは ScalarDB レベルでは適用されません。関連する設定は以下のとおりです:
+
+- `scalar.db.cross_partition_scan.enabled` は `true` である必要があります (デフォルトは `true`)。
+- `scalar.db.cross_partition_scan.filtering.enabled` は効果がありません。
+- `scalar.db.cross_partition_scan.ordering.enabled` は効果がありません。
+
+:::note
+
+フィルタープッシュダウンなどの最適化は、将来のリリースでサポートされる可能性があります。
+
+:::
+
+<h3>ScalarDB Core 設定のオーバーライド</h3>
+
+[ScalarDB Core の設定プロパティ](../configurations.mdx)は、ScalarDB データソースとして使用する場合にも基本的に反映されます。ただし、以下のプロパティは ScalarDB Analytics によってオーバーライドされます:
+
+<ul>
+  <li><strong><code>scalar.db.scan_fetch_size</code></strong>: ユーザーが明示的に設定していない場合、ScalarDB Core のデフォルト値 <code>10</code> の代わりに <code>4096</code> が設定されます。</li>
+  <li><strong><code>scalar.db.consensus_commit.isolation_level</code></strong>: ユーザーが指定した値にかかわらず、常に <code>READ_COMMITTED</code> でオーバーライドされます。</li>
+</ul>
+
   </TabItem>
   <TabItem value="postgresql" label="PostgreSQL">
 
