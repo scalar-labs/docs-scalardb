@@ -62,6 +62,33 @@ The following configuration is for ScalarDB.
 }
 ```
 
+<h3>Data access method</h3>
+
+ScalarDB Analytics reads data from ScalarDB by using the ScalarDB Core library directly, not through ScalarDB Cluster. As a result, features that are available only in ScalarDB Cluster (such as encryption) cannot be used with the ScalarDB data source.
+
+<h3>Scan behavior</h3>
+
+Internally, the ScalarDB data source uses the [`Scan` operation with `all()`](../api-guide.mdx#scan-operation) to read data. This operation requires [cross-partition scan](../configurations.mdx#cross-partition-scan-configurations) to be enabled. Filtering and ordering are not applied at the ScalarDB level. The relevant settings are as follows:
+
+- `scalar.db.cross_partition_scan.enabled` must be `true` (the default is `true`).
+- `scalar.db.cross_partition_scan.filtering.enabled` has no effect.
+- `scalar.db.cross_partition_scan.ordering.enabled` has no effect.
+
+:::note
+
+Filter push-down and other optimizations may be supported in future releases.
+
+:::
+
+<h3>ScalarDB Core configuration overrides</h3>
+
+[ScalarDB Core configuration properties](../configurations.mdx) are generally respected when used as a ScalarDB data source. However, the following properties are overridden by ScalarDB Analytics:
+
+<ul>
+  <li><strong><code>scalar.db.scan_fetch_size</code></strong>: If not explicitly set by the user, defaults to <code>4096</code> instead of the ScalarDB Core default of <code>10</code>.</li>
+  <li><strong><code>scalar.db.consensus_commit.isolation_level</code></strong>: Always overridden to <code>READ_COMMITTED</code>, regardless of the user-specified value.</li>
+</ul>
+
   </TabItem>
   <TabItem value="postgresql" label="PostgreSQL">
 
