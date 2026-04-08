@@ -56,7 +56,7 @@ Vary concurrency and access skew across experiments to understand how the system
 
 When comparing ScalarDB against other systems, ensure that the comparison is fair and the results are interpretable.
 
-First, ensure a fair comparison by using systems that provide the same guarantees. If cross-database transactions are a requirement, comparing ScalarDB against a system that does not support cross-database transactions is not meaningful because the systems solve fundamentally different problems. However, if cross-database transactions are optional rather than required, comparing the two to measure the overhead of coordination is valid. In that case, state explicitly that the comparison measures coordination overhead, not general system performance.
+First, ensure a fair comparison by using systems that provide the same guarantees. If multi-database transactions spanning multiple databases are a requirement, comparing ScalarDB against a system that does not support such transactions is not meaningful because the systems solve fundamentally different problems. However, if multi-database transactions are optional rather than required, comparing the two to measure the overhead of coordination is valid. In that case, state explicitly that the comparison measures coordination overhead, not general system performance.
 
 Second, change one variable at a time. When comparing configurations or systems, vary only one parameter per experiment. If you change multiple variables simultaneously, you cannot determine which variable caused the observed performance difference.
 
@@ -130,9 +130,9 @@ For details on microservice deployment patterns, see [ScalarDB Cluster deploymen
 
 When using ScalarDB Cluster, choose a client connection mode. ScalarDB Cluster supports two modes: `direct-kubernetes` mode and `indirect` mode.
 
-In `**direct-kubernetes mode**`, the client uses the Kubernetes API and a membership-based routing algorithm to connect directly to the correct cluster node. This eliminates an extra network hop, resulting in lower latency and higher throughput. However, the client application must run inside the same Kubernetes cluster as ScalarDB Cluster.
+In **`direct-kubernetes` mode**, the client uses the Kubernetes API and a membership-based routing algorithm to connect directly to the correct cluster node. This eliminates an extra network hop, resulting in lower latency and higher throughput. However, the client application must run inside the same Kubernetes cluster as ScalarDB Cluster.
 
-In `**indirect mode**`, the client sends requests to any cluster node through a load balancer. There are two routing options within `indirect` mode:
+In **`indirect` mode**, the client sends requests to any cluster node through a load balancer. There are two routing options within `indirect` mode:
 
 - **Via Service (ClusterIP) (recommended):** The client connects through an L4 load balancer to a Kubernetes Service, which routes to a cluster node. This option avoids the extra hop through Envoy, resulting in lower latency.
 - **Via Envoy:** The client connects through an L4 load balancer to an Envoy proxy, which routes to a cluster node. This option provides better load balancing across ScalarDB Cluster nodes because Envoy can distribute requests at the L7 layer, but it introduces an additional network hop.
@@ -171,7 +171,7 @@ The [Consensus Commit protocol](./consensus-commit.mdx) supports several optimiz
 |----------|---------|-------------|
 | `scalar.db.consensus_commit.parallel_preparation.enabled` | `true` | Execute the prepare phase in parallel for multi-record transactions. |
 | `scalar.db.consensus_commit.parallel_commit.enabled` | `true` | Execute the commit-records phase in parallel. |
-| `scalar.db.consensus_commit.async_commit.enabled` | `false` | Return to the client after the commit-state phase without waiting for commit-records. Note that it might cause a slowdown under a medium-to-high contention workload due to exessive recovery. |
+| `scalar.db.consensus_commit.async_commit.enabled` | `false` | Return to the client after the commit-state phase without waiting for commit-records. Note that it might cause a slowdown under a medium-to-high contention workload due to excessive recovery. |
 | `scalar.db.consensus_commit.one_phase_commit.enabled` | `false` | Skip prepare and commit-state phases when mutations can be applied atomically. |
 
 For details on how each optimization affects the Consensus Commit protocol, see [Performance optimization](./consensus-commit.mdx#performance-optimization).
@@ -228,7 +228,7 @@ If you use a JDBC database as the storage backend, tune the connection pool to m
 | `scalar.db.jdbc.prepared_statements_pool.enabled` | `false` | Enable prepared statement pooling. |
 | `scalar.db.jdbc.prepared_statements_pool.max_open` | `-1` | Maximum open prepared statements per connection (`-1` for unlimited). |
 
-For the complete list of configuration properties, see [ScalarDB Configurations](./latest/configurations.mdx) and [ScalarDB Cluster Configurations](./scalardb-cluster/scalardb-cluster-configurations.mdx).
+For the complete list of configuration properties, see [ScalarDB Core Configurations](./configurations.mdx) and [ScalarDB Cluster Configurations](./scalardb-cluster/scalardb-cluster-configurations.mdx).
 
 ## Run the benchmark
 
@@ -282,7 +282,7 @@ Once measured results and estimates are in agreement, you can be confident that 
 ## Next steps
 
 - [ScalarDB Benchmarking Tools](./scalardb-benchmarks/README.mdx) — Full reference for the official ScalarDB benchmarking tool, including all workload parameters.
-- [ScalarDB Configurations](./configurations.mdx) — Complete list of ScalarDB configuration properties.
+- [ScalarDB Core Configurations](./configurations.mdx) — Complete list of ScalarDB Core configuration properties.
 - [ScalarDB Cluster Configurations](./scalardb-cluster/scalardb-cluster-configurations.mdx) — Cluster-specific configuration properties, including client-side optimizations.
 - [Consensus Commit Protocol](./consensus-commit.mdx) — How ScalarDB achieves ACID transactions across databases.
 - [ScalarDB Cluster Deployment Patterns for Microservices](./scalardb-cluster/deployment-patterns-for-microservices.mdx) — Shared versus separated cluster patterns.
