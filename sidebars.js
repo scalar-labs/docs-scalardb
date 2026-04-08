@@ -1180,6 +1180,11 @@ const sidebars = {
           ],
         },
         {
+          type: 'doc',
+          id: 'getting-started-with-benchmarking-scalardb',
+          label: 'ScalarDB のベンチマークを実行',
+        },
+        {
           type: 'category',
           label: 'ScalarDB Analytics を使用して分析クエリを実行',
           collapsible: true,
