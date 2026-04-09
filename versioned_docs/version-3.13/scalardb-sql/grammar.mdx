@@ -1065,14 +1065,11 @@ And you can specify `<column value>` to a bind marker (positional `?` and named 
 Examples of `INSERT` are as follows:
 
 ```sql
--- Insert a record without specifying column names
-INSERT INTO ns.tbl VALUES (10, 'aaa', 1.23, 100, true);
-
 -- Insert a record with column names
 INSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100);
 
 -- With positional bind markers
-INSERT INTO tbl VALUES (?, ?, ?, ?, ?);
+INSERT INTO tbl (c1, c2, c3, c4, c5) VALUES (?, ?, ?, ?, ?);
 
 -- Insert multiple records
 INSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100), (20, 'bbb', 4.56, 200);
@@ -1081,11 +1078,6 @@ INSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100), (20, 'bbb', 4
 Examples of building statement objects for `INSERT` are as follows:
 
 ```java
-// Insert a record without specifying column names.
-InsertStatement statement1 = StatementBuilder.insertInto("ns", "tbl")
-    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
-    .build();
-
 // Insert a record with column names.
 InsertStatement statement2 = StatementBuilder.insertInto("ns", "tbl")
     .columns("c1", "c2", "c3", "c4", "c5")
@@ -1111,6 +1103,28 @@ InsertStatement statement4 = StatementBuilder.insertInto("ns", "tbl")
     .values(Value.ofInt(20), Value.ofText("bbb"), Value.of(2.46F), Value.of(200L), Value.of(false))
     .build();
 ```
+
+:::warning
+
+You can write `INSERT` statements without specifying column names, but you must ensure that the order of values matches the definition order of the columns, rather than their creation order, which can be obtained by using the `DESCRIBE` statement.
+For this reason, it is recommended to always specify the column names in your `INSERT` statements.
+
+```sql
+-- Insert a record without specifying column names
+INSERT INTO ns.tbl VALUES (10, 'aaa', 1.23, 100, true);
+
+-- With positional bind markers
+INSERT INTO tbl VALUES (?, ?, ?, ?, ?);
+```
+
+```java
+// Insert a record without specifying column names.
+InsertStatement statement1 = StatementBuilder.insertInto("ns", "tbl")
+    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
+    .build();
+```
+
+:::
 
 ### UPSERT
 
@@ -1138,14 +1152,11 @@ You must specify a full primary key in `UPSERT`. In addition, you can specify `<
 Examples of `UPSERT` are as follows:
 
 ```sql
--- Upsert a record without specifying column names.
-UPSERT INTO ns.tbl VALUES (10, 'aaa', 1.23, 100, true);
-
 -- Upsert a record with column names.
 UPSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100);
 
 -- With positional bind markers
-UPSERT INTO tbl VALUES (?, ?, ?, ?, ?);
+UPSERT INTO tbl (c1, c2, c3, c4, c5) VALUES (?, ?, ?, ?, ?);
 
 -- Upsert multiple records.
 UPSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100), (20, 'bbb', 4.56, 200);
@@ -1154,11 +1165,6 @@ UPSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100), (20, 'bbb', 4
 Examples of building statement objects for `UPSERT` are as follows:
 
 ```java
-// Upsert a record without specifying column names.
-UpsertStatement statement1 = StatementBuilder.upsertInto("ns", "tbl")
-    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
-    .build();
-
 // Upsert a record with column names.
 UpsertStatement statement2 = StatementBuilder.upsertInto("ns", "tbl")
     .columns("c1", "c2", "c3", "c4", "c5")
@@ -1178,12 +1184,51 @@ UpsertStatement statement3 =
         .build();
 
 // Upsert multiple records.
-UpsertStatement statement4 = StatementBuilder.upsertInto("ns", "tbl")
-    .columns("c1", "c2", "c3", "c4", "c5")
-    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
-    .values(Value.ofInt(20), Value.ofText("bbb"), Value.of(2.46F), Value.of(200L), Value.of(false))
-    .build();
+UpsertStatement statement4 =
+    StatementBuilder.upsertInto("ns", "tbl")
+        .columns("c1", "c2", "c3", "c4", "c5")
+        .values(
+            Value.ofInt(10),
+            Value.ofText("aaa"),
+            Value.of(1.23F),
+            Value.of(100L),
+            Value.of(true))
+        .values(
+            Value.ofInt(20),
+            Value.ofText("bbb"),
+            Value.of(2.46F),
+            Value.of(200L),
+            Value.of(false))
+        .build();
 ```
+
+:::warning
+
+You can write `UPSERT` statements without specifying column names, but you must ensure that the order of values matches the definition order of the columns, rather than their creation order, which can be obtained by using the `DESCRIBE` statement.
+For this reason, it is recommended to always specify the column names in your `UPSERT` statements.
+
+```sql
+-- Upsert a record without specifying column names.
+UPSERT INTO ns.tbl VALUES (10, 'aaa', 1.23, 100, true);
+
+-- With positional bind markers
+UPSERT INTO tbl VALUES (?, ?, ?, ?, ?);
+```
+
+```java
+// Upsert a record without specifying column names.
+UpsertStatement statement1 =
+    StatementBuilder.upsertInto("ns", "tbl")
+        .values(
+            Value.ofInt(10),
+            Value.ofText("aaa"),
+            Value.of(1.23F),
+            Value.of(100L),
+            Value.of(true))
+        .build();
+```
+
+:::
 
 ### UPDATE
 
