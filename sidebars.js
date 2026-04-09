@@ -2065,6 +2065,11 @@ const sidebars = {
             },
           ],
         },
+        {
+          type: 'doc',
+          id: 'onboarding',
+          label: 'オンボーディングコンテンツ',
+        },
       ],
     },
   ],
