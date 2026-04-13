@@ -304,9 +304,9 @@ As you see in the above example, Spring Data JDBC's `@Id` annotation doesn't sup
 
 ### One-to-many relationships between two entities
 
-Spring Data JDBC supports one-to-many relationships. But it implicitly deletes and re-creates all the associated child records even if only parent's attributes are changed. This behavior would result in a performance penalty. Additionally, certain use cases of the one-to-many relationship in Spring Data JDBC for ScalarDB fail because of the combination with some limitations of ScalarDB SQL. Considering those concerns and limitations, it's not recommended to use the feature in Spring Data JDBC for ScalarDB.
+Spring Data JDBC supports one-to-many relationships. But it implicitly deletes and re-creates all the associated child records even if only the parent's attributes are changed. This behavior would result in a performance penalty. Considering this concern, it's not recommended to use the feature in Spring Data JDBC for ScalarDB.
 
-For instance, assuming a Bank record contains many Account records, the following implementation fails when calling `BankRepository#update()`
+For instance, assuming a Bank record contains many Account records, calling `BankRepository#update()` on the parent entity causes Spring Data JDBC to implicitly delete and re-insert all child Account records, even if only the parent's attributes are changed.
 
 ```java
 @Autowired BankRepository bankRepository;
@@ -322,9 +322,8 @@ bankRepository.insert(new Bank(42, "My bank", ImmutableSet.of(
 Bank bank = bankRepository.findById(42).get();
 System.out.printf("Bank: " + bank);
 
-// Fails here as `DELETE FROM "account" WHERE "account"."bank_id" = ?` is implicitly issued by Spring Data JDBC
-// while ScalarDB SQL doesn't support DELETE with a secondary index
-// (Spring Data JDBC's custom query might avoid these limitations)
+// `DELETE FROM "account" WHERE "account"."bank_id" = ?` is implicitly issued by Spring Data JDBC
+// followed by re-inserting all child records, causing unnecessary performance overhead
 bankRepository.update(new Bank(bank.bankId, bank.name + " 2", bank.accounts));
 ```
 
