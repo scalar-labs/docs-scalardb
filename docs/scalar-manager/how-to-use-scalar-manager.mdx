@@ -6,9 +6,9 @@ displayed_sidebar: docsEnglish
 
 # How to Use Scalar Manager
 
-Scalar Manager is a centralized management and monitoring solution for ScalarDB and ScalarDL in Kubernetes environments. It simplifies operational tasks by providing a graphical user interface (GUI) that combines functionalities previously managed through separate command-line tools and third-party solutions.
+Scalar Manager is a centralized management and monitoring solution for ScalarDB in Kubernetes environments. It simplifies operational tasks by providing a graphical user interface (GUI) that combines functionalities previously managed through separate command-line tools and third-party solutions.
 
-This guide explains how to use Scalar Manager to monitor, manage, and maintain your ScalarDB and ScalarDL deployments.
+This guide explains how to use Scalar Manager to monitor, manage, and maintain your ScalarDB deployments.
 
 :::note
 
@@ -153,9 +153,9 @@ Only users with the Administrator role can assign or modify user roles. Roles ca
 3. Assign a role to the newly created user by doing the following:
    1. Fill in the user information (name, email address, and password).
    2. In the **Role** dropdown menu, select one of the three roles:
-     - Administrator
-     - Writer
-     - Reader
+      - Administrator
+      - Writer
+      - Reader
    3. Select **Add User** to create the user with the assigned role.
 
 #### 2. Modifying an existing user's role
@@ -168,21 +168,21 @@ Only users with the Administrator role can assign or modify user roles. Roles ca
 ### Creating a new user
 
 1. **Access the user management page**
-   - Click on the `Users` menu item in the admin settings at the bottom of the page
+   - Click on the **Users** menu item in the admin settings at the bottom of the page
    - You'll be taken to the user list page
 2. **Using the user list**
    - The user list shows all users in the system
    - You can filter users by role using the role filter
    - Search for specific users by name or email address using the search bar
 3. **Creating a new user**
-   - Click the `Add User` button
+   - Click the **Add User** button
    - A sidebar will appear on the right side of the page
    - Fill in the required user information:
-   - Name
-   - Email address
-   - Select a role for the user
-   - Enter an initial password
-   - Click the `Add User` button to create the user
+      - Name
+      - Email address
+      - Select a role for the user
+      - Enter an initial password
+   - Click the **Add User** button to create the user
 
 :::note
 
@@ -251,7 +251,7 @@ This section describes how to view your cluster dashboard in Scalar Manager and 
 
 ### How to view your cluster dashboard
 
-After logging in, you'll see the main dashboard that helps you monitor and manage your Kubernetes cluster and Scalar products.
+After logging in, you'll see the main dashboard that helps you monitor and manage your Kubernetes cluster and ScalarDB deployments.
 
 #### View overall cluster health
 
@@ -264,11 +264,11 @@ In the upper section of the dashboard, you'll see the following:
 
 #### Monitor release status
 
-The dashboard displays a list of all your Scalar products grouped by releases. For each row, you'll see the following:
+The dashboard displays a list of all your ScalarDB deployments grouped by releases. For each row, you'll see the following:
 
 - Namespace name
 - Release name
-- Scalar product name and component type
+- ScalarDB deployment name and component type
 - Pod availability
 - Current RPS (requests per second)
 - Resource usage (CPU and memory)
@@ -318,7 +318,7 @@ For detailed descriptions and interpretations of each metric, see [Scalar Manage
 
 ### How to view metrics
 
-The metrics dashboard is pre-configured with product-specific metrics for ScalarDB and ScalarDL. You can:
+The metrics dashboard is pre-configured with product-specific metrics for ScalarDB. You can:
 
 - Select from pre-registered dashboards for different products and components.
 - View real-time performance metrics.
@@ -336,7 +336,7 @@ Authentication is handled seamlessly by using your Scalar Manager credentials.
 
 ## Log management
 
-This section describes how to access logs and pause and resume clusters.
+This section describes how to access logs.
 
 ### How to access logs
 
@@ -358,7 +358,7 @@ The logs dashboard is pre-configured with your cluster's pod information. You ca
 
 Pausing is a process that temporarily stops new transactions from being accepted to ensure transactional consistency during operations like backups. This helps maintain data integrity by ensuring that all transactions are completed before the operation begins.
 
-For detailed information about pausing and when to use it, see [How to Back Up and Restore Databases Used Through ScalarDB](https://scalardb.scalar-labs.com/docs/latest/backup-restore).
+For detailed information about pausing and when to use it, see [How to Back Up and Restore Databases Used Through ScalarDB](../backup-restore.mdx).
 
 ### How to execute a pausing job immediately
 
@@ -425,4 +425,3 @@ This page shows only the results of pauses that have been executed. To [schedule
 :::
 
 ![check-pauses-page](images/check-pauses.png)
-
