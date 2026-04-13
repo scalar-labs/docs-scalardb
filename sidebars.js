@@ -891,6 +891,16 @@ const sidebars = {
             },
             {
               type: 'doc',
+              id: 'scalar-manager/how-to-use-scalar-manager',
+              label: 'How to Use Scalar Manager',
+            },
+            {
+              type: 'doc',
+              id: 'scalar-manager/metrics-reference',
+              label: 'Scalar Manager Metrics Reference',
+            },
+            {
+              type: 'doc',
               id: 'scalar-kubernetes/K8sMonitorGuide',
               label: 'Kubernetes Monitoring Guide',
             },
@@ -1914,20 +1924,30 @@ const sidebars = {
           },
           items: [
             {
-              type: 'doc',
-              id: 'scalar-manager/overview',
-              label: 'Scalar Manager の概要',
+              type: "doc",
+              id: "scalar-manager/overview",
+              label: "Scalar Manager の概要"
             },
             {
-              type: 'doc',
-              id: 'scalar-kubernetes/K8sMonitorGuide',
-              label: 'Kubernetes モニタリングガイド',
+              type: "doc",
+              id: "scalar-manager/how-to-use-scalar-manager",
+              label: "Scalar Manager の使用方法"
             },
             {
-              type: 'doc',
-              id: 'helm-charts/how-to-deploy-scalar-admin-for-kubernetes',
-              label: 'Kubernetes 用の Scalar Admin をデプロイ',
+              type: "doc",
+              id: "scalar-manager/metrics-reference",
+              label: "Scalar Manager メトリクスリファレンス"
             },
+            {
+              type: "doc",
+              id: "scalar-kubernetes/K8sMonitorGuide",
+              label: "Kubernetes モニタリングガイド"
+            },
+            {
+              type: "doc",
+              id: "helm-charts/how-to-deploy-scalar-admin-for-kubernetes",
+              label: "Helm Chart を使用して Scalar Admin for Kubernetes をデプロイ"
+            }
           ],
         },
         {
