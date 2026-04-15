@@ -1211,14 +1211,11 @@ abac_write_tag: ABAC_WRITE_TAG <abac write tag> FOR [POLICY] <abac policy name>
 `INSERT` の例は次のとおりです。
 
 ```sql
--- Insert a record without specifying column names
-INSERT INTO ns.tbl VALUES (10, 'aaa', 1.23, 100, true);
-
 -- Insert a record with column names
 INSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100);
 
 -- With positional bind markers
-INSERT INTO tbl VALUES (?, ?, ?, ?, ?);
+INSERT INTO tbl (c1, c2, c3, c4, c5) VALUES (?, ?, ?, ?, ?);
 
 -- Insert multiple records
 INSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100), (20, 'bbb', 4.56, 200);
@@ -1227,11 +1224,6 @@ INSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100), (20, 'bbb', 4
 `INSERT` のステートメントオブジェクトを構築する例は次のとおりです。
 
 ```java
-// Insert a record without specifying column names.
-InsertStatement statement1 = StatementBuilder.insertInto("ns", "tbl")
-    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
-    .build();
-
 // Insert a record with column names.
 InsertStatement statement2 = StatementBuilder.insertInto("ns", "tbl")
     .columns("c1", "c2", "c3", "c4", "c5")
@@ -1258,6 +1250,28 @@ InsertStatement statement4 = StatementBuilder.insertInto("ns", "tbl")
     .build();
 ```
 
+:::warning
+
+列名を指定せずに `INSERT` ステートメントを記述することもできますが、その場合、値の順序が列の作成順序ではなく、列の定義順序 (`DESCRIBE` ステートメントを使用して取得できる) と一致することを確認する必要があります。
+この理由から、`INSERT` ステートメントでは常に列名を指定することをお勧めします。
+
+```sql
+-- Insert a record without specifying column names
+INSERT INTO ns.tbl VALUES (10, 'aaa', 1.23, 100, true);
+
+-- With positional bind markers
+INSERT INTO tbl VALUES (?, ?, ?, ?, ?);
+```
+
+```java
+// Insert a record without specifying column names.
+InsertStatement statement1 = StatementBuilder.insertInto("ns", "tbl")
+    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
+    .build();
+```
+
+:::
+
 ### UPSERT
 
 `UPSERT` コマンドは、データベースに新しいレコードが存在しない場合はそれを挿入し、すでに存在する場合はターゲットレコードを更新します。
@@ -1271,12 +1285,16 @@ InsertStatement statement4 = StatementBuilder.insertInto("ns", "tbl")
 ```sql
 UPSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ...)]
   VALUES (<literal> [, <literal>] ...) [, (<literal> [, <literal>] ...)] ...
-  [WITH operation_attributes]
+  [WITH operation_attributes_or_abac_read_tags_or_abac_write_tags]
 
-operation_attributes: <operation attribute name>=<operation attribute value> [AND <operation attribute name>=<operation attribute value>] ...
+operation_attributes_or_abac_read_tags_or_abac_write_tags: operation_attribute_or_abac_read_tag_or_abac_write_tag [AND operation_attribute_or_abac_read_tag_or_abac_write_tag] ...
+operation_attribute_or_abac_read_tag_or_abac_write_tag: operation_attribute | abac_read_tag | abac_write_tag
+operation_attribute: <operation attribute name>=<operation attribute value>
+abac_read_tag: ABAC_READ_TAG <abac read tag> FOR [POLICY] <abac policy name>
+abac_write_tag: ABAC_WRITE_TAG <abac write tag> FOR [POLICY] <abac policy name>
 ```
 
-- `INSERT` では完全な主キーを指定する必要があります。
+- `UPSERT` では完全な主キーを指定する必要があります。
 - バインドマーカー (位置 `?` および名前 `:<name>`) に `<literal>` を指定できます。リテラル文法については、[リテラル](#リテラル)セクションを参照してください。
 
 #### 例
@@ -1284,42 +1302,28 @@ operation_attributes: <operation attribute name>=<operation attribute value> [AN
 `UPSERT` の例は次のとおりです。
 
 ```sql
--- Upsert a record without specifying column names.
-UPSERT INTO ns.tbl VALUES (10, 'aaa', 1.23, 100, true);
-
 -- Upsert a record with column names.
 UPSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100);
 
 -- With positional bind markers
-UPSERT INTO tbl VALUES (?, ?, ?, ?, ?);
+UPSERT INTO tbl (c1, c2, c3, c4, c5) VALUES (?, ?, ?, ?, ?);
 
 -- Upsert multiple records.
 UPSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100), (20, 'bbb', 4.56, 200);
 
 -- With operations attributes
-UPSERT INTO ns.tbl VALUES (10, 'aaa', 1.23, 100, true) WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
+UPSERT INTO ns.tbl (c1, c2, c3, c4, c5) VALUES (10, 'aaa', 1.23, 100, true) WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
 
 -- With an ABAC read tag and an ABAC write tag
-UPSERT INTO ns.tbl VALUES (10, 'aaa', 1.23, 100, true) WITH ABAC_READ_TAG 'read_tag1' FOR POLICY policy1 AND ABAC_WRITE_TAG 'write_tag1' FOR POLICY policy1;
+UPSERT INTO ns.tbl (c1, c2, c3, c4, c5) VALUES (10, 'aaa', 1.23, 100, true) WITH ABAC_READ_TAG 'read_tag1' FOR POLICY policy1 AND ABAC_WRITE_TAG 'write_tag1' FOR POLICY policy1;
 
 -- With operations attributes and ABAC read and write tags
-UPSERT INTO ns.tbl VALUES (10, 'aaa', 1.23, 100, true) WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2' AND ABAC_READ_TAG 'read_tag1' FOR POLICY policy1 AND ABAC_WRITE_TAG 'write_tag1' FOR POLICY policy1;
+UPSERT INTO ns.tbl (c1, c2, c3, c4, c5) VALUES (10, 'aaa', 1.23, 100, true) WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2' AND ABAC_READ_TAG 'read_tag1' FOR POLICY policy1 AND ABAC_WRITE_TAG 'write_tag1' FOR POLICY policy1;
 ```
 
 `UPSERT` のステートメントオブジェクトを構築する例は次のとおりです。
 
 ```java
-// Upsert a record without specifying column names.
-UpsertStatement statement1 =
-    StatementBuilder.upsertInto("ns", "tbl")
-        .values(
-            Value.ofInt(10),
-            Value.ofText("aaa"),
-            Value.of(1.23F),
-            Value.of(100L),
-            Value.of(true))
-        .build();
-
 // Upsert a record with column names.
 UpsertStatement statement2 =
     StatementBuilder.upsertInto("ns", "tbl")
@@ -1365,6 +1369,7 @@ UpsertStatement statement4 =
 // With operations attributes
 UpsertStatement statement5 =
     StatementBuilder.upsertInto("ns", "tbl")
+        .columns("c1", "c2", "c3", "c4", "c5")
         .values(
             Value.ofInt(10),
             Value.ofText("aaa"),
@@ -1378,6 +1383,7 @@ UpsertStatement statement5 =
 // With an ABAC read tag and an ABAC write tag
 UpsertStatement statement6 =
     StatementBuilder.upsertInto("ns", "tbl")
+        .columns("c1", "c2", "c3", "c4", "c5")
         .values(
             Value.ofInt(10),
             Value.ofText("aaa"),
@@ -1391,6 +1397,7 @@ UpsertStatement statement6 =
 // With operations attributes and ABAC read and write tags
 UpsertStatement statement7 =
     StatementBuilder.upsertInto("ns", "tbl")
+        .columns("c1", "c2", "c3", "c4", "c5")
         .values(
             Value.ofInt(10),
             Value.ofText("aaa"),
@@ -1403,6 +1410,34 @@ UpsertStatement statement7 =
         .withAbacWriteTag("write_tag1", "policy1")
         .build();
 ```
+
+:::warning
+
+列名を指定せずに `UPSERT` ステートメントを記述することもできますが、その場合、値の順序が列の作成順序ではなく、列の定義順序 (`DESCRIBE` ステートメントを使用して取得できる) と一致することを確認する必要があります。
+この理由から、`UPSERT` ステートメントでは常に列名を指定することをお勧めします。
+
+```sql
+-- Upsert a record without specifying column names.
+UPSERT INTO ns.tbl VALUES (10, 'aaa', 1.23, 100, true);
+
+-- With positional bind markers
+UPSERT INTO tbl VALUES (?, ?, ?, ?, ?);
+```
+
+```java
+// Upsert a record without specifying column names.
+UpsertStatement statement1 =
+    StatementBuilder.upsertInto("ns", "tbl")
+        .values(
+            Value.ofInt(10),
+            Value.ofText("aaa"),
+            Value.of(1.23F),
+            Value.of(100L),
+            Value.of(true))
+        .build();
+```
+
+:::
 
 ### UPDATE
 
