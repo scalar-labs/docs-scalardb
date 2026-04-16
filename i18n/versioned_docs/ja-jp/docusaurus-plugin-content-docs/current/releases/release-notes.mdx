@@ -14,6 +14,55 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 このページには、ScalarDB 3.17 のリリースノートのリストが含まれています。
 
+## v3.17.3
+
+**発売日:** 2026年4月15日
+
+### まとめ
+
+このリリースには、いくつかの改善点とバグ修正が含まれています。
+
+### Community edition
+
+#### 改善点
+
+- MySQL Connector/J を MariaDB Connector/J に置き換えました。ライセンス上の懸念によるものです。 ([#3428](https://github.com/scalar-labs/scalardb/pull/3428))
+- DynamoDB のセカンダリインデックス列に null 値を設定するサポートを追加しました。null 値が設定されると、属性はアイテムから削除され、レコードはセカンダリインデックスのスキャンに表示されなくなります。 ([#3326](https://github.com/scalar-labs/scalardb/pull/3326))
+- TIME (マイクロ秒精度)、TIMESTAMP (ミリ秒精度)、TIMESTAMPTZ (ミリ秒精度)列の値を挿入または更新する際、範囲外の精度は例外をスローするのではなく切り捨てられるようになりました。 ([#3393](https://github.com/scalar-labs/scalardb/pull/3393))
+- Consensus Commit のインデックスベースの Get および Scan 操作で、PREPARED または DELETED 状態のレコードを見逃す可能性がある問題を修正しました。before-image セカンダリインデックスのチェックを追加しました。 ([#3419](https://github.com/scalar-labs/scalardb/pull/3419))
+- before-image インデックスが存在する場合、Consensus Commit のインデックスベースの Get、Scan、および ScanAll 操作で SERIALIZABLE 分離レベルをサポートするようになりました。既存のテーブルに before-image インデックスを作成するには、`repairTable()` を実行してください。 ([#3463](https://github.com/scalar-labs/scalardb/pull/3463))
+- JDBC インデックス名が基盤となるデータベースでサポートされている最大識別子長を超える場合、ハッシュを使用して短縮されるようになりました。 ([#3481](https://github.com/scalar-labs/scalardb/pull/3481))
+
+#### バグの修正
+
+- `dropColumnFromTable()` が列の削除をサポートしていない場合でもセカンダリインデックスを削除してしまう問題を修正しました。 ([#3450](https://github.com/scalar-labs/scalardb/pull/3450))
+- Netty ライブラリをアップグレードしてセキュリティ問題を修正しました: [CVE-2026-33870](https://github.com/advisories/GHSA-pwqr-wmgm-9rr8 "CVE-2026-33870") および [CVE-2026-33871](https://github.com/advisories/GHSA-w9fj-cfpg-grvv "CVE-2026-33871") ([#3452](https://github.com/scalar-labs/scalardb/pull/3452))
+- インデックスベースの Get および Scan 操作が、lazy recovery によって PREPARED レコードがロールバックされた後に不正確な結果を返す可能性があるバグを修正しました。after-image インデックス値がクエリに一致しても、before-image (復元された) 値が一致しない場合があります。 ([#3488](https://github.com/scalar-labs/scalardb/pull/3488))
+
+### Enterprise edition
+
+#### 改善点
+
+##### ScalarDB SQL
+
+- TIMESTAMPTZ リテラルを更新し、UTC タイムゾーン `Z` 文字の前のスペース文字をオプションにしました。例えば、`2021-03-04 12:30:45.123Z` が現在の形式 `2021-03-04 12:30:45.123 Z` に加えて受け入れられるようになりました。また、TIMESTAMPTZ 列を選択する際、値は `Z` の前にスペースを入れずに表示されます。
+- CLI モジュールのシャドウ jar が不必要に GitHub Packages に公開される問題を修正しました。
+- TIME (マイクロ秒精度)、TIMESTAMP (ミリ秒精度)、TIMESTAMPTZ (ミリ秒精度) 列の値を挿入または更新する際、範囲外の精度は例外をスローするのではなく切り捨てられるようになりました。
+
+#### バグの修正
+
+##### ScalarDB Cluster
+
+- `grpc_health_probe` をアップグレードしてセキュリティ問題を修正しました: [CVE-2025-59250](https://github.com/advisories/GHSA-m494-w24q-6f7w "CVE-2025-59250") および [CVE-2026-25679](https://github.com/advisories/GHSA-j3gx-2473-5fp8 "CVE-2026-25679")
+- Netty ライブラリをアップグレードしてセキュリティ問題を修正しました: [CVE-2026-33870](https://github.com/advisories/GHSA-pwqr-wmgm-9rr8 "CVE-2026-33870") および [CVE-2026-33871](https://github.com/advisories/GHSA-w9fj-cfpg-grvv "CVE-2026-33871")
+- ワンショットバッチ操作が GateKept トランザクションマネージャーでポーズ制御をバイパスするバグを修正しました。
+- `grpc_health_probe` をアップグレードしてセキュリティ問題を修正しました: [CVE-2026-34986](https://github.com/advisories/GHSA-78h2-9frx-2jm8 "CVE-2026-34986").
+
+##### ScalarDB SQL
+
+- CREATE TABLE ステートメントで重複する列名が許可されるバグを修正しました。
+- 時間関連の型フォーマッターで厳密な日付検証が欠落していた問題を修正しました。これにより、無効な日付 (例: 2月30日) が拒否されずに静かに受け入れられる可能性がありました。
+
 ## v3.17.2
 
 **発売日:** 2026年3月6日
