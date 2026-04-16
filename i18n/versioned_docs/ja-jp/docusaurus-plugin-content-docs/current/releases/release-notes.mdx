@@ -117,7 +117,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 #### 改善点
 
-- アクティブトランザクション管理を有効/無効にするための `scalar.db.active_transaction_management.enabled` 設定オプションを追加しました（デフォルト: `true`）。([#3233](https://github.com/scalar-labs/scalardb/pull/3233))
+- アクティブトランザクション管理を有効/無効にするための `scalar.db.active_transaction_management.enabled` 設定オプションを追加しました (デフォルト: `true`)。([#3233](https://github.com/scalar-labs/scalardb/pull/3233))
 
 #### バグの修正
 
@@ -177,8 +177,8 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 #### 改善点
 
-- Db2 を使用する場合、Db2 から ScalarDB BLOB 列に使用されるデフォルトのデータ型が `VARBINARY(32672)` から `BLOB(2G)` に変更され、最大 2GB のデータを格納できるようになりました。これにより、BLOB 列はパーティションキー、クラスタリングキー、セカンダリインデックス、またはクロスパーティション スキャン（つまり ScanAll）操作での順序列として使用できないという新しい制限が生じます。([#3000](https://github.com/scalar-labs/scalardb/pull/3000))
-- Oracle を使用する場合、Oracle から ScalarDB BLOB 列に使用されるデフォルトのデータ型が `RAW(2000)` から `BLOB` に変更され、最大 2GB のデータを格納できるようになりました。これにより新しい制限が導入されます：BLOB 列は、パーティションキー、クラスタリングキー、セカンダリインデックス、または Get や Scan 操作の条件として使用できなくなります。([#3070](https://github.com/scalar-labs/scalardb/pull/3070))
+- Db2 を使用する場合、Db2 から ScalarDB BLOB 列に使用されるデフォルトのデータ型が `VARBINARY(32672)` から `BLOB(2G)` に変更され、最大 2GB のデータを格納できるようになりました。これにより、BLOB 列はパーティションキー、クラスタリングキー、セカンダリインデックス、またはクロスパーティション スキャン (つまり ScanAll) 操作での順序列として使用できないという新しい制限が生じます。([#3000](https://github.com/scalar-labs/scalardb/pull/3000))
+- Oracle を使用する場合、Oracle から ScalarDB BLOB 列に使用されるデフォルトのデータ型が `RAW(2000)` から `BLOB` に変更され、最大 2GB のデータを格納できるようになりました。これにより新しい制限が導入されます: BLOB 列は、パーティションキー、クラスタリングキー、セカンダリインデックス、または Get や Scan 操作の条件として使用できなくなります。([#3070](https://github.com/scalar-labs/scalardb/pull/3070))
 - JDBC トランザクションマネージャーを使用する場合、設定 `scalar.db.jdbc.isolation_level` が設定されていない場合に JDBC トランザクション分離レベルを SERIALIZABLE に設定しないようになりました。デフォルトは、ストレージによって設定されたデフォルト値になります。([#3076](https://github.com/scalar-labs/scalardb/pull/3076))
 - ScalarDB Data Loader CLI の Maven パブリッシュサポートを追加し、Maven アーティファクトとしての配布を可能にしました。([#3120](https://github.com/scalar-labs/scalardb/pull/3120))
 
@@ -249,4 +249,4 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 - セキュリティ問題を修正するために `grpc_health_probe` をアップグレードしました。[CVE-2025-22874](https://github.com/advisories/GHSA-6f52-wpx2-hvf2 "CVE-2025-22874")
 - ワンフェーズコミット最適化が有効な場合にレプリケーション機能が開始されないようにバリデーションを追加しました。
 - 重複する列名が存在する場合に SQL API の `ResultSet` が不正な結果を返すバグを修正しました。
-- セキュリティ問題を修正するために `grpc_health_probe` をアップグレードしました：[CVE-2025-47907](https://github.com/advisories/GHSA-j5pm-7495-qmr3 "CVE-2025-47907")、[CVE-2025-58183](https://github.com/advisories/GHSA-9gcr-gp5f-jw27 "CVE-2025-58183")、[CVE-2025-58186](https://github.com/advisories/GHSA-rjcg-56ph-3qvg "CVE-2025-58186")、[CVE-2025-58187](https://github.com/advisories/GHSA-frhw-mqj2-wxw2 "CVE-2025-58187")、および [CVE-2025-58188](https://github.com/advisories/GHSA-7wwx-xj66-r44x "CVE-2025-58188")。
+- セキュリティ問題を修正するために `grpc_health_probe` をアップグレードしました: [CVE-2025-47907](https://github.com/advisories/GHSA-j5pm-7495-qmr3 "CVE-2025-47907")、[CVE-2025-58183](https://github.com/advisories/GHSA-9gcr-gp5f-jw27 "CVE-2025-58183")、[CVE-2025-58186](https://github.com/advisories/GHSA-rjcg-56ph-3qvg "CVE-2025-58186")、[CVE-2025-58187](https://github.com/advisories/GHSA-frhw-mqj2-wxw2 "CVE-2025-58187")、および [CVE-2025-58188](https://github.com/advisories/GHSA-7wwx-xj66-r44x "CVE-2025-58188")。
