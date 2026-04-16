@@ -14,6 +14,54 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 このページには、ScalarDB 3.16 のリリースノートのリストが含まれています。
 
+## v3.16.5
+
+**リリース日:** 2026年4月15日
+
+### 概要
+
+このリリースには、いくつかの改善点とバグ修正が含まれています。
+
+### Community edition
+
+#### 改善点
+
+- ライセンスの問題により、MySQL Connector/J を MariaDB Connector/J に置き換えました。 ([#3428](https://github.com/scalar-labs/scalardb/pull/3428))
+- Consensus Commit プロトコルにおけるワンフェーズコミット最適化の適用範囲を拡張しました。これにより、トランザクションが後で更新するレコードのみを読み取る場合でも、SERIALIZABLE 分離レベルでワンフェーズコミットを使用できるようになり、読み取り-修正-書き込みワークロードのパフォーマンスが向上します。 ([#3295](https://github.com/scalar-labs/scalardb/pull/3295))
+- DynamoDB のセカンダリインデックス列に null 値を設定するサポートを追加しました。null 値が設定されると、属性はアイテムから削除され、レコードはセカンダリインデックスのスキャンに表示されなくなります。 ([#3326](https://github.com/scalar-labs/scalardb/pull/3326))
+- TIME (マイクロ秒精度)、TIMESTAMP (ミリ秒精度)、および TIMESTAMPTZ (ミリ秒精度) 列値を持つレコードの挿入または更新時に、範囲外の精度を切り捨てるようになり、例外がスローされなくなりました。 ([#3393](https://github.com/scalar-labs/scalardb/pull/3393))
+- Consensus Commit におけるインデックスベースの Get および Scan 操作で、PREPARED または DELETED 状態のレコードを見逃す可能性がある問題を修正しました。これにより、before-image セカンダリインデックスのチェックが追加されました。 ([#3419](https://github.com/scalar-labs/scalardb/pull/3419))
+- Consensus Commit におけるインデックスベースの Get、Scan、および ScanAll 操作で、before-image インデックスが存在する場合に SERIALIZABLE 分離レベルをサポートするようになりました。既存のテーブルに対して before-image インデックスを作成するには、`repairTable()` を実行してください。 ([#3463](https://github.com/scalar-labs/scalardb/pull/3463))
+- JDBC インデックス名が基盤となるデータベースでサポートされる最大識別子長を超える場合、ハッシュを使用して短縮されるようになりました。 ([#3481](https://github.com/scalar-labs/scalardb/pull/3481))
+
+#### バグの修正
+
+- Netty ライブラリをアップグレードしてセキュリティ問題を修正しました: [CVE-2026-33870](https://github.com/advisories/GHSA-pwqr-wmgm-9rr8 "CVE-2026-33870") および [CVE-2026-33871](https://github.com/advisories/GHSA-w9fj-cfpg-grvv "CVE-2026-33871") ([#3452](https://github.com/scalar-labs/scalardb/pull/3452))
+- Lazy リカバリが PREPARED レコードをロールバックした後、after-image インデックス値がクエリに一致しても before-image  (復元された) 値が一致しない場合に、インデックスベースの Get および Scan 操作が不正確な結果を返す可能性があるバグを修正しました。 ([#3488](https://github.com/scalar-labs/scalardb/pull/3488))
+
+### Enterprise edition
+
+#### 改善点
+
+##### ScalarDB SQL
+
+- TIMESTAMPTZ リテラルを更新し、UTC タイムゾーン `Z` 文字の前のスペース文字をオプションにしました。例えば、`2021-03-04 12:30:45.123Z` が現在の形式 `2021-03-04 12:30:45.123 Z` に加えて受け入れられるようになりました。また、TIMESTAMPTZ 列を選択する際、値は `Z` の前にスペースを入れずに表示されます。
+- CLI モジュールのシャドウ JAR が不必要に GitHub Packages に公開される問題を修正しました。
+- TIME  (マイクロ秒精度)、TIMESTAMP  (ミリ秒精度)、および TIMESTAMPTZ  (ミリ秒精度) 列値を持つレコードの挿入または更新時に、範囲外の精度を切り捨てるようになり、例外がスローされなくなりました。
+
+#### バグの修正
+
+##### ScalarDB Cluster
+
+- `grpc_health_probe` をアップグレードしてセキュリティ問題を修正しました: [CVE-2025-59250](https://github.com/advisories/GHSA-m494-w24q-6f7w "CVE-2025-59250") および [CVE-2026-25679](https://github.com/advisories/GHSA-j3gx-2473-5fp8 "CVE-2026-25679")
+- Netty ライブラリをアップグレードしてセキュリティ問題を修正しました: [CVE-2026-33870](https://github.com/advisories/GHSA-pwqr-wmgm-9rr8 "CVE-2026-33870") および [CVE-2026-33871](https://github.com/advisories/GHSA-w9fj-cfpg-grvv "CVE-2026-33871")
+- `grpc_health_probe` をアップグレードしてセキュリティ問題を修正しました: [CVE-2026-34986](https://github.com/advisories/GHSA-78h2-9frx-2jm8 "CVE-2026-34986")
+
+##### ScalarDB SQL
+
+- CREATE TABLE ステートメントで重複する列名が許可されるバグを修正しました。
+- 時間関連の型フォーマッタで厳密な日付検証が欠落していた問題を修正しました。これにより、無効な日付  (例: 2月30日) が静かに受け入れられるのではなく、正しく拒否されるようになりました。
+
 ## v3.16.4
 
 **発売日:** 2026年3月6日
@@ -55,7 +103,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 #### 改善点
 
-- アクティブトランザクション管理を有効/無効にするための設定オプション `scalar.db.active_transaction_management.enabled` を追加しました（デフォルト: `true`）。([#3233](https://github.com/scalar-labs/scalardb/pull/3233))
+- アクティブトランザクション管理を有効/無効にするための設定オプション `scalar.db.active_transaction_management.enabled` を追加しました  (デフォルト: `true`)。([#3233](https://github.com/scalar-labs/scalardb/pull/3233))
 
 #### バグの修正
 
@@ -106,7 +154,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 - 重複する列名が存在する場合に SQL API の `ResultSet` が不正な結果を返すバグを修正しました。
 - セキュリティ問題を修正するために gRPC ライブラリをアップグレードしました。[CVE-2025-55163](https://github.com/advisories/GHSA-prj3-ccx8-p6x4 "CVE-2025-55163")
-- セキュリティ問題を修正するために `grpc_health_probe` をアップグレードしました：[CVE-2025-47907](https://github.com/advisories/GHSA-j5pm-7495-qmr3 "CVE-2025-47907")、[CVE-2025-58183](https://github.com/advisories/GHSA-9gcr-gp5f-jw27 "CVE-2025-58183")、[CVE-2025-58186](https://github.com/advisories/GHSA-rjcg-56ph-3qvg "CVE-2025-58186")、[CVE-2025-58187](https://github.com/advisories/GHSA-frhw-mqj2-wxw2 "CVE-2025-58187")、および [CVE-2025-58188](https://github.com/advisories/GHSA-7wwx-xj66-r44x "CVE-2025-58188")。
+- セキュリティ問題を修正するために `grpc_health_probe` をアップグレードしました: [CVE-2025-47907](https://github.com/advisories/GHSA-j5pm-7495-qmr3 "CVE-2025-47907")、[CVE-2025-58183](https://github.com/advisories/GHSA-9gcr-gp5f-jw27 "CVE-2025-58183")、[CVE-2025-58186](https://github.com/advisories/GHSA-rjcg-56ph-3qvg "CVE-2025-58186")、[CVE-2025-58187](https://github.com/advisories/GHSA-frhw-mqj2-wxw2 "CVE-2025-58187")、および [CVE-2025-58188](https://github.com/advisories/GHSA-7wwx-xj66-r44x "CVE-2025-58188")。
 
 ## v3.16.1
 
@@ -189,7 +237,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 ##### ScalarDB Cluster
 
-- ScalarDB Cluster におけるトランザクション機能の有効または無効を設定するための構成オプション（`scalar.db.transaction.enabled`）を追加しました。デフォルト値は `true` です。
+- ScalarDB Cluster におけるトランザクション機能の有効または無効を設定するための構成オプション  (`scalar.db.transaction.enabled`) を追加しました。デフォルト値は `true` です。
 - ScalarDB Cluster におけるトランザクション抽象にスキャナー API のサポートを追加し、結果を反復的に取得できるようにしました。
 - ScalarDB Cluster において、読み取り専用モードでトランザクションを開始するサポートを追加しました。
 - ScalarDB Cluster において、SQL を使用して読み取り専用モードでトランザクションを開始するサポートを追加しました。

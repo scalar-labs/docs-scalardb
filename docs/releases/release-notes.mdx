@@ -10,6 +10,55 @@ displayed_sidebar: docsEnglish
 
 This page includes a list of release notes for ScalarDB 3.17.
 
+## v3.17.3
+
+**Release date:** April 15, 2026
+
+### Summary
+
+This release includes several improvements and bug fixes.
+
+### Community edition
+
+#### Improvements
+
+- Replaced MySQL Connector/J with MariaDB Connector/J due to licensing concerns. ([#3428](https://github.com/scalar-labs/scalardb/pull/3428))
+- Added support for setting null values on secondary index columns in DynamoDB. When a null value is set, the attribute is removed from the item and the record will not appear in secondary index scans. ([#3326](https://github.com/scalar-labs/scalardb/pull/3326))
+- Inserting or updating records with TIME (microsecond precision), TIMESTAMP (millisecond precision), and TIMESTAMPTZ (millisecond precision) column values will truncate out-of-range precision rather than throwing an exception. ([#3393](https://github.com/scalar-labs/scalardb/pull/3393))
+- Fixed an issue where index-based Get and Scan operations in Consensus Commit could miss records in PREPARED or DELETED state, by adding before-image secondary index check. ([#3419](https://github.com/scalar-labs/scalardb/pull/3419))
+- Added support for the SERIALIZABLE isolation level for index-based Get, Scan, and ScanAll operations in Consensus Commit when before-image indexes are present. Run `repairTable()` to create before-image indexes for existing tables. ([#3463](https://github.com/scalar-labs/scalardb/pull/3463))
+- Shortened JDBC index names using a hash when they exceed the maximum identifier length supported by the underlying database. ([#3481](https://github.com/scalar-labs/scalardb/pull/3481))
+
+#### Bug fixes
+
+- Fixed `dropColumnFromTable()` from dropping the secondary index even when column drop is unsupported. ([#3450](https://github.com/scalar-labs/scalardb/pull/3450))
+- Upgraded the Netty library to fix security issues: [CVE-2026-33870](https://github.com/advisories/GHSA-pwqr-wmgm-9rr8 "CVE-2026-33870") and [CVE-2026-33871](https://github.com/advisories/GHSA-w9fj-cfpg-grvv "CVE-2026-33871") ([#3452](https://github.com/scalar-labs/scalardb/pull/3452))
+- Fixed a bug where index-based Get and Scan operations could return incorrect results after lazy recovery rolled back a PREPARED record whose after-image index value matched the query but whose before-image (restored) value did not. ([#3488](https://github.com/scalar-labs/scalardb/pull/3488))
+
+### Enterprise edition
+
+#### Improvements
+
+##### ScalarDB SQL
+
+- Updated the TIMESTAMPTZ literal to make optional the space character before the UTC timezone `Z` character. For example, `2021-03-04 12:30:45.123Z` is now accepted, in addition to the current format `2021-03-04 12:30:45.123 Z`. Also, when selecting a TIMESTAMPTZ column, the value is printed without a space before the `Z`.
+- Fixed an issue where the shadow jar was unnecessarily published to GitHub Packages for the CLI module.
+- Inserting or updating records with TIME (microsecond precision), TIMESTAMP (millisecond precision), and TIMESTAMPTZ (millisecond precision) column values will truncate out-of-range precision rather than throwing an exception.
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Upgraded `grpc_health_probe` to fix security issues: [CVE-2025-59250](https://github.com/advisories/GHSA-m494-w24q-6f7w "CVE-2025-59250") and [CVE-2026-25679](https://github.com/advisories/GHSA-j3gx-2473-5fp8 "CVE-2026-25679")
+- Upgraded the Netty library to fix security issues: [CVE-2026-33870](https://github.com/advisories/GHSA-pwqr-wmgm-9rr8 "CVE-2026-33870") and [CVE-2026-33871](https://github.com/advisories/GHSA-w9fj-cfpg-grvv "CVE-2026-33871")
+- Fixed a bug where one-shot batch operations bypassed pause control in the GateKept transaction managers.
+- Upgraded `grpc_health_probe` to fix a security issue: [CVE-2026-34986](https://github.com/advisories/GHSA-78h2-9frx-2jm8 "CVE-2026-34986").
+
+##### ScalarDB SQL
+
+- Fixed a bug where duplicate column names were allowed in CREATE TABLE statements.
+- Fixed missing strict date validation on time-related type formatters, which could allow invalid dates (e.g., February 30) to be silently accepted instead of rejected.
+
 ## v3.17.2
 
 **Release date:** March 6, 2026

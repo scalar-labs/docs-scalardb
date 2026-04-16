@@ -14,6 +14,55 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 このページには、ScalarDB 3.17 のリリースノートのリストが含まれています。
 
+## v3.17.3
+
+**発売日:** 2026年4月15日
+
+### まとめ
+
+このリリースには、いくつかの改善点とバグ修正が含まれています。
+
+### Community edition
+
+#### 改善点
+
+- MySQL Connector/J を MariaDB Connector/J に置き換えました。ライセンス上の懸念によるものです。 ([#3428](https://github.com/scalar-labs/scalardb/pull/3428))
+- DynamoDB のセカンダリインデックス列に null 値を設定するサポートを追加しました。null 値が設定されると、属性はアイテムから削除され、レコードはセカンダリインデックスのスキャンに表示されなくなります。 ([#3326](https://github.com/scalar-labs/scalardb/pull/3326))
+- TIME (マイクロ秒精度)、TIMESTAMP (ミリ秒精度)、TIMESTAMPTZ (ミリ秒精度)列の値を挿入または更新する際、範囲外の精度は例外をスローするのではなく切り捨てられるようになりました。 ([#3393](https://github.com/scalar-labs/scalardb/pull/3393))
+- Consensus Commit のインデックスベースの Get および Scan 操作で、PREPARED または DELETED 状態のレコードを見逃す可能性がある問題を修正しました。before-image セカンダリインデックスのチェックを追加しました。 ([#3419](https://github.com/scalar-labs/scalardb/pull/3419))
+- before-image インデックスが存在する場合、Consensus Commit のインデックスベースの Get、Scan、および ScanAll 操作で SERIALIZABLE 分離レベルをサポートするようになりました。既存のテーブルに before-image インデックスを作成するには、`repairTable()` を実行してください。 ([#3463](https://github.com/scalar-labs/scalardb/pull/3463))
+- JDBC インデックス名が基盤となるデータベースでサポートされている最大識別子長を超える場合、ハッシュを使用して短縮されるようになりました。 ([#3481](https://github.com/scalar-labs/scalardb/pull/3481))
+
+#### バグの修正
+
+- `dropColumnFromTable()` が列の削除をサポートしていない場合でもセカンダリインデックスを削除してしまう問題を修正しました。 ([#3450](https://github.com/scalar-labs/scalardb/pull/3450))
+- Netty ライブラリをアップグレードしてセキュリティ問題を修正しました: [CVE-2026-33870](https://github.com/advisories/GHSA-pwqr-wmgm-9rr8 "CVE-2026-33870") および [CVE-2026-33871](https://github.com/advisories/GHSA-w9fj-cfpg-grvv "CVE-2026-33871") ([#3452](https://github.com/scalar-labs/scalardb/pull/3452))
+- インデックスベースの Get および Scan 操作が、lazy recovery によって PREPARED レコードがロールバックされた後に不正確な結果を返す可能性があるバグを修正しました。after-image インデックス値がクエリに一致しても、before-image (復元された) 値が一致しない場合があります。 ([#3488](https://github.com/scalar-labs/scalardb/pull/3488))
+
+### Enterprise edition
+
+#### 改善点
+
+##### ScalarDB SQL
+
+- TIMESTAMPTZ リテラルを更新し、UTC タイムゾーン `Z` 文字の前のスペース文字をオプションにしました。例えば、`2021-03-04 12:30:45.123Z` が現在の形式 `2021-03-04 12:30:45.123 Z` に加えて受け入れられるようになりました。また、TIMESTAMPTZ 列を選択する際、値は `Z` の前にスペースを入れずに表示されます。
+- CLI モジュールのシャドウ jar が不必要に GitHub Packages に公開される問題を修正しました。
+- TIME (マイクロ秒精度)、TIMESTAMP (ミリ秒精度)、TIMESTAMPTZ (ミリ秒精度) 列の値を挿入または更新する際、範囲外の精度は例外をスローするのではなく切り捨てられるようになりました。
+
+#### バグの修正
+
+##### ScalarDB Cluster
+
+- `grpc_health_probe` をアップグレードしてセキュリティ問題を修正しました: [CVE-2025-59250](https://github.com/advisories/GHSA-m494-w24q-6f7w "CVE-2025-59250") および [CVE-2026-25679](https://github.com/advisories/GHSA-j3gx-2473-5fp8 "CVE-2026-25679")
+- Netty ライブラリをアップグレードしてセキュリティ問題を修正しました: [CVE-2026-33870](https://github.com/advisories/GHSA-pwqr-wmgm-9rr8 "CVE-2026-33870") および [CVE-2026-33871](https://github.com/advisories/GHSA-w9fj-cfpg-grvv "CVE-2026-33871")
+- ワンショットバッチ操作が GateKept トランザクションマネージャーでポーズ制御をバイパスするバグを修正しました。
+- `grpc_health_probe` をアップグレードしてセキュリティ問題を修正しました: [CVE-2026-34986](https://github.com/advisories/GHSA-78h2-9frx-2jm8 "CVE-2026-34986").
+
+##### ScalarDB SQL
+
+- CREATE TABLE ステートメントで重複する列名が許可されるバグを修正しました。
+- 時間関連の型フォーマッターで厳密な日付検証が欠落していた問題を修正しました。これにより、無効な日付 (例: 2月30日) が拒否されずに静かに受け入れられる可能性がありました。
+
 ## v3.17.2
 
 **発売日:** 2026年3月6日
@@ -68,7 +117,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 #### 改善点
 
-- アクティブトランザクション管理を有効/無効にするための `scalar.db.active_transaction_management.enabled` 設定オプションを追加しました（デフォルト: `true`）。([#3233](https://github.com/scalar-labs/scalardb/pull/3233))
+- アクティブトランザクション管理を有効/無効にするための `scalar.db.active_transaction_management.enabled` 設定オプションを追加しました (デフォルト: `true`)。([#3233](https://github.com/scalar-labs/scalardb/pull/3233))
 
 #### バグの修正
 
@@ -128,8 +177,8 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 #### 改善点
 
-- Db2 を使用する場合、Db2 から ScalarDB BLOB 列に使用されるデフォルトのデータ型が `VARBINARY(32672)` から `BLOB(2G)` に変更され、最大 2GB のデータを格納できるようになりました。これにより、BLOB 列はパーティションキー、クラスタリングキー、セカンダリインデックス、またはクロスパーティション スキャン（つまり ScanAll）操作での順序列として使用できないという新しい制限が生じます。([#3000](https://github.com/scalar-labs/scalardb/pull/3000))
-- Oracle を使用する場合、Oracle から ScalarDB BLOB 列に使用されるデフォルトのデータ型が `RAW(2000)` から `BLOB` に変更され、最大 2GB のデータを格納できるようになりました。これにより新しい制限が導入されます：BLOB 列は、パーティションキー、クラスタリングキー、セカンダリインデックス、または Get や Scan 操作の条件として使用できなくなります。([#3070](https://github.com/scalar-labs/scalardb/pull/3070))
+- Db2 を使用する場合、Db2 から ScalarDB BLOB 列に使用されるデフォルトのデータ型が `VARBINARY(32672)` から `BLOB(2G)` に変更され、最大 2GB のデータを格納できるようになりました。これにより、BLOB 列はパーティションキー、クラスタリングキー、セカンダリインデックス、またはクロスパーティション スキャン (つまり ScanAll) 操作での順序列として使用できないという新しい制限が生じます。([#3000](https://github.com/scalar-labs/scalardb/pull/3000))
+- Oracle を使用する場合、Oracle から ScalarDB BLOB 列に使用されるデフォルトのデータ型が `RAW(2000)` から `BLOB` に変更され、最大 2GB のデータを格納できるようになりました。これにより新しい制限が導入されます: BLOB 列は、パーティションキー、クラスタリングキー、セカンダリインデックス、または Get や Scan 操作の条件として使用できなくなります。([#3070](https://github.com/scalar-labs/scalardb/pull/3070))
 - JDBC トランザクションマネージャーを使用する場合、設定 `scalar.db.jdbc.isolation_level` が設定されていない場合に JDBC トランザクション分離レベルを SERIALIZABLE に設定しないようになりました。デフォルトは、ストレージによって設定されたデフォルト値になります。([#3076](https://github.com/scalar-labs/scalardb/pull/3076))
 - ScalarDB Data Loader CLI の Maven パブリッシュサポートを追加し、Maven アーティファクトとしての配布を可能にしました。([#3120](https://github.com/scalar-labs/scalardb/pull/3120))
 
@@ -200,4 +249,4 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 - セキュリティ問題を修正するために `grpc_health_probe` をアップグレードしました。[CVE-2025-22874](https://github.com/advisories/GHSA-6f52-wpx2-hvf2 "CVE-2025-22874")
 - ワンフェーズコミット最適化が有効な場合にレプリケーション機能が開始されないようにバリデーションを追加しました。
 - 重複する列名が存在する場合に SQL API の `ResultSet` が不正な結果を返すバグを修正しました。
-- セキュリティ問題を修正するために `grpc_health_probe` をアップグレードしました：[CVE-2025-47907](https://github.com/advisories/GHSA-j5pm-7495-qmr3 "CVE-2025-47907")、[CVE-2025-58183](https://github.com/advisories/GHSA-9gcr-gp5f-jw27 "CVE-2025-58183")、[CVE-2025-58186](https://github.com/advisories/GHSA-rjcg-56ph-3qvg "CVE-2025-58186")、[CVE-2025-58187](https://github.com/advisories/GHSA-frhw-mqj2-wxw2 "CVE-2025-58187")、および [CVE-2025-58188](https://github.com/advisories/GHSA-7wwx-xj66-r44x "CVE-2025-58188")。
+- セキュリティ問題を修正するために `grpc_health_probe` をアップグレードしました: [CVE-2025-47907](https://github.com/advisories/GHSA-j5pm-7495-qmr3 "CVE-2025-47907")、[CVE-2025-58183](https://github.com/advisories/GHSA-9gcr-gp5f-jw27 "CVE-2025-58183")、[CVE-2025-58186](https://github.com/advisories/GHSA-rjcg-56ph-3qvg "CVE-2025-58186")、[CVE-2025-58187](https://github.com/advisories/GHSA-frhw-mqj2-wxw2 "CVE-2025-58187")、および [CVE-2025-58188](https://github.com/advisories/GHSA-7wwx-xj66-r44x "CVE-2025-58188")。
