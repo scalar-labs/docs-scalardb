@@ -158,11 +158,6 @@ const sidebars = {
           ],
         },
         {
-          type: 'doc',
-          id: 'getting-started-with-benchmarking-scalardb',
-          label: 'Try Benchmarking ScalarDB',
-        },
-        {
           type: 'category',
           label: 'Try Running Analytical Queries Through ScalarDB Analytics',
           collapsible: true,
@@ -254,6 +249,38 @@ const sidebars = {
             },
             {
               type: 'category',
+              label: 'Run Sample Applications',
+              collapsible: true,
+              link: {
+                type: 'doc',
+                id: 'scalardb-samples/README',
+              },
+              items: [
+                {
+                  type: 'doc',
+                  key: 'develop-sample-multi-storage-transactions-en-us-3.17',
+                  id: 'scalardb-samples/multi-storage-transaction-sample/README',
+                  label: 'Multi-Storage Transactions',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-samples/microservice-transaction-sample/README',
+                  label: 'Microservice Transactions',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-samples/spring-data-multi-storage-transaction-sample/README',
+                  label: 'Multi-Storage Transactions Through Spring Data JDBC',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-samples/spring-data-microservice-transaction-sample/README',
+                  label: 'Microservice Transactions Through Spring Data JDBC',
+                },
+              ],
+            },
+            {
+              type: 'category',
               label: 'Advanced Configurations and Operations',
               collapsible: true,
               items: [
@@ -282,49 +309,291 @@ const sidebars = {
                   id: 'scalardb-benchmarks/README',
                   label: 'Run Benchmarks',
                 },
+                {
+                  type: 'category',
+                  label: 'Run Single-Operation Transactions',
+                  collapsible: true,
+                  link: {
+                    type: 'doc',
+                    id: 'develop-run-non-transactional-operations-overview',
+                  },
+                  items: [
+                    {
+                      type: 'category',
+                      key: 'develop-non-transactional-crud-interface-en-us-3.17',
+                      label: 'Run Through the CRUD Interface',
+                      collapsible: true,
+                      items: [
+                        {
+                          type: 'doc',
+                          key: 'develop-non-transactional-scalardb-core-en-us-3.17',
+                          id: 'run-non-transactional-storage-operations-through-library',
+                          label: 'Use the ScalarDB Core Library',
+                        },
+                        {
+                          type: 'doc',
+                          key: 'develop-non-transactional-scalardb-cluster-en-us-3.17',
+                          id: 'scalardb-cluster/run-non-transactional-storage-operations-through-scalardb-cluster',
+                          label: 'Use ScalarDB Cluster',
+                        },
+                      ],
+                    },
+                    {
+                      type: 'doc',
+                      key: 'develop-non-transactional-sql-interface-en-us-3.17',
+                      id: 'scalardb-cluster/run-non-transactional-storage-operations-through-sql-interface',
+                      label: 'Run Through the SQL Interface',
+                    },
+                    {
+                      type: 'doc',
+                      id: 'run-non-transactional-storage-operations-through-primitive-crud-interface',
+                      label: 'Run Through the Primitive CRUD Interface',
+                    },
+                  ],
+                },
               ],
             },
-          ],
-        },
-        {
-          type: 'category',
-          label: 'Run Non-Transactional Storage Operations',
-          collapsible: true,
-          link: {
-            type: 'doc',
-            id: 'develop-run-non-transactional-operations-overview',
-          },
-          items: [
             {
               type: 'category',
-              key: 'develop-non-transactional-crud-interface-en-us-3.17',
-              label: 'Run Through the CRUD Interface',
+              label: 'Tools',
               collapsible: true,
+              link: {
+                type: 'doc',
+                id: 'develop-run-analytical-queries-overview',
+              },
               items: [
                 {
                   type: 'doc',
-                  key: 'develop-non-transactional-scalardb-core-en-us-3.17',
-                  id: 'run-non-transactional-storage-operations-through-library',
-                  label: 'Use the ScalarDB Core Library',
+                  id: 'schema-loader',
+                  label: 'Schema Loader',
                 },
                 {
                   type: 'doc',
-                  key: 'develop-non-transactional-scalardb-cluster-en-us-3.17',
-                  id: 'scalardb-cluster/run-non-transactional-storage-operations-through-scalardb-cluster',
-                  label: 'Use ScalarDB Cluster',
+                  id: 'data-loader',
+                  label: 'Data Loader',
                 },
               ],
             },
             {
-              type: 'doc',
-              key: 'develop-non-transactional-sql-interface-en-us-3.17',
-              id: 'scalardb-cluster/run-non-transactional-storage-operations-through-sql-interface',
-              label: 'Run Through the SQL Interface',
-            },
-            {
-              type: 'doc',
-              id: 'run-non-transactional-storage-operations-through-primitive-crud-interface',
-              label: 'Run Through the Primitive CRUD Interface',
+              type: 'category',
+              key: 'develop-reference-en-us-3.17',
+              label: 'Reference',
+              collapsible: true,
+              items: [
+                {
+                  type: 'category',
+                  key: 'develop-build-en-us-3.17',
+                  label: 'Build',
+                  collapsible: true,
+                  items: [
+                    {
+                      type: 'doc',
+                      id: 'add-scalardb-to-your-build',
+                      label: 'Add ScalarDB to Your Build',
+                    },
+                    {
+                      type: 'doc',
+                      id: 'scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api',
+                      label: 'ScalarDB Cluster Java API',
+                    },
+                  ],
+                },
+                {
+                  type: 'category',
+                  key: 'develop-configurations-en-us-3.17',
+                  label: 'Configurations',
+                  collapsible: true,
+                  items: [
+                    {
+                      type: 'doc',
+                      id: 'configurations',
+                      label: 'ScalarDB Configurations',
+                    },
+                    {
+                      type: 'doc',
+                      id: 'scalardb-cluster/scalardb-cluster-configurations',
+                      label: 'ScalarDB Cluster Configurations',
+                    },
+                    {
+                      type: 'doc',
+                      key: 'develop-multi-storage-transactions-en-us-3.17',
+                      id: 'multi-storage-transactions',
+                      label: 'Multi-Storage Transactions',
+                    },
+                  ],
+                },
+                {
+                  type: 'category',
+                  key: 'develop-java-interface-guides-en-us-3.17',
+                  label: 'Java Interface Guides',
+                  collapsible: true,
+                  items: [
+                    {
+                      type: 'category',
+                      key: 'develop-reference-primitive-interface-guides-en-us-3.17',
+                      label: 'Java Interface Guides',
+                      collapsible: true,
+                      items: [
+                        {
+                          type: 'doc',
+                          key: 'develop-api-guide-en-us-3.17',
+                          id: 'api-guide',
+                          label: 'API Guide',
+                        },
+                        {
+                          type: 'doc',
+                          id: 'scalardb-cluster/scalardb-cluster-grpc-api-guide',
+                          label: 'ScalarDB Cluster gRPC API Guide',
+                        },
+                        {
+                          type: 'doc',
+                          key: 'develop-two-phase-commit-en-us-3.17',
+                          id: 'two-phase-commit-transactions',
+                          label: 'Two-Phase Commit Transactions',
+                        },
+                      ],
+                    },
+                    {
+                      type: 'category',
+                      label: 'SQL Interface Guides',
+                      collapsible: true,
+                      items: [
+                        {
+                          type: 'doc',
+                          id: 'scalardb-sql/index',
+                          label: 'Overview',
+                        },
+                        {
+                          type: 'doc',
+                          id: 'scalardb-sql/jdbc-guide',
+                          label: 'JDBC Guide',
+                        },
+                        {
+                          type: 'doc',
+                          key: 'develop-sql-api-guide-en-us-3.17',
+                          id: 'scalardb-sql/sql-api-guide',
+                          label: 'API Guide',
+                        },			
+                        {
+                          type: 'doc',
+                          id: 'scalardb-cluster/scalardb-cluster-sql-grpc-api-guide',
+                          label: 'gRPC API Guide',
+                        },
+                        {
+                          type: 'doc',
+                          id: 'scalardb-sql/spring-data-guide',
+                          label: 'Spring Data Guide',
+                        },
+                        {
+                          type: 'doc',
+                          id: 'scalardb-sql/grammar',
+                          label: 'Grammar',
+                        },
+                      ],
+                    },
+                    {
+                      type: 'category',
+                      label: 'GraphQL Interface Guides',
+                      collapsible: true,
+                      items: [
+                        {
+                          type: 'doc',
+                          key: 'develop-graphql-overview-en-us-3.17',
+                          id: 'scalardb-graphql/index',
+                          label: 'Overview',
+                        },
+                        {
+                          type: 'doc',
+                          key: 'develop-graphql-two-phase-commit-en-us-3.17',
+                          id: 'scalardb-graphql/how-to-run-two-phase-commit-transaction',
+                          label: 'Two-Phase Commit Transactions',
+                        },
+                      ],
+                    },
+                  ],
+                },
+                {
+                  type: 'category',
+                  label: '.NET Interface Guides',
+                  collapsible: true,
+                  items: [
+                    {
+                      type: 'doc',
+                      key: 'develop-dotnet-overview-en-us-3.17',
+                      id: 'scalardb-cluster-dotnet-client-sdk/index',
+                      label: 'Overview',
+                    },
+                    {
+                      type: 'doc',
+                      id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-transactions',
+                      label: 'Distributed Transactions',
+                    },
+                    {
+                      type: 'doc',
+                      id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-sql-transactions',
+                      label: 'Distributed SQL Transactions',
+                    },
+                    {
+                      type: 'doc',
+                      id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-admin-api',
+                      label: 'Administrative API',
+                    },
+                    {
+                      type: 'doc',
+                      id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-scalardb-tables-as-csharp-classes',
+                      label: 'Tables as C# Classes',
+                    },
+                    {
+                      type: 'doc',
+                      id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-aspnet-and-di',
+                      label: 'ASP.NET Core and Dependency Injection',
+                    },
+                    {
+                      type: 'doc',
+                      id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-linq',
+                      label: 'LINQ',
+                    },
+                    {
+                      type: 'doc',
+                      key: 'develop-dotnet-two-phase-commit-en-us-3.17',
+                      id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-two-phase-commit-transactions',
+                      label: 'Two-Phase Commit Transactions',
+                    },
+                    {
+                      type: 'doc',
+                      id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-auth',
+                      label: 'Authenticate and Authorize Users',
+                    },
+                    {
+                      type: 'doc',
+                      id: 'scalardb-cluster-dotnet-client-sdk/exception-handling',
+                      label: 'Handle Exceptions',
+                    },
+                    {
+                      type: 'doc',
+                      id: 'scalardb-cluster-dotnet-client-sdk/common-reference',
+                      label: 'Common Reference',
+                    },
+                  ],
+                },
+                {
+                  type: 'category',
+                  label: 'ScalarDB MCP Server',
+                  collapsible: true,
+                  items: [
+                    {
+                    type: 'doc',
+                    id: 'scalardb-mcp-server/getting-started-with-scalardb-mcp-server',
+                    label: 'Use ScalarDB MCP Server',
+                    },
+                    {
+                    type: 'doc',
+                    id: 'scalardb-mcp-server/tools-reference',
+                    label: 'ScalarDB MCP Server Tools Reference',
+                    },
+                  ],
+                },
+              ],
             },
           ],
         },
@@ -347,176 +616,10 @@ const sidebars = {
               id: 'scalardb-analytics/run-analytical-queries',
               label: 'Run Analytical Queries',
             },
-          ],
-        },
-        {
-          type: 'category',
-          label: 'Run Sample Applications',
-          collapsible: true,
-          link: {
-            type: 'doc',
-            id: 'scalardb-samples/README',
-          },
-          items: [
-            {
-              type: 'doc',
-              key: 'develop-sample-multi-storage-transactions-en-us-3.17',
-              id: 'scalardb-samples/multi-storage-transaction-sample/README',
-              label: 'Multi-Storage Transactions',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-samples/microservice-transaction-sample/README',
-              label: 'Microservice Transactions',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-samples/spring-data-multi-storage-transaction-sample/README',
-              label: 'Multi-Storage Transactions Through Spring Data JDBC',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-samples/spring-data-microservice-transaction-sample/README',
-              label: 'Microservice Transactions Through Spring Data JDBC',
-            },
-          ],
-        },
-        {
-          type: 'category',
-          key: 'develop-reference-en-us-3.17',
-          label: 'Reference',
-          collapsible: true,
-          items: [
-            {
-              type: 'doc',
-              id: 'add-scalardb-to-your-build',
-              label: 'Add ScalarDB to Your Build',
-            },
-            {
-              type: 'doc',
-              id: 'configurations',
-              label: 'ScalarDB Configurations',
-            },
-            {
-              type: 'doc',
-              key: 'develop-api-guide-en-us-3.17',
-              id: 'api-guide',
-              label: 'API Guide',
-            },
-            {
-              type: 'doc',
-              key: 'develop-two-phase-commit-en-us-3.17',
-              id: 'two-phase-commit-transactions',
-              label: 'Two-Phase Commit Transactions',
-            },
-            {
-              type: 'doc',
-              key: 'develop-multi-storage-transactions-en-us-3.17',
-              id: 'multi-storage-transactions',
-              label: 'Multi-Storage Transactions',
-            },
-            {
-              type: 'doc',
-              id: 'schema-loader',
-              label: 'Schema Loader',
-            },
-            {
-              type: 'doc',
-              id: 'data-loader',
-              label: 'Data Loader',
-            },
-            {
-              type: 'doc',
-              key: 'develop-scalardb-cluster-en-us-3.17',
-              id: 'scalardb-cluster/index',
-              label: 'ScalarDB Cluster',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/compatibility',
-              label: 'ScalarDB Cluster Compatibility Matrix',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/deployment-patterns-for-microservices',
-              label: 'ScalarDB Cluster Deployment Patterns for Microservices',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api',
-              label: 'ScalarDB Cluster Java API',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/scalardb-cluster-configurations',
-              label: 'ScalarDB Cluster Configurations',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/scalardb-cluster-grpc-api-guide',
-              label: 'ScalarDB Cluster gRPC API Guide',
-            },
             {
               type: 'category',
-              label: 'SQL Interface',
-              collapsible: true,
-              items: [
-                {
-                  type: 'doc',
-                  key: 'develop-sql-overview-en-us-3.17',
-                  id: 'scalardb-sql/index',
-                  label: 'Overview',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-sql/jdbc-guide',
-                  label: 'JDBC Guide',
-                },
-                {
-                  type: 'doc',
-                  key: 'develop-sql-api-guide-en-us-3.17',
-                  id: 'scalardb-sql/sql-api-guide',
-                  label: 'API Guide',
-                },			
-                {
-                  type: 'doc',
-                  id: 'scalardb-cluster/scalardb-cluster-sql-grpc-api-guide',
-                  label: 'gRPC API Guide',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-sql/spring-data-guide',
-                  label: 'Spring Data Guide',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-sql/grammar',
-                  label: 'Grammar',
-                },
-              ],
-            },
-            {
-              type: 'category',
-              label: 'GraphQL Interface',
-              collapsible: true,
-              items: [
-                {
-                  type: 'doc',
-                  key: 'develop-graphql-overview-en-us-3.17',
-                  id: 'scalardb-graphql/index',
-                  label: 'Overview',
-                },
-                {
-                  type: 'doc',
-                  key: 'develop-graphql-two-phase-commit-en-us-3.17',
-                  id: 'scalardb-graphql/how-to-run-two-phase-commit-transaction',
-                  label: 'Two-Phase Commit Transactions',
-                },
-              ],
-            },
-            {
-              type: 'category',
-              label: 'Analytics',
+              key: 'develop-analytical-reference-en-us-3.17',
+              label: 'Reference',
               collapsible: true,
               items: [
                 {
@@ -536,86 +639,17 @@ const sidebars = {
                 },
               ],
             },
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Reference',
+          collapsible: true,
+          items: [
             {
-              type: 'category',
-              label: '.NET',
-              collapsible: true,
-              items: [
-                {
-                  type: 'doc',
-                  key: 'develop-dotnet-overview-en-us-3.17',
-                  id: 'scalardb-cluster-dotnet-client-sdk/index',
-                  label: 'Overview',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-transactions',
-                  label: 'Distributed Transactions',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-sql-transactions',
-                  label: 'Distributed SQL Transactions',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-admin-api',
-                  label: 'Administrative API',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-scalardb-tables-as-csharp-classes',
-                  label: 'Tables as C# Classes',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-aspnet-and-di',
-                  label: 'ASP.NET Core and Dependency Injection',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-linq',
-                  label: 'LINQ',
-                },
-                {
-                  type: 'doc',
-                  key: 'develop-dotnet-two-phase-commit-en-us-3.17',
-                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-two-phase-commit-transactions',
-                  label: 'Two-Phase Commit Transactions',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-auth',
-                  label: 'Authenticate and Authorize Users',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-cluster-dotnet-client-sdk/exception-handling',
-                  label: 'Handle Exceptions',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-cluster-dotnet-client-sdk/common-reference',
-                  label: 'Common Reference',
-                },
-              ],
-            },
-            {
-              type: 'category',
-              label: 'ScalarDB MCP Server',
-              collapsible: true,
-              items: [
-                {
-                type: 'doc',
-                id: 'scalardb-mcp-server/getting-started-with-scalardb-mcp-server',
-                label: 'Use ScalarDB MCP Server',
-                },
-                {
-                type: 'doc',
-                id: 'scalardb-mcp-server/tools-reference',
-                label: 'ScalarDB MCP Server Tools Reference',
-                },
-              ],
+              type: 'doc',
+              id: 'getting-started-with-benchmarking-scalardb',
+              label: 'Try Benchmarking ScalarDB',
             },
           ],
         },
@@ -782,7 +816,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalar-kubernetes/AccessScalarProducts',
-                  label: 'Access Kubernetes environment from applications',
+                  label: 'Access Kubernetes Environment from Applications',
                 },
                 {
                   type: 'doc',
@@ -792,12 +826,12 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'helm-charts/configure-custom-values-scalardb-cluster',
-                  label: 'Configure a custom values file for ScalarDB Cluster',
+                  label: 'Configure a Custom Values File for ScalarDB Cluster',
                 },
                 {
                   type: 'doc',
                   id: 'helm-charts/configure-custom-values-scalardb-analytics-server',
-                  label: 'Configure a Custom Values File for ScalarDB Analytics server',
+                  label: 'Configure a Custom Values File for ScalarDB Analytics Server',
                 },
                 {
                   type: 'doc',
@@ -1004,7 +1038,7 @@ const sidebars = {
               "type": "doc",
               "id": "scalardb-cluster/scalardb-remote-replication-status-codes",
               "label": "Remote Replication",
-            }
+            },
           ],
         },
       ],
@@ -1019,6 +1053,22 @@ const sidebars = {
           type: 'doc',
           id: 'consensus-commit',
           label: 'Consensus Commit Protocol',
+        },
+        {
+          type: 'doc',
+          key: 'develop-scalardb-cluster-en-us-3.17',
+          id: 'scalardb-cluster/index',
+          label: 'ScalarDB Cluster',
+        },
+        {
+          type: 'doc',
+          id: 'scalardb-cluster/compatibility',
+          label: 'ScalarDB Cluster Compatibility Matrix',
+        },
+        {
+          type: 'doc',
+          id: 'scalardb-cluster/deployment-patterns-for-microservices',
+          label: 'ScalarDB Cluster Deployment Patterns for Microservices',
         },
         {
           type: 'doc',
@@ -2042,8 +2092,8 @@ const sidebars = {
             {
               "type": "doc",
               "id": "scalardb-cluster/scalardb-remote-replication-status-codes",
-              "label": "リモートレプリケーション"
-            }
+              "label": "リモートレプリケーション",
+            },
           ],
         },
       ],
