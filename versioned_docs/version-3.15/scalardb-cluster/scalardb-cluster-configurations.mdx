@@ -241,9 +241,9 @@ The following shows the attribute-based access control (ABAC) configurations for
 | `scalar.db.cluster.abac.enabled`   | Whether the ABAC feature is enabled.        | `false` |
 | `scalar.db.cluster.abac.cache_expiration_time_millis` | The cache expiration time of the ABAC metadata cache in milliseconds. If you update the ABAC metadata, for example, the policy configuration, you might need to wait until this expiration time is reached for the changes to be applied. Setting this property to a low number may increase the number of accesses to the backend database and decrease performance. | `60000` (1 minute) |
 
-## Client configurations
+## Java Client SDK configurations
 
-This section describes the general configurations for the ScalarDB Cluster client.
+This section describes the configurations for the ScalarDB Cluster Java Client SDK.
 
 ### Configurations for the primitive interface
 
@@ -257,20 +257,6 @@ The following table shows the general configurations for the ScalarDB Cluster cl
 | `scalar.db.cluster.grpc.deadline_duration_millis`  | Deadline duration for gRPC in millis.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | `60000` (60 seconds)   |
 | `scalar.db.cluster.grpc.max_inbound_message_size`  | Maximum message size allowed for a single gRPC frame.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | The gRPC default value |
 | `scalar.db.cluster.grpc.max_inbound_metadata_size` | Maximum size of metadata allowed to be received.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | The gRPC default value |
-
-For example, if you use the `indirect` client mode and the load balancer IP address is `192.168.10.1`, you can configure the client as follows:
-
-```properties
-scalar.db.transaction_manager=cluster
-scalar.db.contact_points=indirect:192.168.10.1
-```
-
-Or if you use the `direct-kubernetes` client mode, with the namespace of the endpoint as `ns` and the endpoint name as `scalardb-cluster`, you can configure the client as follows:
-
-```properties
-scalar.db.transaction_manager=cluster
-scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
-```
 
 ### Configurations for the SQL interface
 
@@ -287,14 +273,14 @@ The following table shows the configurations for the ScalarDB Cluster SQL client
 | `scalar.db.cluster.grpc.max_inbound_message_size`  | Maximum message size allowed for a single gRPC frame.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | The gRPC default value |
 | `scalar.db.cluster.grpc.max_inbound_metadata_size` | Maximum size of metadata allowed to be received.                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | The gRPC default value |
 
-For example, if you use the `indirect` client mode and the load balancer IP address is `192.168.10.1`, you can configure the client as follows:
+For example, if you use the `indirect` client mode and the load balancer IP address is `192.168.10.1`, you can configure the Java Client SDK as follows:
 
 ```properties
 scalar.db.sql.connection_mode=cluster
 scalar.db.sql.cluster_mode.contact_points=indirect:192.168.10.1
 ```
 
-Or if you use the `direct-kubernetes` client mode, with the namespace of the endpoint as `ns` and the endpoint name as `scalardb-cluster`, you can configure the client as follows:
+Or if you use the `direct-kubernetes` client mode, with the namespace of the endpoint as `ns` and the endpoint name as `scalardb-cluster`, you can configure the Java Client SDK as follows:
 
 ```properties
 scalar.db.sql.connection_mode=cluster
@@ -333,6 +319,6 @@ scalar.db.transaction_manager=cluster
 scalar.db.contact_points=indirect:<SCALARDB_CLUSTER_CONTACT_POINT>
 ```
 
-For details about client configurations, see the [ScalarDB Cluster client configurations](#client-configurations).
+For details about the Java Client SDK configurations, see [ScalarDB Cluster Java Client SDK configurations](#java-client-sdk-configurations).
 
 [^1]: It's worth benchmarking the performance with a few variations (for example, 75% and 125% of the default value) on the same underlying storage that your application uses, considering your application's access pattern, to determine the optimal configuration as it really depends on those factors. Also, it's important to benchmark combinations of these parameters (for example, first, `slot_capacity:20` and `group_size_fix_timeout_millis:40`; second, `slot_capacity:30` and `group_size_fix_timeout_millis:40`; and third, `slot_capacity:20` and `group_size_fix_timeout_millis:80`) to determine the optimal combination.
