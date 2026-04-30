@@ -227,6 +227,11 @@ const sidebars = {
               label: 'Model Your Data',
             },
             {
+              type: 'doc',
+              id: 'database-adapters',
+              label: 'Database Adapters',
+            },
+            {
               type: 'category',
               key: 'develop-transactions-crud-interface-en-us-3.17',
               label: 'Run Through the CRUD Interface',
