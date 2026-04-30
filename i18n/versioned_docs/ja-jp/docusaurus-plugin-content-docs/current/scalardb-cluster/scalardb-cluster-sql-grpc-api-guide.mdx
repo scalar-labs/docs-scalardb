@@ -1,0 +1,185 @@
+---
+tags:
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Cluster SQL gRPC API ガイド
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+import WarningLicenseKeyContact from '/src/components/ja-jp/_warning-license-key-contact.mdx';
+
+<TranslationBanner />
+
+このドキュメントでは、ScalarDB Cluster SQL gRPC API について説明します。
+
+<WarningLicenseKeyContact product="ScalarDB Cluster" />
+
+ScalarDB Cluster SQL は、内部で gRPC API を使用する Java API を提供します。Java または JVM 言語を使用する場合は、ScalarDB Cluster SQL gRPC API を直接使用する代わりに、Java API を使用できます。Java API の詳細については、[Java API を使用した ScalarDB Cluster の開発者ガイド](developer-guide-for-scalardb-cluster-with-java-api.mdx)を参照してください。
+
+ScalarDB Cluster SQL gRPC API のサービスとメッセージの詳細については、`scalardb-cluster-sql.proto` ファイルの定義を参照してください。商用ライセンスを持つ ScalarDB Cluster ユーザーで、`scalardb-cluster-sql.proto` ファイルが必要な場合は、[お問い合わせ](https://www.scalar-labs.com/support)ください。
+
+ScalarDB Cluster SQL gRPC API は、次のサービスで構成されています:
+
+- `scalardb.cluster.rpc.v1.sql.SqlTransaction`: ScalarDB Cluster SQL のトランザクション機能を提供します。
+- `scalardb.cluster.rpc.v1.sql.SqlTwoPhaseCommitTransaction`: ScalarDB Cluster SQL の2フェーズコミットトランザクション機能を提供します。
+- `scalardb.cluster.rpc.v1.sql.Metadata`: ScalarDB Cluster SQL のメタデータビューを提供します。
+
+次のセクションでは、各サービスの使用方法について説明します。
+
+## ScalarDB Cluster SQL gRPC API でのエラー処理の概要
+
+各サービスの使用方法を説明する前に、このセクションでは、ScalarDB Cluster SQL gRPC API でのエラー処理の仕組みについて説明します。
+
+ScalarDB Cluster SQL gRPC API は、エラー処理に [Richer error model](https://grpc.io/docs/guides/error/#richer-error-model) を採用しています。
+
+このモデルにより、サーバーは1つ以上の protobuf メッセージとして表現される追加のエラー詳細を返すことができ、クライアントはそれを利用できるようになります。
+
+ScalarDB Cluster SQL gRPC API は、[standard set of error message types](https://github.com/googleapis/googleapis/blob/master/google/rpc/error_details.proto) の1つである `google.rpc.ErrorInfo` を使用し、追加のエラー詳細を `ErrorInfo` フィールドに格納します。
+
+`ErrorInfo` には次のフィールドがあります:
+
+- `reason`: エラーの簡単な説明を提供する文字列。次のセクションでは、各サービスにおける `reason` の可能な値について説明します。
+- `domain`: エラーの原因を示す文字列。ScalarDB Cluster SQL gRPC API では、この文字列は常に `com.scalar.db.cluster.sql` に設定されます。
+- `metadata`: 特定のエラーのメタデータのマップ。ScalarDB Cluster SQL gRPC API では、エラーがトランザクションに関連している場合、マップに `transactionId` キーを持つトランザクション ID が配置されます。
+
+エラーが発生した場合は、gRPC レスポンスの `google.rpc.Status` から `ErrorInfo` を取得できますが、その方法はプログラミング言語によって異なります。
+
+特定のプログラミング言語で `ErrorInfo` を取得する方法については、適切なドキュメントを参照してください。
+
+## `SqlTransaction` サービスの使用方法
+
+`SqlTransaction` サービスは次の RPC を提供します:
+
+- `Begin`: トランザクションを開始します。
+- `Execute`: SQL ステートメントを実行します。
+- `Commit`: トランザクションをコミットします。
+- `Rollback`: トランザクションをロールバックします。
+
+まず、`Begin` を呼び出してトランザクションを開始します。その後、`Execute` を呼び出してレコードの読み取り、書き込み、削除を行うことができます。トランザクションを終了するには、`Commit` を呼び出します。
+
+または、トランザクションがコミットされる前であればいつでも `Rollback` を呼び出してキャンセルできます。`Begin` を呼び出すと、レスポンスでトランザクション ID を受け取ります。この ID を使用して、`Execute`、`Commit`、および `Rollback` を呼び出すことができます。
+
+また、トランザクション ID なしで `Execute` を呼び出して、ワンショットトランザクションを実行することもできます。この場合、トランザクションは実行後に自動的にコミットされます。このメソッドを使用して、DDL ステートメントを実行することもできます。サポートされている SQL ステートメントの詳細については、[ScalarDB SQL 文法](../scalardb-sql/grammar.mdx)を参照してください。ただし、`Execute` は DML ステートメントと DDL ステートメントのみをサポートすることに注意してください。
+
+`Begin` を呼び出すときに、オプションでトランザクション ID を指定できます。トランザクション ID を指定する場合、ユーザーは ID の一意性を保証する責任があります。トランザクション ID を指定しない場合、ScalarDB Cluster はトランザクションのトランザクション ID を生成します。
+
+各 RPC リクエストに対して `RequestHeader` を設定する必要があります。`RequestHeader` には、リクエストのホップ数を制限する `hop_limit` フィールドが含まれています。`hop_limit` の目的は、クラスター内での無限ループを防ぐことです。リクエストが別のクラスターノードに転送されるたびに、`hop_limit` は1つ減ります。`hop_limit` が0に達すると、リクエストは拒否されます。
+
+### エラー処理
+
+以下の表は、`SqlTransaction` サービスの各 RPC におけるステータスコードと `ErrorInfo` の `reason` の可能な値を示しています。
+
+| RPC      | ステータスコード         | `ErrorInfo` の `reason`    | 説明                                                                                                                                                                                                                                                                                                                                                                      |
+|----------|---------------------|----------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Begin    | INVALID_ARGUMENT    | ILLEGAL_ARGUMENT           | 要求メッセージ内の引数が無効です。                                                                                                                                                                                                                                                                                                                                               |
+| Begin    | FAILED_PRECONDITION | ILLEGAL_STATE              | RPC が無効な状態で呼び出されました。                                                                                                                                                                                                                                                                                                                                             |
+| Begin    | INTERNAL            | HOP_LIMIT_EXCEEDED         | ホップ制限を超えました。これは、クラスターノード間のルーティング情報が矛盾している場合に発生します。通常、このエラーは短時間で解決されるため、このエラーが発生してからしばらく経ってから、トランザクションを最初から再試行できます。                                                                                                                                                                               |
+| Begin    | INTERNAL            | INTERNAL_ERROR             | 一時的または非一時的障害のため、操作が失敗しました。トランザクションを最初から再試行することはできますが、原因が非一時的である場合、トランザクションは失敗する可能性があります。                                                                                                                                                                                                                         |
+| Execute  | INVALID_ARGUMENT    | ILLEGAL_ARGUMENT           | 要求メッセージ内の引数が無効です。                                                                                                                                                                                                                                                                                                                                              |
+| Execute  | FAILED_PRECONDITION | ILLEGAL_STATE              | RPC が無効な状態で呼び出されました。                                                                                                                                                                                                                                                                                                                                            |
+| Execute  | NOT_FOUND           | TRANSACTION_NOT_FOUND      | 指定されたトランザクション ID に関連付けられたトランザクションが見つかりませんでした。このエラーは、トランザクションの有効期限が切れたか、クラスタートポロジの変更によりルーティング情報が更新されたことを示します。この場合、トランザクションを最初から再試行してください。                                                                                                                                            |
+| Execute  | INTERNAL            | HOP_LIMIT_EXCEEDED         | ホップ制限を超えました。これは、クラスターノード間のルーティング情報が矛盾している場合に発生します。通常、このエラーは短時間で解決されるため、このエラーが発生してからしばらく経ってから、トランザクションを最初から再試行できます。                                                                                                                                                                              |
+| Execute  | FAILED_PRECONDITION | TRANSACTION_CONFLICT       | トランザクションの競合が発生しました。このエラーが発生した場合は、トランザクションを最初から再試行してください。                                                                                                                                                                                                                                                                              |
+| Execute  | INTERNAL            | INTERNAL_ERROR             | 一時的または非一時的障害のため、操作が失敗しました。トランザクションを最初から再試行することはできますが、原因が非一時的である場合、トランザクションは失敗する可能性があります。                                                                                                                                                                                                                        |
+| Commit   | INVALID_ARGUMENT    | ILLEGAL_ARGUMENT           | 要求メッセージ内の引数が無効です。                                                                                                                                                                                                                                                                                                                                              |
+| Commit   | FAILED_PRECONDITION | ILLEGAL_STATE              | RPC が無効な状態で呼び出されました。                                                                                                                                                                                                                                                                                                                                            |
+| Commit   | NOT_FOUND           | TRANSACTION_NOT_FOUND      | 指定されたトランザクション ID に関連付けられたトランザクションが見つかりませんでした。このエラーは、トランザクションの有効期限が切れたか、クラスタートポロジの変更によりルーティング情報が更新されたことを示します。この場合、トランザクションを最初から再試行してください。                                                                                                                                            |
+| Commit   | INTERNAL            | HOP_LIMIT_EXCEEDED         | ホップ制限を超えました。これは、クラスターノード間のルーティング情報が矛盾している場合に発生します。通常、このエラーは短時間で解決されるため、このエラーが発生してからしばらく経ってから、トランザクションを最初から再試行できます。                                                                                                                                                                              |
+| Commit   | FAILED_PRECONDITION | TRANSACTION_CONFLICT       | トランザクションの競合が発生しました。このエラーが発生した場合は、トランザクションを最初から再試行してください。                                                                                                                                                                                                                                                                              |
+| Commit   | INTERNAL            | UNKNOWN_TRANSACTION_STATUS | トランザクションのステータスは不明です (トランザクションが正常にコミットされたかどうかは不明です)。この状況では、トランザクションが正常にコミットされたかどうかを確認し、そうでない場合は再試行する必要があります。トランザクションステータスを判別する責任はユーザーにあります。トランザクションステータステーブルを作成し、他のアプリケーションデータと連動して更新すると、テーブル自体からトランザクションのステータスを判別できるため、便利です。 |
+| Commit   | INTERNAL            | INTERNAL_ERROR             | 一時的または非一時的障害のため、操作が失敗しました。トランザクションを最初から再試行することはできますが、原因が非一時的である場合、トランザクションは失敗する可能性があります。                                                                                                                                                                                                                         |
+| Rollback | INVALID_ARGUMENT    | ILLEGAL_ARGUMENT           | 要求メッセージ内の引数が無効です。                                                                                                                                                                                                                                                                                                                                               |
+| Rollback | FAILED_PRECONDITION | ILLEGAL_STATE              | RPC が無効な状態で呼び出されました。                                                                                                                                                                                                                                                                                                                                            |
+| Rollback | NOT_FOUND           | TRANSACTION_NOT_FOUND      | 指定されたトランザクション ID に関連付けられたトランザクションが見つかりませんでした。ロールバックの場合、トランザクションは自動的に期限切れになるため、トランザクションを再試行する必要はありません。                                                                                                                                                                                                      |
+| Rollback | INTERNAL            | HOP_LIMIT_EXCEEDED         | ホップ制限を超えました。ロールバックの場合、トランザクションは自動的に期限切れになるため、トランザクションを再試行する必要はありません。                                                                                                                                                                                                                                                          |
+| Rollback | INTERNAL            | INTERNAL_ERROR             | 一時的または非一時的障害のため、操作が失敗しました。トランザクションを最初から再試行することはできますが、原因が非一時的である場合、トランザクションは失敗する可能性があります。                                                                                                                                                                                                                         |
+
+エラーが発生した場合は、`Begin` の場合を除き、トランザクションをロールバックする必要があります。その後、再試行によって解決できるエラーについては、トランザクションを最初から再試行できます。
+
+上記のエラーの他に、gRPC ライブラリによって返されるエラーが発生する場合があります。これらの場合、応答には `ErrorInfo` は含まれません。詳細については、[gRPC ドキュメント](https://grpc.io/docs/guides/error/#error-status-codes)を参照してください。
+
+gRPC では、RPC ごとに期限を設定できます。期限を超えると、`DEADLINE_EXCEEDED` エラーが表示されます。一般に、RPC が `Begin` または `Commit` でない限り、この状況ではトランザクションをロールバックする必要があります。`Commit` の場合は `UNKNOWN_TRANSACTION_STATUS` (トランザクションが正常にコミットされたかどうか不明) と同等の状況となり、同様にエラーを処理する必要があります。
+
+## `SqlTwoPhaseCommitTransaction` サービスの使用方法
+
+`SqlTwoPhaseCommitTransaction` サービスは次の RPC を提供します:
+
+- `Begin`: トランザクションを開始します。
+- `Join`: トランザクションに参加します。
+- `Execute`: SQL ステートメントを実行します。
+- `Prepare`: トランザクションを準備します。
+- `Validate`: トランザクションを検証します。
+- `Commit`: トランザクションをコミットします。
+- `Rollback`: トランザクションをロールバックします。
+
+まず、コーディネータープロセスの場合は、`Begin` を呼び出してトランザクションを開始します。または、参加者プロセスの場合は、`Join` を呼び出して、コーディネーターが既に開始しているトランザクションに参加できます。その後、`Execute` を呼び出してレコードの読み取り、書き込み、および削除を行うことができます。
+トランザクションを確定するには、`Prepare`、`Validate`、`Commit` の順に呼び出します。または、トランザクションがコミットされる前であればいつでも `Rollback` を呼び出してキャンセルできます。`Begin` または `Join` を呼び出すと、応答でトランザクション ID が返されます。これを使用して、`Execute`、`Prepare`、`Validate`、`Commit`、および `Rollback` を呼び出すことができます。
+
+また、トランザクション ID なしで `Execute` を呼び出して、ワンショットトランザクションを実行することもできます。この場合、トランザクションは実行後に自動的にコミットされます。この方法を使用して、DDL ステートメントを実行することもできます。 サポートされている SQL ステートメントの詳細については、[ScalarDB SQL 文法](../scalardb-sql/grammar.mdx)を参照してください。ただし、`Execute` は DML ステートメントと DDL ステートメントのみをサポートすることに注意してください。
+
+`Begin` を呼び出すときに、オプションでトランザクション ID を指定できます。トランザクション ID を指定する場合、ID の一意性を保証するのはユーザーの責任です。トランザクション ID を指定しない場合、ScalarDB Cluster はトランザクションのトランザクション ID を生成します。
+
+RPC リクエストごとに `RequestHeader` を設定する必要があります。`RequestHeader` には、リクエストのホップ数を制限している `hop_limit` フィールドが含まれています。`hop_limit` の目的は、クラスター内での無限ループを防ぐことです。リクエストが別のクラスターノードに転送されるたびに、`hop_limit` は1つ減ります。`hop_limit` が0に達すると、リクエストは拒否されます。
+
+### エラー処理
+
+次の表は、`SqlTwoPhaseCommitTransaction` サービスの各 RPC のステータスコードと `ErrorInfo` の `reason` の可能な値を示しています。
+
+| RPC               | ステータスコード         | `ErrorInfo` の `reason`    | 説明                                                                                                                                                                                                                                                                                                                                                                     |
+|-------------------|---------------------|----------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| Begin, Join       | INVALID_ARGUMENT    | ILLEGAL_ARGUMENT           | 要求メッセージ内の引数が無効です。                                                                                                                                                                                                                                                                                                                                              |
+| Begin, Join       | FAILED_PRECONDITION | ILLEGAL_STATE              | RPC が無効な状態で呼び出されました。                                                                                                                                                                                                                                                                                                                                           |
+| Begin, Join       | INTERNAL            | HOP_LIMIT_EXCEEDED         | ホップ制限を超えました。これは、クラスターノード間のルーティング情報が矛盾している場合に発生します。通常、このエラーは短時間で解決されるため、このエラーが発生してからしばらく経ってから、トランザクションを最初から再試行できます。                                                                                                                                                                              |
+| Begin, Join       | INTERNAL            | INTERNAL_ERROR             | 一時的または非一時的障害のため、操作が失敗しました。トランザクションを最初から再試行することはできますが、原因が非一時的である場合、トランザクションは失敗する可能性があります。                                                                                                                                                                                                                        |
+| Execute           | INVALID_ARGUMENT    | ILLEGAL_ARGUMENT           | 要求メッセージ内の引数が無効です。                                                                                                                                                                                                                                                                                                                                              |
+| Execute           | FAILED_PRECONDITION | ILLEGAL_STATE              | RPC が無効な状態で呼び出されました。                                                                                                                                                                                                                                                                                                                                            |
+| Execute           | NOT_FOUND           | TRANSACTION_NOT_FOUND      | 指定されたトランザクション ID に関連付けられたトランザクションが見つかりませんでした。このエラーは、トランザクションの有効期限が切れたか、クラスタートポロジの変更によりルーティング情報が更新されたことを示します。この場合、トランザクションを最初から再試行してください。                                                                                                                                            |
+| Execute           | INTERNAL            | HOP_LIMIT_EXCEEDED         | ホップ制限を超えました。これは、クラスターノード間のルーティング情報が矛盾している場合に発生します。通常、このエラーは短時間で解決されるため、このエラーが発生してからしばらく経ってから、トランザクションを最初から再試行できます。                                                                                                                                                                              |
+| Execute           | FAILED_PRECONDITION | TRANSACTION_CONFLICT       | トランザクションの競合が発生しました。このエラーが発生した場合は、トランザクションを最初から再試行してください。                                                                                                                                                                                                                                                                             |
+| Execute           | INTERNAL            | INTERNAL_ERROR             | 一時的または非一時的障害のため、操作が失敗しました。トランザクションを最初から再試行することはできますが、原因が非一時的である場合、トランザクションは失敗する可能性があります。                                                                                                                                                                                                                        |
+| Prepare, Validate | INVALID_ARGUMENT    | ILLEGAL_ARGUMENT           | 要求メッセージ内の引数が無効です。                                                                                                                                                                                                                                                                                                                                              |
+| Prepare, Validate | FAILED_PRECONDITION | ILLEGAL_STATE              | RPC が無効な状態で呼び出されました。                                                                                                                                                                                                                                                                                                                                           |
+| Prepare, Validate | NOT_FOUND           | TRANSACTION_NOT_FOUND      | 指定されたトランザクション ID に関連付けられたトランザクションが見つかりませんでした。このエラーは、トランザクションの有効期限が切れたか、クラスタートポロジの変更によりルーティング情報が更新されたことを示します。この場合、トランザクションを最初から再試行してください。                                                                                                                                            |
+| Prepare, Validate | INTERNAL            | HOP_LIMIT_EXCEEDED         | ホップ制限を超えました。これは、クラスターノード間のルーティング情報が矛盾している場合に発生します。通常、このエラーは短時間で解決されるため、このエラーが発生してからしばらく経ってから、トランザクションを最初から再試行できます。                                                                                                                                                                              |
+| Prepare, Validate | FAILED_PRECONDITION | TRANSACTION_CONFLICT       | トランザクションの競合が発生しました。このエラーが発生した場合は、トランザクションを最初から再試行してください。                                                                                                                                                                                                                                                                              |
+| Prepare, Validate | INTERNAL            | INTERNAL_ERROR             | 一時的または非一時的障害のため、操作が失敗しました。トランザクションを最初から再試行することはできますが、原因が非一時的である場合、トランザクションは失敗する可能性があります。                                                                                                                                                                                                                        |
+| Commit            | INVALID_ARGUMENT    | ILLEGAL_ARGUMENT           | 要求メッセージ内の引数が無効です。                                                                                                                                                                                                                                                                                                                                              |
+| Commit            | FAILED_PRECONDITION | ILLEGAL_STATE              | RPC が無効な状態で呼び出されました。                                                                                                                                                                                                                                                                                                                                           |
+| Commit            | NOT_FOUND           | TRANSACTION_NOT_FOUND      | 指定されたトランザクション ID に関連付けられたトランザクションが見つかりませんでした。このエラーは、トランザクションの有効期限が切れたか、クラスタートポロジの変更によりルーティング情報が更新されたことを示します。この場合、トランザクションを最初から再試行してください。                                                                                                                                            |
+| Commit            | INTERNAL            | HOP_LIMIT_EXCEEDED         | ホップ制限を超えました。これは、クラスターノード間のルーティング情報が矛盾している場合に発生します。通常、このエラーは短時間で解決されるため、このエラーが発生してからしばらく経ってから、トランザクションを最初から再試行できます。                                                                                                                                                                              |
+| Commit            | FAILED_PRECONDITION | TRANSACTION_CONFLICT       | トランザクションの競合が発生しました。このエラーが発生した場合は、トランザクションを最初から再試行してください。                                                                                                                                                                                                                                                                              |
+| Commit            | INTERNAL            | UNKNOWN_TRANSACTION_STATUS | トランザクションのステータスは不明です (トランザクションが正常にコミットされたかどうかは不明です)。この状況では、トランザクションが正常にコミットされたかどうかを確認し、そうでない場合は再試行する必要があります。トランザクションステータスを判別する責任はユーザーにあります。トランザクションステータステーブルを作成し、他のアプリケーションデータと連動して更新すると、テーブル自体からトランザクションのステータスを判別できるため、便利です。 |
+| Commit            | INTERNAL            | INTERNAL_ERROR             | 一時的または非一時的障害のため、操作が失敗しました。トランザクションを最初から再試行することはできますが、原因が非一時的である場合、トランザクションは失敗する可能性があります。                                                                                                                                                                                                                         |
+| Rollback          | INVALID_ARGUMENT    | ILLEGAL_ARGUMENT           | 要求メッセージ内の引数が無効です。                                                                                                                                                                                                                                                                                                                                              |
+| Rollback          | FAILED_PRECONDITION | ILLEGAL_STATE              | RPC が無効な状態で呼び出されました。                                                                                                                                                                                                                                                                                                                                            |
+| Rollback          | NOT_FOUND           | TRANSACTION_NOT_FOUND      | 指定されたトランザクション ID に関連付けられたトランザクションが見つかりませんでした。ロールバックの場合、トランザクションは自動的に期限切れになるため、トランザクションを再試行する必要はありません。                                                                                                                                                                                                      |
+| Rollback          | INTERNAL            | HOP_LIMIT_EXCEEDED         | ホップ制限を超えました。ロールバックの場合、トランザクションは自動的に期限切れになるため、トランザクションを再試行する必要はありません。                                                                                                                                                                                                                                                          |
+| Rollback          | INTERNAL            | INTERNAL_ERROR             | 一時的または非一時的障害のため、操作が失敗しました。トランザクションを最初から再試行することはできますが、原因が非一時的である場合、トランザクションは失敗する可能性があります。                                                                                                                                                                                                                         |
+
+エラーが発生した場合は、`Begin` または `Join` の場合を除き、トランザクションをロールバックする必要があります。その後、再試行によって解決できるエラーについては、トランザクションを最初から再試行できます。
+
+上記のエラーの他に、gRPC ライブラリによって返されるエラーが発生する場合があります。これらの場合、応答には `ErrorInfo` は含まれません。詳細については、[gRPC ドキュメント](https://grpc.io/docs/guides/error/#error-status-codes)を参照してください。
+
+gRPC では、各 RPC に期限を設定できます。期限を超えると、`DEADLINE_EXCEEDED` エラーが表示されます。一般に、RPC が `Begin`、`Join`、または `Commit` でない限り、この状況ではトランザクションをロールバックする必要があります。`Commit` の場合は `UNKNOWN_TRANSACTION_STATUS` (トランザクションが正常にコミットされたかどうか不明) と同等の状況となり、同様にエラーを処理する必要があります。
+
+## `Metadata` サービスの使用方法
+
+`Metadata` サービスは次の RPC を提供します:
+
+- `GetNamespaceMetadata`: 指定された名前空間の名前空間メタデータを取得します。
+- `ListTableMetadataInNamespace`: 指定された名前空間内のテーブルのテーブルメタデータを取得します。
+- `GetTableMetadata`: 指定されたテーブルのテーブルメタデータを取得します。
+- `ListNamespaceMetadata`: 名前空間メタデータのリストを取得します。
+
+### エラー処理
+
+以下の表は、`Metadata` サービスのすべての RPC のステータスコードと `ErrorInfo` の `reason` の可能な値を示しています:
+
+| ステータスコード       | `ErrorInfo` の `reason`    | 説明                            |
+|---------------------|----------------------------|---------------------------------|
+| INVALID_ARGUMENT    | ILLEGAL_ARGUMENT           | 要求メッセージ内の引数が無効です     |
+| FAILED_PRECONDITION | ILLEGAL_STATE              | RPC が無効な状態で呼び出されました。 |
+| INTERNAL            | INTERNAL_ERROR             | 操作が失敗しました。               |
+
+上記のエラー以外にも、gRPC ライブラリによって返されるエラーが発生する場合があります。このような場合、応答には `ErrorInfo` は含まれません。詳細については、[gRPC ドキュメント](https://grpc.io/docs/guides/error/#error-status-codes)を参照してください。

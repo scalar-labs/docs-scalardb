@@ -1,0 +1,334 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsEnglish
+---
+
+# Database Adapters
+
+ScalarDB provides a database-agnostic abstraction layer that enables applications to perform ACID transactions across different databases without being tied to any specific database product. To achieve this, ScalarDB uses database adapters that translate its unified data model into the native constructs of each supported database.
+
+This document describes how each adapter maps the logical data model of ScalarDB—namespaces, tables, partition keys, clustering keys, and columns—to the underlying database and what limitations apply to each adapter.
+
+:::note
+
+When you use Consensus Commit as the transaction protocol, ScalarDB adds metadata columns to each table in the underlying database. These columns are managed by the transaction protocol, not the adapter. For details, see [Consensus Commit](consensus-commit.mdx).
+
+:::
+
+For the background on the logical data model of ScalarDB, see [Data Modeling](data-modeling.mdx). For supported database versions, see [Requirements](requirements.mdx). For configuration guidance for each database, see [Database Configurations](database-configurations.mdx).
+
+## JDBC adapter
+
+The JDBC adapter supports relational databases through JDBC connections. The following databases are supported: MySQL, MariaDB, TiDB, PostgreSQL, YugabyteDB, AlloyDB, Amazon Aurora (MySQL-compatible and PostgreSQL-compatible), Oracle Database, SQL Server, IBM Db2, and SQLite.
+
+MariaDB, TiDB, and Amazon Aurora MySQL-compatible edition follow the same mapping as MySQL. YugabyteDB, AlloyDB, and Amazon Aurora PostgreSQL-compatible edition follow the same mapping as PostgreSQL.
+
+### Namespace and table mapping
+
+How ScalarDB namespaces map to native database constructs depends on the RDBMS. The following table summarizes the mapping for each supported database.
+
+| RDBMS | ScalarDB namespace maps to | Notes |
+|-------|---------------------------|-------|
+| MySQL, MariaDB, TiDB | Database | In MySQL, a database and a schema are synonymous. |
+| PostgreSQL, YugabyteDB, AlloyDB | Schema | Created within the connected database. |
+| Oracle Database | Schema (User) | In Oracle, creating a user automatically creates a schema of the same name. ScalarDB creates a dedicated user for each namespace, and tables are stored in the corresponding schema. |
+| SQL Server | Schema | Created within the connected database. |
+| IBM Db2 | Schema | Created within the connected database. |
+| SQLite | Table name prefix | Since SQLite is a single-file database, the namespace is prepended to the table name with a `$` separator (for example, `my_namespace$my_table`). |
+
+ScalarDB table names map directly to database table names (with the exception of SQLite, which uses the prefixed format described above).
+
+:::warning
+
+For SQLite, namespace names and table names cannot contain the `$` character because ScalarDB uses it as a separator.
+
+:::
+
+### Key and index mapping
+
+The ScalarDB partition key and clustering key columns together form the primary key of the underlying database table. ScalarDB secondary indexes are created as standard database indexes.
+
+### Data-type mapping
+
+The following table shows how ScalarDB data types map to native column types in each JDBC database.
+
+| ScalarDB | MySQL, MariaDB, TiDB | PostgreSQL, YugabyteDB | Oracle | SQL Server | Db2 | SQLite |
+|----------|----------------------|------------------------|--------|------------|-----|--------|
+| BOOLEAN | BOOLEAN | BOOLEAN | NUMBER(1) | BIT | BOOLEAN | BOOLEAN |
+| INT | INT | INT | NUMBER(10) | INT | INT | INT |
+| BIGINT | BIGINT | BIGINT | NUMBER(16) | BIGINT | BIGINT | BIGINT |
+| FLOAT | REAL | REAL | BINARY_FLOAT | FLOAT(24) | REAL | FLOAT |
+| DOUBLE | DOUBLE | DOUBLE PRECISION | BINARY_DOUBLE | FLOAT | DOUBLE | DOUBLE |
+| TEXT | LONGTEXT | TEXT | VARCHAR2(4000) | VARCHAR(8000) | VARCHAR(32672) | TEXT |
+| BLOB | LONGBLOB | BYTEA | BLOB | VARBINARY(8000) | BLOB(2G) | BLOB |
+| DATE | DATE | DATE | DATE | DATE | DATE | INT |
+| TIME | TIME(6) | TIME | TIMESTAMP(6) | TIME(6) | TIMESTAMP(6) | BIGINT |
+| TIMESTAMP | DATETIME(3) | TIMESTAMP | TIMESTAMP(3) | DATETIME2(3) | TIMESTAMP(3) | BIGINT |
+| TIMESTAMPTZ | DATETIME(3) | TIMESTAMP WITH TIME ZONE | TIMESTAMP(3) WITH TIME ZONE | DATETIMEOFFSET(3) | TIMESTAMP(3) | BIGINT |
+
+When TEXT or BLOB columns are used as a partition key, clustering key, or secondary index key, some databases use a smaller, fixed-size type instead of the default type shown above.
+
+| Database | TEXT key column type | BLOB key column type |
+|----------|---------------------|----------------------|
+| MySQL, MariaDB, TiDB | VARCHAR(*size*) | VARBINARY(*size*) |
+| PostgreSQL, YugabyteDB | VARCHAR(10485760) | BYTEA (no conversion) |
+| Oracle | VARCHAR2(*size*) | Not supported as key |
+| Db2 | VARCHAR(*size*) | Not supported as key |
+
+The *size* in the table above defaults to 128 and can be configured per database through the following properties. The minimum allowed value is 64.
+
+- `scalar.db.jdbc.mysql.variable_key_column_size` — Applies to MySQL, MariaDB, and TiDB.
+- `scalar.db.jdbc.oracle.variable_key_column_size` — Applies to Oracle Database.
+- `scalar.db.jdbc.db2.variable_key_column_size` — Applies to IBM Db2.
+
+For the enforced value ranges of each ScalarDB data type, see [Value ranges and precision](#value-ranges-and-precision).
+
+### Limitations
+
+The following limitations apply to specific databases when using the JDBC adapter.
+
+**IBM Db2:**
+
+- BLOB cannot be used as a partition key, clustering key, secondary index key, or ordering column in a cross-partition scan.
+- FLOAT / DOUBLE minimum values are Float.MIN_NORMAL / Double.MIN_NORMAL, not Java's MIN_VALUE.
+- Rename is not supported for partition-key, clustering-key, or secondary-index columns (non-key columns can be renamed).
+- ALTER COLUMN TYPE from BLOB → TEXT is not supported.
+
+**Oracle Database:**
+
+- BLOB cannot be used as a partition key, clustering key, secondary index key, condition column in a Get or Scan operation, or ordering column in a cross-partition scan.
+- ALTER COLUMN TYPE supports only INT → BIGINT. All other conversions, including widening FLOAT → DOUBLE and converting to TEXT, will throw an exception.
+
+**YugabyteDB:**
+
+- FLOAT and DOUBLE cannot be used as a partition key, clustering key, or secondary index key.
+- Import table is unsupported.
+
+**SQLite:**
+
+- SQLite does not fully support concurrent access. Use SQLite only for development and testing purposes, not for production workloads.
+- Import table and virtual table are entirely unsupported.
+
+**TiDB:**
+
+- TiDB does not support the SERIALIZABLE isolation level. ScalarDB uses REPEATABLE READ instead.
+- TiDB does not support ALTER COLUMN TYPE from BLOB to TEXT.
+
+## DynamoDB adapter
+
+The DynamoDB adapter maps ScalarDB operations to Amazon DynamoDB.
+
+### Namespace and table mapping
+
+DynamoDB does not have a native namespace concept. ScalarDB represents each table as a DynamoDB table whose name combines the namespace and table name with a dot (`.`) separator. For example, a ScalarDB table named `orders` in the namespace `my_app` becomes a DynamoDB table named `my_app.orders`.
+
+You can optionally configure a namespace prefix through the `scalar.db.dynamo.namespace.prefix` property. When a prefix is set, it is prepended to the table name. For example, with the prefix `prod_`, the DynamoDB table name becomes `prod_my_app.orders`.
+
+### Key and index mapping
+
+Since DynamoDB supports only a single partition key (hash key) and a single sort key per table, ScalarDB handles multi-column keys by encoding and concatenating all partition key columns into a single binary hash key, and all clustering key columns into a single binary sort key that preserves the specified sort order.
+
+ScalarDB creates a Global Secondary Index (GSI) for each secondary index defined in the schema. Non-key columns are stored as individual DynamoDB attributes.
+
+### Data-type mapping
+
+The following table shows how ScalarDB data types map to DynamoDB attribute types.
+
+| ScalarDB | DynamoDB | Notes |
+|----------|----------|-------|
+| BOOLEAN | BOOL | |
+| INT | N (Number) | |
+| BIGINT | N (Number) | |
+| FLOAT | N (Number) | |
+| DOUBLE | N (Number) | |
+| TEXT | S (String) | |
+| BLOB | B (Binary) | |
+| DATE | N (Number) | Stored as epoch day (days since 1970-01-01). |
+| TIME | N (Number) | Stored as nano of day (nanoseconds since midnight). |
+| TIMESTAMP | N (Number) | Stored as a packed value of epoch second and millisecond of second. |
+| TIMESTAMPTZ | N (Number) | Stored as a packed value of epoch second and millisecond of second in UTC. |
+
+For the enforced value ranges of each ScalarDB data type, see [Value ranges and precision](#value-ranges-and-precision).
+
+### Limitations
+
+- The DynamoDB item size limit of 400 KB applies to each ScalarDB record, including any transaction metadata columns added by Consensus Commit.
+- BLOB cannot be used as a partition key or clustering key except for the last column of a composite partition key.
+- BOOLEAN cannot be used as a secondary index key.
+- BOOLEAN conditional mutations are limited to EQ, NE, IS NULL, IS NOT NULL.
+- You must designate a single primary region. Do not read from asynchronously replicated non-primary regions.
+- Cross-partition scan ordering on non-primary-key columns is not supported. Users who rely on ordering in ScanAll will hit an error.
+- Schema evolution DDLs, such as drop column, rename column, alter column type, and rename table, are not supported.
+- Secondary-index columns cannot be set to an empty string or empty BLOB because GSIs don't allow empty keys.
+
+## Cosmos DB for NoSQL adapter
+
+The Cosmos DB for NoSQL adapter maps ScalarDB operations to Azure Cosmos DB for NoSQL.
+
+### Namespace and table mapping
+
+Each ScalarDB namespace maps to a Cosmos DB database, and each ScalarDB table maps to a Cosmos DB container within that database.
+
+### Key and index mapping
+
+Since a Cosmos DB container supports only a single partition key path, ScalarDB handles multi-column partition keys by concatenating all partition key column values into a single string, using a colon (`:`) as the delimiter. For example, if a table has a partition key with columns `tenant_id = "A"` and `user_id = 123`, the concatenated partition key value stored in Cosmos DB is `A:123`.
+
+Clustering key columns and non-key columns are stored as properties within each JSON document. ScalarDB configures composite indexes on the container to support efficient ordering by clustering key columns.
+
+For secondary indexes, ScalarDB adds the corresponding paths to the container's indexing policy.
+
+:::warning
+
+Because the colon (`:`) is used as the partition key delimiter, text values in partition key columns must not contain colons. Using colons in partition key text values causes incorrect behavior.
+
+:::
+
+### Data-type mapping
+
+The following table shows how ScalarDB data types are represented in Cosmos DB JSON documents.
+
+| ScalarDB | Cosmos DB JSON type | Notes |
+|----------|---------------------|-------|
+| BOOLEAN | boolean | |
+| INT | number | |
+| BIGINT | number | |
+| FLOAT | number | |
+| DOUBLE | number | |
+| TEXT | string | |
+| BLOB | string | Stored as a Base64-encoded string. |
+| DATE | number | Stored as epoch day (days since 1970-01-01). |
+| TIME | number | Stored as nano of day (nanoseconds since midnight). |
+| TIMESTAMP | number | Stored as a packed value of epoch second and millisecond of second. |
+| TIMESTAMPTZ | number | Stored as a packed value of epoch second and millisecond of second in UTC. |
+
+For the enforced value ranges of each ScalarDB data type, see [Value ranges and precision](#value-ranges-and-precision).
+
+### Limitations
+
+- The Cosmos DB document size limit of 2 MB applies to each ScalarDB record, including any transaction metadata added by Consensus Commit.
+- BLOB cannot be used as a clustering key.
+- Text values in partition key columns must not contain colons (`:`).
+- Primary key column values must not contain the following characters: `/`, `\`, `?`, `#`. These characters are [restricted by Cosmos DB resource IDs](https://learn.microsoft.com/en-us/dotnet/api/microsoft.azure.cosmos.databaseproperties.id?view=azure-dotnet#remarks).
+- BLOB conditional mutations are limited to EQ, NE, IS NULL, IS NOT NULL (enforced by CosmosOperationChecker). Comparison operators like GT/LT will throw an exception.
+- The consistency level must be set to Strong or Bounded Staleness. For details, see [Database Configurations](database-configurations.mdx).
+- You must use a single-region write configuration.
+- Cross-partition scan ordering on non-primary-key columns is not supported. Users who rely on ordering in ScanAll will hit an error.
+- Schema evolution DDLs, such as drop column, rename column, alter column type, and rename table, are not supported.
+
+## Cassandra adapter
+
+The Cassandra adapter maps ScalarDB operations to Apache Cassandra.
+
+### Namespace and table mapping
+
+Each ScalarDB namespace maps directly to a Cassandra keyspace, and each ScalarDB table maps to a Cassandra table within that keyspace. This is the most natural mapping among all adapters because the data model of Cassandra closely mirrors the model of ScalarDB.
+
+When ScalarDB creates a keyspace, it uses SimpleStrategy with a replication factor of 1 by default. You can configure the replication strategy and factor through namespace creation options.
+
+### Key and index mapping
+
+ScalarDB partition key columns map directly to Cassandra partition key columns, and ScalarDB clustering key columns map to Cassandra clustering columns with the same sort order (ascending or descending). ScalarDB secondary indexes are created as Cassandra secondary indexes.
+
+### Data-type mapping
+
+The following table shows how ScalarDB data types map to Cassandra native types.
+
+| ScalarDB | Cassandra | Notes |
+|----------|-----------|-------|
+| BOOLEAN | boolean | |
+| INT | int | |
+| BIGINT | bigint | |
+| FLOAT | float | |
+| DOUBLE | double | |
+| TEXT | text | |
+| BLOB | blob | |
+| DATE | date | |
+| TIME | time | |
+| TIMESTAMP | — | **Not supported.** Use TIMESTAMPTZ instead. |
+| TIMESTAMPTZ | timestamp | Cassandra's `timestamp` type stores an absolute instant (epoch-based), which aligns with the TIMESTAMPTZ semantics (a date-time on the UTC time zone) of ScalarDB. |
+
+For the enforced value ranges of each ScalarDB data type, see [Value ranges and precision](#value-ranges-and-precision).
+
+### Limitations
+
+- The TIMESTAMP data type (without time zone) is not supported with the Cassandra adapter. You must use TIMESTAMPTZ instead. Attempting to create a table with a TIMESTAMP column results in an error.
+- BLOB size per mutation is capped at 16 MB by default. (configurable with max_mutation_size)
+- Using PutIf with an IS NULL condition on a non-existing record does not throw NoMutationException. It silently succeeds, which differs from every other adapter.
+- You must use a single primary cluster. Do not read from asynchronously replicated non-primary clusters.
+- The Cassandra commit log must be configured for batch or group sync mode. For details, see [Database Configurations](database-configurations.mdx).
+- ScalarDB uses Cassandra lightweight transactions (LWT) to achieve linearizable operations, which has performance implications compared to regular Cassandra operations.
+- Cross-partition scan ordering on non-primary-key columns is not supported. Users who rely on ordering in ScanAll will hit an error.
+- Schema evolution DDLs, such as alter column type and rename table, are not supported. Drop column is supported. Rename column is supported only for primary-key columns (partition key and clustering key columns).
+
+## Object storage adapter
+
+The object storage adapter maps ScalarDB operations to object storage services. The following backends are supported: Amazon S3, Azure Blob Storage, and Google Cloud Storage.
+
+### Namespace and table mapping
+
+Unlike the other adapters, the object storage adapter stores all data in a single configured bucket (or container, in the case of Azure Blob Storage). Namespaces are not mapped to separate buckets. Instead, ScalarDB uses a hierarchical object key in the format `<namespace>/<table>/<partition_key>` to organize data logically within the bucket.
+
+### Key and index mapping
+
+Each ScalarDB partition is stored as a single object. The object key follows the format `<namespace>/<table>/<partition_key>`, where the partition key portion encodes the partition key column values. For tables with composite partition keys, the individual column values are concatenated by using `!` as the delimiter.
+
+The object content is a JSON document that contains all records in the partition. Each record includes the partition key columns, clustering key columns, and non-key column values. Records within the partition are sorted by clustering key. Because each partition is stored as a single object, consider the following when designing table schemas:
+
+- Avoid defining clustering keys if the sizes of records are large.
+- Place frequently read records in the same partition to reduce the number of read operations to object storage.
+- Place frequently written records in different partitions to avoid write conflicts in object storage.
+
+### Data-type mapping
+
+All ScalarDB data types are serialized into JSON when stored in object storage. The mapping follows the same pattern as the Cosmos DB adapter: numeric types and temporal types are stored as JSON numbers, TEXT is stored as a JSON string, BOOLEAN is stored as a JSON boolean, and BLOB is stored as a Base64-encoded string.
+
+For the enforced value ranges of each ScalarDB data type, see [Value ranges and precision](#value-ranges-and-precision).
+
+### Limitations
+
+- Primary-key text values cannot contain `/` or `!`.
+- Secondary indexes are not supported at all. 
+- BLOB data larger than 1.5 GiB cannot be stored.
+- You must use a single region for the storage bucket or container.
+- Only certain storage classes are supported: S3 Standard for Amazon S3, Hot tier for Azure Blob Storage, and Standard for Google Cloud Storage. For details, see [Database Configurations](database-configurations.mdx).
+- All data is stored in a single bucket, so namespace isolation is logical rather than physical.
+- Cross-partition scan ordering on non-primary-key columns is not supported. Users who rely on ordering in ScanAll will hit an error.
+- Schema evolution DDLs, such as drop column, rename column, alter column type, and rename table, are not supported.
+
+## Value ranges and precision
+
+ScalarDB enforces consistent value ranges across all adapters, regardless of the underlying database's native capabilities. The following table shows the supported range and precision for each data type.
+
+| Data type | Range | Precision | Notes |
+|-----------|-------|-----------|-------|
+| BOOLEAN | `true` or `false` | | |
+| INT | -2,147,483,648 to 2,147,483,647 | | |
+| BIGINT | -2^53 to 2^53 | | ScalarDB restricts the range from the full 64-bit range. See the note below. |
+| FLOAT | -3.4028235E+38 to 3.4028235E+38 | ~7 decimal digits | |
+| DOUBLE | -1.7976931348623157E+308 to 1.7976931348623157E+308 | ~15 decimal digits | |
+| TEXT | Unlimited length | | Maximum size depends on the underlying database. |
+| BLOB | Unlimited length | | Maximum size depends on the underlying database. |
+| DATE | 1000-01-01 to 9999-12-31 | Day | |
+| TIME | 00:00:00.000000 to 23:59:59.999999 | Microsecond | |
+| TIMESTAMP | 1000-01-01T00:00:00.000 to 9999-12-31T23:59:59.999 | Millisecond | Without time zone. |
+| TIMESTAMPTZ | 1000-01-01T00:00:00.000Z to 9999-12-31T23:59:59.999Z | Millisecond | On the UTC time zone. |
+
+:::note
+
+The BIGINT range is limited to -2^53 to 2^53 (rather than the full 64-bit integer range) to ensure consistent behavior across all supported databases, some of which store large integers as floating-point numbers internally.
+
+:::
+
+TIMESTAMP represents a date and time without time zone information. TIMESTAMPTZ represents a date and time on the UTC time zone. Despite having similar names, these types have different semantics and are not interchangeable.
+
+## See also
+
+- [Model Your Data](data-modeling.mdx)
+- [Requirements](requirements.mdx)
+- [Configurations for the Underlying Databases of ScalarDB](database-configurations.mdx)
+- [ScalarDB Schema Loader](schema-loader.mdx)
+- [Consensus Commit Protocol](consensus-commit.mdx)
+- [ScalarDB Design](design.mdx)
