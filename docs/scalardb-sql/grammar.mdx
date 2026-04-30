@@ -280,11 +280,10 @@ CreateTableStatement statement4 =
 
 The `CREATE INDEX` command creates a secondary index on a table. 
 
-:::note
+:::warning
 
-You cannot create a secondary index on a table in the following cases:
-
-- The columns are encrypted.
+- You cannot create a secondary index on a table when columns are encrypted.
+- When using Consensus Commit, `CREATE INDEX` also creates a companion before-image secondary index. For details, see [Correctness of index-based reads](../consensus-commit.mdx#correctness-of-index-based-reads).
 
 :::
 
@@ -364,6 +363,12 @@ TruncateTableStatement statement = StatementBuilder.truncateTable("ns", "tbl").b
 ### DROP INDEX
 
 The `DROP INDEX` command drops a secondary index.
+
+:::warning
+
+When using Consensus Commit, the companion before-image secondary index is also dropped. For details, see [Correctness of index-based reads](../consensus-commit.mdx#correctness-of-index-based-reads).
+
+:::
 
 #### Grammar
 
