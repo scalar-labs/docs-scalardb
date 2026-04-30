@@ -1,0 +1,338 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# データベースアダプター
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+ScalarDB は、アプリケーションが特定のデータベース製品に縛られることなく、さまざまなデータベース間で ACID トランザクションを実行できるデータベース非依存の抽象化レイヤーを提供します。これを実現するために、ScalarDB は統合されたデータモデルを各サポートされているデータベースのネイティブ構成に変換するデータベースアダプターを使用します。
+
+このドキュメントでは、各アダプターが ScalarDB の論理データモデル (名前空間、テーブル、パーティションキー、クラスタリングキー、カラム) を基盤となるデータベースにどのようにマッピングし、各アダプターにどのような制限が適用されるかを説明します。
+
+:::note
+
+Consensus Commit をトランザクションプロトコルとして使用する場合、ScalarDB は基盤となるデータベースの各テーブルにメタデータカラムを追加します。これらのカラムは、アダプターではなくトランザクションプロトコルによって管理されます。詳細については、[Consensus Commit](consensus-commit.mdx) を参照してください。
+
+:::
+
+ScalarDB の論理データモデルについては、[データモデリング](data-modeling.mdx)を参照してください。サポートされているデータベースのバージョンについては、[要件](requirements.mdx)を参照してください。各データベースの設定ガイダンスについては、[データベース設定](database-configurations.mdx)を参照してください。
+
+## JDBC アダプター
+
+JDBC アダプターは、JDBC 接続を通じてリレーショナルデータベースをサポートします。以下のデータベースがサポートされています: MySQL、MariaDB、TiDB、PostgreSQL、YugabyteDB、AlloyDB、Amazon Aurora (MySQL 互換および PostgreSQL 互換)、Oracle Database、SQL Server、IBM Db2、SQLite です。
+
+MariaDB、TiDB、Amazon Aurora MySQL 互換エディションは、MySQL と同じマッピングに従います。YugabyteDB、AlloyDB、Amazon Aurora PostgreSQL 互換エディションは、PostgreSQL と同じマッピングに従います。
+
+### 名前空間とテーブルのマッピング
+
+ScalarDB 名前空間がネイティブデータベース構成にどのようにマッピングされるかは、RDBMS によって異なります。以下の表は、サポートされている各データベースのマッピングを要約しています。
+
+| RDBMS | ScalarDB 名前空間のマッピング先 | 備考 |
+|-------|---------------------------|-------|
+| MySQL、MariaDB、TiDB | データベース | MySQL では、データベースとスキーマは同義語です。 |
+| PostgreSQL、YugabyteDB、AlloyDB | スキーマ | 接続されたデータベース内に作成されます。 |
+| Oracle Database | スキーマ (ユーザー) | Oracle では、ユーザーを作成すると同時に同じ名前のスキーマが自動的に作成されます。ScalarDB は各名前空間に対して専用のユーザーを作成し、テーブルは対応するスキーマに格納されます。 |
+| SQL Server | スキーマ | 接続されたデータベース内に作成されます。 |
+| IBM Db2 | スキーマ | 接続されたデータベース内に作成されます。 |
+| SQLite | テーブル名プレフィックス | SQLite は単一ファイルデータベースであるため、名前空間は `$` セパレーターを使用してテーブル名にプレフィックスとして付加されます (例: `my_namespace$my_table`)。 |
+
+ScalarDB テーブル名は、データベーステーブル名に直接マッピングされます (SQLite は上記で説明したプレフィックス形式を使用する例外)。
+
+:::warning
+
+SQLite の場合、ScalarDB がセパレーターとして `$` 文字を使用するため、名前空間名およびテーブル名には `$` 文字を含めることはできません。
+
+:::
+
+### キーとインデックスのマッピング
+
+ScalarDB パーティションキーカラムとクラスタリングキーカラムを合わせて、基盤となるデータベーステーブルのプライマリキーを形成します。ScalarDB セカンダリインデックスは、標準的なデータベースインデックスとして作成されます。
+
+### データ型のマッピング
+
+以下の表は、ScalarDB データ型が各 JDBC データベースのネイティブカラム型にどのようにマッピングされるかを示しています。
+
+| ScalarDB | MySQL、MariaDB、TiDB | PostgreSQL、YugabyteDB | Oracle | SQL Server | Db2 | SQLite |
+|----------|----------------------|------------------------|--------|------------|-----|--------|
+| BOOLEAN | BOOLEAN | BOOLEAN | NUMBER(1) | BIT | BOOLEAN | BOOLEAN |
+| INT | INT | INT | NUMBER(10) | INT | INT | INT |
+| BIGINT | BIGINT | BIGINT | NUMBER(16) | BIGINT | BIGINT | BIGINT |
+| FLOAT | REAL | REAL | BINARY_FLOAT | FLOAT(24) | REAL | FLOAT |
+| DOUBLE | DOUBLE | DOUBLE PRECISION | BINARY_DOUBLE | FLOAT | DOUBLE | DOUBLE |
+| TEXT | LONGTEXT | TEXT | VARCHAR2(4000) | VARCHAR(8000) | VARCHAR(32672) | TEXT |
+| BLOB | LONGBLOB | BYTEA | BLOB | VARBINARY(8000) | BLOB(2G) | BLOB |
+| DATE | DATE | DATE | DATE | DATE | DATE | INT |
+| TIME | TIME(6) | TIME | TIMESTAMP(6) | TIME(6) | TIMESTAMP(6) | BIGINT |
+| TIMESTAMP | DATETIME(3) | TIMESTAMP | TIMESTAMP(3) | DATETIME2(3) | TIMESTAMP(3) | BIGINT |
+| TIMESTAMPTZ | DATETIME(3) | TIMESTAMP WITH TIME ZONE | TIMESTAMP(3) WITH TIME ZONE | DATETIMEOFFSET(3) | TIMESTAMP(3) | BIGINT |
+
+TEXT または BLOB カラムがパーティションキー、クラスタリングキー、またはセカンダリインデックスキーとして使用される場合、一部のデータベースでは上記の既定の型ではなく、より小さな固定サイズの型を使用します。
+
+| データベース | TEXT キーカラム型 | BLOB キーカラム型 |
+|----------|---------------------|----------------------|
+| MySQL、MariaDB、TiDB | VARCHAR(*size*) | VARBINARY(*size*) |
+| PostgreSQL、YugabyteDB | VARCHAR(10485760) | BYTEA (変換なし) |
+| Oracle | VARCHAR2(*size*) | キーとしてはサポートされていません |
+| Db2 | VARCHAR(*size*) | キーとしてはサポートされていません |
+
+上記の表の *size* は既定では128で、以下のプロパティを通じてデータベースごとに設定できます。許可される最小値は64です。
+
+- `scalar.db.jdbc.mysql.variable_key_column_size` — MySQL、MariaDB、TiDB に適用されます。
+- `scalar.db.jdbc.oracle.variable_key_column_size` — Oracle Database に適用されます。
+- `scalar.db.jdbc.db2.variable_key_column_size` — IBM Db2 に適用されます。
+
+各 ScalarDB データ型の強制値範囲については、[値範囲と精度](#値範囲と精度)を参照してください。
+
+### 制限事項
+
+JDBC アダプターを使用する場合、以下の制限事項が特定のデータベースに適用されます。
+
+**IBM Db2:**
+
+- BLOB は、パーティションキー、クラスタリングキー、セカンダリインデックスキー、またはクロスパーティションスキャンの並び替えカラムとして使用できません。
+- FLOAT / DOUBLE の最小値は、Java の MIN_VALUE ではなく、Float.MIN_NORMAL / Double.MIN_NORMAL です。
+- パーティションキー、クラスタリングキー、またはセカンダリインデックスカラムの名前変更はサポートされていません (非キーカラムは名前変更可能)。
+- BLOB → TEXT への ALTER COLUMN TYPE はサポートされていません。
+
+**Oracle Database:**
+
+- BLOB は、パーティションキー、クラスタリングキー、セカンダリインデックスキー、Get または Scan 操作の条件カラム、またはクロスパーティションスキャンの並び替えカラムとして使用できません。
+- ALTER COLUMN TYPE は INT → BIGINT のみをサポートします。FLOAT → DOUBLE の拡張や TEXT への変換を含む、他のすべての変換は例外をスローします。
+
+**YugabyteDB:**
+
+- FLOAT および DOUBLE は、パーティションキー、クラスタリングキー、またはセカンダリインデックスキーとして使用できません。
+- インポートテーブルはサポートされていません。
+
+**SQLite:**
+
+- SQLite は同時アクセスを完全にはサポートしていません。本番ワークロードではなく、開発およびテスト目的でのみ SQLite を使用してください。
+- インポートテーブルと仮想テーブルは完全にサポートされていません。
+
+**TiDB:**
+
+- TiDB は SERIALIZABLE 分離レベルをサポートしていません。ScalarDB は代わりに REPEATABLE READ を使用します。
+- TiDB は BLOB から TEXT への ALTER COLUMN TYPE をサポートしていません。
+
+## DynamoDBアダプター
+
+DynamoDB アダプターは、ScalarDB 操作を Amazon DynamoDB にマッピングします。
+
+### 名前空間とテーブルのマッピング
+
+DynamoDB にはネイティブな名前空間の概念がありません。ScalarDB は各テーブルを、名前空間とテーブル名をドット (`.`) セパレーターで結合した名前の DynamoDB テーブルとして表現します。たとえば、`my_app` 名前空間内の `orders` という名前の ScalarDB テーブルは、`my_app.orders` という名前の DynamoDB テーブルになります。
+
+`scalar.db.dynamo.namespace.prefix` プロパティを通じて名前空間プレフィックスを任意で設定できます。プレフィックスが設定されている場合、それがテーブル名にプレフィックスとして付加されます。たとえば、プレフィックス `prod_` を使用すると、DynamoDB テーブル名は `prod_my_app.orders` になります。
+
+### キーとインデックスのマッピング
+
+DynamoDB は1テーブルにつき単一のパーティションキー (ハッシュキー) と単一のソートキーのみをサポートするため、ScalarDB はマルチカラムキーを、すべてのパーティションキーカラムを単一のバイナリハッシュキーにエンコードおよび連結し、すべてのクラスタリングキーカラムを指定されたソート順序を保持する単一のバイナリソートキーにエンコードおよび連結することで処理します。
+
+ScalarDB は、スキーマで定義された各セカンダリインデックスに対して Global Secondary Index (GSI) を作成します。非キーカラムは、個別の DynamoDB 属性として格納されます。
+
+### データ型のマッピング
+
+以下の表は、ScalarDB データ型が DynamoDB 属性型にどのようにマッピングされるかを示しています。
+
+| ScalarDB | DynamoDB | 備考 |
+|----------|----------|-------|
+| BOOLEAN | BOOL | |
+| INT | N (Number) | |
+| BIGINT | N (Number) | |
+| FLOAT | N (Number) | |
+| DOUBLE | N (Number) | |
+| TEXT | S (String) | |
+| BLOB | B (Binary) | |
+| DATE | N (Number) | エポック日 (1970-01-01 からの日数) として格納されます。 |
+| TIME | N (Number) | 日のナノ (午前0時からのナノ秒) として格納されます。 |
+| TIMESTAMP | N (Number) | エポック秒と秒のミリ秒のパック値として格納されます。 |
+| TIMESTAMPTZ | N (Number) | エポック秒と秒のミリ秒の UTC 時刻でのパック値として格納されます。 |
+
+各 ScalarDB データ型の強制値範囲については、[値範囲と精度](#値範囲と精度)を参照してください。
+
+### 制限事項
+
+- 400KB の DynamoDB アイテムサイズ制限は、Consensus Commit によって追加されたトランザクションメタデータカラムを含む各 ScalarDB レコードに適用されます。
+- BLOB は、複合パーティションキーの最後のカラムを除き、パーティションキーまたはクラスタリングキーとして使用できません。
+- BOOLEAN はセカンダリインデックスキーとして使用できません。
+- BOOLEAN 条件変更は EQ、NE、IS NULL、IS NOT NULL に制限されます。
+- 単一のプライマリリージョンを指定する必要があります。非同期レプリケーションされた非プライマリリージョンからは読み取らないでください。
+- 非プライマリキーカラムでのクロスパーティションスキャン並び替えはサポートされていません。ScanAll で並び替えに依存しているユーザーはエラーが発生します。
+- ドロップカラム、リネームカラム、カラム型変更、テーブル名変更などのスキーマ進化 DDL はサポートされていません。
+- GSI が空のキーを許可しないため、セカンダリインデックスカラムを空の文字列または空の BLOB に設定することはできません。
+
+## Cosmos DB for NoSQL アダプター
+
+Cosmos DB for NoSQL アダプターは、ScalarDB 操作を Azure Cosmos DB for NoSQL にマッピングします。
+
+### 名前空間とテーブルのマッピング
+
+各 ScalarDB 名前空間は Cosmos DB データベースにマッピングされ、各 ScalarDB テーブルはそのデータベース内の Cosmos DB コンテナーにマッピングされます。
+
+### キーとインデックスのマッピング
+
+Cosmos DB コンテナーは単一のパーティションキーパスのみをサポートするため、ScalarDB はマルチカラムパーティションキーを、すべてのパーティションキーカラム値をコロン (`:`) を区切り文字として使用して単一の文字列に連結することで処理します。たとえば、テーブルに `tenant_id = "A"` および `user_id = 123` のカラムを持つパーティションキーがある場合、Cosmos DB に格納される連結パーティションキー値は `A:123` です。
+
+クラスタリングキーカラムと非キーカラムは、各 JSON ドキュメント内のプロパティとして格納されます。ScalarDB は、クラスタリングキーカラムによる効率的な並び替えをサポートするために、コンテナー上で複合インデックスを設定します。
+
+セカンダリインデックスの場合、ScalarDB は対応するパスをコンテナーのインデックス作成ポリシーに追加します。
+
+:::warning
+
+コロン (`:`) がパーティションキーの区切り文字として使用されるため、パーティションキーカラムのテキスト値にはコロンを含めてはいけません。パーティションキーテキスト値でコロンを使用すると、正しくない動作が発生します。
+
+:::
+
+### データ型のマッピング
+
+以下の表は、ScalarDB データ型が Cosmos DB JSON ドキュメントでどのように表現されるかを示しています。
+
+| ScalarDB | Cosmos DB JSON 型 | 備考 |
+|----------|---------------------|-------|
+| BOOLEAN | boolean | |
+| INT | number | |
+| BIGINT | number | |
+| FLOAT | number | |
+| DOUBLE | number | |
+| TEXT | string | |
+| BLOB | string | Base64 エンコードされた文字列として格納されます。 |
+| DATE | number | エポック日 (1970-01-01 からの日数) として格納されます。 |
+| TIME | number | 日のナノ (午前0時からのナノ秒) として格納されます。 |
+| TIMESTAMP | number | エポック秒と秒のミリ秒のパック値として格納されます。 |
+| TIMESTAMPTZ | number | エポック秒と秒のミリ秒のUTC時刻でのパック値として格納されます。 |
+
+各 ScalarDB データ型の強制値範囲については、[値範囲と精度](#値範囲と精度)を参照してください。
+
+### 制限事項
+
+- 2MB の Cosmos DB ドキュメントサイズ制限は、Consensus Commit によって追加されたトランザクションメタデータを含む各 ScalarDB レコードに適用されます。
+- BLOB はクラスタリングキーとして使用できません。
+- パーティションキーカラムのテキスト値にはコロン (`:`) を含めてはいけません。
+- プライマリキーカラム値には以下の文字を含めてはいけません: `/`、`\`、`?`、`#`。これらの文字は [Cosmos DB リソース ID によって制限されています](https://learn.microsoft.com/ja-jp/dotnet/api/microsoft.azure.cosmos.databaseproperties.id?view=azure-dotnet#remarks)。
+- BLOB 条件変更は EQ、NE、IS NULL、IS NOT NULL に制限されます (CosmosOperationChecker によって強制)。GT/LT などの比較演算子は例外をスローします。
+- 整合性レベルは Strong または Bounded Staleness に設定する必要があります。詳細については、[データベース設定](database-configurations.mdx)を参照してください。
+- 単一リージョン書き込み設定を使用する必要があります。
+- 非プライマリキーカラムでのクロスパーティションスキャン並び替えはサポートされていません。ScanAll で並び替えに依存しているユーザーはエラーが発生します。
+- ドロップカラム、リネームカラム、カラム型変更、テーブル名変更などのスキーマ進化 DDL はサポートされていません。
+
+## Cassandraアダプター
+
+Cassandra アダプターは、ScalarDB 操作を Apache Cassandra にマッピングします。
+
+### 名前空間とテーブルのマッピング
+
+各 ScalarDB 名前空間は Cassandra キースペースに直接マッピングされ、各 ScalarDB テーブルはそのキースペース内の Cassandra テーブルにマッピングされます。Cassandra のデータモデルは ScalarDB のモデルを密接に反映しているため、これは全アダプター中で最も自然なマッピングです。
+
+ScalarDB がキースペースを作成する際、既定では複製係数3の SimpleStrategy を使用します。名前空間作成オプションを通じて複製戦略と係数を設定できます。
+
+### キーとインデックスのマッピング
+
+ScalarDB パーティションキーカラムは直接 Cassandra パーティションキーカラムにマッピングされ、ScalarDB クラスタリングキーカラムは同じソート順序 (昇順または降順) で Cassandra クラスタリングカラムにマッピングされます。ScalarDB セカンダリインデックスは、Cassandra セカンダリインデックスとして作成されます。
+
+### データ型のマッピング
+
+以下の表は、ScalarDB データ型が Cassandra ネイティブ型にどのようにマッピングされるかを示しています。
+
+| ScalarDB | Cassandra | 備考 |
+|----------|-----------|-------|
+| BOOLEAN | boolean | |
+| INT | int | |
+| BIGINT | bigint | |
+| FLOAT | float | |
+| DOUBLE | double | |
+| TEXT | text | |
+| BLOB | blob | |
+| DATE | date | |
+| TIME | time | |
+| TIMESTAMP | — | **サポートされていません。** 代わりに TIMESTAMPTZ を使用してください。 |
+| TIMESTAMPTZ | timestamp | Cassandra の `timestamp` 型は絶対時刻 (エポックベース) を格納し、ScalarDB の TIMESTAMPTZ (UTC 時間帯での日時) のセマンティクスと一致します。 |
+
+各 ScalarDB データ型の強制値範囲については、[値範囲と精度](#値範囲と精度)を参照してください。
+
+### 制限事項
+
+- TIMESTAMP データ型 (タイムゾーンなし) は Cassandra アダプターではサポートされていません。代わりに TIMESTAMPTZ を使用する必要があります。TIMESTAMP カラムを持つテーブルを作成しようとするとエラーが発生します。
+- 変更あたりの BLOB サイズは、既定で 16MB に制限されています (max_mutation_size で設定可能)。
+- 存在しないレコードで IS NULL 条件を使用した PutIf は NoMutationException をスローしません。他のすべてのアダプターとは異なり、サイレントに成功します。
+- 単一のプライマリクラスターを使用する必要があります。非同期レプリケーションされた非プライマリクラスターからは読み取らないでください。
+- Cassandra コミットログは、バッチまたはグループ同期モードに設定する必要があります。詳細については、[データベース設定](database-configurations.mdx)を参照してください。
+- ScalarDB は、線形化可能な操作を実現するために Cassandra ライトウェイトトランザクション (LWT) を使用しており、これは通常の Cassandra 操作と比較してパフォーマンスに影響があります。
+- 非プライマリキーカラムでのクロスパーティションスキャン並び替えはサポートされていません。ScanAll で並び替えに依存しているユーザーはエラーが発生します。
+- カラム型変更やテーブル名変更などのスキーマ進化 DDL はサポートされていません。ドロップカラムはサポートされています。リネームカラムはプライマリキーカラム (パーティションキーおよびクラスタリングキーカラム) にのみサポートされています。
+
+## オブジェクトストレージアダプター
+
+オブジェクトストレージアダプターは、ScalarDB 操作をオブジェクトストレージサービスにマッピングします。以下のバックエンドがサポートされています: Amazon S3、Azure Blob Storage、Google Cloud Storage。
+
+### 名前空間とテーブルのマッピング
+
+他のアダプターとは異なり、オブジェクトストレージアダプターは、設定された単一のバケット (または Azure Blob Storage の場合はコンテナー) にすべてのデータを格納します。名前空間は別個のバケットにマッピングされません。代わりに、ScalarDB は `<namespace>/<table>/<partition_key>` 形式の階層オブジェクトキーを使用して、バケット内でデータを論理的に整理します。
+
+### キーとインデックスのマッピング
+
+各 ScalarDB パーティションは単一のオブジェクトとして格納されます。オブジェクトキーは `<namespace>/<table>/<partition_key>` の形式に従い、パーティションキー部分はパーティションキーカラム値をエンコードします。複合パーティションキーを持つテーブルの場合、個別のカラム値は `!` を区切り文字として使用して連結されます。
+
+オブジェクトの内容は、パーティション内のすべてのレコードを含む JSON ドキュメントです。各レコードには、パーティションキーカラム、クラスタリングキーカラム、および非キーカラム値が含まれています。パーティション内のレコードは、クラスタリングキーによってソートされます。各パーティションが単一のオブジェクトとして格納されるため、テーブルスキーマを設計する際は以下を考慮してください:
+
+- レコードのサイズが大きい場合は、クラスタリングキーの定義を避けてください。
+- 頻繁に読み取られるレコードを同じパーティションに配置して、オブジェクトストレージへの読み取り操作数を減らしてください。
+- 頻繁に書き込まれるレコードを異なるパーティションに配置して、オブジェクトストレージでの書き込み競合を避けてください。
+
+### データ型のマッピング
+
+すべての ScalarDB データ型は、オブジェクトストレージに格納される際に JSON にシリアライズされます。マッピングは Cosmos DB アダプターと同じパターンに従います: 数値型と時間型は JSON 数値として格納され、TEXT は JSON 文字列として格納され、BOOLEAN は JSON ブール値として格納され、BLOB は Base64 エンコードされた文字列として格納されます。
+
+各 ScalarDB データ型の強制値範囲については、[値範囲と精度](#値範囲と精度)を参照してください。
+
+### 制限事項
+
+- プライマリキーテキスト値には `/` または `!` を含めることはできません。
+- セカンダリインデックスは全くサポートされていません。
+- 1.5 GiB を超える BLOB データは格納できません。
+- ストレージバケットまたはコンテナーには単一のリージョンを使用する必要があります。
+- 特定のストレージクラスのみがサポートされています: Amazon S3 の S3 Standard、Azure Blob Storage の Hot ティア、Google Cloud Storage の Standard。詳細については、[データベース設定](database-configurations.mdx)を参照してください。
+- すべてのデータが単一のバケットに格納されるため、名前空間の分離は物理的ではなく論理的です。
+- 非プライマリキーカラムでのクロスパーティションスキャン並び替えはサポートされていません。ScanAll で並び替えに依存しているユーザーはエラーが発生します。
+- ドロップカラム、リネームカラム、カラム型変更、テーブル名変更などのスキーマ進化 DDL はサポートされていません。
+
+## 値範囲と精度
+
+ScalarDB は、基盤となるデータベースのネイティブ機能に関係なく、すべてのアダプターで一貫した値範囲を強制します。以下の表は、各データ型でサポートされる範囲と精度を示しています。
+
+| データ型 | 範囲 | 精度 | 備考 |
+|-----------|-------|-----------|-------|
+| BOOLEAN | `true` または `false` | | |
+| INT | -2,147,483,648 から 2,147,483,647 | | |
+| BIGINT | -2^53 から 2^53 | | ScalarDB は範囲を完全な64ビット範囲から制限しています。以下の備考を参照してください。 |
+| FLOAT | -3.4028235E+38 から 3.4028235E+38 | 約7桁の十進数 | |
+| DOUBLE | -1.7976931348623157E+308 から 1.7976931348623157E+308 | 約15桁の十進数 | |
+| TEXT | 無制限の長さ | | 最大サイズは基盤となるデータベースに依存します。 |
+| BLOB | 無制限の長さ | | 最大サイズは基盤となるデータベースに依存します。 |
+| DATE | 1000-01-01 から 9999-12-31 | 日 | |
+| TIME | 00:00:00.000000 から 23:59:59.999999 | マイクロ秒 | |
+| TIMESTAMP | 1000-01-01T00:00:00.000 から 9999-12-31T23:59:59.999 | ミリ秒 | タイムゾーンなし。 |
+| TIMESTAMPTZ | 1000-01-01T00:00:00.000Z から 9999-12-31T23:59:59.999Z | ミリ秒 | UTC時間帯で。 |
+
+:::note
+
+BIGINT 範囲は、一部のデータベースが大きな整数を内部的に浮動小数点数として格納するため、サポートされているすべてのデータベース間で一貫した動作を確保するために、(完全な64ビット整数範囲ではなく) -2^53 から 2^53 に制限されています。
+
+:::
+
+TIMESTAMP はタイムゾーン情報なしの日付と時刻を表します。TIMESTAMPTZ は UTC 時間帯での日付と時刻を表します。似た名前にもかかわらず、これらの型は異なるセマンティクスを持ち、互換性がありません。
+
+## 関連項目
+
+- [データをモデル化する](data-modeling.mdx)
+- [要件](requirements.mdx)
+- [ScalarDB の基盤となるデータベースの設定](database-configurations.mdx)
+- [ScalarDB Schema Loader](schema-loader.mdx)
+- [Consensus Commit プロトコル](consensus-commit.mdx)
+- [ScalarDB 設計](design.mdx)
