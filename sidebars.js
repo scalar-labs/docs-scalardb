@@ -259,6 +259,7 @@ const sidebars = {
             },
             {
               type: 'category',
+              key: 'develop-run-transactions-advanced-configurations-and-operations-en-us-3.18',
               label: 'Advanced Configurations and Operations',
               collapsible: true,
               items: [
@@ -271,6 +272,11 @@ const sidebars = {
                   type: 'doc',
                   id: 'scalardb-cluster/authorize-with-abac',
                   label: 'Control User Access in a Fine-Grained Manner',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-cluster/integrate-oidc-for-access-control',
+                  label: 'Integrate OIDC for Access Control',
                 },
                 {
                   type: 'doc',
@@ -351,6 +357,20 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-analytics/run-analytical-queries',
               label: 'Run Analytical Queries',
+            },
+            {
+              type: 'category',
+              key: 'develop-run-analytical-queries-advanced-configurations-and-operations-en-us-3.18',
+              label: 'Advanced Configurations and Operations',
+              collapsible: true,
+              items: [
+                {
+                  type: 'doc',
+                  key: 'develop-run-analytical-queries-advanced-configurations-and-operations-authentication-and-authorization-en-us-3.18',
+                  id: 'scalardb-analytics/authentication-and-authorization',
+                  label: 'Authentication and Authorization',
+                },
+              ],
             },
           ],
         },
@@ -992,6 +1012,7 @@ const sidebars = {
             },
             {
               type: 'doc',
+              key: 'troubleshoot-error-codes-authentication-and-authorization-en-us-3.18',
               id: 'scalardb-cluster/scalardb-auth-status-codes',
               label: 'Authentication and Authorization',
             },
