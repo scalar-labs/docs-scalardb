@@ -114,6 +114,21 @@ Transactions can crash at any time and could leave records in an uncommitted sta
 
 A transaction expires after a certain amount of time (currently 15 seconds). When ScalarDB observes a record that has been prepared by an expired transaction, ScalarDB writes the ABORTED state for the transaction to the Coordinator table (with retries). If ScalarDB successfully writes the ABORTED state to the Coordinator table, the transaction is aborted. Otherwise, the transaction will be committed by the original process that is slow but still alive for some reason, or it will remain in the UNKNOWN state until it is either aborted or committed.
 
+#### Correctness of index-based reads
+
+To ensure the correctness of index-based `Get`, `Scan`, and `ScanAll` operations, ScalarDB performs an additional check called a *before-image index check* when reading records through a secondary index. For every user-defined secondary index on a non-primary-key column, ScalarDB stores the before-image in an internal column named `before_<column>` and maintains a companion secondary index on that before-image column in the underlying storage. The check uses this companion index to find records whose committed indexed-column value matches the query but whose current indexed value has been changed by another transaction that is not yet committed (that is, records in the PREPARED or DELETED state). Any such record is then recovered (rolled back or rolled forward) before results are returned; therefore, ScalarDB throws an exception if the record hasn't expired, otherwise it recovers the transaction.
+
+Under the SERIALIZABLE isolation level, ScalarDB also uses the same before-image index during the read validation phase so that concurrent updates on indexed columns are correctly detected as anti-dependencies.
+
+As a result, index-based `Get`, `Scan`, and `ScanAll` operations return every record whose committed indexed-column value matches the query.
+
+:::warning
+
+- Tables created by a ScalarDB version that predates this check do not have the companion before-image indexes required for it. The check is available starting from ScalarDB 3.16.5, 3.17.3, and 3.18.0. After upgrading from an earlier version, you must run [`repairTable()`](api-guide.mdx#repair-a-table) on each existing table to create the missing companion indexes. Until `repairTable()` is run, ScalarDB will log a warning at startup, and index-based reads may miss records whose indexed column is being concurrently updated.
+- Setting `scalar.db.consensus_commit.index.eventually_consistent_read.enabled` to `true` skips the before-image index check. As a result, index-based reads may miss records whose indexed column is being concurrently updated. This option exists for backward compatibility and is not recommended for new workloads.
+
+:::
+
 ## Isolation levels
 
 The Consensus Commit protocol supports three isolation levels: read-committed snapshot isolation (a weaker variant of snapshot isolation), serializable, and read-committed, each of which has the following characteristics:
