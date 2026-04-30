@@ -61,7 +61,7 @@ Consensus Commit トランザクションマネージャーでは、次のパフ
 | `scalar.db.consensus_commit.async_commit.enabled`                                      | コミットフェーズが非同期で実行されるかどうか。                                                                                                                                                                                                                               | `false`                                                           |
 | `scalar.db.consensus_commit.async_rollback.enabled`                                    | ロールバックフェーズが非同期に実行されるかどうか。                                                                                                                                                                                                                             | `scalar.db.consensus_commit.async_commit.enabled` の値    |
 | `scalar.db.consensus_commit.parallel_implicit_pre_read.enabled`                        | 暗黙的な事前読み取りが並列で実行されるかどうか。                                                                                                                                                                                                                                 | `true`                                                            |
-| `scalar.db.consensus_commit.coordinator.group_commit.enabled`                          | トランザクション状態のコミットがバッチモードで実行されるかどうか。この機能は、2フェーズコミットインターフェイスでは使用できません。                                                                                                                                                  | `false`                                                           |
+| `scalar.db.consensus_commit.coordinator.group_commit.enabled`                          | トランザクション状態のコミットがバッチモードで実行されるかどうか。この機能は、2フェーズコミットインターフェースでは使用できません。                                                                                                                                                  | `false`                                                           |
 | `scalar.db.consensus_commit.coordinator.group_commit.slot_capacity`                    | グループコミット機能のグループ内のスロットの最大数。値が大きいとグループコミットの効率は向上しますが、待ち時間が増加し、トランザクションの競合が発生する可能性も高くなります。[^1]                                                                                    | `20`                                                              |
 | `scalar.db.consensus_commit.coordinator.group_commit.group_size_fix_timeout_millis`    | グループ内のスロットのサイズを固定するためのタイムアウト。値が大きいとグループコミットの効率が向上しますが、待ち時間が増加し、トランザクションの競合が発生する可能性も高くなります。[^1]                                                                                                        | `40`                                                              |
 | `scalar.db.consensus_commit.coordinator.group_commit.delayed_slot_move_timeout_millis` | 遅延スロットをグループから別の分離グループに移動して、元のグループが遅延トランザクションの影響を受けないようにするためのタイムアウト。値が大きいとグループコミットの効率が向上しますが、待ち時間が増加し、トランザクションの競合が発生する可能性も高くなります。[^1] | `1200`                                                            |
@@ -243,13 +243,13 @@ ScalarDB Cluster で使用できる追加の設定は次のとおりです。
 | `scalar.db.consensus_commit.include_metadata.enabled`            | Consensus Commit を使用している場合に、`true` に設定すると、`Get` および `Scan` 操作の結果にトランザクションメタデータが含まれます。特定のテーブルのトランザクションメタデータ列の詳細を表示するには、`DistributedTransactionAdmin.getTableMetadata()` メソッドを使用します。このメソッドは、トランザクションメタデータ列が追加されたテーブルメタデータを返します。この設定を使用すると、トランザクション関連の問題を調査するのに役立ちます。 | `false`          |
 | `scalar.db.default_namespace_name`                               | 指定された名前空間名は、名前空間を指定していない操作によって使用されます。                                                                                                                                                                                                                                                                                  |                  |
 
-## クライアント設定
+## Java Client SDK 設定
 
-このセクションでは、ScalarDB Cluster クライアントの一般的な設定について説明します。
+このセクションでは、ScalarDB Cluster Java Client SDK の設定について説明します。
 
-### プリミティブインターフェイスの設定
+### プリミティブインターフェースの設定
 
-次の表は、ScalarDB Cluster クライアントの一般的な設定を示しています。
+以下は、プリミティブインターフェース使用時の Java Client SDK の一般的な設定です。
 
 | 名前                                               | 説明                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | デフォルト                |
 |----------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------|
@@ -260,23 +260,9 @@ ScalarDB Cluster で使用できる追加の設定は次のとおりです。
 | `scalar.db.cluster.grpc.max_inbound_message_size`  | 単一の gRPC フレームに許可される最大メッセージサイズ。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | gRPC のデフォルト値 |
 | `scalar.db.cluster.grpc.max_inbound_metadata_size` | 受信できるメタデータの最大サイズ。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | gRPC のデフォルト値 |
 
-たとえば、`indirect` クライアントモードを使用し、ロードバランサーの IP アドレスが `192.168.10.1` の場合、次のようにクライアントを設定できます。
+### SQL インターフェースの設定
 
-```properties
-scalar.db.transaction_manager=cluster
-scalar.db.contact_points=indirect:192.168.10.1
-```
-
-または、`direct-kubernetes` クライアントモードを使用し、エンドポイントの名前空間が `ns`、エンドポイント名が `scalardb-cluster` の場合、次のようにクライアントを設定できます。
-
-```properties
-scalar.db.transaction_manager=cluster
-scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
-```
-
-### SQL インターフェイスの設定
-
-次の表は、ScalarDB Cluster SQL クライアントの設定を示しています。
+以下は、SQL インターフェース使用時の Java Client SDK の設定です。
 
 | 名前                                               | 説明                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | デフォルト                |
 |----------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------|
@@ -288,14 +274,14 @@ scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
 | `scalar.db.cluster.grpc.max_inbound_message_size`  | 単一の gRPC フレームに許可される最大メッセージサイズ。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | gRPC のデフォルト値 |
 | `scalar.db.cluster.grpc.max_inbound_metadata_size` | 受信できるメタデータの最大サイズ。                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       | gRPC のデフォルト値 |
 
-たとえば、`indirect` クライアントモードを使用し、ロードバランサーの IP アドレスが `192.168.10.1` の場合、次のようにクライアントを設定できます。
+たとえば、`indirect` クライアントモードを使用し、ロードバランサーの IP アドレスが `192.168.10.1` の場合、次のように Java Client SDK を設定できます。
 
 ```properties
 scalar.db.sql.connection_mode=cluster
 scalar.db.sql.cluster_mode.contact_points=indirect:192.168.10.1
 ```
 
-または、`direct-kubernetes` クライアントモードを使用し、エンドポイントの名前空間が `ns`、エンドポイント名が `scalardb-cluster` の場合、次のようにクライアントを設定できます。
+または、`direct-kubernetes` クライアントモードを使用し、エンドポイントの名前空間が `ns`、エンドポイント名が `scalardb-cluster` の場合、次のように Java Client SDK を設定できます。
 
 ```properties
 scalar.db.sql.connection_mode=cluster
@@ -334,6 +320,6 @@ scalar.db.transaction_manager=cluster
 scalar.db.contact_points=indirect:<SCALARDB_CLUSTER_CONTACT_POINT>
 ```
 
-クライアント設定の詳細については、[ScalarDB Cluster クライアント設定](#クライアント設定) を参照してください。
+Java Client SDK 設定の詳細については、[ScalarDB Cluster の Java Client SDK 設定](#java-client-sdk-設定)を参照してください。
 
 [^1]: アプリケーションのアクセスパターンを考慮し、アプリケーションで使用するストレージと同じストレージを使用して、いくつかのバリエーション（例：デフォルト値の75%と125%）でパフォーマンスをベンチマークし、最適な設定を決定することをお勧めします。適切な設定は、これらの要素に強く依存して決まります。また、最適な組み合わせを決定するために、これらのパラメータの組み合わせをベンチマークすることも重要です（例：最初に `slot_capacity:20` と `group_size_fix_timeout_millis:40`、次に `slot_capacity:30` と `group_size_fix_timeout_millis:40`、3番目に `slot_capacity:20` と `group_size_fix_timeout_millis:80`）。
