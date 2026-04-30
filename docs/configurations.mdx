@@ -186,35 +186,53 @@ Select a database to see the configurations available for each storage.
     - **Description:** Password to access the database.
     - **Default value:** empty
 
+:::note
+
+The following properties have been removed and will be ignored if set. If these properties are still in your configuration, please remove them to avoid warning messages.
+
+- `scalar.db.jdbc.connection_pool.max_idle`
+- `scalar.db.jdbc.table_metadata.connection_pool.max_idle`
+- `scalar.db.jdbc.admin.connection_pool.max_idle`
+- `scalar.db.jdbc.prepared_statements_pool.enabled`
+- `scalar.db.jdbc.prepared_statements_pool.max_open`
+
+:::
+
     <h4>`jdbc.connection_pool.min_idle`</h4>
 
     - **Field:** `scalar.db.jdbc.connection_pool.min_idle`
     - **Description:** Minimum number of idle connections in the connection pool.
     - **Default value:** `20`
 
-    <h4>`jdbc.connection_pool.max_idle`</h4>
-
-    - **Field:** `scalar.db.jdbc.connection_pool.max_idle`
-    - **Description:** Maximum number of connections that can remain idle in the connection pool.
-    - **Default value:** `50`
-
     <h4>`jdbc.connection_pool.max_total`</h4>
 
     - **Field:** `scalar.db.jdbc.connection_pool.max_total`
-    - **Description:** Maximum total number of idle and borrowed connections that can be active at the same time for the connection pool. Use a negative value for no limit.
+    - **Description:** Maximum total number of idle and active connections in the connection pool.
     - **Default value:** `200`
 
-    <h4>`jdbc.prepared_statements_pool.enabled`</h4>
+    <h4>`jdbc.connection_pool.connection_timeout_millis`</h4>
 
-    - **Field:** `scalar.db.jdbc.prepared_statements_pool.enabled`
-    - **Description:** Setting this property to `true` enables prepared-statement pooling.
-    - **Default value:** `false`
+    - **Field:** `scalar.db.jdbc.connection_pool.connection_timeout_millis`
+    - **Description:** Maximum time in milliseconds to wait for a connection from the pool.
+    - **Default value:** `30000`
 
-    <h4>`jdbc.prepared_statements_pool.max_open`</h4>
+    <h4>`jdbc.connection_pool.idle_timeout_millis`</h4>
 
-    - **Field:** `scalar.db.jdbc.prepared_statements_pool.max_open`
-    - **Description:** Maximum number of open statements that can be allocated from the statement pool at the same time. Use a negative value for no limit.
-    - **Default value:** `-1`
+    - **Field:** `scalar.db.jdbc.connection_pool.idle_timeout_millis`
+    - **Description:** Maximum time in milliseconds that a connection is allowed to sit idle in the pool. This setting only applies when `min_idle` is less than `max_total`. A value of `0` means idle connections are never removed.
+    - **Default value:** `600000`
+
+    <h4>`jdbc.connection_pool.max_lifetime_millis`</h4>
+
+    - **Field:** `scalar.db.jdbc.connection_pool.max_lifetime_millis`
+    - **Description:** Maximum lifetime in milliseconds of a connection in the pool. Connections that exceed this lifetime will be retired. This value should be set to a few seconds shorter than any database or infrastructure-imposed connection timeout. A value of `0` means no maximum lifetime.
+    - **Default value:** `1800000`
+
+    <h4>`jdbc.connection_pool.keepalive_time_millis`</h4>
+
+    - **Field:** `scalar.db.jdbc.connection_pool.keepalive_time_millis`
+    - **Description:** Interval in milliseconds at which the pool will attempt to keep connections alive to prevent them from being timed out by the database or network infrastructure. This value must be less than `max_lifetime_millis`. A value of `0` disables keepalive.
+    - **Default value:** `0`
 
     <h4>`jdbc.isolation_level`</h4>
 
@@ -228,17 +246,35 @@ Select a database to see the configurations available for each storage.
     - **Description:** Minimum number of idle connections in the connection pool for the table metadata.
     - **Default value:** `5`
 
-    <h4>`jdbc.table_metadata.connection_pool.max_idle`</h4>
-
-    - **Field:** `scalar.db.jdbc.table_metadata.connection_pool.max_idle`
-    - **Description:** Maximum number of connections that can remain idle in the connection pool for the table metadata.
-    - **Default value:** `10`
-
     <h4>`jdbc.table_metadata.connection_pool.max_total`</h4>
 
     - **Field:** `scalar.db.jdbc.table_metadata.connection_pool.max_total`
-    - **Description:** Maximum total number of idle and borrowed connections that can be active at the same time for the connection pool for the table metadata. Use a negative value for no limit.
+    - **Description:** Maximum total number of idle and active connections in the connection pool for the table metadata.
     - **Default value:** `25`
+
+    <h4>`jdbc.table_metadata.connection_pool.connection_timeout_millis`</h4>
+
+    - **Field:** `scalar.db.jdbc.table_metadata.connection_pool.connection_timeout_millis`
+    - **Description:** Same as `jdbc.connection_pool.connection_timeout_millis`, but for the table metadata connection pool.
+    - **Default value:** `30000`
+
+    <h4>`jdbc.table_metadata.connection_pool.idle_timeout_millis`</h4>
+
+    - **Field:** `scalar.db.jdbc.table_metadata.connection_pool.idle_timeout_millis`
+    - **Description:** Same as `jdbc.connection_pool.idle_timeout_millis`, but for the table metadata connection pool.
+    - **Default value:** `600000`
+
+    <h4>`jdbc.table_metadata.connection_pool.max_lifetime_millis`</h4>
+
+    - **Field:** `scalar.db.jdbc.table_metadata.connection_pool.max_lifetime_millis`
+    - **Description:** Same as `jdbc.connection_pool.max_lifetime_millis`, but for the table metadata connection pool.
+    - **Default value:** `1800000`
+
+    <h4>`jdbc.table_metadata.connection_pool.keepalive_time_millis`</h4>
+
+    - **Field:** `scalar.db.jdbc.table_metadata.connection_pool.keepalive_time_millis`
+    - **Description:** Same as `jdbc.connection_pool.keepalive_time_millis`, but for the table metadata connection pool.
+    - **Default value:** `0`
 
     <h4>`jdbc.admin.connection_pool.min_idle`</h4>
 
@@ -246,17 +282,35 @@ Select a database to see the configurations available for each storage.
     - **Description:** Minimum number of idle connections in the connection pool for admin.
     - **Default value:** `5`
 
-    <h4>`jdbc.admin.connection_pool.max_idle`</h4>
-
-    - **Field:** `scalar.db.jdbc.admin.connection_pool.max_idle`
-    - **Description:** Maximum number of connections that can remain idle in the connection pool for admin.
-    - **Default value:** `10`
-
     <h4>`jdbc.admin.connection_pool.max_total`</h4>
 
     - **Field:** `scalar.db.jdbc.admin.connection_pool.max_total`
-    - **Description:** Maximum total number of idle and borrowed connections that can be active at the same time for the connection pool for admin. Use a negative value for no limit.
+    - **Description:** Maximum total number of idle and active connections in the connection pool for admin.
     - **Default value:** `25`
+
+    <h4>`jdbc.admin.connection_pool.connection_timeout_millis`</h4>
+
+    - **Field:** `scalar.db.jdbc.admin.connection_pool.connection_timeout_millis`
+    - **Description:** Same as `jdbc.connection_pool.connection_timeout_millis`, but for the admin connection pool.
+    - **Default value:** `30000`
+
+    <h4>`jdbc.admin.connection_pool.idle_timeout_millis`</h4>
+
+    - **Field:** `scalar.db.jdbc.admin.connection_pool.idle_timeout_millis`
+    - **Description:** Same as `jdbc.connection_pool.idle_timeout_millis`, but for the admin connection pool.
+    - **Default value:** `600000`
+
+    <h4>`jdbc.admin.connection_pool.max_lifetime_millis`</h4>
+
+    - **Field:** `scalar.db.jdbc.admin.connection_pool.max_lifetime_millis`
+    - **Description:** Same as `jdbc.connection_pool.max_lifetime_millis`, but for the admin connection pool.
+    - **Default value:** `1800000`
+
+    <h4>`jdbc.admin.connection_pool.keepalive_time_millis`</h4>
+
+    - **Field:** `scalar.db.jdbc.admin.connection_pool.keepalive_time_millis`
+    - **Description:** Same as `jdbc.connection_pool.keepalive_time_millis`, but for the admin connection pool.
+    - **Default value:** `0`
 
     <h4>`jdbc.mysql.variable_key_column_size`</h4>
 
@@ -593,7 +647,7 @@ For configuring specific storages, use `scalar.db.multi_storage.storages.<STORAG
 For example, if you've defined [namespace mapping](#multi_storagenamespace_mapping) as `scalar.db.multi_storage.namespace_mapping=user:my_cassandra,coordinator:my_mysql`, with `my_cassandra` and `my_mysql` being the storage names for the `user` and `coordinator` namespaces, respectively:
 
 - You can specify the contact points for Cassandra by using `scalar.db.multi_storage.storages.my_cassandra.contact_points`.
-- You can specify the max idle time for the connection pool settings for MySQL by using `scalar.db.multi_storage.storages.my_mysql.jdbc.connection_pool.max_idle`.
+- You can specify the minimum number of idle connections in the connection pool for MySQL by using `scalar.db.multi_storage.storages.my_mysql.jdbc.connection_pool.min_idle`.
 
 For details about the properties available for each storage, see [Storage-related configurations](#storage-related-configurations).
 

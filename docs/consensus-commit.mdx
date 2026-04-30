@@ -257,10 +257,7 @@ If you take backups from multiple databases or from non-transactional databases,
 
 ### Executing particular operations in a certain sequence is prohibited for correctness
 
-In the current implementation, ScalarDB throws an exception in the following cases:
-
-* Executing scan operations after write (Put, Insert, Update, Upsert, Delete) operations for the same record in a transaction.
-* Executing write (Put, Insert, Update, and Upsert) operations after Delete operations for the same record in a transaction.
+In the current implementation, ScalarDB throws an exception when executing scan operations after write (Put, Insert, Update, Upsert, Delete) operations for the same record in a transaction.
 
 ## See also
 

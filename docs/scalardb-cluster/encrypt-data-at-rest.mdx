@@ -30,12 +30,6 @@ Since encryption is transparent to the client, you don't need to change the clie
 
 :::
 
-:::note
-
-If you enable the encryption feature, you will also need to set `scalar.db.cross_partition_scan.enabled` to `true` for the system namespace (`scalardb` by default) because it performs cross-partition scans internally.
-
-:::
-
 The other configurations depend on the encryption implementation you choose. Currently, ScalarDB supports the following encryption implementations:
 
 - HashiCorp Vault encryption
@@ -144,8 +138,11 @@ scalar.db.contact_points=jdbc:postgresql://postgresql:5432/postgres
 scalar.db.username=postgres
 scalar.db.password=postgres
 scalar.db.cluster.node.standalone_mode.enabled=true
-scalar.db.cross_partition_scan.enabled=true
 scalar.db.sql.enabled=true
+
+# Enable cross-partition scan to perform a full scan by using the SELECT statements in this tutorial.
+# This is not required for encryption itself.
+scalar.db.cross_partition_scan.enabled=true
 
 # Encryption configurations
 scalar.db.cluster.encryption.enabled=true
@@ -191,7 +188,7 @@ services:
 
   scalardb-cluster-standalone:
     container_name: "scalardb-cluster-node"
-    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:3.17.2"
+    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:3.18.0"
     ports:
       - 60053:60053
       - 9080:9080
@@ -249,7 +246,7 @@ scalar.db.sql.cluster_mode.contact_points=indirect:localhost
 Then, start the SQL CLI by running the following command.
 
 ```console
-java -jar scalardb-cluster-sql-cli-3.17.2-all.jar --config scalardb-cluster-sql-cli.properties
+java -jar scalardb-cluster-sql-cli-3.18.0-all.jar --config scalardb-cluster-sql-cli.properties
 ```
 
 To begin, create the Coordinator tables required for ScalarDB transaction execution.

@@ -62,6 +62,7 @@ displayed_sidebar: docsEnglish
   - [Text](#text)
   - [Numeric](#numeric)
   - [Date and time](#date-and-time)
+  - [BLOB](#blob)
 
 ## DDL
 
@@ -1373,6 +1374,9 @@ SELECT age, COUNT(*) AS cnt FROM ns.user GROUP BY age HAVING cnt > 1;
 -- With HAVING using aggregate function directly
 SELECT age, COUNT(*) FROM ns.user GROUP BY age HAVING COUNT(*) > 1;
 
+-- With aggregate function alias and multi-predicate HAVING
+SELECT age, COUNT(*) AS cnt FROM ns.user GROUP BY age HAVING cnt > 1 AND cnt < 100;
+
 -- With GROUP BY, WHERE, ORDER BY using alias, and LIMIT
 SELECT age, SUM(height) AS total_height FROM ns.user WHERE name LIKE 'A%' GROUP BY age ORDER BY total_height DESC LIMIT 10;
 ```
@@ -1382,18 +1386,14 @@ Examples of building statement objects for `SELECT` with aggregation are as foll
 ```java
 // With aggregate function
 SelectStatement statement1 =
-    StatementBuilder.select(
-            Projection.function(
-                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))))
+    StatementBuilder.select(Projection.function(FunctionRef.count()))
         .from("ns", "user")
         .build();
 
 // With GROUP BY
 SelectStatement statement2 =
     StatementBuilder.select(
-            Projection.column("age"),
-            Projection.function(
-                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))))
+            Projection.column("age"), Projection.function(FunctionRef.count()))
         .from("ns", "user")
         .groupBy(ColumnRef.of("age"))
         .build();
@@ -1402,26 +1402,11 @@ SelectStatement statement2 =
 SelectStatement statement3 =
     StatementBuilder.select(
             Projection.column("age"),
-            Projection.function(
-                FunctionRef.of(
-                    "COUNT",
-                    ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
-            Projection.function(
-                FunctionRef.of(
-                    "SUM",
-                    ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
-            Projection.function(
-                FunctionRef.of(
-                    "AVG",
-                    ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
-            Projection.function(
-                FunctionRef.of(
-                    "MIN",
-                    ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
-            Projection.function(
-                FunctionRef.of(
-                    "MAX",
-                    ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))))
+            Projection.function(FunctionRef.count("height")),
+            Projection.function(FunctionRef.sum("height")),
+            Projection.function(FunctionRef.avg("height")),
+            Projection.function(FunctionRef.min("height")),
+            Projection.function(FunctionRef.max("height")))
         .from("ns", "user")
         .groupBy(ColumnRef.of("age"))
         .build();
@@ -1430,9 +1415,7 @@ SelectStatement statement3 =
 SelectStatement statement4 =
     StatementBuilder.select(
             Projection.column("age"),
-            Projection.function(
-                    FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create())))
-                .as("cnt"))
+            Projection.function(FunctionRef.count()).as("cnt"))
         .from("ns", "user")
         .groupBy(ColumnRef.of("age"))
         .having(HavingPredicate.column("cnt").isGreaterThan(Value.of(1L)))
@@ -1441,26 +1424,28 @@ SelectStatement statement4 =
 // With HAVING using aggregate function directly
 SelectStatement statement5 =
     StatementBuilder.select(
-            Projection.column("age"),
-            Projection.function(
-                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))))
+            Projection.column("age"), Projection.function(FunctionRef.count()))
         .from("ns", "user")
         .groupBy(ColumnRef.of("age"))
-        .having(
-            HavingPredicate.function(
-                    FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create())))
-                .isGreaterThan(Value.of(1L)))
+        .having(HavingPredicate.function(FunctionRef.count()).isGreaterThan(Value.of(1L)))
         .build();
 
-// With GROUP BY, WHERE, ORDER BY using alias, and LIMIT
+// With aggregate function alias and multi-predicate HAVING
 SelectStatement statement6 =
     StatementBuilder.select(
             Projection.column("age"),
-            Projection.function(
-                    FunctionRef.of(
-                        "SUM",
-                        ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height")))))
-                .as("total_height"))
+            Projection.function(FunctionRef.count()).as("cnt"))
+        .from("ns", "user")
+        .groupBy(ColumnRef.of("age"))
+        .having(HavingPredicate.column("cnt").isGreaterThan(Value.of(1L)))
+        .and(HavingPredicate.column("cnt").isLessThan(Value.of(100L)))
+        .build();
+
+// With GROUP BY, WHERE, ORDER BY using alias, and LIMIT
+SelectStatement statement7 =
+    StatementBuilder.select(
+            Projection.column("age"),
+            Projection.function(FunctionRef.sum("height")).as("total_height"))
         .from("ns", "user")
         .where(Predicate.column("name").isLike(Value.of("A%")))
         .groupBy(ColumnRef.of("age"))
@@ -2192,15 +2177,16 @@ CREATE USER user3;
 Examples of building statement objects for `CREATE USER` are as follows:
 
 ```java
-// Create a user with a password and the `SUPERUSER` attribute.
+// Create a user with a password as a superuser.
 CreateUserStatement statement1 =
-    StatementBuilder.createUser("user1").with("password", UserOption.SUPERUSER).build();
+    StatementBuilder.createUser("user1").withPassword("password1").withSuperuser().build();
 
 // Create a user with a password.
-CreateUserStatement statement2 = StatementBuilder.createUser("user1").with("password").build();
+CreateUserStatement statement2 =
+    StatementBuilder.createUser("user2").withPassword("password2").build();
 
 // Create a user without a password.
-CreateUserStatement statement3 = StatementBuilder.createUser("user1").build();
+CreateUserStatement statement3 = StatementBuilder.createUser("user3").build();
 ```
 
 ### ALTER USER
@@ -2232,11 +2218,11 @@ Examples of building statement objects for `ALTER USER` are as follows:
 
 ```java
 // Change the password of a user.
-AlterUserStatement statement1 = StatementBuilder.alterUser("user1").with("password2").build();
+AlterUserStatement statement1 =
+    StatementBuilder.alterUser("user1").withPassword("password1").build();
 
 // Change a user to a superuser.
-AlterUserStatement statement2 =
-        StatementBuilder.alterUser("user1").with(UserOption.SUPERUSER).build();
+AlterUserStatement statement2 = StatementBuilder.alterUser("user1").withSuperuser().build();
 ```
 
 ### DROP USER
@@ -2352,7 +2338,7 @@ privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER 
 ```
 
 - You must revoke `INSERT` and `UPDATE` privileges together.
-- If the target user has the `INSERT` or `UPDATE` privilege, you cannot revoke the `SELECT` privilege from them.
+- If the target user has the `UPDATE` or `DELETE` privilege, you cannot revoke the `SELECT` privilege from them.
 
 #### Examples
 
@@ -2467,15 +2453,15 @@ The `GRANT ... TO ROLE` command grants privileges to the specified role.
 #### Grammar
 
 ```sql
-GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON [TABLE] <table name> [, <table name>] ... TO ROLE <role name> [, <role name>] ... [WITH GRANT OPTION]
-GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON NAMESPACE <namespace name> [, <namespace name>] ... TO ROLE <role name> [, <role name>] ... [WITH GRANT OPTION]
+GRANT privilege [, privilege] ... ON [TABLE] <table name> [, <table name>] ... TO ROLE <role name> [, <role name>] ... [WITH GRANT OPTION]
+GRANT privilege [, privilege] ... ON NAMESPACE <namespace name> [, <namespace name>] ... TO ROLE <role name> [, <role name>] ... [WITH GRANT OPTION]
 
-privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER
+privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER | ALL [PRIVILEGES] | GRANT OPTION
 ```
 
 - You must grant `INSERT` and `UPDATE` privileges together.
 - To grant a role the `UPDATE` or `DELETE` privilege, the target role must have the `SELECT` privilege.
-- If you specify the `WITH GRANT OPTION` option, any user who has the role can grant privileges to other users or roles.
+- If you specify the `WITH GRANT OPTION` option or the `GRANT OPTION` privilege, any user who has the role can grant privileges to other users or roles.
 
 #### Examples
 
@@ -3155,6 +3141,8 @@ This command returns the following columns:
 - `name`: `TEXT` - a namespace name or a table name, depending on the type
 - `type`: `TEXT` - the type of the object (either `NAMESPACE` or `TABLE`)
 - `privilege`: `TEXT` - a privilege
+- `grantedToUser`: `BOOLEAN` - whether the privilege is directly granted to the user
+- `rolesProvidingPrivilege`: `TEXT` - a comma-separated list of roles that provide this privilege to the user
 
 #### Grammar
 
@@ -3318,9 +3306,27 @@ An approximate-value literal is a sequence of digits with a decimal point, such 
 
 Date and time literals are text literals that follow a specific format to represents DATE, TIME, TIMESTAMP, and TIMESTAMPTZ values. 
 
-| ScalarDB type | Format                             | Note                                                                                                                                                                                                                  | Example                                                                       |
-|---------------|------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
-| DATE          | **'YYYY-MM-DD'**                   |                                                                                                                                                                                                                       | `'2024-05-19'`                                                                |
-| TIME          | **'HH:MM:[SS[.FFFFFF]]'**          | Seconds and fractional seconds are optional. Stores up to microsecond precision (6 digits). Extra fractional digits (up to 9) are silently truncated.                                                                 | `'12:34'`, `'12:34:56'`, `'12:34:56.789123'`                                  |
-| TIMESTAMP     | **'YYYY-MM-DD HH:MM:[SS[.FFF]]'**  | Seconds and fractional seconds are optional. Stores up to millisecond precision (3 digits). Extra fractional digits (up to 9) are silently truncated.                                                                 | `'2024-05-19 12:34'`, `'2024-05-19 12:34:56'`, `'2024-05-19 12:34:56.789'`    |
+| ScalarDB type | Format                             | Note                                                                                                                                                                                                                  | Example                                                                      |
+|---------------|------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| DATE          | **'YYYY-MM-DD'**                   |                                                                                                                                                                                                                       | `'2024-05-19'`                                                               |
+| TIME          | **'HH:MM:[SS[.FFFFFF]]'**          | Seconds and fractional seconds are optional. Stores up to microsecond precision (6 digits). Extra fractional digits (up to 9) are silently truncated.                                                                 | `'12:34'`, `'12:34:56'`, `'12:34:56.789123'`                                 |
+| TIMESTAMP     | **'YYYY-MM-DD HH:MM:[SS[.FFF]]'**  | Seconds and fractional seconds are optional. Stores up to millisecond precision (3 digits). Extra fractional digits (up to 9) are silently truncated.                                                                 | `'2024-05-19 12:34'`, `'2024-05-19 12:34:56'`, `'2024-05-19 12:34:56.789'`   |
 | TIMESTAMPTZ   | **'YYYY-MM-DD HH:MM:[SS[.FFF]]Z'** | Seconds and fractional seconds are optional. Stores up to millisecond precision (3 digits). Extra fractional digits (up to 9) are silently truncated. A space before `Z` is also accepted for backward compatibility. | `'2024-05-19 12:34Z'`, `'2024-05-19 12:34:56Z'`, `'2024-05-19 12:34:56.789Z'` |
+
+### BLOB
+
+A BLOB literal is a sequence of hexadecimal digits enclosed in single quotes (`'`) and prefixed with `X` or `x`, such as `X'48656C6C6F'`. Each pair of hex digits represents 1 byte, so the hex string must contain an even number of digits. An empty hex string `X''` is valid and represents an empty BLOB.
+
+The following examples show valid BLOB literals.
+
+| Literal         | Bytes (hex)      | Note                                     |
+|-----------------|------------------|------------------------------------------|
+| `X'48656C6C6F'` | `48 65 6C 6C 6F` | 5 bytes ("Hello" in ASCII).              |
+| `x'deadbeef'`   | `DE AD BE EF`    | A lowercase `x` prefix is also accepted. |
+| `X''`           | (empty)          | An empty BLOB.                           |
+
+:::note
+
+BLOB literals can be used only with BLOB columns. Using a BLOB literal with a non-BLOB column results in a type-mismatch error.
+
+:::
