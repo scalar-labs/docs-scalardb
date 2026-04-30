@@ -134,7 +134,7 @@ const config = {
 
   customFields: {
     // The following versions have Japanese docs, so the language dropdown should be displayed only when visitors are reading these versions of docs.
-    allowedLanguageDropdownVersions: ["current", "latest", "3.16", "3.15", "3.14", "3.13"],
+    allowedLanguageDropdownVersions: ["current", "latest", "3.17", "3.16", "3.15", "3.14", "3.13"],
 
     // These pre-written queries are used in the Google AI Mode feature. Update these queries as needed when new features are added or when you want to highlight specific features in the Google AI Mode. For more information, see /src/components/GoogleAIModeSearch/index.js.
     prewrittenQueries: [
