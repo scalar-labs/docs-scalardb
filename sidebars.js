@@ -1264,6 +1264,11 @@ const sidebars = {
               label: 'データモデリング',
             },
             {
+              type: 'doc',
+              id: 'database-adapters',
+              label: 'データベースアダプター',
+            },
+            {
               type: 'category',
               key: 'develop-transactions-crud-interface-ja-jp-3.18',
               label: 'CRUD インターフェースを使用して実行',
