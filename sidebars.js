@@ -368,7 +368,7 @@ const sidebars = {
                   type: 'doc',
                   key: 'develop-run-analytical-queries-advanced-configurations-and-operations-authentication-and-authorization-en-us-3.18',
                   id: 'scalardb-analytics/authentication-and-authorization',
-                  label: 'Authentication and Authorization',
+                  label: 'Authenticate and Authorize Users',
                 },
               ],
             },
