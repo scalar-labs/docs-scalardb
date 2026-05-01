@@ -227,11 +227,6 @@ const sidebars = {
               label: 'Database Adapters',
             },
             {
-              type: 'doc',
-              id: 'database-adapters',
-              label: 'Database Adapters',
-            },
-            {
               type: 'category',
               key: 'develop-transactions-crud-interface-en-us-3.18',
               label: 'Run Through the CRUD Interface',
@@ -291,39 +286,6 @@ const sidebars = {
             },
             {
               type: 'category',
-              label: 'Run Sample Applications',
-              collapsible: true,
-              link: {
-                type: 'doc',
-                id: 'scalardb-samples/README',
-              },
-              items: [
-                {
-                  type: 'doc',
-                  key: 'develop-sample-multi-storage-transactions-en-us-3.18',
-                  id: 'scalardb-samples/multi-storage-transaction-sample/README',
-                  label: 'Multi-Storage Transactions',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-samples/microservice-transaction-sample/README',
-                  label: 'Microservice Transactions',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-samples/spring-data-multi-storage-transaction-sample/README',
-                  label: 'Multi-Storage Transactions Through Spring Data JDBC',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-samples/spring-data-microservice-transaction-sample/README',
-                  label: 'Microservice Transactions Through Spring Data JDBC',
-                },
-              ],
-            },
-            {
-              type: 'category',
-              key: 'develop-run-transactions-advanced-configurations-and-operations-en-us-3.18',
               label: 'Advanced Configurations and Operations',
               collapsible: true,
               items: [
@@ -336,11 +298,6 @@ const sidebars = {
                   type: 'doc',
                   id: 'scalardb-cluster/authorize-with-abac',
                   label: 'Control User Access in a Fine-Grained Manner',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-cluster/integrate-oidc-for-access-control',
-                  label: 'Integrate OIDC for Access Control',
                 },
                 {
                   type: 'doc',
