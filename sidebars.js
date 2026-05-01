@@ -366,7 +366,6 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
-                  key: 'develop-run-analytical-queries-advanced-configurations-and-operations-authentication-and-authorization-en-us-3.18',
                   id: 'scalardb-analytics/authentication-and-authorization',
                   label: 'Authenticate and Authorize Users',
                 },
@@ -1012,7 +1011,6 @@ const sidebars = {
             },
             {
               type: 'doc',
-              key: 'troubleshoot-error-codes-authentication-and-authorization-en-us-3.18',
               id: 'scalardb-cluster/scalardb-auth-status-codes',
               label: 'Authentication and Authorization',
             },
