@@ -192,9 +192,9 @@ Map<String, String> options = ...;
 admin.createIndex("ns", "tbl", "c5", options);
 ```
 
-:::note
+:::warning
 
-Object Storage ではセカンダリインデックスを作成できません。
+Consensus Commit を使用している場合、非プライマリキー列で `createIndex()` を使用すると、コンパニオン before-image セカンダリインデックスも作成されます。詳細については、[インデックスベース読み取りの正確性](consensus-commit.mdx#インデックスベース読み取りの正確性)を参照してください。
 
 :::
 
@@ -364,6 +364,12 @@ boolean ifExists = true;
 admin.dropIndex("ns", "tbl", "c5", ifExists);
 ```
 
+:::warning
+
+Consensus Commit を使用している場合、`dropIndex()` はコンパニオン before-image セカンダリインデックスも削除します。詳細については、[インデックスベース読み取りの正確性](consensus-commit.mdx#インデックスベース読み取りの正確性)を参照してください。
+
+:::
+
 ### テーブルを削除する
 
 テーブルを削除するには、次のようにします。
@@ -443,6 +449,12 @@ TableMetadata tableMetadata =
 Map<String, String> options = ...;
 admin.repairTable("ns", "tbl", tableMetadata, options);
 ```
+
+:::warning
+
+Consensus Commit を使用している場合、以前のバージョンから ScalarDB 3.16.5、3.17.3、または 3.18.0 にアップグレードした後、インデックスベース読み取りに必要なコンパニオン before-image セカンダリインデックスを作成するために、既存の各テーブルで `repairTable()` を実行する必要があります。詳細については、[インデックスベース読み取りの正確性](consensus-commit.mdx#インデックスベース読み取りの正確性)を参照してください。
+
+:::
 
 ### 最新の ScalarDB API をサポートするように環境をアップグレードする
 
