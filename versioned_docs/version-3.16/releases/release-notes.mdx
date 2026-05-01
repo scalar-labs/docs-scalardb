@@ -153,6 +153,18 @@ This release includes several bug fixes and vulnerability fixes.
 - Upgraded the gRPC library to fix a security issue. [CVE-2025-55163](https://github.com/advisories/GHSA-prj3-ccx8-p6x4 "CVE-2025-55163")
 - Upgraded `grpc_health_probe` to fix security issues: [CVE-2025-47907](https://github.com/advisories/GHSA-j5pm-7495-qmr3 "CVE-2025-47907"), [CVE-2025-58183](https://github.com/advisories/GHSA-9gcr-gp5f-jw27 "CVE-2025-58183"), [CVE-2025-58186](https://github.com/advisories/GHSA-rjcg-56ph-3qvg "CVE-2025-58186"), [CVE-2025-58187](https://github.com/advisories/GHSA-frhw-mqj2-wxw2 "CVE-2025-58187"), and [CVE-2025-58188](https://github.com/advisories/GHSA-7wwx-xj66-r44x "CVE-2025-58188").
 
+### ScalarDB Analytics
+
+#### Enhancements
+
+- Metering service with AWS Marketplace integration.
+
+#### Bug fixes
+
+- Fix deserialization for Databricks and Snowflake providers.
+- Add missing Databricks JDBC dialect registration.
+- Add TLS support for metering collector.
+
 ## v3.16.1
 
 **Release date:** July 16, 2025
@@ -181,6 +193,13 @@ This release includes several bug fixes and vulnerability fixes.
 - Fixed a bug where an `UnsupportedOperationException` was thrown when executing put operations on tables without ABAC policies, when ABAC was enabled.
 - Upgraded `grpc_health_probe` to fix a security issue. [CVE-2025-22874](https://github.com/advisories/GHSA-6f52-wpx2-hvf2 "CVE-2025-22874")
 - Added validation to prevent the replication feature from starting if the one-phase commit optimization is enabled.
+
+### ScalarDB Analytics
+
+#### Enhancements
+
+- Spark resource usage collection module for PAYG support.
+- Client fat jar support.
 
 ## v3.16.0
 
@@ -260,3 +279,18 @@ This release includes many enhancements, improvements, bug fixes, and performanc
 - Fixed a bug that allowed superusers to execute ABAC administrative operations for non-existing users.
 - Fixed a bug a table-not-found error occurs when dropping empty ABAC system tables.
 - Fixed a memory leak issue when the coordinator group commit feature is enabled.
+
+### ScalarDB Analytics
+
+#### Enhancements
+
+- gRPC catalog server with client-server architecture.
+- Command line client for catalog server.
+- Snowflake data source.
+- Databricks data source.
+
+#### Bug fixes
+
+- MySQL data source: only resolve tables of configured database.
+- SQL Server data source: only resolve schemas of configured database.
+- Databricks data source: fix type mapping for unsupported "interval" types.
