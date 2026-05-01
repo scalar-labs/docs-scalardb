@@ -13,3 +13,124 @@ This page includes a list of release notes for ScalarDB 3.18.
 ## v3.18.0
 
 **Release date:** May 1, 2026
+
+### Summary
+
+This release includes a lot of enhancements, improvements, security issue fixes, and bug fixes.
+
+### Community edition
+
+#### Enhancements
+
+- Added `AuthAdmin.getRole(roleName)`. ([#3238](https://github.com/scalar-labs/scalardb/pull/3238))
+- Added operation-level attributes to allow cross-partition scan, filtering, and ordering on a per-operation basis without requiring global configuration. ([#3425](https://github.com/scalar-labs/scalardb/pull/3425))
+- Added `DistributedTransactionAdmin.hasPrivilege()`. ([#3432](https://github.com/scalar-labs/scalardb/pull/3432))
+- Added `AuthenticationMethod` enum and authentication-method-aware user management APIs to `AuthAdmin` to support OIDC authentication. ([#3433](https://github.com/scalar-labs/scalardb/pull/3433))
+- Added `attributes` parameter to `DistributedTransactionManager` `begin` and `start` methods, enabling transaction-scoped attribute configuration. CRUD methods on `DistributedTransactionManager` also pass the operation's attributes to the internally begun transaction. Also added support for specifying the isolation level per transaction in Consensus Commit via the `cc-transaction-isolation` attribute. ([#3466](https://github.com/scalar-labs/scalardb/pull/3466) [#3517](https://github.com/scalar-labs/scalardb/pull/3517) [#3540](https://github.com/scalar-labs/scalardb/pull/3540))
+- Added support for Google Cloud Spanner as a JDBC storage, via its PostgreSQL-compatible dialect. ([#3510](https://github.com/scalar-labs/scalardb/pull/3510))
+
+#### Improvements
+
+- Extended the applicability of one-phase commit optimization in the Consensus Commit protocol. This allows one-phase commit to be used even in SERIALIZABLE isolation level when the transaction only reads records that it subsequently updates, improving performance for read-modify-write workloads. ([#3295](https://github.com/scalar-labs/scalardb/pull/3295))
+- Added batch execution support for mutate operations in the JDBC adapter to improve performance when executing multiple mutations. Mutations with the same SQL statement are now grouped and executed as a batch. ([#3304](https://github.com/scalar-labs/scalardb/pull/3304))
+- Migrated the JDBC adapter's connection pooling library from Apache Commons DBCP2 to HikariCP for improved performance and reliability. ([#3305](https://github.com/scalar-labs/scalardb/pull/3305))
+- Changed the behavior of Consensus Commit transactions to allow Insert/Upsert/Update operations after Delete on the same record within the same transaction. Previously, this operation threw an `IllegalArgumentException`, but now it properly handles the case by treating it as a new record insertion with null values for unspecified columns. ([#3319](https://github.com/scalar-labs/scalardb/pull/3319))
+- Added @CheckReturnValue annotation to Get/Scan builders. ([#3320](https://github.com/scalar-labs/scalardb/pull/3320))
+- Added support for setting null values on secondary index columns in DynamoDB. When a null value is set, the attribute is removed from the item and the record will not appear in secondary index scans. ([#3326](https://github.com/scalar-labs/scalardb/pull/3326))
+- Inserting or updating records with TIME (microsecond precision), TIMESTAMP (millisecond precision), and TIMESTAMPTZ (millisecond precision) column values will truncate out-of-range precision rather than throwing an exception. ([#3393](https://github.com/scalar-labs/scalardb/pull/3393))
+- Fixed a correctness issue in index-based Get, Scan, and ScanAll operations in Consensus Commit where records whose indexed column was being concurrently updated by another transaction could be missed. ScalarDB now maintains a companion before-image secondary index for each user-defined secondary index on a non-primary-key column and uses it to recover PREPARED/DELETED records during index reads. ([#3419](https://github.com/scalar-labs/scalardb/pull/3419) [#3463](https://github.com/scalar-labs/scalardb/pull/3463))
+- Replaced MySQL Connector/J with MariaDB Connector/J to resolve GPLv2 licensing concerns. ([#3428](https://github.com/scalar-labs/scalardb/pull/3428))
+- Shortened JDBC index names using a hash when they exceed the maximum identifier length supported by the underlying database. ([#3481](https://github.com/scalar-labs/scalardb/pull/3481))
+- Relaxed the BigInt value range restriction (`-2^53` to `2^53`) that previously applied to all storage backends. This restriction now only applies to Cosmos DB and Object Storage. Other backends (JDBC, Cassandra, DynamoDB) now support the full Java long range for BigInt columns. ([#3490](https://github.com/scalar-labs/scalardb/pull/3490))
+- Changed the Oracle BIGINT column type mapping from NUMBER(16) to NUMBER(19) to support the full Java long range. ([#3507](https://github.com/scalar-labs/scalardb/pull/3507))
+- Changed the deprecation policy so that APIs and configurations marked as deprecated will now be removed in 4.0.0 instead of 5.0.0. ([#3520](https://github.com/scalar-labs/scalardb/pull/3520))
+
+#### Bug fixes
+
+- Fixed option issues in Object Storage adapter. ([#3237](https://github.com/scalar-labs/scalardb/pull/3237))
+- On Oracle, when importing a table with a column using the `NUMBER(1)` data type, which is usually used for BOOLEAN data, that column can now be mapped to ScalarDB BOOLEAN using ScalarDB Schema Loader `override-columns-type` setting. ([#3239](https://github.com/scalar-labs/scalardb/pull/3239))
+- Fix to increase the maximum allowed string length with Object Storage. ([#3248](https://github.com/scalar-labs/scalardb/pull/3248))
+- Updated the upper limit value displayed in the error message for data size limitation in Object Storage adapter. ([#3264](https://github.com/scalar-labs/scalardb/pull/3264))
+- Added explicit commits for Oracle database when using SERIALIZABLE isolation level to ensure snapshot updates after each operation. ([#3294](https://github.com/scalar-labs/scalardb/pull/3294))
+- Upgraded the Jackson library to fix a security issue: [GHSA-72hv-8253-57qq](https://github.com/advisories/GHSA-72hv-8253-57qq "GHSA-72hv-8253-57qq") ([#3394](https://github.com/scalar-labs/scalardb/pull/3394))
+- Fix `dropColumnFromTable()` dropping the secondary index even when column drop is unsupported. ([#3450](https://github.com/scalar-labs/scalardb/pull/3450))
+- Upgraded the Netty library to fix security issues: [CVE-2026-33870](https://github.com/advisories/GHSA-pwqr-wmgm-9rr8 "CVE-2026-33870") and [CVE-2026-33871](https://github.com/advisories/GHSA-w9fj-cfpg-grvv "CVE-2026-33871") ([#3452](https://github.com/scalar-labs/scalardb/pull/3452))
+- Fixed a bug where index-based Get and Scan operations could return incorrect results after lazy recovery rolled back a PREPARED record whose after-image index value matched the query but whose before-image (restored) value did not. ([#3488](https://github.com/scalar-labs/scalardb/pull/3488))
+
+### Enterprise edition
+
+#### Enhancements
+
+##### ScalarDB Cluster
+
+- Added `getRole()` API and equivalent to retrieve a single role by name.
+- Added support for starting replication with existing backup site tables.
+- Added support for the `executeBatch` API in ScalarDB Cluster SQL transactions, enabling batch execution of multiple SQL statements in a single call.
+- Added client-side optimizations for SQL transactions (piggyback_begin and write_buffering) to reduce RPC overhead between the client and the cluster.
+- Added support for configuring a separate gRPC port for the admin service by using the `scalar.db.cluster.node.admin.port` property.
+- Added `DistributedTransactionAdmin.hasPrivilege()` to check if a specified user has a specific privilege on a table.
+- Added support for the attributes parameter in transaction begin/start methods, enabling transaction-scoped configuration such as isolation level.
+- Added OIDC JWT authentication support.
+- Added ThreadLocal-based user-password authentication support via `CredentialsHolder`, allowing multiple users to share a single `TransactionManager`.
+- Added property-based OIDC JWT authentication support for the client, allowing JWT access tokens to be passed via configuration properties.
+
+##### ScalarDB SQL
+
+- Added `Metadata.getRole(roleName)`
+- Added support for Spring Boot 4 in Spring Data JDBC for ScalarDB.
+- Added support for extending `AbstractJdbcConfiguration` for custom bean configuration in Spring Data JDBC for ScalarDB.
+- Changed the `PreparedStatement` API to use `bind()` methods that return a `BoundStatement` for parameter binding, instead of directly setting values on `PreparedStatement`. Note that this is a breaking change, and users may need to update their source code accordingly.
+- Added `executeBatch` API to execute multiple statements in a single call, with support in the core SQL API, direct-mode, and JDBC driver.
+- Added support for BLOB literals using X'hex' syntax in SQL statements.
+- Added support for AuthenticationMethod in `CREATE/ALTER USER` and `SHOW USERS`
+- Added support for specifying transaction-scoped attributes in `BEGIN` and `START TRANSACTION` SQL statements using the `WITH` clause (e.g., `BEGIN WITH 'cc-transaction-isolation' = 'SNAPSHOT'`). Also added `begin(Map)`, and `beginReadOnly(Map)` methods to `SqlSession` for programmatic attribute specification.
+- Updated `SqlJdbcDatabaseMetaData.getUserName()` to return the authenticated user name via `Metadata.getCurrentUser()`.
+- Added support for specifying ABAC read and write tags in the `WITH` clause of `BEGIN` and `START TRANSACTION` statements.
+
+#### Improvements
+
+##### ScalarDB Cluster
+
+- Refactored internal auth token handling to use a type-safe class hierarchy instead of string prefix parsing.
+- Auth, ABAC, and Encryption modules no longer require `scalar.db.cross_partition_scan.enabled=true` to be enabled globally. These modules now use operation-level cross-partition scan attributes and run internal metadata transactions with Snapshot Isolation.
+- Changed the deprecation policy so that APIs marked as deprecated will now be removed in 4.0.0 instead of 5.0.0.
+
+##### ScalarDB GraphQL
+
+- Relaxed the range of values accepted by the GraphQL `BigInt` scalar to the full Java `long` range, aligning with the corresponding relaxation in ScalarDB. Backend-specific limits (Cosmos DB and Object Storage still restrict BigInt to `-2^53` to `2^53`) are now enforced by ScalarDB at the storage layer rather than by the GraphQL layer.
+
+##### ScalarDB SQL
+
+- Improve thread pool management in two-phase commit interface transaction to avoid potential starvation issues in Spring Data JDBC for ScalarDB.
+- Added one-operation mode support for one-shot query execution to improve performance by skipping explicit transaction begin/commit when the SQL query can be expressed as a single operation.
+- Inserting or updating records with TIME (microsecond precision), TIMESTAMP (millisecond precision), and TIMESTAMPTZ (millisecond precision) column values will truncate out-of-range precision rather than throwing an exception.
+- Fixed an issue where the shadow jar was unnecessarily published to GitHub Packages for the CLI module.
+- Update the TIMESTAMPTZ literal to make optional the space character before the UTC timezone `Z` character. For example, `2021-03-04 12:30:45.123Z` is now accepted, in addition to the current format `2021-03-04 12:30:45.123 Z`. Also, when selecting a TIMESTAMPTZ column, the value is printed without a space before the `Z`.
+- Refactored the SQL statement builder APIs for improved type safety and ergonomics. `SelectStatementBuilder` now enforces SQL clause ordering at the type level so that `having()` is only callable after `groupBy()`, and HAVING supports the same fluent `.and(...)` / `.or(...)` chain as WHERE; `Having.of(...)` factories have been consolidated into `Having.create(...)`; `CreateUserStatementBuilder` / `AlterUserStatementBuilder` expose explicit `withPassword()` / `withSuperuser()` / `withNoSuperuser()` methods in place of the previous overloaded `with(...)`; the `UserOption` enum has been removed in favor of a nullable `superuser` boolean on `CreateUserStatement` / `AlterUserStatement`; and `FunctionRef` now provides convenience factories (`count()`, `sum(...)`, `avg(...)`, `min(...)`, `max(...)`) for common aggregates.
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Made `GRANT ROLE` command idempotent, allowing duplicate grants and upgrading to `WITH ADMIN OPTION` when re-granting.
+- Fixed a bug where ScalarDB Cluster cannot be deployed in the Omnistrate environment by upgrading `scalar-metering`.
+- Fixed a bug where the pause functionality did not work correctly when transactions expired.
+- Fixed an issue where the batch operation with piggyback commit threw `CrudException` instead of `CrudConflictException` when a commit conflict occurred. This allows clients to properly detect and handle commit conflicts.
+- Fixed a bug where `batch()` with piggyback commit threw `CrudException` instead of `UnknownTransactionStatusException` on unexpected gRPC errors. This could cause incorrect error handling on the client side, as the transaction status was actually unknown when piggyback commit was enabled.
+- Upgraded `grpc_health_probe` to fix security issues: [CVE-2025-68121](https://github.com/advisories/GHSA-h355-32pf-p2xm "CVE-2025-68121"), [CVE-2025-61726](https://github.com/advisories/GHSA-gm9r-q53w-2gh4 "CVE-2025-61726"), [CVE-2025-61728](https://github.com/advisories/GHSA-g9q4-qjx4-2v7q "CVE-2025-61728"), [CVE-2025-61729](https://github.com/advisories/GHSA-7c64-f9jr-v9h2 "CVE-2025-61729"), and [CVE-2025-61730](https://github.com/advisories/GHSA-gr56-3gp6-6gmj "CVE-2025-61730")
+- Excluded `com.microsoft.azure:adal4j` from the Kubernetes Java Client to fix security issues: [CVE-2023-52428](https://github.com/advisories/GHSA-gvpg-vgmx-xg6w "CVE-2023-52428"), [CVE-2021-31684](https://github.com/advisories/GHSA-fg2v-w576-w4v3 "CVE-2021-31684"), and [CVE-2023-1370](https://github.com/advisories/GHSA-493p-pfq6-5258 "CVE-2023-1370")
+- Upgraded the Jackson library to fix a security issue: [GHSA-72hv-8253-57qq](https://github.com/advisories/GHSA-72hv-8253-57qq "GHSA-72hv-8253-57qq")
+- Upgraded `grpc_health_probe` to fix security issues: [CVE-2025-59250](https://github.com/advisories/GHSA-m494-w24q-6f7w "CVE-2025-59250") and [CVE-2026-25679](https://github.com/advisories/GHSA-j3gx-2473-5fp8 "CVE-2026-25679")
+- Upgraded the Netty library to fix security issues: [CVE-2026-33870](https://github.com/advisories/GHSA-pwqr-wmgm-9rr8 "CVE-2026-33870") and [CVE-2026-33871](https://github.com/advisories/GHSA-w9fj-cfpg-grvv "CVE-2026-33871")
+- Fixed a bug where one-shot batch operations bypassed pause control in the GateKept transaction managers.
+- Upgraded `grpc_health_probe` to fix a security issue: [CVE-2026-34986](https://github.com/advisories/GHSA-78h2-9frx-2jm8 "CVE-2026-34986").
+
+##### ScalarDB SQL
+
+- Ambiguous column names in ORDER BY and HAVING clauses were detected.
+- Fixed a `ClassCastException` that occurred in `StatementUtils.appendTerm()` when handling `DATE`, `TIME`, `TIMESTAMP`, and `TIMESTAMPTZ` values. These values are now correctly formatted as string literals instead of being incorrectly cast to String.
+- Fixed `SelectStatement.toSql()` to correctly generate ORDER BY clauses with aggregate functions such as `SUM()` and `COUNT()`. Previously, only column-based orderings were handled, causing incorrect SQL output when function-based orderings were used.
+- Fixed a bug where duplicate column names were allowed in CREATE TABLE statements.
+- Fixed missing strict date validation on time-related type formatters, which could allow invalid dates (e.g., February 30) to be silently accepted instead of rejected.
+- `ResultSet.getObject` on BLOB columns now returns a `java.sql.Blob`, and `ResultSet.getBlob`, `ResultSet.getBinaryStream`, and several `PreparedStatement.setBlob` / `setBinaryStream` overloads are now supported. `ResultSetMetaData.getColumnType` for FLOAT columns now returns `Types.REAL` (previously `Types.FLOAT`). `ResultSet.getString` now returns Java `null` for SQL NULL instead of the literal string `"null"`, in line with the JDBC spec. As a side effect, the SQL CLI now renders BLOB values as `X'...'` hex literals instead of `[B@xxxxxxxx`.
+- Fixed an issue where `CachedMetadata#invalidateNamespaceNamesCache()` did not actually invalidate the cached list of namespaces, causing `SHOW NAMESPACES` and related operations to potentially return stale results until the cache TTL expired.
