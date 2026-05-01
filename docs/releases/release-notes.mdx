@@ -135,9 +135,11 @@ This release includes a lot of enhancements, improvements, security issue fixes,
 - `ResultSet.getObject` on BLOB columns now returns a `java.sql.Blob`, and `ResultSet.getBlob`, `ResultSet.getBinaryStream`, and several `PreparedStatement.setBlob` / `setBinaryStream` overloads are now supported. `ResultSetMetaData.getColumnType` for FLOAT columns now returns `Types.REAL` (previously `Types.FLOAT`). `ResultSet.getString` now returns Java `null` for SQL NULL instead of the literal string `"null"`, in line with the JDBC spec. As a side effect, the SQL CLI now renders BLOB values as `X'...'` hex literals instead of `[B@xxxxxxxx`.
 - Fixed an issue where `CachedMetadata#invalidateNamespaceNamesCache()` did not actually invalidate the cached list of namespaces, causing `SHOW NAMESPACES` and related operations to potentially return stale results until the cache TTL expired.
 
-### ScalarDB Analytics
+### Enterprise Options
 
-### Enhancements
+#### ScalarDB Analytics
+
+#### Enhancements
 
 - Password authentication with access token support.
 - Internal user directory management.
@@ -147,14 +149,14 @@ This release includes a lot of enhancements, improvements, security issue fixes,
 - ScalarDB Cluster password authentication backend.
 - gRPC retry with exponential backoff for Client SDK.
 
-### Improvements
+#### Improvements
 
 - Set scan fetch size to 4096 for JDBC and ScalarDB data sources.
 
-### Breaking changes
+#### Breaking changes
 
 - Unify ScalarDB namespace to `scalardb_analytics` and add domain prefixes to table names (`registry_`, `auth_`) to avoid PostgreSQL identifier length limits.
 
-### Bug fixes
+#### Bug fixes
 
 - Use TIMESTAMPTZ instead of TIMESTAMP for temporal columns.
