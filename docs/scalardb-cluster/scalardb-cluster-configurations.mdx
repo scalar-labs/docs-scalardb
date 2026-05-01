@@ -424,7 +424,15 @@ The following properties have been removed and will be ignored if set. If these 
     - **Field:** `scalar.db.jdbc.db2.time_column.default_date_component`
     - **Description:** Value of the date component used for storing `TIME` data in IBM Db2. Since the IBM Db2 TIMESTAMP type is used to store ScalarDB `TIME` type data because it provides fractional-second precision, ScalarDB stores `TIME` data with the same date component value for ease of comparison and sorting.
     - **Default value:** `1970-01-01`
+
+    <h4>`jdbc.spanner.time_column.default_date_component`</h4>
+
+    - **Field:** `scalar.db.jdbc.spanner.time_column.default_date_component`
+    - **Description:** Value of the date component used for storing `TIME` data in Spanner. Because Spanner's PostgreSQL dialect has no native TIME type, ScalarDB stores `TIME` data as Spanner `TIMESTAMP WITH TIME ZONE` data with a fixed date component to enable comparison and sorting.
+    - **Default value:** `1970-01-01`
 :::note
+
+**SQLite3**
 
 If you're using SQLite3 as a JDBC database, you must set `scalar.db.contact_points` as follows:
 
@@ -435,6 +443,18 @@ scalar.db.contact_points=jdbc:sqlite:<SQLITE_DB_FILE_PATH>?busy_timeout=10000
 Unlike other JDBC databases, [SQLite3 doesn't fully support concurrent access](https://www.sqlite.org/lang_transaction.html).
 To avoid frequent errors caused internally by [`SQLITE_BUSY`](https://www.sqlite.org/rescode.html#busy), we recommend setting a [`busy_timeout`](https://www.sqlite.org/c3ref/busy_timeout.html) parameter.
 
+**Spanner**
+
+Authentication to Spanner requires using a Google Cloud service account key in JSON format. Set `scalar.db.password` to the full content of the service account key file as a single line JSON. The `scalar.db.username` property is unused for Spanner. ScalarDB also sets the JVM system property `ENABLE_CREDENTIALS_PROVIDER=true`, which is required by the Spanner JDBC driver to authenticate.
+
+For example:
+
+```properties
+scalar.db.storage=jdbc
+scalar.db.contact_points=jdbc:cloudspanner:/projects/<PROJECT_ID>/instances/<INSTANCE_ID>/databases/<DATABASE_ID>
+scalar.db.username=
+scalar.db.password=<content-of-service-account-key.json>
+```
 :::
 </TabItem>
 <TabItem value="DynamoDB" label="DynamoDB">
