@@ -91,11 +91,13 @@ The data type mapping between ScalarDB and JDBC is as follows:
 | FLOAT         | float or Float          |
 | DOUBLE        | double or Double        |
 | TEXT          | String                  |
-| BLOB          | byte[]                  |
+| BLOB          | byte[] or java.sql.Blob |
 | DATE          | java.time.LocalDate     |
 | TIME          | java.time.LocalTime     |
 | TIMESTAMP     | java.time.LocalDateTime |
 | TIMESTAMPTZ   | java.time.Instant       |
+
+For BLOB columns, `java.io.InputStream` is also accepted when writing. See the `PreparedStatement` example below.
 
 How to get the data from a `java.sql.ResultSet` object for each data type is as follows:
 
@@ -121,9 +123,16 @@ try (ResultSet resultSet = ...) {
   // Get a TEXT value of a column
   String textValue = resultSet.getString("<column name>");
 
-  // Get a BLOB value of a column
-  byte[] blobValue = resultSet.getBytes("<column name>");
-  
+  // Get a BLOB value of a column as a byte array
+  byte[] blobBytes = resultSet.getBytes("<column name>");
+
+  // Get a BLOB value of a column as a java.sql.Blob
+  // (this is also what resultSet.getObject returns for BLOB columns)
+  Blob blob = resultSet.getBlob("<column name>");
+
+  // Get a BLOB value of a column as a stream
+  InputStream blobStream = resultSet.getBinaryStream("<column name>");
+
   // Get a DATE value of a column
   LocalDate dateValue = resultSet.getObject("<column name>", LocalDate.class);
   
@@ -158,26 +167,71 @@ try (PreparedStatement preparedStatement = ...) {
   preparedStatement.setDouble(5, <DOUBLE value>);
 
   // Set a TEXT value as parameter
-  preparedStatement.setString(7, "<TEXT value>");
+  preparedStatement.setString(6, "<TEXT value>");
 
-  // Set a BLOB value as parameter
-  preparedStatement.setBytes(8, <BLOB value>);
+  // Set a BLOB value as parameter (byte array)
+  preparedStatement.setBytes(7, <byte[] value>);
+
+  // Alternatively, if you have a java.sql.Blob (for example, one obtained from ResultSet.getBlob),
+  // use preparedStatement.setBlob(7, <Blob value>);
+
+  // Set a DATE value as parameter
+  preparedStatement.setObject(8, <LocalDate value>);
   
-  //Set a DATE value as parameter
-  preparedStatement.setObject(9, <LocalDate value>);
-  
-  //Set a TIME value as parameter
-  preparedStatement.setObject(10, <LocalTime value>);
+  // Set a TIME value as parameter
+  preparedStatement.setObject(9, <LocalTime value>);
 
-  //Set a TIMESTAMP value as parameter
-  preparedStatement.setObject(11, <LocalDateTime value>);
+  // Set a TIMESTAMP value as parameter
+  preparedStatement.setObject(10, <LocalDateTime value>);
 
-  //Set a TIMESTAMPTZ value as parameter
-  preparedStatement.setObject(12, <Instant value>);
+  // Set a TIMESTAMPTZ value as parameter
+  preparedStatement.setObject(11, <Instant value>);
 
   preparedStatement.execute();
 }
 ```
+
+For BLOB columns, the driver also supports writing directly from a stream. The following overloads are available in addition to `setBytes(int, byte[])` and `setBlob(int, java.sql.Blob)`:
+
+- `setBlob(int, java.io.InputStream)` and `setBlob(int, java.io.InputStream, long)`, which reads bytes from the stream (the overload with a length reads exactly that many bytes).
+- `setBinaryStream(int, java.io.InputStream)`, `setBinaryStream(int, java.io.InputStream, int)`, and `setBinaryStream(int, java.io.InputStream, long)`, which follow the same pattern.
+
+## Execute batch statements
+
+The ScalarDB JDBC driver supports batch execution for mutation statements, following standard JDBC conventions. Use this when you need to apply many inserts, updates, or deletes in a single round trip.
+
+Using `java.sql.Statement`:
+
+```java
+try (Statement statement = connection.createStatement()) {
+  statement.addBatch("INSERT INTO tbl (c1, c2) VALUES (1, 'a')");
+  statement.addBatch("UPDATE tbl SET c2 = 'b' WHERE c1 = 2");
+  statement.addBatch("DELETE FROM tbl WHERE c1 = 3");
+
+  int[] updateCounts = statement.executeBatch();
+}
+```
+
+Using `java.sql.PreparedStatement`:
+
+```java
+try (PreparedStatement preparedStatement =
+    connection.prepareStatement("INSERT INTO tbl (c1, c2) VALUES (?, ?)")) {
+  preparedStatement.setInt(1, 1);
+  preparedStatement.setString(2, "a");
+  preparedStatement.addBatch();
+
+  preparedStatement.setInt(1, 2);
+  preparedStatement.setString(2, "b");
+  preparedStatement.addBatch();
+
+  int[] updateCounts = preparedStatement.executeBatch();
+}
+```
+
+Batch execution is restricted to mutation statements (`INSERT`, `UPSERT`, `UPDATE`, and `DELETE`). Passing a `SELECT`, DDL, or DCL statement to `addBatch(...)` causes the subsequent `executeBatch()` call to throw a `SQLException`. For batch execution that also accepts DDL and DCL statements, see [Execute batch statements](sql-api-guide.mdx#execute-batch-statements) in the ScalarDB SQL API Guide.
+
+If one or more statements in a batch fail, `executeBatch()` throws a `java.sql.BatchUpdateException`. You can inspect the per-statement update counts by calling `BatchUpdateException.getUpdateCounts()`.
 
 ## Handle SQLException
 
@@ -221,4 +275,4 @@ Please see also [ScalarDB SQL API Guide](sql-api-guide.mdx) for more details on 
 
 - [Java JDBC API](https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/)
 - [ScalarDB SQL API Guide](sql-api-guide.mdx)
-- [Javadoc for ScalarDB JDBC](https://javadoc.io/doc/com.scalar-labs/scalardb-sql-jdbc/3.17.2/index.html)
+- [Javadoc for ScalarDB JDBC](https://javadoc.io/doc/com.scalar-labs/scalardb-sql-jdbc/3.18.0/index.html)

@@ -62,6 +62,7 @@ displayed_sidebar: docsEnglish
   - [Text](#text)
   - [Numeric](#numeric)
   - [Date and time](#date-and-time)
+  - [BLOB](#blob)
 
 ## DDL
 
@@ -961,7 +962,7 @@ SELECT c1, c2, c3, c4 FROM ns.tbl WHERE c4 = 100 LIMIT 10;
 -- With positional bind markers
 SELECT * FROM ns.tbl WHERE c1 = ? AND c2 > ? AND c2 <= ? ORDER BY c2 ASC, c3 DESC LIMIT ?;
 
--- With operations attributes
+-- With operation attributes
 SELECT * FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
 ```
 
@@ -1067,7 +1068,7 @@ SelectStatement statement7 =
         .limit(BindMarker.positional())
         .build();
 
-// With operations attributes
+// With operation attributes
 SelectStatement statement8 =
     StatementBuilder.select()
         .from("ns", "tbl")
@@ -1373,6 +1374,9 @@ SELECT age, COUNT(*) AS cnt FROM ns.user GROUP BY age HAVING cnt > 1;
 -- With HAVING using aggregate function directly
 SELECT age, COUNT(*) FROM ns.user GROUP BY age HAVING COUNT(*) > 1;
 
+-- With aggregate function alias and multi-predicate HAVING
+SELECT age, COUNT(*) AS cnt FROM ns.user GROUP BY age HAVING cnt > 1 AND cnt < 100;
+
 -- With GROUP BY, WHERE, ORDER BY using alias, and LIMIT
 SELECT age, SUM(height) AS total_height FROM ns.user WHERE name LIKE 'A%' GROUP BY age ORDER BY total_height DESC LIMIT 10;
 ```
@@ -1382,18 +1386,14 @@ Examples of building statement objects for `SELECT` with aggregation are as foll
 ```java
 // With aggregate function
 SelectStatement statement1 =
-    StatementBuilder.select(
-            Projection.function(
-                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))))
+    StatementBuilder.select(Projection.function(FunctionRef.count()))
         .from("ns", "user")
         .build();
 
 // With GROUP BY
 SelectStatement statement2 =
     StatementBuilder.select(
-            Projection.column("age"),
-            Projection.function(
-                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))))
+            Projection.column("age"), Projection.function(FunctionRef.count()))
         .from("ns", "user")
         .groupBy(ColumnRef.of("age"))
         .build();
@@ -1402,26 +1402,11 @@ SelectStatement statement2 =
 SelectStatement statement3 =
     StatementBuilder.select(
             Projection.column("age"),
-            Projection.function(
-                FunctionRef.of(
-                    "COUNT",
-                    ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
-            Projection.function(
-                FunctionRef.of(
-                    "SUM",
-                    ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
-            Projection.function(
-                FunctionRef.of(
-                    "AVG",
-                    ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
-            Projection.function(
-                FunctionRef.of(
-                    "MIN",
-                    ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
-            Projection.function(
-                FunctionRef.of(
-                    "MAX",
-                    ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))))
+            Projection.function(FunctionRef.count("height")),
+            Projection.function(FunctionRef.sum("height")),
+            Projection.function(FunctionRef.avg("height")),
+            Projection.function(FunctionRef.min("height")),
+            Projection.function(FunctionRef.max("height")))
         .from("ns", "user")
         .groupBy(ColumnRef.of("age"))
         .build();
@@ -1430,9 +1415,7 @@ SelectStatement statement3 =
 SelectStatement statement4 =
     StatementBuilder.select(
             Projection.column("age"),
-            Projection.function(
-                    FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create())))
-                .as("cnt"))
+            Projection.function(FunctionRef.count()).as("cnt"))
         .from("ns", "user")
         .groupBy(ColumnRef.of("age"))
         .having(HavingPredicate.column("cnt").isGreaterThan(Value.of(1L)))
@@ -1441,26 +1424,28 @@ SelectStatement statement4 =
 // With HAVING using aggregate function directly
 SelectStatement statement5 =
     StatementBuilder.select(
-            Projection.column("age"),
-            Projection.function(
-                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))))
+            Projection.column("age"), Projection.function(FunctionRef.count()))
         .from("ns", "user")
         .groupBy(ColumnRef.of("age"))
-        .having(
-            HavingPredicate.function(
-                    FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create())))
-                .isGreaterThan(Value.of(1L)))
+        .having(HavingPredicate.function(FunctionRef.count()).isGreaterThan(Value.of(1L)))
         .build();
 
-// With GROUP BY, WHERE, ORDER BY using alias, and LIMIT
+// With aggregate function alias and multi-predicate HAVING
 SelectStatement statement6 =
     StatementBuilder.select(
             Projection.column("age"),
-            Projection.function(
-                    FunctionRef.of(
-                        "SUM",
-                        ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height")))))
-                .as("total_height"))
+            Projection.function(FunctionRef.count()).as("cnt"))
+        .from("ns", "user")
+        .groupBy(ColumnRef.of("age"))
+        .having(HavingPredicate.column("cnt").isGreaterThan(Value.of(1L)))
+        .and(HavingPredicate.column("cnt").isLessThan(Value.of(100L)))
+        .build();
+
+// With GROUP BY, WHERE, ORDER BY using alias, and LIMIT
+SelectStatement statement7 =
+    StatementBuilder.select(
+            Projection.column("age"),
+            Projection.function(FunctionRef.sum("height")).as("total_height"))
         .from("ns", "user")
         .where(Predicate.column("name").isLike(Value.of("A%")))
         .groupBy(ColumnRef.of("age"))
@@ -1489,6 +1474,7 @@ operation_attributes: <operation attribute name>=<operation attribute value> [AN
 
 - You must specify a full primary key in `INSERT`.
 - You can specify `<literal>` to a bind marker (positional `?` and named `:<name>`). See the [Literal](#literal) section for the literal syntax.
+- You can specify operation attributes by using the `WITH` clause. For details on operation attributes, see [Operation attributes](../api-guide.mdx#operation-attributes).
 
 #### Examples
 
@@ -1503,6 +1489,9 @@ INSERT INTO tbl (c1, c2, c3, c4, c5) VALUES (?, ?, ?, ?, ?);
 
 -- Insert multiple records
 INSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100), (20, 'bbb', 4.56, 200);
+
+-- With operation attributes
+INSERT INTO ns.tbl (c1, c2, c3, c4, c5) VALUES (10, 'aaa', 1.23, 100, true) WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
 ```
 
 Examples of building statement objects for `INSERT` are as follows:
@@ -1531,6 +1520,14 @@ InsertStatement statement4 = StatementBuilder.insertInto("ns", "tbl")
     .columns("c1", "c2", "c3", "c4", "c5")
     .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
     .values(Value.ofInt(20), Value.ofText("bbb"), Value.of(2.46F), Value.of(200L), Value.of(false))
+    .build();
+
+// With operation attributes
+InsertStatement statement5 = StatementBuilder.insertInto("ns", "tbl")
+    .columns("c1", "c2", "c3", "c4", "c5")
+    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
+    .withAttribute("attribute1", "value1")
+    .withAttribute("attribute2", "value2")
     .build();
 ```
 
@@ -1592,7 +1589,7 @@ UPSERT INTO tbl (c1, c2, c3, c4, c5) VALUES (?, ?, ?, ?, ?);
 -- Upsert multiple records.
 UPSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100), (20, 'bbb', 4.56, 200);
 
--- With operations attributes
+-- With operation attributes
 UPSERT INTO ns.tbl (c1, c2, c3, c4, c5) VALUES (10, 'aaa', 1.23, 100, true) WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
 ```
 
@@ -1641,7 +1638,7 @@ UpsertStatement statement4 =
             Value.of(false))
         .build();
 
-// With operations attributes
+// With operation attributes
 UpsertStatement statement5 =
     StatementBuilder.upsertInto("ns", "tbl")
         .columns("c1", "c2", "c3", "c4", "c5")
@@ -1759,7 +1756,7 @@ UPDATE ns.tbl SET c4 = 200, c5 = false WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.2
 -- With positional bind markers
 UPDATE ns.tbl SET c4 = ?, c5 = ? WHERE c1 = ? AND c2 = ? AND c3 = ?;
 
--- With operations attributes
+-- With operation attributes
 UPDATE ns.tbl SET c4 = 200, c5 = false WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
 ```
 
@@ -1788,7 +1785,7 @@ UpdateStatement statement2 =
         .and(Predicate.column("c3").isEqualTo(BindMarker.positional()))
         .build();
 
-// With operations attributes
+// With operation attributes
 UpdateStatement statement3 =
     StatementBuilder.update("ns", "tbl")
         .set(
@@ -2005,7 +2002,7 @@ DELETE FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23;
 -- With positional bind markers
 DELETE FROM tbl WHERE c1 = ? AND c2 = ? AND c3 = ?;
 
--- With operations attributes
+-- With operation attributes
 DELETE FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
 ```
 
@@ -2028,7 +2025,7 @@ DeleteStatement statement2 =
         .and(Predicate.column("c3").isEqualTo(BindMarker.positional()))
         .build();
 
-// With operations attributes
+// With operation attributes
 DeleteStatement statement3 =
     StatementBuilder.deleteFrom("ns", "tbl")
         .where(Predicate.column("c1").isEqualTo(Value.of(10)))
@@ -2161,15 +2158,21 @@ DeleteStatement statement9 =
 
 ### CREATE USER
 
-The `CREATE USER` command creates a new user with the specified username, password, and user attributes.
+The `CREATE USER` command creates a new user with the specified username, password, authentication methods, and user attributes.
 
 #### Grammar
 
 ```sql
-CREATE USER <username> [WITH] {PASSWORD <password> | SUPERUSER | NO_SUPERUSER} ...
+CREATE USER <username> [WITH] {PASSWORD <password> | AUTH_METHOD <authentication_method_list> | SUPERUSER | NO_SUPERUSER} ...
 ```
 
+Where `<authentication_method_list>` is one or more of `USERPASS` and `OIDC`, separated by commas:
+
+The `PASSWORD <password>` clause and the `AUTH_METHOD` clause are independent. The `PASSWORD <password>` clause sets the user's password credential, while the `AUTH_METHOD` clause controls which authentication methods are enabled for the user.
+
 - If you don't specify a password for a user, the user is created without a password.
+- If you specify the `AUTH_METHOD` clause, the user is created with the specified authentication methods.
+- If you don't specify the `AUTH_METHOD` clause, the default authentication method (`USERPASS`) is used.
 - If you specify the `SUPERUSER` attribute for a user, the user becomes a superuser.
 - If you specify the `NO_SUPERUSER` attribute for a user, the user becomes a normal user.
 - If you don't specify either `SUPERUSER` or `NO_SUPERUSER` for a user, the user becomes a normal user.
@@ -2187,32 +2190,60 @@ CREATE USER user2 WITH PASSWORD 'password2';
 
 -- Create a user without a password.
 CREATE USER user3;
+
+-- Create a user with the USERPASS authentication method.
+CREATE USER user4 AUTH_METHOD USERPASS;
+
+-- Create a user with both USERPASS and OIDC authentication methods.
+CREATE USER user5 AUTH_METHOD USERPASS, OIDC;
+
+-- Create a user with a password and the OIDC authentication method as a superuser.
+CREATE USER user6 WITH PASSWORD 'password6' AUTH_METHOD OIDC SUPERUSER;
 ```
 
 Examples of building statement objects for `CREATE USER` are as follows:
 
 ```java
-// Create a user with a password and the `SUPERUSER` attribute.
+// Create a user with a password as a superuser.
 CreateUserStatement statement1 =
-    StatementBuilder.createUser("user1").with("password", UserOption.SUPERUSER).build();
+    StatementBuilder.createUser("user1").withPassword("password1").withSuperuser().build();
 
 // Create a user with a password.
-CreateUserStatement statement2 = StatementBuilder.createUser("user1").with("password").build();
+CreateUserStatement statement2 =
+    StatementBuilder.createUser("user2").withPassword("password2").build();
 
 // Create a user without a password.
-CreateUserStatement statement3 = StatementBuilder.createUser("user1").build();
+CreateUserStatement statement3 = StatementBuilder.createUser("user3").build();
+
+// Create a user with the OIDC authentication method.
+CreateUserStatement statement4 =
+    StatementBuilder.createUser("user1")
+        .withAuthenticationMethods(Set.of(AuthenticationMethod.OIDC))
+        .build();
+
+// Create a user with both USERPASS and OIDC authentication methods.
+CreateUserStatement statement5 =
+    StatementBuilder.createUser("user1")
+        .withAuthenticationMethods(
+            Set.of(AuthenticationMethod.USERPASS, AuthenticationMethod.OIDC))
+        .build();
 ```
 
 ### ALTER USER
 
-The `ALTER USER` command changes the password and user attributes of the specified user.
+The `ALTER USER` command changes the password, authentication methods, and user attributes of the specified user.
 
 #### Grammar
 
 ```sql
-ALTER USER <username> [WITH] {PASSWORD <password> | SUPERUSER | NO_SUPERUSER} ...
+ALTER USER <username> [WITH] {PASSWORD <password> | AUTH_METHOD <authentication_method_list> | SUPERUSER | NO_SUPERUSER} ...
 ```
 
+Where `<authentication_method_list>` is `NONE` or one or more of `USERPASS` and `OIDC`, separated by commas:
+
+- If you specify the `AUTH_METHOD` clause, the user's authentication methods are updated to the specified methods.
+- If you specify `AUTH_METHOD NONE`, all authentication methods are cleared from the user.
+- If you don't specify the `AUTH_METHOD` clause, the user's current authentication methods remain unchanged.
 - If you specify the `SUPERUSER` attribute for a user, the user becomes a superuser.
 - If you specify the `NO_SUPERUSER` attribute for a user, the user becomes a normal user.
 
@@ -2226,17 +2257,35 @@ ALTER USER user1 WITH PASSWORD 'password1';
 
 -- Change a user to a superuser.
 ALTER USER user1 WITH SUPERUSER;
+
+-- Change a user's authentication method to OIDC.
+ALTER USER user1 AUTH_METHOD OIDC;
+
+-- Clear all authentication methods from a user.
+ALTER USER user1 AUTH_METHOD NONE;
 ```
 
 Examples of building statement objects for `ALTER USER` are as follows:
 
 ```java
 // Change the password of a user.
-AlterUserStatement statement1 = StatementBuilder.alterUser("user1").with("password2").build();
+AlterUserStatement statement1 =
+    StatementBuilder.alterUser("user1").withPassword("password1").build();
 
 // Change a user to a superuser.
-AlterUserStatement statement2 =
-        StatementBuilder.alterUser("user1").with(UserOption.SUPERUSER).build();
+AlterUserStatement statement2 = StatementBuilder.alterUser("user1").withSuperuser().build();
+
+// Change a user's authentication method to OIDC.
+AlterUserStatement statement3 =
+        StatementBuilder.alterUser("user1")
+            .withAuthenticationMethods(Set.of(AuthenticationMethod.OIDC))
+            .build();
+
+// Clear all authentication methods from a user.
+AlterUserStatement statement4 =
+        StatementBuilder.alterUser("user1")
+            .withAuthenticationMethods(Set.of())
+            .build();
 ```
 
 ### DROP USER
@@ -2352,7 +2401,7 @@ privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER 
 ```
 
 - You must revoke `INSERT` and `UPDATE` privileges together.
-- If the target user has the `INSERT` or `UPDATE` privilege, you cannot revoke the `SELECT` privilege from them.
+- If the target user has the `UPDATE` or `DELETE` privilege, you cannot revoke the `SELECT` privilege from them.
 
 #### Examples
 
@@ -2467,15 +2516,15 @@ The `GRANT ... TO ROLE` command grants privileges to the specified role.
 #### Grammar
 
 ```sql
-GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON [TABLE] <table name> [, <table name>] ... TO ROLE <role name> [, <role name>] ... [WITH GRANT OPTION]
-GRANT {privilege [, privilege] ... | ALL [PRIVILEGES]} ON NAMESPACE <namespace name> [, <namespace name>] ... TO ROLE <role name> [, <role name>] ... [WITH GRANT OPTION]
+GRANT privilege [, privilege] ... ON [TABLE] <table name> [, <table name>] ... TO ROLE <role name> [, <role name>] ... [WITH GRANT OPTION]
+GRANT privilege [, privilege] ... ON NAMESPACE <namespace name> [, <namespace name>] ... TO ROLE <role name> [, <role name>] ... [WITH GRANT OPTION]
 
-privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER
+privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER | ALL [PRIVILEGES] | GRANT OPTION
 ```
 
 - You must grant `INSERT` and `UPDATE` privileges together.
 - To grant a role the `UPDATE` or `DELETE` privilege, the target role must have the `SELECT` privilege.
-- If you specify the `WITH GRANT OPTION` option, any user who has the role can grant privileges to other users or roles.
+- If you specify the `WITH GRANT OPTION` option or the `GRANT OPTION` privilege, any user who has the role can grant privileges to other users or roles.
 
 #### Examples
 
@@ -2765,7 +2814,20 @@ BEGIN [READ ONLY | READ WRITE]
 
 #### Examples
 
-An example of building statement objects for `BEGIN` is as follows:
+Examples of `BEGIN` are as follows:
+
+```sql
+-- Begin a transaction
+BEGIN;
+
+-- Begin a transaction in read-only mode
+BEGIN READ ONLY;
+
+-- With operation attributes
+BEGIN WITH 'cc-transaction-isolation' = 'SNAPSHOT';
+```
+
+Examples of building statement objects for `BEGIN` are as follows:
 
 ```java
 // Begin a transaction.
@@ -2776,6 +2838,12 @@ BeginStatement statement2 = StatementBuilder.begin().readOnly().build();
 
 // Begin a transaction in read-write mode.
 BeginStatement statement3 = StatementBuilder.begin().readWrite().build();
+
+// With operation attributes
+BeginStatement statement4 =
+    StatementBuilder.begin()
+        .withAttribute("cc-transaction-isolation", "SNAPSHOT")
+        .build();
 ```
 
 ### START TRANSACTION
@@ -2798,7 +2866,20 @@ START TRANSACTION [READ ONLY | READ WRITE]
 
 #### Examples
 
-An example of building statement objects for `START TRANSACTION` is as follows:
+Examples of `START TRANSACTION` are as follows:
+
+```sql
+-- Start a transaction
+START TRANSACTION;
+
+-- Start a transaction in read-only mode
+START TRANSACTION READ ONLY;
+
+-- With operation attributes
+START TRANSACTION WITH 'cc-transaction-isolation' = 'SNAPSHOT';
+```
+
+Examples of building statement objects for `START TRANSACTION` are as follows:
 
 ```java
 // Start a transaction.
@@ -2809,6 +2890,12 @@ StartTransactionStatement statement2 = StatementBuilder.startTransaction().readO
 
 // Start a transaction in read-write mode.
 StartTransactionStatement statement3 = StatementBuilder.startTransaction().readWrite().build();
+
+// With operation attributes
+StartTransactionStatement statement4 =
+    StatementBuilder.startTransaction()
+        .withAttribute("cc-transaction-isolation", "SNAPSHOT")
+        .build();
 ```
 
 ### JOIN
@@ -3123,6 +3210,7 @@ This command returns the following columns:
 
 - `username`: `TEXT` - a username
 - `isSuperuser`: `BOOLEAN` - whether the user is a superuser
+- `authenticationMethods`: `TEXT` - the configured authentication methods (for example, `USERPASS`, `USERPASS, OIDC`)
 
 #### Grammar
 
@@ -3155,6 +3243,8 @@ This command returns the following columns:
 - `name`: `TEXT` - a namespace name or a table name, depending on the type
 - `type`: `TEXT` - the type of the object (either `NAMESPACE` or `TABLE`)
 - `privilege`: `TEXT` - a privilege
+- `grantedToUser`: `BOOLEAN` - whether the privilege is directly granted to the user
+- `rolesProvidingPrivilege`: `TEXT` - a comma-separated list of roles that provide this privilege to the user
 
 #### Grammar
 
@@ -3318,9 +3408,27 @@ An approximate-value literal is a sequence of digits with a decimal point, such 
 
 Date and time literals are text literals that follow a specific format to represents DATE, TIME, TIMESTAMP, and TIMESTAMPTZ values. 
 
-| ScalarDB type | Format                             | Note                                                                                                                                                                                                                  | Example                                                                       |
-|---------------|------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
-| DATE          | **'YYYY-MM-DD'**                   |                                                                                                                                                                                                                       | `'2024-05-19'`                                                                |
-| TIME          | **'HH:MM:[SS[.FFFFFF]]'**          | Seconds and fractional seconds are optional. Stores up to microsecond precision (6 digits). Extra fractional digits (up to 9) are silently truncated.                                                                 | `'12:34'`, `'12:34:56'`, `'12:34:56.789123'`                                  |
-| TIMESTAMP     | **'YYYY-MM-DD HH:MM:[SS[.FFF]]'**  | Seconds and fractional seconds are optional. Stores up to millisecond precision (3 digits). Extra fractional digits (up to 9) are silently truncated.                                                                 | `'2024-05-19 12:34'`, `'2024-05-19 12:34:56'`, `'2024-05-19 12:34:56.789'`    |
+| ScalarDB type | Format                             | Note                                                                                                                                                                                                                  | Example                                                                      |
+|---------------|------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| DATE          | **'YYYY-MM-DD'**                   |                                                                                                                                                                                                                       | `'2024-05-19'`                                                               |
+| TIME          | **'HH:MM:[SS[.FFFFFF]]'**          | Seconds and fractional seconds are optional. Stores up to microsecond precision (6 digits). Extra fractional digits (up to 9) are silently truncated.                                                                 | `'12:34'`, `'12:34:56'`, `'12:34:56.789123'`                                 |
+| TIMESTAMP     | **'YYYY-MM-DD HH:MM:[SS[.FFF]]'**  | Seconds and fractional seconds are optional. Stores up to millisecond precision (3 digits). Extra fractional digits (up to 9) are silently truncated.                                                                 | `'2024-05-19 12:34'`, `'2024-05-19 12:34:56'`, `'2024-05-19 12:34:56.789'`   |
 | TIMESTAMPTZ   | **'YYYY-MM-DD HH:MM:[SS[.FFF]]Z'** | Seconds and fractional seconds are optional. Stores up to millisecond precision (3 digits). Extra fractional digits (up to 9) are silently truncated. A space before `Z` is also accepted for backward compatibility. | `'2024-05-19 12:34Z'`, `'2024-05-19 12:34:56Z'`, `'2024-05-19 12:34:56.789Z'` |
+
+### BLOB
+
+A BLOB literal is a sequence of hexadecimal digits enclosed in single quotes (`'`) and prefixed with `X` or `x`, such as `X'48656C6C6F'`. Each pair of hex digits represents 1 byte, so the hex string must contain an even number of digits. An empty hex string `X''` is valid and represents an empty BLOB.
+
+The following examples show valid BLOB literals.
+
+| Literal         | Bytes (hex)      | Note                                     |
+|-----------------|------------------|------------------------------------------|
+| `X'48656C6C6F'` | `48 65 6C 6C 6F` | 5 bytes ("Hello" in ASCII).              |
+| `x'deadbeef'`   | `DE AD BE EF`    | A lowercase `x` prefix is also accepted. |
+| `X''`           | (empty)          | An empty BLOB.                           |
+
+:::note
+
+BLOB literals can be used only with BLOB columns. Using a BLOB literal with a non-BLOB column results in a type-mismatch error.
+
+:::

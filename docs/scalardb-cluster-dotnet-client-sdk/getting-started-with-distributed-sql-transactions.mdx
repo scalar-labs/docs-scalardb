@@ -144,6 +144,107 @@ To roll back the transaction, you can use the `RollbackAsync` method:
 await transaction.RollbackAsync();
 ```
 
+## Execute SQL statements in a batch
+
+The `ExecuteBatchAsync` method allows you to execute multiple SQL statements in a single RPC call, reducing round-trip overhead when performing batch operations. You can use this method with both the transaction manager and the transaction object.
+
+### Execute a batch by using the transaction manager
+
+You can execute a batch of SQL statements directly by using the transaction manager as follows:
+
+```c#
+using ScalarDB.Client.Builders.Sql;
+
+// ...
+
+var statements = new[]
+{
+    new SqlStatementBuilder()
+        .SetSql("INSERT INTO ns.statements (order_id, item_id, count) VALUES (:order_id, :item_id, :count)")
+        .AddParam("order_id", "1")
+        .AddParam("item_id", 1)
+        .AddParam("count", 5)
+        .Build(),
+    new SqlStatementBuilder()
+        .SetSql("INSERT INTO ns.statements (order_id, item_id, count) VALUES (:order_id, :item_id, :count)")
+        .AddParam("order_id", "2")
+        .AddParam("item_id", 2)
+        .AddParam("count", 10)
+        .Build()
+};
+
+var resultSets = await manager.ExecuteBatchAsync(statements);
+```
+
+### Execute a batch in a transaction
+
+You can also execute a batch of SQL statements as part of a transaction as follows:
+
+```c#
+var transaction = await manager.BeginAsync();
+
+var resultSets = await transaction.ExecuteBatchAsync(statements);
+
+await transaction.CommitAsync();
+```
+
+The results are returned as `IReadOnlyList<IResultSet>` in the same order as the input statements. For `SELECT` statements, the result set contains the retrieved records. For `INSERT`, `UPDATE`, and `DELETE` statements, the result set is empty.
+
+The following example executes multiple `SELECT` statements in a batch and processes the results:
+
+```c#
+var selectStatements = new[]
+{
+    new SqlStatementBuilder()
+        .SetSql("SELECT * FROM ns.statements WHERE order_id = :order_id")
+        .AddParam("order_id", "1")
+        .Build(),
+    new SqlStatementBuilder()
+        .SetSql("SELECT * FROM ns.statements WHERE order_id = :order_id")
+        .AddParam("order_id", "2")
+        .Build()
+};
+
+var resultSets = await transaction.ExecuteBatchAsync(selectStatements);
+
+for (var i = 0; i < resultSets.Count; i++)
+{
+    foreach (var record in resultSets[i].Records)
+    {
+        var itemId = record.GetValue<int>("item_id");
+        Console.WriteLine($"item_id: {itemId}");
+    }
+}
+```
+
+### Use positional parameters
+
+In addition to named parameters, you can use positional parameters as follows:
+
+```c#
+var statements = new[]
+{
+    new SqlStatementBuilder()
+        .SetSql("SELECT * FROM ns.statements WHERE order_id = ? AND item_id = ?")
+        .AddParam("1")
+        .AddParam(1)
+        .Build(),
+    new SqlStatementBuilder()
+        .SetSql("SELECT * FROM ns.statements WHERE order_id = ? AND item_id = ?")
+        .AddParam("2")
+        .AddParam(2)
+        .Build()
+};
+
+var resultSets = await transaction.ExecuteBatchAsync(statements);
+```
+
+:::note
+
+If an empty collection is provided to `ExecuteBatchAsync`, no RPC call is made and an empty list is returned.
+
+:::
+
 ## Get Metadata
 
 You can retrieve ScalarDB's metadata with the Metadata property as follows:

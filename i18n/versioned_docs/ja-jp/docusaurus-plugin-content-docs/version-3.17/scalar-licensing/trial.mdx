@@ -1,0 +1,47 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+  - Enterprise Option
+displayed_sidebar: docsJapanese
+---
+
+# 試用ライセンスキーの設定方法
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+ScalarDB Enterprise Standard/Premium および ScalarDB Analytics 用の以下の試用ライセンスキーを使用できます。商用ライセンスキーをお持ちの場合は、[商用ライセンスキーの設定方法](./commercial.mdx)を参照してライセンスキーを設定してください。
+
+ScalarDB Enterprise Standard/Premium または ScalarDB Analytics を実行するには、`.properties` ファイルを作成し、試用ライセンスキーと証明書をファイルに追加する必要があります。`.properties` ファイルには、使用している製品に基づいて以下の設定をコピーし、ファイルに貼り付けてください。
+
+:::warning
+
+- これらのライセンスキーは、非本番環境での評価目的にのみ有効です。
+- 試用ライセンスは現状有姿で提供され、動作保証はありません。本ライセンスの使用により生じた損害について、当社は一切の責任を負いません。
+- 試用ライセンスを使用する場合、ライセンスの検証と有効期限の確認のために、ScalarDB Cluster および ScalarDB Analytics をインターネットに接続する必要があります。
+- ライセンスキーの再配布やリバースエンジニアリングは固く禁じます。
+- 試用ライセンスキーは定期的に更新されます。本番環境での使用については、[お問い合わせ](https://www.scalar-labs.com/contact)から商用ライセンスを取得してください。
+
+:::
+
+:::note
+
+ScalarDB Core は、[GitHub](https://github.com/scalar-labs/scalardb) で Apache 2.0 ライセンスの下でオープンソースソフトウェアとして利用可能です。
+
+:::
+
+## ScalarDB Enterprise Standard/Premium
+
+```properties
+scalar.db.cluster.node.licensing.license_key={"organization_name":"Trial","product_name":"ScalarDB Cluster","product_version":3,"license_type":"trial","signature":"MEYCIQD7akp76Z7r2HjGq6Va+widNdr4BbyP46FCvr/RROw9cwIhAOcZBvI07K2HXC5MyGZXkoQUS4TbkTCLIAq5RwwlhF+p","expiration_date_time":"2026-05-31T10:32:56.543+09:00[Asia/Tokyo]"}
+scalar.db.cluster.node.licensing.license_check_cert_pem=-----BEGIN CERTIFICATE-----\nMIICIzCCAcigAwIBAgIIKT9LIGX1TJQwCgYIKoZIzj0EAwIwZzELMAkGA1UEBhMC\nSlAxDjAMBgNVBAgTBVRva3lvMREwDwYDVQQHEwhTaGluanVrdTEVMBMGA1UEChMM\nU2NhbGFyLCBJbmMuMR4wHAYDVQQDExV0cmlhbC5zY2FsYXItbGFicy5jb20wHhcN\nMjMxMTE2MDcxMDM5WhcNMjQwMjE1MTMxNTM5WjBnMQswCQYDVQQGEwJKUDEOMAwG\nA1UECBMFVG9reW8xETAPBgNVBAcTCFNoaW5qdWt1MRUwEwYDVQQKEwxTY2FsYXIs\nIEluYy4xHjAcBgNVBAMTFXRyaWFsLnNjYWxhci1sYWJzLmNvbTBZMBMGByqGSM49\nAgEGCCqGSM49AwEHA0IABBSkIYAk7r5FRDf5qRQ7dbD3ib5g3fb643h4hqCtK+lC\nwM4AUr+PPRoquAy+Ey2sWEvYrWtl2ZjiYyyiZw8slGCjXjBcMA4GA1UdDwEB/wQE\nAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDAYDVR0TAQH/BAIw\nADAdBgNVHQ4EFgQUbFyOWFrsjkkOvjw6vK3gGUADGOcwCgYIKoZIzj0EAwIDSQAw\nRgIhAKwigOb74z9BdX1+dUpeVG8WrzLTIqdIU0w+9jhAueXoAiEA6cniJ3qsP4j7\nsck62kHnFpH1fCUOc/b/B8ZtfeXI2Iw=\n-----END CERTIFICATE-----
+```
+
+## ScalarDB Analytics
+
+```apacheconf
+spark.sql.catalog.scalardb_catalog.license.key {"organization_name":"Trial","product_name":"ScalarDB Analytics","product_version":3,"license_type":"trial","signature":"MEQCIFlXO4TwlbByMvag8xyltTqw2tbv80LRUikw90NmPhgPAiAKNjLjoNyXmCa27qM6ACBJKeyf4EWSelVm8e0jb9LDLQ==","expiration_date_time":"2026-05-31T10:32:58.206+09:00[Asia/Tokyo]"}
+spark.sql.catalog.scalardb_catalog.license.cert_pem -----BEGIN CERTIFICATE-----\nMIICIzCCAcigAwIBAgIIKT9LIGX1TJQwCgYIKoZIzj0EAwIwZzELMAkGA1UEBhMC\nSlAxDjAMBgNVBAgTBVRva3lvMREwDwYDVQQHEwhTaGluanVrdTEVMBMGA1UEChMM\nU2NhbGFyLCBJbmMuMR4wHAYDVQQDExV0cmlhbC5zY2FsYXItbGFicy5jb20wHhcN\nMjMxMTE2MDcxMDM5WhcNMjQwMjE1MTMxNTM5WjBnMQswCQYDVQQGEwJKUDEOMAwG\nA1UECBMFVG9reW8xETAPBgNVBAcTCFNoaW5qdWt1MRUwEwYDVQQKEwxTY2FsYXIs\nIEluYy4xHjAcBgNVBAMTFXRyaWFsLnNjYWxhci1sYWJzLmNvbTBZMBMGByqGSM49\nAgEGCCqGSM49AwEHA0IABBSkIYAk7r5FRDf5qRQ7dbD3ib5g3fb643h4hqCtK+lC\nwM4AUr+PPRoquAy+Ey2sWEvYrWtl2ZjiYyyiZw8slGCjXjBcMA4GA1UdDwEB/wQE\nAwIFoDAdBgNVHSUEFjAUBggrBgEFBQcDAQYIKwYBBQUHAwIwDAYDVR0TAQH/BAIw\nADAdBgNVHQ4EFgQUbFyOWFrsjkkOvjw6vK3gGUADGOcwCgYIKoZIzj0EAwIDSQAw\nRgIhAKwigOb74z9BdX1+dUpeVG8WrzLTIqdIU0w+9jhAueXoAiEA6cniJ3qsP4j7\nsck62kHnFpH1fCUOc/b/B8ZtfeXI2Iw=\n-----END CERTIFICATE-----
+```

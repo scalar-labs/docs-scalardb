@@ -614,6 +614,61 @@ When you specify a transaction ID, make sure you specify a unique ID (for exampl
 
 :::
 
+##### Begin or start a transaction with attributes
+
+You can specify a map of transaction-scoped attributes when beginning or starting a transaction. The specified attributes are merged into every operation issued within the transaction, so configuration that should apply uniformly across the whole transaction can be specified once at begin time. If an operation already has the same attribute key, the attribute on the operation takes precedence.
+
+You can begin or start a transaction with attributes as follows:
+
+```java
+// Specify attributes for the transaction.
+Map<String, String> attributes = ...;
+
+// Begin a transaction with attributes.
+DistributedTransaction transaction = transactionManager.begin(attributes);
+```
+
+```java
+// Start a transaction with attributes.
+DistributedTransaction transaction = transactionManager.start(attributes);
+```
+
+You can also specify a transaction ID together with attributes as follows:
+
+```java
+// Begin a transaction with attributes by specifying a transaction ID.
+DistributedTransaction transaction = transactionManager.begin("<TRANSACTION_ID>", attributes);
+```
+
+```java
+// Start a transaction with attributes by specifying a transaction ID.
+DistributedTransaction transaction = transactionManager.start("<TRANSACTION_ID>", attributes);
+```
+
+The `beginReadOnly` and `startReadOnly` methods also have overloads that accept attributes:
+
+```java
+// Begin a transaction in read-only mode with attributes.
+DistributedTransaction transaction = transactionManager.beginReadOnly(attributes);
+```
+
+```java
+// Start a transaction in read-only mode with attributes.
+DistributedTransaction transaction = transactionManager.startReadOnly(attributes);
+```
+
+```java
+// Begin a transaction in read-only mode with attributes by specifying a transaction ID.
+DistributedTransaction transaction = transactionManager.beginReadOnly("<TRANSACTION_ID>", attributes);
+```
+
+```java
+// Start a transaction in read-only mode with attributes by specifying a transaction ID.
+DistributedTransaction transaction = transactionManager.startReadOnly("<TRANSACTION_ID>", attributes);
+```
+
+For the list of available attributes, see [Operation attributes](#operation-attributes).
+
 #### Join a transaction
 
 Joining a transaction is particularly useful in a stateful application where a transaction spans multiple client requests. In such a scenario, the application can start a transaction during the first client request. Then, in subsequent client requests, the application can join the ongoing transaction by using the `join()` method.
@@ -1036,6 +1091,29 @@ List<Result> results = transaction.scan(scan);
 
 For details about the `WHERE` clause, see [Use the `WHERE` clause](#use-the-where-clause-1).
 
+###### Enable cross-partition scan per operation
+
+Instead of enabling cross-partition scan globally through the configurations above, you can enable it for a specific operation by setting cross-partition scan attributes on the operation. When set on the operation, the attribute takes precedence over the corresponding configuration value for that operation.
+
+The following example enables cross-partition scan, filtering, and ordering for a specific operation:
+
+```java
+// Enable cross-partition scan for this specific `Scan` operation.
+Scan scan =
+    Scan.newBuilder()
+        .namespace("ns")
+        .table("tbl")
+        .all()
+        .where(ConditionBuilder.column("c1").isNotEqualToInt(10))
+        .orderings(Scan.Ordering.asc("c3"))
+        .attribute(DatabaseOperationAttributes.CROSS_PARTITION_SCAN_ENABLED, "true")
+        .attribute(DatabaseOperationAttributes.CROSS_PARTITION_SCAN_FILTERING_ENABLED, "true")
+        .attribute(DatabaseOperationAttributes.CROSS_PARTITION_SCAN_ORDERING_ENABLED, "true")
+        .build();
+```
+
+For details on these attributes, see [Cross-partition scan attributes](#cross-partition-scan-attributes).
+
 ##### `Put` operation
 
 :::note
@@ -1448,7 +1526,9 @@ Scan scanUsingSpecifiedNamespace =
 
 ##### Operation attributes
 
-The operation attribute is a key-value pair that can be used to store additional information about an operation. You can set operation attributes by using the `attribute()` or `attributes()` method in the operation builder, as shown below:
+An operation attribute is a key-value pair that can be used to store additional information about an operation. You can set operation attributes either on individual operations by using the `attribute()` or `attributes()` method in the operation builder as operation-scoped attributes, or at transaction begin time as transaction-scoped attributes that are merged into every operation in the transaction. If the same attribute is set at both levels, the operation-scoped value takes precedence over the transaction-scoped value. For details on transaction-scoped attributes, see [Begin or start a transaction with attributes](#begin-or-start-a-transaction-with-attributes).
+
+The following examples show how to set operation attributes on individual operations:
 
 ```java
 // Set operation attributes in the `Get` operation.
@@ -1518,11 +1598,31 @@ Delete delete = Delete.newBuilder()
     .build();
 ```
 
-:::note
+The following attributes are available. Setting an attribute on an operation that does not support it has no effect.
 
-ScalarDB currently has no available operation attributes.
+###### Cross-partition scan attributes
+
+The following attributes apply to a cross-partition `Scan` operation (a `Scan` operation without a partition key). When set on the operation, they take precedence over the corresponding `scalar.db.cross_partition_scan.*` configuration values for that operation. For details on the configurations, see [Cross-partition scan configurations](configurations.mdx#cross-partition-scan-configurations).
+
+- **`db-cross-partition-scan-enabled`:** Whether cross-partition scan is enabled for the operation. The value must be `true` or `false`.
+- **`db-cross-partition-scan-filtering-enabled`:** Whether cross-partition scan with filtering is enabled for the operation. The value must be `true` or `false`.
+- **`db-cross-partition-scan-ordering-enabled`:** Whether cross-partition scan with ordering is enabled for the operation. The value must be `true` or `false`. This attribute is available only for JDBC databases.
+
+You can use the <JavadocLink packageName="scalardb" path="com/scalar/db/api" className="DatabaseOperationAttributes" /> utility class to set these attributes.
+
+###### Consensus Commit attributes
+
+The following attribute applies to transactions executed under [Consensus Commit](consensus-commit.mdx).
+
+- **`cc-transaction-isolation`:** The isolation level for the transaction. The value must be `SNAPSHOT`, `SERIALIZABLE`, or `READ_COMMITTED`. When set, this overrides the configured default isolation level for the transaction. For details on isolation levels, see [Isolation levels](consensus-commit.mdx#isolation-levels).
+
+:::warning
+
+Unlike the other operation attributes, `cc-transaction-isolation` cannot be applied per operation within a transaction. The attribute is interpreted only at transaction begin time. To use it, either specify it when [beginning or starting a transaction with attributes](#begin-or-start-a-transaction-with-attributes), or, when [executing transactions without beginning or starting a transaction](#execute-transactions-without-beginning-or-starting-a-transaction), set it on the operation, which ScalarDB then uses for the transaction that it implicitly begins.
 
 :::
+
+You can use the <JavadocLink packageName="scalardb" path="com/scalar/db/transaction/consensuscommit" className="ConsensusCommitOperationAttributes" /> utility class to set this attribute.
 
 #### Commit a transaction
 

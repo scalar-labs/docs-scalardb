@@ -211,22 +211,37 @@ The following properties are specific to ScalarDB Cluster and reduce network rou
 
 :::warning
 
-* If `piggyback_begin` is enabled, you will get exceptions for the `getId()` operation until the actual begin operation is executed.
-* If `piggyback_begin` or `write_buffering` is enabled, you will always get exceptions for the `resume()` and `join()` operations.
+* If `piggyback_begin` is enabled, you will get an `IllegalStateException` when calling the `DistributedTransaction.getId()` method until the actual begin operation is executed.
+* If `piggyback_begin` or `write_buffering` is enabled, you will always get an `IllegalStateException` when calling the `DistributedTransactionManager.resume()` and `DistributedTransactionManager.join()` methods.
+
+:::
+
+Similar optimizations are available for SQL transactions. The `piggyback_begin` property works the same way as the primitive API version, eliminating the dedicated begin RPC call. The `write_buffering` property buffers `INSERT` and `UPSERT` statements on the client side and executes them in batches.
+
+| Property | Default | Description |
+|----------|---------|-------------|
+| `scalar.db.sql.cluster_mode.client.piggyback_begin.enabled` | `false` | Eliminate the dedicated begin RPC by piggybacking it onto the first execute operation. |
+| `scalar.db.sql.cluster_mode.client.write_buffering.enabled` | `false` | Buffer `INSERT` and `UPSERT` statements and execute them in batches. |
+
+:::warning
+
+* If `piggyback_begin` is enabled, `SqlSession.getTransactionId()` returns `Optional.empty()` until the actual begin operation is executed.
+* If `piggyback_begin` or `write_buffering` is enabled, you will always get an `IllegalStateException` when calling the `SqlSession.resume()` and `SqlSession.join()` methods.
 
 :::
 
 #### JDBC connection pool
 
-If you use a JDBC database as the storage backend, tune the connection pool to match your expected concurrency. The `max_total` property controls the maximum number of connections in the pool, and the `prepared_statements_pool.enabled` property enables statement caching to reduce SQL parse overhead.
+If you use a JDBC database as the storage backend, tune the connection pool to match your expected concurrency. The `max_total` property controls the maximum number of connections in the pool.
 
 | Property | Default | Description |
 |----------|---------|-------------|
 | `scalar.db.jdbc.connection_pool.min_idle` | `20` | Minimum idle connections in the pool. |
-| `scalar.db.jdbc.connection_pool.max_idle` | `50` | Maximum idle connections in the pool. |
 | `scalar.db.jdbc.connection_pool.max_total` | `200` | Maximum total connections (idle + active). |
-| `scalar.db.jdbc.prepared_statements_pool.enabled` | `false` | Enable prepared statement pooling. |
-| `scalar.db.jdbc.prepared_statements_pool.max_open` | `-1` | Maximum open prepared statements per connection (`-1` for unlimited). |
+| `scalar.db.jdbc.connection_pool.connection_timeout_millis` | `30000` | Maximum time in milliseconds to wait for a connection from the pool. |
+| `scalar.db.jdbc.connection_pool.idle_timeout_millis` | `600000` | Maximum time in milliseconds that a connection is allowed to sit idle in the pool. |
+| `scalar.db.jdbc.connection_pool.max_lifetime_millis` | `1800000` | Maximum lifetime in milliseconds of a connection in the pool. |
+| `scalar.db.jdbc.connection_pool.keepalive_time_millis` | `0` | Interval in milliseconds for connection keepalive. `0` disables keepalive. |
 
 For the complete list of configuration properties, see [ScalarDB Core Configurations](./configurations.mdx) and [ScalarDB Cluster Configurations](./scalardb-cluster/scalardb-cluster-configurations.mdx).
 

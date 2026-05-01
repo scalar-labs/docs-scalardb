@@ -659,9 +659,16 @@ ScalarDB Cluster は Core を使用してデータベースと対話するため
 
 ScalarDB Cluster では、以下のポートにアクセスできる必要があります。これらは、必要に応じて設定可能なデフォルトのポート番号です:
 
-- 60053 (Administrative API / Transactional API / SQL API / ポーズ operation)
-- 8080 (GraphQL)
-- 9080 (メトリクス)
+- 60053 (Administrative API / Transactional API / SQL API / 管理者サービス; `scalar.db.cluster.node.port` で設定可能)
+- 60054 (クラスターノード間の内部 gRPC 通信; `scalar.db.cluster.internal.node.port` で設定可能。このポートは、クラスターノード間でのみ到達可能である必要があり、通常はクライアントおよびパブリックネットワークからは制限されるべきです)
+- 8080 (GraphQL; `scalar.db.graphql.port` で設定可能)
+- 9080 (メトリクス; `scalar.db.cluster.node.prometheus_exporter_port` で設定可能)
+
+:::note
+
+`scalar.db.cluster.node.admin.port` を設定して管理者サービス (`pause`、`unpause`、`checkPaused`) を専用ポートで実行する場合、その専用ポートにもアクセスできる必要があります。この場合、管理者サービスのみがその専用ポートで実行され、`scalar.db.cluster.node.port` で指定されたポートでは実行されません。`scalar.db.cluster.node.port` で指定されたポートは、Administrative API、Transactional API、SQL API などの他の gRPC API にアクセスできるように引き続き維持される必要があります。
+
+:::
 
 ### Kubernetes
 

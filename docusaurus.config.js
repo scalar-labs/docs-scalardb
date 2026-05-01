@@ -74,27 +74,33 @@ const config = {
                 className: 'X.X.X', // This should be the most recent version (major.minor.patch) so that the Javadoc links point to the latest version based on the major.minor version that the visitor is viewing on the docs site.
               },
               */
-              current: { // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
-                label: '3.17',
+             current: { // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
+                label: '3.18',
                 path: 'latest', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
+                banner: 'none',
+                className: '3.18.0',
+              },
+              "3.17": {
+                label: '3.17',
+                path: '3.17',
                 banner: 'none',
                 className: '3.17.3',
               },
-              "3.16": { // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
+              "3.16": {
                 label: '3.16',
-                path: '3.16', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
+                path: '3.16',
                 banner: 'none',
                 className: '3.16.5',
               },
-              "3.15": { // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
+              "3.15": {
                 label: '3.15',
-                path: '3.15', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
+                path: '3.15',
                 banner: 'none',
                 className: '3.15.8',
               },
-              "3.14": { // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
+              "3.14": {
                 label: '3.14',
-                path: '3.14', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
+                path: '3.14',
                 banner: 'none',
                 className: '3.14.6',
               },
@@ -128,7 +134,7 @@ const config = {
 
   customFields: {
     // The following versions have Japanese docs, so the language dropdown should be displayed only when visitors are reading these versions of docs.
-    allowedLanguageDropdownVersions: ["current", "latest", "3.16", "3.15", "3.14", "3.13"],
+    allowedLanguageDropdownVersions: ["current", "latest", "3.17", "3.16", "3.15", "3.14", "3.13"],
 
     // These pre-written queries are used in the Google AI Mode feature. Update these queries as needed when new features are added or when you want to highlight specific features in the Google AI Mode. For more information, see /src/components/GoogleAIModeSearch/index.js.
     prewrittenQueries: [
@@ -501,7 +507,7 @@ const config = {
       announcementBar: {
         id: 'new_version',
         content:
-          'Announcing the release of ScalarDB 3.17!🚀 For details on what\'s included in this new version, see the <a target="_self" href="/docs/latest/releases/release-notes?utm_source=docs-site&utm_medium=announcementbar">release notes</a>.',
+          'Announcing the release of ScalarDB 3.18!🚀 For details on what\'s included in this new version, see the <a target="_self" href="/docs/latest/releases/release-notes?utm_source=docs-site&utm_medium=announcementbar">release notes</a>.',
           // 'Announcing the release of ScalarDB X.X!🚀 For details on what\'s included in this new version, see the <a target="_self" href="/docs/latest/releases/release-notes?utm_source=docs-site&utm_medium=announcementbar">release notes</a>',
         backgroundColor: '#2673BB',
         textColor: '#FFFFFF',
