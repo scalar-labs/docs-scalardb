@@ -222,6 +222,11 @@ const sidebars = {
               label: 'Model Your Data',
             },
             {
+              type: 'doc',
+              id: 'database-adapters',
+              label: 'Database Adapters',
+            },
+            {
               type: 'category',
               key: 'develop-transactions-crud-interface-en-us-3.17',
               label: 'Run Through the CRUD Interface',
@@ -296,6 +301,11 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
+                  id: 'scalardb-cluster/integrate-oidc-for-access-control',
+                  label: 'Integrate OIDC for Access Control',
+                },
+                {
+                  type: 'doc',
                   id: 'scalardb-cluster/encrypt-data-at-rest',
                   label: 'Encrypt Data at Rest',
                 },
@@ -357,10 +367,6 @@ const sidebars = {
               type: 'category',
               label: 'Tools',
               collapsible: true,
-              link: {
-                type: 'doc',
-                id: 'develop-run-analytical-queries-overview',
-              },
               items: [
                 {
                   type: 'doc',
@@ -561,6 +567,7 @@ const sidebars = {
                     },
                     {
                       type: 'doc',
+                      key: 'develop-dotnet-references-authentication-and-authorization-en-us-3.17',
                       id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-auth',
                       label: 'Authenticate and Authorize Users',
                     },
@@ -615,6 +622,12 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-analytics/run-analytical-queries',
               label: 'Run Analytical Queries',
+            },
+            {
+              type: 'doc',
+              key: 'develop-run-analytical-queries-advanced-configurations-and-operations-authentication-and-authorization-en-us-3.17',
+              id: 'scalardb-analytics/authentication-and-authorization',
+              label: 'Authenticate and Authorize Users',
             },
             {
               type: 'category',
