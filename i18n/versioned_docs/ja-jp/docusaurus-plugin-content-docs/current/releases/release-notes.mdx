@@ -16,4 +16,125 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 ## v3.18.0
 
-**発売日:** 2026年4月30日
+**発売日:** 2026年05月01日
+
+### まとめ
+
+このリリースには、多くの改善点、セキュリティ問題の修正、およびバグ修正が含まれています。
+
+### Community edition
+
+#### 改善点
+
+- `AuthAdmin.getRole(roleName)` を追加しました。 ([#3238](https://github.com/scalar-labs/scalardb/pull/3238))
+- 操作レベルの属性を追加し、グローバル機構を必要とせずに、操作ごとにクロスパーティションスキャン、フィルタリング、および並べ替えを許可しました。 ([#3425](https://github.com/scalar-labs/scalardb/pull/3425))
+- `DistributedTransactionAdmin.hasPrivilege()` を追加しました。 ([#3432](https://github.com/scalar-labs/scalardb/pull/3432))
+- `AuthenticationMethod` 列挙と認証方法対応のユーザー管理 API を `AuthAdmin` に追加し、OIDC 認証をサポートしました。 ([#3433](https://github.com/scalar-labs/scalardb/pull/3433))
+- `DistributedTransactionManager` の `begin` および `start` メソッドに `attributes` パラメータを追加し、トランザクションスコープの属性設定を有効にしました。また、`DistributedTransactionManager` の CRUD メソッドは、操作の属性を内部で開始されたトランザクションに渡します。また、Consensus Commit で `cc-transaction-isolation` 属性経由で、トランザクションごとに分離レベルを指定できるようになりました。 ([#3466](https://github.com/scalar-labs/scalardb/pull/3466) [#3517](https://github.com/scalar-labs/scalardb/pull/3517) [#3540](https://github.com/scalar-labs/scalardb/pull/3540))
+- Google Cloud Spanner を JDBC ストレージとして、PostgreSQL 互換方言経由でサポートを追加しました。 ([#3510](https://github.com/scalar-labs/scalardb/pull/3510))
+
+#### 改善点
+
+- Consensus Commit プロトコルでのワンフェーズコミット最適化の適用範囲を拡張しました。これにより、トランザクションが後で更新するレコードのみを読む場合、SERIALIZABLE 分離レベルでもワンフェーズコミットを使用できるようになり、読取-修正-書込ワークロードのパフォーマンスが向上します。 ([#3295](https://github.com/scalar-labs/scalardb/pull/3295))
+- JDBC アダプターで描画操作のバッチ実行サポートを追加し、複数の描画実行時のパフォーマンスを向上させました。同じ SQL ステートメントを持つ描画はグループ化され、バッチで実行されます。 ([#3304](https://github.com/scalar-labs/scalardb/pull/3304))
+- JDBC アダプターのコネクションプーリングライブラリを Apache Commons DBCP2 から HikariCP に移行し、パフォーマンスと信頼性を向上させました。 ([#3305](https://github.com/scalar-labs/scalardb/pull/3305))
+- Consensus Commit トランザクションの動作を変更し、同一トランザクション内で Delete 後に Insert/Upsert/Update 操作を許可するようにしました。以前はこれにより `IllegalArgumentException` がスローされていましたが、現在は指定されていない列に null 値を含む新しいレコード挿入として処理されます。 ([#3319](https://github.com/scalar-labs/scalardb/pull/3319))
+- Get/Scan ビルダーに @CheckReturnValue アノテーションを追加しました。 ([#3320](https://github.com/scalar-labs/scalardb/pull/3320))
+- DynamoDB でセカンダリインデックス列に null 値を設定するサポートを追加しました。null 値が設定されると、属性はアイテムから削除され、レコードはセカンダリインデックススキャンに表示されません。 ([#3326](https://github.com/scalar-labs/scalardb/pull/3326))
+- TIME (マイクロ秒精度)、TIMESTAMP (ミリ秒精度)、TIMESTAMPTZ (ミリ秒精度) 列の値を挿入または更新する際、範囲外の精度は例外をスローするのではなく切り捨てられるようになりました。 ([#3393](https://github.com/scalar-labs/scalardb/pull/3393))
+- Consensus Commit のインデックスベース Get、Scan、ScanAll 操作で、インデックス列を別のトランザクションから同時に更新されるレコードが見逃される可能性がある問題を修正しました。ScalarDB は、プライマリキー以外の列のユーザー定義セカンダリインデックスごとに companion before-image セカンダリインデックスを保持し、インデックス読取中に PREPARED/DELETED レコードを復元するために使用します。 ([#3419](https://github.com/scalar-labs/scalardb/pull/3419) [#3463](https://github.com/scalar-labs/scalardb/pull/3463))
+- MySQL Connector/J を MariaDB Connector/J に置き換え、GPLv2 ライセンスの懸念を解決しました。 ([#3428](https://github.com/scalar-labs/scalardb/pull/3428))
+- JDBC インデックス名が基盤となるデータベースでサポートされている最大識別子長を超える場合、ハッシュを使用して短縮されるようになりました。 ([#3481](https://github.com/scalar-labs/scalardb/pull/3481))
+- 以前すべてのストレージバックエンドに適用されていた BigInt 値範囲制限 (`-2^53` から `2^53`) を緩和しました。この制限は現在 Cosmos DB とオブジェクトストレージのみに適用されます。他のバックエンド (JDBC、Cassandra、DynamoDB) は BigInt 列の完全な Java long 範囲をサポートするようになりました。 ([#3490](https://github.com/scalar-labs/scalardb/pull/3490))
+- Oracle BIGINT 列型マッピングを NUMBER(16) から NUMBER(19) に変更し、完全な Java long 範囲をサポートするようにしました。 ([#3507](https://github.com/scalar-labs/scalardb/pull/3507))
+- 非推奨ポリシーを変更し、API と設定に非推奨のマーク付けされたものは 5.0.0 ではなく 4.0.0 で削除されるようになりました。 ([#3520](https://github.com/scalar-labs/scalardb/pull/3520))
+
+#### バグの修正
+
+- オブジェクトストレージアダプターのオプションの問題を修正しました。 ([#3237](https://github.com/scalar-labs/scalardb/pull/3237))
+- Oracle で `NUMBER(1)` データ型を使用する列でテーブルをインポートする場合 (通常は BOOLEAN データに使用)、その列は ScalarDB Schema Loader `override-columns-type` 設定を使用して ScalarDB BOOLEAN にマップできるようになりました。 ([#3239](https://github.com/scalar-labs/scalardb/pull/3239))
+- オブジェクトストレージで許可される最大文字列長を増加させるための修正。 ([#3248](https://github.com/scalar-labs/scalardb/pull/3248))
+- オブジェクトストレージアダプターのデータサイズ制限のエラーメッセージに表示される上限値を更新しました。 ([#3264](https://github.com/scalar-labs/scalardb/pull/3264))
+- SERIALIZABLE 分離レベルを使用する場合、Oracle データベースに対して各操作後のスナップショット更新を確保するための明示的なコミットを追加しました。 ([#3294](https://github.com/scalar-labs/scalardb/pull/3294))
+- セキュリティ問題を修正するため Jackson ライブラリをアップグレードしました: [GHSA-72hv-8253-57qq](https://github.com/advisories/GHSA-72hv-8253-57qq "GHSA-72hv-8253-57qq") ([#3394](https://github.com/scalar-labs/scalardb/pull/3394))
+- 列削除がサポートされていない場合でも `dropColumnFromTable()` がセカンダリインデックスを削除する問題を修正しました。 ([#3450](https://github.com/scalar-labs/scalardb/pull/3450))
+- セキュリティ問題を修正するため Netty ライブラリをアップグレードしました: [CVE-2026-33870](https://github.com/advisories/GHSA-pwqr-wmgm-9rr8 "CVE-2026-33870") および [CVE-2026-33871](https://github.com/advisories/GHSA-w9fj-cfpg-grvv "CVE-2026-33871") ([#3452](https://github.com/scalar-labs/scalardb/pull/3452))
+- lazy recovery が PREPARED レコードをロールバックした後、インデックスベース Get および Scan 操作が不正確な結果を返す可能性があるバグを修正しました。after-image インデックス値がクエリに一致しても、before-image (復元された) 値が一致しない場合があります。 ([#3488](https://github.com/scalar-labs/scalardb/pull/3488))
+
+### Enterprise edition
+
+#### 改善点
+
+##### ScalarDB Cluster
+
+- `getRole()` API とその同等の API を追加し、名前で単一のロールを取得できるようにしました。
+- 既存のバックアップサイトテーブルでレプリケーションを開始するためのサポートを追加しました。
+- ScalarDB Cluster SQL トランザクションで `executeBatch` API をサポートを追加し、単一の呼び出しで複数の SQL ステートメントをバッチ実行できるようにしました。
+- SQL トランザクションのクライアント側最適化 (piggyback_begin および write_buffering) を追加し、クライアントとクラスター間の RPC オーバーヘッドを削減しました。
+- `scalar.db.cluster.node.admin.port` プロパティを使用して、admin サービス用に別の gRPC ポートを設定するサポートを追加しました。
+- `DistributedTransactionAdmin.hasPrivilege()` を追加して、指定されたユーザーがテーブルに対して特定の権限を持っているかどうかを確認できるようにしました。
+- トランザクション begin/start メソッドで attributes パラメーターのサポートを追加し、分離レベルなどのトランザクションスコープ設定を有効にしました。
+- OIDC JWT 認証サポートを追加しました。
+- `CredentialsHolder` 経由の ThreadLocal ベースのユーザーパスワード認証サポートを追加し、複数のユーザーが単一の `TransactionManager` を共有できるようにしました。
+- プロパティベースの OIDC JWT 認証サポートをクライアント用に追加し、JWT アクセストークンを設定プロパティを介して渡すことができるようにしました。
+
+##### ScalarDB SQL
+
+- `Metadata.getRole(roleName)` を追加しました。
+- Spring Data JDBC for ScalarDB で Spring Boot 4 のサポートを追加しました。
+- Spring Data JDBC for ScalarDB でカスタムビーン構成用に `AbstractJdbcConfiguration` を拡張するサポートを追加しました。
+- `PreparedStatement` API を変更し、`PreparedStatement` で直接値を設定する代わりに、`BoundStatement` を返す `bind()` メソッドを使用するように修正しました。これは重大な変更であり、ユーザーはそれに応じてソースコードを更新する必要があります。
+- `executeBatch` API を追加し、単一の呼び出しで複数のステートメントを実行できるようにしました。 core SQL API、direct-mode、JDBC ドライバーでサポートされています。
+- SQL ステートメントで X'hex' 構文を使用した BLOB リテラルのサポートを追加しました。
+- `CREATE/ALTER USER` および `SHOW USERS` での AuthenticationMethod のサポートを追加しました。
+- `BEGIN` および `START TRANSACTION` SQL ステートメントで `WITH` 句 (例: `BEGIN WITH 'cc-transaction-isolation' = 'SNAPSHOT'`) を使用してトランザクションスコープ属性を指定するサポートを追加しました。また、プログラマティック属性指定用に `SqlSession` に `begin(Map)` および `beginReadOnly(Map)` メソッドを追加しました。
+- `SqlJdbcDatabaseMetaData.getUserName()` を更新し、`Metadata.getCurrentUser()` 経由で認証されたユーザー名を返すようにしました。
+- `BEGIN` および `START TRANSACTION` ステートメントの `WITH` 句で ABAC 読取および書込タグを指定するサポートを追加しました。
+
+#### 改善点
+
+##### ScalarDB Cluster
+
+- 内部認証トークン処理をリファクタリングし、文字列プレフィックス解析の代わりに型安全なクラス階層を使用するようにしました。
+- Auth、ABAC、Encryption モジュールは、グローバルに `scalar.db.cross_partition_scan.enabled=true` を有効にする必要がなくなりました。これらのモジュールは操作レベルのクロスパーティションスキャン属性を使用し、Snapshot Isolation で内部メタデータトランザクションを実行するようになりました。
+- 非推奨ポリシーを変更し、非推奨のマーク付けされた API は 5.0.0 ではなく 4.0.0 で削除されるようになりました。
+
+##### ScalarDB GraphQL
+
+- GraphQL `BigInt` スカラーが受け入れる値の範囲を緩和し、完全な Java `long` 範囲にしました。バックエンド固有の制限 (Cosmos DB とオブジェクトストレージは引き続き BigInt を `-2^53` から `2^53` に制限) は、GraphQL レイヤーではなく ScalarDB ストレージレイヤーで適用されるようになりました。
+
+##### ScalarDB SQL
+
+- 二段階コミットインターフェーストランザクション内のスレッドプール管理を改善し、Spring Data JDBC for ScalarDB での潜在的なスターベーション問題を回避しました。
+- ワンショットクエリ実行用のワン操作モードサポートを追加し、SQL クエリを単一操作として表現できる場合は明示的なトランザクション begin/commit をスキップしてパフォーマンスを向上させました。
+- TIME (マイクロ秒精度)、TIMESTAMP (ミリ秒精度)、TIMESTAMPTZ (ミリ秒精度) 列の値を挿入または更新する際、範囲外の精度は例外をスローするのではなく切り捨てられるようになりました。
+- CLI モジュール用の shadow jar が不必要に GitHub Packages に公開される問題を修正しました。
+- TIMESTAMPTZ リテラルを更新し、UTC タイムゾーン `Z` 文字の前のスペース文字をオプションにしました。例えば、`2021-03-04 12:30:45.123Z` が現在の形式 `2021-03-04 12:30:45.123 Z` に加えて受け入れられるようになりました。また、TIMESTAMPTZ 列を選択する際、値は `Z` の前にスペースを入れずに表示されます。
+- SQL ステートメントビルダー API をリファクタリングし、型安全性とエルゴノミクスを改善しました。`SelectStatementBuilder` は SQL 句の順序を型レベルで強制するようになり、`having()` は `groupBy()` の後にのみ呼び出し可能になります。また HAVING は WHERE と同じ流暢な `.and(...)` / `.or(...)` チェーンをサポートします。`Having.of(...)` ファクトリーが `Having.create(...)` に統合されました。`CreateUserStatementBuilder` / `AlterUserStatementBuilder` は、前述のオーバーロードされた `with(...)` に代わって、明示的な `withPassword()` / `withSuperuser()` / `withNoSuperuser()` メソッドが公開されます。`UserOption` 列挙型が削除され、`CreateUserStatement` / `AlterUserStatement` の nullable `superuser` ブール値に置き換わりました。`FunctionRef` は一般的な集計用の便利なファクトリー (`count()`、`sum(...)`、`avg(...)`、`min(...)`、`max(...)`) を提供するようになりました。
+
+#### バグの修正
+
+##### ScalarDB Cluster
+
+- `GRANT ROLE` コマンドをべき等にしました。重複する付与を許可し、再付与時に `WITH ADMIN OPTION` にアップグレードされるようになりました。
+- `scalar-metering` をアップグレードして、ScalarDB Cluster が Omnistrate 環境にデプロイされない問題を修正しました。
+- トランザクションの有効期限が切れた場合に一時停止機能が正しく機能しなかったバグを修正しました。
+- piggyback commit を使用したバッチ操作が、コミット競合が発生した場合に `CrudException` の代わりに `CrudConflictException` をスローする問題を修正しました。これにより、クライアントがコミット競合を適切に検出して処理できるようになります。
+- piggyback commit を使用した `batch()` が予期しない gRPC エラーで `CrudException` の代わりに `UnknownTransactionStatusException` をスローするバグを修正しました。piggyback commit が有効な場合、トランザクションステータスが実際には不明であるにもかかわらず、これがクライアント側で誤ったエラー処理を引き起こす可能性がありました。
+- セキュリティ問題を修正するため `grpc_health_probe` をアップグレードしました: [CVE-2025-68121](https://github.com/advisories/GHSA-h355-32pf-p2xm "CVE-2025-68121")、[CVE-2025-61726](https://github.com/advisories/GHSA-gm9r-q53w-2gh4 "CVE-2025-61726")、[CVE-2025-61728](https://github.com/advisories/GHSA-g9q4-qjx4-2v7q "CVE-2025-61728")、[CVE-2025-61729](https://github.com/advisories/GHSA-7c64-f9jr-v9h2 "CVE-2025-61729")、および [CVE-2025-61730](https://github.com/advisories/GHSA-gr56-3gp6-6gmj "CVE-2025-61730")
+- Kubernetes Java Client から `com.microsoft.azure:adal4j` を除外してセキュリティ問題を修正しました: [CVE-2023-52428](https://github.com/advisories/GHSA-gvpg-vgmx-xg6w "CVE-2023-52428")、[CVE-2021-31684](https://github.com/advisories/GHSA-fg2v-w576-w4v3 "CVE-2021-31684")、および [CVE-2023-1370](https://github.com/advisories/GHSA-493p-pfq6-5258 "CVE-2023-1370")
+- セキュリティ問題を修正するため Jackson ライブラリをアップグレードしました: [GHSA-72hv-8253-57qq](https://github.com/advisories/GHSA-72hv-8253-57qq "GHSA-72hv-8253-57qq")
+- セキュリティ問題を修正するため `grpc_health_probe` をアップグレードしました: [CVE-2025-59250](https://github.com/advisories/GHSA-m494-w24q-6f7w "CVE-2025-59250") および [CVE-2026-25679](https://github.com/advisories/GHSA-j3gx-2473-5fp8 "CVE-2026-25679")
+- セキュリティ問題を修正するため Netty ライブラリをアップグレードしました: [CVE-2026-33870](https://github.com/advisories/GHSA-pwqr-wmgm-9rr8 "CVE-2026-33870") および [CVE-2026-33871](https://github.com/advisories/GHSA-w9fj-cfpg-grvv "CVE-2026-33871")
+- ワンショットバッチ操作が GateKept トランザクションマネージャーで一時停止制御をバイパスするバグを修正しました。
+- セキュリティ問題を修正するため `grpc_health_probe` をアップグレードしました: [CVE-2026-34986](https://github.com/advisories/GHSA-78h2-9frx-2jm8 "CVE-2026-34986")
+
+##### ScalarDB SQL
+
+- ORDER BY および HAVING 句で曖昧な列名が検出されました。
+- `StatementUtils.appendTerm()` で `DATE`、`TIME`、`TIMESTAMP`、および `TIMESTAMPTZ` の値を処理する際に発生していた `ClassCastException` を修正しました。これらの値は、String に誤ってキャストされるのではなく、文字列リテラルとして正しくフォーマットされるようになりました。
+- `SelectStatement.toSql()` を修正し、`SUM()` および `COUNT()` などの集計関数を使用した ORDER BY 句を正しく生成するようにしました。以前は列ベースの順序付けのみが処理され、関数ベースの順序付けが使用される場合に不正な SQL 出力が生成されていました。
+- CREATE TABLE ステートメントで重複する列名が許可されるバグを修正しました。
+- 時間関連の型フォーマッターで厳密な日付検証が欠落していた問題を修正しました。これにより、無効な日付 (例: 2月30日) が拒否されずに静かに受け入れられる可能性がありました。
+- `ResultSet.getObject` は BLOB 列で `java.sql.Blob` を返すようになり、`ResultSet.getBlob`、`ResultSet.getBinaryStream`、および複数の `PreparedStatement.setBlob` / `setBinaryStream` オーバーロードがサポートされるようになりました。`ResultSetMetaData.getColumnType` は FLOAT 列で `Types.REAL` (以前は `Types.FLOAT`) を返すようになりました。`ResultSet.getString` は JDBC 仕様に準拠して、SQL NULL に対してリテラル文字列 `"null"` ではなく Java `null` を返すようになりました。付随的な効果として、SQL CLI は BLOB 値を `[B@xxxxxxxx` ではなく `X'...'` 16進リテラルとしてレンダリングします。
+- `CachedMetadata#invalidateNamespaceNamesCache()` が実際に名前空間のキャッシュリストを無効にしなかった問題を修正しました。これにより `SHOW NAMESPACES` および関連操作がキャッシュ TTL が期限切れになるまで古い結果を返す可能性がありました。
