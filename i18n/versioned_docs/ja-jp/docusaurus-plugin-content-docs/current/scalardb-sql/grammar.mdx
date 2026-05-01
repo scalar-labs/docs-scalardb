@@ -321,11 +321,10 @@ CreateTableStatement statement4 =
 
 `CREATE INDEX` コマンドは、テーブルにセカンダリインデックスを作成します。
 
-:::note
+:::warning
 
-次の場合、テーブルにセカンダリインデックスを作成することはできません:
-- 列が暗号化されている場合。
-- テーブルが Object Storage 上にある場合。
+- 列が暗号化されている場合、テーブルにセカンダリインデックスを作成することはできません。
+- Consensus Commit を使用している場合、`CREATE INDEX` はコンパニオン before-image セカンダリインデックスも作成します。詳細については、[インデックスベース読み取りの正確性](../consensus-commit.mdx#インデックスベース読み取りの正確性)を参照してください。
 
 :::
 
@@ -403,6 +402,12 @@ TruncateTableStatement statement = StatementBuilder.truncateTable("ns", "tbl").b
 ### DROP INDEX
 
 `DROP INDEX` コマンドはセカンダリインデックスを削除します。
+
+:::warning
+
+Consensus Commit を使用している場合、コンパニオン before-image セカンダリインデックスも削除されます。詳細については、[インデックスベース読み取りの正確性](../consensus-commit.mdx#インデックスベース読み取りの正確性)を参照してください。
+
+:::
 
 #### 文法
 
@@ -1433,6 +1438,9 @@ SELECT age, COUNT(height), SUM(height), AVG(height), MIN(height), MAX(height) FR
 -- 集約関数のエイリアスと HAVING を使用
 SELECT age, COUNT(*) AS cnt FROM ns.user GROUP BY age HAVING cnt > 1;
 
+-- 集約関数のエイリアスと複数条件の HAVING を使用
+SELECT age, COUNT(*) AS cnt FROM ns.user GROUP BY age HAVING cnt > 1 AND cnt < 100;
+
 -- HAVING で集約関数を直接使用
 SELECT age, COUNT(*) FROM ns.user GROUP BY age HAVING COUNT(*) > 1;
 
@@ -1445,18 +1453,14 @@ SELECT age, SUM(height) AS total_height FROM ns.user WHERE name LIKE 'A%' GROUP 
 ```java
 // 集約関数を使用
 SelectStatement statement1 =
-    StatementBuilder.select(
-            Projection.function(
-                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))))
+    StatementBuilder.select(Projection.function(FunctionRef.count()))
         .from("ns", "user")
         .build();
 
 // GROUP BY を使用
 SelectStatement statement2 =
     StatementBuilder.select(
-            Projection.column("age"),
-            Projection.function(
-                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))))
+            Projection.column("age"), Projection.function(FunctionRef.count()))
         .from("ns", "user")
         .groupBy(ColumnRef.of("age"))
         .build();
@@ -1465,16 +1469,11 @@ SelectStatement statement2 =
 SelectStatement statement3 =
     StatementBuilder.select(
             Projection.column("age"),
-            Projection.function(
-                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
-            Projection.function(
-                FunctionRef.of("SUM", ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
-            Projection.function(
-                FunctionRef.of("AVG", ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
-            Projection.function(
-                FunctionRef.of("MIN", ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))),
-            Projection.function(
-                FunctionRef.of("MAX", ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))))
+            Projection.function(FunctionRef.count("height")),
+            Projection.function(FunctionRef.sum("height")),
+            Projection.function(FunctionRef.avg("height")),
+            Projection.function(FunctionRef.min("height")),
+            Projection.function(FunctionRef.max("height")))
         .from("ns", "user")
         .groupBy(ColumnRef.of("age"))
         .build();
@@ -1483,8 +1482,7 @@ SelectStatement statement3 =
 SelectStatement statement4 =
     StatementBuilder.select(
             Projection.column("age"),
-            Projection.function(
-                FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))).as("cnt"))
+            Projection.function(FunctionRef.count()).as("cnt"))
         .from("ns", "user")
         .groupBy(ColumnRef.of("age"))
         .having(HavingPredicate.column("cnt").isGreaterThan(Value.of(1L)))
@@ -1492,18 +1490,27 @@ SelectStatement statement4 =
 
 // HAVING で集約関数を直接使用
 SelectStatement statement5 =
-    StatementBuilder.select(Projection.column("age"), Projection.function(FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))))
+    StatementBuilder.select(Projection.column("age"), Projection.function(FunctionRef.count()))
         .from("ns", "user")
         .groupBy(ColumnRef.of("age"))
-        .having(HavingPredicate.function(FunctionRef.of("COUNT", ImmutableList.of(FunctionRef.StarFunctionArg.create()))).isGreaterThan(Value.of(1L)))
+        .having(HavingPredicate.function(FunctionRef.count()).isGreaterThan(Value.of(1L)))
+        .build();
+
+// 集約関数のエイリアスと複数条件の HAVING を使用
+SelectStatement statement6 =
+    StatementBuilder.select(
+            Projection.column("age"), Projection.function(FunctionRef.count()).as("cnt"))
+        .from("ns", "user")
+        .groupBy(ColumnRef.of("age"))
+        .having(HavingPredicate.column("cnt").isGreaterThan(Value.of(1L)))
+        .and(HavingPredicate.column("cnt").isLessThan(Value.of(100L)))
         .build();
 
 // GROUP BY、WHERE、ORDER BY でエイリアスを使用、および LIMIT を使用
-SelectStatement statement6 =
+SelectStatement statement7 =
     StatementBuilder.select(
             Projection.column("age"),
-            Projection.function(
-                    FunctionRef.of("SUM", ImmutableList.of(FunctionRef.ColumnFunctionArg.create(ColumnRef.of("height"))))).as("total_height"))
+            Projection.function(FunctionRef.sum("height")).as("total_height"))
         .from("ns", "user")
         .where(Predicate.column("name").isLike(Value.of("A%")))
         .groupBy(ColumnRef.of("age"))
@@ -2315,15 +2322,21 @@ DeleteStatement statement9 =
 
 ### CREATE USER
 
-`CREATE USER` コマンドは、指定されたユーザー名、パスワード、およびユーザー属性を持つ新しいユーザーを作成します。
+`CREATE USER` コマンドは、指定されたユーザー名、パスワード、認証方式、およびユーザー属性を持つ新しいユーザーを作成します。
 
 #### 文法
 
 ```sql
-CREATE USER <username> [WITH] {PASSWORD <password> | SUPERUSER | NO_SUPERUSER} ...
+CREATE USER <username> [WITH] {PASSWORD <password> | AUTH_METHOD <authentication_method_list> | SUPERUSER | NO_SUPERUSER} ...
 ```
 
+`<authentication_method_list>` は、`USERPASS` と `OIDC` のうち1つ以上をカンマ区切りで指定します。
+
+`PASSWORD <password>` 句と `AUTH_METHOD` 句は独立しています。`PASSWORD <password>` 句はユーザーのパスワード資格情報を設定し、`AUTH_METHOD` 句はユーザーに対して有効な認証方式を制御します。
+
 - ユーザーにパスワードを指定しない場合、ユーザーはパスワードなしで作成されます。
+- `AUTH_METHOD` 句を指定すると、指定された認証方式でユーザーが作成されます。
+- `AUTH_METHOD` 句を指定しない場合、デフォルトの認証方式 (`USERPASS`) が使用されます。
 - ユーザーに `SUPERUSER` 属性を指定すると、ユーザーはスーパーユーザーになります。
 - ユーザーに `NO_SUPERUSER` 属性を指定すると、ユーザーは通常のユーザーになります。
 - ユーザーに `SUPERUSER` または `NO_SUPERUSER` のどちらも指定しない場合、ユーザーは通常のユーザーになります。
@@ -2341,32 +2354,60 @@ CREATE USER user2 WITH PASSWORD 'password2';
 
 -- Create a user without a password.
 CREATE USER user3;
+
+-- Create a user with the USERPASS authentication method.
+CREATE USER user4 AUTH_METHOD USERPASS;
+
+-- Create a user with both USERPASS and OIDC authentication methods.
+CREATE USER user5 AUTH_METHOD USERPASS, OIDC;
+
+-- Create a user with a password and the OIDC authentication method as a superuser.
+CREATE USER user6 WITH PASSWORD 'password6' AUTH_METHOD OIDC SUPERUSER;
 ```
 
 `CREATE USER` のステートメントオブジェクトを構築する例は次のとおりです。
 
 ```java
-// Create a user with a password and the `SUPERUSER` attribute.
+// Create a user with a password as a superuser.
 CreateUserStatement statement1 =
-    StatementBuilder.createUser("user1").with("password", UserOption.SUPERUSER).build();
+    StatementBuilder.createUser("user1").withPassword("password1").withSuperuser().build();
 
 // Create a user with a password.
-CreateUserStatement statement2 = StatementBuilder.createUser("user1").with("password").build();
+CreateUserStatement statement2 =
+    StatementBuilder.createUser("user2").withPassword("password2").build();
 
 // Create a user without a password.
-CreateUserStatement statement3 = StatementBuilder.createUser("user1").build();
+CreateUserStatement statement3 = StatementBuilder.createUser("user3").build();
+
+// Create a user with the OIDC authentication method.
+CreateUserStatement statement4 =
+    StatementBuilder.createUser("user1")
+        .withAuthenticationMethods(Set.of(AuthenticationMethod.OIDC))
+        .build();
+
+// Create a user with both PASSWORD and OIDC authentication methods.
+CreateUserStatement statement5 =
+    StatementBuilder.createUser("user1")
+        .withAuthenticationMethods(
+            Set.of(AuthenticationMethod.USERPASS, AuthenticationMethod.OIDC))
+        .build();
 ```
 
 ### ALTER USER
 
-`ALTER USER` コマンドは、指定されたユーザーのパスワードとユーザー属性を変更します。
+`ALTER USER` コマンドは、指定されたユーザーのパスワード、認証方式、およびユーザー属性を変更します。
 
 #### 文法
 
 ```sql
-ALTER USER <username> [WITH] {PASSWORD <password> | SUPERUSER | NO_SUPERUSER} ...
+ALTER USER <username> [WITH] {PASSWORD <password> | AUTH_METHOD <authentication_method_list> | SUPERUSER | NO_SUPERUSER} ...
 ```
 
+`<authentication_method_list>` は、`NONE` または `USERPASS` と `OIDC` のうち1つ以上をカンマ区切りで指定します。
+
+- `AUTH_METHOD` 句を指定すると、ユーザーの認証方式が指定された方式に更新されます。
+- `AUTH_METHOD NONE` を指定すると、ユーザーからすべての認証方式が削除されます。
+- `AUTH_METHOD` 句を指定しない場合、ユーザーの現在の認証方式は変更されません。
 - ユーザーに `SUPERUSER` 属性を指定すると、ユーザーはスーパーユーザーになります。
 - ユーザーに `NO_SUPERUSER` 属性を指定すると、ユーザーは通常のユーザーになります。
 
@@ -2380,17 +2421,35 @@ ALTER USER user1 WITH PASSWORD 'password1';
 
 -- Change a user to a superuser.
 ALTER USER user1 WITH SUPERUSER;
+
+-- Change a user's authentication method to OIDC.
+ALTER USER user1 AUTH_METHOD OIDC;
+
+-- Clear all authentication methods from a user.
+ALTER USER user1 AUTH_METHOD NONE;
 ```
 
 `ALTER USER` のステートメントオブジェクトを構築する例は次のとおりです。
 
 ```java
 // Change the password of a user.
-AlterUserStatement statement1 = StatementBuilder.alterUser("user1").with("password2").build();
+AlterUserStatement statement1 =
+    StatementBuilder.alterUser("user1").withPassword("password1").build();
 
 // Change a user to a superuser.
-AlterUserStatement statement2 =
-        StatementBuilder.alterUser("user1").with(UserOption.SUPERUSER).build();
+AlterUserStatement statement2 = StatementBuilder.alterUser("user1").withSuperuser().build();
+
+// Change a user's authentication method to OIDC.
+AlterUserStatement statement3 =
+        StatementBuilder.alterUser("user1")
+            .withAuthenticationMethods(Set.of(AuthenticationMethod.OIDC))
+            .build();
+
+// Clear all authentication methods from a user.
+AlterUserStatement statement4 =
+        StatementBuilder.alterUser("user1")
+            .withAuthenticationMethods(Set.of())
+            .build();
 ```
 
 ### DROP USER
@@ -3980,6 +4039,7 @@ ResumeStatement statement = StatementBuilder.resume("id").build();
 
 - `username`: `TEXT` - ユーザー名
 - `isSuperuser`: `BOOLEAN` - ユーザーがスーパーユーザーであるかどうか
+- `authenticationMethods`: `TEXT` - 設定されている認証方式 (例: `USERPASS`、`USERPASS, OIDC`)
 
 #### 文法
 
