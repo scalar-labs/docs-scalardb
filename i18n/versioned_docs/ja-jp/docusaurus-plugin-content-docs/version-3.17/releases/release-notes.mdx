@@ -146,6 +146,12 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 - トランザクションが期限切れになった際にポーズ機能が正しく動作しないバグを修正しました。
 - scalar-metering をアップグレードすることで、ScalarDB Cluster が Omnistrate 環境にデプロイできないバグを修正しました。
 
+### ScalarDB Analytics
+
+#### バグの修正
+
+- Azure Synapse Analytics との互換性のためのリロケーションルールを追加しました。
+
 ## v3.17.0
 
 **発売日:** 2025年11月26日
@@ -250,3 +256,27 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 - ワンフェーズコミット最適化が有効な場合にレプリケーション機能が開始されないようにバリデーションを追加しました。
 - 重複する列名が存在する場合に SQL API の `ResultSet` が不正な結果を返すバグを修正しました。
 - セキュリティ問題を修正するために `grpc_health_probe` をアップグレードしました: [CVE-2025-47907](https://github.com/advisories/GHSA-j5pm-7495-qmr3 "CVE-2025-47907")、[CVE-2025-58183](https://github.com/advisories/GHSA-9gcr-gp5f-jw27 "CVE-2025-58183")、[CVE-2025-58186](https://github.com/advisories/GHSA-rjcg-56ph-3qvg "CVE-2025-58186")、[CVE-2025-58187](https://github.com/advisories/GHSA-frhw-mqj2-wxw2 "CVE-2025-58187")、および [CVE-2025-58188](https://github.com/advisories/GHSA-7wwx-xj66-r44x "CVE-2025-58188")。
+
+### ScalarDB Analytics
+
+#### 機能強化
+
+- プログラムによるサーバーアクセスのための Java クライアント SDK。
+- `${file:...}` 構文を使用したプロバイダー JSON 内のファイル参照の置換。
+- CLI およびサーバー用のマルチプラットフォーム Docker イメージ (ARM64/AMD64)。
+- 統合テストのためのデータベースバージョンのカバレッジを拡大。
+
+#### 改善点
+
+- Spark モジュールを Scala に移行し、Client SDK 統合および Maven Central への公開を行いました。
+- サーバーのデータベースアクセスを ScalarDB SQL に移行しました。
+- クライアント側モジュール (SDK、gRPC) の Java 8 互換性を向上させました。
+- 将来のプラグインサポートのためにデータソースプロバイダーのアーキテクチャをリファクタリングしました。
+- CLI のデータソース登録コマンドの一貫性を他のサブコマンドと改善しました。
+- ScalarDB プロバイダーがファイルパスではなく埋め込みマップとして構成を受け取るように変更しました。
+- ビュー機能を削除しました。
+
+#### バグの修正
+
+- 名前空間が空の場合にデータソースの削除が失敗する問題を修正しました。
+- システムユーザーの Oracle スキーマ解決ルールを修正しました。
