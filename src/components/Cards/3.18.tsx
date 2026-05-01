@@ -25,18 +25,18 @@ const recentFeatures = [
       // To add a label, use the format ['label1', 'label2'].
       {
         cell: 0, // First cell
-        links: ['consensus-commit#transaction-metadata-decoupling'],
-        labels: ['Transaction Metadata Decoupling']
+        links: ['scalardb-cluster/integrate-oidc-for-access-control'],
+        labels: ['Integrate OIDC for Access Control']
       },
       {
         cell: 1, // Second cell
-        links: ['scalardb-cluster/remote-replication'],
-        labels: ['Replicate Data for High Availability']
+        links: ['scalardb-analytics/authentication-and-authorization'],
+        labels: ['Authenticate and Authorize Users in ScalarDB Analytics']
       },
       {
         cell: 2, // Third cell
-        links: ['scalardb-mcp-server/getting-started-with-scalardb-mcp-server'],
-        labels: ['Getting Started with ScalarDB MCP Server']
+        links: ['consensus-commit#transaction-metadata-decoupling'],
+        labels: ['Transaction Metadata Decoupling']
       }
     ]
   }
