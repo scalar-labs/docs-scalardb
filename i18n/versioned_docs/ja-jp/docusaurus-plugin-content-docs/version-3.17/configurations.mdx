@@ -666,6 +666,18 @@ ScalarDB で使用できる追加の設定は次のとおりです。
 - **説明:** Consensus Commit を使用している場合に、`true` に設定すると、`Get` および `Scan` 操作の結果にトランザクションメタデータが含まれます。特定のテーブルのトランザクションメタデータ列の詳細を表示するには、`DistributedTransactionAdmin.getTableMetadata()` メソッドを使用します。このメソッドは、トランザクションメタデータ列が追加されたテーブルメタデータを返します。この設定を使用すると、トランザクション関連の問題を調査するのに役立ちます。
 - **デフォルト値:** `false`
 
+### `consensus_commit.index.eventually_consistent_read.enabled`
+
+- **フィールド:** `scalar.db.consensus_commit.index.eventually_consistent_read.enabled`
+- **説明:** Consensus Commit を使用している場合に、`true` に設定すると、before-image インデックスチェックがスキップされ、インデックスベース読み取りは、インデックス列が同時に更新されているレコードを見逃す可能性があります。
+- **デフォルト値:** `false`
+
+:::warning
+
+これは後方互換性オプションであり、**新しいワークロードには推奨されません**。詳細については、[インデックスベース読み取りの正確性](consensus-commit.mdx#インデックスベース読み取りの正確性)を参照してください。
+
+:::
+
 ### `default_namespace_name`
 
 - **フィールド:** `scalar.db.default_namespace_name`
