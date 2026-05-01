@@ -366,6 +366,7 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
+                  key: 'develop-run-analytical-queries-advanced-configurations-and-operations-authentication-and-authorization-en-us-3.18',
                   id: 'scalardb-analytics/authentication-and-authorization',
                   label: 'Authenticate and Authorize Users',
                 },
@@ -609,6 +610,7 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
+                  key: 'develop-dotnet-references-authentication-and-authorization-en-us-3.18',
                   id: 'scalardb-cluster-dotnet-client-sdk/getting-started-with-auth',
                   label: 'Authenticate and Authorize Users',
                 },
