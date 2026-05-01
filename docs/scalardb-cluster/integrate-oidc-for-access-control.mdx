@@ -350,7 +350,11 @@ Exit the SQL CLI after completing the setup.
 
 ### 5. Configure Keycloak
 
-Set up Keycloak to issue JWT access tokens with the required claims. This step uses the Keycloak Admin REST API for reproducibility. First, set the following variables:
+Set up Keycloak to issue JWT access tokens with the required claims. You can use either the Keycloak Admin REST API or the admin console.
+
+#### Using the REST API
+
+First, set the following variables:
 
 ```console
 KEYCLOAK_URL="http://auth.localhost:8080"
@@ -368,7 +372,7 @@ ADMIN_TOKEN=$(curl -s "$KEYCLOAK_URL/realms/master/protocol/openid-connect/token
   -d "grant_type=password" | jq -r '.access_token')
 ```
 
-#### Create a realm
+Create a realm:
 
 ```console
 curl -s -X POST "$KEYCLOAK_URL/admin/realms" \
@@ -376,8 +380,6 @@ curl -s -X POST "$KEYCLOAK_URL/admin/realms" \
   -H "Content-Type: application/json" \
   -d '{"realm": "'"$REALM"'", "enabled": true}'
 ```
-
-#### Create a client
 
 Create a public client with the Resource Owner Password Credentials flow enabled and the `at+jwt` token type:
 
@@ -401,8 +403,6 @@ Get the internal UUID of the client:
 CLIENT_UUID=$(curl -s "$KEYCLOAK_URL/admin/realms/$REALM/clients?clientId=$CLIENT_ID" \
   -H "Authorization: Bearer $ADMIN_TOKEN" | jq -r '.[0].id')
 ```
-
-#### Add protocol mappers
 
 Add the audience mapper so that the JWT `aud` claim contains `scalardb`:
 
@@ -462,8 +462,6 @@ curl -s -X POST "$KEYCLOAK_URL/admin/realms/$REALM/clients/$CLIENT_UUID/protocol
   }'
 ```
 
-#### Create a user
-
 Create a Keycloak user with a password:
 
 ```console
@@ -480,6 +478,95 @@ curl -s -X POST "$KEYCLOAK_URL/admin/realms/$REALM/users" \
     "credentials": [{"type": "password", "value": "demo-password", "temporary": false}]
   }'
 ```
+
+:::note
+
+Keycloak 26 enables the `VERIFY_PROFILE` required action by default. If the user profile is incomplete (missing email, first name, or last name), the Resource Owner Password Credentials flow returns an `Account is not fully set up` error.
+
+:::
+
+#### Using the admin console
+
+If you prefer to use the Keycloak admin console, open `http://auth.localhost:8080` and log in with username `admin` and password `admin`. Then, follow these steps.
+
+**Create a realm:**
+
+1. In the top-left dropdown, select **Create Realm**.
+2. Set **Realm name** to `scalardb-demo`, then click **Create**.
+
+**Create a client:**
+
+1. Navigate to **Clients** > **Create client**.
+2. In **General Settings**, set:
+   - **Client type:** `OpenID Connect`
+   - **Client ID:** `scalardb-client`
+3. In **Capability config**, set:
+   - **Client authentication:** OFF (public client)
+   - **Authentication flow > Direct access grants:** ON
+4. Click **Save**.
+5. Open the **Advanced** tab, then under **Fine grain OpenID Connect configuration**, set:
+   - **Use "at+jwt" as access token header type:** ON
+6. Click **Save**.
+
+**Add an audience mapper:**
+
+1. Navigate to the client's **Client scopes** tab, then click `scalardb-client-dedicated`.
+2. Click **Mappers** > **Configure a new mapper**.
+3. Select **Audience** and set:
+
+   | Setting | Value |
+   |---|---|
+   | **Name** | `audience-mapper` |
+   | **Included Custom Audience** | `scalardb` |
+   | **Add to ID token** | OFF |
+   | **Add to access token** | ON |
+
+4. Click **Save**.
+
+**Add a ScalarDB username mapper:**
+
+1. In the same **Mappers** tab, click **Add mapper** > **By configuration**.
+2. Select **Hardcoded claim** and set:
+
+   | Setting | Value |
+   |---|---|
+   | **Name** | `scalardb-username-claim` |
+   | **Token Claim Name** | `scalardb_username` |
+   | **Claim value** | `svc_user` |
+   | **Claim JSON Type** | `String` |
+   | **Add to ID token** | OFF |
+   | **Add to access token** | ON |
+
+3. Click **Save**.
+
+**Add an ABAC claim mapper:**
+
+1. In the same **Mappers** tab, click **Add mapper** > **By configuration**.
+2. Select **Hardcoded claim** and set:
+
+   | Setting | Value |
+   |---|---|
+   | **Name** | `scalardb-abac-claim` |
+   | **Token Claim Name** | `scalardb_abac` |
+   | **Claim value** | `{"policies":{"demo_policy":{"level":{"max":"S"},"compartments":{"read":["HR"]},"groups":{"read":["EU","CS"]}}}}` |
+   | **Claim JSON Type** | `JSON` |
+   | **Add to ID token** | OFF |
+   | **Add to access token** | ON |
+
+3. Click **Save**.
+
+**Create a user:**
+
+1. Navigate to **Users** > **Add user**.
+2. Set the following fields:
+   - **Username:** `demo-user`
+   - **Email:** `demo-user@example.com`
+   - **Email verified:** ON
+   - **First name:** `Demo`
+   - **Last name:** `User`
+3. Click **Create**.
+4. Open the **Credentials** tab, then click **Set password**.
+5. Set **Password** to `demo-password` and **Temporary** to OFF, then click **Save**.
 
 :::note
 

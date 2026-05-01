@@ -342,6 +342,12 @@ The following properties have been removed and will be ignored if set. If these 
     - **Description:** Value of the date component used for storing `TIME` data in IBM Db2. Since the IBM Db2 TIMESTAMP type is used to store ScalarDB `TIME` type data because it provides fractional-second precision, ScalarDB stores `TIME` data with the same date component value for ease of comparison and sorting.
     - **Default value:** `1970-01-01`
 
+    <h4>`jdbc.spanner.time_column.default_date_component`</h4>
+
+    - **Field:** `scalar.db.jdbc.spanner.time_column.default_date_component`
+    - **Description:** Value of the date component used for storing `TIME` data in Spanner. Because Spanner's PostgreSQL dialect has no native TIME type, ScalarDB stores `TIME` data as Spanner `TIMESTAMP WITH TIME ZONE` data with a fixed date component to enable comparison and sorting.
+    - **Default value:** `1970-01-01`
+
 :::note
 
 **SQLite3**
@@ -372,6 +378,19 @@ If you are using AlloyDB on Google Cloud as a JDBC database and want to connect 
 
 ```properties
 scalar.db.contact_points=jdbc:postgresql:///<DATABASE_NAME>?socketFactory=com.google.cloud.alloydb.SocketFactory&alloydbInstanceName=<INSTANCE_NAME>&alloydbIpType=PUBLIC
+```
+
+**Spanner**
+
+Authentication to Spanner requires using a Google Cloud service account key in JSON format. Set `scalar.db.password` to the full content of the service account key file as a single line JSON. The `scalar.db.username` property is unused for Spanner. ScalarDB also sets the JVM system property `ENABLE_CREDENTIALS_PROVIDER=true`, which is required by the Spanner JDBC driver to authenticate.
+
+For example:
+
+```properties
+scalar.db.storage=jdbc
+scalar.db.contact_points=jdbc:cloudspanner:/projects/<PROJECT_ID>/instances/<INSTANCE_ID>/databases/<DATABASE_ID>
+scalar.db.username=
+scalar.db.password=<content-of-service-account-key.json>
 ```
 
 :::

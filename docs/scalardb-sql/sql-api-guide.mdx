@@ -112,6 +112,10 @@ Statement statement = StatementBuilder.<factory method>...;
 ResultSet resultSet = sqlSession.execute(statement);
 ```
 
+For mutation statements (`INSERT`, `UPSERT`, `UPDATE`, or `DELETE`), the returned `ResultSet` contains a single `Record` with one `INT` column named `updateCount`, which reports the number of rows affected.
+
+See [Execute transactions](#execute-transactions) for how DML, DDL, and DCL statements interact with transactions.
+
 `Statement` objects can be built by `StatementBuilder` that has factory methods for corresponding SQLs. For more details, see the <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql/statement/builder" className="StatementBuilder" /> page in the Javadoc and [ScalarDB SQL Grammar](grammar.mdx).
 
 ### Handle ResultSet objects
@@ -217,7 +221,7 @@ You can use `PreparedStatement` for queries that are executed multiple times in 
 
 ```java
 PreparedStatement preparedStatement = sqlSession.prepareStatement("<SQL>");
-ResultSet result = preparedStatement.execute();
+ResultSet result = sqlSession.execute(preparedStatement.bind());
 ```
 
 If you execute the same query a second time or later, the cached pre-parsed statement object is used.
@@ -225,7 +229,8 @@ Thus, you can gain a performance advantage with `PreparedStatement` when you exe
 If you execute a query only once, a prepared statement is inefficient because it requires extra processing.
 Consider using the `sqlSession.execute()` method instead in that case.
 
-Also, you can use `PreparedStatement` with bind parameters.
+Calling `bind(...)` on a `PreparedStatement` returns a `BoundStatement` that holds the parameter values. You then pass the `BoundStatement` to `sqlSession.execute()`.
+
 Parameters can be either positional or named:
 
 ```java
@@ -238,33 +243,83 @@ PreparedStatement preparedStatement2 =
     sqlSession.prepareStatement("INSERT INTO tbl (c1, c2) VALUES (:a, :b)");
 ```
 
-You can set parameters first and execute it:
+You can bind values in one call by passing them to `bind(...)`:
+
+```java
+// Positional values
+sqlSession.execute(preparedStatement1.bind(Value.ofInt(10), Value.ofText("value")));
+
+// Named values
+Map<String, Value> namedValues = new HashMap<>();
+namedValues.put("a", Value.ofInt(10));
+namedValues.put("b", Value.ofText("value"));
+sqlSession.execute(preparedStatement2.bind(namedValues));
+```
+
+Or you can use fluent setters on the `BoundStatement` returned by `bind()`:
 
 ```java
 // Positional setters
-preparedStatement1
-    .setInt(0, 10)
-    .setText(1, "value")
-    .execute();
+sqlSession.execute(
+    preparedStatement1.bind()
+        .setInt(0, 10)
+        .setText(1, "value"));
 
 // Named setters
-preparedStatement2
-    .setInt("a", 10)
-    .setText("b", "value")
-    .execute();
+sqlSession.execute(
+    preparedStatement2.bind()
+        .setInt("a", 10)
+        .setText("b", "value"));
 ```
 
-For more details, see the <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="PreparedStatement" /> page of the Javadoc.
+To wrap a plain SQL string as a `Statement`, for example when constructing a `BatchedStatements`, use `SimpleStatement.of("<SQL>")`.
+
+For more details, see the <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="PreparedStatement" />, <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql/statement" className="BoundStatement" />, and <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql/statement" className="SimpleStatement" /> pages of the Javadoc.
+
+### Execute batch statements
+
+When you need to execute multiple statements in a single round trip, use `sqlSession.executeBatch(...)`. This is useful for bulk inserts, updates, or mixed mutations against one or more namespaces.
+
+Use `BatchedStatements` to build a batch where each statement can carry its own default namespace:
+
+```java
+BatchedStatements batchedStatements =
+    BatchedStatements.builder()
+        .add(boundStatement1, "namespace1")
+        .add(boundStatement2, "namespace2")
+        .add(SimpleStatement.of("INSERT INTO tbl (c1, c2) VALUES (1, 'a')"))
+        .build();
+
+List<ResultSet> results = sqlSession.executeBatch(batchedStatements);
+```
+
+If every statement uses the session's default namespace, you can pass a `List<Statement>` instead:
+
+```java
+List<ResultSet> results =
+    sqlSession.executeBatch(Arrays.asList(boundStatement1, boundStatement2));
+```
+
+`executeBatch(...)` returns a `List<ResultSet>` containing one `ResultSet` per input statement, in the same order as the input.
+
+Batch execution accepts DML, DDL, and DCL statements. Command statements (`BEGIN`, `COMMIT`, `ROLLBACK`, and other transaction-control statements) will be rejected, so use the corresponding `SqlSession` methods instead. See [Execute transactions](#execute-transactions) for how DML, DDL, and DCL statements interact with transactions.
+
+For more details, see the <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="BatchedStatements" /> and <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="SqlStatementExecutable" /> pages of the Javadoc.
 
 ## Execute transactions
 
-In ScalarDB SQL, you can execute DML statements (SELECT/INSERT/UPDATE/DELETE) only in transactions.
-So before executing DML statements, you must begin a transaction.
+In ScalarDB SQL, DML statements (`SELECT`, `INSERT`, `UPSERT`, `UPDATE`, and `DELETE`) always run within a transaction. The transaction can be one you started explicitly with `sqlSession.begin()` or one that ScalarDB manages automatically:
 
-Note that you cannot execute statements other than DML statements transactionally.
-So even if you execute a non-DML statement after beginning a transaction, it is executed immediately, and it doesn't affect the transaction you have begun.
+- If a transaction is active (after `sqlSession.begin()`), both `sqlSession.execute(...)` and `sqlSession.executeBatch(...)` run their DML statements in that transaction.
+- If no transaction is active, each `sqlSession.execute(...)` call runs its DML statement in its own auto-managed transaction, and each `sqlSession.executeBatch(...)` call runs all DML statements in the batch atomically in a single auto-managed transaction.
 
-This section describes how to execute a transaction for each transaction mode: Transaction mode and Two-phase Commit Transaction mode.
+In addition to `begin()`, `SqlSession` provides other variants, such as `beginReadOnly()` for starting a read-only transaction and overloads that accept transaction attributes. For details, see the <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="SqlSession" /> page of the Javadoc.
+
+To make multiple DML statements from separate `execute(...)` calls atomic, you must begin an explicit transaction before executing them. `executeBatch(...)` provides atomicity across the DML statements in its batch without requiring an explicit transaction.
+
+DDL and DCL statements are never transactional. Even when called within an explicit transaction or as part of a batch, they are executed immediately and do not participate in any transaction.
+
+This section describes how to execute an explicit transaction for each transaction mode: Transaction mode and Two-phase Commit Transaction mode.
 
 ### Transaction Mode
 
@@ -314,7 +369,16 @@ Before reading this, please read [this document](../two-phase-commit-transaction
 To begin a transaction for a coordinator, you can do as follows:
 
 ```java
-String transactionId = sqlSession.begin();
+sqlSession.begin();
+```
+
+To retrieve the transaction ID that the coordinator hands to participants, use `getTransactionId()`:
+
+```java
+String transactionId =
+    sqlSession
+        .getTransactionId()
+        .orElseThrow(() -> new IllegalStateException("transaction ID is not available"));
 ```
 
 And to join a transaction for participants, you can do as follows:
@@ -374,4 +438,4 @@ For more details, see the <JavadocLink packageName="scalardb-sql" path="com/scal
 
 - [ScalarDB SQL Grammar](grammar.mdx)
 - [Two-phase Commit Transactions](../two-phase-commit-transactions.mdx)
-- [Javadoc for ScalarDB SQL](https://javadoc.io/doc/com.scalar-labs/scalardb-sql/3.17.0/index.html)
+- [Javadoc for ScalarDB SQL](https://javadoc.io/doc/com.scalar-labs/scalardb-sql/3.18.0/index.html)

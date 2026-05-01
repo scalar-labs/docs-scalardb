@@ -157,7 +157,7 @@ The Consensus Commit protocol supports three isolation levels: read-committed sn
   * Possible anomalies: read skew, write skew, read only
   * Faster than read-committed snapshot isolation because it could return non-latest committed records.
 
-As described above, serializable is preferable from a correctness perspective, but slower than read-committed snapshot isolation. Choose the appropriate one based on your application requirements and workload. For details on how to configure read-committed snapshot isolation, serializable, and read-committed, see [ScalarDB Configuration](configurations.mdx#basic-configurations).
+As described above, serializable is preferable from a correctness perspective, but slower than read-committed snapshot isolation. Choose the appropriate one based on your application requirements and workload. For details on how to configure read-committed snapshot isolation, serializable, and read-committed, see [ScalarDB Configuration](configurations.mdx#basic-configurations). You can also override the configured default isolation level on a per-transaction basis by using the `cc-transaction-isolation` attribute when beginning or starting a transaction. For details, see [Consensus Commit attributes](api-guide.mdx#consensus-commit-attributes).
 
 :::note
 

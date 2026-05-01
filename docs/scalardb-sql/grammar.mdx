@@ -962,7 +962,7 @@ SELECT c1, c2, c3, c4 FROM ns.tbl WHERE c4 = 100 LIMIT 10;
 -- With positional bind markers
 SELECT * FROM ns.tbl WHERE c1 = ? AND c2 > ? AND c2 <= ? ORDER BY c2 ASC, c3 DESC LIMIT ?;
 
--- With operations attributes
+-- With operation attributes
 SELECT * FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
 ```
 
@@ -1068,7 +1068,7 @@ SelectStatement statement7 =
         .limit(BindMarker.positional())
         .build();
 
-// With operations attributes
+// With operation attributes
 SelectStatement statement8 =
     StatementBuilder.select()
         .from("ns", "tbl")
@@ -1474,6 +1474,7 @@ operation_attributes: <operation attribute name>=<operation attribute value> [AN
 
 - You must specify a full primary key in `INSERT`.
 - You can specify `<literal>` to a bind marker (positional `?` and named `:<name>`). See the [Literal](#literal) section for the literal syntax.
+- You can specify operation attributes by using the `WITH` clause. For details on operation attributes, see [Operation attributes](../api-guide.mdx#operation-attributes).
 
 #### Examples
 
@@ -1488,6 +1489,9 @@ INSERT INTO tbl (c1, c2, c3, c4, c5) VALUES (?, ?, ?, ?, ?);
 
 -- Insert multiple records
 INSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100), (20, 'bbb', 4.56, 200);
+
+-- With operation attributes
+INSERT INTO ns.tbl (c1, c2, c3, c4, c5) VALUES (10, 'aaa', 1.23, 100, true) WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
 ```
 
 Examples of building statement objects for `INSERT` are as follows:
@@ -1516,6 +1520,14 @@ InsertStatement statement4 = StatementBuilder.insertInto("ns", "tbl")
     .columns("c1", "c2", "c3", "c4", "c5")
     .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
     .values(Value.ofInt(20), Value.ofText("bbb"), Value.of(2.46F), Value.of(200L), Value.of(false))
+    .build();
+
+// With operation attributes
+InsertStatement statement5 = StatementBuilder.insertInto("ns", "tbl")
+    .columns("c1", "c2", "c3", "c4", "c5")
+    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
+    .withAttribute("attribute1", "value1")
+    .withAttribute("attribute2", "value2")
     .build();
 ```
 
@@ -1577,7 +1589,7 @@ UPSERT INTO tbl (c1, c2, c3, c4, c5) VALUES (?, ?, ?, ?, ?);
 -- Upsert multiple records.
 UPSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100), (20, 'bbb', 4.56, 200);
 
--- With operations attributes
+-- With operation attributes
 UPSERT INTO ns.tbl (c1, c2, c3, c4, c5) VALUES (10, 'aaa', 1.23, 100, true) WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
 ```
 
@@ -1626,7 +1638,7 @@ UpsertStatement statement4 =
             Value.of(false))
         .build();
 
-// With operations attributes
+// With operation attributes
 UpsertStatement statement5 =
     StatementBuilder.upsertInto("ns", "tbl")
         .columns("c1", "c2", "c3", "c4", "c5")
@@ -1744,7 +1756,7 @@ UPDATE ns.tbl SET c4 = 200, c5 = false WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.2
 -- With positional bind markers
 UPDATE ns.tbl SET c4 = ?, c5 = ? WHERE c1 = ? AND c2 = ? AND c3 = ?;
 
--- With operations attributes
+-- With operation attributes
 UPDATE ns.tbl SET c4 = 200, c5 = false WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
 ```
 
@@ -1773,7 +1785,7 @@ UpdateStatement statement2 =
         .and(Predicate.column("c3").isEqualTo(BindMarker.positional()))
         .build();
 
-// With operations attributes
+// With operation attributes
 UpdateStatement statement3 =
     StatementBuilder.update("ns", "tbl")
         .set(
@@ -1990,7 +2002,7 @@ DELETE FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23;
 -- With positional bind markers
 DELETE FROM tbl WHERE c1 = ? AND c2 = ? AND c3 = ?;
 
--- With operations attributes
+-- With operation attributes
 DELETE FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
 ```
 
@@ -2013,7 +2025,7 @@ DeleteStatement statement2 =
         .and(Predicate.column("c3").isEqualTo(BindMarker.positional()))
         .build();
 
-// With operations attributes
+// With operation attributes
 DeleteStatement statement3 =
     StatementBuilder.deleteFrom("ns", "tbl")
         .where(Predicate.column("c1").isEqualTo(Value.of(10)))
@@ -2146,15 +2158,21 @@ DeleteStatement statement9 =
 
 ### CREATE USER
 
-The `CREATE USER` command creates a new user with the specified username, password, and user attributes.
+The `CREATE USER` command creates a new user with the specified username, password, authentication methods, and user attributes.
 
 #### Grammar
 
 ```sql
-CREATE USER <username> [WITH] {PASSWORD <password> | SUPERUSER | NO_SUPERUSER} ...
+CREATE USER <username> [WITH] {PASSWORD <password> | AUTH_METHOD <authentication_method_list> | SUPERUSER | NO_SUPERUSER} ...
 ```
 
+Where `<authentication_method_list>` is one or more of `USERPASS` and `OIDC`, separated by commas:
+
+The `PASSWORD <password>` clause and the `AUTH_METHOD` clause are independent. The `PASSWORD <password>` clause sets the user's password credential, while the `AUTH_METHOD` clause controls which authentication methods are enabled for the user.
+
 - If you don't specify a password for a user, the user is created without a password.
+- If you specify the `AUTH_METHOD` clause, the user is created with the specified authentication methods.
+- If you don't specify the `AUTH_METHOD` clause, the default authentication method (`USERPASS`) is used.
 - If you specify the `SUPERUSER` attribute for a user, the user becomes a superuser.
 - If you specify the `NO_SUPERUSER` attribute for a user, the user becomes a normal user.
 - If you don't specify either `SUPERUSER` or `NO_SUPERUSER` for a user, the user becomes a normal user.
@@ -2172,6 +2190,15 @@ CREATE USER user2 WITH PASSWORD 'password2';
 
 -- Create a user without a password.
 CREATE USER user3;
+
+-- Create a user with the USERPASS authentication method.
+CREATE USER user4 AUTH_METHOD USERPASS;
+
+-- Create a user with both USERPASS and OIDC authentication methods.
+CREATE USER user5 AUTH_METHOD USERPASS, OIDC;
+
+-- Create a user with a password and the OIDC authentication method as a superuser.
+CREATE USER user6 WITH PASSWORD 'password6' AUTH_METHOD OIDC SUPERUSER;
 ```
 
 Examples of building statement objects for `CREATE USER` are as follows:
@@ -2187,18 +2214,36 @@ CreateUserStatement statement2 =
 
 // Create a user without a password.
 CreateUserStatement statement3 = StatementBuilder.createUser("user3").build();
+
+// Create a user with the OIDC authentication method.
+CreateUserStatement statement4 =
+    StatementBuilder.createUser("user1")
+        .withAuthenticationMethods(Set.of(AuthenticationMethod.OIDC))
+        .build();
+
+// Create a user with both USERPASS and OIDC authentication methods.
+CreateUserStatement statement5 =
+    StatementBuilder.createUser("user1")
+        .withAuthenticationMethods(
+            Set.of(AuthenticationMethod.USERPASS, AuthenticationMethod.OIDC))
+        .build();
 ```
 
 ### ALTER USER
 
-The `ALTER USER` command changes the password and user attributes of the specified user.
+The `ALTER USER` command changes the password, authentication methods, and user attributes of the specified user.
 
 #### Grammar
 
 ```sql
-ALTER USER <username> [WITH] {PASSWORD <password> | SUPERUSER | NO_SUPERUSER} ...
+ALTER USER <username> [WITH] {PASSWORD <password> | AUTH_METHOD <authentication_method_list> | SUPERUSER | NO_SUPERUSER} ...
 ```
 
+Where `<authentication_method_list>` is `NONE` or one or more of `USERPASS` and `OIDC`, separated by commas:
+
+- If you specify the `AUTH_METHOD` clause, the user's authentication methods are updated to the specified methods.
+- If you specify `AUTH_METHOD NONE`, all authentication methods are cleared from the user.
+- If you don't specify the `AUTH_METHOD` clause, the user's current authentication methods remain unchanged.
 - If you specify the `SUPERUSER` attribute for a user, the user becomes a superuser.
 - If you specify the `NO_SUPERUSER` attribute for a user, the user becomes a normal user.
 
@@ -2212,6 +2257,12 @@ ALTER USER user1 WITH PASSWORD 'password1';
 
 -- Change a user to a superuser.
 ALTER USER user1 WITH SUPERUSER;
+
+-- Change a user's authentication method to OIDC.
+ALTER USER user1 AUTH_METHOD OIDC;
+
+-- Clear all authentication methods from a user.
+ALTER USER user1 AUTH_METHOD NONE;
 ```
 
 Examples of building statement objects for `ALTER USER` are as follows:
@@ -2223,6 +2274,18 @@ AlterUserStatement statement1 =
 
 // Change a user to a superuser.
 AlterUserStatement statement2 = StatementBuilder.alterUser("user1").withSuperuser().build();
+
+// Change a user's authentication method to OIDC.
+AlterUserStatement statement3 =
+        StatementBuilder.alterUser("user1")
+            .withAuthenticationMethods(Set.of(AuthenticationMethod.OIDC))
+            .build();
+
+// Clear all authentication methods from a user.
+AlterUserStatement statement4 =
+        StatementBuilder.alterUser("user1")
+            .withAuthenticationMethods(Set.of())
+            .build();
 ```
 
 ### DROP USER
@@ -2751,7 +2814,20 @@ BEGIN [READ ONLY | READ WRITE]
 
 #### Examples
 
-An example of building statement objects for `BEGIN` is as follows:
+Examples of `BEGIN` are as follows:
+
+```sql
+-- Begin a transaction
+BEGIN;
+
+-- Begin a transaction in read-only mode
+BEGIN READ ONLY;
+
+-- With operation attributes
+BEGIN WITH 'cc-transaction-isolation' = 'SNAPSHOT';
+```
+
+Examples of building statement objects for `BEGIN` are as follows:
 
 ```java
 // Begin a transaction.
@@ -2762,6 +2838,12 @@ BeginStatement statement2 = StatementBuilder.begin().readOnly().build();
 
 // Begin a transaction in read-write mode.
 BeginStatement statement3 = StatementBuilder.begin().readWrite().build();
+
+// With operation attributes
+BeginStatement statement4 =
+    StatementBuilder.begin()
+        .withAttribute("cc-transaction-isolation", "SNAPSHOT")
+        .build();
 ```
 
 ### START TRANSACTION
@@ -2784,7 +2866,20 @@ START TRANSACTION [READ ONLY | READ WRITE]
 
 #### Examples
 
-An example of building statement objects for `START TRANSACTION` is as follows:
+Examples of `START TRANSACTION` are as follows:
+
+```sql
+-- Start a transaction
+START TRANSACTION;
+
+-- Start a transaction in read-only mode
+START TRANSACTION READ ONLY;
+
+-- With operation attributes
+START TRANSACTION WITH 'cc-transaction-isolation' = 'SNAPSHOT';
+```
+
+Examples of building statement objects for `START TRANSACTION` are as follows:
 
 ```java
 // Start a transaction.
@@ -2795,6 +2890,12 @@ StartTransactionStatement statement2 = StatementBuilder.startTransaction().readO
 
 // Start a transaction in read-write mode.
 StartTransactionStatement statement3 = StatementBuilder.startTransaction().readWrite().build();
+
+// With operation attributes
+StartTransactionStatement statement4 =
+    StatementBuilder.startTransaction()
+        .withAttribute("cc-transaction-isolation", "SNAPSHOT")
+        .build();
 ```
 
 ### JOIN
@@ -3109,6 +3210,7 @@ This command returns the following columns:
 
 - `username`: `TEXT` - a username
 - `isSuperuser`: `BOOLEAN` - whether the user is a superuser
+- `authenticationMethods`: `TEXT` - the configured authentication methods (for example, `USERPASS`, `USERPASS, OIDC`)
 
 #### Grammar
 

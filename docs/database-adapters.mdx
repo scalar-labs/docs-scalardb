@@ -22,7 +22,7 @@ For the background on the logical data model of ScalarDB, see [Data Modeling](da
 
 ## JDBC adapter
 
-The JDBC adapter supports relational databases through JDBC connections. The following databases are supported: MySQL, MariaDB, TiDB, PostgreSQL, YugabyteDB, AlloyDB, Amazon Aurora (MySQL-compatible and PostgreSQL-compatible), Oracle Database, SQL Server, IBM Db2, and SQLite.
+The JDBC adapter supports relational databases through JDBC connections. The following databases are supported: MySQL, MariaDB, TiDB, PostgreSQL, YugabyteDB, AlloyDB, Amazon Aurora (MySQL-compatible and PostgreSQL-compatible), Oracle Database, SQL Server, IBM Db2, Spanner (PostgreSQL dialect), and SQLite.
 
 MariaDB, TiDB, and Amazon Aurora MySQL-compatible edition follow the same mapping as MySQL. YugabyteDB, AlloyDB, and Amazon Aurora PostgreSQL-compatible edition follow the same mapping as PostgreSQL.
 
@@ -37,6 +37,7 @@ How ScalarDB namespaces map to native database constructs depends on the RDBMS. 
 | Oracle Database | Schema (User) | In Oracle, creating a user automatically creates a schema of the same name. ScalarDB creates a dedicated user for each namespace, and tables are stored in the corresponding schema. |
 | SQL Server | Schema | Created within the connected database. |
 | IBM Db2 | Schema | Created within the connected database. |
+| Spanner (PostgreSQL dialect) | Schema | Created within the connected database. |
 | SQLite | Table name prefix | Since SQLite is a single-file database, the namespace is prepended to the table name with a `$` separator (for example, `my_namespace$my_table`). |
 
 ScalarDB table names map directly to database table names (with the exception of SQLite, which uses the prefixed format described above).
@@ -55,19 +56,19 @@ The ScalarDB partition key and clustering key columns together form the primary 
 
 The following table shows how ScalarDB data types map to native column types in each JDBC database.
 
-| ScalarDB | MySQL, MariaDB, TiDB | PostgreSQL, YugabyteDB | Oracle | SQL Server | Db2 | SQLite |
-|----------|----------------------|------------------------|--------|------------|-----|--------|
-| BOOLEAN | BOOLEAN | BOOLEAN | NUMBER(1) | BIT | BOOLEAN | BOOLEAN |
-| INT | INT | INT | NUMBER(10) | INT | INT | INT |
-| BIGINT | BIGINT | BIGINT | NUMBER(16) | BIGINT | BIGINT | BIGINT |
-| FLOAT | REAL | REAL | BINARY_FLOAT | FLOAT(24) | REAL | FLOAT |
-| DOUBLE | DOUBLE | DOUBLE PRECISION | BINARY_DOUBLE | FLOAT | DOUBLE | DOUBLE |
-| TEXT | LONGTEXT | TEXT | VARCHAR2(4000) | VARCHAR(8000) | VARCHAR(32672) | TEXT |
-| BLOB | LONGBLOB | BYTEA | BLOB | VARBINARY(8000) | BLOB(2G) | BLOB |
-| DATE | DATE | DATE | DATE | DATE | DATE | INT |
-| TIME | TIME(6) | TIME | TIMESTAMP(6) | TIME(6) | TIMESTAMP(6) | BIGINT |
-| TIMESTAMP | DATETIME(3) | TIMESTAMP | TIMESTAMP(3) | DATETIME2(3) | TIMESTAMP(3) | BIGINT |
-| TIMESTAMPTZ | DATETIME(3) | TIMESTAMP WITH TIME ZONE | TIMESTAMP(3) WITH TIME ZONE | DATETIMEOFFSET(3) | TIMESTAMP(3) | BIGINT |
+| ScalarDB | MySQL, MariaDB, TiDB | PostgreSQL, YugabyteDB | Oracle | Spanner (PostgreSQL dialect) | SQL Server | Db2 | SQLite |
+|----------|----------------------|------------------------|--------|---------|------------|-----|--------|
+| BOOLEAN | BOOLEAN | BOOLEAN | NUMBER(1) | BOOLEAN | BIT | BOOLEAN | BOOLEAN |
+| INT | INT | INT | NUMBER(10) | BIGINT | INT | INT | INT |
+| BIGINT | BIGINT | BIGINT | NUMBER(19) | BIGINT | BIGINT | BIGINT | BIGINT |
+| FLOAT | REAL | REAL | BINARY_FLOAT | FLOAT | FLOAT(24) | REAL | FLOAT |
+| DOUBLE | DOUBLE | DOUBLE PRECISION | BINARY_DOUBLE | DOUBLE PRECISION | FLOAT | DOUBLE | DOUBLE |
+| TEXT | LONGTEXT | TEXT | VARCHAR2(4000) | TEXT | VARCHAR(8000) | VARCHAR(32672) | TEXT |
+| BLOB | LONGBLOB | BYTEA | BLOB | BYTEA | VARBINARY(8000) | BLOB(2G) | BLOB |
+| DATE | DATE | DATE | DATE | DATE | DATE | DATE | INT |
+| TIME | TIME(6) | TIME | TIMESTAMP(6) | TIMESTAMP WITH TIME ZONE | TIME(6) | TIMESTAMP(6) | BIGINT |
+| TIMESTAMP | DATETIME(3) | TIMESTAMP | TIMESTAMP(3) | TIMESTAMP WITH TIME ZONE | DATETIME2(3) | TIMESTAMP(3) | BIGINT |
+| TIMESTAMPTZ | DATETIME(3) | TIMESTAMP WITH TIME ZONE | TIMESTAMP(3) WITH TIME ZONE | TIMESTAMP WITH TIME ZONE | DATETIMEOFFSET(3) | TIMESTAMP(3) | BIGINT |
 
 When TEXT or BLOB columns are used as a partition key, clustering key, or secondary index key, some databases use a smaller, fixed-size type instead of the default type shown above.
 
@@ -116,6 +117,13 @@ The following limitations apply to specific databases when using the JDBC adapte
 
 - TiDB does not support the SERIALIZABLE isolation level. ScalarDB uses REPEATABLE READ instead.
 - TiDB does not support ALTER COLUMN TYPE from BLOB to TEXT.
+
+**Spanner (PostgreSQL dialect):**
+
+- FLOAT columns cannot be used as a partition key, clustering key, or secondary index key.
+- Table and column renaming are not supported.
+- ALTER COLUMN TYPE is supported only for BLOB → TEXT conversions.
+- The LIKE expression escape character is fixed to `\` and cannot be configured or disabled.
 
 ## DynamoDB adapter
 
@@ -209,6 +217,7 @@ For the enforced value ranges of each ScalarDB data type, see [Value ranges and 
 ### Limitations
 
 - The Cosmos DB document size limit of 2 MB applies to each ScalarDB record, including any transaction metadata added by Consensus Commit.
+- BIGINT values are restricted to the range -2^53 to 2^53 because Cosmos DB stores numbers internally as double-precision floating-point, which can only represent integers exactly up to 2^53.
 - BLOB cannot be used as a clustering key.
 - Text values in partition key columns must not contain colons (`:`).
 - Primary key column values must not contain the following characters: `/`, `\`, `?`, `#`. These characters are [restricted by Cosmos DB resource IDs](https://learn.microsoft.com/en-us/dotnet/api/microsoft.azure.cosmos.databaseproperties.id?view=azure-dotnet#remarks).
@@ -291,6 +300,7 @@ For the enforced value ranges of each ScalarDB data type, see [Value ranges and 
 
 - Primary-key text values cannot contain `/` or `!`.
 - Secondary indexes are not supported at all. 
+- BIGINT values are restricted to the range -2^53 to 2^53 because numbers are serialized as JSON numbers, which can only represent integers exactly up to 2^53.
 - BLOB data larger than 1.5 GiB cannot be stored.
 - You must use a single region for the storage bucket or container.
 - Only certain storage classes are supported: S3 Standard for Amazon S3, Hot tier for Azure Blob Storage, and Standard for Google Cloud Storage. For details, see [Database Configurations](database-configurations.mdx).
@@ -300,13 +310,13 @@ For the enforced value ranges of each ScalarDB data type, see [Value ranges and 
 
 ## Value ranges and precision
 
-ScalarDB enforces consistent value ranges across all adapters, regardless of the underlying database's native capabilities. The following table shows the supported range and precision for each data type.
+ScalarDB enforces consistent value ranges across adapters in most cases. The following table shows the supported range and precision for each data type.
 
 | Data type | Range | Precision | Notes |
 |-----------|-------|-----------|-------|
 | BOOLEAN | `true` or `false` | | |
-| INT | -2,147,483,648 to 2,147,483,647 | | |
-| BIGINT | -2^53 to 2^53 | | ScalarDB restricts the range from the full 64-bit range. See the note below. |
+| INT | -2^31 to 2^31 - 1 | | |
+| BIGINT | -2^63 to 2^63 - 1 | | Restricted to -2^53 to 2^53 in the Cosmos DB for NoSQL and object storage adapters. |
 | FLOAT | -3.4028235E+38 to 3.4028235E+38 | ~7 decimal digits | |
 | DOUBLE | -1.7976931348623157E+308 to 1.7976931348623157E+308 | ~15 decimal digits | |
 | TEXT | Unlimited length | | Maximum size depends on the underlying database. |
@@ -315,12 +325,6 @@ ScalarDB enforces consistent value ranges across all adapters, regardless of the
 | TIME | 00:00:00.000000 to 23:59:59.999999 | Microsecond | |
 | TIMESTAMP | 1000-01-01T00:00:00.000 to 9999-12-31T23:59:59.999 | Millisecond | Without time zone. |
 | TIMESTAMPTZ | 1000-01-01T00:00:00.000Z to 9999-12-31T23:59:59.999Z | Millisecond | On the UTC time zone. |
-
-:::note
-
-The BIGINT range is limited to -2^53 to 2^53 (rather than the full 64-bit integer range) to ensure consistent behavior across all supported databases, some of which store large integers as floating-point numbers internally.
-
-:::
 
 TIMESTAMP represents a date and time without time zone information. TIMESTAMPTZ represents a date and time on the UTC time zone. Despite having similar names, these types have different semantics and are not interchangeable.
 
