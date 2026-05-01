@@ -148,6 +148,107 @@ await transaction.CommitAsync();
 await transaction.RollbackAsync();
 ```
 
+## SQL ステートメントをバッチで実行する
+
+`ExecuteBatchAsync` メソッドを使用すると、複数の SQL ステートメントを1回の RPC 呼び出しで実行でき、バッチ操作時のラウンドトリップのオーバーヘッドを削減できます。このメソッドは、トランザクションマネージャーとトランザクションオブジェクトの両方で使用できます。
+
+### トランザクションマネージャーを使用してバッチを実行する
+
+次のように、トランザクションマネージャーを使用して SQL ステートメントのバッチを直接実行できます。
+
+```c#
+using ScalarDB.Client.Builders.Sql;
+
+// ...
+
+var statements = new[]
+{
+    new SqlStatementBuilder()
+        .SetSql("INSERT INTO ns.statements (order_id, item_id, count) VALUES (:order_id, :item_id, :count)")
+        .AddParam("order_id", "1")
+        .AddParam("item_id", 1)
+        .AddParam("count", 5)
+        .Build(),
+    new SqlStatementBuilder()
+        .SetSql("INSERT INTO ns.statements (order_id, item_id, count) VALUES (:order_id, :item_id, :count)")
+        .AddParam("order_id", "2")
+        .AddParam("item_id", 2)
+        .AddParam("count", 10)
+        .Build()
+};
+
+var resultSets = await manager.ExecuteBatchAsync(statements);
+```
+
+### トランザクション内でバッチを実行する
+
+次のように、トランザクションの一部として SQL ステートメントのバッチを実行することもできます。
+
+```c#
+var transaction = await manager.BeginAsync();
+
+var resultSets = await transaction.ExecuteBatchAsync(statements);
+
+await transaction.CommitAsync();
+```
+
+結果は、入力ステートメントと同じ順序で `IReadOnlyList<IResultSet>` として返されます。`SELECT` ステートメントの場合、結果セットには取得されたレコードが含まれます。`INSERT`、`UPDATE`、`DELETE` ステートメントの場合、結果セットは空になります。
+
+次の例では、複数の `SELECT` ステートメントをバッチで実行し、結果を処理します。
+
+```c#
+var selectStatements = new[]
+{
+    new SqlStatementBuilder()
+        .SetSql("SELECT * FROM ns.statements WHERE order_id = :order_id")
+        .AddParam("order_id", "1")
+        .Build(),
+    new SqlStatementBuilder()
+        .SetSql("SELECT * FROM ns.statements WHERE order_id = :order_id")
+        .AddParam("order_id", "2")
+        .Build()
+};
+
+var resultSets = await transaction.ExecuteBatchAsync(selectStatements);
+
+for (var i = 0; i < resultSets.Count; i++)
+{
+    foreach (var record in resultSets[i].Records)
+    {
+        var itemId = record.GetValue<int>("item_id");
+        Console.WriteLine($"item_id: {itemId}");
+    }
+}
+```
+
+### 位置パラメータを使用する
+
+名前付きパラメータに加えて、次のように位置パラメータを使用することもできます。
+
+```c#
+var statements = new[]
+{
+    new SqlStatementBuilder()
+        .SetSql("SELECT * FROM ns.statements WHERE order_id = ? AND item_id = ?")
+        .AddParam("1")
+        .AddParam(1)
+        .Build(),
+    new SqlStatementBuilder()
+        .SetSql("SELECT * FROM ns.statements WHERE order_id = ? AND item_id = ?")
+        .AddParam("2")
+        .AddParam(2)
+        .Build()
+};
+
+var resultSets = await transaction.ExecuteBatchAsync(statements);
+```
+
+:::note
+
+`ExecuteBatchAsync` に空のコレクションを渡した場合、RPC 呼び出しは行われず、空のリストが返されます。
+
+:::
+
 ## メタデータを取得する
 
 次のように、Metadata プロパティを使用して ScalarDB のメタデータを取得できます。

@@ -1,0 +1,102 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB MCP Server ツールリファレンス
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+ScalarDB MCP Server は、20以上の専門的な MCP ツールを通じて包括的なデータベース操作を提供します。自然言語を使用して LLM と対話でき、LLM が自動的に適切なツールを選択して使用し、リクエストを満たします。これらのツールを理解することで、LLM があなたの代わりに実行できるデータベース操作を知ることができます。
+
+## 接続ツール
+
+ScalarDB 接続ステータスと設定を監視および確認します。以下のツールは CRUD と SQL の両方のモードで使用できます。
+
+| ツール | 説明 |
+|------|-------------|
+| `scalardb_connection_info` | 現在の接続ステータス、設定詳細、ヘルスチェック結果を取得。 |
+
+## スキーマ管理ツール
+
+ネームスペース、テーブル、インデックスを含むデータベース構造を作成、変更、検査します。以下のツールは CRUD モードで使用できます。
+
+| ツール | 説明 |
+|------|-------------|
+| `scalardb_create_namespace` | テーブルを整理するための新しいネームスペース/キースペースを作成。 |
+| `scalardb_drop_namespace` | 既存のネームスペースとそのすべてのテーブルを削除。 |
+| `scalardb_list_namespaces` | データベース内の利用可能なすべてのネームスペースをリスト。 |
+| `scalardb_create_table` | パーティションキー、クラスタリングキー、列を含む完全なスキーマ定義で新しいテーブルを作成。 |
+| `scalardb_drop_table` | 既存のテーブルとそのすべてのデータを削除。 |
+| `scalardb_truncate_table` | スキーマを保持したままテーブルからすべてのデータを削除。 |
+| `scalardb_describe_table` | 列、キー、メタデータを含む詳細なテーブルスキーマを取得。 |
+| `scalardb_list_tables` | 特定のネームスペース内のすべてのテーブルをリスト。 |
+| `scalardb_add_new_column` | 既存のテーブルスキーマに新しい列を追加。 |
+| `scalardb_create_index` | より高速なクエリのためにテーブル列にセカンダリインデックスを作成。 |
+| `scalardb_drop_index` | 既存のセカンダリインデックスを削除。 |
+
+## CRUD 操作ツール
+
+細かい制御と型安全性のために ScalarDB Java Client SDK を使用してデータ操作操作を実行します。以下のツールは CRUD モードで使用できます。
+
+| ツール | 説明 |
+|------|-------------|
+| `scalardb_get` | パーティションキー、クラスタリングキー、またはセカンダリインデックスを使用して特定のレコードを取得。 |
+| `scalardb_scan` | 柔軟なフィルタリング、順序付け、ページネーション機能でレコードをスキャン。 |
+| `scalardb_insert` | 自動競合検出で新しいレコードを挿入。 |
+| `scalardb_update` | 条件付き操作で既存のレコードを更新。 |
+| `scalardb_upsert` | 新しいレコードを挿入または既存のレコードを更新 (存在しない場合は挿入、存在する場合は更新)。 |
+| `scalardb_delete` | プライマリキーまたは条件ロジックを使用してレコードを削除。 |
+
+## トランザクション管理ツール
+
+適切な分離と一貫性保証で ScalarDB Java Client SDK を使用して ACID トランザクションを制御します。CRUD モードで使用できます。
+
+| ツール | 説明 |
+|------|-------------|
+| `scalardb_begin_transaction` | ACID 保証付きの新しい読み書きトランザクションを開始。 |
+| `scalardb_begin_readonly_transaction` | クエリ用に最適化された読み取り専用トランザクションを開始。 |
+| `scalardb_commit_transaction` | トランザクションをコミットし、すべての変更を永続化。 |
+| `scalardb_rollback_transaction` | トランザクションをロールバックし、すべての変更を元に戻す。 |
+
+## SQL ツール (ScalarDB Cluster のみ)
+
+ScalarDB SQL インターフェースを通じて SQL コマンドを直接実行します。以下のツールは SQL モードで使用できます。
+
+| ツール | 説明 |
+|------|-------------|
+| `scalardb_execute_sql` | 完全な SQL 構文サポートで SQL クエリを直接実行 (`SELECT`、`INSERT`、`UPDATE`、`DELETE`)。 |
+
+## コーディネータツール
+
+マルチデータベース一貫性のための分散トランザクションコーディネータテーブルを管理します。これらのツールは CRUD モードで使用できます。
+
+| ツール | 説明 |
+|------|-------------|
+| `scalardb_create_coordinator_tables` | 分散トランザクションに必要なコーディネータテーブルを作成。 |
+| `scalardb_drop_coordinator_tables` | 不要になったコーディネータテーブルを削除。 |
+| `scalardb_truncate_coordinator_tables` | 構造を保持したままコーディネータテーブルをクリア。 |
+
+## モード別ツール可用性
+
+選択した操作モードに応じて、異なるツールが使用できます。
+
+### SQL モード
+
+- **接続ツール:** 接続ステータスとヘルスを監視。
+- **SQL ツール:** ScalarDB SQL インターフェースを通じて SQL クエリを直接実行。
+- **使用例:** SQL 構文を使用する場合の ScalarDB Cluster デプロイメントに最適。
+
+### CRUD モード
+
+- **接続ツール:** 接続ステータスとヘルスを監視。
+- **スキーマ管理ツール:** ネームスペース、テーブル、インデックスを作成および管理。
+- **CRUD 操作ツール:** ScalarDB Java Client SDK でデータ操作を実行。
+- **トランザクション管理ツール:** プログラム的に ACID トランザクションを制御。
+- **コーディネータツール:** 分散トランザクション調整を管理。
+- **使用例:** ScalarDB Core に必要。

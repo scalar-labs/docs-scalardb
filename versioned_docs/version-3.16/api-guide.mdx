@@ -181,6 +181,12 @@ Map<String, String> options = ...;
 admin.createIndex("ns", "tbl", "c5", options);
 ```
 
+:::warning
+
+When using Consensus Commit, `createIndex()` on a non-primary-key column also creates a companion before-image secondary index. For details, see [Correctness of index-based reads](consensus-commit.mdx#correctness-of-index-based-reads).
+
+:::
+
 #### Creation options
 
 In the secondary index creation operations, you can specify options that are maps of option names and values (`Map<String, String>`). By using the options, you can set storage adapter–specific configurations.
@@ -245,6 +251,12 @@ admin.dropIndex("ns", "tbl", "c5");
 boolean ifExists = true;
 admin.dropIndex("ns", "tbl", "c5", ifExists);
 ```
+
+:::warning
+
+When using Consensus Commit, `dropIndex()` also drops the companion before-image secondary index. For details, see [Correctness of index-based reads](consensus-commit.mdx#correctness-of-index-based-reads).
+
+:::
 
 ### Drop a table
 
@@ -316,6 +328,12 @@ TableMetadata tableMetadata =
 Map<String, String> options = ...;
 admin.repairTable("ns", "tbl", tableMetadata, options);
 ```
+
+:::warning
+
+When using Consensus Commit, after upgrading to ScalarDB 3.16.5, 3.17.3, or 3.18.0 from an earlier version, you must run `repairTable()` on each existing table to create the companion before-image secondary indexes that index-based reads require. For details, see [Correctness of index-based reads](consensus-commit.mdx#correctness-of-index-based-reads).
+
+:::
 
 ### Specify operations for the Coordinator table
 

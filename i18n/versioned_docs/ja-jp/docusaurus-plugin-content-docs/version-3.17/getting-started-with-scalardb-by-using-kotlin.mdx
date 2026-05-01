@@ -1,0 +1,419 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# Kotlin を使って ScalarDB をはじめよう
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+この入門チュートリアルでは、ScalarDB で好みのデータベースを設定し、Kotlin を使用して基本的な電子マネーアプリケーションをセットアップする方法について説明します。Kotlin は Java との相互運用性を備えているため、Kotlin から直接 ScalarDB を使用できます。
+
+:::warning
+
+電子マネーアプリケーションはこのチュートリアル用に簡略化されており、実稼働環境には適していません。
+
+:::
+
+## このサンプルアプリケーションの前提条件
+
+ScalarDB は Java で記述されているため、環境に次のいずれかの Java Development Kit (JDK) がインストールされている必要があります。
+
+- [Eclipse Temurin](https://adoptium.net/temurin/releases/) の OpenJDK LTS バージョン (8、11、17、または 21)
+- [Docker](https://www.docker.com/get-started/) 20.10以降と [Docker Compose](https://docs.docker.com/compose/install/) V2以降
+
+:::note
+
+このサンプルアプリケーションは、Eclipse Temurin の OpenJDK でテストされています。ただし、ScalarDB 自体は、さまざまなベンダーの JDK ディストリビューションでテストされています。互換性のある JDK ディストリビューションを含む ScalarDB の要件の詳細については、[要件](./requirements.mdx)を参照してください。
+
+:::
+
+## ScalarDB サンプルリポジトリのクローンを作成する
+
+**Terminal** を開き、次のコマンドを実行して ScalarDB サンプルリポジトリのクローンを作成します。
+
+```console
+git clone https://github.com/scalar-labs/scalardb-samples
+```
+
+次に、次のコマンドを実行して、サンプルアプリケーションが含まれているディレクトリに移動します。
+
+```console
+cd scalardb-samples/scalardb-kotlin-sample
+```
+
+## データベースをセットアップする
+
+データベースを選択し、指示に従って ScalarDB 用に設定します。
+
+ScalarDB がサポートするデータベースの一覧については、[データベース](requirements.mdx#データベース)を参照してください。
+
+<Tabs groupId="databases" queryString>
+  <TabItem value="MySQL" label="MySQL" default>
+    <h3>MySQLをローカルで実行する</h3>
+
+    `scalardb-samples/scalardb-kotlin-sample` ディレクトリの `docker-compose.yml` ファイルを使用して、Docker Compose で MySQL を実行できます。
+
+    MySQL を起動するには、次のコマンドを実行します。
+
+    ```console
+    docker compose up -d mysql
+    ```
+
+    <h3>ScalarDB を設定する</h3>
+
+    `scalardb-samples/scalardb-kotlin-sample` ディレクトリの **database.properties** ファイルには、ScalarDB のデータベース設定が含まれています。**database.properties** ファイル内の MySQL のプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For MySQL
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:mysql://localhost:3306/
+    scalar.db.username=root
+    scalar.db.password=mysql
+    ```
+  </TabItem>
+  <TabItem value="PostgreSQL" label="PostgreSQL">
+    <h3>PostgreSQL をローカルで実行する</h3>
+
+    `scalardb-samples/scalardb-kotlin-sample` ディレクトリの `docker-compose.yml` ファイルを使用して、Docker Compose で PostgreSQL を実行できます。
+
+    PostgreSQL を起動するには、次のコマンドを実行します。
+
+    ```console
+    docker compose up -d postgres
+    ```
+
+    <h3>ScalarDB を設定する</h3>
+
+    `scalardb-samples/scalardb-kotlin-sample` ディレクトリの **database.properties** ファイルには、ScalarDB のデータベース設定が含まれています。**database.properties** ファイル内の PostgreSQL のプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For PostgreSQL
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:postgresql://localhost:5432/
+    scalar.db.username=postgres
+    scalar.db.password=postgres
+    ```
+  </TabItem>
+  <TabItem value="Oracle Database" label="Oracle Database">
+    <h3>Oracle Database をローカルで実行する</h3>
+
+    `scalardb-samples/scalardb-kotlin-sample` ディレクトリの `docker-compose.yml` ファイルを使用して、Docker Compose で Oracle Database を実行できます。
+
+    Oracle Database を起動するには、次のコマンドを実行します。
+
+    ```console
+    docker compose up -d oracle
+    ```
+
+    <h3>ScalarDB を設定する</h3>
+
+    `scalardb-samples/scalardb-kotlin-sample` ディレクトリの **database.properties** ファイルには、ScalarDB のデータベース設定が含まれています。**database.properties** ファイル内の Oracle データベースのプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For Oracle
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:oracle:thin:@//localhost:1521/FREEPDB1
+    scalar.db.username=SYSTEM
+    scalar.db.password=Oracle
+    ```
+  </TabItem>
+  <TabItem value="SQL Server" label="SQL Server">
+    <h3>SQL Server をローカルで実行する</h3>
+
+    `scalardb-samples/scalardb-kotlin-sample` ディレクトリの `docker-compose.yml` ファイルを使用して、Docker Compose で SQL Server を実行できます。
+
+    SQL Server を起動するには、次のコマンドを実行します。
+
+    ```console
+    docker compose up -d sqlserver
+    ```
+
+    <h3>ScalarDB を設定する</h3>
+
+    `scalardb-samples/scalardb-kotlin-sample` ディレクトリの **database.properties** ファイルには、ScalarDB のデータベース設定が含まれています。**database.properties** ファイル内の SQL Server のプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For SQL Server
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=jdbc:sqlserver://localhost:1433;encrypt=true;trustServerCertificate=true
+    scalar.db.username=sa
+    scalar.db.password=SqlServer22
+    ```
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    <h3>Amazon DynamoDB をローカルで実行する</h3>
+
+    `scalardb-samples/scalardb-kotlin-sample` ディレクトリの `docker-compose.yml` ファイルを使用して、Docker Compose で Amazon DynamoDB Local を実行できます。
+
+    Amazon DynamoDB Local を起動するには、次のコマンドを実行します。
+
+    ```console
+    docker compose up -d dynamodb
+    ```
+
+    <h3>ScalarDB を設定する</h3>
+
+    `scalardb-samples/scalardb-kotlin-sample` ディレクトリの **database.properties** ファイルには、ScalarDB のデータベース設定が含まれています。**database.properties** ファイル内の Amazon DynamoDB Local のプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For DynamoDB Local
+    scalar.db.storage=dynamo
+    scalar.db.contact_points=sample
+    scalar.db.username=sample
+    scalar.db.password=sample
+    scalar.db.dynamo.endpoint_override=http://localhost:8000
+    ```
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    Azure Cosmos DB for NoSQL を使用するには、Azure アカウントが必要です。Azure アカウントをお持ちでない場合は、[Azure Cosmos DB アカウントを作成する](https://learn.microsoft.com/ja-jp/azure/cosmos-db/nosql/quickstart-portal#create-account)にアクセスしてください。
+
+    <h3>Cosmos DB for NoSQL を設定する</h3>
+
+    [既定の整合性レベルを構成する](https://learn.microsoft.com/ja-jp/azure/cosmos-db/nosql/how-to-manage-consistency#configure-the-default-consistency-level)の公式ドキュメントに従って、**既定の整合性レベル**を**強力**に設定します。
+
+    <h3>ScalarDB を設定する</h3>
+
+    以下の手順では、ローカル環境に JDK が適切にインストールおよび設定されており、Azure で Cosmos DB for NoSQL アカウントが適切に設定されていることを前提としています。
+
+    `scalardb-samples/scalardb-kotlin-sample` ディレクトリの **database.properties** ファイルには、ScalarDB のデータベース設定が含まれています。`scalar.db.contact_points` と `scalar.db.password` の値は、説明に従って必ず変更してください。
+
+    ```properties
+    # For Cosmos DB
+    scalar.db.storage=cosmos
+    scalar.db.contact_points=<COSMOS_DB_FOR_NOSQL_URI>
+    scalar.db.password=<COSMOS_DB_FOR_NOSQL_KEY>
+    ```
+
+:::note
+
+Azure Cosmos DB アカウントの主キーまたはセカンダリキーを `scalar.db.password` の値として使用できます。
+
+:::
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    <h3>Cassandra をローカルで実行する</h3>
+
+    `scalardb-samples/scalardb-kotlin-sample` ディレクトリの `docker-compose.yml` ファイルを使用して、Docker Compose で Apache Cassandra を実行できます。
+
+    Apache Cassandra を起動するには、次のコマンドを実行します。
+
+    ```console
+    docker compose up -d cassandra
+    ```
+
+    <h3>ScalarDB を設定する</h3>
+
+    `scalardb-samples/scalardb-kotlin-sample` ディレクトリの **database.properties** ファイルには、ScalarDB のデータベース設定が含まれています。**database.properties** ファイル内の Cassandra のプロパティのコメントを解除して、設定が次のようになるようにしてください。
+
+    ```properties
+    # For Cassandra
+    scalar.db.storage=cassandra
+    scalar.db.contact_points=localhost
+    scalar.db.username=cassandra
+    scalar.db.password=cassandra
+    ```
+  </TabItem>
+</Tabs>
+
+## データベーススキーマをロードする
+
+アプリケーションでデータベーススキーマ (データを整理する方法) を定義する必要があります。サポートされているデータ型の詳細については、[ScalarDB と他のデータベース間のデータ型マッピング](schema-loader.mdx#scalardb-と他のデータベース間のデータ型マッピング)を参照してください。
+
+このチュートリアルでは、**schema.json** というファイルが `scalardb-samples/scalardb-kotlin-sample` ディレクトリに既に存在します。スキーマを適用するには、[`scalardb` Releases](https://github.com/scalar-labs/scalardb/releases) ページに移動し、使用している ScalarDB のバージョンに一致する ScalarDB Schema Loader を `scalardb-samples/scalardb-kotlin-sample` ディレクトリにダウンロードします。
+
+次に、データベースに基づいて、`<VERSION>` をダウンロードした ScalarDB Schema Loader のバージョンに置き換えて、次のコマンドを実行します。
+
+<Tabs groupId="databases" queryString>
+  <TabItem value="MySQL" label="MySQL" default>
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```
+
+:::note
+
+`transaction` が `true` に設定されたテーブルがスキーマ内に存在するため、`--coordinator` オプションが指定されています。スキーマの設定とロードの詳細については、[ScalarDB Schema Loader](schema-loader.mdx) を参照してください。
+
+:::
+  </TabItem>
+  <TabItem value="PostgreSQL" label="PostgreSQL">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```
+
+:::note
+
+`transaction` が `true` に設定されたテーブルがスキーマ内に存在するため、`--coordinator` オプションが指定されています。スキーマの設定とロードの詳細については、[ScalarDB Schema Loader](schema-loader.mdx) を参照してください。
+
+:::
+  </TabItem>
+  <TabItem value="Oracle Database" label="Oracle Database">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```
+
+:::note
+
+`transaction` が `true` に設定されたテーブルがスキーマ内に存在するため、`--coordinator` オプションが指定されています。スキーマの設定とロードの詳細については、[ScalarDB Schema Loader](schema-loader.mdx) を参照してください。
+
+:::
+  </TabItem>
+  <TabItem value="SQL Server" label="SQL Server">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```
+
+:::note
+
+`transaction` が `true` に設定されたテーブルがスキーマ内に存在するため、`--coordinator` オプションが指定されています。スキーマの設定とロードの詳細については、[ScalarDB Schema Loader](schema-loader.mdx) を参照してください。
+
+:::
+  </TabItem>
+  <TabItem value="DynamoDB" label="DynamoDB">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator --no-backup --no-scaling
+    ```
+
+:::note
+
+`transaction` が `true` に設定されたテーブルがスキーマ内に存在するため、`--coordinator` オプションが指定されています。スキーマの設定とロードの詳細については、[ScalarDB Schema Loader](schema-loader.mdx) を参照してください。
+
+また、Amazon DynamoDB Local は継続的なバックアップと自動スケーリングをサポートしていないため、`--no-backup` および `--no-scaling` オプションが指定されています。
+
+:::
+  </TabItem>
+  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator
+    ```
+
+:::note
+
+`transaction` が `true` に設定されたテーブルがスキーマ内に存在するため、`--coordinator` オプションが指定されています。スキーマの設定とロードの詳細については、[ScalarDB Schema Loader](schema-loader.mdx) を参照してください。
+
+:::
+  </TabItem>
+  <TabItem value="Cassandra" label="Cassandra">
+    ```console
+    java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator --replication-factor=1
+    ```
+
+:::note
+
+`transaction` が `true` に設定されたテーブルがスキーマ内に存在するため、`--coordinator` オプションが指定されています。スキーマの設定とロードの詳細については、[ScalarDB Schema Loader](schema-loader.mdx) を参照してください。
+
+また、`--replication-factor=1` オプションは Cassandra を使用する場合にのみ有効です。デフォルトのレプリケーション係数は `3` ですが、このチュートリアルではセットアップを容易にするために `1` が使用されているため、3つのノードではなく1つのノードを持つクラスターを準備するだけで済みます。ただし、レプリケーション係数 `1` は本番環境には適していないことに注意してください。
+
+:::
+  </TabItem>
+</Tabs>
+
+## 基本的な電子マネーアプリケーションでトランザクションを実行し、データを取得します
+
+スキーマをロードした後、クローンしたリポジトリに含まれる基本的な電子マネーアプリケーションでトランザクションを実行し、データを取得できます。
+
+アプリケーションは、次の種類のトランザクションをサポートしています:
+
+- アカウントを作成します。
+- アカウントに資金を追加します。
+- 2つのアカウント間で資金を送信します。
+- アカウント残高を取得します。
+
+:::note
+
+初めて Gradle コマンドを実行すると、Gradle によって必要なライブラリが自動的にインストールされます。
+
+:::
+
+### 残高のあるアカウントを作成する
+
+アカウント間で資金を送金するには、残高のあるアカウントが必要です。
+
+**customer1** の残高が **500** のアカウントを作成するには、次のコマンドを実行します。
+
+```console
+./gradlew run --args="-action charge -amount 500 -to customer1"
+```
+
+### 残高のないアカウントを作成する
+
+残高のあるアカウントを設定したら、資金を送金するための別のアカウントが必要です。
+
+残高が **0** の **merchant1** のアカウントを作成するには、次のコマンドを実行します。
+
+```console
+./gradlew run --args="-action charge -amount 0 -to merchant1"
+```
+
+### アカウントに資金を追加する
+
+[残高のあるアカウントを作成する](#残高のあるアカウントを作成する)でアカウントを作成して資金を追加したのと同じ方法で、アカウントに資金を追加できます。
+
+**customer1** のアカウントに **500** を追加するには、次のコマンドを実行します。
+
+```console
+./gradlew run --args="-action charge -amount 500 -to customer1"
+```
+
+**customer1** のアカウントの残高は **1000** になります。
+
+### 2つのアカウント間で電子マネーを送金する
+
+これで 2つのアカウントが作成され、少なくとも1つのアカウントに残高があるので、一方のアカウントからもう一方のアカウントに資金を送金できます。
+
+**customer1** が **merchant1** に **100** を支払うようにするには、次のコマンドを実行します。
+
+```console
+./gradlew run --args="-action pay -amount 100 -from customer1 -to merchant1"
+```
+
+### アカウント残高を取得する
+
+あるアカウントから別のアカウントに資金を送金した後、各アカウントの残高を確認できます。
+
+**customer1** の残高を取得するには、次のコマンドを実行します。
+
+```console
+./gradlew run --args="-action getBalance -id customer1"
+```
+
+次の出力が表示されます。
+
+```console
+...
+The balance for customer1 is 900
+...
+```
+
+**merchant1** の残高を取得するには、次のコマンドを実行します。
+
+```console
+./gradlew run --args="-action getBalance -id merchant1"
+```
+
+次の出力が表示されます。
+
+```console
+...
+The balance for merchant1 is 100
+...
+```
+
+## データベースを停止する
+
+データベースを停止するには、次のコマンドを実行して Docker コンテナを停止します。
+
+```console
+docker compose down
+```
+
+## 参照
+
+このチュートリアルで使用されている電子マネーアプリケーションのソースコードを確認するには、[`ElectronicMoney.kt`](https://github.com/scalar-labs/scalardb-samples/blob/main/scalardb-kotlin-sample/src/main/kotlin/sample/ElectronicMoney.kt) を参照してください。

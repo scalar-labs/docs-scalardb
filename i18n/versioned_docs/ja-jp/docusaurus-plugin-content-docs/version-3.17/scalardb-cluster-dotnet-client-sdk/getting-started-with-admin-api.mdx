@@ -1,0 +1,132 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Cluster .NET Client SDK の Administrative API をはじめよう
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+ScalarDB Cluster .NET Client SDK は、ScalarDB Cluster の Administrative API をサポートしています。この API を使用すると、.NET アプリケーションから ScalarDB Cluster を管理できます。
+
+:::note
+
+次の例のように非同期メソッドを使用することをお勧めしますが、代わりに同期メソッドを使用することもできます。
+
+:::
+
+## SDK をインストールする
+
+ScalarDB Cluster と同じメジャーバージョンとマイナーバージョンの [SDK](https://www.nuget.org/packages/ScalarDB.Client) を .NET プロジェクトにインストールします。組み込みの NuGet パッケージマネージャーを使用してこれを行うことができます。`<MAJOR>.<MINOR>` を、使用しているバージョンに置き換えます。
+
+```console
+dotnet add package ScalarDB.Client --version '<MAJOR>.<MINOR>.*'
+```
+
+## 設定ファイルを作成する
+
+`scalardb-options.json` ファイルを作成し、次の内容を追加します。`<HOSTNAME_OR_IP_ADDRESS>` を FQDN または IP アドレスに、`<PORT>` をクラスターのポート番号 (デフォルトでは `60053`) に置き換えます。
+
+```json
+{
+  "ScalarDbOptions": {
+    "Address": "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
+    "HopLimit": 10
+  }
+}
+```
+
+設定ファイルやクライアントを設定するその他の方法の詳細については、[クライアント設定](common-reference.mdx#クライアント設定)を参照してください。
+
+## トランザクションマネージャーを取得する
+
+Administrative API とやり取りするためのオブジェクトを取得する必要があります。オブジェクトを取得するには、次のように `TransactionFactory` を使用します。
+
+```c#
+// Pass the path to the settings file created in the previous step.
+var factory = TransactionFactory.Create("scalardb-options.json");
+
+using var admin = factory.GetTransactionAdmin();
+```
+
+## ScalarDB Cluster の管理
+
+ScalarDB Cluster .NET Client SDK を使用して、次の操作を実行できます。
+
+### 新しい名前空間を作成する
+
+```c#
+await admin.CreateNamespaceAsync("ns", ifNotExists: true);
+```
+
+### 名前空間を削除する
+
+```c#
+await admin.DropNamespaceAsync("ns", ifExists: true);
+```
+
+### 名前空間が存在するかどうかを確認する
+
+```c#
+var namespaceExists = await admin.IsNamespacePresentAsync("ns");
+```
+
+### 新しいテーブルを作成する
+
+```c#
+// ...
+using ScalarDB.Client.Builders.Admin;
+using ScalarDB.Client.Core;
+
+// ...
+
+var tableMetadata =
+    new TableMetadataBuilder()
+        .AddPartitionKey("pk", DataType.Int)
+        .AddClusteringKey("ck", DataType.Double)
+        .AddSecondaryIndex("index", DataType.Float)
+        .AddColumn("ordinary", DataType.Text)
+        .Build();
+
+await admin.CreateTableAsync("ns", "table_name", tableMetadata, ifNotExists: true);
+```
+
+### テーブルを削除する
+
+```c#
+await admin.DropTableAsync("ns", "table_name", ifExists: true);
+```
+
+### テーブルが存在するかどうかを確認する
+
+```c#
+var tableExists = await admin.IsTablePresentAsync("ns", "table_name");
+```
+
+### 既存のテーブルの名前を取得する
+
+```c#
+var tablesList = await admin.GetTableNamesAsync("ns");
+```
+
+### Coordinator テーブルを作成する
+
+```c#
+await admin.CreateCoordinatorTablesAsync();
+```
+
+### Coordinator テーブルを削除する
+
+```c#
+await admin.DropCoordinatorTablesAsync();
+```
+
+### Coordinator テーブルが存在するかどうかを確認します
+
+```c#
+var exists = await admin.AreCoordinatorTablesPresentAsync();
+```

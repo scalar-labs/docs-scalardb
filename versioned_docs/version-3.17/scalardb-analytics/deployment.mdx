@@ -1,0 +1,806 @@
+---
+tags:
+  - Enterprise Option
+displayed_sidebar: docsEnglish
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+# Deploy ScalarDB Analytics in Public Cloud Environments
+
+This guide explains how to deploy ScalarDB Analytics in a public cloud environment. ScalarDB Analytics consists of two main components: a ScalarDB Analytics server and Apache Spark. In this guide, you can choose either Amazon EMR, Databricks, Azure Synapse Analytics, or Google Cloud Dataproc for the Spark environment.
+
+For details about ScalarDB Analytics, refer to [ScalarDB Analytics Design](./design.mdx).
+
+## Deploy ScalarDB Analytics server
+
+ScalarDB Analytics requires a catalog server to manage metadata and data source connections. The catalog server should be deployed by using Helm Charts on a Kubernetes cluster.
+
+For detailed deployment instructions, see [How to install Scalar products through AWS Marketplace](../scalar-kubernetes/AwsMarketplaceGuide?products=scalardb-analytics-server).
+
+After deploying the catalog server, note the following information for Spark configuration:
+
+- Catalog server host address
+- Catalog port (default: 11051)
+- Metering port (default: 11052)
+
+## Deploy Spark with ScalarDB Analytics
+
+After deploying the catalog server, you can configure and deploy Spark with ScalarDB Analytics by using managed Spark services.
+
+### Supported managed Spark services and their application types
+
+ScalarDB Analytics supports the following managed Spark services and application types.
+
+| Public Cloud Service    | Spark Driver | Spark Connect | Notebook | JDBC |
+| ----------------------- | ------------ | ------------- | -------- | ---- |
+| Amazon EMR (EMR on EC2) | ✅           | ✅            | ✅       | ❌   |
+| Databricks              | ✅           | ❌            | ✅       | ✅   |
+| Azure Synapse Analytics | ✅           | ❌            | ✅       | ❌   |
+| Google Cloud Dataproc   | ✅           | ✅            | ✅       | ❌   |
+
+### Configure and deploy
+
+Select your public cloud environment, and follow the instructions to set up and deploy Spark with ScalarDB Analytics.
+
+<Tabs groupId="cloud-service" queryString>
+  <TabItem value="emr" label="Amazon EMR">
+
+You can use Amazon EMR (EMR on EC2) to run analytical queries through ScalarDB Analytics. For the basics to launch an EMR cluster, please refer to the [AWS EMR on EC2 documentation](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-plan.html).
+
+<h3>ScalarDB Analytics configuration</h3>
+
+To enable ScalarDB Analytics, you need to add the following configuration to the Software setting when you launch an EMR cluster. Be sure to replace the content in the angle brackets:
+
+```json
+[
+  {
+    "Classification": "spark-defaults",
+    "Properties": {
+      "spark.jars.packages": "com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>",
+      "spark.extraListeners": "com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener",
+      "spark.sql.catalog.<CATALOG_NAME>": "com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog",
+      "spark.sql.catalog.<CATALOG_NAME>.server.host": "<CATALOG_SERVER_HOST>",
+      "spark.sql.catalog.<CATALOG_NAME>.server.catalog.port": "11051",
+      "spark.sql.catalog.<CATALOG_NAME>.server.metering.port": "11052"
+    }
+  }
+]
+```
+
+The following describes what you should change the content in the angle brackets to:
+
+- `<SPARK_VERSION>`: The version of Spark (`3.5` or `3.4`).
+- `<SCALA_VERSION>`: The version of Scala used to build Spark (`2.13` or `2.12`).
+- `<SCALARDB_ANALYTICS_VERSION>`: The version of ScalarDB Analytics.
+- `<CATALOG_NAME>`: The name of the catalog. This must match a catalog created on the ScalarDB Analytics server.
+- `<CATALOG_SERVER_HOST>`: The host address of your ScalarDB Analytics server.
+
+For more details, refer to [Set up ScalarDB Analytics in the Spark configuration](./run-analytical-queries.mdx#set-up-scalardb-analytics-in-the-spark-configuration).
+
+<h3>Run analytical queries via the Spark driver</h3>
+
+After the EMR Spark cluster has launched, you can use ssh to connect to the primary node of the EMR cluster and run your Spark application. For details on how to create a Spark driver application, refer to [Spark driver application](./run-analytical-queries.mdx?spark-application-type=spark-driver#develop-a-spark-application).
+
+<h3>Run analytical queries via Spark Connect</h3>
+
+You can use Spark Connect to run your Spark application remotely by using the EMR cluster that you launched.
+
+You first need to configure the Software setting in the same way as the [Spark driver application](./run-analytical-queries.mdx?spark-application-type=spark-driver#develop-a-spark-application). You also need to set the following configuration to enable Spark Connect.
+
+<h4>Allow inbound traffic for a Spark Connect server</h4>
+
+1. Create a security group to allow inbound traffic for a Spark Connect server. (Port 15001 is the default).
+2. Allow the role of "Amazon EMR service role" to attach the security group to the primary node of the EMR cluster.
+3. Add the security group to the primary node of the EMR cluster as "Additional security groups" when you launch the EMR cluster.
+
+<h4>Launch the Spark Connect server via a bootstrap action</h4>
+
+1. Create a script file to launch the Spark Connect server as follows:
+
+    ```bash
+    #!/usr/bin/env bash
+
+    set -eu -o pipefail
+    cd /var/lib/spark
+    sudo -u spark /usr/lib/spark/sbin/start-connect-server.sh --packages org.apache.spark:spark-connect_<SCALA_VERSION>:<SPARK_FULL_VERSION>,com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>
+    ```
+
+    The following describes what you should change the content in the angle brackets to:
+
+    - `<SCALA_VERSION>`: The major and minor version of Scala that matches your Spark installation (2.12 or 2.13).
+    - `<SPARK_FULL_VERSION>`: The full version of Spark you are using (such as 3.5.3).
+    - `<SPARK_VERSION>`: The major and minor version of Spark you are using (3.4 or 3.5).
+    - `<SCALARDB_ANALYTICS_VERSION>`: The version of ScalarDB Analytics.
+
+2. Upload the script file to S3.
+3. Allow the role of "EC2 instance profile for Amazon EMR" to access the uploaded script file in S3.
+4. Add the uploaded script file to "Bootstrap actions" when you launch the EMR cluster.
+
+<h4>Run analytical queries</h4>
+
+You can run your Spark application via Spark Connect from anywhere by using the remote URL of the Spark Connect server, which is `sc://<PRIMARY_NODE_PUBLIC_HOSTNAME>:15001`.
+
+For details on how to create a Spark application by using Spark Connect, refer to [Spark Connect application](./run-analytical-queries.mdx?spark-application-type=spark-connect#develop-a-spark-application).
+
+<h3>Run interactive queries by using notebooks</h3>
+
+You can also use EMR Studio notebooks to run interactive queries through ScalarDB Analytics. EMR Studio provides a managed Jupyter notebook environment that can be attached to your EMR cluster.
+
+For details on how to set up and use EMR Studio notebooks, refer to the [Amazon EMR Studio documentation](https://docs.aws.amazon.com/emr/latest/ManagementGuide/emr-studio.html).
+
+After attaching a notebook to the EMR cluster that is configured with ScalarDB Analytics, you can run SQL queries by using the `%%sql` magic command.
+
+To list the available catalogs, run the following command: 
+
+```sql
+%%sql
+-- List available catalogs
+SHOW CATALOGS
+```
+
+To list the databases in the ScalarDB catalog, run the following command, replacing `<CATALOG_NAME>` with your actual catalog name configured in the ScalarDB Analytics server.
+  
+```sql
+%%sql
+-- List databases in ScalarDB catalog
+SHOW DATABASES IN <CATALOG_NAME>
+```
+
+To query the data, run the following command, replacing the placeholders in angle brackets with your actual catalog, data source, namespace, and table names configured in the ScalarDB Analytics server.
+
+```sql
+%%sql
+-- Query data
+SELECT * FROM <CATALOG_NAME>.<DATA_SOURCE_NAME>.<NAMESPACE_NAME>.<TABLE_NAME> LIMIT 10
+```
+
+  </TabItem>
+  <TabItem value="databricks" label="Databricks">
+
+You can use Databricks to run analytical queries through ScalarDB Analytics.
+
+:::note
+
+Note that Databricks provides a modified version of Apache Spark, which works differently from the original Apache Spark.
+
+:::
+
+<h3>Prepare an init script for loading the ScalarDB Analytics library JAR</h3>
+
+1. Download the ScalarDB Analytics library JAR file from the Maven repository. Choose the appropriate JAR file based on your Spark, Scala, and ScalarDB versions:
+   - [scalardb-analytics-spark-all-3.4_2.13 (Spark v3.4, Scala v2.13)](https://repo1.maven.org/maven2/com/scalar-labs/scalardb-analytics-spark-all-3.4_2.13/)
+   - [scalardb-analytics-spark-all-3.5_2.13 (Spark v3.5, Scala v2.13)](https://repo1.maven.org/maven2/com/scalar-labs/scalardb-analytics-spark-all-3.5_2.13/)
+   - [scalardb-analytics-spark-all-3.4_2.12 (Spark v3.4, Scala v2.12)](https://repo1.maven.org/maven2/com/scalar-labs/scalardb-analytics-spark-all-3.4_2.12/)
+   - [scalardb-analytics-spark-all-3.5_2.12 (Spark v3.5, Scala v2.12)](https://repo1.maven.org/maven2/com/scalar-labs/scalardb-analytics-spark-all-3.5_2.12/)
+2. Upload the JAR file to the Databricks workspace.
+3. Create an init script as follows, replacing `<PATH_TO_YOUR_JAR_FILE_IN_WORKSPACE>` with the path to your JAR file in the Databricks workspace:
+
+    ```bash
+    #!/bin/bash
+
+    # Target directories
+    TARGET_DIRECTORIES=("/databricks/jars" "/databricks/hive_metastore_jars")
+    JAR_PATH="<PATH_TO_YOUR_JAR_FILE_IN_WORKSPACE>"
+
+    # Copy the JAR file to the target directories
+    for TARGET_DIR in "${TARGET_DIRECTORIES[@]}"; do
+     mkdir -p "$TARGET_DIR"
+     cp "$JAR_PATH" "$TARGET_DIR/"
+    done
+    ```
+
+4. Upload the init script to the Databricks workspace.
+
+<h3>Launch Databricks compute</h3>
+
+ScalarDB Analytics works with all-purpose compute on Databricks. When you launch compute, you need to configure the compute to enable ScalarDB Analytics as follows:
+
+1. Select `Create compute` in the `Compute` menu.
+2. Select `Unrestricted` from the `Policy` dropdown menu.
+3. Select an appropriate Databricks runtime version that supports Spark 3.4 or 3.5.
+4. Go to the `Advanced` section. In the `Access mode` tab, select `Manual` as the access mode, and choose `No isolation shared`.
+5. In the `Advanced` section, select the `Spark` tab, and enter the following configurations in `Spark config`:
+
+    ```
+    spark.extraListeners com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener
+    spark.sql.catalog.<CATALOG_NAME> com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog
+    spark.sql.catalog.<CATALOG_NAME>.server.host <CATALOG_SERVER_HOST>
+    spark.sql.catalog.<CATALOG_NAME>.server.catalog.port 11051
+    spark.sql.catalog.<CATALOG_NAME>.server.metering.port 11052
+    ```
+
+    Replace the placeholders:
+
+    - `<CATALOG_NAME>`: The name of the catalog. This must match a catalog created on the ScalarDB Analytics server.
+    - `<CATALOG_SERVER_HOST>`: The host address of your ScalarDB Analytics server.
+
+6. In the `Advanced` section, select the `init scripts` tab, and specify the path to the init script in the workspace you uploaded.
+7. Select `Create`.
+
+<h3>Run analytical queries via the Spark driver</h3>
+
+You can run your Spark application on the properly configured Databricks compute with Databricks Jobs to access the tables in ScalarDB Analytics. ScalarDB Analytics works with Databricks Jobs task types for Python, JAR, SQL, and Notebook. See the following section for details on using notebooks.
+
+For more details on how to use Databricks Jobs, refer to the [Databricks Jobs documentation](https://docs.databricks.com/en/jobs/index.html).
+
+<h3>Run interactive queries by using notebooks</h3>
+
+You can also use Databricks notebooks to run interactive queries through ScalarDB Analytics. After launching the compute that is configured with ScalarDB Analytics, you can create a notebook and attach it to the compute.
+
+For details on how to use Databricks notebooks, refer to the [Databricks notebooks documentation](https://docs.databricks.com/en/notebooks/index.html).
+
+After attaching a notebook to the compute, you can run SQL queries as follows.
+
+To list the available catalogs, run the following command:
+
+```sql
+-- List available catalogs
+SHOW CATALOGS
+```
+
+To list the databases in the ScalarDB catalog, run the following command, replacing `<CATALOG_NAME>` with your actual catalog name configured in the ScalarDB Analytics server.
+
+```sql
+-- List databases in ScalarDB catalog
+SHOW DATABASES IN <CATALOG_NAME>
+```
+
+To query the data, run the following command, replacing the placeholders in angle brackets with your actual catalog, data source, namespace, and table names configured in the ScalarDB Analytics server.
+
+```sql
+-- Query data
+SELECT * FROM <CATALOG_NAME>.<DATA_SOURCE_NAME>.<NAMESPACE_NAME>.<TABLE_NAME> LIMIT 10
+```
+<h3>Run analytical queries via the JDBC driver</h3>
+
+Databricks supports JDBC to run SQL jobs on compute.
+After compute is launched, you can get the JDBC URL of the compute in the `Advanced` > `JDBC/ODBC` tab. To connect to the compute by using JDBC, you need to add the Databricks JDBC driver to your application dependencies. For example, if you are using Gradle, you can add the following dependency to your `build.gradle` file after replacing `<DRIVER_VERSION>` with the version of the Databricks JDBC driver you want to use:
+
+```groovy
+implementation("com.databricks:databricks-jdbc:<DRIVER_VERSION>")
+```
+
+Then, you can connect to the compute by using JDBC with the JDBC URL (`<YOUR_COMPUTE_JDBC_URL>`), as is common with JDBC applications.
+
+```java
+Class.forName("com.databricks.client.jdbc.Driver");
+String url = "<YOUR_COMPUTE_JDBC_URL>";
+Connection conn = DriverManager.getConnection(url);
+```
+
+For more details on how to use JDBC with Databricks, refer to the [Databricks JDBC Driver documentation](https://docs.databricks.com/en/integrations/jdbc/index.html).
+
+  </TabItem>
+  <TabItem value="synapse" label="Azure Synapse Analytics">
+
+<h3>Use Azure Synapse Analytics</h3>
+
+You can use Azure Synapse Analytics to run analytical queries through ScalarDB Analytics. For the basics of Azure Synapse Analytics, please refer to the [Azure Synapse Analytics documentation](https://learn.microsoft.com/en-us/azure/synapse-analytics/).
+
+:::note
+
+Azure Synapse Analytics uses serverless Apache Spark pools to run Spark workloads. For more details about Spark pools, see [Apache Spark in Azure Synapse Analytics](https://learn.microsoft.com/en-us/azure/synapse-analytics/spark/apache-spark-overview).
+
+:::
+
+<h4>Prerequisites</h4>
+
+Before configuring ScalarDB Analytics on Azure Synapse, ensure the following requirements are met.
+
+<h5>Synapse workspace</h5>
+
+A Synapse workspace is a collaboration environment for analytics in Azure. You must create a Synapse workspace before you run Spark workloads. For more details about creating a Synapse workspace, see [Quickstart: Create a Synapse workspace](https://learn.microsoft.com/en-us/azure/synapse-analytics/quickstart-create-workspace).
+
+:::note
+
+This guide assumes that you have created a Synapse workspace with a Managed Virtual Network enabled. A Managed Virtual Network is recommended for network isolation and security. For more details, see [Azure Synapse Analytics Managed Virtual Network](https://learn.microsoft.com/en-us/azure/synapse-analytics/security/synapse-workspace-managed-vnet).
+
+:::
+
+<h5>Storage permissions</h5>
+
+If you plan to run a Spark driver application, both the **Synapse workspace managed identity** and the **user account** that submits the job require the `Storage Blob Data Contributor` role on the storage account. This role must be assigned by a subscription owner or user access administrator.
+
+<h4>ScalarDB Analytics configuration</h4>
+
+To enable ScalarDB Analytics, add the following configuration to the Spark pool configuration in Synapse Studio.
+
+1. Go to **Synapse Studio**, select manage **Manage**, and choose **Apache Spark pools**.
+2. Select your Spark pool, and then select **Apache Spark configuration**.
+3. Create a new configuration or edit an existing one with the following properties:
+
+   ```text
+   spark.jars.packages com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>
+   spark.extraListeners com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener
+   spark.sql.catalog.<CATALOG_NAME> com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog
+   spark.sql.catalog.<CATALOG_NAME>.server.host <CATALOG_SERVER_IP>
+   spark.sql.catalog.<CATALOG_NAME>.server.catalog.port 11051
+   spark.sql.catalog.<CATALOG_NAME>.server.metering.port 11052
+   ```
+
+The following describes what you should change the content in the angle brackets to:
+
+- `<SPARK_VERSION>`: The version of Spark (`3.4` or `3.5`).
+- `<SCALA_VERSION>`: The version of Scala used to build Spark (`2.12` or `2.13`).
+- `<SCALARDB_ANALYTICS_VERSION>`: The version of ScalarDB Analytics.
+- `<CATALOG_NAME>`: The name of the catalog. This must match a catalog created on the ScalarDB Analytics server.
+- `<CATALOG_SERVER_IP>`: The IP address of your Managed Private Endpoint for the ScalarDB Analytics server.
+
+<h4>Set up private connectivity</h4>
+
+ScalarDB Analytics requires network connectivity from the Managed Virtual Network of the Synapse workspace to both the ScalarDB Analytics server and data sources. To establish this connectivity, you must use a Private Link Service and Managed Private Endpoints as follows:
+
+1. **Connectivity between the Synapse workspace and the ScalarDB Analytics server:** Create a Private Link Service for the Internal Load Balancer in Azure Kubernetes Service (AKS), then create a Managed Private Endpoint in the Managed Virtual Network of the Synapse workspace.
+2. **Connectivity between the Synapse workspace and data sources:** Create a Managed Private Endpoint in the Managed Virtual Network of the Synapse workspace directly to each data source (for example, Azure Database for PostgreSQL).
+
+:::caution
+
+If you are using Azure Database for PostgreSQL Flexible Server, it must be created with **Public access** mode. VNet integration mode does not support adding private endpoints after creation. For more details, see the [Networking](https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/how-to-networking) section of the Azure Database for PostgreSQL documentation.
+
+:::
+
+<h5>Create a Private Link Service for the ScalarDB Analytics server</h5>
+
+To create an Internal Load Balancer for the ScalarDB Analytics server, set `scalarDbAnalyticsServer.service.type` to `LoadBalancer` in your custom values file for the Helm chart.
+
+:::note
+
+The Helm chart includes the `service.beta.kubernetes.io/azure-load-balancer-internal: "true"` annotation by default, so the Load Balancer will be created as an Internal Load Balancer.
+
+:::
+
+After deploying with this configuration, proceed with the following steps.
+
+1. Verify that an internal IP address is assigned to the ScalarDB Analytics server service:
+
+   ```console
+   kubectl get svc -n <NAMESPACE> <SCALARDB_ANALYTICS_SERVICE_NAME>
+   ```
+
+   Replace `<NAMESPACE>` with the namespace where ScalarDB Analytics server is deployed and `<SCALARDB_ANALYTICS_SERVICE_NAME>` with the name of the service (for example, `scalardb-analytics-server`). Confirm that the service has a private IP address (for example, `10.x.x.x`) assigned in the `EXTERNAL-IP` column. For Internal Load Balancer services, the `EXTERNAL-IP` shows a private IP address instead of a public IP.
+
+2. Create a Private Link Service in Azure Portal:
+   1. Go to **Private Link**, select **Private Link Services**, and choose **Create**.
+   2. Select the Internal Load Balancer for the ScalarDB Analytics server service.
+   3. Configure the Source NAT subnet and access security.
+
+3. Create a Managed Private Endpoint in Synapse Studio:
+   1. Go to **Manage**, select **Managed private endpoints**, and choose **New**.
+   2. Select **Private Link Service**, and then choose the Private Link Service you created.
+   3. After creation, approve the connection in the Private Link Service settings.
+
+4. Note the IP address of the Managed Private Endpoint for use in Spark configuration.
+
+<h5>Create a Managed Private Endpoint for the data source</h5>
+
+1. In Synapse Studio, go to **Manage**, select **Managed private endpoints**, and choose **New**.
+2. Select your database type (for example, **Azure Database for PostgreSQL Flexible Server**).
+3. Select your database server, and then create the endpoint.
+4. Approve the connection in the database server's networking settings:
+   1. Go to **Azure Portal**, select **Your database server**, choose **Networking**, and select **Private access**.
+   2. Select the pending connection, and then approve it.
+
+<h4>Run analytical queries via the Spark driver</h4>
+
+To run Spark driver applications:
+
+1. Upload your Spark driver application JAR to Azure Data Lake Storage Gen2.
+2. Go to **Develop**, and select **New Spark job definition**.
+3. Configure the job:
+   - **Language:** Spark (Scala/Java)
+   - **Main class:** Your application's main class
+   - **Main definition file:** Path to your JAR file (for example, `abfss://<CONTAINER>@<STORAGE>.dfs.core.windows.net/path/to/app.jar`)
+     - `<CONTAINER>`: Your Azure Data Lake Storage Gen2 container name
+     - `<STORAGE>`: Your Azure storage account name
+   - **Spark pool:** Your configured Spark pool
+4. Submit the job.
+
+:::note
+
+Make sure the required permissions are set as described in the [Prerequisites](#prerequisites) section.
+
+:::
+
+<h4>Run interactive queries by using notebooks</h4>
+
+You can also use Azure Synapse Analytics notebooks to run interactive queries through ScalarDB Analytics. After configuring the Spark pool, you can create a notebook and attach it to the Spark pool.
+
+For details on how to use Azure Synapse Analytics notebooks, refer to the [Azure Synapse Analytics notebooks documentation](https://learn.microsoft.com/en-us/azure/synapse-analytics/spark/apache-spark-notebook-concept).
+
+After attaching a notebook to the Spark pool, you can run SQL queries as follows.
+
+To list the available catalogs, run the following command:
+
+```sql
+-- List available catalogs
+SHOW CATALOGS
+```
+
+To list the databases in the ScalarDB catalog, run the following command, replacing `<CATALOG_NAME>` with your actual catalog name configured in the ScalarDB Analytics server.
+
+```sql
+-- List databases in ScalarDB catalog
+```
+
+To query the data, run the following command, replacing the placeholders in angle brackets with your actual catalog, data source, namespace, and table names configured in the ScalarDB Analytics server.
+
+```sql
+-- Query data
+SELECT * FROM <CATALOG_NAME>.<DATA_SOURCE_NAME>.<NAMESPACE_NAME>.<TABLE_NAME> LIMIT 10
+```
+  </TabItem>
+  <TabItem value="dataproc" label="Google Cloud Dataproc">
+
+You can use Google Cloud Dataproc to run analytical queries through ScalarDB Analytics. Dataproc provides both Compute-based clusters and Serverless, and ScalarDB Analytics supports both.
+
+For the basics of Dataproc, refer to the [Google Cloud Dataproc documentation](https://cloud.google.com/dataproc/docs).
+
+<h3>Set up a Google Cloud environment</h3>
+
+To use ScalarDB Analytics with Dataproc, you first need to set up a Google Cloud environment: create a VPC, create a database instance for the ScalarDB Analytics server, create a Google Kubernetes Engine (GKE) cluster, and deploy the ScalarDB Analytics server.
+
+<h4>Create a VPC</h4>
+
+By default, the ScalarDB Analytics server Helm Chart configures the LoadBalancer service to use a private IP from the VPC for its external IP. Additionally, it's recommended to access Cloud SQL via private IP. Therefore, you need to create a VPC for a private IP access.
+
+Allow the following ports in the firewall rules for the VPC:
+
+- **For Dataproc internal communication:** TCP 0-65535, UDP 0-65535, ICMP (within the subnet only)
+- **For SSH via Identity-Aware Proxy (IAP):** TCP 22
+- **For Cloud SQL:** The port corresponding to your database (within the subnet only)
+
+The following is an example of creating a VPC, subnet, and firewall rules:
+
+```bash
+# Create a VPC
+gcloud compute networks create <VPC_NAME> \
+  --subnet-mode=custom \
+  --project=<PROJECT_ID>
+
+# Create a subnet
+gcloud compute networks subnets create <SUBNET_NAME> \
+  --network=<VPC_NAME> \
+  --region=<REGION> \
+  --range=10.0.0.0/20 \
+  --project=<PROJECT_ID>
+
+# For Dataproc internal communication
+gcloud compute firewall-rules create <VPC_NAME>-allow-internal \
+  --network=<VPC_NAME> \
+  --allow=tcp:0-65535,udp:0-65535,icmp \
+  --source-ranges=10.0.0.0/20 \
+  --project=<PROJECT_ID>
+
+# For SSH via IAP
+gcloud compute firewall-rules create <VPC_NAME>-allow-iap-ssh \
+  --network=<VPC_NAME> \
+  --allow=tcp:22 \
+  --source-ranges=35.235.240.0/20 \
+  --project=<PROJECT_ID>
+
+# For Cloud SQL (PostgreSQL example)
+gcloud compute firewall-rules create <VPC_NAME>-allow-postgres \
+  --network=<VPC_NAME> \
+  --allow=tcp:5432 \
+  --source-ranges=10.0.0.0/20 \
+  --project=<PROJECT_ID>
+```
+
+Replace the following placeholders:
+
+- `<VPC_NAME>`: Your VPC name
+- `<SUBNET_NAME>`: Your subnet name
+- `<PROJECT_ID>`: Your Google Cloud project ID
+- `<REGION>`: The region (for example, `us-west1`)
+
+For details on VPC and firewall rules, refer to [Create and manage VPC networks](https://cloud.google.com/vpc/docs/create-modify-vpc-networks) and [Using IAP for TCP forwarding](https://cloud.google.com/iap/docs/using-tcp-forwarding).
+
+<h4>Create a database instance for the ScalarDB Analytics server</h4>
+
+The ScalarDB Analytics server requires a backend database. This section explains how to set one up by using Cloud SQL. You can use other databases depending on your requirements.
+
+Google Cloud recommends connecting via a private IP. This guide enables private IP connections.
+
+To use a private IP, you need to configure private service access in the VPC beforehand. For details, refer to [Configuring private services access](https://cloud.google.com/vpc/docs/configure-private-services-access).
+
+The following is an example of creating a Cloud SQL instance with a private IP enabled:
+
+```bash
+gcloud sql instances create <INSTANCE_NAME> \
+  --database-version=POSTGRES_15 \
+  --tier=db-custom-2-4096 \
+  --region=<REGION> \
+  --network=projects/<PROJECT_ID>/global/networks/<VPC_NAME> \
+  --no-assign-ip \
+  --project=<PROJECT_ID>
+```
+
+Replace the following placeholders:
+
+- `<INSTANCE_NAME>`: Your Cloud SQL instance name
+- `<REGION>`: The region (for example, `us-west1`)
+- `<PROJECT_ID>`: Your Google Cloud project ID
+- `<VPC_NAME>`: Your VPC name
+
+After creating the instance, create a database and a user:
+
+```bash
+# Create a database
+gcloud sql databases create <DB_NAME> \
+  --instance=<INSTANCE_NAME> \
+  --project=<PROJECT_ID>
+
+# Create a user
+gcloud sql users create <DB_USERNAME> \
+  --instance=<INSTANCE_NAME> \
+  --password=<DB_PASSWORD> \
+  --project=<PROJECT_ID>
+```
+
+For details, refer to [Configuring private IP for Cloud SQL](https://cloud.google.com/sql/docs/postgres/configure-private-ip).
+
+<h4>Deploy the ScalarDB Analytics server on GKE</h4>
+
+Follow these steps for deploying the ScalarDB Analytics server on GKE.
+
+**1. Create a GKE Autopilot cluster**
+
+Create a GKE Autopilot cluster to deploy the ScalarDB Analytics server. Using the subnet that you created in the VPC section ensures that the LoadBalancer's external IP will be a private IP within the VPC.
+
+```bash
+gcloud container clusters create-auto <GKE_CLUSTER_NAME> \
+  --region=<REGION> \
+  --network=<VPC_NAME> \
+  --subnetwork=<SUBNET_NAME> \
+  --project=<PROJECT_ID>
+```
+
+Replace the following placeholders:
+
+- `<GKE_CLUSTER_NAME>`: Your GKE cluster name
+- `<REGION>`: The region (for example, `us-west1`)
+- `<VPC_NAME>`: The VPC name created in the VPC section
+- `<SUBNET_NAME>`: The subnet name created in the VPC section
+- `<PROJECT_ID>`: Your Google Cloud project ID
+
+After creating the cluster, get the credentials so that kubectl can connect to the cluster:
+
+```bash
+gcloud container clusters get-credentials <GKE_CLUSTER_NAME> \
+  --region=<REGION> \
+  --project=<PROJECT_ID>
+```
+
+**2. Install Cloud SQL Auth Proxy Operator**
+
+When using Cloud SQL as the backend database, Google Cloud recommends connecting via Cloud SQL Auth Proxy. Since the ScalarDB Analytics server Helm Chart does not support adding sidecar containers, this guide uses Cloud SQL Auth Proxy Operator to deploy the sidecar container.
+
+To install Cloud SQL Auth Proxy Operator on the GKE cluster, follow [Connect using the Cloud SQL Proxy Operator](https://cloud.google.com/sql/docs/postgres/connect-proxy-operator) .
+
+**3. Create an AuthProxyWorkload resource**
+
+Create an AuthProxyWorkload resource to inject the Cloud SQL Auth Proxy sidecar into the ScalarDB Analytics server deployment. When a Deployment matching the `workloadSelector` of this resource is deployed, a Cloud SQL Auth Proxy sidecar container will be automatically added.
+
+The following is an example AuthProxyWorkload configuration:
+
+```yaml
+apiVersion: cloudsql.cloud.google.com/v1
+kind: AuthProxyWorkload
+metadata:
+  name: scalardb-analytics-server-cloudsql-auth-proxy
+spec:
+  workloadSelector:
+    kind: "Deployment"
+    name: "scalardb-analytics-server"
+  instances:
+    - connectionString: "<INSTANCE_CONNECTION_NAME>"
+      portEnvName: "DB_PORT"
+      hostEnvName: "INSTANCE_HOST"
+```
+
+Replace the following placeholder:
+
+- `<INSTANCE_CONNECTION_NAME>`: The Cloud SQL instance connection name. You can get it by running the following command:
+
+  ```bash
+  gcloud sql instances describe <INSTANCE_NAME> \
+    --project=<PROJECT_ID> \
+    --format="value(connectionName)"
+  ```
+
+Create the AuthProxyWorkload resource with the following command:
+
+```bash
+kubectl apply -f auth-proxy-workload.yaml
+```
+
+**4. Deploy the ScalarDB Analytics server**
+
+To deploy the ScalarDB Analytics server by using Helm, follow [Deploy a ScalarDB Analytics server](./deploy-scalardb-analytics-server.mdx).
+
+When using Cloud SQL Auth Proxy, database connections are made through the sidecar container. Use the environment variables `INSTANCE_HOST` and `DB_PORT` configured in AuthProxyWorkload to specify the connection destination.
+
+The following is an example Helm values file:
+
+```yaml
+scalarDbAnalyticsServer:
+  image:
+    repository: ghcr.io/scalar-labs/scalardb-analytics-server-byol
+  properties: |
+    # License configuration
+    scalar.db.analytics.server.licensing.license_key=<YOUR_LICENSE_KEY>
+    scalar.db.analytics.server.licensing.license_check_cert_pem=<YOUR_LICENSE_CHECK_CERT_PEM>
+
+    # Database configuration
+    scalar.db.analytics.server.db.contact_points=jdbc:postgresql://${INSTANCE_HOST}:${DB_PORT}/<DB_NAME>
+    scalar.db.analytics.server.db.username=<DB_USERNAME>
+    scalar.db.analytics.server.db.password=<DB_PASSWORD>
+
+    # Metering storage configuration
+    scalar.db.analytics.server.metering.storage.provider=google-cloud-storage
+    scalar.db.analytics.server.metering.storage.bucket_name=<BUCKET_NAME>
+    scalar.db.analytics.server.metering.storage.accessKeyId=<GCS_ACCESS_KEY>
+    scalar.db.analytics.server.metering.storage.secretAccessKey=<GCS_SECRET_KEY>
+  serviceAccount:
+    serviceAccountName: scalardb-analytics-server
+```
+
+Replace the following placeholders:
+
+- `<YOUR_LICENSE_KEY>`: Your license key
+- `<YOUR_LICENSE_CHECK_CERT_PEM>`: Your license verification certificate
+- `<DB_NAME>`: The database name created in the Cloud SQL section
+- `<DB_USERNAME>`: The database username
+- `<DB_PASSWORD>`: The database password
+- `<BUCKET_NAME>`: The Cloud Storage bucket name for storing metering information. For how to create a bucket, refer to [Create buckets](https://cloud.google.com/storage/docs/creating-buckets).
+- `<GCS_ACCESS_KEY>`: The Cloud Storage HMAC access key
+- `<GCS_SECRET_KEY>`: The Cloud Storage HMAC secret key. For how to create HMAC keys, refer to [Manage HMAC keys](https://cloud.google.com/storage/docs/authentication/managing-hmackeys).
+
+**5. Verify the ScalarDB Analytics server host address**
+
+After deployment, verify the LoadBalancer's external IP of the ScalarDB Analytics server by running the following command. This IP address will be used as `<CATALOG_SERVER_HOST>` in the subsequent Dataproc section.
+
+```bash
+kubectl get svc scalardb-analytics-server
+```
+
+Example output:
+
+```
+NAME                        TYPE           CLUSTER-IP      EXTERNAL-IP     PORT(S)                           AGE
+scalardb-analytics-server   LoadBalancer   10.98.116.121   203.0.113.10    11051:32619/TCP,11052:32598/TCP   2m43s
+```
+
+The IP address shown in the `EXTERNAL-IP` column (for example, `203.0.113.10`) is the value for `<CATALOG_SERVER_HOST>`.
+
+<h3>Set up a Dataproc cluster</h3>
+
+You can create a Dataproc Compute cluster by running the following command:
+
+```bash
+gcloud dataproc clusters create <CLUSTER_NAME> \
+  --region=<REGION> \
+  --subnet=projects/<PROJECT_ID>/regions/<REGION>/subnetworks/<SUBNET_NAME> \
+  --properties=spark:spark.jars.packages=com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION> \
+  --properties=spark:spark.extraListeners=com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener \
+  --properties=spark:spark.sql.catalog.<CATALOG_NAME>=com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog \
+  --properties=spark:spark.sql.catalog.<CATALOG_NAME>.server.host=<CATALOG_SERVER_HOST> \
+  --properties=spark:spark.sql.catalog.<CATALOG_NAME>.server.catalog.port=11051 \
+  --properties=spark:spark.sql.catalog.<CATALOG_NAME>.server.metering.port=11052 \
+  --project=<PROJECT_ID>
+```
+
+Replace the following placeholders:
+
+- `<CLUSTER_NAME>`: Your Dataproc cluster name
+- `<CATALOG_NAME>`: Your catalog name. This must match the catalog name created on the ScalarDB Analytics server.
+- `<REGION>`: The region (for example, `us-west1`)
+- `<PROJECT_ID>`: Your Google Cloud project ID
+- `<SUBNET_NAME>`: The subnet name created in the VPC section
+- `<SPARK_VERSION>`: The Spark version (for example, `3.5` or `3.4`). Refer to [Dataproc version list](https://cloud.google.com/dataproc/docs/concepts/versioning/dataproc-version-clusters).
+- `<SCALA_VERSION>`: The Scala version used to build Spark (for example, `2.13` or `2.12`)
+- `<SCALARDB_ANALYTICS_VERSION>`: The ScalarDB Analytics version (for example, `3.17.0`)
+- `<CATALOG_SERVER_HOST>`: The ScalarDB Analytics server host address verified in the GKE section
+
+After creating the cluster, you can connect via SSH through IAP and run analytical queries by using `spark-shell` or `spark-sql` on the cluster:
+
+```bash
+gcloud compute ssh <CLUSTER_NAME>-m \
+  --zone=<ZONE> \
+  --tunnel-through-iap \
+  --project=<PROJECT_ID>
+```
+
+Replace the following placeholders:
+
+- `<CLUSTER_NAME>`: The Dataproc cluster name you created
+- `<ZONE>`: The zone where the cluster's primary node exists (for example, `us-west1-a`)
+- `<PROJECT_ID>`: Your Google Cloud project ID
+
+Since Dataproc Compute clusters provide a standard Apache Spark environment, you can run Spark applications by using standard methods. For more information, refer to the [Apache Spark documentation](https://spark.apache.org/docs/latest/submitting-applications.html).
+
+For details on Spark driver applications, refer to [Spark driver application](./run-analytical-queries.mdx?spark-application-type=spark-driver#develop-a-spark-application).
+
+<h3>Run interactive queries by using notebooks</h3>
+
+You can also use Jupyter notebooks on Dataproc Compute clusters to run interactive queries through ScalarDB Analytics. To enable Jupyter notebooks, add the `--optional-components=JUPYTER` flag and enable the Component Gateway when creating the cluster.
+
+For details on how to use Jupyter notebooks on Dataproc, refer to the [Dataproc Jupyter component documentation](https://cloud.google.com/dataproc/docs/concepts/components/jupyter).
+
+After accessing the Jupyter notebook through the Component Gateway, you can run SQL queries by using the `%%sql` magic command.
+
+To list the available catalogs, run the following command:
+
+```sql
+%%sql
+-- List available catalogs
+SHOW CATALOGS
+```
+
+To list the databases in the ScalarDB catalog, run the following command, replacing `<CATALOG_NAME>` with your actual catalog name configured in the ScalarDB Analytics server.
+
+```sql
+%%sql
+-- List databases in ScalarDB catalog
+SHOW DATABASES IN <CATALOG_NAME>
+```
+
+To query the data, run the following command, replacing the placeholders in angle brackets with your actual catalog, data source, namespace, and table names configured in the ScalarDB Analytics server.
+
+```sql
+%%sql
+-- Query data
+SELECT * FROM <CATALOG_NAME>.<DATA_SOURCE_NAME>.<NAMESPACE_NAME>.<TABLE_NAME> LIMIT 10
+```
+<h3>Set up Dataproc Serverless</h3>
+
+Dataproc Serverless is a Spark Connect-based service. Currently, only Python clients are provided, so you must use it from notebooks or Python clients.
+
+The following is an example configuration in Python:
+
+```python
+from google.cloud.dataproc_spark_connect import DataprocSparkSession
+from google.cloud.dataproc_v1 import Session
+
+session_config = Session()
+session_config.environment_config.execution_config.subnetwork_uri = "projects/<PROJECT_ID>/regions/<REGION>/subnetworks/<SUBNET_NAME>"
+spark = (
+    DataprocSparkSession.builder.projectId("<PROJECT_ID>")
+    .location("<REGION>")
+    .dataprocSessionConfig(session_config)
+    .config(
+        "spark.jars.packages",
+        "com.scalar-labs:scalardb-analytics-spark-all-<SPARK_VERSION>_<SCALA_VERSION>:<SCALARDB_ANALYTICS_VERSION>",
+    )
+    .config(
+        "spark.extraListeners",
+        "com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener",
+    )
+    .config(
+        "spark.sql.catalog.<CATALOG_NAME>",
+        "com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog",
+    )
+    .config("spark.sql.catalog.<CATALOG_NAME>.server.host", "<CATALOG_SERVER_HOST>")
+    .config("spark.sql.catalog.<CATALOG_NAME>.server.catalog.port", "11051")
+    .config("spark.sql.catalog.<CATALOG_NAME>.server.metering.port", "11052")
+    .getOrCreate()
+)
+```
+
+Replace the following placeholders:
+
+- `<CATALOG_NAME>`: Your catalog name. This must match the catalog name created on the ScalarDB Analytics server.
+- `<PROJECT_ID>`: Your Google Cloud project ID
+- `<REGION>`: The region (for example, `us-west1`)
+- `<SUBNET_NAME>`: The subnet name created in the VPC section
+- `<SPARK_VERSION>`: The Spark version (for example, `3.5` or `3.4`)
+- `<SCALA_VERSION>`: The Scala version used to build Spark (for example, `2.13` or `2.12`)
+- `<SCALARDB_ANALYTICS_VERSION>`: The ScalarDB Analytics version (for example, `3.17.0`)
+- `<CATALOG_SERVER_HOST>`: The ScalarDB Analytics server host address verified in the GKE section
+
+For details on Spark Connect applications, refer to [Spark Connect application](./run-analytical-queries.mdx?spark-application-type=spark-connect#develop-a-spark-application) and [Dataproc Serverless for Spark documentation](https://cloud.google.com/dataproc-serverless/docs).
+
+  </TabItem>
+</Tabs>
