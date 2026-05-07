@@ -16,6 +16,13 @@ ScalarDB Cluster can authenticate and authorize users in a coarse-grained manner
 You can also do authentication and authorization by using the primitive interface. For details, see <JavadocLink packageName="scalardb-cluster-java-client-sdk" path="com/scalar/db/cluster/client" className="ClusterClientTransactionAdmin" />, which implements <JavadocLink packageName="scalardb" path="com/scalar/db/api" className="AuthAdmin" />.
 :::
 
+## Authentication methods
+
+ScalarDB Cluster supports the following authentication methods:
+
+- **Username and password (`USERPASS`):** Users authenticate with a username and password. This is the default method described in this guide.
+- **OIDC (`OIDC`):** Client applications pass JWT access tokens from an OIDC provider (for example, Keycloak) instead of passwords. For details, see [Integrate OIDC for Access Control](./integrate-oidc-for-access-control.mdx).
+
 ## Users
 
 Users can log in to ScalarDB Cluster with a username and a password and execute SQL statements if they have the required privileges.
@@ -294,12 +301,12 @@ SHOW USERS;
 ```
 
 ```console
-+----------+-------------+
-| username | isSuperuser |
-+----------+-------------+
-| user1    | false       |
-| admin    | true        |
-+----------+-------------+
++----------+-------------+-----------------------+
+| username | isSuperuser | authenticationMethods |
++----------+-------------+-----------------------+
+| user1    | false       | USERPASS              |
+| admin    | true        | USERPASS              |
++----------+-------------+-----------------------+
 ```
 
 You can see that the `user1` user has been created.
