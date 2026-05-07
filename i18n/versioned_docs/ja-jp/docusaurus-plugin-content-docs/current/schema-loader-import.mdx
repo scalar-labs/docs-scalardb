@@ -295,6 +295,27 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
     - decfloat
     - xml
   </TabItem>
+  <TabItem value="Spanner" label="Spanner (PostgreSQL 構文)">
+    | Spanner                  | ScalarDB                               | 注意事項                            |
+    |--------------------------|----------------------------------------|------------------------------------|
+    | bigint                   | BIGINT                                 |                                    |
+    | boolean                  | BOOLEAN                                |                                    |
+    | bytea                    | BLOB                                   |                                    |
+    | date                     | DATE                                   |                                    |
+    | double precision         | DOUBLE                                 |                                    |
+    | real                     | FLOAT                                  |                                    |
+    | text                     | TEXT                                   |                                    |
+    | timestamp with time zone | TIMESTAMPTZ (default), TIME, TIMESTAMP | 下記の警告 [6](#6) を参照してください。 |
+
+    上記にリストされていないデータ型はサポートされていません。以下は、サポートされていない一般的なデータ型の例です:
+
+    - array
+    - decimal
+    - interval
+    - jsonb
+    - serial
+    - uuid
+  </TabItem>
 </Tabs>
 
 :::warning
