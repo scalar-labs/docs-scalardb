@@ -204,6 +204,25 @@ Db2 は Linux、UNIX、Windows 版のみがサポートされています。z/OS
 | **ScalarDB 3.12** | ❌            |
 
 </TabItem>
+<TabItem value="Spanner" label="Spanner (PostgreSQL 構文)">
+
+| バージョン           | Spanner (PostgreSQL 構文) |
+|:------------------|:--------|
+| **ScalarDB 3.18** | ✅       |
+| **ScalarDB 3.17** | ❌       |
+| **ScalarDB 3.16** | ❌       |
+| **ScalarDB 3.15** | ❌       |
+| **ScalarDB 3.14** | ❌       |
+| **ScalarDB 3.13** | ❌       |
+| **ScalarDB 3.12** | ❌       |
+
+:::note
+
+ScalarDB は [PostgreSQL 構文での Spanner データベース](https://docs.cloud.google.com/spanner/docs/create-manage-databases)でのみ動作します。
+
+:::
+
+</TabItem>
 </Tabs>
 
 #### NoSQL データベース
@@ -550,6 +569,12 @@ SQL Server を使用している場合、以下のデータベース権限を付
 YugabyteDB を使用している場合、以下のデータベース権限を付与する必要があります。
 
 - `CREATE`
+
+#### Spanner
+
+Spanner を使用している場合、以下のロールを付与する必要があります：
+
+- `roles/spanner.databaseUser`
 
 #### Amazon DynamoDB
 
