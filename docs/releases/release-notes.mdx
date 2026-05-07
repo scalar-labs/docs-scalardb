@@ -31,6 +31,7 @@ This release includes a lot of enhancements, improvements, security issue fixes,
   - Connection pool default behavior follows HikariCP rather than DBCP2, which may change runtime behavior even without configuration changes (for example, connection acquisition timeout and idle eviction).
 - **Existing tables require `repairTable()` to create the new before-image secondary index.** Index-based `Get`, `Scan`, and `ScanAll` in Consensus Commit now rely on a companion `before_<col>` index. Until you run `repairTable()` on each existing table, ScalarDB logs a warning at startup and index-based reads fall back to the previous behavior, which may miss records whose indexed column is being concurrently updated. The configuration `scalar.db.consensus_commit.index.eventually_consistent_read.enabled` is provided as an opt-out but is not recommended for new workloads.
 - **MySQL Connector/J replaced with MariaDB Connector/J.** SSL is no longer enabled by default. If you connect to MySQL 8.0 or later with `caching_sha2_password` authentication, add `sslMode=REQUIRED` or `allowPublicKeyRetrieval=true` to your JDBC URL. No action is required for `jdbc:mysql://` URLs because ScalarDB automatically appends `permitMysqlScheme` for compatibility.
+- **`BigIntColumn.MAX_VALUE` and `BigIntColumn.MIN_VALUE` constants have been removed.** Code that referenced them must use `Long.MAX_VALUE` and `Long.MIN_VALUE` instead.
 
 :::
 
