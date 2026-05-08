@@ -105,11 +105,11 @@ cd scalardb-samples/microservice-transaction-sample-with-shared-cluster-with-jdb
 
 ### Set the license key
 
-Set the license key (trial license or commercial license) for the ScalarDB Cluster deployment to the configuration file [`scalardb-cluster-node.properties`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transactions-sample-with-shared-cluster-with-jdbc/scalardb-cluster-node.properties). For details, see [How to Configure a Product License Key](../../scalar-licensing/index.mdx).
+Set the license key (trial license or commercial license) for the ScalarDB Cluster deployment to the configuration file [`scalardb-cluster-node.properties`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transaction-sample-with-shared-cluster-with-jdbc/scalardb-cluster-node.properties). For details, see [How to Configure a Product License Key](../../scalar-licensing/index.mdx).
 
 ### Start Cassandra, MySQL, and ScalarDB Cluster
 
-The configuration file for ScalarDB Cluster is [`scalardb-cluster-node.properties`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transactions-sample-with-shared-cluster-with-jdbc/scalardb-cluster-node.properties).
+The configuration file for ScalarDB Cluster is [`scalardb-cluster-node.properties`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transaction-sample-with-shared-cluster-with-jdbc/scalardb-cluster-node.properties).
 
 Cassandra and MySQL are already configured with the multi-storage setting, as shown in the configuration. For details about configuring the multi-storage transactions feature in ScalarDB, see [How to configure ScalarDB to support multi-storage transactions](../../multi-storage-transactions.mdx#how-to-configure-scalardb-to-support-multi-storage-transactions).
 
@@ -137,7 +137,7 @@ Starting the Docker container may take more than one minute depending on your de
 
 ### Load the schema
 
-The database schema (the method in which the data will be organized) for the sample application has already been defined in [`schema.sql`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transactions-sample-with-shared-cluster-with-jdbc/schema.sql).
+The database schema (the method in which the data will be organized) for the sample application has already been defined in [`schema.sql`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transaction-sample-with-shared-cluster-with-jdbc/schema.sql).
 
 To apply the schema, go to the [Releases](https://github.com/scalar-labs/scalardb/releases) of ScalarDB and download the SQL CLI tool (`scalardb-cluster-sql-cli-<VERSION>-all.jar`) for the version of ScalarDB Cluster that you want to use.
 
@@ -149,7 +149,7 @@ java -jar scalardb-cluster-sql-cli-<VERSION>-all.jar --config scalardb-cluster-s
 
 #### Schema details
 
-As shown in [`schema.sql`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transactions-sample-with-shared-cluster-with-jdbc/schema.sql) for the sample application, all the tables for the Customer Service are created in the `customer_service` namespace.
+As shown in [`schema.sql`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transaction-sample-with-shared-cluster-with-jdbc/schema.sql) for the sample application, all the tables for the Customer Service are created in the `customer_service` namespace.
 
 - `customer_service.customers`: a table that manages customers' information
   - `credit_limit`: the maximum amount of money a lender will allow each customer to spend when using a line of credit
@@ -175,11 +175,11 @@ Run the following command, replacing `<VERSION>` with the version of the SQL CLI
 java -jar scalardb-cluster-sql-cli-<VERSION>-all.jar --config scalardb-cluster-sql-cli.properties --file user-privileges.sql
 ```
 
-As shown in [`user-privileges.sql`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transactions-sample-with-shared-cluster-with-jdbc/user-privileges.sql), you create users for Customer Service and Order Service and grant privileges to them.
+As shown in [`user-privileges.sql`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transaction-sample-with-shared-cluster-with-jdbc/user-privileges.sql), you create users for Customer Service and Order Service and grant privileges to them.
 
 ## Start the microservices
 
-The configuration files for Customer Service and Order Service are [`customer-service.properties`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transactions-sample-with-shared-cluster-with-jdbc/customer-service/customer-service.properties) and [`order-service.properties`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transactions-sample-with-shared-cluster-with-jdbc/order-service/order-service.properties), respectively.
+The configuration files for Customer Service and Order Service are [`customer-service.properties`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transaction-sample-with-shared-cluster-with-jdbc/customer-service/customer-service.properties) and [`order-service.properties`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transaction-sample-with-shared-cluster-with-jdbc/order-service/order-service.properties), respectively.
 
 Before starting the microservices, build the Docker images of the sample application by running the following command:
 
