@@ -229,7 +229,7 @@ try (PreparedStatement preparedStatement =
 }
 ```
 
-Batch execution is restricted to mutation statements (`INSERT`, `UPSERT`, `UPDATE`, and `DELETE`). Passing a `SELECT`, DDL, or DCL statement to `addBatch(...)` causes the subsequent `executeBatch()` call to throw a `SQLException`. For batch execution that also accepts DDL and DCL statements, see [Execute batch statements](sql-api-guide.mdx#execute-batch-statements) in the ScalarDB SQL API Guide.
+Batch execution is restricted to mutation statements (`INSERT`, `UPSERT`, `UPDATE`, and `DELETE`). Passing a `SELECT`, DDL, or DCL statement to `addBatch(...)` causes the subsequent `executeBatch()` call to throw a `SQLException`.
 
 If one or more statements in a batch fail, `executeBatch()` throws a `java.sql.BatchUpdateException`. You can inspect the per-statement update counts by calling `BatchUpdateException.getUpdateCounts()`.
 
