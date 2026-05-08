@@ -96,36 +96,36 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
 次の表は、各 JDBC データベースでサポートされているデータ型と、それらの ScalarDB データ型へのマッピングを示しています。データベースを選択し、既存のテーブルをインポートできるかどうかを確認してください。
 
 <Tabs groupId="databases" queryString>
-  <TabItem value="MySQL" label="MySQL、MariaDB、と TiDB" default>
+  <TabItem value="MySQL_MariaDB_TiDB" label="MySQL、MariaDB、と TiDB" default>
     | MySQL/MariaDB/TiDB        | ScalarDB                            | 注記                                                                                                                |
     |--------------|-------------------------------------|---------------------------------------------------------------------------------------------------------------------|
-    | bigint       | BIGINT                              | 下記の警告 [1](#1) を参照してください。                                                                                 |
+    | bigint       | BIGINT                              |                                                                                                                     |
     | binary       | BLOB                                |                                                                                                                     |
     | bit          | BOOLEAN                             |                                                                                                                     |
-    | blob         | BLOB                                | 下記の警告 [2](#2) を参照してください。                                                                                 |
-    | char         | TEXT                                | 下記の警告 [2](#2) を参照してください。                                                                                 |
+    | blob         | BLOB                                | 下記の警告 [1](#1) を参照してください。                                                                                 |
+    | char         | TEXT                                | 下記の警告 [1](#1) を参照してください。                                                                                 |
     | date         | DATE                                |                                                                                                                     |
-    | datetime     | TIMESTAMP (デフォルト)、TIMESTAMPTZ  | TIMESTAMPTZ としてインポートする場合、ScalarDB はデータが UTC タイムゾーンにあると想定します。下記の警告 [6](#6) を参照してください。   |
+    | datetime     | TIMESTAMP (デフォルト)、TIMESTAMPTZ  | TIMESTAMPTZ としてインポートする場合、ScalarDB はデータが UTC タイムゾーンにあると想定します。下記の警告 [5](#5) を参照してください。   |
     | double       | DOUBLE                              |                                                                                                                      |
     | float        | FLOAT                               |                                                                                                                      |
     | int          | INT                                 |                                                                                                                      |
-    | int unsigned | BIGINT                              | 下記の警告 [2](#2) を参照してください。                                                                                   |
+    | int unsigned | BIGINT                              | 下記の警告 [1](#1) を参照してください。                                                                                   |
     | integer      | INT                                 |                                                                                                                      |
     | longblob     | BLOB                                |                                                                                                                      |
     | longtext     | TEXT                                |                                                                                                                      |
-    | mediumblob   | BLOB                                | 下記の警告 [2](#2) を参照してください。                                                                                    |
-    | mediumint    | INT                                 | 下記の警告 [2](#2) を参照してください。                                                                                    |
-    | mediumtext   | TEXT                                | 下記の警告 [2](#2) を参照してください。                                                                                    |
-    | smallint     | INT                                 | 下記の警告 [2](#2) を参照してください。                                                                                     |
-    | text         | TEXT                                | 下記の警告 [2](#2) を参照してください。                                                                                    |
+    | mediumblob   | BLOB                                | 下記の警告 [1](#1) を参照してください。                                                                                    |
+    | mediumint    | INT                                 | 下記の警告 [1](#1) を参照してください。                                                                                    |
+    | mediumtext   | TEXT                                | 下記の警告 [1](#1) を参照してください。                                                                                    |
+    | smallint     | INT                                 | 下記の警告 [1](#1) を参照してください。                                                                                     |
+    | text         | TEXT                                | 下記の警告 [1](#1) を参照してください。                                                                                    |
     | time         | TIME                                |                                                                                                                        |
     | timestamp    | TIMESTAMPTZ                         |                                                                                                                        |
-    | tinyblob     | BLOB                                | 下記の警告 [2](#2) を参照してください。                                                                                      |
-    | tinyint      | INT                                | 下記の警告 [2](#2) を参照してください。                                                                                       |
+    | tinyblob     | BLOB                                | 下記の警告 [1](#1) を参照してください。                                                                                      |
+    | tinyint      | INT                                | 下記の警告 [1](#1) を参照してください。                                                                                       |
     | tinyint(1)   | BOOLEAN                             |                                                                                                                         |
-    | tinytext     | TEXT                                | 下記の警告 [2](#2) を参照してください。                                                                                      |
-    | varbinary    | BLOB                                | 下記の警告 [2](#2) を参照してください。                                                                                       |
-    | varchar      | TEXT                                | 下記の警告 [2](#2) を参照してください。                                                                                       |
+    | tinytext     | TEXT                                | 下記の警告 [1](#1) を参照してください。                                                                                      |
+    | varbinary    | BLOB                                | 下記の警告 [1](#1) を参照してください。                                                                                       |
+    | varchar      | TEXT                                | 下記の警告 [1](#1) を参照してください。                                                                                       |
 
     上記に記載されていないデータ型はサポートされていません。サポートされていない一般的なデータ型は次のとおりです。
 
@@ -142,16 +142,16 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
   <TabItem value="PostgreSQL_YugabyteDB_AlloyDB" label="PostgreSQL、YugabyteDB、と AlloyDB">
     | PostgreSQL/YugabyteDB/AlloyDB    | ScalarDB    | 注記                               |
     |--------------------------|-------------|-----------------------------------|
-    | bigint                   | BIGINT      | 下記の警告 [1](#1) を参照してください。|
+    | bigint                   | BIGINT      |                                   |
     | boolean                  | BOOLEAN     |                                   |
     | bytea                    | BLOB        |                                   |
-    | character                | TEXT        | 下記の警告 [2](#2) を参照してください。|
-    | character varying        | TEXT        | 下記の警告 [2](#2) を参照してください。|
+    | character                | TEXT        | 下記の警告 [1](#1) を参照してください。|
+    | character varying        | TEXT        | 下記の警告 [1](#1) を参照してください。|
     | date                     | DATE        |                                   |
     | double precision         | DOUBLE      |                                   |
     | integer                  | INT         |                                   |
     | real                     | FLOAT       |                                   |
-    | smallint                 | INT         | 下記の警告 [2](#2) を参照してください。|
+    | smallint                 | INT         | 下記の警告 [1](#1) を参照してください。|
     | text                     | TEXT        |                                   |
     | time                     | TIME        |                                   |
     | timestamp                | TIMESTAMP   |                                   |
@@ -194,23 +194,23 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
 |--------------------------------|-----------------------------------|-------------------------------------|
 | binary_double                  | DOUBLE                            |                                     |
 | binary_float                   | FLOAT                             |                                     |
-| blob                           | BLOB                              | 下記の警告 [3](#3) を参照してください。  |
-| char                           | TEXT                              | 下記の警告 [2](#2) を参照してください。  |
+| blob                           | BLOB                              | 下記の警告 [2](#2) を参照してください。  |
+| char                           | TEXT                              | 下記の警告 [1](#1) を参照してください。  |
 | clob                           | TEXT                              |                                     |
-| date                           | DATE（デフォルト）、TIME、TIMESTAMP  | 下記の警告 [6](#6) を参照してください。  |
-| float                          | DOUBLE                            | 下記の警告 [4](#4) を参照してください。  |
+| date                           | DATE（デフォルト）、TIME、TIMESTAMP  | 下記の警告 [5](#5) を参照してください。  |
+| float                          | DOUBLE                            | 下記の警告 [3](#3) を参照してください。  |
 | long                           | TEXT                              |                                     |
 | long raw                       | BLOB                              |                                     |
-| nchar                          | TEXT                              | 下記の警告 [2](#2) を参照してください。  |
+| nchar                          | TEXT                              | 下記の警告 [1](#1) を参照してください。  |
 | nclob                          | TEXT                              |                                     |
-| number(p,s), p ≠ 1の場合       | BIGINT / DOUBLE                   | 下記の警告 [5](#5) を参照してください。  |
-| number(1,0)                    | BIGINT (デフォルト), BOOLEAN      | 下記の警告 [6](#6) を参照してください。  |
-| nvarchar2                      | TEXT                              | 下記の警告 [2](#2) を参照してください。  |
-| raw                            | BLOB                              | 下記の警告 [2](#2) を参照してください。  |
-| timestamp                      | TIMESTAMP (デフォルト)、TIME        | 下記の警告 [6](#6) を参照してください。 |
+| number(p,s), p ≠ 1の場合       | BIGINT / DOUBLE                   | 下記の警告 [4](#4) を参照してください。  |
+| number(1,0)                    | BIGINT (デフォルト), BOOLEAN      | 下記の警告 [5](#5) を参照してください。  |
+| nvarchar2                      | TEXT                              | 下記の警告 [1](#1) を参照してください。  |
+| raw                            | BLOB                              | 下記の警告 [1](#1) を参照してください。  |
+| timestamp                      | TIMESTAMP (デフォルト)、TIME        | 下記の警告 [5](#5) を参照してください。 |
 | timestamp with time zone       | TIMESTAMPTZ                       |                                     |
 | timestamp with local time zone | TIMESTAMPTZ                       |                                     |
-| varchar2                       | TEXT                              | 下記の警告 [2](#2) を参照してください。  |
+| varchar2                       | TEXT                              | 下記の警告 [1](#1) を参照してください。  |
 
     上記に記載されていないデータ型はサポートされていません。サポートされていない一般的なデータ型は次のとおりです。
 
@@ -223,28 +223,28 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
   <TabItem value="SQLServer" label="SQL Server">
     | SQL Server     | ScalarDB    | 注記                               |
     |----------------|-------------|------------------------------------|
-    | bigint         | BIGINT      | 下記の警告 [1](#1) を参照してください。 |
-    | binary         | BLOB        | 下記の警告 [2](#2) を参照してください。 |
+    | bigint         | BIGINT      |                                    |
+    | binary         | BLOB        | 下記の警告 [1](#1) を参照してください。 |
     | bit            | BOOLEAN     |                                    |
-    | char           | TEXT        | 下記の警告 [2](#2) を参照してください。 |
+    | char           | TEXT        | 下記の警告 [1](#1) を参照してください。 |
     | date           | DATE        |                                    |
     | datetime       | TIMESTAMP   |                                    |
     | datetime2      | TIMESTAMP   |                                    |
     | float          | DOUBLE      |                                    |
-    | image          | BLOB        |                                    |
+    | image          | BLOB        | 下記の警告 [6](#6) を参照してください。 |
     | int            | INT         |                                    |
-    | nchar          | TEXT        | 下記の警告 [2](#2) を参照してください。 |
+    | nchar          | TEXT        | 下記の警告 [1](#1) を参照してください。 |
     | ntext          | TEXT        |                                    |
-    | nvarchar       | TEXT        | 下記の警告 [2](#2) を参照してください。 |
+    | nvarchar       | TEXT        | 下記の警告 [1](#1) を参照してください。 |
     | offsetdatetime | TIMESTAMPTZ |                                    |
     | real           | FLOAT       |                                    |
     | smalldatetime  | TIMESTAMP   |                                    |
-    | smallint       | INT         | 下記の警告 [2](#2) を参照してください。 |
+    | smallint       | INT         | 下記の警告 [1](#1) を参照してください。 |
     | text           | TEXT        |                                    |
     | time           | TIME        |                                    |
-    | tinyint        | INT         | 下記の警告 [2](#2) を参照してください。 |
-    | varbinary      | BLOB        | 下記の警告 [2](#2) を参照してください。 |
-    | varchar        | TEXT        | 下記の警告 [2](#2) を参照してください。 |
+    | tinyint        | INT         | 下記の警告 [1](#1) を参照してください。 |
+    | varbinary      | BLOB        | 下記の警告 [1](#1) を参照してください。 |
+    | varchar        | TEXT        | 下記の警告 [1](#1) を参照してください。 |
 
     上記に記載されていないデータ型はサポートされていません。サポートされていない一般的なデータ型は次のとおりです。
 
@@ -264,7 +264,7 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
   <TabItem value="Db2" label="Db2">
     | Db2                   | ScalarDB                               | 注意事項                            |
     |-----------------------|----------------------------------------|------------------------------------|
-    | BIGINT                | BIGINT                                 | 下記の警告 [1](#1) を参照してください。 |
+    | BIGINT                | BIGINT                                 |                                    |
     | BINARY                | BLOB                                   |                                    |
     | BLOB                  | BLOB                                   |                                    |
     | BOOLEAN               | BOOLEAN                                |                                    |
@@ -272,18 +272,18 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
     | CHAR FOR BIT DATA     | BLOB                                   |                                    |
     | CLOB                  | TEXT                                   |                                    |
     | DATE                  | DATE                                   |                                    |
-    | DOUBLE                | DOUBLE                                 | 下記の警告 [2](#2) を参照してください。 |
-    | FLOAT(p), with p ≤ 24 | FLOAT                                  | 下記の警告 [2](#2) を参照してください。 |
-    | FLOAT(p), with p ≥ 25 | DOUBLE                                 | 下記の警告 [2](#2) を参照してください。 |
+    | DOUBLE                | DOUBLE                                 | 下記の警告 [1](#1) を参照してください。 |
+    | FLOAT(p), with p ≤ 24 | FLOAT                                  | 下記の警告 [1](#1) を参照してください。 |
+    | FLOAT(p), with p ≥ 25 | DOUBLE                                 | 下記の警告 [1](#1) を参照してください。 |
     | GRAPHIC               | TEXT                                   |                                    |
     | INT                   | INT                                    |                                    |
     | NCHAR                 | TEXT                                   |                                    |
     | NCLOB                 | TEXT                                   |                                    |
     | NVARCHAR              | TEXT                                   |                                    |
-    | REAL                  | FLOAT                                  | 下記の警告 [2](#2) を参照してください。 |
+    | REAL                  | FLOAT                                  | 下記の警告 [1](#1) を参照してください。 |
     | SMALLINT              | INT                                    |                                    |
     | TIME                  | TIME                                   |                                    |
-    | TIMESTAMP             | TIMESTAMP (default), TIME, TIMESTAMPTZ | 下記の警告 [6](#6) を参照してください。 |
+    | TIMESTAMP             | TIMESTAMP (default), TIME, TIMESTAMPTZ | 下記の警告 [5](#5) を参照してください。 |
     | VARBINARY             | BLOB                                   |                                    |
     | VARCHAR               | TEXT                                   |                                    |
     | VARCHAR FOR BIT DATA  | BLOB                                   |                                    |
@@ -322,25 +322,22 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
 
 <ol>
   <li>
-    <a name="1"></a>ScalarDB の `BIGINT` の値の範囲は、基礎となるデータベースの `bigint` のサイズに関係なく、-2^53から2^53です。したがって、インポートされたテーブルにこの範囲外のデータが存在する場合、ScalarDB はそれを読み取ることができません。
+    <a name="1"></a>上記の特定のデータ型の場合、ScalarDB は基になるデータベースのデータ型よりも大きいデータ型をマップする場合があります。その場合、基になる列の制限より大きい値を挿入するとエラーが表示されます。
   </li>
   <li>
-    <a name="2"></a>上記の特定のデータ型の場合、ScalarDB は基になるデータベースのデータ型よりも大きいデータ型をマップする場合があります。その場合、基になるデータベースで指定されたサイズよりも大きいサイズの値を入力するとエラーが表示されます。
+    <a name="2"></a>ScalarDB の `BLOB` の最大サイズは約 2GB (正確には2^31-1バイト) です。対照的に、Oracle の `blob` は (4GB-1)*(ブロック数) を持つことができます。したがって、インポートされたテーブルに 2GB を超えるデータが存在する場合、ScalarDB はそれを読み取ることができません。
   </li>
   <li>
-    <a name="3"></a>ScalarDB の `BLOB` の最大サイズは約 2GB (正確には2^31-1バイト) です。対照的に、Oracle の `blob` は (4GB-1)*(ブロック数) を持つことができます。したがって、インポートされたテーブルに 2GB を超えるデータが存在する場合、ScalarDB はそれを読み取ることができません。
+    <a name="3"></a>ScalarDB は、ScalarDB の `DOUBLE` よりも精度の高い Oracle `float` 列をサポートしていません。
   </li>
   <li>
-    <a name="4"></a>ScalarDB は、ScalarDB の `DOUBLE` よりも精度の高い Oracle `float` 列をサポートしていません。
+    <a name="4"></a>ScalarDB では、ScalarDB のデータ型の最大サイズにより、`p` が18より大きい場合、Oracle の `numeric(p, s)` 列 (`p` は精度、`s` はスケール) をサポートしません。`s` が0の場合、ScalarDB は列を `BIGINT` にマッピングします。それ以外の場合は、ScalarDB は列を `DOUBLE` にマッピングします。後者の場合、浮動小数点値が固定小数点値にキャストされるため、基になるデータベースで切り上げまたは切り捨てが発生する可能性があることに注意してください。
   </li>
   <li>
-    <a name="5"></a>ScalarDB では、ScalarDB のデータ型の最大サイズにより、`p` が15より大きい場合、Oracle の `numeric(p, s)` 列 (`p` は精度、`s` はスケール) をサポートしません。`s` が0の場合、ScalarDB は列を `BIGINT` にマッピングします。それ以外の場合は、ScalarDB は列を `DOUBLE` にマッピングします。後者の場合、浮動小数点値が固定小数点値にキャストされるため、基になるデータベースで切り上げまたは切り捨てが発生する可能性があることに注意してください。
+    <a name="5"></a>基盤となるストレージ型は、いくつかの ScalarDB データ型にマップできます。デフォルトのマッピングをオーバーライドするには、インポートスキーマファイルの `override-columns-type` フィールドを使用します。例については、[サンプルインポートスキーマファイル](#サンプルインポートスキーマファイル)を参照してください。
   </li>
   <li>
-    <a name="6"></a>基盤となるデータベースデータ型は、いくつかの ScalarDB データ型にマップできます。デフォルトのマッピングをオーバーライドするには、インポートスキーマファイルの `override-columns-type` フィールドを使用します。例については、[サンプルインポートスキーマファイル](#サンプルインポートスキーマファイル)を参照してください。
-  </li>
-  <li>
-    <a name="7"></a>ScalarDB は、ScalarDB の `BLOB` 列としてインポートされた SQL Server の `image` 列のデータ型を `TEXT` に変更することをサポートしていません。
+    <a name="6"></a>ScalarDB は、ScalarDB の `BLOB` 列としてインポートされた SQL Server の `image` 列のデータ型を `TEXT` に変更することをサポートしていません。
   </li>
 </ol>
 
