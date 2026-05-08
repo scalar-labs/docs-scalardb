@@ -1,0 +1,452 @@
+---
+tags:
+  - Enterprise Premium
+displayed_sidebar: docsEnglish
+---
+
+# Create an Application That Supports Microservice Transactions in a Shared ScalarDB Cluster Environment by Using ScalarDB JDBC
+
+This tutorial describes how to create a sample e-commerce application that supports microservice transactions and follows the shared-cluster pattern for ScalarDB Cluster by using ScalarDB JDBC.
+
+For details about the shared-cluster pattern, see [ScalarDB Cluster Deployment Patterns for Microservices](../../scalardb-cluster/deployment-patterns-for-microservices.mdx#shared-cluster-pattern).
+
+## Overview of the sample microservice application
+
+The sample e-commerce application shows how users can order and pay for items by using a line of credit.
+
+The sample application has two microservices called the *Customer Service* and the *Order Service* based on the [database-per-service pattern](https://microservices.io/patterns/data/database-per-service.html):
+
+- The **Customer Service** manages customer information, including line-of-credit information, credit limit, and credit total.
+- The **Order Service** is responsible for order operations like placing an order and getting order histories.
+
+Each service has gRPC endpoints. Clients call the endpoints, and the services call each endpoint as well.
+
+The databases that you will be using in the sample application are Cassandra and MySQL. The Customer Service and the Order Service use Cassandra and MySQL, respectively, through ScalarDB Cluster.
+
+![Overview](./images/overview.png)
+
+As shown in the diagram, ScalarDB Cluster has a small Coordinator database used for the Consensus Commit protocol. The database is service-independent and exists for managing transaction metadata for Consensus Commit in a highly available manner.
+
+In the sample application, for ease of setup and explanation, you co-locate the Coordinator database in the same Cassandra instance of the Order Service. Alternatively, you can manage the Coordinator database as a separate database.
+
+:::note
+
+Since the focus of the sample application is to demonstrate using ScalarDB Cluster, application-specific error handling, authentication processing, and similar functions are not included in the sample application.
+
+:::
+
+### Service endpoints
+
+The endpoints defined in the services are as follows:
+
+- Customer Service
+    - `getCustomerInfo`
+    - `payment`
+    - `repayment`
+
+- Order Service
+    - `placeOrder`
+    - `getOrder`
+    - `getOrders`
+
+### What you can do in this sample application
+
+The sample application supports the following types of transactions:
+
+- Get customer information through the `getCustomerInfo` endpoint of the Customer Service.
+- Place an order by using a line of credit through the `placeOrder` endpoint of the Order Service and the `payment` endpoint of the Customer Service.
+    - Checks if the cost of the order is below the customer's credit limit.
+    - If the check passes, records the order history and updates the amount the customer has spent.
+- Get order information by order ID through the `getOrder` endpoint of the Order Service and the `getCustomerInfo` endpoint of the Customer Service.
+- Get order information by customer ID through the `getOrders` endpoint of the Order Service and the `getCustomerInfo` endpoint of the Customer Service.
+- Make a payment through the `repayment` endpoint of the Customer Service.
+    - Reduces the amount the customer has spent.
+
+:::note
+
+The `getCustomerInfo` endpoint works as a participant service endpoint when receiving a transaction ID from the coordinator.
+
+:::
+
+## Prerequisites
+
+- One of the following Java Development Kits (JDKs):
+  - [Oracle JDK](https://www.oracle.com/java/technologies/downloads/) LTS version (8, 11, 17 or 21)
+  - OpenJDK LTS version (8, 11, 17, or 21) from [Eclipse Temurin](https://adoptium.net/temurin/releases/), [Amazon Corretto](https://aws.amazon.com/corretto/), or [Microsoft](https://learn.microsoft.com/en-us/java/openjdk/download)
+- [Docker](https://www.docker.com/get-started/) 20.10 or later with [Docker Compose](https://docs.docker.com/compose/install/) V2 or later
+
+:::note
+
+We recommend using the LTS versions mentioned above, but other non-LTS versions may work.
+
+In addition, other JDKs should work with ScalarDB, but we haven't tested them.
+
+:::
+
+Also, you need to have a license key (trial license or commercial license) for ScalarDB Cluster. If you don't have a license key, please [contact us](https://www.scalar-labs.com/contact).
+
+## Set up ScalarDB Cluster
+
+The following sections describe how to set up the sample application that supports microservice transactions with ScalarDB Cluster.
+
+### Clone the ScalarDB samples repository
+
+Open **Terminal**, then clone the ScalarDB samples repository by running the following command:
+
+```console
+git clone https://github.com/scalar-labs/scalardb-samples
+```
+
+Then, go to the directory that contains the sample application by running the following command:
+
+```console
+cd scalardb-samples/microservice-transaction-sample-with-shared-cluster-with-jdbc/
+```
+
+### Set the license key
+
+Set the license key (trial license or commercial license) for the ScalarDB Cluster deployment to the configuration file [`scalardb-cluster-node.properties`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transactions-sample-with-shared-cluster-with-jdbc/scalardb-cluster-node.properties). For details, see [How to Configure a Product License Key](../../scalar-licensing/index.mdx).
+
+### Start Cassandra, MySQL, and ScalarDB Cluster
+
+The configuration file for ScalarDB Cluster is [`scalardb-cluster-node.properties`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transactions-sample-with-shared-cluster-with-jdbc/scalardb-cluster-node.properties).
+
+Cassandra and MySQL are already configured with the multi-storage setting, as shown in the configuration. For details about configuring the multi-storage transactions feature in ScalarDB, see [How to configure ScalarDB to support multi-storage transactions](../../multi-storage-transactions.mdx#how-to-configure-scalardb-to-support-multi-storage-transactions).
+
+For the sake of quickly setting up this sample application, you'll run ScalarDB Cluster in standalone mode. For details about running ScalarDB Cluster in standalone mode, see [ScalarDB Cluster Standalone Mode](../../scalardb-cluster/standalone-mode.mdx).
+
+Also, ScalarDB Auth is enabled to implement access control for each microservice. For details about ScalarDB Auth, see [ScalarDB Auth with SQL](../../scalardb-cluster/scalardb-auth-with-sql.mdx).
+
+:::note
+
+For the sake of quickly setting up this sample application, wire encryption is not enabled. However, we recommend enabling wire encryption in a production environment to secure the communication between the client and the ScalarDB Cluster nodes, and amongst the ScalarDB Cluster nodes themselves. For details about wire encryption, see [Wire encryption](../../scalardb-cluster/encrypt-wire-communications.mdx).
+
+:::
+
+To start Cassandra, MySQL, and ScalarDB Cluster, which are included in the Docker container for the sample application, run the following command:
+
+```console
+docker compose up -d mysql cassandra scalardb-cluster-node
+```
+
+:::note
+
+Starting the Docker container may take more than one minute depending on your development environment.
+
+:::
+
+### Load the schema
+
+The database schema (the method in which the data will be organized) for the sample application has already been defined in [`schema.sql`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transactions-sample-with-shared-cluster-with-jdbc/schema.sql).
+
+To apply the schema, go to the [Releases](https://github.com/scalar-labs/scalardb/releases) of ScalarDB and download the SQL CLI tool (`scalardb-cluster-sql-cli-<VERSION>-all.jar`) for the version of ScalarDB Cluster that you want to use.
+
+Then, run the following command, replacing `<VERSION>` with the version of the SQL CLI tool that you downloaded:
+
+```console
+java -jar scalardb-cluster-sql-cli-<VERSION>-all.jar --config scalardb-cluster-sql-cli.properties --file schema.sql
+```
+
+#### Schema details
+
+As shown in [`schema.sql`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transactions-sample-with-shared-cluster-with-jdbc/schema.sql) for the sample application, all the tables for the Customer Service are created in the `customer_service` namespace.
+
+- `customer_service.customers`: a table that manages customers' information
+  - `credit_limit`: the maximum amount of money a lender will allow each customer to spend when using a line of credit
+  - `credit_total`: the amount of money that each customer has already spent by using their line of credit
+
+Also, all the tables for the Order Service are created in the `order_service` namespace.
+
+- `order_service.orders`: a table that manages order information
+- `order_service.statements`: a table that manages order statement information
+- `order_service.items`: a table that manages information of items to be ordered
+
+The Entity Relationship Diagram for the schema is as follows:
+
+![ERD](./images/ERD.png)
+
+### Create users for the services and grant privileges to them
+
+To implement access control for each microservice, you need to create users for the services and grant privileges to them.
+
+Run the following command, replacing `<VERSION>` with the version of the SQL CLI tool that you downloaded:
+
+```console
+java -jar scalardb-cluster-sql-cli-<VERSION>-all.jar --config scalardb-cluster-sql-cli.properties --file user-privileges.sql
+```
+
+As shown in [`user-privileges.sql`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transactions-sample-with-shared-cluster-with-jdbc/user-privileges.sql), you create users for Customer Service and Order Service and grant privileges to them.
+
+## Start the microservices
+
+The configuration files for Customer Service and Order Service are [`customer-service.properties`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transactions-sample-with-shared-cluster-with-jdbc/customer-service/customer-service.properties) and [`order-service.properties`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transactions-sample-with-shared-cluster-with-jdbc/order-service/order-service.properties), respectively.
+
+Before starting the microservices, build the Docker images of the sample application by running the following command:
+
+```console
+./gradlew docker
+```
+
+Then, start the microservices by running the following command:
+
+```console
+docker compose up -d customer-service order-service
+```
+
+After starting the microservices and the initial data has loaded, the following records should be stored in the `customer_service.customers` table:
+
+| customer_id | name          | credit_limit | credit_total |
+|-------------|---------------|--------------|--------------|
+| 1           | Yamada Taro   | 10000        | 0            |
+| 2           | Yamada Hanako | 10000        | 0            |
+| 3           | Suzuki Ichiro | 10000        | 0            |
+
+And the following records should be stored in the `order_service.items` table:
+
+| item_id | name   | price |
+|---------|--------|-------|
+| 1       | Apple  | 1000  |
+| 2       | Orange | 2000  |
+| 3       | Grape  | 2500  |
+| 4       | Mango  | 5000  |
+| 5       | Melon  | 3000  |
+
+## Execute transactions and retrieve data in the sample application
+
+The following sections describe how to execute transactions and retrieve data in the sample e-commerce application.
+
+### Get customer information
+
+Start with getting information about the customer whose ID is `1` by running the following command:
+
+```console
+./gradlew :client:run --args="GetCustomerInfo 1" -q
+```
+
+You should see the following output:
+
+```console
+{
+  "id": 1,
+  "name": "Yamada Taro",
+  "creditLimit": 10000
+}
+```
+
+At this time, `credit_total` isn't shown, which means the current value of `credit_total` is `0`.
+
+### Place an order
+
+Then, have customer ID `1` place an order for three apples and two oranges by running the following command:
+
+:::note
+
+The order format in this command is `./gradlew run --args="PlaceOrder <CUSTOMER_ID> <ITEM_ID>:<COUNT>,<ITEM_ID>:<COUNT>,..."`.
+
+:::
+
+```console
+./gradlew :client:run --args="PlaceOrder 1 1:3,2:2" -q
+```
+
+You should see a similar output as below, with a different UUID for `order_id`, which confirms that the order was successful:
+
+```console
+{
+  "orderId": "2dab1af1-a008-45b2-92e3-f30ff2a4ae3e"
+}
+```
+
+### Check the order details
+
+Check details about the order by running the following command, replacing `<ORDER_ID_UUID>` with the UUID for the `order_id` that was shown after running the previous command:
+
+```console
+./gradlew :client:run --args="GetOrder <ORDER_ID_UUID>" -q
+```
+
+You should see a similar output as below, with different UUIDs for `order_id` and `timestamp`:
+
+```console
+{
+  "order": {
+    "orderId": "2dab1af1-a008-45b2-92e3-f30ff2a4ae3e",
+    "timestamp": "1708566933602",
+    "customerId": 1,
+    "customerName": "Yamada Taro",
+    "statement": [{
+      "itemId": 1,
+      "itemName": "Apple",
+      "price": 1000,
+      "count": 3,
+      "total": 3000
+    }, {
+      "itemId": 2,
+      "itemName": "Orange",
+      "price": 2000,
+      "count": 2,
+      "total": 4000
+    }],
+    "total": 7000
+  }
+}
+```
+
+### Place another order
+
+Place an order for one melon that uses the remaining amount in `credit_total` for customer ID `1` by running the following command:
+
+```console
+./gradlew :client:run --args="PlaceOrder 1 5:1" -q
+```
+
+You should see a similar output as below, with a different UUID for `order_id`, which confirms that the order was successful:
+
+```console
+{
+  "orderId": "abc6ed14-ac3d-4d4c-9a83-7fa0e70c1d4e"
+}
+```
+
+### Check the order history
+
+Get the history of all orders for customer ID `1` by running the following command:
+
+```console
+./gradlew :client:run --args="GetOrders 1" -q
+```
+
+You should see a similar output as below, with different UUIDs for `order_id` and `timestamp`, which shows the history of all orders for customer ID `1` in descending order by timestamp:
+
+```console
+{
+  "order": [{
+    "orderId": "2dab1af1-a008-45b2-92e3-f30ff2a4ae3e",
+    "timestamp": "1708566933602",
+    "customerId": 1,
+    "customerName": "Yamada Taro",
+    "statement": [{
+      "itemId": 1,
+      "itemName": "Apple",
+      "price": 1000,
+      "count": 3,
+      "total": 3000
+    }, {
+      "itemId": 2,
+      "itemName": "Orange",
+      "price": 2000,
+      "count": 2,
+      "total": 4000
+    }],
+    "total": 7000
+  }, {
+    "orderId": "abc6ed14-ac3d-4d4c-9a83-7fa0e70c1d4e",
+    "timestamp": "1708566978052",
+    "customerId": 1,
+    "customerName": "Yamada Taro",
+    "statement": [{
+      "itemId": 5,
+      "itemName": "Melon",
+      "price": 3000,
+      "count": 1,
+      "total": 3000
+    }],
+    "total": 3000
+  }]
+}
+```
+
+### Check the credit total
+
+Get the credit total for customer ID `1` by running the following command:
+
+```console
+./gradlew :client:run --args="GetCustomerInfo 1" -q
+```
+
+You should see the following output, which shows that customer ID `1` has reached their `credit_limit` in `credit_total` and cannot place anymore orders:
+
+```console
+{
+  "id": 1,
+  "name": "Yamada Taro",
+  "creditLimit": 10000,
+  "creditTotal": 10000
+}
+```
+
+Try to place an order for one grape and one mango by running the following command:
+
+```console
+./gradlew :client:run --args="PlaceOrder 1 3:1,4:1" -q
+```
+
+You should see the following output, which shows that the order failed because the `credit_total` amount would exceed the `credit_limit` amount:
+
+```console
+io.grpc.StatusRuntimeException: FAILED_PRECONDITION: Credit limit exceeded
+        at io.grpc.stub.ClientCalls.toStatusRuntimeException(ClientCalls.java:268)
+        at io.grpc.stub.ClientCalls.getUnchecked(ClientCalls.java:249)
+        at io.grpc.stub.ClientCalls.blockingUnaryCall(ClientCalls.java:167)
+        at sample.rpc.OrderServiceGrpc$OrderServiceBlockingStub.placeOrder(OrderServiceGrpc.java:288)
+        at sample.client.command.PlaceOrderCommand.call(PlaceOrderCommand.java:38)
+        at sample.client.command.PlaceOrderCommand.call(PlaceOrderCommand.java:12)
+        at picocli.CommandLine.executeUserObject(CommandLine.java:2041)
+        at picocli.CommandLine.access$1500(CommandLine.java:148)
+        at picocli.CommandLine$RunLast.executeUserObjectOfLastSubcommandWithSameParent(CommandLine.java:2461)
+        at picocli.CommandLine$RunLast.handle(CommandLine.java:2453)
+        at picocli.CommandLine$RunLast.handle(CommandLine.java:2415)
+        at picocli.CommandLine$AbstractParseResultHandler.execute(CommandLine.java:2273)
+        at picocli.CommandLine$RunLast.execute(CommandLine.java:2417)
+        at picocli.CommandLine.execute(CommandLine.java:2170)
+        at sample.client.Client.main(Client.java:39)
+```
+
+### Make a payment
+
+To continue making orders, customer ID `1` must make a payment to reduce the `credit_total` amount.
+
+Make a payment by running the following command:
+
+```console
+./gradlew :client:run --args="Repayment 1 8000" -q
+```
+
+Then, check the `credit_total` amount for customer ID `1` by running the following command:
+
+```console
+./gradlew :client:run --args="GetCustomerInfo 1" -q
+```
+
+You should see the following output, which shows that a payment was applied to customer ID `1`, reducing the `credit_total` amount:
+
+```console
+{
+  "id": 1,
+  "name": "Yamada Taro",
+  "creditLimit": 10000,
+  "creditTotal": 2000
+}
+```
+
+Now that customer ID `1` has made a payment, place an order for one grape and one mango by running the following command:
+
+```console
+./gradlew :client:run --args="PlaceOrder 1 3:1,4:1" -q
+```
+
+You should see a similar output as below, with a different UUID for `order_id`, which confirms that the order was successful:
+
+```console
+{
+  "orderId": "e29a5fd2-58f6-4bc5-9fef-8852461232e8"
+}
+```
+
+## Stop the sample application
+
+To stop the sample application, you need to stop the Docker containers that are running Cassandra, MySQL, ScalarDB Cluster, and the microservices. To stop the Docker containers, run the following command:
+
+```console
+docker compose down
+```
