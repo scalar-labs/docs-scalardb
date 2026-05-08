@@ -404,6 +404,11 @@ const sidebars = {
               id: 'scalardb-samples/spring-data-microservice-transaction-sample/README',
               label: 'Microservice Transactions Through Spring Data JDBC',
             },
+            {
+              type: 'doc',
+              id: 'scalardb-samples/microservice-transactions-sample-with-shared-cluster-with-jdbc/README',
+              label: 'Microservice Transactions Through Shared Cluster with JDBC',
+            },
           ],
         },
         {
