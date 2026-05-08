@@ -409,6 +409,11 @@ const sidebars = {
               id: 'scalardb-samples/microservice-transactions-sample-with-shared-cluster-with-jdbc/README',
               label: 'Microservice Transactions Through Shared Cluster with JDBC',
             },
+            {
+              type: 'doc',
+              id: 'scalardb-samples/dotnet-microservice-transactions-sample-with-shared-cluster-with-linq/README',
+              label: 'Microservice Transactions Through Shared Cluster with LINQ',
+            },
           ],
         },
         {
