@@ -733,34 +733,6 @@ The configurations for ScalarDB Cluster SQL are as follows:
 - **Description:** Default namespace name. If you don't specify a namespace name in your SQL statement, this value is used.
 - **Default value:** empty
 
-### ABAC configurations
-
-The following shows the attribute-based access control (ABAC) configurations for ScalarDB Cluster.
-
-:::warning
-
-The single CRUD operation transaction manager does not support ABAC.
-
-:::
-
-#### `abac.enabled`
-
-- **Field:** `scalar.db.cluster.abac.enabled`
-- **Description:** Whether the ABAC feature is enabled.
-- **Default value:** `false`
-
-:::warning
-
-If you enable the ABAC feature, you will also need to enable authentication and authorization. For more information, see [Authenticate and Authorize Users](./scalardb-auth-with-sql.mdx).
-
-:::
-
-#### `abac.cache_expiration_time_millis`
-
-- **Field:** `scalar.db.cluster.abac.cache_expiration_time_millis`
-- **Description:** The cache expiration time of the ABAC metadata cache in milliseconds. If you update the ABAC metadata, for example, the policy configuration, you might need to wait until this expiration time is reached for the changes to be applied. Setting this property to a low number may increase the number of accesses to the backend database and decrease performance.
-- **Default value:** `60000` (1 minute)
-
 ### Authentication and authorization configurations
 
 The following shows the authentication and authorization configurations for ScalarDB Cluster.
@@ -794,6 +766,52 @@ The following shows the authentication and authorization configurations for Scal
 - **Field:** `scalar.db.cluster.auth.pepper`
 - **Description:** A secret value added to a password before hashing. If not specified, the password is hashed without pepper.
 - **Default value:** empty
+
+### OIDC configurations
+
+The following configurations are available for the OIDC integration in ScalarDB Cluster. For details about the OIDC integration, see [Integrate OIDC for Access Control](./integrate-oidc-for-access-control.mdx).
+
+#### `auth.oidc.trusted_issuers`
+
+- **Field:** `scalar.db.cluster.auth.oidc.trusted_issuers`
+- **Description:** The trusted OIDC issuer URL. ScalarDB Cluster rejects tokens whose `iss` claim does not exactly match this value. This property must be specified when using the OIDC integration. Currently, only a single issuer URL is supported. For example, `http://localhost:8080/realms/my-realm` for Keycloak.
+- **Default value:** empty
+
+#### `auth.oidc.audience.name`
+
+- **Field:** `scalar.db.cluster.auth.oidc.audience.name`
+- **Description:** The expected value in the JWT `aud` claim. ScalarDB Cluster rejects tokens whose `aud` does not contain this value.
+- **Default value:** `scalardb`
+
+#### `auth.oidc.username.claim_name`
+
+- **Field:** `scalar.db.cluster.auth.oidc.username.claim_name`
+- **Description:** The JWT claim name used to extract the ScalarDB username. This property must be specified when using the OIDC integration.
+- **Default value:** empty
+
+#### `auth.oidc.jwt.access_token.require_at_jwt_typ`
+
+- **Field:** `scalar.db.cluster.auth.oidc.jwt.access_token.require_at_jwt_typ`
+- **Description:** Whether to require the JWT `typ` header to be `at+jwt` or `application/at+jwt` per RFC 9068. Set to `false` only for development purposes.
+- **Default value:** `true`
+
+#### `auth.oidc.jwt.jwks.url_cache.expiration_seconds`
+
+- **Field:** `scalar.db.cluster.auth.oidc.jwt.jwks.url_cache.expiration_seconds`
+- **Description:** The cache expiration time, in seconds, for the JWKS URL obtained from the OIDC provider configuration.
+- **Default value:** `86400` (24 hours)
+
+#### `auth.oidc.jwt.jwks.content_cache.expiration_seconds`
+
+- **Field:** `scalar.db.cluster.auth.oidc.jwt.jwks.content_cache.expiration_seconds`
+- **Description:** The cache expiration time, in seconds, for the fetched JWKS content.
+- **Default value:** `86400` (24 hours)
+
+#### `auth.oidc.jwt.max_clock_skew_seconds`
+
+- **Field:** `scalar.db.cluster.auth.oidc.jwt.max_clock_skew_seconds`
+- **Description:** The maximum clock skew tolerance, in seconds, for JWT expiration validation.
+- **Default value:** `10`
 
 ### Data-at-rest encryption configurations
 
@@ -1229,14 +1247,20 @@ When you run applications or tools that use the Java Client SDK and the primitiv
 ##### `username`
 
 - **Field:** `scalar.db.username`
-- **Description:** Username to access ScalarDB Cluster.
+- **Description:** Username to access ScalarDB Cluster. Not required when using OIDC JWT authentication.
 - **Default value:** empty
 
 ##### `password`
 
 - **Field:** `scalar.db.password`
-- **Description:** Password to access ScalarDB Cluster.
+- **Description:** Password to access ScalarDB Cluster. Not required when using OIDC JWT authentication.
 - **Default value:** empty
+
+##### `cluster.client.auth.type`
+
+- **Field:** `scalar.db.cluster.client.auth.type`
+- **Description:** The authentication type. `userpass` uses username and password authentication. `oidc_jwt` uses OIDC JWT-based access control. For details about `oidc_jwt`, see [Integrate OIDC for Access Control](./integrate-oidc-for-access-control.mdx).
+- **Default value:** empty (treated as `userpass`)
 
 ### Configurations for wire encryption
 
@@ -1374,13 +1398,25 @@ The following shows the authentication and authorization configurations for the 
 #### `auth.username`
 
 - **Field:** `scalar.db.sql.cluster_mode.username`
-- **Description:** Username to access ScalarDB Cluster.
+- **Description:** Username to access ScalarDB Cluster. Not required when using OIDC JWT authentication.
 - **Default value:** empty
 
 #### `auth.password`
 
 - **Field:** `scalar.db.sql.cluster_mode.password`
-- **Description:** Password to access ScalarDB Cluster.
+- **Description:** Password to access ScalarDB Cluster. Not required when using OIDC JWT authentication.
+- **Default value:** empty
+
+#### `auth.type`
+
+- **Field:** `scalar.db.sql.cluster_mode.auth.type`
+- **Description:** The authentication type. `userpass` uses username and password authentication. `oidc_jwt` uses OIDC JWT-based access control. For details about `oidc_jwt`, see [Integrate OIDC for Access Control](./integrate-oidc-for-access-control.mdx).
+- **Default value:** empty (treated as `userpass`)
+
+#### `auth.oidc_jwt.access_token`
+
+- **Field:** `scalar.db.sql.cluster_mode.auth.oidc_jwt.access_token`
+- **Description:** The JWT access token for OIDC access control. Since the token is set at initialization time, it cannot be refreshed and is only valid for the duration of the JWT access token's expiration.
 - **Default value:** empty
 
 ## Configuration example - App, ScalarDB Cluster, and database

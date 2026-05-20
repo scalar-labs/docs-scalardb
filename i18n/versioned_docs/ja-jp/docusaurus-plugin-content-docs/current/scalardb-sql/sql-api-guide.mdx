@@ -117,6 +117,10 @@ Statement statement = StatementBuilder.<factory method>...;
 ResultSet resultSet = sqlSession.execute(statement);
 ```
 
+ミューテーションステートメント（`INSERT`、`UPSERT`、`UPDATE`、または `DELETE`）の場合、返される `ResultSet` には、影響を受けた行数を報告する `updateCount` という名前の 1 つの `INT` 列を持つ単一の `Record` が含まれます。
+
+DML、DDL、および DCL ステートメントがトランザクションとどのように相互作用するかについては、[トランザクションの実行](#トランザクションの実行)を参照してください。
+
 `Statement` オブジェクトは、対応する SQL のファクトリメソッドを持つ `StatementBuilder` によって構築できます。詳細については、Javadoc の <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql/statement/builder" className="StatementBuilder" /> ページおよび [ScalarDB SQL 文法](grammar.mdx)を参照してください。
 
 ### ResultSet オブジェクトの処理
@@ -219,11 +223,11 @@ boolean isNullGottenByIndex = record.isNull(<column index>);
 
 ### 準備済みステートメント
 
-アプリケーションで複数回実行されるクエリには、`PreparedStatement` を使用できます。
+アプリケーションで複数回実行されるクエリには、`PreparedStatement` を使用できます：
 
 ```java
 PreparedStatement preparedStatement = sqlSession.prepareStatement("<SQL>");
-ResultSet result = preparedStatement.execute();
+ResultSet result = sqlSession.execute(preparedStatement.bind());
 ```
 
 同じクエリを2回目以降に実行すると、キャッシュされた事前解析済みステートメントオブジェクトが使用されます。
@@ -231,8 +235,9 @@ ResultSet result = preparedStatement.execute();
 クエリを1回だけ実行する場合、準備済みステートメントは余分な処理が必要になるため非効率的です。
 その場合は、代わりに `sqlSession.execute()` メソッドの使用を検討してください。
 
-また、バインドパラメータで `PreparedStatement` を使用することもできます。
-パラメータは、位置指定または名前付きのいずれかになります。
+`PreparedStatement` で `bind(...)` を呼び出すと、パラメータ値を保持する `BoundStatement` が返されます。その後、`BoundStatement` を `sqlSession.execute()` に渡します。
+
+パラメータは、位置指定または名前付きのいずれかになります：
 
 ```java
 // Positional parameters
@@ -244,35 +249,83 @@ PreparedStatement preparedStatement2 =
     sqlSession.prepareStatement("INSERT INTO tbl (c1, c2) VALUES (:a, :b)");
 ```
 
-最初にパラメータを設定して実行することができます:
+`bind(...)` に渡すことで、1 回の呼び出しで値をバインドできます：
+
+```java
+// Positional values
+sqlSession.execute(preparedStatement1.bind(Value.ofInt(10), Value.ofText("value")));
+
+// Named values
+Map<String, Value> namedValues = new HashMap<>();
+namedValues.put("a", Value.ofInt(10));
+namedValues.put("b", Value.ofText("value"));
+sqlSession.execute(preparedStatement2.bind(namedValues));
+```
+
+または、`bind()` によって返される `BoundStatement` で流暢なセッターを使用することもできます：
 
 ```java
 // Positional setters
-preparedStatement1
-    .setInt(0, 10)
-    .setText(1, "value")
-    .execute();
+sqlSession.execute(
+    preparedStatement1.bind()
+        .setInt(0, 10)
+        .setText(1, "value"));
 
 // Named setters
-preparedStatement2
-    .setInt("a", 10)
-    .setText("b", "value")
-    .execute();
+sqlSession.execute(
+    preparedStatement2.bind()
+        .setInt("a", 10)
+        .setText("b", "value"));
 ```
 
-詳細については、Javadoc の <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="PreparedStatement" /> ページを参照してください。
+たとえば `BatchedStatements` を構築する際に、プレーンな SQL 文字列を `Statement` としてラップするには、`SimpleStatement.of("<SQL>")` を使用します。
+
+詳細については、Javadoc の <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="PreparedStatement" />、<JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql/statement" className="BoundStatement" />、および <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql/statement" className="SimpleStatement" /> ページを参照してください。
+
+### バッチステートメントの実行
+
+単一のラウンドトリップで複数のステートメントを実行する必要がある場合は、`sqlSession.executeBatch(...)` を使用します。これは、一つまたは複数のネームスペースに対する一括挿入、更新、または混合ミューテーションに役立ちます。
+
+各ステートメントが独自のデフォルトネームスペースを持つことができるバッチを構築するには、`BatchedStatements` を使用します：
+
+```java
+BatchedStatements batchedStatements =
+    BatchedStatements.builder()
+        .add(boundStatement1, "namespace1")
+        .add(boundStatement2, "namespace2")
+        .add(SimpleStatement.of("INSERT INTO tbl (c1, c2) VALUES (1, 'a')"))
+        .build();
+
+List<ResultSet> results = sqlSession.executeBatch(batchedStatements);
+```
+
+すべてのステートメントがセッションのデフォルトネームスペースを使用する場合は、代わりに `List<Statement>` を渡すことができます：
+
+```java
+List<ResultSet> results =
+    sqlSession.executeBatch(Arrays.asList(boundStatement1, boundStatement2));
+```
+
+`executeBatch(...)` は、入力と同じ順序で、入力ステートメントごとに 1 つの `ResultSet` を含む `List<ResultSet>` を返します。
+
+バッチ実行は DML、DDL、および DCL ステートメントを受け入れます。コマンドステートメント（`BEGIN`、`COMMIT`、`ROLLBACK`、およびその他のトランザクション制御ステートメント）は拒否されるため、代わりに対応する `SqlSession` メソッドを使用してください。DML、DDL、および DCL ステートメントがトランザクションとどのように相互作用するかについては、[トランザクションの実行](#トランザクションの実行)を参照してください。
+
+詳細については、Javadoc の <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="BatchedStatements" /> および <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="SqlStatementExecutable" /> ページを参照してください。
 
 ## トランザクションの実行
 
-ScalarDB SQL では、DML ステートメント (SELECT/INSERT/UPDATE/DELETE) はトランザクション内でのみ実行できます。
+ScalarDB SQL では、DML ステートメント（`SELECT`、`INSERT`、`UPSERT`、`UPDATE`、および `DELETE`）は常にトランザクション内で実行されます。トランザクションは、`sqlSession.begin()` で明示的に開始したもの、または ScalarDB が自動的に管理するもののいずれかです：
 
-したがって、DML ステートメントを実行する前に、トランザクションを開始する必要があります。
+- トランザクションがアクティブな場合（`sqlSession.begin()` の後）、`sqlSession.execute(...)` と `sqlSession.executeBatch(...)` の両方がそのトランザクションで DML ステートメントを実行します。
+- トランザクションがアクティブでない場合、各 `sqlSession.execute(...)` 呼び出しはその DML ステートメントを独自の自動管理トランザクションで実行し、各 `sqlSession.executeBatch(...)` 呼び出しはバッチ内のすべての DML ステートメントを単一の自動管理トランザクションでアトミックに実行します。
 
-DML ステートメント以外のステートメントはトランザクションで実行できないことに注意してください。
+`begin()` に加えて、`SqlSession` は読み取り専用トランザクションを開始するための `beginReadOnly()` や、トランザクション属性を受け入れるオーバーロードなど、他のバリアントも提供します。詳細については、Javadoc の <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="SqlSession" /> ページを参照してください。
 
-したがって、トランザクションを開始した後に非 DML ステートメントを実行しても、そのステートメントはすぐに実行され、開始したトランザクションには影響しません。
+別々の `execute(...)` 呼び出しからの複数の DML ステートメントをアトミックにするには、それらを実行する前に明示的なトランザクションを開始する必要があります。`executeBatch(...)` は、明示的なトランザクションを必要とせずに、そのバッチ内の DML ステートメント間でアトミシティを提供します。
 
-このセクションでは、トランザクションモードと2フェーズコミットトランザクションモードの各トランザクションモードについて、トランザクションを実行する方法について説明します。
+DDL および DCL ステートメントは決してトランザクショナルではありません。明示的なトランザクション内で呼び出された場合やバッチの一部として呼び出された場合でも、それらはすぐに実行され、いかなるトランザクションにも参加しません。
+
+このセクションでは、トランザクションモードと2フェーズコミットトランザクションモードの各トランザクションモードについて、明示的なトランザクションを実行する方法について説明します。
 
 ### トランザクションモード
 
@@ -322,7 +375,16 @@ try {
 コーディネータのトランザクションを開始するには、次のようにします。
 
 ```java
-String transactionId = sqlSession.begin();
+sqlSession.begin();
+```
+
+コーディネータが参加者に渡すトランザクション ID を取得するには、`getTransactionId()` を使用します：
+
+```java
+String transactionId =
+    sqlSession
+        .getTransactionId()
+        .orElseThrow(() -> new IllegalStateException("transaction ID is not available"));
 ```
 
 参加者のトランザクションに参加するには、次のようにします。

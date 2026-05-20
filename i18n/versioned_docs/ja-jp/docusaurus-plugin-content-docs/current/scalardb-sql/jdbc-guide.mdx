@@ -95,11 +95,13 @@ ScalarDB と JDBC 間のデータ型マッピングは次のとおりです。
 | FLOAT        | float または Float         |
 | DOUBLE       | double または Double       |
 | TEXT         | String                  |
-| BLOB         | byte[]                  |
+| BLOB         | byte[] または java.sql.Blob |
 | DATE         | java.time.LocalDate     |
 | TIME         | java.time.LocalTime     |
 | TIMESTAMP    | java.time.LocalDateTime |
 | TIMESTAMPTZ  | java.time.Instant       |
+
+BLOB 列の場合、書き込み時には `java.io.InputStream` も受け入れられます。以下の `PreparedStatement` の例を参照してください。
 
 各データ型の `java.sql.ResultSet` オブジェクトからデータを取得する方法は次のとおりです。
 
@@ -125,8 +127,15 @@ try (ResultSet resultSet = ...) {
   // Get a TEXT value of a column
   String textValue = resultSet.getString("<column name>");
 
-  // Get a BLOB value of a column
-  byte[] blobValue = resultSet.getBytes("<column name>");
+  // Get a BLOB value of a column as a byte array
+  byte[] blobBytes = resultSet.getBytes("<column name>");
+
+  // Get a BLOB value of a column as a java.sql.Blob
+  // (this is also what resultSet.getObject returns for BLOB columns)
+  Blob blob = resultSet.getBlob("<column name>");
+
+  // Get a BLOB value of a column as a stream
+  InputStream blobStream = resultSet.getBinaryStream("<column name>");
   
     // Get a DATE value of a column
   LocalDate dateValue = resultSet.getObject("<column name>", LocalDate.class);
@@ -162,25 +171,71 @@ try (PreparedStatement preparedStatement = ...) {
   preparedStatement.setDouble(5, <DOUBLE value>);
 
   // Set a TEXT value as parameter
-  preparedStatement.setString(7, "<TEXT value>");
+  preparedStatement.setString(6, "<TEXT value>");
 
-  // Set a BLOB value as parameter
-  preparedStatement.setBytes(8, <BLOB value>);
-  //Set a DATE value as parameter
-  preparedStatement.setObject(9, <LocalDate value>);
+  // Set a BLOB value as parameter (byte array)
+  preparedStatement.setBytes(7, <byte[] value>);
 
-  //Set a TIME value as parameter
-  preparedStatement.setObject(10, <LocalTime value>);
+  // Alternatively, if you have a java.sql.Blob (for example, one obtained from ResultSet.getBlob),
+  // use preparedStatement.setBlob(7, <Blob value>);
 
-  //Set a TIMESTAMP value as parameter
-  preparedStatement.setObject(11, <LocalDateTime value>);
+  // Set a DATE value as parameter
+  preparedStatement.setObject(8, <LocalDate value>);
+  
+  // Set a TIME value as parameter
+  preparedStatement.setObject(9, <LocalTime value>);
 
-  //Set a TIMESTAMPTZ value as parameter
-  preparedStatement.setObject(12, <Instant value>);
+  // Set a TIMESTAMP value as parameter
+  preparedStatement.setObject(10, <LocalDateTime value>);
+
+  // Set a TIMESTAMPTZ value as parameter
+  preparedStatement.setObject(11, <Instant value>);
 
   preparedStatement.execute();
 }
 ```
+
+BLOB 列の場合、ドライバーはストリームから直接書き込みをサポートしています。`setBytes(int, byte[])` と `setBlob(int, java.sql.Blob)` に加えて、以下のオーバーロードを使用できます：
+
+- `setBlob(int, java.io.InputStream)` と `setBlob(int, java.io.InputStream, long)`：ストリームからバイトを読み取ります（長さ付きのオーバーロードは指定されたバイト数を正確に読み取ります）。
+- `setBinaryStream(int, java.io.InputStream)`、`setBinaryStream(int, java.io.InputStream, int)`、および `setBinaryStream(int, java.io.InputStream, long)`：同じパターンに従います。
+
+## バッチステートメントの実行
+
+ScalarDB JDBC ドライバーは、標準の JDBC 規約に従って、ミューテーションステートメントのバッチ実行をサポートしています。単一のラウンドトリップで多数の挿入、更新、または削除を適用する必要がある場合に使用します。
+
+`java.sql.Statement` を使用した場合：
+
+```java
+try (Statement statement = connection.createStatement()) {
+  statement.addBatch("INSERT INTO tbl (c1, c2) VALUES (1, 'a')");
+  statement.addBatch("UPDATE tbl SET c2 = 'b' WHERE c1 = 2");
+  statement.addBatch("DELETE FROM tbl WHERE c1 = 3");
+
+  int[] updateCounts = statement.executeBatch();
+}
+```
+
+`java.sql.PreparedStatement` を使用した場合：
+
+```java
+try (PreparedStatement preparedStatement =
+    connection.prepareStatement("INSERT INTO tbl (c1, c2) VALUES (?, ?)")) {
+  preparedStatement.setInt(1, 1);
+  preparedStatement.setString(2, "a");
+  preparedStatement.addBatch();
+
+  preparedStatement.setInt(1, 2);
+  preparedStatement.setString(2, "b");
+  preparedStatement.addBatch();
+
+  int[] updateCounts = preparedStatement.executeBatch();
+}
+```
+
+バッチ実行はミューテーションステートメント（`INSERT`、`UPSERT`、`UPDATE`、および `DELETE`）に制限されています。`SELECT`、DDL、または DCL ステートメントを `addBatch(...)` に渡すと、その後の `executeBatch()` 呼び出しで `SQLException` がスローされます。
+
+バッチ内の 1 つ以上のステートメントが失敗した場合、`executeBatch()` は `java.sql.BatchUpdateException` をスローします。`BatchUpdateException.getUpdateCounts()` を呼び出すことで、ステートメントごとの更新カウントを確認できます。
 
 ## SQLException の処理
 

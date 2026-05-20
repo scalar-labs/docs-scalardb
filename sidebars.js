@@ -282,6 +282,16 @@ const sidebars = {
                   id: 'scalardb-samples/spring-data-microservice-transaction-sample/README',
                   label: 'Microservice Transactions Through Spring Data JDBC',
                 },
+                {
+                  type: 'doc',
+                  id: 'scalardb-samples/microservice-transactions-sample-with-shared-cluster-with-jdbc/README',
+                  label: 'Microservice Transactions Through Shared Cluster with JDBC',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-samples/dotnet-microservice-transactions-sample-with-shared-cluster-with-linq/README',
+                  label: 'Microservice Transactions Through Shared Cluster with LINQ',
+                },
               ],
             },
             {
@@ -1498,6 +1508,11 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-samples/spring-data-microservice-transaction-sample/README',
               label: 'Spring Data JDBC によるマイクロサービストランザクション',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-samples/microservice-transactions-sample-with-shared-cluster-with-jdbc/README',
+              label: 'JDBC を使用して共有クラスタでマイクロサービストランザクション',
             },
           ],
         },
