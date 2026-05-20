@@ -61,11 +61,6 @@ const sidebars = {
         },
         {
           type: 'doc',
-          id: 'database-configurations',
-          label: 'Underlying Database Configurations',
-        },
-        {
-          type: 'doc',
           id: 'releases/release-notes',
           label: 'Release Notes',
         },
@@ -155,6 +150,24 @@ const sidebars = {
               id: 'scalardb-cluster/getting-started-with-scalardb-cluster-sql-linq',
               label: 'Use SQL via .NET and LINQ',
             },
+            {
+              type: 'category',
+              key: 'quickstart-reference-en-us-3.18',
+              label: 'Reference',
+              collapsible: true,
+              items: [
+                {
+                  type: 'doc',
+                  id: 'scalardb-cluster/getting-started-with-using-go-for-scalardb-cluster',
+                  label: 'Use Go for ScalarDB Cluster',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-cluster/getting-started-with-using-python-for-scalardb-cluster',
+                  label: 'Use Python for ScalarDB Cluster',
+                },
+              ],
+            },
           ],
         },
         {
@@ -177,24 +190,6 @@ const sidebars = {
           type: 'doc',
           id: 'scalardb-cluster/getting-started-with-vector-search',
           label: 'Try Running Vector Search Through ScalarDB Cluster',
-        },
-        {
-          type: 'category',
-          key: 'quickstart-reference-en-us-3.18',
-          label: 'Reference',
-          collapsible: true,
-          items: [
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/getting-started-with-using-go-for-scalardb-cluster',
-              label: 'Use Go for ScalarDB Cluster',
-            },
-            {
-              type: 'doc',
-              id: 'scalardb-cluster/getting-started-with-using-python-for-scalardb-cluster',
-              label: 'Use Python for ScalarDB Cluster',
-            },
-          ],
         },
       ],
     },
@@ -224,7 +219,12 @@ const sidebars = {
             {
               type: 'doc',
               id: 'database-adapters',
-              label: 'Database Adapters',
+              label: 'Learn About Database Adapters',
+            },
+            {
+              type: 'doc',
+              id: 'database-configurations',
+              label: 'Configure Database Requirements',
             },
             {
               type: 'category',
@@ -325,11 +325,6 @@ const sidebars = {
                   label: 'Encrypt Wire Communications',
                 },
                 {
-                  type: 'doc',
-                  id: 'scalardb-benchmarks/README',
-                  label: 'Run Benchmarks',
-                },
-                {
                   type: 'category',
                   label: 'Run Single-Operation Transactions',
                   collapsible: true,
@@ -370,6 +365,23 @@ const sidebars = {
                       label: 'Run Through the Primitive CRUD Interface',
                     },
                   ],
+                },
+              ],
+            },
+            {
+              type: 'category',
+              label: 'Benchmarking',
+              collapsible: true,
+              items: [
+                {
+                  type: 'doc',
+                  id: 'scalardb-benchmarks/README',
+                  label: 'Run Benchmarks',
+                },
+                {
+                  type: 'doc',
+                  id: 'getting-started-with-benchmarking-scalardb',
+                  label: 'Try Benchmarking ScalarDB',
                 },
               ],
             },
@@ -616,7 +628,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: 'Run Analytical Queries Overview',
+          label: 'Run Analytical Queries',
           collapsible: true,
           link: {
             type: 'doc',
@@ -672,18 +684,6 @@ const sidebars = {
             },
           ],
         },
-        {
-          type: 'category',
-          label: 'Reference',
-          collapsible: true,
-          items: [
-            {
-              type: 'doc',
-              id: 'getting-started-with-benchmarking-scalardb',
-              label: 'Try Benchmarking ScalarDB',
-            },
-          ],
-        },
       ],
     },
     {
@@ -696,34 +696,48 @@ const sidebars = {
       },
       items: [
         {
-          type: 'doc',
-          id: 'scalardb-cluster/setup-scalardb-cluster-on-kubernetes-by-using-helm-chart',
-          label: 'Deploy ScalarDB Cluster Locally',
+          type: 'category',
+          label: 'Deploy ScalarDB Cluster',
+          collapsible: true,
+          items: [
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/setup-scalardb-cluster-on-kubernetes-by-using-helm-chart',
+              label: 'Deploy ScalarDB Cluster Locally',
+            },
+            {
+              type: 'doc',
+              id: 'scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS',
+              label: 'Deploy ScalarDB Cluster on Amazon EKS',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/deploy-scalardb-cluster-google-cloud-marketplace',
+              label: 'Deploy ScalarDB Cluster on Google Cloud Marketplace',
+            },
+          ],
         },
         {
-          type: 'doc',
-          id: 'scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS',
-          label: 'Deploy ScalarDB Cluster on Amazon EKS',
-        },
-        {
-          type: 'doc',
-          id: 'scalardb-cluster/deploy-scalardb-cluster-google-cloud-marketplace',
-          label: 'Deploy ScalarDB Cluster on Google Cloud Marketplace',
-        },
-        {
-          type: 'doc',
-          id: 'scalardb-analytics/deployment-local',
-          label: 'Deploy ScalarDB Analytics Locally',
-        },
-        {
-          type: 'doc',
-          id: 'scalardb-analytics/deployment',
-          label: 'Deploy ScalarDB Analytics in Public Cloud Environments',
-        },
-        {
-          type: 'doc',
-          id: 'scalardb-analytics/deploy-scalardb-analytics-server',
-          label: 'Deploy a ScalarDB Analytics Server',
+          type: 'category',
+          label: 'Deploy ScalarDB Analytics',
+          collapsible: true,
+          items: [
+            {
+              type: 'doc',
+              id: 'scalardb-analytics/deployment-local',
+              label: 'Deploy ScalarDB Analytics Locally',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-analytics/deployment',
+              label: 'Deploy ScalarDB Analytics in Public Cloud Environments',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-analytics/deploy-scalardb-analytics-server',
+              label: 'Deploy a ScalarDB Analytics Server',
+            },
+          ],
         },
         {
           type: 'category',
@@ -905,15 +919,22 @@ const sidebars = {
       },
       items: [
         {
-          type: 'doc',
-          id: 'schema-loader-import',
-          label: 'Import Existing Tables',
+          type: 'category',
+          label: 'Migrate to ScalarDB Cluster',
+          collapsible: true,
+          items: [
+            {
+              type: 'doc',
+              id: 'schema-loader-import',
+              label: 'Import Existing Tables',
+            },
+            {
+              'type': 'doc',
+              'id': 'scalardb-sql/migration-guide',
+              'label': 'Migrate Applications and Databases',
+            }
+          ],
         },
-        {
-          'type': 'doc',
-          'id': 'scalardb-sql/migration-guide',
-          'label': 'Migrate Applications and Databases',
-        }
       ],
     },
     {
@@ -923,22 +944,30 @@ const sidebars = {
       link: {
         type: 'doc',
         id: 'manage-overview',
+        
       },
       items: [
         {
-          type: 'doc',
-          id: 'scalar-kubernetes/HowToScaleScalarDB',
-          label: 'Scale',
-        },
-        {
-          type: 'doc',
-          id: 'scalar-kubernetes/HowToUpgradeScalarDB',
-          label: 'Upgrade',
-        },
-        {
-          type: 'doc',
-          id: 'scalardb-cluster/remote-replication',
-          label: 'Replicate Data for High Availability',
+          type: 'category',
+          label: 'Manage ScalarDB Cluster',
+          collapsible: true,
+          items: [
+            {
+              type: 'doc',
+              id: 'scalar-kubernetes/HowToScaleScalarDB',
+              label: 'Scale',
+            },
+            {
+              type: 'doc',
+              id: 'scalar-kubernetes/HowToUpgradeScalarDB',
+              label: 'Upgrade',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/remote-replication',
+              label: 'Replicate Data for High Availability',
+            },
+          ],
         },
         {
           type: 'category',
@@ -1095,11 +1124,6 @@ const sidebars = {
           type: 'doc',
           id: 'scalardb-cluster/compatibility',
           label: 'ScalarDB Cluster Compatibility Matrix',
-        },
-        {
-          type: 'doc',
-          id: 'scalardb-cluster/deployment-patterns-for-microservices',
-          label: 'ScalarDB Cluster Deployment Patterns for Microservices',
         },
         {
           type: 'doc',
@@ -1796,6 +1820,11 @@ const sidebars = {
           label: '詳細',
           collapsible: true,
           items: [
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/deployment-patterns-for-microservices',
+              label: 'ScalarDB Cluster Deployment Patterns for Microservices',
+            },
             {
               type: 'doc',
               id: 'scalardb-cluster/standalone-mode',
