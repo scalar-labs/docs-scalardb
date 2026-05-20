@@ -275,8 +275,8 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
-                  id: 'scalardb-cluster/integrate-oidc-for-access-control',
-                  label: 'Integrate OIDC for Access Control',
+                  id: 'scalardb-cluster/control-access-via-oidc-based-jwt-tokens',
+                  label: 'Control User Access via OIDC-Based JWT Access Tokens',
                 },
                 {
                   type: 'doc',
