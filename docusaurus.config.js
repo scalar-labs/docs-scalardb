@@ -104,12 +104,6 @@ const config = {
                 banner: 'none',
                 className: '3.14.6',
               },
-              "3.13": {
-                label: '3.13',
-                path: '3.13',
-                banner: 'none',
-                className: '3.13.6',
-              },
             },
           },
           googleTagManager: {
@@ -134,7 +128,7 @@ const config = {
 
   customFields: {
     // The following versions have Japanese docs, so the language dropdown should be displayed only when visitors are reading these versions of docs.
-    allowedLanguageDropdownVersions: ["current", "latest", "3.17", "3.16", "3.15", "3.14", "3.13"],
+    allowedLanguageDropdownVersions: ["current", "latest", "3.17", "3.16", "3.15", "3.14"],
 
     // These pre-written queries are used in the Google AI Mode feature. Update these queries as needed when new features are added or when you want to highlight specific features in the Google AI Mode. For more information, see /src/components/GoogleAIModeSearch/index.js.
     prewrittenQueries: [
@@ -190,16 +184,8 @@ const config = {
             from: '/docs/latest/storage-abstraction',
           },
           {
-            to: '/docs/3.13/run-non-transactional-storage-operations-through-primitive-crud-interface',
-            from: '/docs/3.13/storage-abstraction',
-          },
-          {
             to: '/docs/latest/requirements#databases',
             from: '/docs/latest/scalardb-supported-databases',
-          },
-          {
-            to: '/docs/3.13/requirements#databases',
-            from: '/docs/3.13/scalardb-supported-databases',
           },
           {
             to: '/docs/latest/helm-charts/getting-started-scalar-manager',
