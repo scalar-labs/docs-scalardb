@@ -1262,6 +1262,12 @@ When you run applications or tools that use the Java Client SDK and the primitiv
 - **Description:** The authentication type. `userpass` uses username and password authentication. `oidc_jwt` uses OIDC JWT-based access control. For details about `oidc_jwt`, see [Control User Access via OIDC-Based JWT Access Tokens](./control-access-via-oidc-based-jwt-tokens.mdx).
 - **Default value:** empty (treated as `userpass`)
 
+#### `auth.oidc_jwt.access_token`
+
+- **Field:** `scalar.db.cluster.client.auth.oidc_jwt.access_token`
+- **Description:** The JWT access token for OIDC access control. Since the token is set at initialization time, it cannot be refreshed and is only valid for the duration of the JWT access token's expiration.
+- **Default value:** empty
+
 ### Configurations for wire encryption
 
 The following wire encryption configurations are available for the Java Client SDK.
