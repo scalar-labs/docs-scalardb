@@ -18,8 +18,14 @@ ScalarDB Cluster では、きめ細かい認証と認可を実行できます。
 :::tip
 
 プリミティブインターフェースを使用して認証と認可を行うこともできます。詳細については、<JavadocLink packageName="scalardb-cluster-java-client-sdk" path="com/scalar/db/cluster/client" className="ClusterClientTransactionAdmin" />を参照してください。これは <JavadocLink packageName="scalardb" path="com/scalar/db/api" className="AuthAdmin" /> を実装しています。
-
 :::
+
+## 認証方法
+
+ScalarDB Cluster は以下の認証方法をサポートしています:
+
+- **ユーザー名とパスワード (`USERPASS`):** ユーザーはユーザー名とパスワードで認証します。これはこのガイドで説明されているデフォルトの方法です。
+- **OIDC (`OIDC`):** クライアントアプリケーションは、パスワードの代わりに OIDC プロバイダー (例: Keycloak) からの JWT アクセストークンを渡します。ABAC と組み合わせることで、JWT クレームがリクエストごとに動的にアクセスを制限できます。詳細については、[OIDC ベースの JWT アクセストークンを用いてユーザアクセスを制御する](./control-access-via-oidc-based-jwt-tokens.mdx)を参照してください。
 
 ## ユーザー
 
@@ -293,12 +299,12 @@ SHOW USERS;
 ```
 
 ```console
-+----------+-------------+
-| username | isSuperuser |
-+----------+-------------+
-| user1    | false       |
-| admin    | true        |
-+----------+-------------+
++----------+-------------+-----------------------+
+| username | isSuperuser | authenticationMethods |
++----------+-------------+-----------------------+
+| user1    | false       | USERPASS              |
+| admin    | true        | USERPASS              |
++----------+-------------+-----------------------+
 ```
 
 `user1` ユーザーが作成されたことがわかります。

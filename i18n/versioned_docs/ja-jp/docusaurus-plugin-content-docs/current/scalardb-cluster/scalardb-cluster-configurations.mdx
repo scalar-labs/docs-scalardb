@@ -775,6 +775,64 @@ ABAC 機能を有効にする場合は、認証と認可を有効にする必要
 - **説明:** ハッシュ化の前にパスワードに追加される秘密値。指定されていない場合、パスワードはペッパーなしでハッシュ化されます。
 - **デフォルト値:** empty
 
+### OIDC 設定
+
+ScalarDB Cluster の OIDC 統合に使用できる設定は以下の通りです。OIDC 統合の詳細については、[OIDC ベースの JWT アクセストークンを用いてユーザアクセスを制御する](./control-access-via-oidc-based-jwt-tokens.mdx)を参照してください。
+
+#### `auth.oidc.trusted_issuers`
+
+- **フィールド:** `scalar.db.cluster.auth.oidc.trusted_issuers`
+- **説明:** 信頼できる OIDC 発行者の URL。ScalarDB Cluster は、`iss` クレームがこの値と完全に一致しないトークンを拒否します。OIDC 統合を使用する場合は、このプロパティを指定する必要があります。現在、単一の発行者 URL のみがサポートされています。例: Keycloak の場合は `http://localhost:8080/realms/my-realm`。
+- **デフォルト値:** empty
+
+#### `auth.oidc.audience.name`
+
+- **フィールド:** `scalar.db.cluster.auth.oidc.audience.name`
+- **説明:** JWT `aud` クレームで期待される値。ScalarDB Cluster は、`aud` にこの値が含まれていないトークンを拒否します。
+- **デフォルト値:** `scalardb`
+
+#### `auth.oidc.username.claim_name`
+
+- **フィールド:** `scalar.db.cluster.auth.oidc.username.claim_name`
+- **説明:** ScalarDB ユーザー名を抽出するために使用される JWT クレーム名。OIDC 統合を使用する場合は、このプロパティを指定する必要があります。
+- **デフォルト値:** empty
+
+#### `auth.oidc.jwt.access_token.require_at_jwt_typ`
+
+- **フィールド:** `scalar.db.cluster.auth.oidc.jwt.access_token.require_at_jwt_typ`
+- **説明:** RFC 9068 に従って JWT `typ` ヘッダーが `at+jwt` または `application/at+jwt` であることを要求するかどうか。開発目的でのみ `false` に設定してください。
+- **デフォルト値:** `true`
+
+#### `auth.oidc.abac.enabled`
+
+- **フィールド:** `scalar.db.cluster.auth.oidc.abac.enabled`
+- **説明:** OIDC ABAC 統合が有効かどうか。`true` の場合、ScalarDB Cluster は JWT に ABAC クレームを要求し、動的な制限を適用します。ABAC クレームのないトークンは拒否されます。
+- **デフォルト値:** `false`
+
+#### `auth.oidc.abac.claim_name`
+
+- **フィールド:** `scalar.db.cluster.auth.oidc.abac.claim_name`
+- **説明:** ABAC タグ用の JWT クレーム名。
+- **デフォルト値:** `scalardb_abac`
+
+#### `auth.oidc.jwt.jwks.url_cache.expiration_seconds`
+
+- **フィールド:** `scalar.db.cluster.auth.oidc.jwt.jwks.url_cache.expiration_seconds`
+- **説明:** OIDC プロバイダー設定から取得した JWKS URL のキャッシュ有効期限 (秒単位)。
+- **デフォルト値:** `86400` (24時間)
+
+#### `auth.oidc.jwt.jwks.content_cache.expiration_seconds`
+
+- **フィールド:** `scalar.db.cluster.auth.oidc.jwt.jwks.content_cache.expiration_seconds`
+- **説明:** フェッチされた JWKS コンテンツのキャッシュ有効期限 (秒単位)。
+- **デフォルト値:** `86400` (24時間)
+
+#### `auth.oidc.jwt.max_clock_skew_seconds`
+
+- **フィールド:** `scalar.db.cluster.auth.oidc.jwt.max_clock_skew_seconds`
+- **説明:** JWT 有効期限検証における最大クロックスキュー許容時間 (秒単位)。
+- **デフォルト値:** `10`
+
 ### 保存時データ暗号化設定
 
 ScalarDB Cluster で保存時のデータを暗号化するための設定は以下の通りです。
@@ -1229,13 +1287,25 @@ scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
 ##### `username`
 
 - **フィールド:** `scalar.db.username`
-- **説明:** ScalarDB Cluster にアクセスするためのユーザー名。
+- **説明:** ScalarDB Cluster にアクセスするためのユーザー名。OIDC JWT 認証を使用する場合は不要です。
 - **デフォルト値:** empty
 
 ##### `password`
 
 - **フィールド:** `scalar.db.password`
-- **説明:** ScalarDB Cluster にアクセスするためのパスワード。
+- **説明:** ScalarDB Cluster にアクセスするためのパスワード。OIDC JWT 認証を使用する場合は不要です。
+- **デフォルト値:** empty
+
+##### `cluster.client.auth.type`
+
+- **フィールド:** `scalar.db.cluster.client.auth.type`
+- **説明:** 認証タイプ。`userpass` はユーザー名とパスワードでの認証を使用します。`oidc_jwt` は OIDC JWT ベースのアクセス制御を使用します。`oidc_jwt` の詳細については、[OIDC ベースの JWT アクセストークンを用いてユーザアクセスを制御する](./control-access-via-oidc-based-jwt-tokens.mdx)を参照してください。
+- **デフォルト値:** empty (`userpass` として処理されます)
+
+#### `auth.oidc_jwt.access_token`
+
+- **フィールド:** `scalar.db.cluster.client.auth.oidc_jwt.access_token`
+- **説明:** OIDC アクセス制御用の JWT アクセストークン。トークンは初期化時に設定されるため、リフレッシュすることはできず、JWT アクセストークンの有効期限の間のみ有効です。
 - **デフォルト値:** empty
 
 ### ワイヤ暗号化の設定
@@ -1374,13 +1444,25 @@ Spring Data JDBC for ScalarDB の設定方法の詳細については、[設定]
 #### `auth.username`
 
 - **フィールド:** `scalar.db.sql.cluster_mode.username`
-- **説明:** ScalarDB Cluster にアクセスするためのユーザー名。
+- **説明:** ScalarDB Cluster にアクセスするためのユーザー名。OIDC JWT 認証を使用する場合は不要です。
 - **デフォルト値:** empty
 
 #### `auth.password`
 
 - **フィールド:** `scalar.db.sql.cluster_mode.password`
-- **説明:** ScalarDB Cluster にアクセスするためのパスワード。
+- **説明:** ScalarDB Cluster にアクセスするためのパスワード。OIDC JWT 認証を使用する場合は不要です。
+- **デフォルト値:** empty
+
+#### `auth.type`
+
+- **フィールド:** `scalar.db.sql.cluster_mode.auth.type`
+- **説明:** 認証タイプ。`userpass` はユーザー名とパスワードでの認証を使用します。`oidc_jwt` は OIDC JWT ベースのアクセス制御を使用します。`oidc_jwt` の詳細については、[OIDC ベースの JWT アクセストークンを用いてユーザアクセスを制御する](./control-access-via-oidc-based-jwt-tokens.mdx)を参照してください。
+- **デフォルト値:** empty (`userpass` として処理されます)
+
+#### `auth.oidc_jwt.access_token`
+
+- **フィールド:** `scalar.db.sql.cluster_mode.auth.oidc_jwt.access_token`
+- **説明:** OIDC アクセス制御用の JWT アクセストークン。トークンは初期化時に設定されるため、リフレッシュすることはできず、JWT アクセストークンの有効期限の間のみ有効です。
 - **デフォルト値:** empty
 
 ## 設定例 - アプリ、ScalarDB Cluster、データベース
