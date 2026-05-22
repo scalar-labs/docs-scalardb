@@ -329,7 +329,7 @@ const config = {
         title: '',
         logo: {
           alt: 'ScalarDB logo',
-          src: 'img/scalardb-logo.png',
+          src: 'img/scalardb-logo-02.png',
           href: '/docs/latest/',
           target: '_self',
         },
