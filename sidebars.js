@@ -1338,7 +1338,6 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalardb-cluster/authorize-with-abac',
-                  label: 'ユーザアクセスを細かく制御',
                 },
                 {
                   type: 'doc',
