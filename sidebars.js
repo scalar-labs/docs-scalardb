@@ -1338,7 +1338,12 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalardb-cluster/authorize-with-abac',
-                  label: 'ユーザアクセスを細かく制御',
+                  label: 'ユーザーアクセスを細かく制御',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-cluster/control-access-via-oidc-based-jwt-tokens',
+                  label: 'OIDC ベースの JWT アクセストークンを用いてユーザアクセスを制御',
                 },
                 {
                   type: 'doc',
