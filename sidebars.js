@@ -1469,6 +1469,11 @@ const sidebars = {
               id: 'scalardb-samples/microservice-transactions-sample-with-shared-cluster-with-jdbc/README',
               label: 'JDBC を使用して共有クラスタでマイクロサービストランザクション',
             },
+            {
+              type: 'doc',
+              id: 'scalardb-samples/dotnet-microservice-transactions-sample-with-shared-cluster-with-linq/README',
+              label: 'LINQ を使用して共有クラスタでマイクロサービストランザクション',
+            },
           ],
         },
         {
