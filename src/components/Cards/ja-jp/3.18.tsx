@@ -25,18 +25,18 @@ const recentFeatures = [
       // To add a label, use the format ['label1', 'label2'].
       {
         cell: 0, // First cell
+        links: ['scalardb-cluster/control-access-via-oidc-based-jwt-tokens'],
+        labels: ['OIDC ベースの JWT アクセストークンを用いてユーザーアクセスを制御']
+      },
+      {
+        cell: 1, // Second cell
         links: ['consensus-commit#%E3%83%88%E3%83%A9%E3%83%B3%E3%82%B6%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF%E5%88%86%E9%9B%A2'],
         labels: ['トランザクションメタデータ分離']
       },
       {
-        cell: 1, // Second cell
+        cell: 2, // Third cell
         links: ['scalardb-cluster/remote-replication'],
         labels: ['高可用性のためのデータレプリケーション']
-      },
-      {
-        cell: 2, // Third cell
-        links: ['scalardb-mcp-server/getting-started-with-scalardb-mcp-server'],
-        labels: ['ScalarDB MCP Server をはじめよう']
       }
     ]
   }
