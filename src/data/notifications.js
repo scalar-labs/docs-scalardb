@@ -12,17 +12,17 @@ const notificationsList = [
   //   },
   //   unread: true
   // },
-  // {
-  //   message: {
-  //     en: 'Control User Access via OIDC-Based JWT Access Tokens in ScalarDB 3.18',
-  //     ja: 'ScalarDB 3.18 で OIDC ベースの JWT アクセストークンを使用してユーザーアクセスを制御する'
-  //   },
-  //   url: {
-  //     en: 'scalardb-cluster/control-access-via-oidc-based-jwt-tokens?utm_source=docs-site&utm_medium=notifications',
-  //     ja: 'scalardb-cluster/control-access-via-oidc-based-jwt-tokens?utm_source=docs-site&utm_medium=notifications'
-  //   },
-  //   unread: true
-  // },
+  {
+    message: {
+      en: 'Control User Access via OIDC-Based JWT Access Tokens in ScalarDB 3.18',
+      ja: 'ScalarDB 3.18 で OIDC ベースの JWT アクセストークンを用いてユーザーアクセスを制御する'
+    },
+    url: {
+      en: 'scalardb-cluster/control-access-via-oidc-based-jwt-tokens?utm_source=docs-site&utm_medium=notifications',
+      ja: 'scalardb-cluster/control-access-via-oidc-based-jwt-tokens?utm_source=docs-site&utm_medium=notifications'
+    },
+    unread: true
+  },
   {
     message: {
       en: 'Blog post: ScalarDB 3.18 has been released!',
