@@ -25,8 +25,8 @@ const recentFeatures = [
       // To add a label, use the format ['label1', 'label2'].
       {
         cell: 0, // First cell
-        links: ['scalardb-cluster/integrate-oidc-for-access-control'],
-        labels: ['Integrate OIDC for Access Control']
+        links: ['scalardb-cluster/control-access-via-oidc-based-jwt-tokens'],
+        labels: ['Control User Access via OIDC-Based JWT Access Tokens']
       },
       {
         cell: 1, // Second cell

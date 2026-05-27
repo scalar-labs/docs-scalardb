@@ -104,12 +104,6 @@ const config = {
                 banner: 'none',
                 className: '3.14.6',
               },
-              "3.13": {
-                label: '3.13',
-                path: '3.13',
-                banner: 'none',
-                className: '3.13.6',
-              },
             },
           },
           googleTagManager: {
@@ -134,7 +128,7 @@ const config = {
 
   customFields: {
     // The following versions have Japanese docs, so the language dropdown should be displayed only when visitors are reading these versions of docs.
-    allowedLanguageDropdownVersions: ["current", "latest", "3.17", "3.16", "3.15", "3.14", "3.13"],
+    allowedLanguageDropdownVersions: ["current", "latest", "3.17", "3.16", "3.15", "3.14"],
 
     // These pre-written queries are used in the Google AI Mode feature. Update these queries as needed when new features are added or when you want to highlight specific features in the Google AI Mode. For more information, see /src/components/GoogleAIModeSearch/index.js.
     prewrittenQueries: [
@@ -190,16 +184,8 @@ const config = {
             from: '/docs/latest/storage-abstraction',
           },
           {
-            to: '/docs/3.13/run-non-transactional-storage-operations-through-primitive-crud-interface',
-            from: '/docs/3.13/storage-abstraction',
-          },
-          {
             to: '/docs/latest/requirements#databases',
             from: '/docs/latest/scalardb-supported-databases',
-          },
-          {
-            to: '/docs/3.13/requirements#databases',
-            from: '/docs/3.13/scalardb-supported-databases',
           },
           {
             to: '/docs/latest/helm-charts/getting-started-scalar-manager',
@@ -329,7 +315,7 @@ const config = {
         title: '',
         logo: {
           alt: 'ScalarDB logo',
-          src: 'img/scalardb-logo.png',
+          src: 'img/scalardb-logo-02.png',
           href: '/docs/latest/',
           target: '_self',
         },
@@ -507,8 +493,7 @@ const config = {
       announcementBar: {
         id: 'new_version',
         content:
-          'Announcing the release of ScalarDB 3.18!🚀 For details on what\'s included in this new version, see the <a target="_self" href="/docs/latest/releases/release-notes?utm_source=docs-site&utm_medium=announcementbar">release notes</a>.',
-          // 'Announcing the release of ScalarDB X.X!🚀 For details on what\'s included in this new version, see the <a target="_self" href="/docs/latest/releases/release-notes?utm_source=docs-site&utm_medium=announcementbar">release notes</a>',
+          'Announcing the release of ScalarDB 3.18!🚀 For details on what\'s included in this new version, see the <a target="_self" href="/docs/latest/releases/release-notes?utm_source=docs-site&utm_medium=announcementbar">release notes</a> and <a target="_blank" href="https://medium.com/scalar-engineering/scalardb-3-18-has-been-released-e85b7f536cc7?utm_source=docs-site&utm_medium=announcementbar">blog post</a>.',
         backgroundColor: '#2673BB',
         textColor: '#FFFFFF',
         isCloseable: false,

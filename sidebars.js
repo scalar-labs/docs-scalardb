@@ -311,8 +311,8 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
-                  id: 'scalardb-cluster/integrate-oidc-for-access-control',
-                  label: 'Integrate OIDC for Access Control',
+                  id: 'scalardb-cluster/control-access-via-oidc-based-jwt-tokens',
+                  label: 'Control User Access via OIDC-Based JWT Access Tokens',
                 },
                 {
                   type: 'doc',
@@ -737,6 +737,11 @@ const sidebars = {
           label: 'Reference',
           collapsible: true,
           items: [
+            {
+              type: 'doc',
+              id: 'scalardb-cluster/deployment-patterns-for-microservices',
+              label: 'ScalarDB Cluster Deployment Patterns for Microservices',
+            },
             {
               type: 'doc',
               id: 'scalardb-cluster/standalone-mode',
@@ -1436,12 +1441,12 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalardb-cluster/authorize-with-abac',
-                  label: 'ユーザアクセスを細かく制御',
+                  label: 'ユーザーアクセスを細かく制御',
                 },
                 {
                   type: 'doc',
-                  id: 'scalardb-cluster/integrate-oidc-for-access-control',
-                  label: 'アクセス制御のための OIDC を統合',
+                  id: 'scalardb-cluster/control-access-via-oidc-based-jwt-tokens',
+                  label: 'OIDC ベースの JWT アクセストークンを用いてユーザーアクセスを制御',
                 },
                 {
                   type: 'doc',
@@ -1766,6 +1771,20 @@ const sidebars = {
             },
             {
               type: 'category',
+              key: 'develop-run-analytical-queries-advanced-configurations-and-operations-ja-jp-3.18',
+              label: '高度な設定と操作',
+              collapsible: true,
+              items: [
+                {
+                  type: 'doc',
+                  key: 'develop-run-analytical-queries-advanced-configurations-and-operations-authentication-and-authorization-ja-jp-3.18',
+                  id: 'scalardb-analytics/authentication-and-authorization',
+                  label: 'ユーザーの認証と認可',
+                },
+              ],
+            },
+            {
+              type: 'category',
               key: 'develop-analytical-reference-ja-jp-3.18',
               label: '詳細',
               collapsible: true,
@@ -1853,7 +1872,7 @@ const sidebars = {
             {
               type: 'doc',
               id: 'scalardb-cluster/deployment-patterns-for-microservices',
-              label: 'ScalarDB Cluster Deployment Patterns for Microservices',
+              label: 'マイクロサービスにおける ScalarDB Cluster のデプロイパターン',
             },
             {
               type: 'doc',

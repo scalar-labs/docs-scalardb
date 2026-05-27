@@ -14,23 +14,45 @@ const notificationsList = [
   // },
   {
     message: {
-      en: 'Learn about transaction metadata decoupling in ScalarDB 3.17',
-      ja: 'ScalarDB 3.17 でトランザクションメタデータ分離について学ぶ'
+      en: 'Blog post: ScalarDB 3.18 has been released!',
+      ja: 'ブログ記事: ScalarDB 3.18 をリリースしました！'
     },
     url: {
-      en: 'consensus-commit?utm_source=docs-site&utm_medium=notifications#transaction-metadata-decoupling',
-      ja: 'consensus-commit?utm_source=docs-site&utm_medium=notifications#%E3%83%88%E3%83%A9%E3%83%B3%E3%82%B6%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF%E5%88%86%E9%9B%A2'
+      en: 'https://medium.com/scalar-engineering/scalardb-3-18-has-been-released-e85b7f536cc7?utm_source=docs-site&utm_medium=notifications',
+      ja: 'https://medium.com/scalar-engineering-ja/scalardb-3-18-%E3%82%92%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-3bd653f87137?utm_source=docs-site&utm_medium=notifications'
     },
     unread: true
   },
   {
     message: {
-      en: 'Configure role-based access control in ScalarDB Cluster 3.17',
-      ja: 'ScalarDB Cluster 3.17 でロールベースのアクセス制御を設定する'
+      en: 'Control user access via OIDC-based JWT access tokens',
+      ja: 'OIDC ベースの JWT アクセストークンを用いてユーザーアクセスを制御する'
     },
     url: {
-      en: 'scalardb-cluster/scalardb-auth-with-sql?utm_source=docs-site&utm_medium=notifications#roles',
-      ja: 'scalardb-cluster/scalardb-auth-with-sql?utm_source=docs-site&utm_medium=notifications#%E3%83%AD%E3%83%BC%E3%83%AB'
+      en: 'scalardb-cluster/control-access-via-oidc-based-jwt-tokens?utm_source=docs-site&utm_medium=notifications',
+      ja: 'scalardb-cluster/control-access-via-oidc-based-jwt-tokens?utm_source=docs-site&utm_medium=notifications'
+    },
+    unread: true
+  },
+  {
+    message: {
+      en: 'Authenticate and authorize users in ScalarDB Analytics',
+      ja: 'ScalarDB Analytics でユーザーを認証と認可する'
+    },
+    url: {
+      en: 'scalardb-analytics/authentication-and-authorization?utm_source=docs-site&utm_medium=notifications',
+      ja: 'scalardb-analytics/authentication-and-authorization?utm_source=docs-site&utm_medium=notifications'
+    },
+    unread: true
+  },
+  {
+    message: {
+      en: 'Learn about transaction metadata decoupling',
+      ja: 'トランザクションメタデータ分離について学ぶ'
+    },
+    url: {
+      en: 'consensus-commit?utm_source=docs-site&utm_medium=notifications#transaction-metadata-decoupling',
+      ja: 'consensus-commit?utm_source=docs-site&utm_medium=notifications#%E3%83%88%E3%83%A9%E3%83%B3%E3%82%B6%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF%E5%88%86%E9%9B%A2'
     },
     unread: true
   },
