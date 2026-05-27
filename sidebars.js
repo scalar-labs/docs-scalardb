@@ -1364,18 +1364,6 @@ const sidebars = {
             },
           ],
         },
-        // {
-        //   type: 'category',
-        //   label: '分析クエリを実行',
-        //   collapsible: true,
-        //   items: [
-        //     {
-        //       type: 'doc',
-        //       id: '<PATH_TO_FILE>',
-        //       label: '<LABEL>',
-        //     }
-        //   ],
-        // },
         {
           type: 'category',
           label: '非トランザクションストレージ操作を実行',
