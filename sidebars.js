@@ -1364,18 +1364,6 @@ const sidebars = {
             },
           ],
         },
-        // {
-        //   type: 'category',
-        //   label: '分析クエリを実行',
-        //   collapsible: true,
-        //   items: [
-        //     {
-        //       type: 'doc',
-        //       id: '<PATH_TO_FILE>',
-        //       label: '<LABEL>',
-        //     }
-        //   ],
-        // },
         {
           type: 'category',
           label: '非トランザクションストレージ操作を実行',
@@ -1436,6 +1424,20 @@ const sidebars = {
               type: 'doc',
               id: 'scalardb-analytics/run-analytical-queries',
               label: '分析クエリの実行',
+            },
+            {
+              type: 'category',
+              key: 'develop-run-analytical-queries-advanced-configurations-and-operations-ja-jp-3.18',
+              label: '高度な設定と操作',
+              collapsible: true,
+              items: [
+                {
+                  type: 'doc',
+                  key: 'develop-run-analytical-queries-advanced-configurations-and-operations-authentication-and-authorization-ja-jp-3.18',
+                  id: 'scalardb-analytics/authentication-and-authorization',
+                  label: 'ユーザーの認証と認可',
+                },
+              ],
             },
           ],
         },
