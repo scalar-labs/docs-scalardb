@@ -30,13 +30,13 @@ const recentFeatures = [
       },
       {
         cell: 1, // Second cell
-        links: ['consensus-commit#%E3%83%88%E3%83%A9%E3%83%B3%E3%82%B6%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF%E5%88%86%E9%9B%A2'],
-        labels: ['トランザクションメタデータ分離']
+        links: ['scalardb-analytics/authentication-and-authorization'],
+        labels: ['ScalarDB Analytics でユーザーを認証と認可']
       },
       {
-        cell: 2, // Third cell
-        links: ['scalardb-cluster/remote-replication'],
-        labels: ['高可用性のためのデータレプリケーション']
+        cell: 2, // Second cell
+        links: ['consensus-commit#%E3%83%88%E3%83%A9%E3%83%B3%E3%82%B6%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF%E5%88%86%E9%9B%A2'],
+        labels: ['トランザクションメタデータ分離']
       }
     ]
   }
