@@ -224,7 +224,7 @@ const sidebars = {
             {
               type: 'doc',
               id: 'database-configurations',
-              label: 'Configure Database Requirements',
+              label: 'Configure Databases',
             },
             {
               type: 'category',
@@ -1358,7 +1358,7 @@ const sidebars = {
             {
               type: 'doc',
               id: 'database-configurations',
-              label: 'データベース要件を設定',
+              label: 'データベースを設定',
             },
             {
               type: 'category',
