@@ -941,7 +941,6 @@ const sidebars = {
       link: {
         type: 'doc',
         id: 'manage-overview',
-        
       },
       items: [
         {
@@ -1276,12 +1275,12 @@ const sidebars = {
             },
             {
               type: 'doc',
-              id: 'scalardb-cluster/getting-started-with-scalardb-cluster-dotnet',
+              id: 'scalardb-cluster/getting-started-with-scalardb-cluster-sql-dotnet',
               label: '.NET 経由で SQL を使用',
             },
             {
               type: 'doc',
-              id: 'scalardb-cluster/getting-started-with-scalardb-cluster-dotnet',
+              id: 'scalardb-cluster/getting-started-with-scalardb-cluster-sql-linq',
               label: '.NET と LINQ 経由で SQL を使用',
             },
             {
