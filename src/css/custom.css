@@ -1193,3 +1193,126 @@ html[data-theme="dark"] .googleAiModeModalSubmitIcon:hover:not(:disabled) {
 .DocSearch-Button-Key {
   padding: 0;
 }
+
+/* Query with AI dropdown component */
+.query-with-ai-wrapper {
+  position: relative;
+  margin-bottom: 0.75rem;
+}
+
+.query-with-ai-trigger {
+  align-items: center;
+  background: rgba(38, 115, 187, 0.06);
+  border: 1px solid var(--ifm-color-primary);
+  border-radius: var(--ifm-global-radius);
+  color: var(--ifm-color-primary);
+  cursor: pointer;
+  display: flex;
+  font-family: var(--ifm-font-family-base);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  gap: 0.375rem;
+  justify-content: space-between;
+  padding: 0.375rem 0.625rem;
+  transition: background 0.15s, border-color 0.15s;
+  width: 100%;
+}
+
+.query-with-ai-trigger:hover,
+.query-with-ai-trigger:focus {
+  background: rgba(38, 115, 187, 0.12);
+  border-color: var(--ifm-color-primary);
+  outline: none;
+}
+
+.query-with-ai-icon {
+  flex-shrink: 0;
+  height: 0.9rem;
+  width: 0.9rem;
+}
+
+.query-with-ai-chevron {
+  flex-shrink: 0;
+  height: 0.75rem;
+  margin-left: auto;
+  transition: transform 0.2s ease;
+  width: 0.75rem;
+}
+
+.query-with-ai-chevron.open {
+  transform: rotate(180deg);
+}
+
+.query-with-ai-dropdown {
+  background: var(--ifm-dropdown-background-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  box-shadow: var(--ifm-global-shadow-md);
+  left: 0;
+  min-width: 200px;
+  padding: 0.375rem 0;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 100;
+}
+
+.query-with-ai-section-label {
+  color: var(--ifm-color-emphasis-600);
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  padding: 0.375rem 0.75rem 0.2rem;
+  text-transform: uppercase;
+}
+
+.query-with-ai-separator {
+  border: none;
+  border-top: 1px solid var(--ifm-color-emphasis-200);
+  margin: 0.25rem 0;
+}
+
+.query-with-ai-item {
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: var(--ifm-font-color-base);
+  cursor: pointer;
+  display: flex;
+  font-family: var(--ifm-font-family-base);
+  font-size: 0.8125rem;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  text-align: left;
+  transition: background 0.1s;
+  width: 100%;
+}
+
+.query-with-ai-item:hover,
+.query-with-ai-item:focus {
+  background: var(--ifm-dropdown-hover-background-color);
+  color: var(--ifm-font-color-base);
+  outline: none;
+}
+
+.query-with-ai-item-icon {
+  flex-shrink: 0;
+  height: 0.875rem;
+  width: 0.875rem;
+}
+
+/* Dark mode overrides */
+html[data-theme='dark'] .query-with-ai-trigger {
+  background: rgba(38, 115, 187, 0.12);
+}
+
+html[data-theme='dark'] .query-with-ai-dropdown {
+  border-color: var(--ifm-color-emphasis-400);
+}
+
+/* Hide on mobile/narrow screens (feature is desktop-only) */
+@media (max-width: 997px) {
+  .query-with-ai-wrapper {
+    display: none;
+  }
+}
