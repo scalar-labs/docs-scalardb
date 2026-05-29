@@ -1200,6 +1200,8 @@ html[data-theme="dark"] .googleAiModeModalSubmitIcon:hover:not(:disabled) {
   margin-bottom: 0.75rem;
 }
 
+
+
 .query-with-ai-trigger {
   align-items: center;
   background: rgba(38, 115, 187, 0.06);
@@ -1314,5 +1316,165 @@ html[data-theme='dark'] .query-with-ai-dropdown {
 @media (max-width: 997px) {
   .query-with-ai-wrapper {
     display: none;
+  }
+}
+
+/* =====================================================
+   Query with AI — Inline end-of-article card
+   Placed after article content, before prev/next nav.
+   Works on all screen sizes.
+   ===================================================== */
+
+.qai-inline-card {
+  align-items: center;
+  background: var(--ifm-color-emphasis-100);
+  border: 1px solid var(--ifm-color-emphasis-200);
+  border-radius: var(--ifm-global-radius);
+  display: flex;
+  flex-wrap: nowrap;
+  justify-content: space-between;
+  margin: 0.75rem 0 1.5rem;
+  padding: 0.5rem 0.5rem;
+}
+
+html[data-theme='dark'] .qai-inline-card {
+  background: var(--ifm-color-emphasis-100);
+  border-color: var(--ifm-color-emphasis-300);
+}
+
+/* Left label: icon + "Query with AI" text */
+.qai-inline-label {
+  align-items: center;
+  color: var(--ifm-color-primary);
+  display: flex;
+  flex-shrink: 0;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  gap: 0.35rem;
+  white-space: nowrap;
+}
+
+.qai-inline-label svg {
+  flex-shrink: 0;
+  height: 0.9rem;
+  width: 0.9rem;
+}
+
+/* Dropdown wrapper — relative so the menu positions against it */
+.qai-inline-dropdown-wrap {
+  position: relative;
+}
+
+/* Trigger button */
+.qai-inline-trigger {
+  align-items: center;
+  background: var(--ifm-background-surface-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  color: var(--ifm-font-color-base);
+  cursor: pointer;
+  display: flex;
+  font-family: var(--ifm-font-family-base);
+  font-size: 0.8125rem;
+  font-weight: 500;
+  gap: 0.375rem;
+  padding: 0.3rem 0.6rem;
+  transition: background 0.12s, border-color 0.12s;
+  white-space: nowrap;
+}
+
+.qai-inline-trigger svg {
+  flex-shrink: 0;
+  height: 0.875rem;
+  width: 0.875rem;
+}
+
+.qai-inline-trigger:hover,
+.qai-inline-trigger:focus {
+  background: rgba(38, 115, 187, 0.08);
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+  outline: none;
+}
+
+.qai-inline-trigger.open {
+  background: rgba(38, 115, 187, 0.08);
+  border-color: var(--ifm-color-primary);
+  color: var(--ifm-color-primary);
+}
+
+.qai-inline-chevron {
+  flex-shrink: 0;
+  height: 0.7rem;
+  margin-left: 0.1rem;
+  transition: transform 0.18s ease;
+  width: 0.7rem;
+}
+
+.qai-inline-trigger.open .qai-inline-chevron {
+  transform: rotate(180deg);
+}
+
+/* Dropdown panel */
+.qai-inline-dropdown {
+  background: var(--ifm-dropdown-background-color);
+  border: 1px solid var(--ifm-color-emphasis-300);
+  border-radius: var(--ifm-global-radius);
+  box-shadow: var(--ifm-global-shadow-md);
+  right: 0;
+  min-width: 210px;
+  padding: 0.3rem 0;
+  position: absolute;
+  top: calc(100% + 4px);
+  z-index: 200;
+}
+
+html[data-theme='dark'] .qai-inline-dropdown {
+  border-color: var(--ifm-color-emphasis-400);
+}
+
+/* Items inside dropdown */
+.qai-inline-item {
+  align-items: center;
+  background: transparent;
+  border: none;
+  color: var(--ifm-font-color-base);
+  cursor: pointer;
+  display: flex;
+  font-family: var(--ifm-font-family-base);
+  font-size: 0.8125rem;
+  gap: 0.5rem;
+  padding: 0.375rem 0.75rem;
+  text-align: left;
+  transition: background 0.1s;
+  width: 100%;
+}
+
+.qai-inline-item svg {
+  flex-shrink: 0;
+  height: 0.875rem;
+  width: 0.875rem;
+}
+
+.qai-inline-item:hover,
+.qai-inline-item:focus {
+  background: var(--ifm-dropdown-hover-background-color);
+  color: var(--ifm-font-color-base);
+  outline: none;
+}
+
+/* Right-side button group */
+.qai-inline-actions {
+  align-items: center;
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.75rem;
+}
+
+/* On small screens, drop dividers and tighten padding. */
+@media (max-width: 600px) {
+  .qai-inline-card {
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
   }
 }

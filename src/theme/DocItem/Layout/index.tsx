@@ -11,7 +11,7 @@ import DocItemTOCDesktop from '@theme/DocItem/TOC/Desktop';
 import DocItemContent from '@theme/DocItem/Content';
 import DocBreadcrumbs from '@theme/DocBreadcrumbs';
 import ContentVisibility from '@theme/ContentVisibility';
-import QueryWithAI from '@site/src/components/QueryWithAI';
+import QueryWithAIInline from '@site/src/components/QueryWithAIInline';
 
 import styles from './styles.module.css';
 
@@ -57,6 +57,7 @@ const DocItemLayout: React.FC<DocItemLayoutProps> = ({ children }) => {
           <article>
             <DocBreadcrumbs />
             <DocVersionBadge />
+            <QueryWithAIInline />
             {docTOC.mobile}
             <DocItemContent>{children}</DocItemContent>
             <DocItemFooter />
@@ -68,7 +69,6 @@ const DocItemLayout: React.FC<DocItemLayoutProps> = ({ children }) => {
       {!hideTOC && windowSize !== 'mobile' && (
         <div className="col col--3" style={{ position: "relative" }}>
           <div style={{ position: "sticky", top: "80px", zIndex: 1 }}>
-            <QueryWithAI />
             {docTOC.desktop}
           </div>
         </div>
