@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
+import { translate } from '@docusaurus/Translate';
 import { useLocation } from '@docusaurus/router';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 
@@ -11,7 +12,14 @@ const CLAUDE_URL = 'https://claude.ai/new';
 const PERPLEXITY_URL = 'https://www.perplexity.ai/';
 
 function buildAIPrompt(pageUrl: string): string {
-  return `Using the documentation at ${pageUrl}, please help me understand this topic.`;
+  return translate(
+    {
+      id: 'queryWithAI.prompt',
+      message: 'Using the documentation at {pageUrl}, please help me understand this topic.',
+      description: 'The prompt sent to AI services when opening a chat',
+    },
+    { pageUrl },
+  );
 }
 
 function openAIService(serviceUrl: string, prompt: string): void {
@@ -327,8 +335,8 @@ export default function QueryWithAIInline(): JSX.Element {
 
   const getCopyLabel = (key: string, defaultLabel: string): string => {
     const s = copyStatus[key];
-    if (s === 'copied') return 'Copied!';
-    if (s === 'error') return 'Failed';
+    if (s === 'copied') return translate({ id: 'queryWithAI.copied', message: 'Copied!', description: 'Status shown after a successful copy' });
+    if (s === 'error') return translate({ id: 'queryWithAI.copyFailed', message: 'Failed', description: 'Status shown after a failed copy' });
     return defaultLabel;
   };
 
@@ -337,7 +345,7 @@ export default function QueryWithAIInline(): JSX.Element {
       {/* Left: label */}
       <div className="qai-inline-label">
         <ChatIcon />
-        <span>Query with AI</span>
+        <span>{translate({ id: 'queryWithAI.trigger', message: 'Query with AI', description: 'Left label in the inline card' })}</span>
       </div>
 
       {/* Right: divider + buttons grouped together */}
@@ -354,7 +362,7 @@ export default function QueryWithAIInline(): JSX.Element {
             aria-haspopup="true"
           >
             <ChatIcon />
-            Chat
+            {translate({ id: 'queryWithAI.inlineChatBtn', message: 'Chat', description: 'Label for the Chat dropdown trigger in the inline card' })}
             <svg className="qai-inline-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
               <polyline points="6 9 12 15 18 9" />
             </svg>
@@ -363,15 +371,15 @@ export default function QueryWithAIInline(): JSX.Element {
             <div className="qai-inline-dropdown" role="menu">
               <button className="qai-inline-item" role="menuitem" onClick={handleChatGPT}>
                 <ChatGPTLogo />
-                Chat in ChatGPT
+                {translate({ id: 'queryWithAI.chatGPTTitle', message: 'Chat in ChatGPT', description: 'Label for the ChatGPT chat item' })}
               </button>
               <button className="qai-inline-item" role="menuitem" onClick={handleClaude}>
                 <ClaudeLogo />
-                Chat in Claude
+                {translate({ id: 'queryWithAI.claudeTitle', message: 'Chat in Claude', description: 'Label for the Claude chat item' })}
               </button>
               <button className="qai-inline-item" role="menuitem" onClick={handlePerplexity}>
                 <PerplexityLogo />
-                Chat in Perplexity
+                {translate({ id: 'queryWithAI.perplexityTitle', message: 'Chat in Perplexity', description: 'Label for the Perplexity chat item' })}
               </button>
             </div>
           )}
@@ -389,7 +397,7 @@ export default function QueryWithAIInline(): JSX.Element {
           aria-haspopup="true"
         >
           <CopyIcon />
-          Copy
+          {translate({ id: 'queryWithAI.inlineCopyBtn', message: 'Copy', description: 'Label for the Copy dropdown trigger in the inline card' })}
           <svg className="qai-inline-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
             <polyline points="6 9 12 15 18 9" />
           </svg>
@@ -398,15 +406,15 @@ export default function QueryWithAIInline(): JSX.Element {
           <div className="qai-inline-dropdown" role="menu">
             <button className="qai-inline-item" role="menuitem" onClick={handleCopyMarkdown}>
               <CopyIcon />
-              {getCopyLabel('markdown', 'Copy page as Markdown')}
+              {getCopyLabel('markdown', translate({ id: 'queryWithAI.copyMarkdown', message: 'Copy page as Markdown', description: 'Label for the copy-page-as-markdown button' }))}
             </button>
             <button className="qai-inline-item" role="menuitem" onClick={handleCopyLlmsTxt}>
               <FileIcon />
-              {getCopyLabel('llms', 'Copy llms.txt')}
+              {getCopyLabel('llms', translate({ id: 'queryWithAI.copyLlms', message: 'Copy llms.txt', description: 'Label for the copy llms.txt button' }))}
             </button>
             <button className="qai-inline-item" role="menuitem" onClick={handleCopyLlmsFullTxt}>
               <FileIcon />
-              {getCopyLabel('llmsFull', 'Copy llms-full.txt')}
+              {getCopyLabel('llmsFull', translate({ id: 'queryWithAI.copyLlmsFull', message: 'Copy llms-full.txt', description: 'Label for the copy llms-full.txt button' }))}
             </button>
           </div>
         )}
