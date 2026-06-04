@@ -265,32 +265,32 @@ const sidebars = {
                   type: 'doc',
                   key: 'develop-sample-multi-storage-transactions-en-us-3.18',
                   id: 'scalardb-samples/multi-storage-transaction-sample/README',
-                  label: 'Multi-Storage Transactions',
+                  label: 'Run Multi-Storage Transactions Samples',
                 },
                 {
                   type: 'doc',
                   id: 'scalardb-samples/microservice-transaction-sample/README',
-                  label: 'Microservice Transactions',
+                  label: 'Run Microservice Transactions Samples',
                 },
                 {
                   type: 'doc',
                   id: 'scalardb-samples/spring-data-multi-storage-transaction-sample/README',
-                  label: 'Multi-Storage Transactions Through Spring Data JDBC',
+                  label: 'Run Multi-Storage Transactions Samples Through Spring Data JDBC',
                 },
                 {
                   type: 'doc',
                   id: 'scalardb-samples/spring-data-microservice-transaction-sample/README',
-                  label: 'Microservice Transactions Through Spring Data JDBC',
+                  label: 'Run Microservice Transactions Samples Through Spring Data JDBC',
                 },
                 {
                   type: 'doc',
                   id: 'scalardb-samples/microservice-transactions-sample-with-shared-cluster-with-jdbc/README',
-                  label: 'Microservice Transactions Through Shared Cluster with JDBC',
+                  label: 'Run Microservice Transactions Samples Through Shared Cluster with JDBC',
                 },
                 {
                   type: 'doc',
                   id: 'scalardb-samples/dotnet-microservice-transactions-sample-with-shared-cluster-with-linq/README',
-                  label: 'Microservice Transactions Through Shared Cluster with LINQ',
+                  label: 'Run Microservice Transactions Samples Through Shared Cluster with LINQ',
                 },
               ],
             },
@@ -375,13 +375,13 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
-                  id: 'scalardb-benchmarks/README',
-                  label: 'Run Benchmarks',
+                  id: 'getting-started-with-benchmarking-scalardb',
+                  label: 'Try Benchmarking ScalarDB',
                 },
                 {
                   type: 'doc',
-                  id: 'getting-started-with-benchmarking-scalardb',
-                  label: 'Try Benchmarking ScalarDB',
+                  id: 'scalardb-benchmarks/README',
+                  label: 'Run Benchmarks',
                 },
               ],
             },
@@ -908,34 +908,6 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: 'Migrate',
-      collapsible: true,
-      link: {
-        type: 'doc',
-        id: 'migrate-overview',
-      },
-      items: [
-        {
-          type: 'category',
-          label: 'Migrate to ScalarDB Cluster',
-          collapsible: true,
-          items: [
-            {
-              type: 'doc',
-              id: 'schema-loader-import',
-              label: 'Import Existing Tables',
-            },
-            {
-              'type': 'doc',
-              'id': 'scalardb-sql/migration-guide',
-              'label': 'Migrate Applications and Databases',
-            }
-          ],
-        },
-      ],
-    },
-    {
-      type: 'category',
       label: 'Manage',
       collapsible: true,
       link: {
@@ -992,7 +964,7 @@ const sidebars = {
             {
               type: 'doc',
               id: 'scalar-kubernetes/K8sMonitorGuide',
-              label: 'Kubernetes Monitoring Guide',
+              label: 'Monitor ScalarDB Cluster',
             },
             {
               type: 'doc',
@@ -1025,6 +997,34 @@ const sidebars = {
               id: 'scalar-kubernetes/RestoreDatabase',
               label: 'Restore Databases in Kubernetes',
             },
+          ],
+        },
+      ],
+    },
+    {
+      type: 'category',
+      label: 'Migrate',
+      collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'migrate-overview',
+      },
+      items: [
+        {
+          type: 'category',
+          label: 'Migrate to ScalarDB Cluster',
+          collapsible: true,
+          items: [
+            {
+              type: 'doc',
+              id: 'schema-loader-import',
+              label: 'Import Existing Tables',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-sql/migration-guide',
+              label: 'Migrate Applications and Databases',
+            }
           ],
         },
       ],
@@ -1418,12 +1418,12 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalardb-samples/microservice-transactions-sample-with-shared-cluster-with-jdbc/README',
-                  label: 'JDBC を使用して共有クラスタでマイクロサービストランザクション',
+                  label: 'JDBC を使用した共有クラスタでのマイクロサービストランザクション',
                 },
                 {
                   type: 'doc',
                   id: 'scalardb-samples/dotnet-microservice-transactions-sample-with-shared-cluster-with-linq/README',
-                  label: 'LINQ を使用して共有クラスタでマイクロサービストランザクション',
+                  label: 'LINQ を使用した共有クラスタでのマイクロサービストランザクション',
                 },
               ],
             },
@@ -1508,13 +1508,13 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
-                  id: 'scalardb-benchmarks/README',
-                  label: 'ベンチマークを実行',
+                  id: 'getting-started-with-benchmarking-scalardb',
+                  label: 'ScalarDB のベンチマークを実行',
                 },
                 {
                   type: 'doc',
-                  id: 'getting-started-with-benchmarking-scalardb',
-                  label: 'ScalarDB のベンチマークを実行',
+                  id: 'scalardb-benchmarks/README',
+                  label: 'ベンチマークを実行',
                 },
               ],
             },
@@ -2039,34 +2039,6 @@ const sidebars = {
     },
     {
       type: 'category',
-      label: '移行',
-      collapsible: true,
-      link: {
-        type: 'doc',
-        id: 'migrate-overview',
-      },
-      items: [
-        {
-          type: 'category',
-          label: 'ScalarDB Cluster に移行',
-          collapsible: true,
-          items: [
-            {
-              type: 'doc',
-              id: 'schema-loader-import',
-              label: '既存のテーブルをインポート',
-            },
-            {
-              'type': 'doc',
-              'id': 'scalardb-sql/migration-guide',
-              'label': 'アプリケーションとデータベースの移行',
-            }
-          ],
-        },
-      ],
-    },
-    {
-      type: 'category',
       label: '運用',
       collapsible: true,
       link: {
@@ -2123,7 +2095,7 @@ const sidebars = {
             {
               type: "doc",
               id: "scalar-kubernetes/K8sMonitorGuide",
-              label: "Kubernetes モニタリングガイド"
+              label: "ScalarDB Cluster の監視"
             },
             {
               type: "doc",
@@ -2156,6 +2128,34 @@ const sidebars = {
               id: 'scalar-kubernetes/RestoreDatabase',
               label: 'Kubernetes でデータベースを復元',
             },
+          ],
+        },
+      ],
+    },
+    {
+      type: 'category',
+      label: '移行',
+      collapsible: true,
+      link: {
+        type: 'doc',
+        id: 'migrate-overview',
+      },
+      items: [
+        {
+          type: 'category',
+          label: 'ScalarDB Cluster に移行',
+          collapsible: true,
+          items: [
+            {
+              type: 'doc',
+              id: 'schema-loader-import',
+              label: '既存のテーブルをインポート',
+            },
+            {
+              type: 'doc',
+              id: 'scalardb-sql/migration-guide',
+              label: 'アプリケーションとデータベースの移行',
+            }
           ],
         },
       ],
