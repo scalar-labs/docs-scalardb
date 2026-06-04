@@ -1127,6 +1127,11 @@ const sidebars = {
           label: 'ScalarDB Analytics Design',
         },
         {
+          type: 'doc',
+          id: 'libraries-and-tools',
+          label: 'Libraries and Tools',
+        },
+        {
           type: 'category',
           label: 'Configure a License Key',
           collapsible: true,
@@ -2256,6 +2261,11 @@ const sidebars = {
           type: 'doc',
           id: 'scalardb-analytics/design',
           label: 'ScalarDB Analytics の設計',
+        },
+        {
+          type: 'doc',
+          id: 'libraries-and-tools',
+          label: 'ライブラリとツール',
         },
         {
           type: 'category',
