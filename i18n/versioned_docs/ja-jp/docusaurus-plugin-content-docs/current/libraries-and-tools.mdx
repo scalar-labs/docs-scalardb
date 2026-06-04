@@ -1,0 +1,81 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+  - Enterprise Option
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB のライブラリとツール
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+ScalarDB は、スケーラブルで信頼性の高いアプリケーションの構築と運用を支援するさまざまなライブラリとツールを提供します。以下は、利用可能な主要なライブラリとツールです。
+
+## Core and Cluster
+
+このセクションでは、ScalarDB Core と Cluster で利用可能なライブラリとツールを一覧表示します。
+
+### ライブラリ
+
+ScalarDB Core と Cluster で利用可能なライブラリは以下の通りです。
+
+| ライブラリ                         | エディション                                         | Maven パッケージ                                                                                                     | コンテナイメージ | リファレンス                                                                                     |
+|----------------------------------|----------------------------------------------------|--------------------------------------------------------------------------------------------------------------------|----------------|-----------------------------------------------------------------------------------------------|
+| ScalarDB Core Java API ライブラリ  | Community、Enterprise Standard、Enterprise Premium | [Maven Central Repository](https://central.sonatype.com/artifact/com.scalar-labs/scalardb)                         | N/A            | [ドキュメンテーション](./api-guide.mdx)                                                           |
+| ScalarDB Cluster Java Client SDK | Enterprise Standard、Enterprise Premium            | [Maven Central Repository](https://central.sonatype.com/artifact/com.scalar-labs/scalardb-cluster-java-client-sdk) | N/A            | [ドキュメンテーション](./scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx) |
+| ScalarDB SQL                     | Enterprise Standard、Enterprise Premium            | [Maven Central Repository](https://central.sonatype.com/artifact/com.scalar-labs/scalardb-sql)                     | N/A            | [ドキュメンテーション](./scalardb-sql/sql-api-guide.mdx)                                          |
+| ScalarDB SQL 用 JDBC ドライバー     | Enterprise Standard、Enterprise Premium           | [Maven Central Repository](https://central.sonatype.com/artifact/com.scalar-labs/scalardb-sql-jdbc)                | N/A             | [ドキュメンテーション](./scalardb-sql/jdbc-guide.mdx)                                            |
+| Spring Data JDBC for ScalarDB    | Enterprise Standard、Enterprise Premium            | [Maven Central Repository](https://central.sonatype.com/artifact/com.scalar-labs/scalardb-sql-spring-data)         | N/A             | [ドキュメンテーション](./scalardb-sql/spring-data-guide.mdx)                                     |
+
+### ツール
+
+ScalarDB Core と Cluster で利用可能なツールは以下の通りです。
+
+| ツール                            | エディション                                        | Maven パッケージ                                                                                                 | JAR ファイル                                                            | コンテナイメージ                                                                                          | リファレンス                                                                                                               |
+|----------------------------------|---------------------------------------------------|---------------------------------------------------------------------------------------------------------------|---------------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------|
+| ScalarDB Schema Loader           | Community、Enterprise Standard、Enterprise Premium | [Maven Central Repository](https://central.sonatype.com/artifact/com.scalar-labs/scalardb-schema-loader)      | [GitHub Releases](https://github.com/scalar-labs/scalardb/releases) | [GitHub](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-schema-loader)           | [ドキュメンテーション](./schema-loader.mdx)                                                                                 |
+| ScalarDB Cluster Schema Loader   | Enterprise Standard、Enterprise Premium            | N/A                                                                                                           | [GitHub Releases](https://github.com/scalar-labs/scalardb/releases) | [GitHub](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-cluster-schema-loader)   | [ドキュメンテーション](./scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#クラスター用-schema-loader) |
+| ScalarDB Data Loader CLI         | Community、Enterprise Standard、Enterprise Premium | [Maven Central Repository](https://central.sonatype.com/artifact/com.scalar-labs/scalardb-data-loader-cli)    | [GitHub Releases](https://github.com/scalar-labs/scalardb/releases) | [GitHub](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-data-loader-cli)         | [ドキュメンテーション](./data-loader.mdx)                                                                                   |
+| ScalarDB Cluster Data Loader CLI | Enterprise Standard、Enterprise Premium           | N/A                                                                                                            | [GitHub Releases](https://github.com/scalar-labs/scalardb/releases) | [GitHub](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-cluster-data-loader-cli) | [ドキュメンテーション](./data-loader.mdx)                                                                                   |
+| ScalarDB Cluster SQL CLI         | Enterprise Premium                                | N/A                                                                                                           | [GitHub Releases](https://github.com/scalar-labs/scalardb/releases) | [GitHub](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-cluster-sql-cli)         | [ドキュメンテーション](./scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#sql-cli)                   |
+| Replication CLI                  | Enterprise Premium                                | N/A                                                                                                           | [GitHub Releases](https://github.com/scalar-labs/scalardb/releases) | [GitHub](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-cluster-replication-cli) | [ドキュメンテーション](./scalardb-cluster/remote-replication.mdx#replication-cli)                                           |
+| ScalarDB MCP Server              | Community、Enterprise Standard、Enterprise Premium | N/A                                                                                                           | N/A                                                                 | [GitHub](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-mcp-server)              | [ドキュメンテーション](./scalardb-mcp-server/getting-started-with-scalardb-mcp-server.mdx)                                  |
+| Helm Charts                      | Community、Enterprise Standard、Enterprise Premium | N/A                                                                                                           | N/A                                                                 | N/A                                                                                                       | [ドキュメンテーション](./helm-charts/getting-started-scalar-helm-charts.mdx)                                                |
+| Scalar Admin for Kubernetes      | Enterprise Standard、Enterprise Premium            | [Maven Central Repository](https://central.sonatype.com/artifact/com.scalar-labs/scalar-admin-for-kubernetes) | N/A                                                                 | [GitHub](https://github.com/orgs/scalar-labs/packages/container/package/scalar-admin-for-kubernetes)      | [ドキュメンテーション](./helm-charts/how-to-deploy-scalar-admin-for-kubernetes.mdx)                                         |
+
+### クラスターコンポーネント
+
+ScalarDB Cluster で利用可能なコンポーネントは以下の通りです。
+
+| コンポーネント                     | エディション          | コンテナイメージ                                                                                                    | リファレンス                |
+|----------------------------------|---------------------|------------------------------------------------------------------------------------------------------------------|--------------------------|
+| ScalarDB Cluster Node (BYOL)     | Enterprise Premium  | [GitHub](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-cluster-node-byol-premium)      | ドキュメンテーション（準備中）|
+| ScalarDB Cluster Node (BYOL)     | Enterprise Standard | [GitHub](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-cluster-node-byol-standard)     | ドキュメンテーション（準備中）|
+| ScalarDB Cluster Node (UBI BYOL) | Enterprise Premium  | [GitHub](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-cluster-node-ubi-byol-premium)  | ドキュメンテーション（準備中）|
+| ScalarDB Cluster Node (UBI BYOL) | Enterprise Standard | [GitHub](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-cluster-node-ubi-byol-standard) | ドキュメンテーション（準備中）|
+
+## Analytics
+
+このセクションでは、ScalarDB Analyticsで利用可能なライブラリとツールを一覧表示します。
+
+### ライブラリ
+
+ScalarDB Analytics で利用可能なライブラリは以下の通りです。
+
+| ライブラリ                  | エディション        | Maven パッケージ                                                                                 | コンテナイメージ | リファレンス                                                                                                     |
+|---------------------------|-------------------|------------------------------------------------------------------------------------------------|---------------|----------------------------------------------------------------------------------------------------------------|
+| ScalarDB Analytics        | Enterprise Option | [Maven Central Repository](https://central.sonatype.com/search?q=scalardb-analytics-spark-all) | N/A           | [ドキュメンテーション](./scalardb-analytics/run-analytical-queries.mdx#spark-アプリケーションのビルド設定) |
+
+### ツール
+
+ScalarDB Analytics で利用可能なツールは以下の通りです。
+
+| ツール                     | エディション                                         | Maven パッケージ | JAR ファイル                                                          | コンテナイメージ                                                                                          | リファレンス                                                                    |
+|---------------------------|----------------------------------------------------|----------------|---------------------------------------------------------------------|---------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
+| ScalarDB Analytics server | Enterprise Option                                  | N/A            | N/A                                                                 | [GitHub](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-analytics-server-byol) | [ドキュメンテーション](./scalardb-analytics/deploy-scalardb-analytics-server.mdx) |
+| ScalarDB Analytics CLI    | Enterprise Option                                  | N/A            | [GitHub Releases](https://github.com/scalar-labs/scalardb/releases) | [GitHub](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-analytics-cli)         | [ドキュメンテーション](./scalardb-analytics/reference-cli-command.mdx)            |
+| Helm Charts               | Community、Enterprise Standard、Enterprise Premium  | N/A            | N/A                                                                 | N/A                                                                                                     | [ドキュメンテーション](./helm-charts/getting-started-scalar-helm-charts.mdx)      |
