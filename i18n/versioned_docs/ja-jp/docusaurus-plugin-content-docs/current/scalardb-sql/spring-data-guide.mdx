@@ -75,8 +75,15 @@ spring.datasource.url=jdbc:scalardb:\
 &scalar.db.username=root\
 &scalar.db.password=mysql\
 &scalar.db.storage=jdbc\
-&scalar.db.consensus_commit.isolation_level=SERIALIZABLE
+&scalar.db.consensus_commit.isolation_level=SERIALIZABLE\
+&scalar.db.sql.default_namespace_name.existence_check.enabled=false
 ```
+
+### scalar.db.sql.default_namespace_name.existence_check.enabled
+
+`scalar.db.sql.default_namespace_name.existence_check.enabled` が `true` (デフォルト) に設定されている場合、ScalarDB JDBC ドライバーは新しいセッションが作成されるたびにデフォルトの名前空間が存在することを確認します。Spring Data JDBC はアプリケーションの起動時に JDBC 接続を開くため、このチェックにより起動失敗が発生する可能性があります。
+
+これを回避するには、JDBC URL で `scalar.db.sql.default_namespace_name.existence_check.enabled` を `false` に設定します。
 
 ## アノテーション
 
@@ -90,6 +97,31 @@ public class MyApplication {
   @Autowired private GroupRepository groupRepository;
   @Autowired private UserRepository userRepository;
 ```
+
+アノテーションは次のパラメーターをサポートしています:
+
+| パラメーター | デフォルト | 説明 |
+|---|---|---|
+| `basePackages` (または `value`) | アノテーション付きクラスのパッケージ | リポジトリインターフェースをスキャンするベースパッケージ。複数の `@EnableScalarDbRepositories` アノテーションを使用してスキャン競合を避ける場合に必要です。 |
+| `transactionManagerRef` | `scalarDbTransactionManager` | トランザクションマネージャーの bean 名。[2フェーズコミットトランザクション](#2フェーズコミットトランザクション)の場合は `scalarDbSuspendableTransactionManager` に設定します。 |
+| `jdbcOperationsRef` | `scalarDbNamedParameterJdbcTemplate` | 使用する `NamedParameterJdbcOperations` の bean 名。 |
+| `dataAccessStrategyRef` | `""` (自動検出) | `DataAccessStrategy` の bean 名。複数データソース設定で必要です。 |
+
+最もシンプルなケース (単一の ScalarDB データソース) では、デフォルトが次のセクションで説明する自動構成された bean を指すため、これらのパラメーターを設定する必要はありません。
+
+## 自動構成された bean
+
+Spring Data JDBC for ScalarDB は、`ScalarDbJdbcConfiguration` を通じて次の bean を自動的に登録します:
+
+| Bean 名 | 型 | 説明 |
+|---|---|---|
+| `jdbcTemplate` | `JdbcTemplate` | デフォルト JDBC テンプレート (`@Primary`)。同じ型の ScalarDB 固有の bean との bean 競合を防ぐために定義されています。 |
+| `namedParameterJdbcTemplate` | `NamedParameterJdbcTemplate` | デフォルト名前付きパラメーター JDBC テンプレート (`@Primary`)。同じ型の ScalarDB 固有の bean との bean 競合を防ぐために定義されています。 |
+| `transactionManager` | `JdbcTransactionManager` | デフォルトトランザクションマネージャー (`@Primary`)。同じ型の ScalarDB 固有の bean との bean 競合を防ぐために定義されています。 |
+| `scalarDbJdbcTemplate` | `ScalarDbJdbcTemplate` | カスタム例外変換を備えた ScalarDB 対応 JDBC テンプレート。 |
+| `scalarDbNamedParameterJdbcTemplate` | `ScalarDbNamedParameterJdbcTemplate` | ScalarDB 対応名前付きパラメーターテンプレート。デフォルトで `@EnableScalarDbRepositories` によって使用されます。 |
+| `scalarDbTransactionManager` | `ScalarDbTransactionManager` | ScalarDB トランザクションマネージャー。デフォルトで `@EnableScalarDbRepositories` によって使用されます。 |
+| `scalarDbSuspendableTransactionManager` | `ScalarDbSuspendableTransactionManager` | 2フェーズコミットトランザクション用の ScalarDB トランザクションマネージャー。 |
 
 ## 永続エンティティモデル
 
@@ -433,6 +465,39 @@ public class MyApp {
 
 トランザクションを再試行するための他のオプションとして、Spring Retry の RetryTemplate や Resilience4j などがあります。お好みの再試行ライブラリを自由に選択して使用してください。
 
+### カスタム型コンバーター
+
+ScalarDB SQL でネイティブにサポートされていない Java 型とデータベースカラム型間の変換が必要な場合 (例：`UUID`)、`AbstractJdbcConfiguration` を拡張してカスタムコンバーターを登録できます:
+
+```java
+@Configuration
+public class MyJdbcConfiguration extends AbstractJdbcConfiguration {
+
+  @WritingConverter
+  public static class UuidToStringConverter implements Converter<UUID, String> {
+    @Override
+    public String convert(UUID source) {
+      return source.toString();
+    }
+  }
+
+  @ReadingConverter
+  public static class StringToUuidConverter implements Converter<String, UUID> {
+    @Override
+    public UUID convert(String source) {
+      return UUID.fromString(source);
+    }
+  }
+
+  @Override
+  protected List<?> userConverters() {
+    return Arrays.asList(new UuidToStringConverter(), new StringToUuidConverter());
+  }
+}
+```
+
+これは標準的な Spring Data JDBC パターンです。詳細については、Spring Data JDBC リファレンスの [カスタム変換](https://docs.spring.io/spring-data/jdbc/docs/3.0.x/reference/html/#jdbc.custom-converters)を参照してください。
+
 ### 2フェーズコミットトランザクション
 
 ScalarDB は[2フェーズコミットトランザクション](../two-phase-commit-transactions.mdx)をサポートしており、ユーザーは Spring Data JDBC for ScalarDB を介してこの機能を使用できます。次の設定が必要です。
@@ -708,12 +773,6 @@ public class StockController {
 
 [このサンプル実装](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/customer-service/src/main/java/sample/customer/CustomerService.java)は REST API ではなく gRPC を使用していますが、リファレンスとしても使用できます。
 
-#### JVM アプリケーションで 2PC と通常のトランザクションモードの両方を使用する方法
-
-ほとんどの場合、アプリケーションでは 2PC と通常のトランザクションモードのいずれか1つだけを使用することになっています。ただし、両方のトランザクションモードを使用するユースケースもあります。たとえば、2PC の参加者として使用されるサービスに、2PC プロトコルを使用せずに他のサービスまたはクライアントから直接呼び出される API がいくつかあるとします。この場合、開発者は 2PC で使用されない API に対して通常のトランザクションモードを使用するだけで済みます。
-
-このユースケースを実現するには、2PC と通常のトランザクションモードの異なる `scalar.db.sql.default_transaction_mode` パラメータを、`spring.datasource.url` プロパティを介して Spring Data JDBC フレームワークに渡す必要があります。ただし、Spring Data JDBC では、複数のデータソース設定を使用する簡単な方法は提供されていません。ただし、いくつかのカスタム設定クラスを使用すると、ユーザーは複数のデータソース設定を使用する JVM アプリケーションで 2PC と通常のトランザクションモードの両方を使用できます。
-
 #### 制限事項
 
 ##### `@Transactional` メソッドは `commit()` を暗黙的に呼び出しません
@@ -781,6 +840,136 @@ public class SampleService {
   }
 }
 ```
+
+### Spring Data JDBC との複数データソース設定
+
+同じアプリケーションで標準の Spring Data JDBC リポジトリと並行して ScalarDB リポジトリを使用でき、それぞれ異なるデータソースによってバックアップできます。これは、アプリケーションがいくつかのテーブルを ScalarDB 経由で管理し、他のテーブルを標準の JDBC 接続を通じて管理する場合に有用です。
+
+#### プロパティ
+
+```console
+# 非 ScalarDB Spring Data JDBC データソース
+spring.datasource.default.url=jdbc:postgresql://localhost/mydb?user=postgres&password=postgres
+
+# ScalarDB データソース
+spring.datasource.scalardb.driver-class-name=com.scalar.db.sql.jdbc.SqlJdbcDriver
+spring.datasource.scalardb.url=jdbc:scalardb:\
+?scalar.db.sql.connection_mode=direct\
+&scalar.db.contact_points=jdbc:postgresql://localhost/\
+&...
+```
+
+#### 設定クラス
+
+2つの `@Configuration` クラスを作成します。ScalarDB 側は `@EnableScalarDbRepositories` を使用し、非 ScalarDB 側は Spring Data JDBC の `@EnableJdbcRepositories` を使用します。`basePackages` を使用して、各アノテーションを正しいリポジトリインターフェースセットに向けます。
+
+**ScalarDB 設定:**
+
+```java
+@Configuration
+@EnableScalarDbRepositories(
+    basePackages = "com.example.scalardb.domain",
+    transactionManagerRef = "myScalarDbTransactionManager",
+    dataAccessStrategyRef = "myScalarDbDataAccessStrategy")
+public class ScalarDbConfiguration {
+
+  @Bean
+  @ConfigurationProperties("spring.datasource.scalardb")
+  DataSourceProperties myScalarDbDataSourceProperties() {
+    return new DataSourceProperties();
+  }
+
+  @Bean
+  DataSource myScalarDbDataSource() {
+    return myScalarDbDataSourceProperties().initializeDataSourceBuilder().build();
+  }
+
+  @Bean
+  JdbcTemplate myScalarDbJdbcTemplate() {
+    return new ScalarDbJdbcTemplate(myScalarDbDataSource());
+  }
+
+  @Bean
+  DataAccessStrategy myScalarDbDataAccessStrategy(
+      RelationalMappingContext context, JdbcConverter converter) {
+    // Create a DataAccessStrategy using ScalarDbDialect
+    // and the beans from the ScalarDB datasource
+    ...
+  }
+
+  @Bean
+  PlatformTransactionManager myScalarDbTransactionManager() {
+    return new ScalarDbTransactionManager(myScalarDbDataSource());
+  }
+}
+```
+
+**非 ScalarDB Spring Data JDBC 設定:**
+
+```java
+@Configuration
+@EnableJdbcRepositories(
+    basePackages = "com.example.myapp.domain",
+    transactionManagerRef = "defaultTransactionManager",
+    dataAccessStrategyRef = "defaultDataAccessStrategy")
+public class DefaultConfiguration {
+
+  @Bean
+  @ConfigurationProperties("spring.datasource.default")
+  DataSourceProperties defaultDataSourceProperties() {
+    return new DataSourceProperties();
+  }
+
+  @Bean
+  @Primary
+  DataSource defaultDataSource() {
+    return defaultDataSourceProperties().initializeDataSourceBuilder().build();
+  }
+
+  @Bean
+  JdbcTemplate defaultJdbcTemplate() {
+    return new JdbcTemplate(defaultDataSource());
+  }
+
+  @Bean
+  @Primary
+  DataAccessStrategy defaultDataAccessStrategy(
+      RelationalMappingContext context, JdbcConverter converter) {
+    // Create a DataAccessStrategy using DialectResolver
+    // and the beans from the default datasource
+    ...
+  }
+
+  @Bean
+  PlatformTransactionManager defaultTransactionManager() {
+    return new JdbcTransactionManager(defaultDataSource());
+  }
+}
+```
+
+:::note
+
+非 ScalarDB 側では標準の `JdbcTemplate` と `JdbcTransactionManager` を使用し、ScalarDB 側では `ScalarDbJdbcTemplate` と `ScalarDbTransactionManager` を使用します。
+
+:::
+
+#### `@Qualifier` を使用した bean 注入
+
+アプリケーションコードで特定の `JdbcTemplate` bean を注入する必要がある場合は、`@Qualifier` を使用して正しいものを選択します:
+
+```java
+@Qualifier("defaultJdbcTemplate")
+@Autowired
+JdbcTemplate template;
+
+@Qualifier("myScalarDbJdbcTemplate")
+@Autowired
+JdbcTemplate scalarDbTemplate;
+```
+
+## Spring Boot バージョン互換性
+
+Spring Data JDBC for ScalarDB は Spring Boot 2、3、および 4 でテストされています。
 
 ## トラブルシューティング
 
