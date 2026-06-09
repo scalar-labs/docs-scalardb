@@ -12,6 +12,7 @@ import DocItemContent from '@theme/DocItem/Content';
 import DocBreadcrumbs from '@theme/DocBreadcrumbs';
 import ContentVisibility from '@theme/ContentVisibility';
 import QueryWithAIInline from '@site/src/components/QueryWithAIInline';
+import QueryWithAI from '@site/src/components/QueryWithAI';
 
 import styles from './styles.module.css';
 
@@ -47,17 +48,27 @@ const DocItemLayout: React.FC<DocItemLayoutProps> = ({ children }) => {
   const { metadata, frontMatter } = useDoc();
   const hideTOC = frontMatter.hide_table_of_contents;
   const windowSize = useWindowSize();
+  const isHomePage = metadata.slug === '/';
 
   return (
+    <>
     <div className="row">
       <div className={clsx('col', !docTOC.hidden && styles.docItemCol)}>
         <ContentVisibility metadata={metadata} />
         <DocVersionBanner />
         <div className={styles.docItemContainer}>
           <article>
-            <DocBreadcrumbs />
+            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'nowrap', gap: '0.5rem' }}>
+              <div style={{ minWidth: 0, flex: '1 1 auto' }}>
+                <DocBreadcrumbs />
+              </div>
+              {!isHomePage && (
+                <div style={{ flex: '0 0 auto', paddingTop: 'var(--ifm-breadcrumb-item-padding-vertical, 0.4rem)' }}>
+                  <QueryWithAIInline />
+                </div>
+              )}
+            </div>
             <DocVersionBadge />
-            <QueryWithAIInline />
             {docTOC.mobile}
             <DocItemContent>{children}</DocItemContent>
             <DocItemFooter />
@@ -74,6 +85,10 @@ const DocItemLayout: React.FC<DocItemLayoutProps> = ({ children }) => {
         </div>
       )}
     </div>
+
+    {/* Floating action button — fixed position, outside the grid */}
+    {!isHomePage && <QueryWithAI />}
+    </>
   );
 };
 
