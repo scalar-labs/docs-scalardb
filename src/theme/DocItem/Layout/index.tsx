@@ -11,8 +11,8 @@ import DocItemTOCDesktop from '@theme/DocItem/TOC/Desktop';
 import DocItemContent from '@theme/DocItem/Content';
 import DocBreadcrumbs from '@theme/DocBreadcrumbs';
 import ContentVisibility from '@theme/ContentVisibility';
-import QueryWithAIInline from '@site/src/components/QueryWithAIInline';
-import QueryWithAI from '@site/src/components/QueryWithAI';
+import CopyContents from '@site/src/components/CopyContents';
+import ChatWithPage from '@site/src/components/ChatWithPage';
 
 import styles from './styles.module.css';
 
@@ -64,7 +64,7 @@ const DocItemLayout: React.FC<DocItemLayoutProps> = ({ children }) => {
               </div>
               {!isHomePage && (
                 <div style={{ flex: '0 0 auto', paddingTop: 'var(--ifm-breadcrumb-item-padding-vertical, 0.4rem)' }}>
-                  <QueryWithAIInline />
+                  <CopyContents />
                 </div>
               )}
             </div>
@@ -87,7 +87,7 @@ const DocItemLayout: React.FC<DocItemLayoutProps> = ({ children }) => {
     </div>
 
     {/* Floating action button — fixed position, outside the grid */}
-    {!isHomePage && <QueryWithAI />}
+    {!isHomePage && <ChatWithPage />}
     </>
   );
 };
