@@ -1194,6 +1194,14 @@ html[data-theme="dark"] .googleAiModeModalSubmitIcon:hover:not(:disabled) {
   padding: 0;
 }
 
+/* Prevent desktop TOC from extending behind the Chat with Page FAB.
+   Docusaurus renders the scrollable TOC with the global `thin-scrollbar` class
+   inside the right col--3. Overriding max-height here avoids a double-scroll
+   situation (our wrapper does not add overflow-y: auto). */
+.col--3 .thin-scrollbar {
+  max-height: calc(100vh - 80px - 3rem - 20px - 2.5rem);
+}
+
 /* Query with AI dropdown component */
 .chat-with-page-wrapper {
   align-items: flex-end;
