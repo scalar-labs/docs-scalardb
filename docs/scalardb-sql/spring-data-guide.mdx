@@ -49,11 +49,11 @@ To add the dependencies by using Maven, use the following, replacing `...` with 
 
 ## Configurations
 
-Spring Data JDBC for ScalarDB is supposed to be used as a part of Spring application. The following properties are needed at least.
+Spring Data JDBC for ScalarDB is supposed to be used as part of a Spring application. Set the following properties.
 
 ### spring.datasource.driver-class-name
 
-This needs to be set to fixed value `com.scalar.db.sql.jdbc.SqlJdbcDriver`.
+This needs to be set to the fixed value `com.scalar.db.sql.jdbc.SqlJdbcDriver`. Always required.
 
 ```console
 spring.datasource.driver-class-name=com.scalar.db.sql.jdbc.SqlJdbcDriver
@@ -61,7 +61,7 @@ spring.datasource.driver-class-name=com.scalar.db.sql.jdbc.SqlJdbcDriver
 
 ### spring.datasource.url
 
-This value follows the ScalarDB JDBC connection URL configuration. For more information, see [ScalarDB JDBC Guide](jdbc-guide.mdx) and [ScalarDB Cluster SQL client configurations](../scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-client-configurations).
+This value follows the ScalarDB JDBC connection URL configuration. For more information, see [ScalarDB JDBC Guide](jdbc-guide.mdx) and [ScalarDB Cluster SQL client configurations](../scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-client-configurations). Always required.
 
 ```console
 spring.datasource.url=jdbc:scalardb:\
@@ -74,11 +74,9 @@ spring.datasource.url=jdbc:scalardb:\
 &scalar.db.sql.default_namespace_name.existence_check.enabled=false
 ```
 
-### scalar.db.sql.default_namespace_name.existence_check.enabled
+### scalar.db.sql.default_namespace_name.existence_check.enabled (in `spring.datasource.url`)
 
-When `scalar.db.sql.default_namespace_name.existence_check.enabled` is set to `true` (default), the ScalarDB JDBC driver verifies that the default namespace exists each time a new session is created. Because Spring Data JDBC opens a JDBC connection during application startup, this check can cause a startup failure.
-
-To avoid this, set `scalar.db.sql.default_namespace_name.existence_check.enabled` to `false` in the JDBC URL.
+This configuration is recommended, and it is required when `scalar.db.sql.default_namespace_name` is set. In that case, leaving it at the default (`true`) makes Spring Data JDBC fail to start, so set it to `false`.
 
 ## Annotations
 
