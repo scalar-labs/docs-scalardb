@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useCallback } from 'react';
 import { translate } from '@docusaurus/Translate';
 import { useLocation } from '@docusaurus/router';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
@@ -181,30 +181,16 @@ function FileIcon(): JSX.Element {
 
 // ── Main component ──────────────────────────────────────────────────────────
 
-export default function CopyContents(): JSX.Element {
+interface CopyContentsProps {
+  showLlmsButtons?: boolean;
+}
+
+export default function CopyContents({ showLlmsButtons = false }: CopyContentsProps): JSX.Element {
   const [copyStatus, setCopyStatus] = useState<Record<string, CopyStatus>>({});
-  const [isOpen, setIsOpen] = useState(false);
-  const cardRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const { siteConfig } = useDocusaurusContext();
 
   const currentPageUrl = `${siteConfig.url}${location.pathname}`;
-
-  // Close dropdown on outside click
-  useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (cardRef.current && !cardRef.current.contains(e.target as Node)) {
-        setIsOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  // Close dropdown on navigation
-  useEffect(() => {
-    setIsOpen(false);
-  }, [location.pathname]);
 
   const trackEvent = useCallback((action: string) => {
     if (typeof gtag !== 'undefined') {
@@ -223,7 +209,6 @@ export default function CopyContents(): JSX.Element {
 
   const handleCopyMarkdown = async () => {
     trackEvent('copy_page_markdown');
-    setIsOpen(false);
     try {
       const markdown = getPageMarkdown();
       if (!markdown) throw new Error('No content found');
@@ -236,7 +221,6 @@ export default function CopyContents(): JSX.Element {
 
   const handleCopyLlmsTxt = async () => {
     trackEvent('copy_llms_txt');
-    setIsOpen(false);
     try {
       const text = await fetchTextFile(`${siteConfig.baseUrl}llms.txt`);
       await copyToClipboard(text);
@@ -248,7 +232,6 @@ export default function CopyContents(): JSX.Element {
 
   const handleCopyLlmsFullTxt = async () => {
     trackEvent('copy_llms_full_txt');
-    setIsOpen(false);
     try {
       const text = await fetchTextFile(`${siteConfig.baseUrl}llms-full.txt`);
       await copyToClipboard(text);
@@ -266,35 +249,33 @@ export default function CopyContents(): JSX.Element {
   };
 
   return (
-    <div className="copy-contents-dropdown-wrap" ref={cardRef}>
-      <button
-          className={`copy-contents-trigger${isOpen ? ' open' : ''}`}
-          onClick={() => setIsOpen((prev) => !prev)}
-          aria-expanded={isOpen}
-          aria-haspopup="true"
-        >
+    <div className="copy-contents-actions">
+      {!showLlmsButtons && (
+        <button className="copy-contents-trigger" onClick={handleCopyMarkdown}>
           <CopyIcon />
-          {translate({ id: 'copyContents.inlineCopyBtn', message: 'Copy contents', description: 'Label for the Copy dropdown trigger' })}
-          <svg className="copy-contents-chevron" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-            <polyline points="6 9 12 15 18 9" />
-          </svg>
-        </button>
-        {isOpen && (
-          <div className="copy-contents-dropdown" role="menu">
-            <button className="copy-contents-item" role="menuitem" onClick={handleCopyMarkdown}>
-              <CopyIcon />
+          {/* Grid overlay keeps button width fixed at the longest label's width */}
+          <span style={{ display: 'grid' }}>
+            <span style={{ gridArea: '1/1', visibility: 'hidden', pointerEvents: 'none' }} aria-hidden="true">
+              {translate({ id: 'copyContents.copyMarkdown', message: 'Copy page as Markdown', description: 'Label for the copy-page-as-markdown button' })}
+            </span>
+            <span style={{ gridArea: '1/1' }}>
               {getCopyLabel('markdown', translate({ id: 'copyContents.copyMarkdown', message: 'Copy page as Markdown', description: 'Label for the copy-page-as-markdown button' }))}
-            </button>
-            <button className="copy-contents-item" role="menuitem" onClick={handleCopyLlmsTxt}>
-              <FileIcon />
-              {getCopyLabel('llms', translate({ id: 'copyContents.copyLlms', message: 'Copy llms.txt', description: 'Label for the copy llms.txt button' }))}
-            </button>
-            <button className="copy-contents-item" role="menuitem" onClick={handleCopyLlmsFullTxt}>
-              <FileIcon />
-              {getCopyLabel('llmsFull', translate({ id: 'copyContents.copyLlmsFull', message: 'Copy llms-full.txt', description: 'Label for the copy llms-full.txt button' }))}
-            </button>
-          </div>
-        )}
+            </span>
+          </span>
+        </button>
+      )}
+      {showLlmsButtons && (
+        <>
+          <button className="copy-contents-trigger" onClick={handleCopyLlmsTxt}>
+            <FileIcon />
+            {getCopyLabel('llms', translate({ id: 'copyContents.copyLlms', message: 'Copy llms.txt', description: 'Label for the copy llms.txt button' }))}
+          </button>
+          <button className="copy-contents-trigger" onClick={handleCopyLlmsFullTxt}>
+            <FileIcon />
+            {getCopyLabel('llmsFull', translate({ id: 'copyContents.copyLlmsFull', message: 'Copy llms-full.txt', description: 'Label for the copy llms-full.txt button' }))}
+          </button>
+        </>
+      )}
     </div>
   );
 }
