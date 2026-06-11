@@ -58,15 +58,13 @@ const DocItemLayout: React.FC<DocItemLayoutProps> = ({ children }) => {
         <DocVersionBanner />
         <div className={styles.docItemContainer}>
           <article>
-            <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', flexWrap: 'nowrap', gap: '0.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', flexWrap: 'nowrap', gap: '0.5rem' }}>
               <div style={{ minWidth: 0, flex: '1 1 auto' }}>
                 <DocBreadcrumbs />
               </div>
-              {!isHomePage && (
-                <div style={{ flex: '0 0 auto', paddingTop: 'var(--ifm-breadcrumb-item-padding-vertical, 0.4rem)' }}>
-                  <CopyContents />
-                </div>
-              )}
+              <div style={{ flex: '0 0 auto' }}>
+                <CopyContents showLlmsButtons={isHomePage} />
+              </div>
             </div>
             <DocVersionBadge />
             {docTOC.mobile}
