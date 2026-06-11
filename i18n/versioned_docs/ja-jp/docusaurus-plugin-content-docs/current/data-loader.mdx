@@ -16,7 +16,7 @@ import JDKVersions from '/src/components/ja-jp/_prerequisites-jdk-versions.mdx';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-ScalarDB Data Loader は、ScalarDB に対してデータのインポートとエクスポートを簡単に行うことができるユーティリティツールです。
+ScalarDB Data Loader は、ScalarDB Core に対してデータのインポートとエクスポートを簡単に行うことができるユーティリティツールです。ScalarDB Cluster を使用している場合は、ScalarDB Cluster Data Loader を使用できます。これは、バックエンドデータベースに直接アクセスするかクラスターに接続して、インポートおよびエクスポート操作を実行できる Data Loader のバージョンです。
 
 Data Loader は、検証、エラーハンドリング、詳細なログ記録を備えた構造化されたインポートおよびエクスポートプロセスを提供し、ScalarDB との間で安全にデータを移動できるように支援します。
 
@@ -116,7 +116,7 @@ Consensus Commit トランザクションマネージャーを使用する場合
 
 Consensus Commit トランザクション用に設定された ScalarDB Cluster があり、大量のデータをインポートまたはエクスポートしていない場合に、このパターンを使用してください。
 
-**クライアント設定** (Data Loader 用の scalardb.properties):
+**クライアント設定** (ScalarDB Cluster Data Loader 用の scalardb.properties):
 
 ```properties
 # ScalarDB Cluster に接続するためのトランザクションマネージャー
@@ -184,7 +184,7 @@ scalar.db.password=<PASSWORD>
 
 非トランザクション Storage 操作用に設定された ScalarDB Cluster があり、大量のデータをインポートまたはエクスポートしていない場合に、このパターンを使用してください。
 
-**クライアント設定** (Data Loader 用の scalardb.properties):
+**クライアント設定** (ScalarDB Cluster Data Loader 用の scalardb.properties):
 
 ```properties
 # ScalarDB Cluster に接続するためのトランザクションマネージャー
