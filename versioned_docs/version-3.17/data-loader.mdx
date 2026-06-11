@@ -12,7 +12,7 @@ import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import JDKVersions from '/src/components/en-us/_prerequisites-jdk-versions.mdx';
 
-ScalarDB Data Loader is a utility tool enabling you to import and export data with ScalarDB easily.
+ScalarDB Data Loader is a utility tool enabling you to import and export data with ScalarDB Core easily. If you're using ScalarDB Cluster, you can use ScalarDB Cluster Data Loader, which is a version of Data Loader that you can use to either access backend databases directly or connect to the cluster to perform import and export operations through it.
 
 Data Loader provides structured import and export processes with validation, error handling, and detailed logging to help you safely move data in and out of ScalarDB.
 
@@ -112,7 +112,7 @@ To ensure data consistency:
 
 Use this pattern when you have ScalarDB Cluster configured for Consensus Commit transactions and are not importing or exporting large amounts of data.
 
-**Client configuration** (scalardb.properties for Data Loader):
+**Client configuration** (scalardb.properties for ScalarDB Cluster Data Loader):
 
 ```properties
 # Transaction manager for connecting to ScalarDB Cluster
@@ -180,7 +180,7 @@ When running import commands, use `--mode STORAGE`. The `--mode` argument is not
 
 Use this pattern when you have ScalarDB Cluster configured for non-transactional storage operations and are not importing or exporting large amounts of data.
 
-**Client configuration** (scalardb.properties for Data Loader):
+**Client configuration** (scalardb.properties for ScalarDB Cluster Data Loader):
 
 ```properties
 # Transaction manager for connecting to ScalarDB Cluster
