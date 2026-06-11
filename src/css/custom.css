@@ -1240,11 +1240,17 @@ html[data-theme="dark"] .googleAiModeModalSubmitIcon:hover:not(:disabled) {
   width: 1.1rem;
 }
 
-.chat-with-page-btn:hover,
-.chat-with-page-btn:focus {
+.chat-with-page-btn:hover {
   background: #1d5fa0;
   box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
-  outline: none;
+  transform: translateY(-1px);
+}
+
+.chat-with-page-btn:focus-visible {
+  background: #1d5fa0;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  outline: 2px solid #fff;
+  outline-offset: 2px;
   transform: translateY(-1px);
 }
 
@@ -1321,11 +1327,16 @@ html[data-theme="dark"] .googleAiModeModalSubmitIcon:hover:not(:disabled) {
   width: 0.875rem;
 }
 
-.chat-with-page-close:hover,
-.chat-with-page-close:focus {
+.chat-with-page-close:hover {
   background: var(--ifm-color-emphasis-100);
   color: var(--ifm-font-color-base);
-  outline: none;
+}
+
+.chat-with-page-close:focus-visible {
+  background: var(--ifm-color-emphasis-100);
+  color: var(--ifm-font-color-base);
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
 }
 
 .chat-with-page-section-label {
@@ -1367,11 +1378,12 @@ html[data-theme="dark"] .googleAiModeModalSubmitIcon:hover:not(:disabled) {
 }
 
 .chat-with-page-chat-btn:hover,
-.chat-with-page-chat-btn:focus {
+.chat-with-page-chat-btn:focus-visible {
   background: rgba(38, 115, 187, 0.1);
   border-color: var(--ifm-color-primary);
   color: var(--ifm-color-primary);
-  outline: none;
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
 }
 
 .chat-with-page-chat-icon {
@@ -1466,11 +1478,12 @@ html[data-theme='dark'] .copy-contents-card {
 }
 
 .copy-contents-trigger:hover,
-.copy-contents-trigger:focus {
+.copy-contents-trigger:focus-visible {
   background: rgba(38, 115, 187, 0.08);
   border-color: var(--ifm-color-primary);
   color: var(--ifm-color-primary);
-  outline: none;
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: 2px;
 }
 
 .copy-contents-trigger.open {
@@ -1534,10 +1547,11 @@ html[data-theme='dark'] .copy-contents-dropdown {
 }
 
 .copy-contents-item:hover,
-.copy-contents-item:focus {
+.copy-contents-item:focus-visible {
   background: var(--ifm-dropdown-hover-background-color);
   color: var(--ifm-font-color-base);
-  outline: none;
+  outline: 2px solid var(--ifm-color-primary);
+  outline-offset: -2px;
 }
 
 /* Right-side button group */

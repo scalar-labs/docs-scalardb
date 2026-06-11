@@ -67,9 +67,10 @@ function resolveSource(importPath, siteDir) {
  *
  * @param {string} source
  * @param {string} siteDir
+ * @param {Map<string, string>} cache  Shared across all docs; maps absolute path → processed body.
  * @returns {Promise<string>}
  */
-async function inlineMdxComponents(source, siteDir) {
+async function inlineMdxComponents(source, siteDir, cache) {
   // 1. Collect all `import X from '…/file.mdx'` statements.
   //    Only local `.mdx` files are inlinable; theme/npm imports are skipped.
   const importLineRegex =
@@ -90,15 +91,22 @@ async function inlineMdxComponents(source, siteDir) {
   const componentBodies = new Map();
   for (const [name, filePath] of mdxImports) {
     try {
-      let body = await fs.promises.readFile(filePath, 'utf8');
-      body = stripFrontMatter(body);
-      // Strip nested import lines (e.g. `import Tabs from '@theme/Tabs'`)
-      // so the inlined content doesn't contain unresolvable MDX imports.
-      body = body.replace(
-        /^import\s+[A-Za-z0-9_{}, *]+\s+from\s+['"][^'"]+['"]\s*;?\s*\n?/gm,
-        '',
-      );
-      componentBodies.set(name, body.trim());
+      let body;
+      if (cache.has(filePath)) {
+        body = cache.get(filePath);
+      } else {
+        body = await fs.promises.readFile(filePath, 'utf8');
+        body = stripFrontMatter(body);
+        // Strip nested import lines (e.g. `import Tabs from '@theme/Tabs'`)
+        // so the inlined content doesn't contain unresolvable MDX imports.
+        body = body.replace(
+          /^import\s+[A-Za-z0-9_{}, *]+\s+from\s+['"][^'"]+['"]\s*;?\s*\n?/gm,
+          '',
+        );
+        body = body.trim();
+        cache.set(filePath, body);
+      }
+      componentBodies.set(name, body);
     } catch {
       // If the file is unreadable, leave the tag as-is (handled below).
     }
@@ -161,6 +169,8 @@ module.exports = function copyPageSourcePlugin(context) {
    * @type {Array<{ permalink: string, sourcePath: string }>}
    */
   let docEntries = [];
+  /** @type {Map<string, string>} Absolute path → processed component body, shared across all docs. */
+  const componentCache = new Map();
 
   return {
     name: 'copy-page-source-plugin',
@@ -207,7 +217,7 @@ module.exports = function copyPageSourcePlugin(context) {
           .readFile(sourcePath, 'utf8')
           .then(async (raw) => {
             let content = stripFrontMatter(raw);
-            content = await inlineMdxComponents(content, context.siteDir);
+            content = await inlineMdxComponents(content, context.siteDir, componentCache);
             content = content.trimStart();
             await fs.promises.mkdir(path.dirname(destPath), { recursive: true });
             await fs.promises.writeFile(destPath, content, 'utf8');
