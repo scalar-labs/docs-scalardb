@@ -132,28 +132,6 @@ const categories = [
     ]
   },
   {
-    name: '移行',
-    categoryLinks: [
-      // To add a link, use the format ['link1', 'link2']
-      // To add a label, use the format ['label1', 'label2']
-      {
-        cell: 0, // First cell
-        links: ['migrate-overview'],
-        labels: ['移行の概要']
-      },
-      {
-        cell: 1, // Second cell
-        links: ['scalardb-sql/migration-guide'],
-        labels: ['アプリケーションとデータベースを ScalarDB ベースの環境に移行する方法']
-      },
-      {
-        cell: 2, // Third cell
-        links: ['scalardb-sql/migration-guide'],
-        labels: ['アプリケーションとデータベースを ScalarDB ベースの環境に移行する方法']
-      }
-    ]
-  },
-  {
     name: '管理',
     categoryLinks: [
       // To add a link, use the format ['link1', 'link2']
@@ -172,6 +150,28 @@ const categories = [
         cell: 2, // Third cell
         links: ['scalar-kubernetes/HowToUpgradeScalarDB'],
         labels: ['ScalarDB のアップグレード方法']
+      }
+    ]
+  },
+  {
+    name: '移行',
+    categoryLinks: [
+      // To add a link, use the format ['link1', 'link2']
+      // To add a label, use the format ['label1', 'label2']
+      {
+        cell: 0, // First cell
+        links: ['migrate-overview'],
+        labels: ['移行の概要']
+      },
+      {
+        cell: 1, // Second cell
+        links: ['scalardb-sql/migration-guide'],
+        labels: ['アプリケーションとデータベースを ScalarDB ベースの環境に移行する方法']
+      },
+      {
+        cell: 2, // Third cell
+        links: ['scalardb-sql/migration-guide'],
+        labels: ['アプリケーションとデータベースを ScalarDB ベースの環境に移行する方法']
       }
     ]
   }
