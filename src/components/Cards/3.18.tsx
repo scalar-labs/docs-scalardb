@@ -104,8 +104,8 @@ const categories = [
       },
       {
         cell: 2, // Third cell
-        links: ['develop-run-non-transactional-operations-overview'],
-        labels: ['Run Non-Transactional Storage Operations']
+        links: ['develop-run-analytical-queries-overview'],
+        labels: ['Run Analytical Queries']
       }
     ]
   },
@@ -132,28 +132,6 @@ const categories = [
     ]
   },
   {
-    name: 'Migrate',
-    categoryLinks: [
-      // To add a link, use the format ['link1', 'link2']
-      // To add a label, use the format ['label1', 'label2']
-      {
-        cell: 0, // First cell
-        links: ['migrate-overview'],
-        labels: ['Migrate Overview']
-      },
-      {
-        cell: 1, // Second cell
-        links: ['scalardb-sql/migration-guide'],
-        labels: ['Import Tables by Using Schema Loader']
-      },
-      {
-        cell: 2, // Third cell
-        links: ['scalardb-sql/migration-guide'],
-        labels: ['Migrate Applications and Databases']
-      }
-    ]
-  },
-  {
     name: 'Manage',
     categoryLinks: [
       // To add a link, use the format ['link1', 'link2']
@@ -172,6 +150,28 @@ const categories = [
         cell: 2, // Third cell
         links: ['scalar-kubernetes/HowToUpgradeScalarDB'],
         labels: ['Upgrade ScalarDB']
+      }
+    ]
+  },
+  {
+    name: 'Migrate',
+    categoryLinks: [
+      // To add a link, use the format ['link1', 'link2']
+      // To add a label, use the format ['label1', 'label2']
+      {
+        cell: 0, // First cell
+        links: ['migrate-overview'],
+        labels: ['Migrate Overview']
+      },
+      {
+        cell: 1, // Second cell
+        links: ['scalardb-sql/migration-guide'],
+        labels: ['Import Tables by Using Schema Loader']
+      },
+      {
+        cell: 2, // Third cell
+        links: ['scalardb-sql/migration-guide'],
+        labels: ['Migrate Applications and Databases']
       }
     ]
   }
