@@ -473,6 +473,23 @@ html[data-theme="dark"] a[class^='tag_'] {
   } */
 }
 
+/* NEW badge next to H1 title on pages with new: true in frontmatter */
+.doc-new .markdown h1:first-of-type::after {
+  background-color: var(--scalar-green);
+  border-radius: 3px;
+  color: #fff;
+  content: "NEW";
+  display: inline-block;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  line-height: 1;
+  margin-left: 10px;
+  padding: 3px 6px;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+
 /* The following Font Awesome-related styles are for the question mark next to the Editions tags. These styles are currently not being used but might be useful later. */
 a[class^='fa-solid fa-circle-question'] {
   color: #6B7280;
@@ -1243,4 +1260,18 @@ html[data-theme="dark"] .googleAiModeModalSubmitIcon:hover:not(:disabled) {
 
 .DocSearch-Button-Key {
   padding: 0;
+}
+
+/* Screen-reader-only utility: visually hidden but announced by assistive technology. */
+.sr-only {
+  border: 0;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  margin: -1px;
+  overflow: hidden;
+  padding: 0;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
 }
