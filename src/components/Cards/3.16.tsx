@@ -104,8 +104,8 @@ const categories = [
       },
       {
         cell: 2, // Third cell
-        links: ['develop-run-non-transactional-operations-overview'],
-        labels: ['Run Non-Transactional Storage Operations']
+        links: ['develop-run-analytical-queries-overview'],
+        labels: ['Run Analytical Queries']
       }
     ]
   },

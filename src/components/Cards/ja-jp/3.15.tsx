@@ -104,8 +104,8 @@ const categories = [
       },
       {
         cell: 2, // Third cell
-        links: ['develop-run-non-transactional-operations-overview'],
-        labels: ['非トランザクションストレージ操作を実行']
+        links: ['develop-run-analytical-queries-overview'],
+        labels: ['分析クエリの実行']
       }
     ]
   },
