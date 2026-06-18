@@ -312,7 +312,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalardb-cluster/control-access-via-oidc-based-jwt-tokens',
-                  label: 'Control User Access via OIDC-Based JWT Access Tokens',
+                  label: 'Control User Access via OIDC-Based JWT Access Tokens [NEW]',
                 },
                 {
                   type: 'doc',
@@ -647,7 +647,7 @@ const sidebars = {
                   type: 'doc',
                   key: 'develop-run-analytical-queries-advanced-configurations-and-operations-authentication-and-authorization-en-us-3.18',
                   id: 'scalardb-analytics/authentication-and-authorization',
-                  label: 'Authenticate and Authorize Users',
+                  label: 'Authenticate and Authorize Users [NEW]',
                 },
               ],
             },
@@ -1450,7 +1450,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalardb-cluster/control-access-via-oidc-based-jwt-tokens',
-                  label: 'OIDC ベースの JWT アクセストークンを用いてユーザーアクセスを制御',
+                  label: 'OIDC ベースの JWT アクセストークンを用いてユーザーアクセスを制御 [NEW]',
                 },
                 {
                   type: 'doc',
@@ -1783,7 +1783,7 @@ const sidebars = {
                   type: 'doc',
                   key: 'develop-run-analytical-queries-advanced-configurations-and-operations-authentication-and-authorization-ja-jp-3.18',
                   id: 'scalardb-analytics/authentication-and-authorization',
-                  label: 'ユーザーの認証と認可',
+                  label: 'ユーザーの認証と認可 [NEW]',
                 },
               ],
             },

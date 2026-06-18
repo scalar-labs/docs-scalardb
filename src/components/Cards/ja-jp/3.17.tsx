@@ -15,6 +15,7 @@ import LiteYouTubeEmbed from 'react-lite-youtube-embed';
 import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook } from '@fortawesome/free-solid-svg-icons';
+import { parseBadgeLabel } from '../utils';
 
 const recentFeatures = [
   {
@@ -26,7 +27,7 @@ const recentFeatures = [
       {
         cell: 0, // First cell
         links: ['consensus-commit#%E3%83%88%E3%83%A9%E3%83%B3%E3%82%B6%E3%82%AF%E3%82%B7%E3%83%A7%E3%83%B3%E3%83%A1%E3%82%BF%E3%83%87%E3%83%BC%E3%82%BF%E5%88%86%E9%9B%A2'],
-        labels: ['トランザクションメタデータ分離']
+        labels: ['トランザクションメタデータ分離 [NEW]']
       },
       {
         cell: 1, // Second cell
@@ -209,15 +210,15 @@ const CategoryGrid = () => {
               {doc.name}
             </div>
             {doc.categoryLinks.map((categoryLinkCell, j) => (
-              <div key={j} className="category-cell-multiple-links">
+              <div key={j} className="category-cell-multiple-links recent-features-cell-bg">
                 {categoryLinkCell.links.map((cellLink, k) => (
                   cellLink ? (
                     <Link key={`${j}-${k}`} className="category-cell-link" to={cellLink}>
-                      {categoryLinkCell.labels[k]}
+                      <span className="category-cell-link-text">{parseBadgeLabel(categoryLinkCell.labels[k])}</span>
                     </Link>
                   ) : (
                     <span key={`${j}-${k}`} className="recent-features-cell">
-                      {categoryLinkCell.labels[k]}
+                      <span className="category-cell-link-text">{parseBadgeLabel(categoryLinkCell.labels[k])}</span>
                     </span>
                   )
                 ))}
@@ -235,11 +236,11 @@ const CategoryGrid = () => {
                 {categoryLinkCell.links.map((cellLink, k) => (
                   cellLink ? (
                     <Link key={`${j}-${k}`} className="category-cell-link" to={cellLink}>
-                      {categoryLinkCell.labels[k]}
+                      <span className="category-cell-link-text">{parseBadgeLabel(categoryLinkCell.labels[k])}</span>
                     </Link>
                   ) : (
                     <span key={`${j}-${k}`} className="category-cell">
-                      {categoryLinkCell.labels[k]}
+                      <span className="category-cell-link-text">{parseBadgeLabel(categoryLinkCell.labels[k])}</span>
                     </span>
                   )
                 ))}
