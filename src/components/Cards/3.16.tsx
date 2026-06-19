@@ -15,6 +15,7 @@ import LiteYouTubeEmbed from 'react-lite-youtube-embed';
 import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook } from '@fortawesome/free-solid-svg-icons';
+import { parseBadgeLabel } from './utils';
 
 const recentFeatures = [
   {
@@ -26,12 +27,12 @@ const recentFeatures = [
       {
         cell: 0, // First cell
         links: ['scalardb-cluster/remote-replication'],
-        labels: ['Replicate Data for High Availability']
+        labels: ['Replicate Data for High Availability [NEW]']
       },
       {
         cell: 1, // Second cell
         links: ['scalardb-mcp-server/getting-started-with-scalardb-mcp-server'],
-        labels: ['Getting Started with ScalarDB MCP Server']
+        labels: ['Getting Started with ScalarDB MCP Server [NEW]']
       },
       {
         cell: 2, // Third cell
@@ -104,8 +105,8 @@ const categories = [
       },
       {
         cell: 2, // Third cell
-        links: ['develop-run-non-transactional-operations-overview'],
-        labels: ['Run Non-Transactional Storage Operations']
+        links: ['develop-run-analytical-queries-overview'],
+        labels: ['Run Analytical Queries']
       }
     ]
   },
@@ -132,28 +133,6 @@ const categories = [
     ]
   },
   {
-    name: 'Migrate',
-    categoryLinks: [
-      // To add a link, use the format ['link1', 'link2']
-      // To add a label, use the format ['label1', 'label2']
-      {
-        cell: 0, // First cell
-        links: ['migrate-overview'],
-        labels: ['Migrate Overview']
-      },
-      {
-        cell: 1, // Second cell
-        links: ['scalardb-sql/migration-guide'],
-        labels: ['Import Tables by Using Schema Loader']
-      },
-      {
-        cell: 2, // Third cell
-        links: ['scalardb-sql/migration-guide'],
-        labels: ['Migrate Applications and Databases']
-      }
-    ]
-  },
-  {
     name: 'Manage',
     categoryLinks: [
       // To add a link, use the format ['link1', 'link2']
@@ -172,6 +151,28 @@ const categories = [
         cell: 2, // Third cell
         links: ['scalar-kubernetes/HowToUpgradeScalarDB'],
         labels: ['Upgrade ScalarDB']
+      }
+    ]
+  },
+  {
+    name: 'Migrate',
+    categoryLinks: [
+      // To add a link, use the format ['link1', 'link2']
+      // To add a label, use the format ['label1', 'label2']
+      {
+        cell: 0, // First cell
+        links: ['migrate-overview'],
+        labels: ['Migrate Overview']
+      },
+      {
+        cell: 1, // Second cell
+        links: ['scalardb-sql/migration-guide'],
+        labels: ['Import Tables by Using Schema Loader']
+      },
+      {
+        cell: 2, // Third cell
+        links: ['scalardb-sql/migration-guide'],
+        labels: ['Migrate Applications and Databases']
       }
     ]
   }
@@ -209,15 +210,15 @@ const CategoryGrid = () => {
               {doc.name}
             </div>
             {doc.categoryLinks.map((categoryLinkCell, j) => (
-              <div key={j} className="category-cell-multiple-links">
+              <div key={j} className="category-cell-multiple-links recent-features-cell-bg">
                 {categoryLinkCell.links.map((cellLink, k) => (
                   cellLink ? (
                     <Link key={`${j}-${k}`} className="category-cell-link" to={cellLink}>
-                      {categoryLinkCell.labels[k]}
+                      <span className="category-cell-link-text">{parseBadgeLabel(categoryLinkCell.labels[k])}</span>
                     </Link>
                   ) : (
                     <span key={`${j}-${k}`} className="recent-features-cell">
-                      {categoryLinkCell.labels[k]}
+                      <span className="category-cell-link-text">{parseBadgeLabel(categoryLinkCell.labels[k])}</span>
                     </span>
                   )
                 ))}
@@ -235,11 +236,11 @@ const CategoryGrid = () => {
                 {categoryLinkCell.links.map((cellLink, k) => (
                   cellLink ? (
                     <Link key={`${j}-${k}`} className="category-cell-link" to={cellLink}>
-                      {categoryLinkCell.labels[k]}
+                      <span className="category-cell-link-text">{parseBadgeLabel(categoryLinkCell.labels[k])}</span>
                     </Link>
                   ) : (
                     <span key={`${j}-${k}`} className="category-cell">
-                      {categoryLinkCell.labels[k]}
+                      <span className="category-cell-link-text">{parseBadgeLabel(categoryLinkCell.labels[k])}</span>
                     </span>
                   )
                 ))}

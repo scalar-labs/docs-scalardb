@@ -15,6 +15,7 @@ import LiteYouTubeEmbed from 'react-lite-youtube-embed';
 import 'react-lite-youtube-embed/dist/LiteYouTubeEmbed.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBook } from '@fortawesome/free-solid-svg-icons';
+import { parseBadgeLabel } from '../utils';
 
 const recentFeatures = [
   {
@@ -26,12 +27,12 @@ const recentFeatures = [
       {
         cell: 0, // First cell
         links: ['scalardb-cluster/control-access-via-oidc-based-jwt-tokens'],
-        labels: ['OIDC ベースの JWT アクセストークンを用いてユーザーアクセスを制御']
+        labels: ['OIDC ベースの JWT アクセストークンを用いてユーザーアクセスを制御 [NEW]']
       },
       {
         cell: 1, // Second cell
         links: ['scalardb-analytics/authentication-and-authorization'],
-        labels: ['ScalarDB Analytics でユーザーを認証と認可']
+        labels: ['ScalarDB Analytics でユーザーを認証と認可 [NEW]']
       },
       {
         cell: 2, // Second cell
@@ -104,8 +105,8 @@ const categories = [
       },
       {
         cell: 2, // Third cell
-        links: ['develop-run-non-transactional-operations-overview'],
-        labels: ['非トランザクションストレージ操作を実行']
+        links: ['develop-run-analytical-queries-overview'],
+        labels: ['分析クエリの実行']
       }
     ]
   },
@@ -132,28 +133,6 @@ const categories = [
     ]
   },
   {
-    name: '移行',
-    categoryLinks: [
-      // To add a link, use the format ['link1', 'link2']
-      // To add a label, use the format ['label1', 'label2']
-      {
-        cell: 0, // First cell
-        links: ['migrate-overview'],
-        labels: ['移行の概要']
-      },
-      {
-        cell: 1, // Second cell
-        links: ['scalardb-sql/migration-guide'],
-        labels: ['アプリケーションとデータベースを ScalarDB ベースの環境に移行する方法']
-      },
-      {
-        cell: 2, // Third cell
-        links: ['scalardb-sql/migration-guide'],
-        labels: ['アプリケーションとデータベースを ScalarDB ベースの環境に移行する方法']
-      }
-    ]
-  },
-  {
     name: '管理',
     categoryLinks: [
       // To add a link, use the format ['link1', 'link2']
@@ -172,6 +151,28 @@ const categories = [
         cell: 2, // Third cell
         links: ['scalar-kubernetes/HowToUpgradeScalarDB'],
         labels: ['ScalarDB のアップグレード方法']
+      }
+    ]
+  },
+  {
+    name: '移行',
+    categoryLinks: [
+      // To add a link, use the format ['link1', 'link2']
+      // To add a label, use the format ['label1', 'label2']
+      {
+        cell: 0, // First cell
+        links: ['migrate-overview'],
+        labels: ['移行の概要']
+      },
+      {
+        cell: 1, // Second cell
+        links: ['scalardb-sql/migration-guide'],
+        labels: ['アプリケーションとデータベースを ScalarDB ベースの環境に移行する方法']
+      },
+      {
+        cell: 2, // Third cell
+        links: ['scalardb-sql/migration-guide'],
+        labels: ['アプリケーションとデータベースを ScalarDB ベースの環境に移行する方法']
       }
     ]
   }
@@ -209,15 +210,15 @@ const CategoryGrid = () => {
               {doc.name}
             </div>
             {doc.categoryLinks.map((categoryLinkCell, j) => (
-              <div key={j} className="category-cell-multiple-links">
+              <div key={j} className="category-cell-multiple-links recent-features-cell-bg">
                 {categoryLinkCell.links.map((cellLink, k) => (
                   cellLink ? (
                     <Link key={`${j}-${k}`} className="category-cell-link" to={cellLink}>
-                      {categoryLinkCell.labels[k]}
+                      <span className="category-cell-link-text">{parseBadgeLabel(categoryLinkCell.labels[k])}</span>
                     </Link>
                   ) : (
                     <span key={`${j}-${k}`} className="recent-features-cell">
-                      {categoryLinkCell.labels[k]}
+                      <span className="category-cell-link-text">{parseBadgeLabel(categoryLinkCell.labels[k])}</span>
                     </span>
                   )
                 ))}
@@ -235,11 +236,11 @@ const CategoryGrid = () => {
                 {categoryLinkCell.links.map((cellLink, k) => (
                   cellLink ? (
                     <Link key={`${j}-${k}`} className="category-cell-link" to={cellLink}>
-                      {categoryLinkCell.labels[k]}
+                      <span className="category-cell-link-text">{parseBadgeLabel(categoryLinkCell.labels[k])}</span>
                     </Link>
                   ) : (
                     <span key={`${j}-${k}`} className="category-cell">
-                      {categoryLinkCell.labels[k]}
+                      <span className="category-cell-link-text">{parseBadgeLabel(categoryLinkCell.labels[k])}</span>
                     </span>
                   )
                 ))}

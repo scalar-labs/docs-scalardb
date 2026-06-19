@@ -1,7 +1,7 @@
 import React from 'react';
 import clsx from 'clsx';
 import { useWindowSize } from '@docusaurus/theme-common';
-import { useDoc } from '@docusaurus/plugin-content-docs/client';
+import { useDoc, useDocsSidebar } from '@docusaurus/plugin-content-docs/client';
 import DocItemPaginator from '@theme/DocItem/Paginator';
 import DocVersionBanner from '@theme/DocVersionBanner';
 import DocVersionBadge from '@theme/DocVersionBadge';
@@ -15,6 +15,28 @@ import CopyContents from '@site/src/components/CopyContents';
 import ChatWithPage from '@site/src/components/ChatWithPage';
 
 import styles from './styles.module.css';
+
+const BADGE_PATTERN = /\[[A-Z]+\]$/;
+
+type SidebarItem = {
+  type: string;
+  href?: string;
+  label?: string;
+  items?: SidebarItem[];
+};
+
+// Recursively search sidebar items for a link matching permalink that has a badge marker.
+function sidebarItemHasBadge(items: SidebarItem[], permalink: string): boolean {
+  for (const item of items) {
+    if (item.type === 'link' && item.href === permalink && BADGE_PATTERN.test(item.label ?? '')) {
+      return true;
+    }
+    if (item.type === 'category' && Array.isArray(item.items)) {
+      if (sidebarItemHasBadge(item.items, permalink)) return true;
+    }
+  }
+  return false;
+}
 
 // Define the type for the useDocTOC return value.
 interface DocTOC {
@@ -46,9 +68,11 @@ function useDocTOC(): DocTOC {
 const DocItemLayout: React.FC<DocItemLayoutProps> = ({ children }) => {
   const docTOC = useDocTOC();
   const { metadata, frontMatter } = useDoc();
+  const sidebar = useDocsSidebar();
   const hideTOC = frontMatter.hide_table_of_contents;
   const windowSize = useWindowSize();
   const isHomePage = metadata.slug === '/';
+  const isNew = frontMatter['new'] || (sidebar != null && sidebarItemHasBadge(sidebar.items, metadata.permalink));
 
   return (
     <>
@@ -66,7 +90,11 @@ const DocItemLayout: React.FC<DocItemLayoutProps> = ({ children }) => {
                 <CopyContents showLlmsButtons={isHomePage} />
               </div>
             </div>
+          </article>
+          <article className={clsx(isNew && 'doc-new')}>
+            <DocBreadcrumbs />
             <DocVersionBadge />
+            {isNew && <span className="sr-only">New</span>}
             {docTOC.mobile}
             <DocItemContent>{children}</DocItemContent>
             <DocItemFooter />

@@ -216,6 +216,9 @@ const config = {
         generateLLMsFullTxt: false, // Disabled. We're currently using gitingest to generate a more detailed llms-full.txt file. For details, see /scripts/README.md.
         docsDir: 'docs',
         version: 'latest',
+        pathTransformation: {
+          addPaths: ['latest'],
+        },
         title: 'ScalarDB Documentation',
         description: 'Universal hybrid transaction/analytical processing (HTAP) engine for diverse databases',
         // Content cleaning options
