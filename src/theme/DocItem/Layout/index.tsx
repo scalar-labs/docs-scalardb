@@ -81,7 +81,7 @@ const DocItemLayout: React.FC<DocItemLayoutProps> = ({ children }) => {
         <ContentVisibility metadata={metadata} />
         <DocVersionBanner />
         <div className={styles.docItemContainer}>
-          <article>
+          <article className={clsx(isNew && 'doc-new')}>
             <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', flexWrap: 'nowrap', gap: '0.5rem' }}>
               <div style={{ minWidth: 0, flex: '1 1 auto' }}>
                 <DocBreadcrumbs />
@@ -90,9 +90,6 @@ const DocItemLayout: React.FC<DocItemLayoutProps> = ({ children }) => {
                 <CopyContents showLlmsButtons={isHomePage} />
               </div>
             </div>
-          </article>
-          <article className={clsx(isNew && 'doc-new')}>
-            <DocBreadcrumbs />
             <DocVersionBadge />
             {isNew && <span className="sr-only">New</span>}
             {docTOC.mobile}
