@@ -1,0 +1,113 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+import Admonition from '@theme/Admonition';
+import Link from '@docusaurus/Link';
+
+{/*
+  Reusable Schema Loader command tabs for "Load the database schema" sections.
+
+  Used by the ScalarDB Core (Java and Kotlin) getting-started guides, which share
+  the same `database.properties` config file and the same `schema.json` schema.
+  ScalarDB Cluster guides use a different schema-loader binary and are not handled
+  by this component.
+
+  The UI uses the same two-level nested-tabs design as <StorageSetupTabs>:
+    - Outer tabs (groupId="storage-category") pick a category:
+        "Relational databases" | "NewSQL databases" | "NoSQL databases"
+    - Inner tabs (groupId="databases") pick a specific storage in that category,
+      listed in alphabetical order.
+
+  Takes no props.
+*/}
+
+export const baseCommand = (extraFlags) =>
+  `java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator${extraFlags ? ' ' + extraFlags : ''}`;
+
+export const loaderCommand = (extraFlags) => (
+  <CodeBlock language="console">{baseCommand(extraFlags)}</CodeBlock>
+);
+
+export const CoordinatorNote = ({ children }) => (
+  <Admonition type="note">
+    <p>
+      The <code>--coordinator</code> option is specified because a table with <code>transaction</code> set to <code>true</code> exists in the schema. For details about configuring and loading a schema, see <Link to="/en-us/schema-loader">ScalarDB Schema Loader</Link>.
+    </p>
+    {children}
+  </Admonition>
+);
+
+<Tabs groupId="storage-category" queryString>
+  <TabItem value="relational" label="Relational databases" default>
+    Select your relational database.
+    <Tabs groupId="databases" queryString>
+      <TabItem value="MariaDB" label="MariaDB" default>
+        {loaderCommand()}
+        <CoordinatorNote />
+      </TabItem>
+
+      <TabItem value="MySQL" label="MySQL">
+        {loaderCommand()}
+        <CoordinatorNote />
+      </TabItem>
+
+      <TabItem value="Oracle Database" label="Oracle Database">
+        {loaderCommand()}
+        <CoordinatorNote />
+      </TabItem>
+
+      <TabItem value="PostgreSQL" label="PostgreSQL">
+        {loaderCommand()}
+        <CoordinatorNote />
+      </TabItem>
+
+      <TabItem value="SQL Server" label="SQL Server">
+        {loaderCommand()}
+        <CoordinatorNote />
+      </TabItem>
+
+      <TabItem value="SQLite" label="SQLite">
+        {loaderCommand()}
+        <CoordinatorNote />
+      </TabItem>
+    </Tabs>
+  </TabItem>
+
+  <TabItem value="newsql" label="NewSQL databases">
+    Select your NewSQL database.
+    <Tabs groupId="databases" queryString>
+      <TabItem value="YugabyteDB" label="YugabyteDB" default>
+        {loaderCommand()}
+        <CoordinatorNote />
+      </TabItem>
+    </Tabs>
+  </TabItem>
+
+  <TabItem value="nosql" label="NoSQL databases">
+    Select your NoSQL database.
+    <Tabs groupId="databases" queryString>
+      <TabItem value="Cassandra" label="Cassandra" default>
+        {loaderCommand('--replication-factor=1')}
+        <CoordinatorNote>
+          <p>
+            In addition, the <code>--replication-factor=1</code> option has an effect only when using Cassandra. The default replication factor is <code>3</code>, but to facilitate the setup in this tutorial, <code>1</code> is used so that you only need to prepare a cluster with one node instead of three nodes. However, keep in mind that a replication factor of <code>1</code> is not suited for production.
+          </p>
+        </CoordinatorNote>
+      </TabItem>
+
+      <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+        {loaderCommand()}
+        <CoordinatorNote />
+      </TabItem>
+
+      <TabItem value="DynamoDB" label="DynamoDB">
+        {loaderCommand('--no-backup --no-scaling')}
+        <CoordinatorNote>
+          <p>
+            Also, <code>--no-backup</code> and <code>--no-scaling</code> options are specified because Amazon DynamoDB Local does not support continuous backup and auto-scaling.
+          </p>
+        </CoordinatorNote>
+      </TabItem>
+    </Tabs>
+  </TabItem>
+</Tabs>
