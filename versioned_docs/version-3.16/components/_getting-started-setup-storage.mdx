@@ -1,0 +1,317 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+import Admonition from '@theme/Admonition';
+
+{/*
+  Reusable storage setup tabs for "Set up a database" sections.
+
+  The UI uses two-level nested tabs:
+    - Outer tabs (groupId="storage-category") pick a category:
+        "Relational databases" | "NewSQL databases" | "NoSQL databases"
+    - Inner tabs (groupId="databases") pick a specific storage in that category,
+      listed in alphabetical order.
+
+  Props:
+    - mode: "core-java" | "core-kotlin" | "cluster"
+        Switches properties filename, "Configure ScalarDB" vs "Configure ScalarDB Cluster",
+        host names in JDBC URLs, and the samples directory under scalardb-samples/.
+        Also controls which mode-specific storage tabs are shown: SQLite is core-only 
+        (because it is not recommend to use with ScalarDB Cluster).
+*/}
+
+export const samplesDir = (props) => {
+  switch (props.mode) {
+    case 'cluster':
+      return 'scalardb-cluster-standalone-mode';
+    case 'core-kotlin':
+      return 'scalardb-kotlin-sample';
+    case 'core-java':
+      return 'scalardb-sample';
+    default:
+      throw new Error(
+        `<StorageSetupTabs> requires a "mode" prop set to one of: "core-java", "core-kotlin", "cluster". Received: ${JSON.stringify(props.mode)}`
+      );
+  }
+};
+
+export const propertiesFile = (props) =>
+  props.mode === 'cluster' ? 'scalardb-cluster-node.properties' : 'database.properties';
+
+export const configureHeading = (props) =>
+  props.mode === 'cluster' ? 'Configure ScalarDB Cluster' : 'Configure ScalarDB';
+
+export const host = (props, service) =>
+  props.mode === 'cluster' ? `${service}-1` : 'localhost';
+
+export const dedent = (strings, ...values) => {
+  // Strips the shared leading indentation (and surrounding blank lines) from a
+  // code block, so the source can be indented to match the surrounding JSX
+  // while the rendered output stays flush-left.
+  const raw = strings.reduce(
+    (acc, str, i) => acc + (i ? values[i - 1] : '') + str,
+    ''
+  );
+  const lines = raw.replace(/^\n/, '').replace(/\n[ \t]*$/, '').split('\n');
+  const min = Math.min(
+    ...lines.filter((l) => l.trim()).map((l) => l.match(/^[ \t]*/)[0].length)
+  );
+  return lines.map((l) => l.slice(min)).join('\n');
+};
+
+<Tabs groupId="storage-category" queryString>
+  <TabItem value="relational" label="Relational databases" default>
+    Select your relational database.
+    <Tabs groupId="databases" queryString>
+      <TabItem value="Db2" label="Db2" default>
+        <h3>Run Db2 locally</h3>
+
+        You can run IBM Db2 in Docker Compose by using the <code>docker-compose.yml</code> file in the <code>scalardb-samples/{samplesDir(props)}</code> directory.
+
+        To start IBM Db2, run the following command:
+
+        <CodeBlock language="console">docker compose up -d db2</CodeBlock>
+
+        <h3>{configureHeading(props)}</h3>
+
+        The <strong>{propertiesFile(props)}</strong> file in the <code>scalardb-samples/{samplesDir(props)}</code> directory contains database configurations. Please uncomment the properties for Db2 in the <strong>{propertiesFile(props)}</strong> file so that the configuration looks as follows:
+
+        <CodeBlock language="properties">{dedent`
+          # For Db2
+          scalar.db.storage=jdbc
+          scalar.db.contact_points=jdbc:db2://${host(props, 'db2')}:50000/sample
+          scalar.db.username=db2inst1
+          scalar.db.password=db2inst1
+        `}</CodeBlock>
+      </TabItem>
+
+      <TabItem value="MariaDB" label="MariaDB">
+        <h3>Run MariaDB locally</h3>
+
+        You can run MariaDB in Docker Compose by using the <code>docker-compose.yml</code> file in the <code>scalardb-samples/{samplesDir(props)}</code> directory.
+
+        To start MariaDB, run the following command:
+
+        <CodeBlock language="console">docker compose up -d mariadb</CodeBlock>
+
+        <h3>{configureHeading(props)}</h3>
+
+        The <strong>{propertiesFile(props)}</strong> file in the <code>scalardb-samples/{samplesDir(props)}</code> directory contains database configurations. Please uncomment the properties for MariaDB in the <strong>{propertiesFile(props)}</strong> file so that the configuration looks as follows:
+
+        <CodeBlock language="properties">{dedent`
+          # For MariaDB
+          scalar.db.storage=jdbc
+          scalar.db.contact_points=jdbc:mariadb://${host(props, 'mariadb')}:3306
+          scalar.db.username=root
+          scalar.db.password=mariadb
+        `}</CodeBlock>
+      </TabItem>
+
+      <TabItem value="MySQL" label="MySQL">
+        <h3>Run MySQL locally</h3>
+
+        You can run MySQL in Docker Compose by using the <code>docker-compose.yml</code> file in the <code>scalardb-samples/{samplesDir(props)}</code> directory.
+
+        To start MySQL, run the following command:
+
+        <CodeBlock language="console">docker compose up -d mysql</CodeBlock>
+
+        <h3>{configureHeading(props)}</h3>
+
+        The <strong>{propertiesFile(props)}</strong> file in the <code>scalardb-samples/{samplesDir(props)}</code> directory contains database configurations. Please uncomment the properties for MySQL in the <strong>{propertiesFile(props)}</strong> file so that the configuration looks as follows:
+
+        <CodeBlock language="properties">{dedent`
+          # For MySQL
+          scalar.db.storage=jdbc
+          scalar.db.contact_points=jdbc:mysql://${host(props, 'mysql')}:3306/
+          scalar.db.username=root
+          scalar.db.password=mysql
+        `}</CodeBlock>
+      </TabItem>
+
+      <TabItem value="Oracle Database" label="Oracle Database">
+        <h3>Run Oracle Database locally</h3>
+
+        You can run Oracle Database in Docker Compose by using the <code>docker-compose.yml</code> file in the <code>scalardb-samples/{samplesDir(props)}</code> directory.
+
+        To start Oracle Database, run the following command:
+
+        <CodeBlock language="console">docker compose up -d oracle</CodeBlock>
+
+        <h3>{configureHeading(props)}</h3>
+
+        The <strong>{propertiesFile(props)}</strong> file in the <code>scalardb-samples/{samplesDir(props)}</code> directory contains database configurations. Please uncomment the properties for Oracle Database in the <strong>{propertiesFile(props)}</strong> file so that the configuration looks as follows:
+
+        <CodeBlock language="properties">{dedent`
+          # For Oracle
+          scalar.db.storage=jdbc
+          scalar.db.contact_points=jdbc:oracle:thin:@//${host(props, 'oracle')}:1521/FREEPDB1
+          scalar.db.username=SYSTEM
+          scalar.db.password=Oracle
+        `}</CodeBlock>
+      </TabItem>
+
+      <TabItem value="PostgreSQL" label="PostgreSQL">
+        <h3>Run PostgreSQL locally</h3>
+
+        You can run PostgreSQL in Docker Compose by using the <code>docker-compose.yml</code> file in the <code>scalardb-samples/{samplesDir(props)}</code> directory.
+
+        To start PostgreSQL, run the following command:
+
+        <CodeBlock language="console">docker compose up -d postgres</CodeBlock>
+
+        <h3>{configureHeading(props)}</h3>
+
+        The <strong>{propertiesFile(props)}</strong> file in the <code>scalardb-samples/{samplesDir(props)}</code> directory contains database configurations. Please uncomment the properties for PostgreSQL in the <strong>{propertiesFile(props)}</strong> file so that the configuration looks as follows:
+
+        <CodeBlock language="properties">{dedent`
+          # For PostgreSQL
+          scalar.db.storage=jdbc
+          scalar.db.contact_points=jdbc:postgresql://${host(props, 'postgres')}:5432/
+          scalar.db.username=postgres
+          scalar.db.password=postgres
+        `}</CodeBlock>
+      </TabItem>
+
+      <TabItem value="SQL Server" label="SQL Server">
+        <h3>Run SQL Server locally</h3>
+
+        You can run SQL Server in Docker Compose by using the <code>docker-compose.yml</code> file in the <code>scalardb-samples/{samplesDir(props)}</code> directory.
+
+        To start SQL Server, run the following command:
+
+        <CodeBlock language="console">docker compose up -d sqlserver</CodeBlock>
+
+        <h3>{configureHeading(props)}</h3>
+
+        The <strong>{propertiesFile(props)}</strong> file in the <code>scalardb-samples/{samplesDir(props)}</code> directory contains database configurations. Please uncomment the properties for SQL Server in the <strong>{propertiesFile(props)}</strong> file so that the configuration looks as follows:
+
+        <CodeBlock language="properties">{dedent`
+          # For SQL Server
+          scalar.db.storage=jdbc
+          scalar.db.contact_points=jdbc:sqlserver://${host(props, 'sqlserver')}:1433;encrypt=true;trustServerCertificate=true
+          scalar.db.username=sa
+          scalar.db.password=SqlServer22
+        `}</CodeBlock>
+      </TabItem>
+
+      {props.mode !== 'cluster' && (
+        <TabItem value="SQLite" label="SQLite">
+          <h3>{configureHeading(props)}</h3>
+
+          SQLite is an embedded, file-based database, so there is no separate server to start. ScalarDB creates the database file automatically when it is first used.
+
+          The <strong>{propertiesFile(props)}</strong> file in the <code>scalardb-samples/{samplesDir(props)}</code> directory contains database configurations. Please uncomment the properties for SQLite in the <strong>{propertiesFile(props)}</strong> file so that the configuration looks as follows:
+
+          <CodeBlock language="properties">{dedent`
+            # For Sqlite
+            scalar.db.storage=jdbc
+            scalar.db.contact_points=jdbc:sqlite:scalardb-sample.sqlite3?busy_timeout=10000
+            scalar.db.username=
+            scalar.db.password=
+          `}</CodeBlock>
+        </TabItem>
+      )}
+    </Tabs>
+  </TabItem>
+
+  <TabItem value="newsql" label="NewSQL databases">
+    Select your NewSQL database.
+    <Tabs groupId="databases" queryString>
+      <TabItem value="YugabyteDB" label="YugabyteDB" default>
+        <h3>Run YugabyteDB locally</h3>
+
+        You can run YugabyteDB in Docker Compose by using the <code>docker-compose.yml</code> file in the <code>scalardb-samples/{samplesDir(props)}</code> directory.
+
+        To start YugabyteDB, run the following command:
+
+        <CodeBlock language="console">docker compose up -d yugabyte</CodeBlock>
+
+        <h3>{configureHeading(props)}</h3>
+
+        The <strong>{propertiesFile(props)}</strong> file in the <code>scalardb-samples/{samplesDir(props)}</code> directory contains database configurations. Please uncomment the properties for YugabyteDB in the <strong>{propertiesFile(props)}</strong> file so that the configuration looks as follows:
+
+        <CodeBlock language="properties">{dedent`
+          # For Yugabyte
+          scalar.db.storage=jdbc
+          scalar.db.contact_points=jdbc:yugabytedb://${host(props, 'yugabyte')}:5433/postgres
+          scalar.db.username=yugabyte
+          scalar.db.password=yugabyte
+        `}</CodeBlock>
+      </TabItem>
+    </Tabs>
+  </TabItem>
+
+  <TabItem value="nosql" label="NoSQL databases">
+    Select your NoSQL database.
+    <Tabs groupId="databases" queryString>
+      <TabItem value="Cassandra" label="Cassandra" default>
+        <h3>Run Cassandra locally</h3>
+
+        You can run Apache Cassandra in Docker Compose by using the <code>docker-compose.yml</code> file in the <code>scalardb-samples/{samplesDir(props)}</code> directory.
+
+        To start Apache Cassandra, run the following command:
+
+        <CodeBlock language="console">docker compose up -d cassandra</CodeBlock>
+
+        <h3>{configureHeading(props)}</h3>
+
+        The <strong>{propertiesFile(props)}</strong> file in the <code>scalardb-samples/{samplesDir(props)}</code> directory contains database configurations. Please uncomment the properties for Cassandra in the <strong>{propertiesFile(props)}</strong> file so that the configuration looks as follows:
+
+        <CodeBlock language="properties">{dedent`
+          # For Cassandra
+          scalar.db.storage=cassandra
+          scalar.db.contact_points=${host(props, 'cassandra')}
+          scalar.db.username=cassandra
+          scalar.db.password=cassandra
+        `}</CodeBlock>
+      </TabItem>
+
+      <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+        To use Azure Cosmos DB for NoSQL, you must have an Azure account. If you don't have an Azure account, visit [Create an Azure Cosmos DB account](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/quickstart-portal#create-account).
+
+        <h3>Configure Cosmos DB for NoSQL</h3>
+
+        Set the **default consistency level** to **Strong** according to the official document at [Configure the default consistency level](https://learn.microsoft.com/en-us/azure/cosmos-db/nosql/how-to-manage-consistency#configure-the-default-consistency-level).
+
+        <h3>{configureHeading(props)}</h3>
+
+        The <strong>{propertiesFile(props)}</strong> file in the <code>scalardb-samples/{samplesDir(props)}</code> directory contains database configurations. Be sure to change the values for <code>scalar.db.contact_points</code> and <code>scalar.db.password</code> as described.
+
+        <CodeBlock language="properties">{dedent`
+          # For Cosmos DB
+          scalar.db.storage=cosmos
+          scalar.db.contact_points=<COSMOS_DB_FOR_NOSQL_URI>
+          scalar.db.password=<COSMOS_DB_FOR_NOSQL_KEY>
+        `}</CodeBlock>
+
+        <Admonition type="note">
+          You can use the primary key or the secondary key in your Azure Cosmos DB account as the value for <code>scalar.db.password</code>.
+        </Admonition>
+      </TabItem>
+
+      <TabItem value="DynamoDB" label="DynamoDB">
+        <h3>Run Amazon DynamoDB Local</h3>
+
+        You can run Amazon DynamoDB Local in Docker Compose by using the <code>docker-compose.yml</code> file in the <code>scalardb-samples/{samplesDir(props)}</code> directory.
+
+        To start Amazon DynamoDB Local, run the following command:
+
+        <CodeBlock language="console">docker compose up -d dynamodb</CodeBlock>
+
+        <h3>{configureHeading(props)}</h3>
+
+        The <strong>{propertiesFile(props)}</strong> file in the <code>scalardb-samples/{samplesDir(props)}</code> directory contains database configurations. Please uncomment the properties for Amazon DynamoDB Local in the <strong>{propertiesFile(props)}</strong> file so that the configuration looks as follows:
+
+        <CodeBlock language="properties">{dedent`
+          # For DynamoDB Local
+          scalar.db.storage=dynamo
+          scalar.db.contact_points=sample
+          scalar.db.username=sample
+          scalar.db.password=sample
+          scalar.db.dynamo.endpoint_override=http://${host(props, 'dynamodb')}:8000
+        `}</CodeBlock>
+      </TabItem>
+    </Tabs>
+  </TabItem>
+</Tabs>
