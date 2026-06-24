@@ -95,13 +95,13 @@ const config = {
               "3.15": {
                 label: '3.15',
                 path: '3.15',
-                banner: 'none',
+                banner: 'unmaintained',
                 className: '3.15.8',
               },
               "3.14": {
                 label: '3.14',
                 path: '3.14',
-                banner: 'none',
+                banner: 'unmaintained',
                 className: '3.14.6',
               },
             },
