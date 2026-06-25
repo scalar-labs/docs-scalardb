@@ -52,35 +52,40 @@ Select your database for details on how to configure it to achieve the general r
 
     - Use read-committed or stricter isolation levels.
   </TabItem>
-  <TabItem value="DynamoDB" label="DynamoDB">
-    <h4>Transactions</h4>
+  <TabItem value="NoSQL_databases" label="NoSQL databases">
+    Select your NoSQL database.
+    <Tabs groupId="nosql-databases" queryString>
+      <TabItem value="Cassandra" label="Cassandra" default>
+        <h4>Transactions</h4>
 
-    - Use a single primary region for all operations. (No read and write operations on global tables in non-primary regions.)
-      - There is no concept for primary regions in DynamoDB, so you must designate a primary region by yourself.
+        - Use a single primary cluster for all operations (no read or write operations in non-primary clusters).
+        - Use `batch` or `group` for `commitlog_sync`.
+        - If you're using Cassandra-compatible databases, those databases must properly support lightweight transactions (LWT).
 
-    <h4>Analytics</h4>
+        <h4>Analytics</h4>
 
-    - Not applicable. DynamoDB always returns committed records, so there are no DynamoDB-specific requirements.
-  </TabItem>
-  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
-    <h4>Transactions</h4>
+        - Not applicable. Cassandra always returns committed records, so there are no Cassandra-specific requirements.
+      </TabItem>
+      <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+        <h4>Transactions</h4>
 
-    - Use a single primary region for all operations with `Strong` or `Bounded Staleness` consistency.
+        - Use a single primary region for all operations with `Strong` or `Bounded Staleness` consistency.
 
-    <h4>Analytics</h4>
+        <h4>Analytics</h4>
 
-    - Not applicable. Cosmos DB always returns committed records, so there are no Cosmos DB–specific requirements.
-  </TabItem>
-  <TabItem value="Cassandra" label="Cassandra">
-    <h4>Transactions</h4>
+        - Not applicable. Cosmos DB always returns committed records, so there are no Cosmos DB–specific requirements.
+      </TabItem>
+      <TabItem value="DynamoDB" label="DynamoDB">
+        <h4>Transactions</h4>
 
-    - Use a single primary cluster for all operations (no read or write operations in non-primary clusters).
-    - Use `batch` or `group` for `commitlog_sync`.
-    - If you're using Cassandra-compatible databases, those databases must properly support lightweight transactions (LWT).
+        - Use a single primary region for all operations. (No read and write operations on global tables in non-primary regions.)
+          - There is no concept for primary regions in DynamoDB, so you must designate a primary region by yourself.
 
-    <h4>Analytics</h4>
+        <h4>Analytics</h4>
 
-    - Not applicable. Cassandra always returns committed records, so there are no Cassandra-specific requirements.
+        - Not applicable. DynamoDB always returns committed records, so there are no DynamoDB-specific requirements.
+      </TabItem>
+    </Tabs>
   </TabItem>
 </Tabs>
 
@@ -99,22 +104,27 @@ ScalarDB can be seen as an application of underlying databases, so you may want 
     - Use read-committed isolation for better performance.
     - Follow the performance optimization best practices for each database. For example, increasing the buffer size (for example, `shared_buffers` in PostgreSQL) and increasing the number of connections (for example, `max_connections` in PostgreSQL) are usually recommended for better performance.
   </TabItem>
-  <TabItem value="DynamoDB" label="DynamoDB">
-    - Increase the number of read capacity units (RCUs) and write capacity units (WCUs) for high throughput.
-    - Enable point-in-time recovery (PITR).
+  <TabItem value="NoSQL_databases" label="NoSQL databases">
+    Select your NoSQL database.
+    <Tabs groupId="nosql-databases" queryString>
+      <TabItem value="Cassandra" label="Cassandra" default>
+        - Increase `concurrent_reads` and `concurrent_writes` for high throughput. For details, see the official Cassandra documentation about [`concurrent_writes`](https://cassandra.apache.org/doc/stable/cassandra/configuration/cass_yaml_file.html#concurrent_writes).
+      </TabItem>
+      <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+        - Increase the number of Request Units (RUs) for high throughput.
+        - Enable point-in-time restore (PITR).
+        - Enable availability zones.
+      </TabItem>
+      <TabItem value="DynamoDB" label="DynamoDB">
+        - Increase the number of read capacity units (RCUs) and write capacity units (WCUs) for high throughput.
+        - Enable point-in-time recovery (PITR).
 
 :::note
 
 Since DynamoDB stores data in multiple availability zones by default, you don’t need to adjust any configurations to improve availability.
 
 :::
-  </TabItem>
-  <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
-    - Increase the number of Request Units (RUs) for high throughput.
-    - Enable point-in-time restore (PITR).
-    - Enable availability zones.
-  </TabItem>
-  <TabItem value="Cassandra" label="Cassandra">
-    - Increase `concurrent_reads` and `concurrent_writes` for high throughput. For details, see the official Cassandra documentation about [`concurrent_writes`](https://cassandra.apache.org/doc/stable/cassandra/configuration/cass_yaml_file.html#concurrent_writes).
+      </TabItem>
+    </Tabs>
   </TabItem>
 </Tabs>
