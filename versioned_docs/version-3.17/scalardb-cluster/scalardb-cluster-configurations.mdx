@@ -959,6 +959,408 @@ For details about encrypting wire communications, see [Encrypt Wire Communicatio
 - **Description:** The private key file used for TLS communication.
 - **Default value:** empty
 
+### Embedding-related configurations
+
+The following embedding-related configurations are available for ScalarDB Cluster.
+
+#### `embedding.enabled`
+
+- **Field:** `scalar.db.embedding.enabled`
+- **Description:** Whether the embedding feature is enabled.
+- **Default value:** `false`
+
+#### `embedding.stores`
+
+- **Field:** `scalar.db.embedding.stores`
+- **Description:** Comma-separated list of embedding store names that you want to use.
+- **Default value:** empty
+
+#### `embedding.models`
+
+- **Field:** `scalar.db.embedding.models`
+- **Description:** Comma-separated list of embedding model names that you want to use.
+- **Default value:** empty
+
+#### Embedding store configurations
+
+For each embedding store name specified in `scalar.db.embedding.stores`, you can configure the embedding store by using `scalar.db.embedding.stores.<STORE_NAME>.` as a prefix.
+
+<Tabs groupId="embedding-store" queryString>
+  <TabItem value="in-memory" label="In-memory" default>
+    The in-memory embedding store is a basic in-memory implementation. This embedding store is useful for fast prototyping and simple use cases.
+
+    <h5>`type`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.type`
+    - **Description:** Must be set to `in-memory`.
+    - **Default value:** N/A
+  </TabItem>
+  <TabItem value="opensearch" label="OpenSearch">
+    The OpenSearch embedding store uses OpenSearch as the backend.
+
+    <h5>`type`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.type`
+    - **Description:** Must be set to `opensearch`.
+    - **Default value:** N/A
+
+    <h5>`server_url`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.opensearch.server_url`
+    - **Description:** OpenSearch server URL.
+    - **Default value:** empty
+
+    <h5>`index_name`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.opensearch.index_name`
+    - **Description:** OpenSearch index name.
+    - **Default value:** empty
+
+    <h5>`api_key` (optional)</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.opensearch.api_key`
+    - **Description:** OpenSearch API key for authentication.
+    - **Default value:** empty
+
+    <h5>`user_name` (optional)</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.opensearch.user_name`
+    - **Description:** OpenSearch username for authentication.
+    - **Default value:** empty
+
+    <h5>`password` (optional)</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.opensearch.password`
+    - **Description:** OpenSearch password for authentication.
+    - **Default value:** empty
+
+    <h5>`service_name` (AWS only)</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.opensearch.service_name`
+    - **Description:** AWS signing service name. Either `es` (Amazon OpenSearch) or `aoss` (Amazon OpenSearch Serverless).
+    - **Default value:** empty
+
+    <h5>`region` (AWS only)</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.opensearch.region`
+    - **Description:** AWS region for signing requests.
+    - **Default value:** empty
+
+    <h5>`access_key_id` (AWS only)</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.opensearch.access_key_id`
+    - **Description:** AWS access key ID.
+    - **Default value:** empty
+
+    <h5>`secret_access_key` (AWS only)</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.opensearch.secret_access_key`
+    - **Description:** AWS secret access key.
+    - **Default value:** empty
+  </TabItem>
+  <TabItem value="azure-cosmos-db-for-nosql" label="Azure Cosmos DB for NoSQL">
+    The Azure Cosmos DB for NoSQL embedding store uses Azure Cosmos DB as the backend.
+
+    <h5>`type`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.type`
+    - **Description:** Must be set to `azure-cosmos-nosql`.
+    - **Default value:** N/A
+
+    <h5>`endpoint`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.azure-cosmos-nosql.endpoint`
+    - **Description:** Azure Cosmos DB endpoint URL.
+    - **Default value:** empty
+
+    <h5>`key`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.azure-cosmos-nosql.key`
+    - **Description:** Master key or read-only key for authentication.
+    - **Default value:** empty
+
+    <h5>`database_name`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.azure-cosmos-nosql.database_name`
+    - **Description:** Azure Cosmos DB database name.
+    - **Default value:** empty
+
+    <h5>`container_name`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.azure-cosmos-nosql.container_name`
+    - **Description:** Azure Cosmos DB container name.
+    - **Default value:** empty
+
+    <h5>`dimensions`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.azure-cosmos-nosql.dimensions`
+    - **Description:** Dimensions of the embeddings.
+    - **Default value:** 1536
+  </TabItem>
+  <TabItem value="azure-ai-search" label="Azure AI Search">
+    The Azure AI Search embedding store uses Azure AI Search as the backend.
+
+    <h5>`type`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.type`
+    - **Description:** Must be set to `azure-ai-search`.
+    - **Default value:** N/A
+
+    <h5>`endpoint`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.azure-ai-search.endpoint`
+    - **Description:** Azure AI Search endpoint URL.
+    - **Default value:** empty
+
+    <h5>`api_key`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.azure-ai-search.api_key`
+    - **Description:** Azure AI Search API key.
+    - **Default value:** empty
+
+    <h5>`index_name`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.azure-ai-search.index_name`
+    - **Description:** Name of the index to be used. If no index is provided, a default index name will be used.
+    - **Default value:** empty
+
+    <h5>`dimensions`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.azure-ai-search.dimensions`
+    - **Description:** Dimensions of the embeddings.
+    - **Default value:** 1536
+  </TabItem>
+  <TabItem value="pgvector" label="pgvector">
+    The pgvector embedding store uses pgvector, a Postgres extension for vector similarity search, as the backend.
+
+    <h5>`type`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.type`
+    - **Description:** Must be set to `pgvector`.
+    - **Default value:** N/A
+
+    <h5>`host`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.pgvector.host`
+    - **Description:** Database host.
+    - **Default value:** empty
+
+    <h5>`port`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.pgvector.port`
+    - **Description:** Database port.
+    - **Default value:** 5432
+
+    <h5>`user`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.pgvector.user`
+    - **Description:** Database user.
+    - **Default value:** empty
+
+    <h5>`password`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.pgvector.password`
+    - **Description:** Database password.
+    - **Default value:** empty
+
+    <h5>`database`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.pgvector.database`
+    - **Description:** Database name.
+    - **Default value:** empty
+
+    <h5>`table`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.pgvector.table`
+    - **Description:** Table name.
+    - **Default value:** empty
+
+    <h5>`dimensions`</h5>
+
+    - **Field:** `scalar.db.embedding.stores.<STORE_NAME>.pgvector.dimensions`
+    - **Description:** Dimensions of the embeddings.
+    - **Default value:** 1536
+  </TabItem>
+</Tabs>
+
+#### Embedding model configurations
+
+For each embedding model name specified in `scalar.db.embedding.models`, you can configure the embedding model by using `scalar.db.embedding.models.<MODEL_NAME>.` as a prefix.
+
+<Tabs groupId="embedding-model" queryString>
+  <TabItem value="in-process" label="In-process" default>
+    The in-process embedding model is a local embedding model powered by ONNX runtime and runs in the ScalarDB Cluster process. This embedding model is useful for fast prototyping and simple use cases.
+
+    <h5>`type`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.type`
+    - **Description:** Must be set to `in-process`.
+    - **Default value:** N/A
+  </TabItem>
+  <TabItem value="amazon-bedrock" label="Amazon Bedrock">
+    The Amazon Bedrock embedding model uses Amazon Bedrock as the backend.
+
+    <h5>`type`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.type`
+    - **Description:** Must be set to `bedrock-titan`.
+    - **Default value:** N/A
+
+    <h5>`region`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.bedrock-titan.region`
+    - **Description:** AWS region for signing requests.
+    - **Default value:** empty
+
+    <h5>`access_key_id`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.bedrock-titan.access_key_id`
+    - **Description:** AWS access key ID.
+    - **Default value:** empty
+
+    <h5>`secret_access_key`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.bedrock-titan.secret_access_key`
+    - **Description:** AWS secret access key.
+    - **Default value:** empty
+
+    <h5>`model`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.bedrock-titan.model`
+    - **Description:** Model name. Either `amazon.titan-embed-text-v1` or `amazon.titan-embed-text-v2:0`.
+    - **Default value:** empty
+
+    <h5>`dimensions`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.bedrock-titan.dimensions`
+    - **Description:** Dimensions of the embeddings.
+    - **Default value:** empty
+  </TabItem>
+  <TabItem value="azure-openai" label="Azure OpenAI">
+    The Azure OpenAI embedding model uses Azure OpenAI as the backend.
+
+    <h5>`type`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.type`
+    - **Description:** Must be set to `azure-open-ai`.
+    - **Default value:** N/A
+
+    <h5>`endpoint`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.azure-open-ai.endpoint`
+    - **Description:** Azure OpenAI endpoint URL.
+    - **Default value:** empty
+
+    <h5>`api_key`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.azure-open-ai.api_key`
+    - **Description:** Azure OpenAI API key.
+    - **Default value:** empty
+
+    <h5>`deployment_name`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.azure-open-ai.deployment_name`
+    - **Description:** Deployment name in Azure OpenAI.
+    - **Default value:** empty
+
+    <h5>`dimensions`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.azure-open-ai.dimensions`
+    - **Description:** Dimensions of the embeddings.
+    - **Default value:** empty
+  </TabItem>
+  <TabItem value="google-vertex-ai" label="Google Vertex AI">
+    The Google Vertex AI embedding model uses Google Vertex AI as the backend.
+
+    <h5>`type`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.type`
+    - **Description:** Must be set to `vertex-ai`.
+    - **Default value:** N/A
+
+    <h5>`project`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.vertex-ai.project`
+    - **Description:** Google Cloud project ID.
+    - **Default value:** empty
+
+    <h5>`location`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.vertex-ai.location`
+    - **Description:** Google Cloud location.
+    - **Default value:** empty
+
+    <h5>`endpoint`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.vertex-ai.endpoint`
+    - **Description:** Endpoint URL.
+    - **Default value:** empty
+
+    <h5>`publisher`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.vertex-ai.publisher`
+    - **Description:** Publisher name.
+    - **Default value:** empty
+
+    <h5>`model_name`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.vertex-ai.model_name`
+    - **Description:** Model name.
+    - **Default value:** empty
+
+    <h5>`output_dimensionality`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.vertex-ai.output_dimensionality`
+    - **Description:** Output dimensionality of the embeddings.
+    - **Default value:** empty
+  </TabItem>
+  <TabItem value="openai" label="OpenAI">
+    The OpenAI embedding model uses OpenAI as the backend.
+
+    <h5>`type`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.type`
+    - **Description:** Must be set to `open-ai`.
+    - **Default value:** N/A
+
+    <h5>`api_key`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.open-ai.api_key`
+    - **Description:** OpenAI API key.
+    - **Default value:** empty
+
+    <h5>`model_name`</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.open-ai.model_name`
+    - **Description:** Model name.
+    - **Default value:** empty
+
+    <h5>`base_url` (optional)</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.open-ai.base_url`
+    - **Description:** Base URL for the API.
+    - **Default value:** empty
+
+    <h5>`organization_id` (optional)</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.open-ai.organization_id`
+    - **Description:** OpenAI organization ID.
+    - **Default value:** empty
+
+    <h5>`dimensions` (optional)</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.open-ai.dimensions`
+    - **Description:** Dimensions of the embeddings.
+    - **Default value:** empty
+
+    <h5>`user` (optional)</h5>
+
+    - **Field:** `scalar.db.embedding.models.<MODEL_NAME>.open-ai.user`
+    - **Description:** User identifier.
+    - **Default value:** empty
+  </TabItem>
+</Tabs>
+
 ### Remote replication configurations
 
 The following configurations are available for remote replication in ScalarDB Cluster. Remote replication enables data replication to remote sites for high availability and workload distribution.
@@ -1211,6 +1613,12 @@ scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
 - **Description:** Maximum size of metadata allowed to be received.
 - **Default value:** The gRPC default value
 
+#### `cluster.hop_limit`
+
+- **Field:** `scalar.db.cluster.hop_limit`
+- **Description:** The hop limit to restrict request forwarding between cluster nodes.
+- **Default value:** `3`
+
 #### `cluster.client.scan_fetch_size`
 
 - **Field:** `scalar.db.cluster.client.scan_fetch_size`
@@ -1384,6 +1792,34 @@ The following shows the authentication and authorization configurations for the 
 
 - **Field:** `scalar.db.sql.cluster_mode.password`
 - **Description:** Password to access ScalarDB Cluster.
+- **Default value:** empty
+
+### Configurations for embedding
+
+The following shows the configurations for the Embedding Client SDK (`scalardb-cluster-embedding-java-client-sdk`).
+
+#### `embedding.client.contact_points`
+
+- **Field:** `scalar.db.embedding.client.contact_points`
+- **Description:** Contact point of the cluster. If you use the `indirect` client mode, specify the IP address of the load balancer in front of your cluster nodes by using the format `indirect:<the load balancer IP address>`. If you use the `direct-kubernetes` client mode, specify the namespace name (optional) and the name of the [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) to get the membership information by using the format `direct-kubernetes:<namespace name>/<endpoint name>` or just `direct-kubernetes:<endpoint name>`. If you don't specify the namespace name, the Embedding Client SDK will use the `default` namespace.
+- **Default value:** empty
+
+#### `embedding.client.contact_port`
+
+- **Field:** `scalar.db.embedding.client.contact_port`
+- **Description:** The port number for contact points.
+- **Default value:** `60053`
+
+#### `embedding.client.store`
+
+- **Field:** `scalar.db.embedding.client.store`
+- **Description:** The name of the embedding store to use, as defined in `scalar.db.embedding.stores` on the server.
+- **Default value:** empty
+
+#### `embedding.client.model`
+
+- **Field:** `scalar.db.embedding.client.model`
+- **Description:** The name of the embedding model to use, as defined in `scalar.db.embedding.models` on the server.
 - **Default value:** empty
 
 ## Configuration example - App, ScalarDB Cluster, and database
