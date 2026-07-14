@@ -22,9 +22,9 @@ For the background on the logical data model of ScalarDB, see [Data Modeling](da
 
 ## JDBC adapter
 
-The JDBC adapter supports relational databases through JDBC connections. The following databases are supported: MySQL, MariaDB, TiDB, PostgreSQL, YugabyteDB, AlloyDB, Amazon Aurora (MySQL-compatible and PostgreSQL-compatible), Oracle Database, SQL Server, IBM Db2, and SQLite.
+The JDBC adapter supports relational databases through JDBC connections. The following databases are supported: MySQL, MariaDB, PostgreSQL, YugabyteDB, Amazon Aurora (MySQL-compatible and PostgreSQL-compatible), Oracle Database, SQL Server, IBM Db2, and SQLite.
 
-MariaDB, TiDB, and Amazon Aurora MySQL-compatible edition follow the same mapping as MySQL. YugabyteDB, AlloyDB, and Amazon Aurora PostgreSQL-compatible edition follow the same mapping as PostgreSQL.
+MariaDB and Amazon Aurora MySQL-compatible edition follow the same mapping as MySQL. YugabyteDB and Amazon Aurora PostgreSQL-compatible edition follow the same mapping as PostgreSQL.
 
 ### Namespace and table mapping
 
@@ -32,8 +32,8 @@ How ScalarDB namespaces map to native database constructs depends on the RDBMS. 
 
 | RDBMS | ScalarDB namespace maps to | Notes |
 |-------|---------------------------|-------|
-| MySQL, MariaDB, TiDB | Database | In MySQL, a database and a schema are synonymous. |
-| PostgreSQL, YugabyteDB, AlloyDB | Schema | Created within the connected database. |
+| MySQL, MariaDB | Database | In MySQL, a database and a schema are synonymous. |
+| PostgreSQL, YugabyteDB | Schema | Created within the connected database. |
 | Oracle Database | Schema (User) | In Oracle, creating a user automatically creates a schema of the same name. ScalarDB creates a dedicated user for each namespace, and tables are stored in the corresponding schema. |
 | SQL Server | Schema | Created within the connected database. |
 | IBM Db2 | Schema | Created within the connected database. |
@@ -55,7 +55,7 @@ The ScalarDB partition key and clustering key columns together form the primary 
 
 The following table shows how ScalarDB data types map to native column types in each JDBC database.
 
-| ScalarDB | MySQL, MariaDB, TiDB | PostgreSQL, YugabyteDB | Oracle | SQL Server | Db2 | SQLite |
+| ScalarDB | MySQL, MariaDB | PostgreSQL, YugabyteDB | Oracle | SQL Server | Db2 | SQLite |
 |----------|----------------------|------------------------|--------|------------|-----|--------|
 | BOOLEAN | BOOLEAN | BOOLEAN | NUMBER(1) | BIT | BOOLEAN | BOOLEAN |
 | INT | INT | INT | NUMBER(10) | INT | INT | INT |
@@ -73,14 +73,14 @@ When TEXT or BLOB columns are used as a partition key, clustering key, or second
 
 | Database | TEXT key column type | BLOB key column type |
 |----------|---------------------|----------------------|
-| MySQL, MariaDB, TiDB | VARCHAR(*size*) | VARBINARY(*size*) |
+| MySQL, MariaDB | VARCHAR(*size*) | VARBINARY(*size*) |
 | PostgreSQL, YugabyteDB | VARCHAR(10485760) | BYTEA (no conversion) |
 | Oracle | VARCHAR2(*size*) | Not supported as key |
 | Db2 | VARCHAR(*size*) | Not supported as key |
 
 The *size* in the table above defaults to 128 and can be configured per database through the following properties. The minimum allowed value is 64.
 
-- `scalar.db.jdbc.mysql.variable_key_column_size` — Applies to MySQL, MariaDB, and TiDB.
+- `scalar.db.jdbc.mysql.variable_key_column_size` — Applies to MySQL and MariaDB.
 - `scalar.db.jdbc.oracle.variable_key_column_size` — Applies to Oracle Database.
 - `scalar.db.jdbc.db2.variable_key_column_size` — Applies to IBM Db2.
 
@@ -111,11 +111,6 @@ The following limitations apply to specific databases when using the JDBC adapte
 
 - SQLite does not fully support concurrent access. Use SQLite only for development and testing purposes, not for production workloads.
 - Import table and virtual table are entirely unsupported.
-
-**TiDB:**
-
-- TiDB does not support the SERIALIZABLE isolation level. ScalarDB uses REPEATABLE READ instead.
-- TiDB does not support ALTER COLUMN TYPE from BLOB to TEXT.
 
 ## DynamoDB adapter
 
