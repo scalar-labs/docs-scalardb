@@ -87,7 +87,7 @@ const sidebars = {
       items: [
         {
           type: 'category',
-          label: 'Try Running Transactions Through the ScalarDB Core Library',
+          label: 'Try Using the ScalarDB Core Library to Run Transactions',
           collapsible: true,
           link: {
             type: 'doc',
@@ -108,7 +108,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: 'Try Running Transactions Through ScalarDB Cluster',
+          label: 'Try Using ScalarDB Cluster to Run Transactions',
           collapsible: true,
           link: {
             type: 'doc',
@@ -172,7 +172,7 @@ const sidebars = {
         },
         {
           type: 'category',
-          label: 'Try Running Analytical Queries Through ScalarDB Analytics',
+          label: 'Try Using ScalarDB Analytics to Run Analytical Queries',
           collapsible: true,
           link: {
             type: 'doc',
@@ -189,7 +189,7 @@ const sidebars = {
         {
           type: 'doc',
           id: 'scalardb-cluster/getting-started-with-vector-search',
-          label: 'Try Running Vector Search Through ScalarDB Cluster',
+          label: 'Try Using ScalarDB Cluster to Run Vector Search',
         },
       ],
     },
@@ -275,22 +275,22 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalardb-samples/spring-data-multi-storage-transaction-sample/README',
-                  label: 'Run Multi-Storage Transactions Samples Through Spring Data JDBC',
+                  label: 'Use Spring Data JDBC to Run Multi-Storage Transactions Samples',
                 },
                 {
                   type: 'doc',
                   id: 'scalardb-samples/spring-data-microservice-transaction-sample/README',
-                  label: 'Run Microservice Transactions Samples Through Spring Data JDBC',
+                  label: 'Use Spring Data JDBC to Run Microservice Transactions Samples',
                 },
                 {
                   type: 'doc',
                   id: 'scalardb-samples/microservice-transactions-sample-with-shared-cluster-with-jdbc/README',
-                  label: 'Run Microservice Transactions Samples Through Shared Cluster with JDBC',
+                  label: 'Use JDBC to Run Microservice Transactions Samples Through Shared Cluster',
                 },
                 {
                   type: 'doc',
                   id: 'scalardb-samples/dotnet-microservice-transactions-sample-with-shared-cluster-with-linq/README',
-                  label: 'Run Microservice Transactions Samples Through Shared Cluster with LINQ',
+                  label: 'Use LINQ to Run Microservice Transactions Samples Through Shared Cluster',
                 },
               ],
             },
