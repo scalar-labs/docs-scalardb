@@ -10,7 +10,7 @@ displayed_sidebar: docsEnglish
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-import JDKVersions from '/src/components/en-us/_prerequisites-jdk-versions.mdx';
+import JDKVersions from './components/_prerequisites-jdk-versions.mdx';
 
 This page outlines the requirements for using each ScalarDB component, including the programming languages and their versions, supported databases and their versions, and the necessary configurations.
 
@@ -39,29 +39,7 @@ ScalarDB runs on top of the following databases and their versions.
 #### Relational databases
 
 <Tabs groupId="RDBs" queryString>
-<TabItem value="Amazon_Aurora_MySQL" label="Amazon Aurora MySQL" default>
-
-|      Version      | Aurora MySQL 3 | Aurora MySQL 2 |
-| :---------------- | :------------- | :------------- |
-| **ScalarDB 3.18** | ✅              | ✅              |
-| **ScalarDB 3.17** | ✅              | ✅              |
-| **ScalarDB 3.16** | ✅              | ✅              |
-| **ScalarDB 3.15** | ✅              | ✅              |
-| **ScalarDB 3.14** | ✅              | ✅              |
-
-</TabItem>
-<TabItem value="Amazon_Aurora_PostgreSQL" label="Amazon Aurora PostgreSQL">
-
-| Version           | Aurora PostgreSQL 17 | Aurora PostgreSQL 16 | Aurora PostgreSQL 15 | Aurora PostgreSQL 14 | Aurora PostgreSQL 13 |
-|:------------------|:---------------------|:---------------------|:---------------------|:---------------------|:---------------------|
-| **ScalarDB 3.18** | ✅                    | ✅                    | ✅                    | ✅                    | ✅                    |
-| **ScalarDB 3.17** | ✅                    | ✅                    | ✅                    | ✅                    | ✅                    |
-| **ScalarDB 3.16** | ✅                    | ✅                    | ✅                    | ✅                    | ✅                    |
-| **ScalarDB 3.15** | ✅                    | ✅                    | ✅                    | ✅                    | ✅                    |
-| **ScalarDB 3.14** | ✅                    | ✅                    | ✅                    | ✅                    | ✅                    |
-
-</TabItem>
-<TabItem value="Db2" label="IBM Db2">
+<TabItem value="Db2" label="IBM Db2" default>
 
 |      Version      | Db2 12.1 | Db2 11.5 |
 | :---------------- | :------- | :------- |
@@ -158,6 +136,28 @@ Only Linux, UNIX, and Windows versions of Db2 are supported. The z/OS version is
 | **ScalarDB 3.16** | ❌          | ❌          |
 | **ScalarDB 3.15** | ❌          | ❌          |
 | **ScalarDB 3.14** | ❌          | ❌          |
+
+</TabItem>
+<TabItem value="Amazon_Aurora_MySQL" label="Amazon Aurora MySQL" default>
+
+|      Version      | Aurora MySQL 3 | Aurora MySQL 2 |
+| :---------------- | :------------- | :------------- |
+| **ScalarDB 3.18** | ✅              | ✅              |
+| **ScalarDB 3.17** | ✅              | ✅              |
+| **ScalarDB 3.16** | ✅              | ✅              |
+| **ScalarDB 3.15** | ✅              | ✅              |
+| **ScalarDB 3.14** | ✅              | ✅              |
+
+</TabItem>
+<TabItem value="Amazon_Aurora_PostgreSQL" label="Amazon Aurora PostgreSQL">
+
+| Version           | Aurora PostgreSQL 17 | Aurora PostgreSQL 16 | Aurora PostgreSQL 15 | Aurora PostgreSQL 14 | Aurora PostgreSQL 13 |
+|:------------------|:---------------------|:---------------------|:---------------------|:---------------------|:---------------------|
+| **ScalarDB 3.18** | ✅                    | ✅                    | ✅                    | ✅                    | ✅                    |
+| **ScalarDB 3.17** | ✅                    | ✅                    | ✅                    | ✅                    | ✅                    |
+| **ScalarDB 3.16** | ✅                    | ✅                    | ✅                    | ✅                    | ✅                    |
+| **ScalarDB 3.15** | ✅                    | ✅                    | ✅                    | ✅                    | ✅                    |
+| **ScalarDB 3.14** | ✅                    | ✅                    | ✅                    | ✅                    | ✅                    |
 
 </TabItem>
 <TabItem value="Spanner" label="Spanner (PostgreSQL dialect)">

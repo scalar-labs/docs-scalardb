@@ -1,0 +1,133 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+import Admonition from '@theme/Admonition';
+import Link from '@docusaurus/Link';
+
+{/*
+  Reusable Schema Loader command tabs for "Load the database schema" sections.
+
+  Used by the ScalarDB Core (Java and Kotlin) getting-started guides, which share
+  the same `database.properties` config file and the same `schema.json` schema.
+  ScalarDB Cluster guides use a different schema-loader binary and are not handled
+  by this component.
+
+  The UI uses the same two-level nested-tabs design as <StorageSetupTabs>:
+    - Outer tabs (groupId="storage-category") pick a category:
+        "リレーショナルデータベース" | "NewSQL データベース" | "NoSQL データベース"
+    - Inner tabs (groupId="databases") pick a specific storage in that category,
+      listed in alphabetical order.
+
+  Takes no props.
+*/}
+
+export const baseCommand = (extraFlags) =>
+  `java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator${extraFlags ? ' ' + extraFlags : ''}`;
+
+export const loaderCommand = (extraFlags) => (
+  <CodeBlock language="console">{baseCommand(extraFlags)}</CodeBlock>
+);
+
+export const CoordinatorNote = ({ children }) => (
+  <Admonition type="note">
+    <p>
+      スキーマ内に <code>transaction</code> が <code>true</code> に設定されたテーブルが存在するため、<code>--coordinator</code> オプションが指定されています。スキーマの設定とロードの詳細については、<Link to="/ja-jp/schema-loader">ScalarDB Schema Loader</Link> を参照してください。
+    </p>
+    {children}
+  </Admonition>
+);
+
+<Tabs groupId="storage-category" queryString>
+  <TabItem value="relational" label="リレーショナルデータベース" default>
+    リレーショナルデータベースを選択します。
+    <Tabs groupId="databases" queryString>
+      <TabItem value="Db2" label="Db2" default>
+        {loaderCommand()}
+        <CoordinatorNote />
+      </TabItem>
+
+      <TabItem value="MariaDB" label="MariaDB">
+        {loaderCommand()}
+        <CoordinatorNote />
+      </TabItem>
+
+      <TabItem value="MySQL" label="MySQL">
+        {loaderCommand()}
+        <CoordinatorNote />
+      </TabItem>
+
+      <TabItem value="Oracle Database" label="Oracle Database">
+        {loaderCommand()}
+        <CoordinatorNote />
+      </TabItem>
+
+      <TabItem value="PostgreSQL" label="PostgreSQL">
+        {loaderCommand()}
+        <CoordinatorNote />
+      </TabItem>
+
+      <TabItem value="SQL Server" label="SQL Server">
+        {loaderCommand()}
+        <CoordinatorNote />
+      </TabItem>
+
+      <TabItem value="SQLite" label="SQLite">
+        {loaderCommand()}
+        <CoordinatorNote />
+      </TabItem>
+    </Tabs>
+  </TabItem>
+
+  <TabItem value="newsql" label="NewSQL データベース">
+    NewSQL データベースを選択します。
+    <Tabs groupId="databases" queryString>
+      <TabItem value="AlloyDB" label="AlloyDB" default>
+        {loaderCommand()}
+        <CoordinatorNote />
+      </TabItem>
+
+      <TabItem value="Spanner" label="Spanner">
+        {loaderCommand()}
+        <CoordinatorNote />
+      </TabItem>
+
+      <TabItem value="TiDB" label="TiDB">
+        {loaderCommand()}
+        <CoordinatorNote />
+      </TabItem>
+
+      <TabItem value="YugabyteDB" label="YugabyteDB">
+        {loaderCommand()}
+        <CoordinatorNote />
+      </TabItem>
+    </Tabs>
+  </TabItem>
+
+  <TabItem value="nosql" label="NoSQL データベース">
+    NoSQL データベースを選択します。
+    <Tabs groupId="databases" queryString>
+      <TabItem value="Cassandra" label="Cassandra" default>
+        {loaderCommand('--replication-factor=1')}
+        <CoordinatorNote>
+          <p>
+            また、<code>--replication-factor=1</code> オプションは Cassandra を使用する場合にのみ有効です。デフォルトのレプリケーション係数は <code>3</code> ですが、このチュートリアルではセットアップを容易にするために <code>1</code> が使用されているため、3つのノードではなく1つのノードを持つクラスターを準備するだけで済みます。ただし、レプリケーション係数 <code>1</code> は本番環境には適していないことに注意してください。
+          </p>
+        </CoordinatorNote>
+      </TabItem>
+
+      <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
+        {loaderCommand()}
+        <CoordinatorNote />
+      </TabItem>
+
+      <TabItem value="DynamoDB" label="DynamoDB">
+        {loaderCommand('--no-backup --no-scaling')}
+        <CoordinatorNote>
+          <p>
+            また、Amazon DynamoDB Local は継続的なバックアップと自動スケーリングをサポートしていないため、<code>--no-backup</code> および <code>--no-scaling</code> オプションが指定されています。
+          </p>
+        </CoordinatorNote>
+      </TabItem>
+    </Tabs>
+  </TabItem>
+</Tabs>

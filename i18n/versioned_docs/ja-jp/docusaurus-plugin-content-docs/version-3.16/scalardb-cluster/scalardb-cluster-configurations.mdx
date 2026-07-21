@@ -818,6 +818,408 @@ ScalarDB Cluster でワイヤ通信を暗号化するための設定は以下の
 - **説明:** TLS 通信に使用される秘密鍵ファイル。
 - **デフォルト値:** empty
 
+### 埋め込み関連の設定
+
+次の埋め込み関連の設定が ScalarDB Cluster で利用可能です。
+
+#### `embedding.enabled`
+
+- **フィールド:** `scalar.db.embedding.enabled`
+- **説明:** 埋め込み機能が有効かどうか。
+- **デフォルト値:** `false`
+
+#### `embedding.stores`
+
+- **フィールド:** `scalar.db.embedding.stores`
+- **説明:** 使用するコンマ区切りの埋め込みストア名リスト。
+- **デフォルト値:** empty
+
+#### `embedding.models`
+
+- **フィールド:** `scalar.db.embedding.models`
+- **説明:** 使用するコンマ区切りの埋め込みモデル名リスト。
+- **デフォルト値:** empty
+
+#### 埋め込みストアの設定
+
+`scalar.db.embedding.stores` に指定された各埋め込みストア名について、`scalar.db.embedding.stores.<STORE_NAME>.` をプレフィックスとして使用して埋め込みストアを設定できます。
+
+<Tabs groupId="embedding-store" queryString>
+  <TabItem value="in-memory" label="In-memory" default>
+    インメモリ埋め込みストアは基本的なインメモリ実装です。この埋め込みストアは、迅速なプロトタイピングやシンプルなユースケースに役立ちます。
+
+    <h5>`type`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.type`
+    - **説明:** `in-memory` に設定する必要があります。
+    - **デフォルト値:** N/A
+  </TabItem>
+  <TabItem value="opensearch" label="OpenSearch">
+    OpenSearch 埋め込みストアはバックエンドとして OpenSearch を使用します。
+
+    <h5>`type`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.type`
+    - **説明:** `opensearch` に設定する必要があります。
+    - **デフォルト値:** N/A
+
+    <h5>`server_url`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.opensearch.server_url`
+    - **説明:** OpenSearch サーバー URL。
+    - **デフォルト値:** empty
+
+    <h5>`index_name`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.opensearch.index_name`
+    - **説明:** OpenSearch インデックス名。
+    - **デフォルト値:** empty
+
+    <h5>`api_key` (オプション)</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.opensearch.api_key`
+    - **説明:** 認証用の OpenSearch API キー。
+    - **デフォルト値:** empty
+
+    <h5>`user_name` (オプション)</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.opensearch.user_name`
+    - **説明:** 認証用の OpenSearch ユーザー名。
+    - **デフォルト値:** empty
+
+    <h5>`password` (オプション)</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.opensearch.password`
+    - **説明:** 認証用の OpenSearch パスワード。
+    - **デフォルト値:** empty
+
+    <h5>`service_name` (AWS のみ)</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.opensearch.service_name`
+    - **説明:** AWS 署名サービス名。`es` (Amazon OpenSearch) または `aoss` (Amazon OpenSearch Serverless) のいずれか。
+    - **デフォルト値:** empty
+
+    <h5>`region` (AWS のみ)</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.opensearch.region`
+    - **説明:** リクエストに署名する AWS リージョン。
+    - **デフォルト値:** empty
+
+    <h5>`access_key_id` (AWS のみ)</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.opensearch.access_key_id`
+    - **説明:** AWS アクセスキー ID。
+    - **デフォルト値:** empty
+
+    <h5>`secret_access_key` (AWS のみ)</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.opensearch.secret_access_key`
+    - **説明:** AWS シークレットアクセスキー。
+    - **デフォルト値:** empty
+  </TabItem>
+  <TabItem value="azure-cosmos-db-for-nosql" label="Azure Cosmos DB for NoSQL">
+    Azure Cosmos DB for NoSQL 埋め込みストアはバックエンドとして Azure Cosmos DB を使用します。
+
+    <h5>`type`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.type`
+    - **説明:** `azure-cosmos-nosql` に設定する必要があります。
+    - **デフォルト値:** N/A
+
+    <h5>`endpoint`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.azure-cosmos-nosql.endpoint`
+    - **説明:** Azure Cosmos DB エンドポイント URL。
+    - **デフォルト値:** empty
+
+    <h5>`key`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.azure-cosmos-nosql.key`
+    - **説明:** 認証用のマスターキーまたは読み取り専用キー。
+    - **デフォルト値:** empty
+
+    <h5>`database_name`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.azure-cosmos-nosql.database_name`
+    - **説明:** Azure Cosmos DB データベース名。
+    - **デフォルト値:** empty
+
+    <h5>`container_name`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.azure-cosmos-nosql.container_name`
+    - **説明:** Azure Cosmos DB コンテナー名。
+    - **デフォルト値:** empty
+
+    <h5>`dimensions`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.azure-cosmos-nosql.dimensions`
+    - **説明:** 埋め込みの次元。
+    - **デフォルト値:** 1536
+  </TabItem>
+  <TabItem value="azure-ai-search" label="Azure AI Search">
+    Azure AI Search 埋め込みストアはバックエンドとして Azure AI Search を使用します。
+
+    <h5>`type`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.type`
+    - **説明:** `azure-ai-search` に設定する必要があります。
+    - **デフォルト値:** N/A
+
+    <h5>`endpoint`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.azure-ai-search.endpoint`
+    - **説明:** Azure AI Search エンドポイント URL。
+    - **デフォルト値:** empty
+
+    <h5>`api_key`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.azure-ai-search.api_key`
+    - **説明:** Azure AI Search API キー。
+    - **デフォルト値:** empty
+
+    <h5>`index_name`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.azure-ai-search.index_name`
+    - **説明:** 使用するインデックスの名前。インデックスが提供されない場合、デフォルトのインデックス名が使用されます。
+    - **デフォルト値:** empty
+
+    <h5>`dimensions`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.azure-ai-search.dimensions`
+    - **説明:** 埋め込みの次元。
+    - **デフォルト値:** 1536
+  </TabItem>
+  <TabItem value="pgvector" label="pgvector">
+    pgvector 埋め込みストアは、ベクトル類似検索用の Postgres 拡張機能である pgvector をバックエンドとして使用します。
+
+    <h5>`type`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.type`
+    - **説明:** `pgvector` に設定する必要があります。
+    - **デフォルト値:** N/A
+
+    <h5>`host`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.pgvector.host`
+    - **説明:** データベースホスト。
+    - **デフォルト値:** empty
+
+    <h5>`port`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.pgvector.port`
+    - **説明:** データベースポート。
+    - **デフォルト値:** 5432
+
+    <h5>`user`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.pgvector.user`
+    - **説明:** データベースユーザー。
+    - **デフォルト値:** empty
+
+    <h5>`password`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.pgvector.password`
+    - **説明:** データベースパスワード。
+    - **デフォルト値:** empty
+
+    <h5>`database`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.pgvector.database`
+    - **説明:** データベース名。
+    - **デフォルト値:** empty
+
+    <h5>`table`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.pgvector.table`
+    - **説明:** テーブル名。
+    - **デフォルト値:** empty
+
+    <h5>`dimensions`</h5>
+
+    - **フィールド:** `scalar.db.embedding.stores.<STORE_NAME>.pgvector.dimensions`
+    - **説明:** 埋め込みの次元。
+    - **デフォルト値:** 1536
+  </TabItem>
+</Tabs>
+
+#### 埋め込みモデルの設定
+
+`scalar.db.embedding.models` に指定された各埋め込みモデル名について、`scalar.db.embedding.models.<MODEL_NAME>.` をプレフィックスとして使用して埋め込みモデルを設定できます。
+
+<Tabs groupId="embedding-model" queryString>
+  <TabItem value="in-process" label="In-process" default>
+    In-process 埋め込みモデルは、ONNX ランタイムによって提供されるローカル埋め込みモデルで、ScalarDB Cluster プロセス内で実行されます。この埋め込みモデルは、迅速なプロトタイピングやシンプルなユースケースに役立ちます。
+
+    <h5>`type`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.type`
+    - **説明:** `in-process` に設定する必要があります。
+    - **デフォルト値:** N/A
+  </TabItem>
+  <TabItem value="amazon-bedrock" label="Amazon Bedrock">
+    Amazon Bedrock 埋め込みモデルはバックエンドとして Amazon Bedrock を使用します。
+
+    <h5>`type`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.type`
+    - **説明:** `bedrock-titan` に設定する必要があります。
+    - **デフォルト値:** N/A
+
+    <h5>`region`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.bedrock-titan.region`
+    - **説明:** リクエストに署名する AWS リージョン。
+    - **デフォルト値:** empty
+
+    <h5>`access_key_id`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.bedrock-titan.access_key_id`
+    - **説明:** AWS アクセスキー ID。
+    - **デフォルト値:** empty
+
+    <h5>`secret_access_key`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.bedrock-titan.secret_access_key`
+    - **説明:** AWS シークレットアクセスキー。
+    - **デフォルト値:** empty
+
+    <h5>`model`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.bedrock-titan.model`
+    - **説明:** モデル名。`amazon.titan-embed-text-v1` または `amazon.titan-embed-text-v2:0`。
+    - **デフォルト値:** empty
+
+    <h5>`dimensions`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.bedrock-titan.dimensions`
+    - **説明:** 埋め込みの次元。
+    - **デフォルト値:** empty
+  </TabItem>
+  <TabItem value="azure-openai" label="Azure OpenAI">
+    Azure OpenAI 埋め込みモデルはバックエンドとして Azure OpenAI を使用します。
+
+    <h5>`type`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.type`
+    - **説明:** `azure-open-ai` に設定する必要があります。
+    - **デフォルト値:** N/A
+
+    <h5>`endpoint`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.azure-open-ai.endpoint`
+    - **説明:** Azure OpenAI エンドポイント URL。
+    - **デフォルト値:** empty
+
+    <h5>`api_key`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.azure-open-ai.api_key`
+    - **説明:** Azure OpenAI API キー。
+    - **デフォルト値:** empty
+
+    <h5>`deployment_name`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.azure-open-ai.deployment_name`
+    - **説明:** Azure OpenAI のデプロイメント名。
+    - **デフォルト値:** empty
+
+    <h5>`dimensions`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.azure-open-ai.dimensions`
+    - **説明:** 埋め込みの次元。
+    - **デフォルト値:** empty
+  </TabItem>
+  <TabItem value="google-vertex-ai" label="Google Vertex AI">
+    Google Vertex AI 埋め込みモデルはバックエンドとして Google Vertex AI を使用します。
+
+    <h5>`type`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.type`
+    - **説明:** `vertex-ai` に設定する必要があります。
+    - **デフォルト値:** N/A
+
+    <h5>`project`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.vertex-ai.project`
+    - **説明:** Google Cloud プロジェクト ID。
+    - **デフォルト値:** empty
+
+    <h5>`location`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.vertex-ai.location`
+    - **説明:** Google Cloud ロケーション。
+    - **デフォルト値:** empty
+
+    <h5>`endpoint`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.vertex-ai.endpoint`
+    - **説明:** エンドポイント URL。
+    - **デフォルト値:** empty
+
+    <h5>`publisher`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.vertex-ai.publisher`
+    - **説明:** パブリッシャー名。
+    - **デフォルト値:** empty
+
+    <h5>`model_name`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.vertex-ai.model_name`
+    - **説明:** モデル名。
+    - **デフォルト値:** empty
+
+    <h5>`output_dimensionality`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.vertex-ai.output_dimensionality`
+    - **説明:** 埋め込みの出力次元。
+    - **デフォルト値:** empty
+  </TabItem>
+  <TabItem value="openai" label="OpenAI">
+    OpenAI 埋め込みモデルはバックエンドとして OpenAI を使用します。
+
+    <h5>`type`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.type`
+    - **説明:** `open-ai` に設定する必要があります。
+    - **デフォルト値:** N/A
+
+    <h5>`api_key`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.open-ai.api_key`
+    - **説明:** OpenAI API キー。
+    - **デフォルト値:** empty
+
+    <h5>`model_name`</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.open-ai.model_name`
+    - **説明:** モデル名。
+    - **デフォルト値:** empty
+
+    <h5>`base_url` (オプション)</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.open-ai.base_url`
+    - **説明:** API のベース URL。
+    - **デフォルト値:** empty
+
+    <h5>`organization_id` (オプション)</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.open-ai.organization_id`
+    - **説明:** OpenAI 組織 ID。
+    - **デフォルト値:** empty
+
+    <h5>`dimensions` (オプション)</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.open-ai.dimensions`
+    - **説明:** 埋め込みの次元。
+    - **デフォルト値:** empty
+
+    <h5>`user` (オプション)</h5>
+
+    - **フィールド:** `scalar.db.embedding.models.<MODEL_NAME>.open-ai.user`
+    - **説明:** ユーザー識別子。
+    - **デフォルト値:** empty
+  </TabItem>
+</Tabs>
+
 ### ABAC 設定
 
 属性ベースアクセス制御 (ABAC) の設定は以下の通りです。
@@ -1101,6 +1503,12 @@ scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
 - **説明:** 受信できるメタデータの最大サイズ。
 - **デフォルト値:** gRPC のデフォルト値
 
+#### `cluster.hop_limit`
+
+- **フィールド:** `scalar.db.cluster.hop_limit`
+- **説明:** クラスターノード間のリクエスト転送を制限するためのホップ上限。
+- **デフォルト値:** `3`
+
 #### `cluster.client.scan_fetch_size`
 
 - **フィールド:** `scalar.db.cluster.client.scan_fetch_size`
@@ -1255,6 +1663,34 @@ Spring Data JDBC for ScalarDB の設定方法の詳細については、[設定]
 
 - **フィールド:** `scalar.db.sql.cluster_mode.password`
 - **説明:** ScalarDB Cluster にアクセスするためのパスワード。
+- **デフォルト値:** empty
+
+### 埋め込みの設定
+
+次に、埋め込みクライアント SDK (`scalardb-cluster-embedding-java-client-sdk`) の設定を示します。
+
+#### `embedding.client.contact_points`
+
+- **フィールド:** `scalar.db.embedding.client.contact_points`
+- **説明:** クラスターのコンタクトポイント。`indirect` クライアントモードを使用する場合は、`indirect:<ロードバランサーの IP アドレス>` の形式でクラスターノードの前にあるロードバランサーの IP アドレスを指定します。`direct-kubernetes` クライアントモードを使用する場合は、`direct-kubernetes:<名前空間名>/<エンドポイント名>` または `direct-kubernetes:<エンドポイント名>` の形式で、メンバーシップ情報を取得するための [endpoint resource](https://kubernetes.io/docs/concepts/services-networking/service/#endpoints) の名前空間名 (省略可能) と名前を指定します。名前空間名を指定しない場合、埋め込みクライアント SDK は `default` 名前空間を使用します。
+- **デフォルト値:** empty
+
+#### `embedding.client.contact_port`
+
+- **フィールド:** `scalar.db.embedding.client.contact_port`
+- **説明:** コンタクトポイントのポート番号。
+- **デフォルト値:** `60053`
+
+#### `embedding.client.store`
+
+- **フィールド:** `scalar.db.embedding.client.store`
+- **説明:** サーバー上の `scalar.db.embedding.stores` で定義された、使用する埋め込みストアの名前。
+- **デフォルト値:** empty
+
+#### `embedding.client.model`
+
+- **フィールド:** `scalar.db.embedding.client.model`
+- **説明:** サーバー上の `scalar.db.embedding.models` で定義された、使用する埋め込みモデルの名前。
 - **デフォルト値:** empty
 
 ## 設定例 - アプリ、ScalarDB Cluster、データベース
