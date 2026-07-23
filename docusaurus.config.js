@@ -193,18 +193,25 @@ const config = {
             from: '/docs/latest/helm-charts/how-to-deploy-scalar-manager',
           },
           {
-            to: '/docs/latest/scalardb-cluster-dotnet-client-sdk',
+            to: '/docs/latest/scalardb-cluster-dotnet-client-sdk/',
             from: '/docs/latest/scalardb-cluster-dotnet-client-sdk/overview',
           },
         ],
         createRedirects(existingPath) {
+          const redirects = [];
           if (existingPath.includes('/ja-jp/docs')) {
             // Redirect from /docs/ja-jp/X to /ja-jp/docs/X.
-            return [
-              existingPath.replace('/ja-jp/docs', '/docs/ja-jp'),
-            ];
+            redirects.push(existingPath.replace('/ja-jp/docs', '/docs/ja-jp'));
           }
-          return undefined; // Return a falsy value: no redirect created
+          if (existingPath.startsWith('/docs/latest/')) {
+            // Redirect from /docs/<OLD_VERSION>/X to /docs/latest/X for versions
+            // that are no longer built (3.4 through 3.13).
+            const retiredVersions = ['3.13', '3.12', '3.11', '3.10', '3.9', '3.8', '3.7', '3.6', '3.5', '3.4'];
+            for (const version of retiredVersions) {
+              redirects.push(existingPath.replace('/docs/latest/', `/docs/${version}/`));
+            }
+          }
+          return redirects.length ? redirects : undefined;
         },
       },
     ],
