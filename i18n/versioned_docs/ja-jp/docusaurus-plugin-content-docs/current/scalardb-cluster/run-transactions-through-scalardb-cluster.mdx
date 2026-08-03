@@ -1,0 +1,149 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Cluster を介してトランザクションを実行する
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import StorageSetupTabs from '../components/_getting-started-setup-storage.mdx';
+
+<TranslationBanner />
+
+このガイドでは、ScalarDB プロパティファイルを設定し、ScalarDB Cluster を使用して1フェーズまたは2フェーズのコミットインターフェイスを介してトランザクションを実行するためのスキーマを作成する方法について説明します。
+
+:::warning
+
+ScalarDB Cluster のライセンスキー (試用ライセンスまたは商用ライセンス) が必要です。ライセンスキーをお持ちでない場合は、[お問い合わせ](https://www.scalar-labs.com/contact)ください。
+
+:::
+
+## 準備
+
+このガイドでは、ScalarDB サンプルリポジトリのサンプルを使用して、データベースと ScalarDB Cluster をスタンドアロンモードでセットアップします。
+
+:::note
+
+スタンドアロンモードの ScalarDB Cluster は、主に開発とテストを目的としています。
+
+:::
+
+### ScalarDB サンプルリポジトリのクローンを作成する
+
+**ターミナル** を開き、次のコマンドを実行して ScalarDB サンプルリポジトリのクローンを作成します。
+
+```console
+git clone https://github.com/scalar-labs/scalardb-samples
+```
+
+次に、次のコマンドを実行して、必要なファイルが含まれているディレクトリに移動します。
+
+```console
+cd scalardb-samples/scalardb-cluster-standalone-mode
+```
+
+## データベースをセットアップする
+
+以下の手順に従って、ScalarDB Cluster 用にデータベースを設定してください。
+
+ScalarDB がサポートするデータベースの一覧については、[データベース](../requirements.mdx#データベース)を参照してください。
+
+<StorageSetupTabs mode="cluster" />
+
+ScalarDB Cluster の設定の包括的なリストについては、[ScalarDB Cluster の設定](developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-クライアント設定) を参照してください。
+
+## スタンドアロンモードで ScalarDB Cluster を設定する
+
+スタンドアロンモードで ScalarDB Cluster を設定するには、ライセンスキーを設定してから ScalarDB Cluster を起動する必要があります。
+
+### ライセンスキーの設定
+
+プロパティファイルで ScalarDB Cluster のライセンスキー (試用ライセンスまたは商用ライセンス) を設定します。詳細については、[製品ライセンスキーの設定方法](../scalar-licensing/index.mdx)を参照してください。
+
+### スタンドアロンモードで ScalarDB Cluster を起動
+
+スタンドアロンモードで ScalarDB Cluster を起動するには、次のコマンドを実行します。
+
+:::note
+
+ScalarDB Cluster のその他の設定を変更する場合は、以下のコマンドを実行する前に `scalardb-cluster-node.properties` ファイルを更新してください。
+
+:::
+
+```console
+docker compose up -d scalardb-cluster-node
+```
+
+## スキーマを作成またはインポートする
+
+ScalarDB には、実装固有のデータモデルとスキーマにマップされる独自のデータモデルとスキーマがあります。
+
+- **データベーススキーマを作成する必要がありますか?** [ScalarDB Schema Loader](../schema-loader.mdx) を参照してください。
+- **既存のデータベースをインポートする必要がありますか?** [ScalarDB Schema Loader を使用して既存のテーブルを ScalarDB にインポートする](../schema-loader-import.mdx)を参照してください。
+
+## 必要に応じて初期データをロードする
+
+ScalarDB Cluster Data Loader は、ScalarDB Cluster でデータのインポートとエクスポートを行うユーティリティです。
+
+- **データベースにデータをインポートする必要がありますか?** [データのインポート](../data-loader.mdx#データのインポート)を参照してください。
+- **データベースからデータをエクスポートする必要がありますか?** [データのエクスポート](../data-loader.mdx#データのエクスポート)を参照してください。
+
+## トランザクションを実行する
+
+1フェーズまたは2フェーズのコミットインターフェースを使用してトランザクションを実行できます。トランザクションを実行する方法を選択してください。
+
+
+:::note
+
+モノリシックなアプリケーションを構築する場合は、1フェーズコミットインターフェースを使用してください。一方、マイクロサービスアプリケーションを構築する場合は、[マイクロサービスにおける ScalarDB Cluster のデプロイパターン](./deployment-patterns-for-microservices.mdx)を読んで、どちらを使用するかを決定してください。
+
+:::
+
+<Tabs groupId="interfaces" queryString>
+  <TabItem value="Java" label="Java" default>
+    <h3>1フェーズコミットインターフェース</h3>
+
+    1フェーズコミットインターフェイスを使用してトランザクションを実行する方法の詳細については、[ScalarDB Java API ガイド](../api-guide.mdx#transactional-api)を参照してください。
+
+:::note
+
+1フェーズコミットインターフェースを使用してトランザクションを実行するには、次のサンプルチュートリアルを参照してください。
+
+- [マルチストレージトランザクションをサポートするサンプルアプリケーションを作成する](../scalardb-samples/multi-storage-transaction-sample/README.mdx)
+- [マルチストレージトランザクションを備えた Spring Data JDBC for ScalarDB のサンプルアプリケーション](../scalardb-samples/spring-data-multi-storage-transaction-sample/README.mdx)
+
+:::
+
+    <h3>2フェーズコミットインターフェース</h3>
+
+    2フェーズコミットインターフェイスを使用してトランザクションを実行する方法の詳細については、[2フェーズコミットインターフェイスを使用したトランザクション](../two-phase-commit-transactions.mdx)を参照してください。
+
+:::note
+
+2フェーズコミットインターフェースを使用してトランザクションを実行するには、次のサンプルチュートリアルを参照してください。
+
+- [マイクロサービストランザクションをサポートするサンプルアプリケーションを作成する](../scalardb-samples/microservice-transaction-sample/README.mdx)
+- [マイクロサービストランザクションを使用した Spring Data JDBC for ScalarDB のサンプルアプリケーション](../scalardb-samples/spring-data-microservice-transaction-sample/README.mdx)
+
+:::
+
+    <h3>詳細</h3>
+
+    ScalarDB Cluster を使用してトランザクションを実行する方法の詳細については、以下を参照してください。
+
+    - [ScalarDB Cluster gRPC API ガイド](scalardb-cluster-grpc-api-guide.mdx)
+  </TabItem>
+  <TabItem value="NET" label=".NET">
+    <h3>1フェーズコミットインターフェース</h3>
+
+    1フェーズコミットインターフェイスを使用してトランザクションを実行する方法の詳細については、[ScalarDB Cluster .NET Client SDK での分散トランザクションをはじめよう](../scalardb-cluster-dotnet-client-sdk/getting-started-with-distributed-transactions.mdx)を参照してください。
+
+    <h3>2フェーズコミットインターフェース</h3>
+
+    2フェーズコミットインターフェイスを使用してトランザクションを実行する方法の詳細については、[ScalarDB Cluster .NET Client SDK の2フェーズコミットインターフェイスを使用した分散トランザクションをはじめよう](../scalardb-cluster-dotnet-client-sdk/getting-started-with-two-phase-commit-transactions.mdx)を参照してください。
+  </TabItem>
+</Tabs>

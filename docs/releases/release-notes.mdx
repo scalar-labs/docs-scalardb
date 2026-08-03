@@ -1,0 +1,81 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsEnglish
+---
+
+# ScalarDB 3.19 Release Notes
+
+This page includes a list of release notes for ScalarDB 3.19.
+
+## v3.19.0
+
+**Release date:** August 2, 2026
+
+### Summary
+
+This release adds Consensus Commit recovery capabilities, including write-set logging, transaction finishing, and single-record recovery APIs, and improves recovery correctness when Coordinator state records are cleaned up. It also adds attribute-based authentication, OpenTelemetry support, the Transaction Coordinator node for Separated Cluster deployments, and Global Transaction API support in the Cluster client SDK. In addition, this release improves `repairTable`, active transaction management, Cluster upgrade and authentication behavior, and SQL SELECT execution, while fixing several Consensus Commit, Cluster rollback/pause, and SQL statement cache issues.
+
+### Community edition
+
+#### Enhancements
+
+- Added an opt-in `scalar.db.consensus_commit.coordinator.write_set_logging.enabled` configuration that, when enabled, adds a `tx_write_set` column to the Coordinator table and populates it on commit/abort. This lays the groundwork for proactive transaction recovery. Existing Coordinator tables can be migrated by enabling the config and running `Admin.repairCoordinatorTables()`. ([#3570](https://github.com/scalar-labs/scalardb/pull/3570) [#3593](https://github.com/scalar-labs/scalardb/pull/3593))
+- Added the `DistributedTransactionManager#finishTransaction(String)` API, which completes per-record post-commit recovery for a committed transaction and removes its Coordinator state row. It returns `true` when the transaction was finished (or was already finished) and `false` when the transaction is not applicable because it carries no write set (for example, a transaction terminated via `rollback()` / `abort()` rather than `commit()`); a `TransactionException` is thrown when finishing fails. Note that this is a low-level operational API specific to the Consensus Commit transaction manager. Most applications should not call it directly; it is intended for advanced use cases. Callers are expected to understand the underlying transaction lifecycle and the implications of invoking this method directly. ([#3567](https://github.com/scalar-labs/scalardb/pull/3567))
+- Added the `DistributedTransactionManager#recoverRecord` API for recovering a single record left in an uncommitted state by a crashed transaction. Note that this is a low-level operational API specific to the Consensus Commit transaction manager. Most applications should not call it directly; it is intended for advanced use cases. Callers are expected to understand the underlying transaction lifecycle and the implications of invoking this method directly. ([#3617](https://github.com/scalar-labs/scalardb/pull/3617))
+
+#### Improvements
+
+- Improved `repairTable` to skip rewriting a table's metadata when it is already up to date (and, for Cosmos DB, to skip updating the container indexing policy when it already matches), avoiding unnecessary writes. ([#3613](https://github.com/scalar-labs/scalardb/pull/3613))
+- Fixed the Consensus Commit recovery and read paths to stay correct when Coordinator state records are removed by cleanup (for example, by `finishTransaction`), preventing stale reads, spurious aborts, and a crash during group-commit lazy recovery. ([#3650](https://github.com/scalar-labs/scalardb/pull/3650))
+- Added a configurable limit on the number of active transactions tracked by active transaction management (`scalar.db.active_transaction_management.max_active_transactions`, default 10000), backed by a Caffeine cache with Window-TinyLFU eviction, and refreshed the idle timer on every transaction operation so long-running transactions are not reaped while still in use. ([#3673](https://github.com/scalar-labs/scalardb/pull/3673))
+
+#### Bug fixes
+
+- Accepts connection string starting with `jdbc:spanner` to connect to Spanner (emulator, omni, and cloud instance) in addition to the already supported `jdbc:cloudspanner` pattern. ([#3559](https://github.com/scalar-labs/scalardb/pull/3559))
+- Fixed an issue in Consensus Commit where a `Get` operation using a secondary index could fail with an `IllegalArgumentException` when another record with the same indexed value was concurrently being deleted and inserted. ([#3607](https://github.com/scalar-labs/scalardb/pull/3607))
+- Fixed an issue in Consensus Commit where a read-only transaction could fail when coordinator write omission on read-only was disabled and coordinator group commit was enabled. ([#3614](https://github.com/scalar-labs/scalardb/pull/3614))
+- Fixed a bug where aborting an in-flight, group-committed transaction by ID via `DistributedTransactionManager.rollback(String)` / `abort(String)` could be lost when the Coordinator group commit feature was enabled. ([#3619](https://github.com/scalar-labs/scalardb/pull/3619))
+- Fixed an issue in the Consensus Commit transaction manager where a read could return a stale (pre-commit) value for a record whose writing transaction committed concurrently during lazy recovery. ([#3621](https://github.com/scalar-labs/scalardb/pull/3621))
+
+### Enterprise edition
+
+#### Enhancements
+
+##### ScalarDB Cluster
+
+- Added attribute-based authentication.
+- Added OpenTelemetry support.
+- Added the Transaction Coordinator node for the new Separated Cluster deployment pattern, which drives two-phase commit across ScalarDB Clusters on behalf of applications using the one-phase transaction interface.
+
+##### ScalarDB SQL
+
+- Added `@AutoConfigureBefore` to `ScalarDbJdbcConfiguration` to explicitly declare auto-configuration ordering relative to Spring Boot's auto-configs.
+
+#### Improvements
+
+##### ScalarDB Cluster
+
+- ScalarDB Cluster now repairs its authentication and ABAC system metadata tables at node startup to create the companion before-image secondary indexes required after upgrading, so deployments upgraded from an earlier version gain them automatically without a manual `repairTable()`.
+- Fixed an issue where a cluster node failed to start when TLS was disabled but a CA root certificate path was still configured.
+- Added support for the Global Transaction API on the ScalarDB Cluster client SDK. Applications can now use `GlobalTransactionManager` to run a single transaction that spans multiple processes, such as microservice transactions, where the Transaction Coordinator drives two-phase commit on their behalf. The same application code also works for transactions within a single ScalarDB Cluster, with only configuration selecting which.
+- Added a configurable expiration margin to the userpass auth-token cache so the ScalarDB Cluster client re-authenticates shortly before a cached token expires, reducing spurious authentication errors near token expiration.
+- Added a fixed label to the Kubernetes Secrets that store data encryption keys for self encryption so that operators can select them with a label selector.
+
+##### ScalarDB SQL
+
+- Enabled the read-only optimization for one-shot SELECT statements and SELECT-only batches.
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Fixed a bug where a `rollback` that exceeded the cluster's request-forwarding hop limit was silently reported as successful instead of surfacing the failure, which could leave records prepared until lazy recovery.
+- **`ABORTED` is new on the pause RPC.** Every pause failure was previously `FAILED_PRECONDITION`. A failure caused by losing a race with another admin request is now `ABORTED`, which means the pause can simply be retried. Every pause failure also carries a `google.rpc.ErrorInfo` detail in the status trailers, with `domain` set to `com.scalar.db.cluster.admin` and `reason` set to the outcome, so a caller can tell the outcomes apart without matching on the status code or the description text. In particular, a caller that unpauses to recover from a failed pause must skip that unpause when the reason is `TIMED_OUT_STILL_PAUSED`, because the server is still paused by an earlier request.
+- Upgraded the Bouncy Castle library and the grpc_health_probe binary to fix security issues: [CVE-2025-14813](https://github.com/advisories/GHSA-574f-3g2m-x479 "CVE-2025-14813"), [CVE-2026-5598](https://github.com/advisories/GHSA-p93r-85wp-75v3 "CVE-2026-5598"), [CVE-2026-25681](https://github.com/advisories/GHSA-w9p8-pvxh-rxpj "CVE-2026-25681"), [CVE-2026-27136](https://github.com/advisories/GHSA-m9x8-m34x-fj9q "CVE-2026-27136"), [CVE-2026-27145](https://github.com/advisories/GHSA-4279-q6mj-392r "CVE-2026-27145"), [CVE-2026-33811](https://github.com/advisories/GHSA-497x-jcxf-m478 "CVE-2026-33811"), CVE-2026-33814, [CVE-2026-39820](https://github.com/advisories/GHSA-p9h5-jm8x-mjm5 "CVE-2026-39820"), [CVE-2026-39821](https://github.com/advisories/GHSA-w2q5-6q6x-x959 "CVE-2026-39821"), [CVE-2026-39822](https://github.com/advisories/GHSA-xcgv-8mv7-v8c7 "CVE-2026-39822"), [CVE-2026-39836](https://github.com/advisories/GHSA-8g2r-hhvj-mv99 "CVE-2026-39836"), [CVE-2026-42499](https://github.com/advisories/GHSA-xq5j-9r39-c3vf "CVE-2026-42499"), and [CVE-2026-42504](https://github.com/advisories/GHSA-h524-452v-82p9 "CVE-2026-42504")
+
+##### ScalarDB SQL
+
+- Fixed a statement cache regression where non-parameterized DML statements occupied cache slots intended for parameterized SQL. Cache eligibility is now correctly gated on the presence of bind markers in the parsed SQL.

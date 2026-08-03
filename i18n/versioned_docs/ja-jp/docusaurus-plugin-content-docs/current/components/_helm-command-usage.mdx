@@ -1,0 +1,106 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+
+<h3>前提条件</h3>
+
+1. `helm repo add` コマンドと `helm repo update` コマンドを使用して、Scalar Helm Chart リポジトリを追加し、最新バージョンに更新してください。
+
+   <CodeBlock language="console">helm repo add scalar-labs https://scalar-labs.github.io/helm-charts</CodeBlock>
+
+   <CodeBlock language="console">helm repo update</CodeBlock>
+
+1. デプロイまたはアップグレードする ScalarDB 製品のバージョン（厳密には、対応するチャートバージョン）を決定してください。以下のコマンドを実行してバージョンを確認できます。
+
+   <CodeBlock language="console">helm search repo scalar-labs/&lt;CHART_NAME&gt; -l</CodeBlock>
+
+   :::tip
+
+   このドキュメントでは（{props.productName} をデプロイする場合）、以下のコマンドを実行してください。
+
+   <CodeBlock language="console">helm search repo scalar-labs/{props.helmChartName} -l</CodeBlock>
+
+   :::
+
+   例えば、以下のような出力が表示されます。
+
+   <CodeBlock language="console">NAME                        CHART VERSION   APP VERSION
+   scalar-labs/&lt;CHART_NAME&gt;    1.9.0           3.16.1
+   scalar-labs/&lt;CHART_NAME&gt;    1.8.1           3.16.1
+   scalar-labs/&lt;CHART_NAME&gt;    1.8.0           3.16.0
+   scalar-labs/&lt;CHART_NAME&gt;    1.7.6           3.15.5
+   scalar-labs/&lt;CHART_NAME&gt;    1.7.5           3.15.5
+   scalar-labs/&lt;CHART_NAME&gt;    1.7.4           3.15.5
+   scalar-labs/&lt;CHART_NAME&gt;    1.7.3           3.15.4
+   scalar-labs/&lt;CHART_NAME&gt;    1.7.2           3.15.3
+   scalar-labs/&lt;CHART_NAME&gt;    1.7.1           3.15.2
+   scalar-labs/&lt;CHART_NAME&gt;    1.7.0           3.15.1
+   scalar-labs/&lt;CHART_NAME&gt;    1.6.4           3.14.4
+   scalar-labs/&lt;CHART_NAME&gt;    1.6.3           3.14.3
+   scalar-labs/&lt;CHART_NAME&gt;    1.6.2           3.14.2
+   scalar-labs/&lt;CHART_NAME&gt;    1.6.1           3.14.1
+   scalar-labs/&lt;CHART_NAME&gt;    1.6.0           3.14.0</CodeBlock>
+
+   :::note
+
+   - `APP VERSION` は ScalarDB 製品自体のバージョンを意味します。まず、このバージョンを確認して、デプロイまたはアップグレードする ScalarDB 製品のバージョンを決定してください。
+   - `APP VERSION` でバージョンを確認し、デプロイまたはアップグレードする ScalarDB 製品のバージョンを決定した後、`CHART VERSION` の対応するバージョンをメモしてください。
+   - `APP VERSION` で同じバージョンが複数ある場合は、`CHART VERSION` の最新バージョンをメモしてください。
+   - 例：
+     - ScalarDB 製品 3.16.1 をデプロイしたい場合は、`CHART VERSION` として `1.9.0` をメモしてください。
+     - ScalarDB 製品 3.15.5 をデプロイしたい場合は、`CHART VERSION` として `1.7.6` をメモしてください。
+     - ScalarDB 製品 3.14.4 をデプロイしたい場合は、`CHART VERSION` として `1.6.4` をメモしてください。
+
+   :::
+
+<h3>デプロイ、アップグレード、またはアンインストール</h3>
+
+<Tabs groupId="operations" queryString>
+  <TabItem value="deploy" label="デプロイ" default>
+  以下のように `helm install` コマンドを使用して {props.productName} をデプロイしてください。
+
+  <CodeBlock language="console">helm install &lt;RELEASE_NAME&gt; scalar-labs/{props.helmChartName} -f {props.helmChartName}.yaml --namespace &lt;KUBERNETES_NAMESPACE&gt; --version &lt;CHART_VERSION&gt;</CodeBlock>
+
+  :::note
+
+  - `<RELEASE_NAME>` をデプロイメントの任意の（一意の）名前に変更してください。
+  - `--namespace` オプションについては、`<KUBERNETES_NAMESPACE>` を {props.productName} をデプロイしたい Kubernetes 名前空間の名前に変更してください。
+  - `--version` オプションについては、`<CHART_VERSION>` を前のステップでメモしたバージョンに変更してください。
+
+  :::
+  </TabItem>
+  <TabItem value="upgrade" label="アップグレード">
+  以下のように `helm upgrade` コマンドを使用して既存の {props.productName} デプロイメントをアップグレードしてください。
+
+  <CodeBlock language="console">helm upgrade &lt;RELEASE_NAME&gt; scalar-labs/{props.helmChartName} -f {props.helmChartName}.yaml --namespace &lt;KUBERNETES_NAMESPACE&gt; --version &lt;CHART_VERSION&gt;</CodeBlock>
+
+  :::note
+
+  - `<RELEASE_NAME>` をアップグレードしたいデプロイメントの任意の（一意の）名前に変更してください。
+  - `--namespace` オプションについては、`<KUBERNETES_NAMESPACE>` を {props.productName} をアップグレードしたい Kubernetes 名前空間の名前に変更してください。
+  - `--version` オプションについては、`<CHART_VERSION>` を前のステップでメモしたバージョンに変更してください。
+
+  :::
+
+  :::important
+
+  {props.productName} のバージョンのダウングレードはサポートされていません。バージョン番号を指定する際は、以下のことのみ可能です。
+  
+    - 既存のデプロイメントと同じバージョンを指定する。例えば、設定を更新する場合などに行うことがあります。
+    - 既存のデプロイメントよりも大きなバージョンを指定する。例えば、{props.productName} のバージョンをアップグレードする場合などに行うことがあります。
+
+  :::
+  </TabItem>
+  <TabItem value="uninstall" label="アンインストール">
+  以下のように `helm uninstall` コマンドを使用して既存の {props.productName} デプロイメントをアンインストールしてください。
+
+  <CodeBlock language="console">helm uninstall &lt;RELEASE_NAME&gt; --namespace &lt;KUBERNETES_NAMESPACE&gt;</CodeBlock>
+
+  :::note
+
+  - `<RELEASE_NAME>` をアンインストールしたいデプロイメントの任意の（一意の）名前に変更してください。
+  - `--namespace` オプションについては、`<KUBERNETES_NAMESPACE>` を {props.productName} をアンインストールしたい Kubernetes 名前空間の名前に変更してください。
+
+  :::
+  </TabItem>
+</Tabs>

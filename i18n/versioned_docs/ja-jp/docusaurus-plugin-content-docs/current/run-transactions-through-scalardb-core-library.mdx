@@ -1,0 +1,63 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Core ライブラリを介してトランザクションを実行する
+
+import StorageSetupTabs from './components/_getting-started-setup-storage.mdx';
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このガイドでは、ScalarDB Core ライブラリを使用して、ScalarDB プロパティファイルを設定し、1フェーズまたは2フェーズのコミットインターフェイスを介してトランザクションを実行するためのスキーマを作成する方法について説明します。
+
+## 準備
+
+このガイドでは、ScalarDB サンプルリポジトリのサンプルを使用して、データベースと ScalarDB をセットアップします。
+
+### ScalarDB サンプルリポジトリのクローンを作成する
+
+**Terminal** を開き、次のコマンドを実行して ScalarDB サンプルリポジトリのクローンを作成します。
+
+```console
+git clone https://github.com/scalar-labs/scalardb-samples
+```
+
+次に、次のコマンドを実行して、必要なファイルが含まれているディレクトリに移動します。
+
+```console
+cd scalardb-samples/scalardb-sample
+```
+
+## データベースをセットアップする
+
+以下の手順に従って、ScalarDB 用にデータベースを設定してください。
+
+ScalarDB がサポートするデータベースの一覧については、[データベース](requirements.mdx#データベース)を参照してください。
+
+<StorageSetupTabs mode="core-java" />
+
+ScalarDB の設定の包括的なリストについては、[ScalarDB Core の設定](configurations.mdx)を参照してください。
+
+## スキーマを作成またはインポートする
+
+ScalarDB には、実装固有のデータモデルとスキーマにマップされる独自のデータモデルとスキーマがあります。
+
+- **データベーススキーマを作成する必要がありますか?** [ScalarDB Schema Loader](schema-loader.mdx) を参照してください。
+- **既存のデータベースをインポートする必要がありますか?** [ScalarDB Schema Loader を使用して既存のテーブルを ScalarDB にインポートする](schema-loader-import.mdx)を参照してください。
+
+## 必要に応じて初期データをロードする
+
+ScalarDB Data Loader は、ScalarDB でデータのインポートとエクスポートを行うユーティリティです。
+
+- **データベースにデータをインポートする必要がありますか?** [データのインポート](data-loader.mdx#データのインポート)を参照してください。
+- **データベースからデータをエクスポートする必要がありますか?** [データのエクスポート](data-loader.mdx#データのエクスポート)を参照してください。
+
+## Javaを使用してトランザクションを実行する
+
+- **1フェーズコミットインターフェイスを使用してトランザクションを実行しますか?** [ScalarDB Java API ガイド](api-guide.mdx#transactional-api)を参照してください。
+- **2フェーズコミットインターフェイスを使用してトランザクションを実行しますか?** [2フェーズコミットインターフェースを使用したトランザクション](two-phase-commit-transactions.mdx)を参照してください。
