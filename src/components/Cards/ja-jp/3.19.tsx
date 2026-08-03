@@ -27,12 +27,12 @@ const recentFeatures = [
       {
         cell: 0, // First cell
         links: ['scalardb-cluster/control-access-via-oidc-based-jwt-tokens'],
-        labels: ['OIDC ベースの JWT アクセストークンを用いてユーザーアクセスを制御 [NEW]']
+        labels: ['OIDC ベースの JWT アクセストークンを用いてユーザーアクセスを制御']
       },
       {
         cell: 1, // Second cell
         links: ['scalardb-analytics/authentication-and-authorization'],
-        labels: ['ScalarDB Analytics でユーザーを認証と認可 [NEW]']
+        labels: ['ScalarDB Analytics でユーザーを認証と認可']
       },
       {
         cell: 2, // Second cell
