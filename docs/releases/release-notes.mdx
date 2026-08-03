@@ -10,6 +10,61 @@ displayed_sidebar: docsEnglish
 
 This page includes a list of release notes for ScalarDB 3.18.
 
+## v3.18.1
+
+**Release date:** August 2, 2026
+
+### Summary
+
+This release improves `repairTable` to avoid unnecessary metadata and indexing-policy updates, adds support for `jdbc:spanner` connection strings, fixes multiple Consensus Commit transaction handling issues, improves ScalarDB Cluster metadata repair and ScalarDB SQL SELECT execution, resolves Cluster rollback/pause and SQL statement cache bugs, and upgrades several dependencies to address security vulnerabilities.
+
+### Community edition
+
+#### Improvements
+
+- Improved `repairTable` to skip rewriting a table's metadata when it is already up to date (and, for Cosmos DB, to skip updating the container indexing policy when it already matches), avoiding unnecessary writes. ([#3613](https://github.com/scalar-labs/scalardb/pull/3613))
+
+#### Bug fixes
+
+- Accepts connection string starting with `jdbc:spanner` to connect to Spanner (emulator, omni, and cloud instance) in addition to the already supported `jdbc:cloudspanner` pattern. ([#3559](https://github.com/scalar-labs/scalardb/pull/3559))
+- Fixed an issue in Consensus Commit where a `Get` operation using a secondary index could fail with an `IllegalArgumentException` when another record with the same indexed value was concurrently being deleted and inserted. ([#3607](https://github.com/scalar-labs/scalardb/pull/3607))
+- Fixed an issue in Consensus Commit where a read-only transaction could fail when coordinator write omission on read-only was disabled and coordinator group commit was enabled. ([#3614](https://github.com/scalar-labs/scalardb/pull/3614))
+- Fixed a bug where aborting an in-flight, group-committed transaction by ID via `DistributedTransactionManager.rollback(String)` / `abort(String)` could be lost when the Coordinator group commit feature was enabled. ([#3619](https://github.com/scalar-labs/scalardb/pull/3619))
+- Fixed an issue in the Consensus Commit transaction manager where a read could return a stale (pre-commit) value for a record whose writing transaction committed concurrently during lazy recovery. ([#3621](https://github.com/scalar-labs/scalardb/pull/3621))
+- Upgraded the Jackson, Netty, Azure Cosmos DB, and Azure Blob Storage libraries to fix security issues: [CVE-2026-42579](https://github.com/advisories/GHSA-cm33-6792-r9fm), [CVE-2026-42583](https://github.com/advisories/GHSA-mj4r-2hfc-f8p6), [CVE-2026-42584](https://github.com/advisories/GHSA-57rv-r2g8-2cj3), [CVE-2026-42587](https://github.com/advisories/GHSA-f6hv-jmp6-3vwv), [CVE-2026-44249](https://github.com/advisories/GHSA-3qp7-7mw8-wx86), [CVE-2026-45416](https://github.com/advisories/GHSA-x4gw-5cx5-pgmh), [CVE-2026-45674](https://github.com/advisories/GHSA-676x-f7gg-47vc), [CVE-2026-47691](https://github.com/advisories/GHSA-5pvg-856g-cp85), [CVE-2026-50010](https://github.com/advisories/GHSA-c653-97m9-rcg9), [CVE-2026-54512](https://github.com/advisories/GHSA-j3rv-43j4-c7qm), [CVE-2026-54513](https://github.com/advisories/GHSA-rmj7-2vxq-3g9f), [CVE-2026-55831](https://github.com/advisories/GHSA-6jqx-86gh-f27w), [CVE-2026-55833](https://github.com/advisories/GHSA-mvh2-crg5-v77c), [CVE-2026-56745](https://github.com/advisories/GHSA-jppx-w49h-x2qq), [CVE-2026-59901](https://github.com/advisories/GHSA-558v-64gr-wgg4), and [GHSA-r7wm-3cxj-wff9](https://github.com/advisories/GHSA-r7wm-3cxj-wff9) ([#3754](https://github.com/scalar-labs/scalardb/pull/3754))
+- Upgraded the PostgreSQL JDBC driver to fix security issues: [CVE-2026-42198](https://github.com/advisories/GHSA-98qh-xjc8-98pq) and [CVE-2026-54291](https://github.com/advisories/GHSA-j92g-9f8w-j867) ([#3758](https://github.com/scalar-labs/scalardb/pull/3758))
+
+### Enterprise edition
+
+#### Enhancements
+
+##### ScalarDB SQL
+
+- Added `@AutoConfigureBefore` to `ScalarDbJdbcConfiguration` to explicitly declare auto-configuration ordering relative to Spring Boot's auto-configs.
+
+#### Improvements
+
+##### ScalarDB Cluster
+
+- ScalarDB Cluster now repairs its authentication and ABAC system metadata tables at node startup to create the companion before-image secondary indexes required after upgrading, so deployments upgraded from an earlier version gain them automatically without a manual `repairTable()`.
+
+##### ScalarDB SQL
+
+- Enabled the read-only optimization for one-shot SELECT statements and SELECT-only batches.
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Fixed a bug where a `rollback` that exceeded the cluster's request-forwarding hop limit was silently reported as successful instead of surfacing the failure, which could leave records prepared until lazy recovery.
+- Fixed a race condition where pausing a cluster node or the Transaction Coordinator could report success while the node remained unpaused. This could happen when an unpause or another pause request was issued concurrently, and also when a pause that waits for outstanding requests timed out after an earlier pause had already succeeded.
+- Upgraded the Jackson, Netty, and LangChain4j libraries to fix security issues: [CVE-2026-40682](https://github.com/advisories/GHSA-4v8g-86x5-3vrc), [CVE-2026-42027](https://github.com/advisories/GHSA-cx4m-2p55-rw7j), [CVE-2026-42440](https://github.com/advisories/GHSA-659w-93r5-9j6m), [CVE-2026-42583](https://github.com/advisories/GHSA-mj4r-2hfc-f8p6), [CVE-2026-42584](https://github.com/advisories/GHSA-57rv-r2g8-2cj3), [CVE-2026-42587](https://github.com/advisories/GHSA-f6hv-jmp6-3vwv), [CVE-2026-44249](https://github.com/advisories/GHSA-3qp7-7mw8-wx86), [CVE-2026-45416](https://github.com/advisories/GHSA-x4gw-5cx5-pgmh), [CVE-2026-50010](https://github.com/advisories/GHSA-c653-97m9-rcg9), [CVE-2026-54512](https://github.com/advisories/GHSA-j3rv-43j4-c7qm), [CVE-2026-54513](https://github.com/advisories/GHSA-rmj7-2vxq-3g9f), [CVE-2026-55405](https://github.com/advisories/GHSA-2mfg-cc43-9pcj), [CVE-2026-55831](https://github.com/advisories/GHSA-6jqx-86gh-f27w), [CVE-2026-55833](https://github.com/advisories/GHSA-mvh2-crg5-v77c), [CVE-2026-56745](https://github.com/advisories/GHSA-jppx-w49h-x2qq), [CVE-2026-59901](https://github.com/advisories/GHSA-558v-64gr-wgg4), and [GHSA-r7wm-3cxj-wff9](https://github.com/advisories/GHSA-r7wm-3cxj-wff9)
+- Upgraded the Bouncy Castle library and the grpc_health_probe binary to fix security issues: [CVE-2025-14813](https://github.com/advisories/GHSA-574f-3g2m-x479), [CVE-2026-5598](https://github.com/advisories/GHSA-p93r-85wp-75v3), [CVE-2026-25681](https://github.com/advisories/GHSA-w9p8-pvxh-rxpj), [CVE-2026-27136](https://github.com/advisories/GHSA-m9x8-m34x-fj9q), [CVE-2026-27145](https://github.com/advisories/GHSA-4279-q6mj-392r), [CVE-2026-33811](https://github.com/advisories/GHSA-497x-jcxf-m478), CVE-2026-33814, [CVE-2026-39820](https://github.com/advisories/GHSA-p9h5-jm8x-mjm5), [CVE-2026-39821](https://github.com/advisories/GHSA-w2q5-6q6x-x959), [CVE-2026-39822](https://github.com/advisories/GHSA-xcgv-8mv7-v8c7), [CVE-2026-39836](https://github.com/advisories/GHSA-8g2r-hhvj-mv99), [CVE-2026-42499](https://github.com/advisories/GHSA-xq5j-9r39-c3vf), and [CVE-2026-42504](https://github.com/advisories/GHSA-h524-452v-82p9)
+
+##### ScalarDB SQL
+
+- Fixed a statement cache regression where non-parameterized DML statements occupied cache slots intended for parameterized SQL. Cache eligibility is now correctly gated on the presence of bind markers in the parsed SQL.
+
 ## v3.18.0
 
 **Release date:** May 1, 2026

@@ -78,25 +78,25 @@ const config = {
                 label: '3.18',
                 path: 'latest', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
                 banner: 'none',
-                className: '3.18.0',
+                className: '3.18.1',
               },
               "3.17": {
                 label: '3.17',
                 path: '3.17',
                 banner: 'none',
-                className: '3.17.3',
+                className: '3.17.4',
               },
               "3.16": {
                 label: '3.16',
                 path: '3.16',
                 banner: 'none',
-                className: '3.16.5',
+                className: '3.16.6',
               },
               "3.15": {
                 label: '3.15',
                 path: '3.15',
                 banner: 'unmaintained',
-                className: '3.15.8',
+                className: '3.15.9',
               },
               "3.14": {
                 label: '3.14',
