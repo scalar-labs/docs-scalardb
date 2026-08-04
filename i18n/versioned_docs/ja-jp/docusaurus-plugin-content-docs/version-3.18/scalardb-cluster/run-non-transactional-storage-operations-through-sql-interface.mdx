@@ -1,0 +1,237 @@
+---
+tags:
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# SQL インターフェースを介して非トランザクションストレージ操作を実行する
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import StorageSetupTabs from '../components/_getting-started-setup-storage.mdx';
+
+<TranslationBanner />
+
+このガイドでは、ScalarDB Cluster の SQL インターフェースを通じて非トランザクションストレージ操作を実行する方法について説明します。
+
+:::warning
+
+ScalarDB Cluster のライセンスキー (試用ライセンスまたは商用ライセンス) が必要です。ライセンスキーをお持ちでない場合は、[お問い合わせ](https://www.scalar-labs.com/contact)ください。
+
+:::
+
+## 準備
+
+このガイドでは、ScalarDB サンプルリポジトリのサンプルを使用して、データベースと ScalarDB Cluster をスタンドアロンモードでセットアップします。
+
+:::note
+
+スタンドアロンモードの ScalarDB Cluster は、主に開発とテストを目的としています。
+
+:::
+
+### ScalarDB サンプルリポジトリのクローンを作成する
+
+**ターミナル** を開き、次のコマンドを実行して ScalarDB サンプルリポジトリのクローンを作成します。
+
+```console
+git clone https://github.com/scalar-labs/scalardb-samples
+```
+
+次に、次のコマンドを実行して、必要なファイルが含まれているディレクトリに移動します。
+
+```console
+cd scalardb-samples/scalardb-cluster-standalone-mode
+```
+
+## データベースをセットアップする
+
+以下の手順に従って、ScalarDB Cluster 用にデータベースを設定してください。
+
+ScalarDB がサポートするデータベースの一覧については、[データベース](../requirements.mdx#データベース)を参照してください。
+
+<StorageSetupTabs mode="cluster" />
+
+ScalarDB の設定の包括的なリストについては、[ScalarDB の設定](../configurations.mdx)を参照してください。
+
+## スタンドアロンモードで ScalarDB Cluster を設定する
+
+スタンドアロンモードで ScalarDB Cluster を設定するには、非トランザクションストレージ操作を実行するように ScalarDB Cluster を設定し、ライセンスキーを設定してから、ScalarDB Cluster を起動する必要があります。
+
+### 非トランザクションストレージ操作を実行するように ScalarDB Cluster を設定する
+
+非トランザクションストレージ操作を実行するには、設定ファイル `scalardb-cluster-node.properties` で `scalar.db.transaction_manager` プロパティを `single-crud-operation` に設定する必要があります。
+
+```properties
+scalar.db.transaction_manager=single-crud-operation
+```
+
+### ライセンスキーの設定
+
+プロパティファイルで ScalarDB Cluster のライセンスキー (試用ライセンスまたは商用ライセンス) を設定します。詳細については、[製品ライセンスキーの設定方法](../scalar-licensing/index.mdx)を参照してください。
+
+### スタンドアロンモードで ScalarDB Cluster を起動
+
+スタンドアロンモードで ScalarDB Cluster を起動するには、次のコマンドを実行します。
+
+:::note
+
+ScalarDB Cluster のその他の設定を変更する場合は、以下のコマンドを実行する前に `scalardb-cluster-node.properties` ファイルを更新してください。
+
+:::
+
+```console
+docker compose up -d scalardb-cluster-node
+```
+
+## スキーマを作成またはインポートする
+
+ScalarDB には、実装固有のデータモデルとスキーマにマップされる独自のデータモデルとスキーマがあります。
+
+- **データベーススキーマを作成する必要がありますか?** [クラスター用 Schema Loader](developer-guide-for-scalardb-cluster-with-java-api.mdx#クラスター用-schema-loader) を参照してください。
+- **既存のデータベースをインポートする必要がありますか?** [ScalarDB Schema Loader を使用して既存のテーブルを ScalarDB にインポートする](../schema-loader-import.mdx)を参照してください。
+
+また、サポートされている DDL のリストについては、[ScalarDB SQL 文法](../scalardb-sql/grammar.mdx)を参照してください。
+
+## 必要に応じて初期データをロードする
+
+ScalarDB Cluster Data Loader は、ScalarDB Cluster でデータのインポートとエクスポートを行うユーティリティです。
+
+- **データベースにデータをインポートする必要がありますか?** [データのインポート](../data-loader.mdx#データのインポート)を参照してください。
+- **データベースからデータをエクスポートする必要がありますか?** [データのエクスポート](../data-loader.mdx#データのエクスポート)を参照してください。
+
+## アプリケーションを作成する
+
+<Tabs groupId="interfaces" queryString>
+  <TabItem value="JDBC" label="JDBC" default>
+    <h3>JDBC アプリケーションを設定する</h3>
+
+    このセクションでは、ScalarDB JDBC ドライバーをプロジェクトに追加する方法と、Java を使用して非トランザクションストレージ操作を実行するように設定する方法について説明します。
+
+    <h3>ScalarDB JDBC ドライバーをプロジェクトに追加する</h3>
+
+    Gradle または Maven を使用して、ScalarDB JDBC ドライバーをビルド依存関係としてアプリケーションに追加できます。
+
+    ビルドツールを選択し、手順に従って ScalarDB JDBC ドライバーのビルド依存関係をアプリケーションに追加します。
+
+    <Tabs groupId="build_tools" queryString>
+      <TabItem value="Gradle" label="Gradle" default>
+        Gradle を使用して ScalarDB JDBC ドライバーのビルド依存関係を追加するには、アプリケーションの `build.gradle` に以下を追加します。
+
+        ```gradle
+        dependencies {
+            implementation 'com.scalar-labs:scalardb-sql-jdbc:3.18.1'
+            implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.18.1'
+        }
+        ```
+      </TabItem>
+      <TabItem value="Maven" label="Maven">
+        Maven を使用して ScalarDB SQL API のビルド依存関係を追加するには、アプリケーションの `pom.xml` に以下を追加します。
+
+        ```xml
+        <dependencies>
+            <dependency>
+                <groupId>com.scalar-labs</groupId>
+                <artifactId>scalardb-sql-jdbc</artifactId>
+                <version>3.18.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.scalar-labs</groupId>
+                <artifactId>scalardb-cluster-java-client-sdk</artifactId>
+                <version>3.18.1</version>
+            </dependency>
+        </dependencies>
+        ```
+      </TabItem>
+    </Tabs>
+
+    <h3>SQL インターフェース用に ScalarDB Cluster Java SDK を設定する</h3>
+
+    SQL インターフェース用に ScalarDB Cluster Java SDK を設定する方法の詳細については、[ScalarDB Cluster SQL クライアント設定](developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-クライアント設定)を参照してください。
+
+    <h3>JDBC API を使用する</h3>
+
+    JDBC API の詳細については、[ScalarDB JDBC ガイド](../scalardb-sql/jdbc-guide.mdx)を参照してください。
+
+:::note
+
+非トランザクションストレージ操作には、次の制限が適用されます:
+
+- トランザクションの開始はサポートされていません。
+- 単一の SQL ステートメントで複数のミューテーションを実行することはサポートされていません。
+- 分離レベルは常に `READ_COMMITTED` です。
+
+:::
+
+    <h3>詳細</h3>
+
+    - [Java API を使用した ScalarDB Cluster の開発者ガイド](developer-guide-for-scalardb-cluster-with-java-api.mdx)
+    - [Java JDBC API](https://docs.oracle.com/javase/8/docs/technotes/guides/jdbc/)
+  </TabItem>
+  <TabItem value="Java" label="Java">
+    <h3>Java アプリケーションを設定する</h3>
+
+    このセクションでは、ScalarDB SQL API をプロジェクトに追加する方法と、Java を使用して非トランザクションストレージ操作を実行するように設定する方法について説明します。
+
+    <h3>ScalarDB SQL API をプロジェクトに追加する</h3>
+
+    Gradle または Maven を使用して、ScalarDB SQL API をビルド依存関係としてアプリケーションに追加できます。
+
+    ビルドツールを選択し、手順に従って ScalarDB SQL API のビルド依存関係をアプリケーションに追加します。
+
+    <Tabs groupId="build_tools" queryString>
+      <TabItem value="Gradle" label="Gradle" default>
+        Gradle を使用して ScalarDB SQL API のビルド依存関係を追加するには、アプリケーションの `build.gradle` に以下を追加します。
+
+        ```gradle
+        dependencies {
+            implementation 'com.scalar-labs:scalardb-sql:3.18.1'
+            implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.18.1'
+        }
+        ```
+      </TabItem>
+      <TabItem value="Maven" label="Maven">
+        Maven を使用して ScalarDB SQL API のビルド依存関係を追加するには、アプリケーションの `pom.xml` に以下を追加します。
+
+        ```xml
+        <dependencies>
+            <dependency>
+                <groupId>com.scalar-labs</groupId>
+                <artifactId>scalardb-sql</artifactId>
+                <version>3.18.1</version>
+            </dependency>
+            <dependency>
+                <groupId>com.scalar-labs</groupId>
+                <artifactId>scalardb-cluster-java-client-sdk</artifactId>
+                <version>3.18.1</version>
+            </dependency>
+        </dependencies>
+        ```
+      </TabItem>
+    </Tabs>
+
+    <h3>SQL インターフェース用に ScalarDB Cluster Java SDK を設定する</h3>
+
+    SQL インターフェース用に ScalarDB Cluster Java SDK を設定する方法の詳細については、[ScalarDB Cluster SQL クライアント設定](developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-クライアント設定)を参照してください。
+
+    <h3>Java API を使用する</h3>
+
+    SQL API の詳細については、[ScalarDB SQL API ガイド](../scalardb-sql/sql-api-guide.mdx)を参照してください。
+
+:::note
+
+非トランザクションストレージ操作には、次の制限が適用されます:
+
+- トランザクションの開始はサポートされていません。
+- 単一の SQL ステートメントで複数のミューテーションを実行することはサポートされていません。
+- 分離レベルは常に `READ_COMMITTED` です。
+
+:::
+
+    <h3>詳細</h3>
+
+    - [Javadoc](https://javadoc.io/doc/com.scalar-labs/scalardb-sql/3.18.1/index.html)
+
+  </TabItem>
+</Tabs>
