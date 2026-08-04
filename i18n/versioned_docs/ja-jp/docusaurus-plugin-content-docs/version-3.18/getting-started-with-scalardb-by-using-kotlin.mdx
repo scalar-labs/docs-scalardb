@@ -1,0 +1,167 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# Kotlin を使って ScalarDB をはじめよう
+
+import StorageSetupTabs from './components/_getting-started-setup-storage.mdx';
+import LoadSchemaTabs from './components/_getting-started-load-schema.mdx';
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+import JDKVersions from './components/_prerequisites-jdk-versions.mdx';
+
+<TranslationBanner />
+
+この入門チュートリアルでは、ScalarDB で好みのデータベースを設定し、Kotlin を使用して基本的な電子マネーアプリケーションをセットアップする方法について説明します。Kotlin は Java との相互運用性を備えているため、Kotlin から直接 ScalarDB を使用できます。
+
+:::warning
+
+電子マネーアプリケーションはこのチュートリアル用に簡略化されており、実稼働環境には適していません。
+
+:::
+
+## このサンプルアプリケーションの前提条件
+
+ScalarDB は Java で記述されているため、環境に次のいずれかの Java Development Kit (JDK) がインストールされている必要があります。
+
+- 以下のいずれかの Java Development Kit (JDK):
+  <JDKVersions versionNumbers="8、11、17、または 21" />
+- [Docker](https://www.docker.com/get-started/) 20.10以降と [Docker Compose](https://docs.docker.com/compose/install/) V2以降
+
+## ScalarDB サンプルリポジトリのクローンを作成する
+
+**Terminal** を開き、次のコマンドを実行して ScalarDB サンプルリポジトリのクローンを作成します。
+
+```console
+git clone https://github.com/scalar-labs/scalardb-samples
+```
+
+次に、次のコマンドを実行して、サンプルアプリケーションが含まれているディレクトリに移動します。
+
+```console
+cd scalardb-samples/scalardb-kotlin-sample
+```
+
+## データベースをセットアップする
+
+以下の手順に従って、ScalarDB 用にデータベースを設定してください。
+
+ScalarDB がサポートするデータベースの一覧については、[データベース](requirements.mdx#データベース)を参照してください。
+
+<StorageSetupTabs mode="core-kotlin" />
+
+## データベーススキーマをロードする
+
+アプリケーションでデータベーススキーマ (データを整理する方法) を定義する必要があります。サポートされているデータ型の詳細については、[データベースアダプター](database-adapters.mdx)を参照してください。
+
+このチュートリアルでは、**schema.json** というファイルが `scalardb-samples/scalardb-kotlin-sample` ディレクトリに既に存在します。スキーマを適用するには、[`scalardb` Releases](https://github.com/scalar-labs/scalardb/releases) ページに移動し、使用している ScalarDB のバージョンに一致する ScalarDB Schema Loader を `scalardb-samples/scalardb-kotlin-sample` ディレクトリにダウンロードします。
+
+次に、データベースに基づいて、`<VERSION>` をダウンロードした ScalarDB Schema Loader のバージョンに置き換えて、次のコマンドを実行します。
+
+<LoadSchemaTabs />
+
+## 基本的な電子マネーアプリケーションでトランザクションを実行し、データを取得します
+
+スキーマをロードした後、クローンしたリポジトリに含まれる基本的な電子マネーアプリケーションでトランザクションを実行し、データを取得できます。
+
+アプリケーションは、次の種類のトランザクションをサポートしています:
+
+- アカウントを作成します。
+- アカウントに資金を追加します。
+- 2つのアカウント間で資金を送信します。
+- アカウント残高を取得します。
+
+:::note
+
+初めて Gradle コマンドを実行すると、Gradle によって必要なライブラリが自動的にインストールされます。
+
+:::
+
+### 残高のあるアカウントを作成する
+
+アカウント間で資金を送金するには、残高のあるアカウントが必要です。
+
+**customer1** の残高が **500** のアカウントを作成するには、次のコマンドを実行します。
+
+```console
+./gradlew run --args="-action charge -amount 500 -to customer1"
+```
+
+### 残高のないアカウントを作成する
+
+残高のあるアカウントを設定したら、資金を送金するための別のアカウントが必要です。
+
+残高が **0** の **merchant1** のアカウントを作成するには、次のコマンドを実行します。
+
+```console
+./gradlew run --args="-action charge -amount 0 -to merchant1"
+```
+
+### アカウントに資金を追加する
+
+[残高のあるアカウントを作成する](#残高のあるアカウントを作成する)でアカウントを作成して資金を追加したのと同じ方法で、アカウントに資金を追加できます。
+
+**customer1** のアカウントに **500** を追加するには、次のコマンドを実行します。
+
+```console
+./gradlew run --args="-action charge -amount 500 -to customer1"
+```
+
+**customer1** のアカウントの残高は **1000** になります。
+
+### 2つのアカウント間で電子マネーを送金する
+
+これで 2つのアカウントが作成され、少なくとも1つのアカウントに残高があるので、一方のアカウントからもう一方のアカウントに資金を送金できます。
+
+**customer1** が **merchant1** に **100** を支払うようにするには、次のコマンドを実行します。
+
+```console
+./gradlew run --args="-action pay -amount 100 -from customer1 -to merchant1"
+```
+
+### アカウント残高を取得する
+
+あるアカウントから別のアカウントに資金を送金した後、各アカウントの残高を確認できます。
+
+**customer1** の残高を取得するには、次のコマンドを実行します。
+
+```console
+./gradlew run --args="-action getBalance -id customer1"
+```
+
+次の出力が表示されます。
+
+```console
+...
+The balance for customer1 is 900
+...
+```
+
+**merchant1** の残高を取得するには、次のコマンドを実行します。
+
+```console
+./gradlew run --args="-action getBalance -id merchant1"
+```
+
+次の出力が表示されます。
+
+```console
+...
+The balance for merchant1 is 100
+...
+```
+
+## データベースを停止する
+
+データベースを停止するには、次のコマンドを実行して Docker コンテナを停止します。
+
+```console
+docker compose down
+```
+
+## 参照
+
+このチュートリアルで使用されている電子マネーアプリケーションのソースコードを確認するには、[`ElectronicMoney.kt`](https://github.com/scalar-labs/scalardb-samples/blob/main/scalardb-kotlin-sample/src/main/kotlin/sample/ElectronicMoney.kt) を参照してください。

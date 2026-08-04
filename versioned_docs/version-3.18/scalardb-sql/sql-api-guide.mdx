@@ -1,0 +1,441 @@
+---
+tags:
+  - Enterprise Premium
+displayed_sidebar: docsEnglish
+---
+
+# ScalarDB SQL API Guide
+
+import JavadocLink from '/src/theme/JavadocLink.js';
+
+This guide describes how to use ScalarDB SQL API.
+
+## Add ScalarDB SQL API to your project
+
+To add the dependencies on ScalarDB SQL API by using Gradle, use the following, replacing `<VERSION>` with the versions of ScalarDB SQL API and the related library, respectively, that you are using:
+
+```gradle
+dependencies {
+    implementation 'com.scalar-labs:scalardb-sql:<VERSION>'
+    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:<VERSION>'
+}
+```
+
+To add the dependencies by using Maven, use the following, replacing `...` with the version of ScalarDB SQL API that you are using:
+
+```xml
+<dependencies>
+    <dependency>
+        <groupId>com.scalar-labs</groupId>
+        <artifactId>scalardb-sql</artifactId>
+        <version>...</version>
+    </dependency>
+    <dependency>
+        <groupId>com.scalar-labs</groupId>
+        <artifactId>scalardb-cluster-java-client-sdk</artifactId>
+        <version>...</version>
+    </dependency>
+</dependencies>
+```
+
+## SqlSessionFactory
+
+In ScalarDB SQL API, you execute all operations through a `SqlSession` instance, which is instantiated with `SqlSessionFactory`.
+This section explains how to use them.
+
+Before explaining `SqlSessionFactory`, we start with the explanation for Connection mode and Transaction mode.
+
+### Transaction mode
+
+Also, ScalarDB SQL offers two transaction modes: *Transaction* mode and *Two-phase Commit Transaction* mode.
+Transaction mode exposes only `commit` interface to users and runs two-phase commit behind the scene, while Two-phase Commit Transaction mode exposes two-phase commit style interfaces (`prepare` and `commit`) to users.
+
+You can specify the default transaction mode in your configuration file or when you build `SqlSessionFactory`.
+And you also can change it with the `setTransactionMode()` method of `SqlSession`.
+
+### Build SqlSessionFactory
+
+You can build `SqlSessionFactory` with a properties file as follows:
+
+```java
+SqlSessionFactory sqlSessionFactory = SqlSessionFactory.builder()
+    .withPropertiesFile("<your configuration file>")
+    // If you need to set custom properties, you can specify them with withProperty() or withProperties()
+    .withProperty("<custom property name>", "<custom property value>")
+    .build();
+```
+
+Please see [ScalarDB Cluster SQL client configurations](../scalardb-cluster/developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-sql-client-configurations) for the details of the configurations.
+
+### Get a SqlSession instance
+
+You can get a `SqlSession` instance with `SqlSessionFactory` as follows:
+
+```java
+SqlSession sqlSession = sqlSessionFactory.createSqlSession();
+```
+
+Note that `SqlSession` is not thread-safe.
+Please don't use it from multiple threads at the same time.
+
+#### Close a SqlSession instance
+
+Once all operations are done with a `SqlSession` instance, you should close the SqlSession instance:
+
+```java
+sqlSession.close();
+```
+
+### Close a SqlSessionFactory instance
+
+`sqlSessionFactory` should also be closed once it's no longer needed:
+
+```java
+sqlSessionFactory.close();
+```
+
+## Execute SQLs
+
+You can execute a SQL with `SqlSession` as follows:
+
+```java
+ResultSet resultSet = sqlSession.execute("<SQL>");
+```
+
+You can also execute a `Statement` object with `SqlSession` as follows:
+
+```java
+// Build a statement
+Statement statement = StatementBuilder.<factory method>...;
+
+// Execute the statement
+ResultSet resultSet = sqlSession.execute(statement);
+```
+
+For mutation statements (`INSERT`, `UPSERT`, `UPDATE`, or `DELETE`), the returned `ResultSet` contains a single `Record` with one `INT` column named `updateCount`, which reports the number of rows affected.
+
+See [Execute transactions](#execute-transactions) for how DML, DDL, and DCL statements interact with transactions.
+
+`Statement` objects can be built by `StatementBuilder` that has factory methods for corresponding SQLs. For more details, see the <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql/statement/builder" className="StatementBuilder" /> page in the Javadoc and [ScalarDB SQL Grammar](grammar.mdx).
+
+### Handle ResultSet objects
+
+As the result of the SQL execution, `SqlSession` returns a `ResultSet` object.
+Here, we describe how to handle `ResultSet` objects.
+
+If you want to get results one by one from the `ResultSet` object, you can use the `one()` method as follows:
+```java
+Optional<Record> record = resultSet.one();
+```
+
+Or, if you want to get results all at once as a `List`, you can use the `all()` method as follows:
+```java
+List<Record> records = resultSet.all();
+```
+
+Also, as `ResultSet` implements `Iterable`, you can use it in a for-each loop as follows:
+
+```java
+for (Record record : resultSet) {
+    ...
+}
+```
+
+If you want to get the metadata of the `ResultSet` object, you can use the `getColumnDefinitions()` method as follows:
+
+```java
+ColumnDefinitions columnDefinitions = resultSet.getColumnDefinitions();
+```
+
+For more details, see the <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="ColumnDefinition" /> page in the Javadoc.
+
+### Handle Record objects
+
+As mentioned, a `ResultSet` object returns `Record` objects that represent records of the database.
+
+You can get a column value of a result with `getXXX("<column name>")` or `getXXX(<column index>)` methods (XXX is a type name) as follows:
+
+```java
+// Get a BOOLEAN value of a column
+boolean booleanValueGottenByName = record.getBoolean("<column name>");
+boolean booleanValueGottenByIndex = record.getBoolean(<column index>);
+
+// Get an INT value of a column
+int intValueGottenByName = record.getInt("<column name>");
+int intValueGottenByIndex = record.getInt(<column index>);
+
+// Get a BIGINT value of a column
+long bigIntValueGottenByName = record.getBigInt("<column name>");
+long bigIntValueGottenByIndex = record.getBigInt(<column index>);
+
+// Get a FLOAT value of a column
+float floatValueGottenByName = record.getFloat("<column name>");
+float floatValueGottenByIndex = record.getFloat(<column index>);
+
+// Get a DOUBLE value of a column
+double doubleValueGottenByName = record.getDouble("<column name>");
+double doubleValueGottenByIndex = record.getDouble(<column index>);
+
+// Get a TEXT value of a column
+String textValueGottenByName = record.getText("<column name>");
+String textValueGottenByIndex = record.getText(<column index>);
+
+// Get a BLOB value of a column (as a ByteBuffer)
+ByteBuffer blobValueGottenByName = record.getBlob("<column name>");
+ByteBuffer blobValueGottenByIndex = record.getBlob(<column index>);
+
+// Get a BLOB value of a column as a byte array
+byte[] blobValueAsBytesGottenByName = record.getBlobAsBytes("<column name>");
+byte[] blobValueAsBytesGottenByIndex = record.getBlobAsBytes(<column index>);
+
+// Get a DATE value of a column as a LocalDate
+LocalDate dateValueGottenByName = record.getDate("<column name>");
+LocalDate dateValueGottenByName = record.getDate(<column index>);
+
+// Get a TIME value of a column as a LocalTime
+LocalTime timeValueGottenByName = record.getTime("<column name>");
+LocalTime timeValueGottenByName = record.getTime(<column index>);
+
+// Get a TIMESTAMP value of a column as a LocalDateTime
+LocalDateTime timestampValueGottenByName = record.getTimestamp("<column name>");
+LocalDateTime timestampValueGottenByName = record.getTimestamp(<column index>);
+
+// Get a TIMESTAMPTZ value of a column as an Instant
+Instant timestampTZValueGottenByName = record.getTimestampTZ("<column name>");
+Instant timestampTZValueGottenByName = record.getTimestampTZ(<column index>);
+```
+
+And if you need to check if a value of a column is null, you can use the `isNull("<column name>")` or `isNull(<column index>)` method.
+
+``` java
+// Check if a value of a column is null
+boolean isNullGottenByName = record.isNull("<column name>");
+boolean isNullGottenByIndex = record.isNull(<column index>);
+```
+
+For more details, see the <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="Record" /> page of the Javadoc.
+
+### Prepared Statements
+
+You can use `PreparedStatement` for queries that are executed multiple times in your application:
+
+```java
+PreparedStatement preparedStatement = sqlSession.prepareStatement("<SQL>");
+ResultSet result = sqlSession.execute(preparedStatement.bind());
+```
+
+If you execute the same query a second time or later, the cached pre-parsed statement object is used.
+Thus, you can gain a performance advantage with `PreparedStatement` when you execute the query multiple times.
+If you execute a query only once, a prepared statement is inefficient because it requires extra processing.
+Consider using the `sqlSession.execute()` method instead in that case.
+
+Calling `bind(...)` on a `PreparedStatement` returns a `BoundStatement` that holds the parameter values. You then pass the `BoundStatement` to `sqlSession.execute()`.
+
+Parameters can be either positional or named:
+
+```java
+// Positional parameters
+PreparedStatement preparedStatement1 =
+    sqlSession.prepareStatement("INSERT INTO tbl (c1, c2) VALUES (?, ?)");
+
+// Named parameters
+PreparedStatement preparedStatement2 =
+    sqlSession.prepareStatement("INSERT INTO tbl (c1, c2) VALUES (:a, :b)");
+```
+
+You can bind values in one call by passing them to `bind(...)`:
+
+```java
+// Positional values
+sqlSession.execute(preparedStatement1.bind(Value.ofInt(10), Value.ofText("value")));
+
+// Named values
+Map<String, Value> namedValues = new HashMap<>();
+namedValues.put("a", Value.ofInt(10));
+namedValues.put("b", Value.ofText("value"));
+sqlSession.execute(preparedStatement2.bind(namedValues));
+```
+
+Or you can use fluent setters on the `BoundStatement` returned by `bind()`:
+
+```java
+// Positional setters
+sqlSession.execute(
+    preparedStatement1.bind()
+        .setInt(0, 10)
+        .setText(1, "value"));
+
+// Named setters
+sqlSession.execute(
+    preparedStatement2.bind()
+        .setInt("a", 10)
+        .setText("b", "value"));
+```
+
+To wrap a plain SQL string as a `Statement`, for example when constructing a `BatchedStatements`, use `SimpleStatement.of("<SQL>")`.
+
+For more details, see the <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="PreparedStatement" />, <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql/statement" className="BoundStatement" />, and <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql/statement" className="SimpleStatement" /> pages of the Javadoc.
+
+### Execute batch statements
+
+When you need to execute multiple statements in a single round trip, use `sqlSession.executeBatch(...)`. This is useful for bulk inserts, updates, or mixed mutations against one or more namespaces.
+
+Use `BatchedStatements` to build a batch where each statement can carry its own default namespace:
+
+```java
+BatchedStatements batchedStatements =
+    BatchedStatements.builder()
+        .add(boundStatement1, "namespace1")
+        .add(boundStatement2, "namespace2")
+        .add(SimpleStatement.of("INSERT INTO tbl (c1, c2) VALUES (1, 'a')"))
+        .build();
+
+List<ResultSet> results = sqlSession.executeBatch(batchedStatements);
+```
+
+If every statement uses the session's default namespace, you can pass a `List<Statement>` instead:
+
+```java
+List<ResultSet> results =
+    sqlSession.executeBatch(Arrays.asList(boundStatement1, boundStatement2));
+```
+
+`executeBatch(...)` returns a `List<ResultSet>` containing one `ResultSet` per input statement, in the same order as the input.
+
+Batch execution accepts DML, DDL, and DCL statements. Command statements (`BEGIN`, `COMMIT`, `ROLLBACK`, and other transaction-control statements) will be rejected, so use the corresponding `SqlSession` methods instead. See [Execute transactions](#execute-transactions) for how DML, DDL, and DCL statements interact with transactions.
+
+For more details, see the <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="BatchedStatements" /> and <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="SqlStatementExecutable" /> pages of the Javadoc.
+
+## Execute transactions
+
+In ScalarDB SQL, DML statements (`SELECT`, `INSERT`, `UPSERT`, `UPDATE`, and `DELETE`) always run within a transaction. The transaction can be one you started explicitly with `sqlSession.begin()` or one that ScalarDB manages automatically:
+
+- If a transaction is active (after `sqlSession.begin()`), both `sqlSession.execute(...)` and `sqlSession.executeBatch(...)` run their DML statements in that transaction.
+- If no transaction is active, each `sqlSession.execute(...)` call runs its DML statement in its own auto-managed transaction, and each `sqlSession.executeBatch(...)` call runs all DML statements in the batch atomically in a single auto-managed transaction.
+
+In addition to `begin()`, `SqlSession` provides other variants, such as `beginReadOnly()` for starting a read-only transaction and overloads that accept transaction attributes. For details, see the <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql" className="SqlSession" /> page of the Javadoc.
+
+To make multiple DML statements from separate `execute(...)` calls atomic, you must begin an explicit transaction before executing them. `executeBatch(...)` provides atomicity across the DML statements in its batch without requiring an explicit transaction.
+
+DDL and DCL statements are never transactional. Even when called within an explicit transaction or as part of a batch, they are executed immediately and do not participate in any transaction.
+
+This section describes how to execute an explicit transaction for each transaction mode: Transaction mode and Two-phase Commit Transaction mode.
+
+### Transaction Mode
+
+An example code for Transaction mode is as follows:
+
+```java
+try {
+  // Begin a transaction
+  sqlSession.begin();
+
+  // Execute statements (SELECT/INSERT/UPDATE/DELETE) in the transaction
+  ...
+
+  // Commit the transaction
+  sqlSession.commit();
+} catch (UnknownTransactionStatusException e) {
+  // If you catch `UnknownTransactionStatusException`, it indicates that the status of the 
+  // transaction, whether it has succeeded or not, is unknown. In such a case, you need to check if
+  // the transaction is committed successfully or not and retry it if it failed. How to identify a
+  // transaction status is delegated to users
+} catch (SqlException e) {
+  // For other exceptions, you can try retrying the transaction
+
+  // Rollback the transaction
+  sqlSession.rollback();
+
+  // For `TransactionRetryableException`, you can basically retry the transaction. However, for
+  // the other exceptions, the transaction may still fail if the cause of the exception is
+  // nontransient. For such a case, you need to limit the number of retries and give up retrying
+}
+```
+
+If you catch `UnknownTransactionStatusException`, it indicates that the status of the transaction, whether it has succeeded or not, is unknown.
+In such a case, you need to check if the transaction is committed successfully or not and retry it if it fails.
+How to identify a transaction status is delegated to users.
+You may want to create a transaction status table and update it transactionally with other application data so that you can get the status of a transaction from the status table.
+
+If you catch another exception, you can try retrying the transaction.
+For `TransactionRetryableException`, you can basically retry the transaction.
+However, for the other exceptions, the transaction may still fail if the cause of the exception is nontransient. 
+For such a case, you need to limit the number of retries and give up retrying.
+
+### Two-phase Commit Transaction Mode
+
+Before reading this, please read [this document](../two-phase-commit-transactions.mdx) to learn the concept of Two-phase commit transactions.
+
+To begin a transaction for a coordinator, you can do as follows:
+
+```java
+sqlSession.begin();
+```
+
+To retrieve the transaction ID that the coordinator hands to participants, use `getTransactionId()`:
+
+```java
+String transactionId =
+    sqlSession
+        .getTransactionId()
+        .orElseThrow(() -> new IllegalStateException("transaction ID is not available"));
+```
+
+And to join a transaction for participants, you can do as follows:
+
+```java
+sqlSession.join(transactionId);
+```
+
+An example code of Two-phase Commit Transaction mode is as follows:
+
+```java
+try {
+  // Begin a transaction
+  sqlSession.begin();
+
+  // Execute statements (SELECT/INSERT/UPDATE/DELETE) in the transaction
+  ...
+
+  // Prepare the transaction
+  sqlSession.prepare();
+
+  // Validate the transaction
+  sqlSession.validate();
+
+  // Commit the transaction
+  sqlSession.commit();
+} catch (UnknownTransactionStatusException e) {
+  // If you catch `UnknownTransactionStatusException` when committing the transaction, it
+  // indicates that the status of the transaction, whether it has succeeded or not, is unknown.
+  // In such a case, you need to check if the transaction is committed successfully or not and
+  // retry it if it failed. How to identify a transaction status is delegated to users
+} catch (SqlException e) {
+  // For other exceptions, you can try retrying the transaction
+    
+  // Rollback the transaction
+  sqlSession.rollback();
+
+  // For `TransactionRetryableException`, you can basically retry the transaction. However, for
+  // the other exceptions, the transaction may still fail if the cause of the exception is
+  // nontransient. For that case, you need to limit the number of retries and give up retrying
+}
+```
+
+The exception handling is the same as Transaction mode.
+
+## Get Metadata
+
+You can get metadata with the `SqlSession.getMetadata()` method as follows:
+
+```java
+Metadata metadata = sqlSession.getMetadata();
+```
+
+For more details, see the <JavadocLink packageName="scalardb-sql" path="com/scalar/db/sql/metadata" className="Metadata" /> page of the Javadoc.
+
+## References
+
+- [ScalarDB SQL Grammar](grammar.mdx)
+- [Two-phase Commit Transactions](../two-phase-commit-transactions.mdx)
+- [Javadoc for ScalarDB SQL](https://javadoc.io/doc/com.scalar-labs/scalardb-sql/3.18.1/index.html)
