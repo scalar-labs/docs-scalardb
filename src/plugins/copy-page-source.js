@@ -16,7 +16,7 @@
  *
  * MDX component inlining: When a doc imports a local `.mdx` component (e.g.
  * `import Foo from '/src/components/en-us/_foo.mdx'`) and uses it as a JSX
- * self-closing tag (e.g. `<Foo bar="baz" />`), this plugin reads the component
+ * self-closing tag (e.g., `<Foo bar="baz" />`), this plugin reads the component
  * file, substitutes `{props.bar}` with `"baz"`, and replaces the JSX tag with
  * the inlined content. This ensures the copied Markdown is fully readable
  * outside Docusaurus (e.g., admonitions from `_warning-*.mdx` are inlined as
@@ -42,9 +42,9 @@ function stripFrontMatter(content) {
 }
 
 /**
- * Resolve a path (possibly `@site/`-prefixed or root-relative `/src/…`) to an
+ * Resolve a path (possibly `@site/`-prefixed or root-relative `/src/...`) to an
  * absolute filesystem path.
- * @param {string} importPath  e.g. "/src/components/en-us/_foo.mdx"
+ * @param {string} importPath  e.g., "/src/components/en-us/_foo.mdx"
  * @param {string} siteDir     absolute path to the Docusaurus site root
  * @returns {string}
  */
@@ -84,6 +84,24 @@ function stripDocExtension(pathname) {
 function normalizeDocPathname(pathname) {
   const collapsed = pathname.replace(/\/(?:index|README)$/i, '');
   return collapsed || '/';
+}
+
+/**
+ * Insert a `<link rel="alternate" type="text/markdown">` tag immediately before
+ * `</head>` in the given HTML string.
+ *
+ * @param {string} html
+ * @param {string} twinUrl  Absolute URL of the `.md` twin.
+ * @returns {string}
+ * @throws {Error} if the input contains no `</head>`.
+ */
+function injectAlternateLinkTag(html, twinUrl) {
+  const tag = `<link rel="alternate" type="text/markdown" href="${twinUrl}">`;
+  const injected = html.replace(/<\/head>/i, `  ${tag}\n</head>`);
+  if (injected === html) {
+    throw new Error('No </head> tag found in HTML.');
+  }
+  return injected;
 }
 
 /**
@@ -176,7 +194,7 @@ function absolutizeMarkdownLinks(markdown, permalink, siteUrl) {
 }
 
 /**
- * For a doc's MDX source string, find every `import X from '…/file.mdx'`
+ * For a doc's MDX source string, find every `import X from '.../file.mdx'`
  * statement, read the referenced `.mdx` file, and replace any self-closing JSX
  * usage `<X prop="val" />` with the inlined component content (with props
  * substituted). Import lines for inlined components are removed from the output.
@@ -188,7 +206,7 @@ function absolutizeMarkdownLinks(markdown, permalink, siteUrl) {
  * @returns {Promise<string>}
  */
 async function inlineMdxComponents(source, siteDir, cache) {
-  // 1. Collect all `import X from '…/file.mdx'` statements.
+  // 1. Collect all `import X from '.../file.mdx'` statements.
   //    Only local `.mdx` files are inlinable; theme/npm imports are skipped.
   const importLineRegex =
     /^import\s+([A-Za-z0-9_]+)\s+from\s+['"]([^'"]+\.mdx)['"]\s*;?\s*$/gm;
@@ -214,7 +232,7 @@ async function inlineMdxComponents(source, siteDir, cache) {
       } else {
         body = await fs.promises.readFile(filePath, 'utf8');
         body = stripFrontMatter(body);
-        // Strip nested import lines (e.g. `import Tabs from '@theme/Tabs'`)
+        // Strip nested import lines (e.g., `import Tabs from '@theme/Tabs'`)
         // so the inlined content doesn't contain unresolvable MDX imports.
         body = body.replace(
           /^import\s+[A-Za-z0-9_{}, *]+\s+from\s+['"][^'"]+['"]\s*;?\s*\n?/gm,
@@ -299,7 +317,7 @@ module.exports = function copyPageSourcePlugin(context) {
      * We capture the permalink → source path mapping here for use in postBuild.
      */
     async allContentLoaded({ allContent }) {
-      // The docs plugin can register multiple instances (for example, per locale).
+      // The docs plugin can register multiple instances (e.g., per locale).
       const docsInstances = allContent?.['docusaurus-plugin-content-docs'];
 
       if (!docsInstances || typeof docsInstances !== 'object') {
@@ -339,11 +357,16 @@ module.exports = function copyPageSourcePlugin(context) {
 
       const localeDir = path.basename(outDir);
 
-      const writes = docEntries.map(({ permalink, sourcePath }) => {
+      /** Strip the leading locale prefix from a permalink to get the output-relative path. */
+      const toOutputPath = (permalink) => {
         const permalinkPath = permalink.replace(/^\//, '');
-        const outputPath = permalinkPath.startsWith(`${localeDir}/`)
+        return permalinkPath.startsWith(`${localeDir}/`)
           ? permalinkPath.slice(localeDir.length + 1)
           : permalinkPath;
+      };
+
+      const writes = docEntries.map(({ permalink, sourcePath }) => {
+        const outputPath = toOutputPath(permalink);
         const destPath = path.join(outDir, outputPath, 'source.md');
         return fs.promises
           .readFile(sourcePath, 'utf8')
@@ -356,6 +379,24 @@ module.exports = function copyPageSourcePlugin(context) {
             content = content.trimStart();
             await fs.promises.mkdir(path.dirname(destPath), { recursive: true });
             await fs.promises.writeFile(destPath, content, 'utf8');
+
+            // Skip twin write and tag injection for the site root: `<outDir>/.md`
+            // is nonsensical and no doc renders there in practice.
+            if (permalink === '/') return;
+
+            // The `.md` twin lives as a sibling of the `<outputPath>/` directory
+            // that already holds source.md, at `<outDir>/<outputPath>.md`.
+            const twinPath = path.join(outDir, outputPath.replace(/\/$/, '') + '.md');
+            await fs.promises.mkdir(path.dirname(twinPath), { recursive: true });
+            await fs.promises.writeFile(twinPath, content, 'utf8');
+
+            if (siteUrl) {
+              const htmlPath = path.join(outDir, outputPath, 'index.html');
+              const twinUrl = `${siteUrl}${permalink.replace(/\/$/, '')}.md`;
+              const html = await fs.promises.readFile(htmlPath, 'utf8');
+              const injected = injectAlternateLinkTag(html, twinUrl);
+              await fs.promises.writeFile(htmlPath, injected, 'utf8');
+            }
           })
           .catch((err) => {
             console.warn(`[copy-page-source] Skipping ${sourcePath}: ${err.message}`);
@@ -364,6 +405,48 @@ module.exports = function copyPageSourcePlugin(context) {
 
       await Promise.all(writes);
       console.log(`[copy-page-source] Wrote source.md for ${docEntries.length} pages to ${outDir}.`);
+
+      // Audit: fail the build loudly if any doc is missing its twin or alternate
+      // tag. The dominant failure mode of this feature is silent drift as new
+      // pages/locales/versions are added; the audit turns that into a CI failure
+      // on the introducing PR.
+      if (!siteUrl) {
+        console.warn('[copy-page-source] siteConfig.url is not set; skipping twin/tag audit.');
+        return;
+      }
+
+      const failures = [];
+      for (const { permalink } of docEntries) {
+        if (permalink === '/') continue;
+        const outputPath = toOutputPath(permalink);
+        const twinPath = path.join(outDir, outputPath.replace(/\/$/, '') + '.md');
+        const htmlPath = path.join(outDir, outputPath, 'index.html');
+        const twinUrl = `${siteUrl}${permalink.replace(/\/$/, '')}.md`;
+        const expectedTag = `<link rel="alternate" type="text/markdown" href="${twinUrl}">`;
+
+        try {
+          await fs.promises.access(twinPath, fs.constants.F_OK);
+        } catch {
+          failures.push(`Missing .md twin: ${twinPath}`);
+        }
+
+        try {
+          const html = await fs.promises.readFile(htmlPath, 'utf8');
+          if (!html.includes(expectedTag)) {
+            failures.push(`Missing alternate tag in ${htmlPath} (expected href=${twinUrl})`);
+          }
+        } catch (err) {
+          failures.push(`Cannot read ${htmlPath}: ${err.message}`);
+        }
+      }
+
+      if (failures.length > 0) {
+        const summary = failures.map((f) => `  - ${f}`).join('\n');
+        throw new Error(
+          `[copy-page-source] Build audit failed for ${failures.length} entr${failures.length === 1 ? 'y' : 'ies'}:\n${summary}`,
+        );
+      }
+      console.log(`[copy-page-source] Audit passed: ${docEntries.length} entries have twin + alternate tag.`);
     },
   };
 };
