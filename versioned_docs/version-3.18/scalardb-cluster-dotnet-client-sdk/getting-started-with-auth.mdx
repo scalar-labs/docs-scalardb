@@ -7,6 +7,9 @@ displayed_sidebar: docsEnglish
 
 # Getting Started with Authentication and Authorization by Using ScalarDB Cluster .NET Client SDK
 
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
 The ScalarDB Cluster .NET Client SDK supports [authentication and authorization](../scalardb-cluster/scalardb-auth-with-sql.mdx), which allows you to authenticate and authorize your requests to ScalarDB Cluster.
 
 ## Install the SDK
@@ -19,7 +22,12 @@ dotnet add package ScalarDB.Client --version '<MAJOR>.<MINOR>.*'
 
 ## Set credentials in the settings file
 
-You need to set credentials in the settings file as follows, replacing the contents in the angle brackets as described:
+You need to set credentials in the settings file, replacing the contents in the angle brackets as described. ScalarDB Cluster supports two authentication types: username and password authentication, and authentication that uses a JWT access token issued by an OpenID Connect (OIDC) provider. Select the tab for the authentication type that you want to use.
+
+<Tabs groupId="auth-type" queryString>
+  <TabItem value="userpass" label="Username and password" default>
+
+To authenticate by using a username and password, set `Username` and `Password` as follows:
 
 ```json
 {
@@ -32,6 +40,34 @@ You need to set credentials in the settings file as follows, replacing the conte
   }
 }
 ```
+
+  </TabItem>
+  <TabItem value="oidc-jwt" label="OIDC JWT access token">
+
+To authenticate by using an OIDC JWT access token instead of a username and password, set `AuthType` to `OidcJwt` and set `AuthOidcJwtAccessToken` to a valid access token issued by your OIDC provider as follows:
+
+```json
+{
+  "ScalarDbOptions": {
+    "Address": "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
+    "HopLimit": 10,
+    "AuthEnabled": true,
+    "AuthType": "OidcJwt",
+    "AuthOidcJwtAccessToken": "<OIDC_JWT_ACCESS_TOKEN>"
+  }
+}
+```
+
+When you use `OidcJwt`, `Username` and `Password` aren't required. For details about how to configure ScalarDB Cluster to accept OIDC JWT access tokens and how to obtain a token from an OIDC provider, see [Control User Access via OIDC-Based JWT Access Tokens](../scalardb-cluster/control-access-via-oidc-based-jwt-tokens.mdx).
+
+:::note
+
+The SDK doesn't refresh OIDC JWT access tokens. Because the token is set when `TransactionFactory` is created, it can't be refreshed afterward. When the token expires or becomes invalid, the authentication error is propagated to your application. To use a new token, obtain a valid token and create a new `TransactionFactory` and transaction manager with that token.
+
+:::
+
+  </TabItem>
+</Tabs>
 
 For details about settings files and other ways to configure the client, see [Client configuration](common-reference.mdx#client-configuration).
 
