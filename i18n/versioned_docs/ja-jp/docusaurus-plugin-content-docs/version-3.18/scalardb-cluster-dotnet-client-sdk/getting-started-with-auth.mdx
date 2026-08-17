@@ -8,6 +8,8 @@ displayed_sidebar: docsJapanese
 # ScalarDB Cluster .NET Client SDK を使用した認証と認可をはじめよう
 
 import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
 
 <TranslationBanner />
 
@@ -23,7 +25,12 @@ dotnet add package ScalarDB.Client --version '<MAJOR>.<MINOR>.*'
 
 ## 設定ファイルで資格情報を設定する
 
-設定ファイルの資格情報を次のように設定し、山括弧内の内容を置き換えてください。
+設定ファイルで資格情報を設定し、山括弧内の内容を置き換えてください。ScalarDB Cluster は2つの認証タイプをサポートしています。ユーザー名とパスワードによる認証と、OpenID Connect (OIDC) プロバイダーが発行した JWT アクセストークンを使用する認証です。使用する認証タイプのタブを選択してください。
+
+<Tabs groupId="auth-type" queryString>
+  <TabItem value="userpass" label="ユーザー名とパスワード" default>
+
+ユーザー名とパスワードで認証するには、次のように `Username` と `Password` を設定します。
 
 ```json
 {
@@ -36,6 +43,34 @@ dotnet add package ScalarDB.Client --version '<MAJOR>.<MINOR>.*'
   }
 }
 ```
+
+  </TabItem>
+  <TabItem value="oidc-jwt" label="OIDC JWT アクセストークン">
+
+ユーザー名とパスワードの代わりに OIDC JWT アクセストークンで認証するには、次のように `AuthType` を `OidcJwt` に設定し、`AuthOidcJwtAccessToken` に OIDC プロバイダーが発行した有効なアクセストークンを設定します。
+
+```json
+{
+  "ScalarDbOptions": {
+    "Address": "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
+    "HopLimit": 10,
+    "AuthEnabled": true,
+    "AuthType": "OidcJwt",
+    "AuthOidcJwtAccessToken": "<OIDC_JWT_ACCESS_TOKEN>"
+  }
+}
+```
+
+`OidcJwt` を使用する場合、`Username` と `Password` は必要ありません。OIDC JWT アクセストークンを受け入れるように ScalarDB Cluster を設定する方法と、OIDC プロバイダーからトークンを取得する方法の詳細については、[OIDC ベースの JWT アクセストークンを用いてユーザーアクセスを制御する](../scalardb-cluster/control-access-via-oidc-based-jwt-tokens.mdx)を参照してください。
+
+:::note
+
+SDK は OIDC JWT アクセストークンを更新しません。トークンは `TransactionFactory` の作成時に設定されるため、その後は更新できません。トークンの有効期限が切れたり無効になったりすると、認証エラーがアプリケーションに伝播されます。新しいトークンを使用するには、有効なトークンを取得し、そのトークンを使用して新しい `TransactionFactory` とトランザクションマネージャーを作成してください。
+
+:::
+
+  </TabItem>
+</Tabs>
 
 設定ファイルやクライアントを設定するその他の方法の詳細については、[クライアント設定](common-reference.mdx#クライアント設定)を参照してください。
 
