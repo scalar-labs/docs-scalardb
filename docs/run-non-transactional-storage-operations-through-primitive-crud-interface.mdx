@@ -10,16 +10,16 @@ This page explains how to run non-transactional storage operations through the p
 
 One of the keys to achieving storage-agnostic or database-agnostic ACID transactions on top of existing storage and database systems is the storage abstraction capabilities that ScalarDB provides. Storage abstraction defines a [data model](design.mdx#data-model) and the APIs (Storage API) that issue operations on the basis of the data model.
 
-Although you will likely use the [Transactional API](api-guide.mdx#transactional-api) in most cases, another option is to use the Storage API.
+Although you will likely use the [Transaction API](api-guide.mdx#transaction-api) in most cases, another option is to use the Storage API.
 
 The benefits of using the Storage API include the following:
 
-- As with the Transactional API, you can write your application code without worrying too much about the underlying storage implementation.
+- As with the Transaction API, you can write your application code without worrying too much about the underlying storage implementation.
 - If you don't need transactions for some of the data in your application, you can use the Storage API to partially avoid transactions, which results in faster execution.
 
 :::warning
 
-Directly using the Storage API or mixing the Transactional API and the Storage API could cause unexpected behavior. For example, since the Storage API cannot provide transaction capability, the API could cause anomalies or data inconsistency if failures occur when executing operations.
+Directly using the Storage API or mixing the Transaction API and the Storage API could cause unexpected behavior. For example, since the Storage API cannot provide transaction capability, the API could cause anomalies or data inconsistency if failures occur when executing operations.
 
 Therefore, you should be *very* careful about using the Storage API and use it only if you know exactly what you are doing.
 
