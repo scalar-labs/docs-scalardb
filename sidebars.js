@@ -1098,7 +1098,7 @@ const sidebars = {
             {
               "type": "doc",
               "id": "scalardb-analytics/scalardb-analytics-status-codes",
-              "label": "ScalarDB Analytics",
+              "label": "ScalarDB Analytics [NEW]",
             },
           ],
         },
@@ -2239,7 +2239,7 @@ const sidebars = {
             {
               "type": "doc",
               "id": "scalardb-analytics/scalardb-analytics-status-codes",
-              "label": "ScalarDB Analytics",
+              "label": "ScalarDB Analytics [NEW]",
             },
           ],
         },
