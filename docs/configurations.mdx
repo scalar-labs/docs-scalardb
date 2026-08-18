@@ -723,8 +723,14 @@ The following are additional configurations available for ScalarDB.
 ### `active_transaction_management.expiration_time_millis`
 
 - **Field:** `scalar.db.active_transaction_management.expiration_time_millis`
-- **Description:** ScalarDB maintains in-progress transactions, which can be resumed by using a transaction ID. This process expires transactions that have been idle for an extended period to prevent resource leaks. This setting specifies the expiration time of this transaction management feature in milliseconds.
+- **Description:** ScalarDB maintains in-progress transactions, which can be resumed by using a transaction ID. This process expires transactions that have been idle for an extended period to prevent resource leaks. This setting specifies the expiration time of this transaction management feature in milliseconds. The idle time of a transaction is reset each time an operation is performed on the transaction, so a transaction that keeps making progress does not expire. When a transaction expires, ScalarDB rolls back the transaction, and resuming the transaction by using the `resume()` method throws `TransactionNotFoundException`.
 - **Default value:** `-1` (no expiration)
+
+### `active_transaction_management.max_active_transactions`
+
+- **Field:** `scalar.db.active_transaction_management.max_active_transactions`
+- **Description:** Specifies the maximum number of in-progress transactions that ScalarDB maintains for resumption. When the number of in-progress transactions exceeds this value, ScalarDB reclaims one of the transactions that it maintains, giving preference to transactions that are idle or that are used the least. ScalarDB rolls back a reclaimed transaction in the same way as an expired transaction. This limit applies regardless of the `scalar.db.active_transaction_management.expiration_time_millis` setting, including when expiration is disabled. To disable this limit, specify `0` or a negative value.
+- **Default value:** `10000`
 
 ### `consensus_commit.include_metadata.enabled`
 
