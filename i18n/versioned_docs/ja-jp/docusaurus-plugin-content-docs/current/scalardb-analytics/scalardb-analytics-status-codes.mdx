@@ -1,0 +1,514 @@
+---
+tags:
+  - Enterprise Option
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Analytics エラーコード
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このページでは、ScalarDB Analytics のエラーコードの一覧を示します。
+
+## エラーコードのクラスと説明
+
+| クラス                | 説明                          |
+|:---------------------|:-----------------------------|
+| `DB-ANALYTICS-1xxxx` | ユーザーエラーカテゴリのエラー     |
+| `DB-ANALYTICS-3xxxx` | 内部エラーカテゴリのエラー        |
+| `DB-ANALYTICS-4xxxx` | クライアントエラーカテゴリのエラー |
+
+## `DB-ANALYTICS-1xxxx` ステータスコード
+
+以下は、ユーザーエラーカテゴリのステータスコードとメッセージです。
+
+### `DB-ANALYTICS-10000`
+
+**メッセージ**
+
+```markdown
+Authentication failed
+```
+
+**原因**
+
+The provided credentials are invalid or the user does not exist.
+
+**対応**
+
+Verify the credentials, then retry. Contact your administrator if you cannot recover the credentials.
+
+### `DB-ANALYTICS-10001`
+
+**メッセージ**
+
+```markdown
+Authentication token has expired
+```
+
+**原因**
+
+The access token issued during authentication has reached its expiry time.
+
+**対応**
+
+Re-authenticate to obtain a new token, then retry the request.
+
+### `DB-ANALYTICS-10002`
+
+**メッセージ**
+
+```markdown
+Authentication token is invalid
+```
+
+**原因**
+
+The token is malformed, was revoked, or was not issued by this server.
+
+**対応**
+
+Authenticate again with valid credentials to obtain a new token, then retry. Contact your administrator if the token continues to be rejected.
+
+### `DB-ANALYTICS-10003`
+
+**メッセージ**
+
+```markdown
+Access denied
+```
+
+**原因**
+
+The authenticated user lacks the required role or permission for the requested action on the resource.
+
+**対応**
+
+Ask your administrator to grant the required role (e.g. SUPERADMIN, CATALOG_ADMIN) or the specific permission on the resource, then retry.
+
+### `DB-ANALYTICS-10100`
+
+**メッセージ**
+
+```markdown
+Catalog already exists
+```
+
+**原因**
+
+A catalog with the given name has already been created in this Analytics instance.
+
+**対応**
+
+Choose a different catalog name, or use the existing catalog instead of creating a new one.
+
+### `DB-ANALYTICS-10101`
+
+**メッセージ**
+
+```markdown
+Data source already exists
+```
+
+**原因**
+
+A data source with the given name has already been registered in the catalog.
+
+**対応**
+
+Choose a different data source name, or use the existing data source instead of registering a new one.
+
+### `DB-ANALYTICS-10102`
+
+**メッセージ**
+
+```markdown
+Namespace already exists
+```
+
+**原因**
+
+A namespace with the given name already exists in the catalog for the data source.
+
+**対応**
+
+The namespace is already registered in the catalog for this data source. Use the existing registration, or refresh it if the registration is outdated.
+
+### `DB-ANALYTICS-10103`
+
+**メッセージ**
+
+```markdown
+Table already exists
+```
+
+**原因**
+
+A table with the given name already exists in the namespace.
+
+**対応**
+
+The table is already registered in the catalog for this namespace. Use the existing registration, or refresh it if the registration is outdated.
+
+### `DB-ANALYTICS-10104`
+
+**メッセージ**
+
+```markdown
+Role already exists
+```
+
+**原因**
+
+A role with the given name has already been created.
+
+**対応**
+
+Choose a different role name, or use the existing role instead of creating a new one.
+
+### `DB-ANALYTICS-10105`
+
+**メッセージ**
+
+```markdown
+User already exists
+```
+
+**原因**
+
+A user with the given user id has already been registered.
+
+**対応**
+
+Choose a different user id, or use the existing user instead of registering a new one.
+
+### `DB-ANALYTICS-10106`
+
+**メッセージ**
+
+```markdown
+Role already assigned to user
+```
+
+**原因**
+
+The role is already assigned to the user.
+
+**対応**
+
+No action is required if the assignment is intended. Otherwise, choose a different role.
+
+### `DB-ANALYTICS-10107`
+
+**メッセージ**
+
+```markdown
+Permission already granted to role
+```
+
+**原因**
+
+The permission is already granted to the role on the resource.
+
+**対応**
+
+No action is required if the grant is intended. Otherwise, choose a different permission or resource.
+
+### `DB-ANALYTICS-10200`
+
+**メッセージ**
+
+```markdown
+Catalog is not empty
+```
+
+**原因**
+
+The catalog still contains data sources or other dependent entities.
+
+**対応**
+
+Delete the data sources within the catalog before deleting the catalog, or use a cascading delete if supported.
+
+### `DB-ANALYTICS-10201`
+
+**メッセージ**
+
+```markdown
+Data source is not empty
+```
+
+**原因**
+
+The data source still contains namespaces or tables.
+
+**対応**
+
+Delete the namespaces and tables within the data source before deleting the data source.
+
+### `DB-ANALYTICS-10202`
+
+**メッセージ**
+
+```markdown
+Built-in entity cannot be modified
+```
+
+**原因**
+
+The target is a built-in (system-managed) entity that cannot be modified or deleted.
+
+**対応**
+
+Do not modify the built-in entity. Create a new custom entity instead if you need different behavior.
+
+### `DB-ANALYTICS-10203`
+
+**メッセージ**
+
+```markdown
+User is not empty
+```
+
+**原因**
+
+The user still has linked backend users, role assignments, or direct permission grants.
+
+**対応**
+
+Remove the linked backend users, role assignments, and permission grants before deleting the user, or use a cascading delete.
+
+### `DB-ANALYTICS-10300`
+
+**メッセージ**
+
+```markdown
+Data source authentication failed
+```
+
+**原因**
+
+The credentials configured for the data source were rejected by the underlying database.
+
+**対応**
+
+Update the data source credentials with valid values, then retry.
+
+### `DB-ANALYTICS-10301`
+
+**メッセージ**
+
+```markdown
+Data source is unreachable
+```
+
+**原因**
+
+Analytics could not establish a network connection to the data source.
+
+**対応**
+
+Verify the data source endpoint, network connectivity, and that the underlying database is running, then retry.
+
+### `DB-ANALYTICS-10400`
+
+**メッセージ**
+
+```markdown
+Invalid argument
+```
+
+**原因**
+
+One or more arguments do not satisfy the validation rules (format, range, or required field).
+
+**対応**
+
+Inspect the metadata for the offending field and provide a valid value, then retry.
+
+## `DB-ANALYTICS-3xxxx` ステータスコード
+
+以下は、内部エラーカテゴリのステータスコードとメッセージです。
+
+### `DB-ANALYTICS-30000`
+
+**メッセージ**
+
+```markdown
+Analytics database connection failed
+```
+
+**原因**
+
+Analytics could not connect to its internal database (e.g. catalog metadata store).
+
+**対応**
+
+Retry the request. If the failure persists, check the Analytics database health and contact your administrator.
+
+### `DB-ANALYTICS-30002`
+
+**メッセージ**
+
+```markdown
+ScalarDB Cluster is unavailable
+```
+
+**原因**
+
+Analytics could not reach the ScalarDB Cluster (network failure, deadline exceeded, or the cluster is down).
+
+**対応**
+
+Retry the request. If the failure persists, check the ScalarDB Cluster health and contact your administrator.
+
+### `DB-ANALYTICS-30100`
+
+**メッセージ**
+
+```markdown
+Persisted data is inconsistent with the expected schema
+```
+
+**原因**
+
+Analytics encountered persisted data that does not match the expected schema or format.
+
+**対応**
+
+This indicates an internal data integrity issue. Contact your administrator with the error details.
+
+### `DB-ANALYTICS-30101`
+
+**メッセージ**
+
+```markdown
+ScalarDB Cluster backend token has expired
+```
+
+**原因**
+
+The token Analytics uses to authenticate to the ScalarDB Cluster has expired.
+
+**対応**
+
+Re-authenticate to refresh the backend token. The SDK normally handles this automatically.
+
+### `DB-ANALYTICS-30102`
+
+**メッセージ**
+
+```markdown
+ScalarDB privilege check failed
+```
+
+**原因**
+
+Analytics could not complete the privilege check against the ScalarDB Cluster.
+
+**対応**
+
+Verify that the ScalarDB Cluster is reachable and configured correctly. Contact your administrator if the failure persists.
+
+### `DB-ANALYTICS-30103`
+
+**メッセージ**
+
+```markdown
+Internal error
+```
+
+**原因**
+
+Analytics encountered an unexpected internal error.
+
+**対応**
+
+Contact your administrator with the error details so the unexpected failure can be investigated.
+
+### `DB-ANALYTICS-30104`
+
+**メッセージ**
+
+```markdown
+Analytics database operation failed
+```
+
+**原因**
+
+An operation on the Analytics internal database failed (e.g. a constraint violation or an unexpected query/write error). The operation is not known to be safe to retry.
+
+**対応**
+
+Inspect the error details. Contact your administrator if the failure persists.
+
+## `DB-ANALYTICS-4xxxx` ステータスコード
+
+以下は、クライアントエラーカテゴリのステータスコードとメッセージです。
+
+### `DB-ANALYTICS-40000`
+
+**メッセージ**
+
+```markdown
+The Analytics server could not be reached
+```
+
+**原因**
+
+The request did not reach the server, or the server returned no structured error (e.g. network failure or the server is down).
+
+**対応**
+
+Verify the server endpoint and network connectivity, then retry. Contact your administrator if the failure persists.
+
+### `DB-ANALYTICS-40001`
+
+**メッセージ**
+
+```markdown
+The request to the Analytics server timed out
+```
+
+**原因**
+
+The request did not complete before its deadline expired.
+
+**対応**
+
+Retry the request. If timeouts persist, check server health and network latency, or increase the request deadline.
+
+### `DB-ANALYTICS-40002`
+
+**メッセージ**
+
+```markdown
+Unexpected client-side error
+```
+
+**原因**
+
+The SDK encountered an unexpected error while issuing the request or processing the response, with no structured server error available.
+
+**対応**
+
+Retry the request. Contact your administrator with the error details if the failure persists.
+
+### `DB-ANALYTICS-40003`
+
+**メッセージ**
+
+```markdown
+The server returned an error code that this client does not recognize
+```
+
+**原因**
+
+The server is likely newer than this client SDK and returned an error code not known to this version.
+
+**対応**
+
+Upgrade the client SDK to a version compatible with the server. See the server_error_code metadata for the original code, and contact your administrator if the problem persists.
+
