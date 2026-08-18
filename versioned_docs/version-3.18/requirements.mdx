@@ -709,14 +709,14 @@ Since ScalarDB Cluster uses Core to interact with databases, the requirements fo
 
 ScalarDB Cluster requires the following ports to be accessible. These default port numbers can be configured via the corresponding properties as needed:
 
-- 60053 (Administrative API / Transactional API / SQL API / administrator service; configurable via `scalar.db.cluster.node.port`)
+- 60053 (Administrative API / Transaction API / SQL API / administrator service; configurable via `scalar.db.cluster.node.port`)
 - 60054 (internal gRPC communication between cluster nodes; configurable via `scalar.db.cluster.internal.node.port`. This port only needs to be reachable between cluster nodes and should typically be restricted from client and public networks.)
 - 8080 (GraphQL; configurable via `scalar.db.graphql.port`)
 - 9080 (metrics; configurable via `scalar.db.cluster.node.prometheus_exporter_port`)
 
 :::note
 
-If you configure `scalar.db.cluster.node.admin.port` to run the administrator service (`pause`, `unpause`, and `checkPaused`) on a dedicated port, that dedicated port will also need to be accessible. In this case, only the administrator service runs on that port instead of the port specified by `scalar.db.cluster.node.port`; the port specified by `scalar.db.cluster.node.port` must still remain accessible for the other gRPC APIs, including the Administrative API, Transactional API, and SQL API.
+If you configure `scalar.db.cluster.node.admin.port` to run the administrator service (`pause`, `unpause`, and `checkPaused`) on a dedicated port, that dedicated port will also need to be accessible. In this case, only the administrator service runs on that port instead of the port specified by `scalar.db.cluster.node.port`; the port specified by `scalar.db.cluster.node.port` must still remain accessible for the other gRPC APIs, including the Administrative API, Transaction API, and SQL API.
 
 :::
 
