@@ -78,14 +78,6 @@ A positional bind marker is not allowed when binding named values
 A named bind marker is not allowed when binding positional values
 ```
 
-### `DB-SQL-10007`
-
-**メッセージ**
-
-```markdown
-Cannot convert BLOB values to SQL. Please use a bind marker for a BLOB value and bind it separately
-```
-
 ### `DB-SQL-10008`
 
 **メッセージ**
@@ -740,4 +732,100 @@ The %s in the HAVING clause must appear in the SELECT projections
 
 ```markdown
 Invalid LIKE pattern: '%s'. Detail: %s
+```
+
+### `DB-SQL-10090`
+
+**メッセージ**
+
+```markdown
+Command statements (BEGIN, COMMIT, ROLLBACK, SHOW ..., etc.) are not allowed in batch execution
+```
+
+### `DB-SQL-10091`
+
+**メッセージ**
+
+```markdown
+Only mutation statements (INSERT, UPDATE, DELETE, etc.) are allowed in batch execution
+```
+
+### `DB-SQL-10092`
+
+**メッセージ**
+
+```markdown
+Unmatched column type. The type of the column %s should be %s, but a blob literal is specified
+```
+
+### `DB-SQL-10093`
+
+**メッセージ**
+
+```markdown
+A bind marker is not allowed in the argument of the function %s
+```
+
+### `DB-SQL-10094`
+
+**メッセージ**
+
+```markdown
+The column %s is specified more than once in the CREATE TABLE statement
+```
+
+### `DB-SQL-10095`
+
+**メッセージ**
+
+```markdown
+Executing a batch with multiple statements is not supported in one-operation mode
+```
+
+### `DB-SQL-10096`
+
+**メッセージ**
+
+```markdown
+Functions are not allowed in WHERE clauses: %s
+```
+
+### `DB-SQL-10097`
+
+**メッセージ**
+
+```markdown
+Functions are not allowed in ORDER BY clauses without GROUP BY: %s
+```
+
+### `DB-SQL-10098`
+
+**メッセージ**
+
+```markdown
+AUTH_METHOD is specified more than once
+```
+
+### `DB-SQL-10099`
+
+**メッセージ**
+
+```markdown
+Invalid pos or length for Blob access. pos: %d, length: %d
+```
+
+### `DB-SQL-10100`
+
+**メッセージ**
+
+```markdown
+The start position for Blob.position() must be >= 1. start: %d
+```
+
+### `DB-SQL-10101`
+
+**メッセージ**
+
+```markdown
+The InputStream has fewer bytes than the declared length. declared: %d
 ```

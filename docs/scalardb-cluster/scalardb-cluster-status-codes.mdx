@@ -242,7 +242,7 @@ This feature is not supported in ScalarDB Cluster
 **Message**
 
 ```markdown
-The property 'scalar.db.contact_points' must not be empty
+The contact points must not be empty. Property: %s
 ```
 
 ### `DB-CLUSTER-10029`
@@ -250,7 +250,7 @@ The property 'scalar.db.contact_points' must not be empty
 **Message**
 
 ```markdown
-The property 'scalar.db.contact_points' must be prefixed with 'indirect:' or 'direct-kubernetes:'
+The contact points must be prefixed with 'indirect:' or 'direct-kubernetes:'. Property: %s
 ```
 
 ### `DB-CLUSTER-10030`
@@ -258,31 +258,7 @@ The property 'scalar.db.contact_points' must be prefixed with 'indirect:' or 'di
 **Message**
 
 ```markdown
-The format of the property 'scalar.db.contact_points' for direct-kubernetes client mode is 'direct-kubernetes:<NAMESPACE_NAME>/<ENDPOINT_NAME>' or 'direct-kubernetes:<ENDPOINT_NAME>'
-```
-
-### `DB-CLUSTER-10031`
-
-**Message**
-
-```markdown
-The property 'scalar.db.sql.cluster_mode.contact_points' must not be empty
-```
-
-### `DB-CLUSTER-10032`
-
-**Message**
-
-```markdown
-The property 'scalar.db.sql.cluster_mode.contact_points' must be prefixed with 'indirect:' or 'direct-kubernetes:'
-```
-
-### `DB-CLUSTER-10033`
-
-**Message**
-
-```markdown
-The format of the property 'scalar.db.sql.cluster_mode.contact_points' for direct-kubernetes client mode is 'direct-kubernetes:<NAMESPACE_NAME>/<ENDPOINT_NAME>' or 'direct-kubernetes:<ENDPOINT_NAME>'
+The format of the contact points for the direct-kubernetes mode is 'direct-kubernetes:<NAMESPACE_NAME>/<ENDPOINT_NAME>' or 'direct-kubernetes:<ENDPOINT_NAME>'. Property: %s
 ```
 
 ### `DB-CLUSTER-10035`
@@ -397,6 +373,182 @@ Resuming a transaction is not allowed when write-buffering is enabled
 The transaction has not begun yet. This situation may occur when piggyback-begin is enabled
 ```
 
+### `DB-CLUSTER-10062`
+
+**Message**
+
+```markdown
+The transaction already exists. Transaction ID: %s
+```
+
+### `DB-CLUSTER-10063`
+
+**Message**
+
+```markdown
+The authentication method is unspecified
+```
+
+### `DB-CLUSTER-10064`
+
+**Message**
+
+```markdown
+The authentication method is unrecognized
+```
+
+### `DB-CLUSTER-10065`
+
+**Message**
+
+```markdown
+Nested holder calls are not supported
+```
+
+### `DB-CLUSTER-10066`
+
+**Message**
+
+```markdown
+No value set in the thread-local holder. Use the holder's execute method to set it.
+```
+
+### `DB-CLUSTER-10067`
+
+**Message**
+
+```markdown
+The auth type specified in attributes is invalid. Auth type: %s
+```
+
+### `DB-CLUSTER-10068`
+
+**Message**
+
+```markdown
+The required attribute is missing. Auth type: %s; Attribute: %s
+```
+
+### `DB-CLUSTER-10069`
+
+**Message**
+
+```markdown
+The write type is unspecified
+```
+
+### `DB-CLUSTER-10070`
+
+**Message**
+
+```markdown
+The write type is unrecognized
+```
+
+### `DB-CLUSTER-10071`
+
+**Message**
+
+```markdown
+The write-set detail level is unspecified
+```
+
+### `DB-CLUSTER-10072`
+
+**Message**
+
+```markdown
+The write-set detail level is unrecognized
+```
+
+### `DB-CLUSTER-10073`
+
+**Message**
+
+```markdown
+The transaction ID is required for this operation but was not specified
+```
+
+### `DB-CLUSTER-10074`
+
+**Message**
+
+```markdown
+'scalar.db.cluster.id' must be configured when 'scalar.db.cluster.node.transaction_participant.enabled' is enabled
+```
+
+### `DB-CLUSTER-10075`
+
+**Message**
+
+```markdown
+The cluster is not configured. Cluster ID: %s; Configured clusters: %s
+```
+
+### `DB-CLUSTER-10076`
+
+**Message**
+
+```markdown
+'scalar.db.cluster.transaction_coordinator.clusters' must be configured with at least one cluster ID
+```
+
+### `DB-CLUSTER-10077`
+
+**Message**
+
+```markdown
+The cluster IDs in 'scalar.db.cluster.transaction_coordinator.clusters' must be unique. Duplicate cluster ID: %s
+```
+
+### `DB-CLUSTER-10078`
+
+**Message**
+
+```markdown
+Joining a transaction is not allowed when piggyback-begin is enabled
+```
+
+### `DB-CLUSTER-10079`
+
+**Message**
+
+```markdown
+Joining a transaction is not allowed when write-buffering is enabled
+```
+
+### `DB-CLUSTER-10080`
+
+**Message**
+
+```markdown
+'scalar.db.cluster.id' must be configured for the cluster connection when 'scalar.db.cluster.client.transaction_coordinator.enabled' is enabled
+```
+
+### `DB-CLUSTER-10081`
+
+**Message**
+
+```markdown
+The cluster connection is not configured, so this operation is not available. A transaction coordinator client without a cluster connection can only begin, commit, and roll back transactions
+```
+
+### `DB-CLUSTER-10082`
+
+**Message**
+
+```markdown
+Joining a transaction is not allowed when authentication is enabled
+```
+
+### `DB-CLUSTER-10083`
+
+**Message**
+
+```markdown
+Resuming a transaction is not allowed when authentication is enabled
+```
+
 ## `DB-CLUSTER-2xxxx` status codes
 
 The following are status codes and messages for the concurrency error category.
@@ -423,6 +575,14 @@ A transaction associated with the specified transaction ID is not found. The tra
 
 ```markdown
 A scanner associated with the specified scanner ID is not found. The scanner might have expired, or the cluster node that handled the scanner might have been restarted. Transaction ID: %s; Scanner ID: %s
+```
+
+### `DB-CLUSTER-20003`
+
+**Message**
+
+```markdown
+The transaction was aborted because its authentication token was rejected during commit. The token snapshot of an in-flight transaction cannot be refreshed, so retry the transaction from the beginning
 ```
 
 ## `DB-CLUSTER-3xxxx` status codes
