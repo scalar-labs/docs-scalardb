@@ -1095,6 +1095,11 @@ const sidebars = {
               "id": "scalardb-cluster/scalardb-remote-replication-status-codes",
               "label": "Remote Replication",
             },
+            {
+              "type": "doc",
+              "id": "scalardb-analytics/scalardb-analytics-status-codes",
+              "label": "ScalarDB Analytics",
+            },
           ],
         },
       ],
@@ -2230,6 +2235,11 @@ const sidebars = {
               "type": "doc",
               "id": "scalardb-cluster/scalardb-remote-replication-status-codes",
               "label": "リモートレプリケーション",
+            },
+            {
+              "type": "doc",
+              "id": "scalardb-analytics/scalardb-analytics-status-codes",
+              "label": "ScalarDB Analytics",
             },
           ],
         },
