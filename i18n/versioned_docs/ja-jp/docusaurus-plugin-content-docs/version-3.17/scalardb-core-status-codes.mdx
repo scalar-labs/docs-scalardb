@@ -648,7 +648,7 @@ Cannot encode a Text value that contains '\\u0000'
 **メッセージ**
 
 ```markdown
-An index column cannot be set to null or an empty value for Text or Blob in DynamoDB. Operation: %s
+An index column cannot be set to an empty value for Text or Blob in DynamoDB. Operation: %s
 ```
 
 ### `DB-CORE-10082`
@@ -1480,7 +1480,7 @@ Specifying transaction metadata columns in the ordering is not allowed. Table: %
 **メッセージ**
 
 ```markdown
-Get operations by using an index is not allowed in the SERIALIZABLE isolation level
+Get operations using a secondary index are not allowed in the SERIALIZABLE isolation level without before-image indexes. Run repairTable() to create before-image indexes for the table, which will enable index-based Get operations in the SERIALIZABLE isolation level
 ```
 
 ### `DB-CORE-10261`
@@ -1488,7 +1488,7 @@ Get operations by using an index is not allowed in the SERIALIZABLE isolation le
 **メッセージ**
 
 ```markdown
-Scan operations by using an index is not allowed in the SERIALIZABLE isolation level
+Scan operations using a secondary index are not allowed in the SERIALIZABLE isolation level without before-image indexes. Run repairTable() to create before-image indexes for the table, which will enable index-based Scan operations in the SERIALIZABLE isolation level
 ```
 
 ### `DB-CORE-10262`
@@ -1496,7 +1496,7 @@ Scan operations by using an index is not allowed in the SERIALIZABLE isolation l
 **メッセージ**
 
 ```markdown
-Conditions on indexed columns in cross-partition scan operations are not allowed in the SERIALIZABLE isolation level
+Conditions on indexed columns in cross-partition scan operations are not allowed in the SERIALIZABLE isolation level without before-image indexes. Run repairTable() to create before-image indexes for the table, which will enable conditions on indexed columns in cross-partition scan operations in the SERIALIZABLE isolation level
 ```
 
 ### `DB-CORE-10263`
@@ -1625,6 +1625,22 @@ The transaction metadata decoupling feature is not supported in the storage. Sto
 
 ```markdown
 The storage does not guarantee consistent reads for virtual tables. Depending on the storage configuration, you may be able to adjust the settings to enable consistent reads. Please refer to the storage configuration for details. Storage: %s
+```
+
+### `DB-CORE-10279`
+
+**メッセージ**
+
+```markdown
+The size of a BLOB column value exceeds the maximum allowed size of %d bytes. Column: %s; Size: %d bytes
+```
+
+### `DB-CORE-10281`
+
+**メッセージ**
+
+```markdown
+The column definition must be specified since %s is specified as a secondary index
 ```
 
 ## `DB-CORE-2xxxx` ステータスコード
@@ -1845,6 +1861,22 @@ A conflict occurred when committing records. Details: %s
 
 ```markdown
 A transaction conflict occurred in the mutation. Details: %s
+```
+
+### `DB-CORE-20028`
+
+**メッセージ**
+
+```markdown
+Before-image index recovery retry limit exceeded. Transaction ID: %s
+```
+
+### `DB-CORE-20029`
+
+**メッセージ**
+
+```markdown
+Records that need recovery were found during the before-image index check when closing the scanner. Transaction ID: %s
 ```
 
 ## `DB-CORE-3xxxx` ステータスコード
