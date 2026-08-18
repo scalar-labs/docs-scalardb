@@ -1802,11 +1802,23 @@ When you run applications or tools that use the Java Client SDK and the primitiv
 - **Description:** The authentication type. `userpass` uses username and password authentication. `oidc_jwt` uses OIDC JWT-based access control. For details about `oidc_jwt`, see [Control User Access via OIDC-Based JWT Access Tokens](./control-access-via-oidc-based-jwt-tokens.mdx).
 - **Default value:** empty (treated as `userpass`)
 
-#### `auth.oidc_jwt.access_token`
+##### `auth.oidc_jwt.access_token`
 
 - **Field:** `scalar.db.cluster.client.auth.oidc_jwt.access_token`
 - **Description:** The JWT access token for OIDC access control. Since the token is set at initialization time, it cannot be refreshed and is only valid for the duration of the JWT access token's expiration.
 - **Default value:** empty
+
+##### `cluster.client.auth.userpass_cache.size`
+
+- **Field:** `scalar.db.cluster.client.auth.userpass_cache.size`
+- **Description:** The maximum number of authentication tokens that the client caches. The client caches a token for each username and password pair so that it does not need to authenticate on every request. This configuration applies only when the authentication type is `userpass`.
+- **Default value:** `10000`
+
+##### `cluster.client.auth.userpass_cache.expiration_margin_millis`
+
+- **Field:** `scalar.db.cluster.client.auth.userpass_cache.expiration_margin_millis`
+- **Description:** How long before a cached authentication token actually expires that the client evicts it from the cache, in milliseconds. Because the client re-authenticates ahead of the actual expiration, a token that the client reads from the cache is less likely to expire while a request is in flight. The margin is capped at half of the remaining lifetime of each token. To disable the margin, set this configuration to `0`. This configuration applies only when the authentication type is `userpass`.
+- **Default value:** `60000` (1 minute)
 
 ### Configurations for wire encryption
 
@@ -1964,6 +1976,18 @@ The following shows the authentication and authorization configurations for the 
 - **Field:** `scalar.db.sql.cluster_mode.auth.oidc_jwt.access_token`
 - **Description:** The JWT access token for OIDC access control. Since the token is set at initialization time, it cannot be refreshed and is only valid for the duration of the JWT access token's expiration.
 - **Default value:** empty
+
+#### `auth.userpass_cache.size`
+
+- **Field:** `scalar.db.sql.cluster_mode.auth.userpass_cache.size`
+- **Description:** The maximum number of authentication tokens that the client caches. The client caches a token for each username and password pair so that it does not need to authenticate on every request. This configuration applies only when the authentication type is `userpass`.
+- **Default value:** `10000`
+
+#### `auth.userpass_cache.expiration_margin_millis`
+
+- **Field:** `scalar.db.sql.cluster_mode.auth.userpass_cache.expiration_margin_millis`
+- **Description:** How long before a cached authentication token actually expires that the client evicts it from the cache, in milliseconds. Because the client re-authenticates ahead of the actual expiration, a token that the client reads from the cache is less likely to expire while a request is in flight. The margin is capped at half of the remaining lifetime of each token. To disable the margin, set this configuration to `0`. This configuration applies only when the authentication type is `userpass`.
+- **Default value:** `60000` (1 minute)
 
 ### Configurations for embedding
 
