@@ -342,7 +342,7 @@ For the backup site, tune thread counts ([`scalar.db.replication.log_applier.tra
 
 #### High-latency database environments
 
-Multi-region databases may have higher latency. Consider using [group commit configurations](../api-guide.mdx#group-commit-for-the-coordinator-table) to improve throughput on high-latency Coordinator databases. The Coordinator group commit feature batches multiple transactions together, reducing the impact of network latency on overall throughput. For replication database tuning, see the [LogWriter performance tuning](#logwriter-performance-tuning) section above.
+Multi-region databases may have higher latency. Consider using [group commit](../consensus-commit.mdx#group-commit) to improve throughput on high-latency Coordinator databases. The Coordinator group commit feature batches multiple transactions together, reducing the impact of network latency on overall throughput. For replication database tuning, see the [LogWriter performance tuning](#logwriter-performance-tuning) section above.
 
 ## Tutorial
 
