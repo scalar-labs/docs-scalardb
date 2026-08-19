@@ -104,12 +104,6 @@ const config = {
                 banner: 'unmaintained',
                 className: '3.15.9',
               },
-              "3.14": {
-                label: '3.14',
-                path: '3.14',
-                banner: 'unmaintained',
-                className: '3.14.6',
-              },
             },
           },
           googleTagManager: {
@@ -134,7 +128,7 @@ const config = {
 
   customFields: {
     // The following versions have Japanese docs, so the language dropdown should be displayed only when visitors are reading these versions of docs.
-    allowedLanguageDropdownVersions: ["current", "latest", "3.18", "3.17", "3.16", "3.15", "3.14"],
+    allowedLanguageDropdownVersions: ["current", "latest", "3.18", "3.17", "3.16", "3.15"],
 
     // These pre-written queries are used in the Google AI Mode feature. Update these queries as needed when new features are added or when you want to highlight specific features in the Google AI Mode. For more information, see /src/components/GoogleAIModeSearch/index.js.
     prewrittenQueries: [
@@ -175,16 +169,8 @@ const config = {
             from: '/docs/latest/scalardb-analytics/deployment/development',
           },
           {
-            to: '/docs/3.14/scalardb-analytics/run-analytical-queries',
-            from: '/docs/3.14/scalardb-analytics/deployment/development',
-          },
-          {
             to: '/docs/latest/scalardb-analytics/run-analytical-queries#version-compatibility',
             from: '/docs/latest/scalardb-analytics-spark/version-compatibility',
-          },
-          {
-            to: '/docs/3.14/scalardb-analytics/run-analytical-queries#version-compatibility',
-            from: '/docs/3.14/scalardb-analytics-spark/version-compatibility',
           },
           {
             to: '/docs/latest/run-non-transactional-storage-operations-through-primitive-crud-interface',
@@ -211,8 +197,8 @@ const config = {
           }
           if (existingPath.startsWith('/docs/latest/')) {
             // Redirect from /docs/<OLD_VERSION>/X to /docs/latest/X for versions
-            // that are no longer built (3.4 through 3.13).
-            const retiredVersions = ['3.13', '3.12', '3.11', '3.10', '3.9', '3.8', '3.7', '3.6', '3.5', '3.4'];
+            // that are no longer built (3.4 through 3.14).
+            const retiredVersions = ['3.14', '3.13', '3.12', '3.11', '3.10', '3.9', '3.8', '3.7', '3.6', '3.5', '3.4'];
             for (const version of retiredVersions) {
               redirects.push(existingPath.replace('/docs/latest/', `/docs/${version}/`));
             }
