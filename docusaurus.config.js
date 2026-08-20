@@ -181,10 +181,6 @@ const config = {
             from: '/docs/latest/scalardb-supported-databases',
           },
           {
-            to: '/docs/latest/helm-charts/getting-started-scalar-manager',
-            from: '/docs/latest/helm-charts/how-to-deploy-scalar-manager',
-          },
-          {
             to: '/docs/latest/scalardb-cluster-dotnet-client-sdk/',
             from: '/docs/latest/scalardb-cluster-dotnet-client-sdk/overview',
           },
