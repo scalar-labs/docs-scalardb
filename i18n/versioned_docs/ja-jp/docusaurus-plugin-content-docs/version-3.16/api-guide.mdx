@@ -359,7 +359,7 @@ admin.upgrade(options);
 
 ### Coordinator テーブルの操作を指定する
 
-Coordinator テーブルは、[Transactional API](#transactional-api) によってトランザクションのステータスを追跡するために使用されます。
+Coordinator テーブルは、[Transaction API](#transaction-api) によってトランザクションのステータスを追跡するために使用されます。
 
 トランザクションマネージャーを使用する場合は、トランザクションを実行するために Coordinator テーブルを作成する必要があります。テーブルの作成に加えて、Coordinator テーブルを切り捨てたり削除したりすることもできます。
 
@@ -418,9 +418,9 @@ admin.importTable("ns", "tbl", options, overrideColumnsType);
 
 :::
 
-## Transactional API
+## Transaction API
 
-このセクションでは、ScalarDB の Transactional API を使用してトランザクション操作を実行する方法について説明します。
+このセクションでは、ScalarDB の Transaction API を使用してトランザクション操作を実行する方法について説明します。
 
 ### `DistributedTransactionManager` インスタンスを取得する
 
@@ -1794,63 +1794,3 @@ CRUD 操作の API (`get()`、`scan()`、`put()`、`delete()`、および `mutat
 サンプルコードでは、トランザクションは最大3回再試行され、再試行される前に100ミリ秒間スリープします。ただし、アプリケーションの要件に応じて、指数バックオフなどの再試行ポリシーを選択できます。
 
 :::
-
-## Coordinator テーブルのグループコミット
-
-Consensus Commit トランザクションに使用される Coordinator テーブルは重要なデータストアであり、堅牢なストレージを使用することをお勧めします。ただし、内部でマルチ AZ またはマルチリージョンレプリケーションを活用するなど、より堅牢なストレージオプションを使用すると、ストレージにレコードを書き込むときにレイテンシが増加し、スループットパフォーマンスが低下する可能性があります。
-
-ScalarDB は、Coordinator テーブルにグループコミット機能を提供します。この機能は、複数のレコードの書き込みを1つの書き込み操作にグループ化し、書き込みスループットを向上させます。この場合、基盤となるデータベースとワークロードに応じて、レイテンシが増加または減少する可能性があります。
-
-グループコミット機能を有効にするには、次の設定を追加します。
-
-```properties
-# By default, this configuration is set to `false`.
-scalar.db.consensus_commit.coordinator.group_commit.enabled=true
-
-# These properties are for tuning the performance of the group commit feature.
-# scalar.db.consensus_commit.coordinator.group_commit.group_size_fix_timeout_millis=40
-# scalar.db.consensus_commit.coordinator.group_commit.delayed_slot_move_timeout_millis=800
-# scalar.db.consensus_commit.coordinator.group_commit.old_group_abort_timeout_millis=30000
-# scalar.db.consensus_commit.coordinator.group_commit.timeout_check_interval_millis=10
-# scalar.db.consensus_commit.coordinator.group_commit.metrics_monitor_log_enabled=true
-```
-
-### 制限事項
-
-このセクションでは、グループコミット機能の制限事項について説明します。
-
-#### ユーザーが渡したカスタムトランザクション ID
-
-グループコミット機能は、内部値を暗黙的に生成し、それをトランザクション ID の一部として使用します。したがって、ユーザーが `com.scalar.db.transaction.consensuscommit.ConsensusCommitManager.begin(String txId)` または `com.scalar.db.transaction.consensuscommit.TwoPhaseConsensusCommitManager.begin(String txId)` を介して手動で渡したカスタムトランザクション ID は、その後の API 呼び出しでそのまま使用することはできません。代わりに、`com.scalar.db.transaction.consensuscommit.ConsensusCommit.getId()` または `com.scalar.db.transaction.consensuscommit.TwoPhaseConsensusCommit.getId()` から返されたトランザクション ID を使用する必要があります。
-
-```java
-   // This custom transaction ID needs to be used for ScalarDB transactions.
-   String myTxId = UUID.randomUUID().toString();
-
-   ...
-
-   DistributedTransaction transaction = manager.begin(myTxId);
-
-   ...
-
-   // When the group commit feature is enabled, a custom transaction ID passed by users can't be used as is.
-   // logger.info("The transaction state: {}", manager.getState(myTxId));
-   logger.info("The transaction state: {}", manager.getState(transaction.getId()));
-```
-
-#### 2フェーズコミットインターフェースでの使用の禁止
-
-グループコミット機能は、進行中のすべてのトランザクションをメモリ内で管理します。この機能が2フェーズコミットインターフェースで有効になっている場合、Coordinator テーブルへの参加者サービスの一貫性のない書き込みによって生じる競合 (グループ間で異なるトランザクション分散が含まれる場合があります) を防ぐために、情報は Coordinator サービスによってのみ維持される必要があります。
-
-この制限により、アプリケーション開発に関連する複雑さと柔軟性が損なわれます。したがって、グループコミット機能と2フェーズコミットインターフェースを組み合わせて使用​​することは現在禁止されています。
-
-## Consensus Commit トランザクションマネージャーエラーの調査
-
-Consensus Commit トランザクションマネージャーの使用時にエラーを調査するには、トランザクションメタデータ列が追加されたテーブルメタデータを返す設定を有効にできます。これは、トランザクション関連の問題を調査するときに役立ちます。この設定は、Consensus Commit トランザクションマネージャーのトラブルシューティング時にのみ使用可能で、`DistributedTransactionAdmin.getTableMetadata()` メソッドを使用して、特定のテーブルのトランザクションメタデータ列の詳細を表示できます。
-
-次の設定を追加すると、`Get` および `Scan` 操作の結果に [トランザクションメタデータ](schema-loader.mdx#consensus-commit-の内部メタデータ)が含まれます。
-
-```properties
-# By default, this configuration is set to `false`.
-scalar.db.consensus_commit.include_metadata.enabled=true
-```

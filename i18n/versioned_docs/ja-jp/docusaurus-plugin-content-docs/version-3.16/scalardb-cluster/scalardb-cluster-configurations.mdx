@@ -1420,7 +1420,7 @@ ScalarDB Cluster で使用できる追加の設定は以下の通りです。
 ##### `consensus_commit.include_metadata.enabled`
 
 - **フィールド:** `scalar.db.consensus_commit.include_metadata.enabled`
-- **説明:** Consensus Commit を使用している場合に、`true` に設定すると、`Get` および `Scan` 操作の結果にトランザクションメタデータが含まれます。特定のテーブルのトランザクションメタデータ列の詳細を表示するには、`DistributedTransactionAdmin.getTableMetadata()` メソッドを使用します。このメソッドは、トランザクションメタデータ列が追加されたテーブルメタデータを返します。この設定を使用すると、トランザクション関連の問題を調査するのに役立ちます。
+- **説明:** Consensus Commit を使用している場合に、`true` に設定すると、`Get` および `Scan` 操作の結果に[トランザクションメタデータ](../schema-loader.mdx#consensus-commit-の内部トランザクションメタデータ)が含まれます。特定のテーブルのトランザクションメタデータ列の詳細を表示するには、`DistributedTransactionAdmin.getTableMetadata()` メソッドを使用します。このメソッドは、トランザクションメタデータ列が追加されたテーブルメタデータを返します。この設定を使用すると、トランザクション関連の問題を調査するのに役立ちます。
 - **デフォルト値:** `false`
 
 #### `consensus_commit.index.eventually_consistent_read.enabled`
