@@ -233,7 +233,7 @@ Consensus Commit は、正確性を犠牲にすることなく、トランザク
 
 ### グループコミット
 
-Consensus Commit は、複数のトランザクションの状態コミットフェーズをバッチで実行し、状態コミットフェーズの書き込み回数を減らすグループコミット機能を提供します。これは特に、Coordinator テーブルへの書き込みが遅い場合、たとえば高可用性のためにマルチリージョン環境に Coordinator テーブルがデプロイされている場合に役立ちます。
+Consensus Commit は、複数のトランザクションの状態コミットフェーズをバッチで実行し、状態コミットフェーズの書き込み回数を減らすグループコミット機能を提供します。これは特に、Coordinator テーブルへの書き込みが遅い場合、たとえば高可用性のためにマルチリージョン環境に Coordinator テーブルがデプロイされている場合に役立ちます。グループコミットを有効にすると、基盤となるデータベースとワークロードに応じてレイテンシが増加または減少する可能性があります。
 
 以下のパラメータを使用してグループコミットを有効にできます:
 
@@ -241,9 +241,11 @@ Consensus Commit は、複数のトランザクションの状態コミットフ
 
 グループコミットにはいくつかの他のパラメータがあります。詳細については、[パフォーマンス関連の設定](configurations.mdx#パフォーマンス関連の設定)を参照してください。
 
+グループコミット機能にもいくつかの制限があります。詳細については、[制限事項](#制限事項)を参照してください。
+
 ## 制限事項
 
-ScalarDB には、データベースに依存しないトランザクションを実現するうえでいくつかの制限があります。
+ScalarDB には、データベースに依存しないトランザクションを実現するうえでいくつかの制限があり、一部の機能にも固有の制限があります。
 
 ### アプリケーションは下位のデータベースにアクセスするために ScalarDB にアクセスする必要がある
 
@@ -260,6 +262,31 @@ Consensus Commit プロトコルを使用する ScalarDB は、下位のデー�
 ### 正確性のために特定の操作を特定の順序で実行することは禁止されている
 
 現在の実装では、ScalarDB はトランザクション内で同じレコードに対して書き込み (Put、Insert、Update、Upsert、Delete) 操作の後にスキャン操作を実行する場合に例外をスローします。
+
+### グループコミットが有効な場合、カスタムトランザクション ID はそのまま使用できない
+
+グループコミット機能は、内部値を暗黙的に生成し、それをトランザクション ID の一部として使用します。したがって、ユーザーが `com.scalar.db.transaction.consensuscommit.ConsensusCommitManager.begin(String txId)` または `com.scalar.db.transaction.consensuscommit.TwoPhaseConsensusCommitManager.begin(String txId)` を介して手動で渡したカスタムトランザクション ID は、その後の API 呼び出しでそのまま使用することはできません。代わりに、`com.scalar.db.transaction.consensuscommit.ConsensusCommit.getId()` または `com.scalar.db.transaction.consensuscommit.TwoPhaseConsensusCommit.getId()` から返されたトランザクション ID を使用する必要があります。
+
+```java
+// This custom transaction ID needs to be used for ScalarDB transactions.
+String myTxId = UUID.randomUUID().toString();
+
+...
+
+DistributedTransaction transaction = manager.begin(myTxId);
+
+...
+
+// When the group commit feature is enabled, a custom transaction ID passed by users can't be used as is.
+// logger.info("The transaction state: {}", manager.getState(myTxId));
+logger.info("The transaction state: {}", manager.getState(transaction.getId()));
+```
+
+### 2フェーズコミットインターフェースでのグループコミットの使用は禁止されている
+
+グループコミット機能は、進行中のすべてのトランザクションをメモリ内で管理します。この機能が2フェーズコミットインターフェースで有効になっている場合、Coordinator テーブルへの参加者サービスの一貫性のない書き込みによって生じる競合 (グループ間で異なるトランザクション分散が含まれる場合があります) を防ぐために、情報は Coordinator サービスによってのみ維持される必要があります。
+
+この制限により、アプリケーション開発に関連する複雑さと柔軟性が損なわれます。したがって、グループコミット機能と2フェーズコミットインターフェースを組み合わせて使用することは現在禁止されています。
 
 ## 関連情報
 
