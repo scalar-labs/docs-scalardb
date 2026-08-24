@@ -223,6 +223,12 @@ You can enable group commit by using the following parameter:
 
 * `scalar.db.consensus_commit.coordinator.group_commit.enabled`
 
+:::warning
+
+A Coordinator table created before you enable group commit does not have the additional column that group commit requires. Adding this column to an existing Coordinator table is available starting from ScalarDB 3.16.6, 3.17.4, 3.18.1, and 3.19.0. In earlier versions, Schema Loader can't add the column, so you must start your application in a clean state to use group commit. After enabling group commit in the properties file, run [Schema Loader](schema-loader.mdx#repair-tables) with the `--coordinator` and `--repair-all` options to add the missing column before you start your application with the new configuration. Until you add the column, transactions fail when they write their status to the Coordinator table.
+
+:::
+
 Group commit has several other parameters. For more details, refer to [Performance-related configurations](configurations.mdx#performance-related-configurations).
 
 The group commit feature also has some limitations. For details, see [Limitations](#limitations).
