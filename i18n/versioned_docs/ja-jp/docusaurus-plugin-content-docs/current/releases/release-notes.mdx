@@ -83,3 +83,29 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 ##### ScalarDB SQL
 
 - パラメーター化された SQL 用のキャッシュスロットを非パラメーター化 DML ステートメントが占有するステートメントキャッシュの不具合を修正しました。キャッシュ適格性は、解析された SQL 内のバインドマーカーの存在に基づいて正しく制御されるようになりました。
+
+### Enterprise Options
+
+#### ScalarDB Analytics
+
+:::warning 破壊的変更
+
+- `user` / `internal-backend` / `role` / `permission` CLI コマンドを再設計しました：`user register` は `user create` + `user link` に置き換わり、`user unregister` は `user delete` + `user unlink` (+ `internal-backend create`) に置き換わります。`--username` は `--user` / `--backend-user` に分割され、パスワードは `--password` / `--password-stdin` でのみ受け入れられるようになり、`data-source delete` は `data-source unregister` に名前変更されました。
+
+:::
+
+##### 機能強化
+
+- 統一されたエラーコードシステム (`DB-ANALYTICS-NNNNN`)：サーバー側と SDK エラーは、機械可読なエラーコードと構造化メタデータを含む単一の `AnalyticsException` として報告され、gRPC 上で構造化 `AnalyticsError` の詳細として伝播されます。
+- ScalarDB Spark データソースのフィルタプッシュダウン、列削除、リミットプッシュダウンにより、選択的クエリのデータ転送を削減します。
+- Spark コネクタで環境変数 (`SCALAR_DB_ANALYTICS_CLIENT_AUTH_USERNAME` / `SCALAR_DB_ANALYTICS_CLIENT_AUTH_PASSWORD`) を使用して認証認証情報を設定できるようになりました。
+
+##### 改善点
+
+- spark-sql CLI のカタログエラーについて、生のスタックトレースの代わりにクリーンなエラーメッセージを表示するようになりました。
+- CLI コマンドの Catalog JSON 出力から内部 `tenantId` フィールドを削除しました。
+- Spring Boot を 3.5.x から 4.0.4 にアップグレードしました。
+
+##### バグの修正
+
+- ジョブを含まない実行またはステージを含まないジョブを報告する際のメータリングサーバーの `NullPointerException` を修正しました。
