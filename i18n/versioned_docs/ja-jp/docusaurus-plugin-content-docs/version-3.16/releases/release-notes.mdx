@@ -67,6 +67,13 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 このリリースには、いくつかの改善点とバグ修正が含まれています。
 
+:::warning 破壊的変更
+
+- **既存のテーブルは新しい before-image セカンダリインデックスを作成するために `repairTable()` が必要です。** Consensus Commit でのインデックスベースの `Get`、`Scan`、および `ScanAll` は、コンパニオン `before_<col>` インデックスに依存するようになりました。既存のテーブルそれぞれで `repairTable()` を実行するまで、ScalarDB はスタートアップ時に警告をログに記録し、インデックスベースの読み取りは前の動作にフォールバックします。これにより、インデックス付き列が同時に更新されているレコードを見逃す可能性があります。設定 `scalar.db.consensus_commit.index.eventually_consistent_read.enabled` はオプトアウトとして提供されていますが、新しいワークロードには推奨されません。
+- **MySQL Connector/J が MariaDB Connector/J に置き換わりました。** SSL はデフォルトで有効になりません。MySQL 8.0 以降に `caching_sha2_password` 認証で接続する場合は、JDBC URL に `sslMode=REQUIRED` または `allowPublicKeyRetrieval=true` を追加してください。`jdbc:mysql://` URL の場合、ScalarDB が互換性のために自動的に `permitMysqlScheme` を付加するため、アクションは不要です。
+
+:::
+
 ### Community edition
 
 #### 改善点
@@ -170,6 +177,12 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 ### まとめ
 
 このリリースには、いくつかのバグ修正および脆弱性修正が含まれています。
+
+:::warning 破壊的変更
+
+- **SERIALIZABLE 分離レベルでセカンダリインデックスを使用した `Get` および `Scan` 操作は、 `IllegalArgumentException` をスロー**するようになりました。これらの操作は SERIALIZABLE が要求する厳密な一貫性を保証できないためです。インデックスベースの読み取りの SERIALIZABLE サポートを復元するには、3.16.5以降にアップグレードしてください。このバージョンでは、コンパニオンの before-image セカンダリインデックスを介して機能が復元されます。または、非 SERIALIZABLE な分離レベルに切り替え (読み取りは結果整合性になり、わずかに古いデータを返す可能性があります) るか、プライマリキーを使用する操作に書き直してください。
+
+:::
 
 ### Community edition
 

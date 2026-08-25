@@ -79,3 +79,29 @@ This release adds Consensus Commit recovery capabilities, including write-set lo
 ##### ScalarDB SQL
 
 - Fixed a statement cache regression where non-parameterized DML statements occupied cache slots intended for parameterized SQL. Cache eligibility is now correctly gated on the presence of bind markers in the parsed SQL.
+
+### Enterprise Options
+
+#### ScalarDB Analytics
+
+:::warning Backward-incompatible changes
+
+- Redesigned `user` / `internal-backend` / `role` / `permission` CLI commands: `user register` is replaced by `user create` + `user link` and `user unregister` by `user delete` + `user unlink` (+ `internal-backend create`), `--username` is split into `--user` / `--backend-user`, passwords are accepted only via `--password` / `--password-stdin`, and `data-source delete` is renamed to `data-source unregister`.
+
+:::
+
+##### Enhancements
+
+- Unified error code system (`DB-ANALYTICS-NNNNN`): server-side and SDK errors are reported as a single `AnalyticsException` carrying a machine-readable error code and structured metadata, propagated over gRPC as structured `AnalyticsError` details.
+- Filter push down, column pruning, and limit push down for the ScalarDB Spark data source, reducing data transfer for selective queries.
+- Configure authentication credentials via environment variables (`SCALAR_DB_ANALYTICS_CLIENT_AUTH_USERNAME` / `SCALAR_DB_ANALYTICS_CLIENT_AUTH_PASSWORD`) in the Spark connector.
+
+##### Improvements
+
+- Display clean error messages instead of raw stack traces for catalog errors in the spark-sql CLI.
+- Removed the internal `tenantId` field from Catalog JSON output in CLI commands.
+- Upgraded Spring Boot from 3.5.x to 4.0.4.
+
+##### Bug fixes
+
+- Fixed a `NullPointerException` in the metering server when reporting an execution that contains no jobs, or a job that contains no stages.

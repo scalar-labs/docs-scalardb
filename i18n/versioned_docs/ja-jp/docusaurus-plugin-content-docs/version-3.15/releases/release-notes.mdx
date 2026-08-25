@@ -42,6 +42,12 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 このリリースには、いくつかの改善点とバグ修正が含まれています。
 
+:::warning 破壊的変更
+
+- **MySQL Connector/J が MariaDB Connector/J に置き換わりました。** SSL はデフォルトで有効になりません。MySQL 8.0 以降に `caching_sha2_password` 認証で接続する場合は、JDBC URL に `sslMode=REQUIRED` または `allowPublicKeyRetrieval=true` を追加してください。`jdbc:mysql://` URL の場合、ScalarDB が互換性のために自動的に `permitMysqlScheme` を付加するため、アクションは不要です。
+
+:::
+
 ### Community edition
 
 #### 改善点

@@ -77,6 +77,23 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 このリリースには、多くの改善点、セキュリティ問題の修正、およびバグ修正が含まれています。
 
+:::warning 破壊的変更
+
+- **JDBC コネクションプールが Apache Commons DBCP2 から HikariCP に移行しました:**
+  - 次の設定プロパティはサポートされなくなりました。設定されている場合は警告がログに記録されて無視されます:
+    - `scalar.db.jdbc.connection_pool.max_idle`
+    - `scalar.db.jdbc.table_metadata.connection_pool.max_idle`
+    - `scalar.db.jdbc.admin.connection_pool.max_idle`
+    - `scalar.db.jdbc.prepared_statements_pool.enabled`
+    - `scalar.db.jdbc.prepared_statements_pool.max_open`
+  - プリペアドステートメントプーリングは HikariCP には同等の機能がないため、利用できなくなりました。
+  - コネクションプールのデフォルト動作は DBCP2 ではなく HikariCP に従います。これにより、設定変更がなくても実行時の動作が変わる可能性があります (例: コネクション取得タイムアウトとアイドルエビクション)。
+- **既存のテーブルは、新しい before-image セカンダリインデックスを作成するために `repairTable()` が必要です。** Consensus Commit のインデックスベースの `Get`、`Scan`、`ScanAll` 操作は、コンパニオンの `before_<col>` インデックスに依存するようになりました。既存のテーブルそれぞれで `repairTable()` を実行するまで、ScalarDB はスタートアップ時に警告をログに出力し、インデックスベースの読み取りは以前の動作にフォールバックします。これにより、インデックス列が同時に更新されているレコードを見落とす可能性があります。設定 `scalar.db.consensus_commit.index.eventually_consistent_read.enabled` はオプトアウト用に提供されていますが、新しいワークロードにはお勧めしません。
+- **MySQL Connector/J が MariaDB Connector/J に置き換わりました。** SSL はデフォルトで有効になりません。MySQL 8.0 以降に `caching_sha2_password` 認証で接続する場合は、JDBC URL に `sslMode=REQUIRED` または `allowPublicKeyRetrieval=true` を追加してください。`jdbc:mysql://` URL の場合、ScalarDB が互換性のために自動的に `permitMysqlScheme` を追加するため、操作は不要です。
+- **`BigIntColumn.MAX_VALUE` および `BigIntColumn.MIN_VALUE` 定数が削除されました。** これらを参照していたコードは、代わりに `Long.MAX_VALUE` および `Long.MIN_VALUE` を使用する必要があります。
+
+:::
+
 ### Community edition
 
 #### 機能強化
