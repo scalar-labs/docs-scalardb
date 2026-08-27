@@ -1692,8 +1692,14 @@ ScalarDB Cluster で使用できる追加の設定は以下の通りです。
 ##### `active_transaction_management.expiration_time_millis`
 
 - **フィールド:** `scalar.db.active_transaction_management.expiration_time_millis`
-- **説明:** ScalarDB は進行中のトランザクションを管理しており、トランザクション ID を使用して再開できます。このプロセスは、リソースリークを防ぐために、長時間アイドル状態のトランザクションを期限切れにします。この設定は、このトランザクション管理機能の有効期限をミリ秒単位で指定します。
+- **説明:** ScalarDB は進行中のトランザクションを管理しており、トランザクション ID を使用して再開できます。このプロセスは、リソースリークを防ぐために、長時間アイドル状態のトランザクションを期限切れにします。この設定は、このトランザクション管理機能の有効期限をミリ秒単位で指定します。トランザクションのアイドル時間は、そのトランザクションに対して操作が実行されるたびにリセットされるため、処理を継続しているトランザクションは期限切れになりません。トランザクションが期限切れになると、ScalarDB はそのトランザクションをロールバックし、`resume()` メソッドを使用してトランザクションを再開しようとすると `TransactionNotFoundException` がスローされます。
 - **デフォルト値:** `60000` (60秒)
+
+##### `active_transaction_management.max_active_transactions`
+
+- **フィールド:** `scalar.db.active_transaction_management.max_active_transactions`
+- **説明:** ScalarDB が再開のために管理する進行中のトランザクションの最大数を指定します。進行中のトランザクション数がこの値を超えると、ScalarDB はアイドル状態または最も使用頻度が低いトランザクションを優先して、管理しているトランザクションの1つを回収します。ScalarDB は回収したトランザクションを、期限切れのトランザクションと同じ方法でロールバックします。この制限は、有効期限が無効になっている場合を含め、`scalar.db.active_transaction_management.expiration_time_millis` の設定に関係なく適用されます。この制限を無効にするには、`0` または負の値を指定してください。
+- **デフォルト値:** `10000`
 
 ##### `consensus_commit.include_metadata.enabled`
 
@@ -1842,11 +1848,23 @@ scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
 - **説明:** 認証タイプ。`userpass` はユーザー名とパスワードでの認証を使用します。`oidc_jwt` は OIDC JWT ベースのアクセス制御を使用します。`oidc_jwt` の詳細については、[OIDC ベースの JWT アクセストークンを用いてユーザーアクセスを制御する](./control-access-via-oidc-based-jwt-tokens.mdx)を参照してください。
 - **デフォルト値:** empty (`userpass` として処理されます)
 
-#### `auth.oidc_jwt.access_token`
+##### `auth.oidc_jwt.access_token`
 
 - **フィールド:** `scalar.db.cluster.client.auth.oidc_jwt.access_token`
 - **説明:** OIDC アクセス制御用の JWT アクセストークン。トークンは初期化時に設定されるため、リフレッシュすることはできず、JWT アクセストークンの有効期限の間のみ有効です。
 - **デフォルト値:** empty
+
+##### `cluster.client.auth.userpass_cache.size`
+
+- **フィールド:** `scalar.db.cluster.client.auth.userpass_cache.size`
+- **説明:** クライアントがキャッシュする認証トークンの最大数。クライアントはユーザー名とパスワードのペアごとにトークンをキャッシュするため、リクエストのたびに認証する必要がありません。この設定は認証タイプが `userpass` の場合のみ適用されます。
+- **デフォルト値:** `10000`
+
+##### `cluster.client.auth.userpass_cache.expiration_margin_millis`
+
+- **フィールド:** `scalar.db.cluster.client.auth.userpass_cache.expiration_margin_millis`
+- **説明:** キャッシュされた認証トークンが実際に有効期限切れになる前にクライアントがキャッシュから削除する時間 (ミリ秒)。クライアントは実際の有効期限より前に再認証するため、クライアントがキャッシュから読み取ったトークンがリクエスト中に有効期限切れになる可能性が低くなります。マージンは各トークンの残りの有効期間の半分を上限とします。マージンを無効にするには、この設定を `0` に設定してください。この設定は認証タイプが `userpass` の場合のみ適用されます。
+- **デフォルト値:** `60000` (1分)
 
 ### ワイヤ暗号化の設定
 
@@ -2004,6 +2022,18 @@ Spring Data JDBC for ScalarDB の設定方法の詳細については、[設定]
 - **フィールド:** `scalar.db.sql.cluster_mode.auth.oidc_jwt.access_token`
 - **説明:** OIDC アクセス制御用の JWT アクセストークン。トークンは初期化時に設定されるため、リフレッシュすることはできず、JWT アクセストークンの有効期限の間のみ有効です。
 - **デフォルト値:** empty
+
+#### `auth.userpass_cache.size`
+
+- **フィールド:** `scalar.db.sql.cluster_mode.auth.userpass_cache.size`
+- **説明:** クライアントがキャッシュする認証トークンの最大数。クライアントはユーザー名とパスワードのペアごとにトークンをキャッシュするため、リクエストのたびに認証する必要がありません。この設定は認証タイプが `userpass` の場合のみ適用されます。
+- **デフォルト値:** `10000`
+
+#### `auth.userpass_cache.expiration_margin_millis`
+
+- **フィールド:** `scalar.db.sql.cluster_mode.auth.userpass_cache.expiration_margin_millis`
+- **説明:** キャッシュされた認証トークンが実際に有効期限切れになる前にクライアントがキャッシュから削除する時間 (ミリ秒)。クライアントは実際の有効期限より前に再認証するため、クライアントがキャッシュから読み取ったトークンがリクエスト中に有効期限切れになる可能性が低くなります。マージンは各トークンの残りの有効期間の半分を上限とします。マージンを無効にするには、この設定を `0` に設定してください。この設定は認証タイプが `userpass` の場合のみ適用されます。
+- **デフォルト値:** `60000` (1分)
 
 ### 埋め込みの設定
 
