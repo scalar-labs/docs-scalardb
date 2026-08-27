@@ -1817,7 +1817,7 @@ When you run applications or tools that use the Java Client SDK and the primitiv
 ##### `cluster.client.auth.userpass_cache.size`
 
 - **Field:** `scalar.db.cluster.client.auth.userpass_cache.size`
-- **Description:** The maximum number of authentication tokens that the client caches. The client caches a token for each username and password pair so that it does not need to authenticate on every request. This configuration applies only when the authentication type is `userpass`.
+- **Description:** The maximum number of authentication tokens that the client caches. The client caches a token for each username and password pair so that it does not need to authenticate on every request. The cache is shared between the credentials set in the configuration properties and the credentials passed programmatically. This configuration applies only when the authentication type is `userpass`.
 - **Default value:** `10000`
 
 ##### `cluster.client.auth.userpass_cache.expiration_margin_millis`
@@ -1986,7 +1986,7 @@ The following shows the authentication and authorization configurations for the 
 #### `auth.userpass_cache.size`
 
 - **Field:** `scalar.db.sql.cluster_mode.auth.userpass_cache.size`
-- **Description:** The maximum number of authentication tokens that the client caches. The client caches a token for each username and password pair so that it does not need to authenticate on every request. This configuration applies only when the authentication type is `userpass`.
+- **Description:** The maximum number of authentication tokens that the client caches. The client caches a token for each username and password pair so that it does not need to authenticate on every request. The cache is shared between the credentials set in the configuration properties and the credentials passed programmatically. This configuration applies only when the authentication type is `userpass`.
 - **Default value:** `10000`
 
 #### `auth.userpass_cache.expiration_margin_millis`
