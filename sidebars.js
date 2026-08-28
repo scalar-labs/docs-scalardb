@@ -974,6 +974,18 @@ const sidebars = {
             },
           ],
         },
+        {
+          type: 'category',
+          label: 'Manage ScalarDB Analytics',
+          collapsible: true,
+          items: [
+            {
+              type: 'doc',
+              id: 'scalardb-analytics/set-up-metering',
+              label: 'Set Up Usage Metering',
+            },
+          ],
+        },
       ],
     },
     {
@@ -2087,6 +2099,18 @@ const sidebars = {
               type: 'doc',
               id: 'scalar-kubernetes/RestoreDatabase',
               label: 'Kubernetes でデータベースを復元',
+            },
+          ],
+        },
+        {
+          type: 'category',
+          label: 'Manage ScalarDB Analytics',
+          collapsible: true,
+          items: [
+            {
+              type: 'doc',
+              id: 'scalardb-analytics/set-up-metering',
+              label: '使用量メータリングのセットアップ',
             },
           ],
         },
