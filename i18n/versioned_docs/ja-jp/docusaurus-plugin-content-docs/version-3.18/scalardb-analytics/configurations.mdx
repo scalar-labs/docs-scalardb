@@ -189,12 +189,12 @@ ScalarDB Analytics サーバーの認証と認可を設定します。詳細に�
 #### `metering.storage.accessKeyId`
 
 - **フィールド:** `scalar.db.analytics.server.metering.storage.accessKeyId`
-- **説明:** クラウドストレージプロバイダー用のアクセスキー ID。`aws-s3`、`azureblob`、`google-cloud-storage` の場合に必須。
+- **説明:** クラウドストレージ用のアクセスキー ID。`azureblob` の場合は必須で、ストレージアカウント名を指定します。`aws-s3` の場合は任意で、`secretAccessKey` と併せて指定すると静的な認証情報を使用し、両方を省略するとデフォルトの AWS 認証情報プロバイダーチェーンを使用します。`google-cloud-storage` では使用されず、アプリケーションのデフォルト認証情報 (ADC) を使用します。
 
 #### `metering.storage.secretAccessKey`
 
 - **フィールド:** `scalar.db.analytics.server.metering.storage.secretAccessKey`
-- **説明:** クラウドストレージプロバイダー用のシークレットアクセスキー。`aws-s3`、`azureblob`、`google-cloud-storage` の場合に必須。
+- **説明:** クラウドストレージ用のシークレットアクセスキー。`azureblob` の場合は必須で、ストレージアカウントキーを指定します。`aws-s3` の場合は任意で、`accessKeyId` と併せて指定すると静的な認証情報を使用し、両方を省略するとデフォルトの AWS 認証情報プロバイダーチェーンを使用します。`google-cloud-storage` では使用されず、アプリケーションのデフォルト認証情報 (ADC) を使用します。
 
 #### `metering.storage.prefix`
 
