@@ -185,12 +185,12 @@ Configure storage for metering data.
 #### `metering.storage.accessKeyId`
 
 - **Field:** `scalar.db.analytics.server.metering.storage.accessKeyId`
-- **Description:** Access key ID for cloud storage providers. Required for `aws-s3`, `azureblob`, and `google-cloud-storage`.
+- **Description:** Access key ID for cloud storage. Required for `azureblob`, where it is the storage account name. Optional for `aws-s3`: provide it together with `secretAccessKey` to use static credentials, or omit both to use the default AWS credential provider chain. Not used for `google-cloud-storage`, which uses Application Default Credentials.
 
 #### `metering.storage.secretAccessKey`
 
 - **Field:** `scalar.db.analytics.server.metering.storage.secretAccessKey`
-- **Description:** Secret access key for cloud storage providers. Required for `aws-s3`, `azureblob`, and `google-cloud-storage`.
+- **Description:** Secret access key for cloud storage. Required for `azureblob`, where it is the storage account key. Optional for `aws-s3`: provide it together with `accessKeyId` to use static credentials, or omit both to use the default AWS credential provider chain. Not used for `google-cloud-storage`, which uses Application Default Credentials.
 
 #### `metering.storage.prefix`
 
