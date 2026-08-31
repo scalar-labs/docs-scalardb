@@ -294,7 +294,7 @@ ScalarDB には、複数のストレージ実装をサポートするストレ�
 
 :::note
 
-#### SQLite3
+**SQLite3**
 
 SQLite3 を JDBC データベースとして使用している場合は、`scalar.db.contact_points` を次のように設定する必要があります。
 
@@ -304,7 +304,7 @@ scalar.db.contact_points=jdbc:sqlite:<SQLITE_DB_FILE_PATH>?busy_timeout=10000
 
 他の JDBC データベースとは異なり、[SQLite3 doesn't fully support concurrent access](https://www.sqlite.org/lang_transaction.html)。[`SQLITE_BUSY`](https://www.sqlite.org/rescode.html#busy) によって内部的に頻繁に発生するエラーを回避するには、[`busy_timeout`](https://www.sqlite.org/c3ref/busy_timeout.html) パラメータを設定することをお勧めします。
 
-#### YugabyteDB
+**YugabyteDB**
 
 YugabyteDB を JDBC データベースとして使用している場合は、次のように `scalar.db.contact_points` で複数のエンドポイントを指定できます。
 

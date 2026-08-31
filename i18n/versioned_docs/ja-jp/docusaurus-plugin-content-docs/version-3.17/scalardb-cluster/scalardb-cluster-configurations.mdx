@@ -361,6 +361,8 @@ ScalarDB には、複数のストレージ実装をサポートするストレ�
 
 :::note
 
+**SQLite3**
+
 SQLite3 を JDBC データベースとして使用している場合は、`scalar.db.contact_points` を次のように設定する必要があります。
 
 ```properties
@@ -368,6 +370,26 @@ scalar.db.contact_points=jdbc:sqlite:<SQLITE_DB_FILE_PATH>?busy_timeout=10000
 ```
 
 他の JDBC データベースとは異なり、[SQLite3 doesn't fully support concurrent access](https://www.sqlite.org/lang_transaction.html)。[`SQLITE_BUSY`](https://www.sqlite.org/rescode.html#busy) によって内部的に頻繁に発生するエラーを回避するには、[`busy_timeout`](https://www.sqlite.org/c3ref/busy_timeout.html) パラメータを設定することをお勧めします。
+
+**YugabyteDB**
+
+YugabyteDB を JDBC データベースとして使用している場合は、次のように `scalar.db.contact_points` で複数のエンドポイントを指定できます。
+
+```properties
+scalar.db.contact_points=jdbc:yugabytedb://127.0.0.1:5433\\,127.0.0.2:5433\\,127.0.0.3:5433/?load-balance=true
+```
+
+複数のエンドポイントはエスケープされたコンマで区切る必要があります。
+
+YugabyteDB のスマートドライバーと負荷分散の詳細については、[YugabyteDB smart drivers for YSQL](https://docs.yugabyte.com/preview/drivers-orms/smart-drivers/) を参照してください。
+
+**AlloyDB**
+
+Google Cloud 上の AlloyDB を JDBC データベースとして使用し、[Java コネクタ](https://docs.cloud.google.com/alloydb/docs/connect-language-connectors#configure-connectors)で接続したい場合は、次のように `scalar.db.contact_points` で追加のプロパティを追加する必要があります：
+
+```properties
+scalar.db.contact_points=jdbc:postgresql:///<DATABASE_NAME>?socketFactory=com.google.cloud.alloydb.SocketFactory&alloydbInstanceName=<INSTANCE_NAME>&alloydbIpType=PUBLIC
+```
 
 :::
 </TabItem>
