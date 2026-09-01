@@ -295,10 +295,10 @@ Select a database to see the configurations available for each storage.
 If you're using SQLite3 as a JDBC database, you must set `scalar.db.contact_points` as follows:
 
 ```properties
-scalar.db.contact_points=jdbc:sqlite:<SQLITE_DB_FILE_PATH>?busy_timeout=10000
+scalar.db.contact_points=jdbc:sqlite:<SQLITE_DB_FILE_PATH>?busy_timeout=10000&journal_mode=WAL
 ```
 
-Unlike other JDBC databases, [SQLite3 doesn't fully support concurrent access](https://www.sqlite.org/lang_transaction.html). To avoid frequent errors caused internally by [`SQLITE_BUSY`](https://www.sqlite.org/rescode.html#busy), setting a [`busy_timeout`](https://www.sqlite.org/c3ref/busy_timeout.html) parameter is recommended.
+Unlike other JDBC databases, [SQLite3 doesn't fully support concurrent access](https://www.sqlite.org/lang_transaction.html). To avoid frequent errors caused internally by [`SQLITE_BUSY`](https://www.sqlite.org/rescode.html#busy), set a [`busy_timeout`](https://www.sqlite.org/c3ref/busy_timeout.html) parameter. Also set [`journal_mode=WAL`](https://www.sqlite.org/wal.html) to enable write-ahead logging (WAL), which lets a reader and a writer run at the same time and reduces lock contention. Keep the `busy_timeout` parameter set as well because SQLite3 still serializes writers in WAL mode.
 
 **YugabyteDB**
 
