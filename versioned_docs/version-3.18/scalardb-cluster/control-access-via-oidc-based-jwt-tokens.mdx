@@ -91,7 +91,7 @@ The following are the client-side configurations for OIDC-based access control. 
 
 :::note
 
-You can pass the JWT access token programmatically by using `OidcJwtAccessTokenHolder`, which is the recommended option when handling many OIDC users. Alternatively, you can supply the token via the access token property (`scalar.db.cluster.client.auth.oidc_jwt.access_token` for the primitive interface or `scalar.db.sql.cluster_mode.auth.oidc_jwt.access_token` for the SQL interface), which is easy to start with, especially for testing with tools like the SQL CLI. However, since the token is set at initialization time, it cannot be refreshed.
+You can pass the JWT access token programmatically by using `OidcJwtAccessTokenHolder`, which is the recommended option when handling many OIDC users. For details, see [Passing credentials programmatically](./scalardb-auth-with-sql.mdx#passing-credentials-programmatically). Alternatively, you can supply the token via the access token property (`scalar.db.cluster.client.auth.oidc_jwt.access_token` for the primitive interface or `scalar.db.sql.cluster_mode.auth.oidc_jwt.access_token` for the SQL interface), which is easy to start with, especially for testing with tools like the SQL CLI. However, since the token is set at initialization time, it cannot be refreshed.
 
 :::
 

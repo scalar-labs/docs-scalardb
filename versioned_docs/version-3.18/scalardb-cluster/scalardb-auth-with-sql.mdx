@@ -156,6 +156,42 @@ In addition to the configuration in the [ScalarDB Cluster SQL client configurati
 | `scalar.db.sql.cluster_mode.username` | The username of the client. |         |
 | `scalar.db.sql.cluster_mode.password` | The password of the client. |         |
 
+## Passing credentials programmatically
+
+The simplest way to provide credentials is to set them in the configuration properties: a username and password for the `userpass` authentication type, or a JWT access token for the `oidc_jwt` authentication type. However, this binds the client to a single ScalarDB user, and a token set in the properties cannot be refreshed when it expires. If your application needs to authenticate as different ScalarDB users at runtime (for example, when one application instance serves many end users), you can instead pass credentials programmatically on a per-thread basis.
+
+A credential holder sets credentials for the current thread for the duration of a block of code. All ScalarDB Cluster operations within the block are executed as the user identified by the held credentials.
+
+Use `UserpassHolder` when the authentication type of the client is `userpass`, which is the default:
+
+```java
+import com.scalar.db.cluster.client.UserpassHolder;
+
+UserpassHolder.executeWithUserpass(username, password, () -> {
+    // All ScalarDB Cluster operations in this block are executed as the user who is authenticated with the specified username and password.
+});
+```
+
+Use `OidcJwtAccessTokenHolder` when the authentication type of the client is `oidc_jwt`:
+
+```java
+import com.scalar.db.cluster.client.OidcJwtAccessTokenHolder;
+
+OidcJwtAccessTokenHolder.executeWithToken(jwtAccessToken, () -> {
+    // All ScalarDB Cluster operations in this block are executed as the user who is mapped from the specified token.
+});
+```
+
+When using the holders, keep the following in mind:
+
+- The credentials are set for the current thread only. Other threads are not affected, so you can safely use the holders concurrently from multiple threads.
+- The credentials are resolved for each request. Therefore, when you begin a transaction within the block, also commit or roll it back within the block.
+- The credentials are cleared automatically when the block completes, even if an exception is thrown.
+- Nested calls of the same holder are not supported and throw an `IllegalStateException`.
+- Credentials set in the holder for the other authentication type are ignored.
+- The credentials set in a holder take precedence over the credentials set in the configuration properties.
+- For `UserpassHolder`, the password will be `null` for users that don't have a password.
+
 ## Wire encryption
 
 If you enable authentication and authorization, enabling wire encryption to protect the user credentials is strongly recommended, especially in production environments. For details about wire encryption, see [Encrypt Wire Communications](encrypt-wire-communications.mdx).
