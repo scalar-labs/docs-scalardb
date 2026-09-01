@@ -1696,6 +1696,18 @@ This is a backward-compatibility option and is **not recommended for new workloa
 
 :::
 
+#### `consensus_commit.coordinator.write_set_logging.enabled`
+
+- **Field:** `scalar.db.consensus_commit.coordinator.write_set_logging.enabled`
+- **Description:** When using Consensus Commit, if this is set to `true`, ScalarDB records the write set of each transaction in the Coordinator table. The write set identifies the records that the transaction wrote, and ScalarDB uses this information for capabilities such as recovering transactions proactively. Enabling this configuration requires an additional column in the Coordinator table and increases the amount of data that ScalarDB writes to and stores in the Coordinator table.
+- **Default value:** `false`
+
+:::warning
+
+A Coordinator table created before you enable this configuration does not have the additional column that this configuration requires. For details about how to add the column to an existing Coordinator table, see [Coordinator write set logging](../consensus-commit.mdx#coordinator-write-set-logging).
+
+:::
+
 #### `default_namespace_name`
 
 - **Field:** `scalar.db.default_namespace_name`
