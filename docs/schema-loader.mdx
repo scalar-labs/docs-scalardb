@@ -217,7 +217,7 @@ To create namespaces and tables by using a properties file, run the following co
 java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator]
 ```
 
-If `--coordinator` is specified, a [Coordinator table](api-guide.mdx#specify-operations-for-the-coordinator-table) will be created. When [group commit](consensus-commit.mdx#group-commit) is enabled, this command creates a Coordinator table with the additional column that group commit requires.
+If `--coordinator` is specified, a [Coordinator table](api-guide.mdx#specify-operations-for-the-coordinator-table) will be created. When [group commit](consensus-commit.mdx#group-commit) or [Coordinator write set logging](consensus-commit.mdx#coordinator-write-set-logging) is enabled, this command creates a Coordinator table with the additional column that each enabled feature requires.
 
 :::note
 
@@ -353,7 +353,7 @@ Before executing this command, you should confirm the schema configuration is th
 
 If `--coordinator` is specified, the Coordinator table will be repaired as well. In addition, if you're using Cosmos DB for NoSQL, running this command will also repair stored procedures attached to each table.
 
-If you enable [group commit](consensus-commit.mdx#group-commit) after creating the Coordinator table, running this command with `--coordinator` also adds the additional column that group commit requires.
+If you enable [group commit](consensus-commit.mdx#group-commit) or [Coordinator write set logging](consensus-commit.mdx#coordinator-write-set-logging) after creating the Coordinator table, running this command with `--coordinator` also adds the additional column that each enabled feature requires.
 
 :::note
 
