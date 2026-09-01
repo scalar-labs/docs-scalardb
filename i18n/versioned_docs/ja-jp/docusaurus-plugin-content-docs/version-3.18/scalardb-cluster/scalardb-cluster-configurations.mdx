@@ -1864,11 +1864,17 @@ scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
 - **説明:** 認証タイプ。`userpass` はユーザー名とパスワードでの認証を使用します。`oidc_jwt` は OIDC JWT ベースのアクセス制御を使用します。`oidc_jwt` の詳細については、[OIDC ベースの JWT アクセストークンを用いてユーザーアクセスを制御する](./control-access-via-oidc-based-jwt-tokens.mdx)を参照してください。
 - **デフォルト値:** empty (`userpass` として処理されます)
 
-#### `auth.oidc_jwt.access_token`
+##### `auth.oidc_jwt.access_token`
 
 - **フィールド:** `scalar.db.cluster.client.auth.oidc_jwt.access_token`
 - **説明:** OIDC アクセス制御用の JWT アクセストークン。トークンは初期化時に設定されるため、リフレッシュすることはできず、JWT アクセストークンの有効期限の間のみ有効です。
 - **デフォルト値:** empty
+
+##### `cluster.client.auth.userpass_cache.size`
+
+- **フィールド:** `scalar.db.cluster.client.auth.userpass_cache.size`
+- **説明:** クライアントがキャッシュする認証トークンの最大数。クライアントはユーザー名とパスワードのペアごとにトークンをキャッシュするため、リクエストのたびに認証する必要がありません。キャッシュされた各トークンは、キャッシュされてから1日後に有効期限が切れます。キャッシュは、設定プロパティで設定されたクレデンシャルとプログラムで渡されたクレデンシャルの間で共有されます。この設定は認証タイプが `userpass` の場合のみ適用されます。
+- **デフォルト値:** `10000`
 
 ### ワイヤ暗号化の設定
 
@@ -2026,6 +2032,12 @@ Spring Data JDBC for ScalarDB の設定方法の詳細については、[設定]
 - **フィールド:** `scalar.db.sql.cluster_mode.auth.oidc_jwt.access_token`
 - **説明:** OIDC アクセス制御用の JWT アクセストークン。トークンは初期化時に設定されるため、リフレッシュすることはできず、JWT アクセストークンの有効期限の間のみ有効です。
 - **デフォルト値:** empty
+
+#### `auth.userpass_cache.size`
+
+- **フィールド:** `scalar.db.sql.cluster_mode.auth.userpass_cache.size`
+- **説明:** クライアントがキャッシュする認証トークンの最大数。クライアントはユーザー名とパスワードのペアごとにトークンをキャッシュするため、リクエストのたびに認証する必要がありません。キャッシュされた各トークンは、キャッシュされてから1日後に有効期限が切れます。キャッシュは、設定プロパティで設定されたクレデンシャルとプログラムで渡されたクレデンシャルの間で共有されます。この設定は認証タイプが `userpass` の場合のみ適用されます。
+- **デフォルト値:** `10000`
 
 ### 埋め込みの設定
 
