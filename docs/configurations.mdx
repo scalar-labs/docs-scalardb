@@ -393,6 +393,46 @@ scalar.db.username=
 scalar.db.password=<content-of-service-account-key.json>
 ```
 
+**Amazon Aurora**
+
+If you're using Amazon Aurora as a JDBC database, you can add the `jdbc:aws-wrapper:` prefix to `scalar.db.contact_points` to connect through the [AWS Advanced JDBC Wrapper](https://github.com/aws/aws-advanced-jdbc-wrapper). The wrapper discovers the cluster topology and reconnects to the new writer after a failover instead of waiting for DNS to propagate. ScalarDB bundles the wrapper, so you don't need to add any JAR files.
+
+For Aurora PostgreSQL, specify the cluster endpoint as follows:
+
+```properties
+scalar.db.storage=jdbc
+scalar.db.contact_points=jdbc:aws-wrapper:postgresql://<CLUSTER_ENDPOINT>:5432/<DATABASE_NAME>
+scalar.db.username=<USERNAME>
+scalar.db.password=<PASSWORD>
+```
+
+For Aurora MySQL, specify the cluster endpoint as follows:
+
+```properties
+scalar.db.storage=jdbc
+scalar.db.contact_points=jdbc:aws-wrapper:mysql://<CLUSTER_ENDPOINT>:3306/<DATABASE_NAME>
+scalar.db.username=<USERNAME>
+scalar.db.password=<PASSWORD>
+```
+
+ScalarDB supports the prefix for Aurora PostgreSQL and Aurora MySQL only. If you use it with any other database, ScalarDB fails to start.
+
+To configure the wrapper, add its parameters to the query string of the connection URL. Aside from the Aurora MySQL parameters described below, ScalarDB sets no defaults of its own, so the wrapper's own defaults apply. For example, to shorten the failover timeout:
+
+```properties
+scalar.db.contact_points=jdbc:aws-wrapper:postgresql://<CLUSTER_ENDPOINT>:5432/<DATABASE_NAME>?failoverTimeoutMs=60000
+```
+
+For Aurora MySQL, ScalarDB adds `permitMysqlScheme=true` and `wrapperTargetDriverDialect=mariadb-connector-j-3` to the URL automatically, because ScalarDB connects to MySQL through MariaDB Connector/J. If you set either parameter yourself, ScalarDB uses your value.
+
+If a failover happens while `commit()` is running, ScalarDB throws `UnknownTransactionStatusException`. Check whether the transaction was applied before you retry it. A failover during a CRUD operation throws `CrudException`, which you can handle as usual. For details, see [How to handle exceptions](./api-guide.mdx#how-to-handle-exceptions).
+
+This support does not cover the following:
+
+- **IAM database authentication and Secrets Manager integration:** The wrapper's plugins for these require additional JAR files that ScalarDB doesn't bundle.
+- **Read-write splitting:** ScalarDB doesn't route read operations to reader instances.
+- **Configurations other than Aurora:** ScalarDB doesn't support non-Aurora RDS deployments, or engines other than PostgreSQL and MySQL, through the wrapper. ScalarDB doesn't check whether the endpoint belongs to an Aurora cluster, so a non-Aurora RDS deployment starts without an error.
+
 :::
 
   </TabItem>
