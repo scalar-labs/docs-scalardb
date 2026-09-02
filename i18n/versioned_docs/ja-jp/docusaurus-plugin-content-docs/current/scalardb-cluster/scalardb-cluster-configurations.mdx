@@ -438,10 +438,10 @@ ScalarDB には、複数のストレージ実装をサポートするストレ�
 SQLite3 を JDBC データベースとして使用している場合は、`scalar.db.contact_points` を次のように設定する必要があります。
 
 ```properties
-scalar.db.contact_points=jdbc:sqlite:<SQLITE_DB_FILE_PATH>?busy_timeout=10000
+scalar.db.contact_points=jdbc:sqlite:<SQLITE_DB_FILE_PATH>?busy_timeout=10000&journal_mode=WAL
 ```
 
-他の JDBC データベースとは異なり、[SQLite3 doesn't fully support concurrent access](https://www.sqlite.org/lang_transaction.html)。[`SQLITE_BUSY`](https://www.sqlite.org/rescode.html#busy) によって内部的に頻繁に発生するエラーを回避するには、[`busy_timeout`](https://www.sqlite.org/c3ref/busy_timeout.html) パラメータを設定することをお勧めします。
+他の JDBC データベースとは異なり、[SQLite3 doesn't fully support concurrent access](https://www.sqlite.org/lang_transaction.html)。[`SQLITE_BUSY`](https://www.sqlite.org/rescode.html#busy) によって内部的に頻繁に発生するエラーを回避するには、[`busy_timeout`](https://www.sqlite.org/c3ref/busy_timeout.html) パラメータを設定してください。また、[`journal_mode=WAL`](https://www.sqlite.org/wal.html) を設定して先行書き込みログ (WAL) を有効にすると、読み取りと書き込みを同時に実行でき、ロックの競合が軽減されます。SQLite3 は WAL モードでも書き込みをシリアライズするため、`busy_timeout` パラメータも引き続き設定しておいてください。
 
 **YugabyteDB**
 
@@ -1741,6 +1741,18 @@ ScalarDB Cluster で使用できる追加の設定は以下の通りです。
 
 :::
 
+##### `consensus_commit.coordinator.write_set_logging.enabled`
+
+- **フィールド:** `scalar.db.consensus_commit.coordinator.write_set_logging.enabled`
+- **説明:** Consensus Commit を使用している場合に、`true` に設定すると、ScalarDB は各トランザクションの書き込みセットを Coordinator テーブルに記録します。書き込みセットは、トランザクションが書き込んだレコードを識別するもので、ScalarDB はこの情報を、トランザクションを事前にリカバリするなどの機能に使用します。この設定を有効にするには、Coordinator テーブルに追加の列が必要になり、ScalarDB が Coordinator テーブルに書き込み、格納するデータ量が増加します。
+- **デフォルト値:** `false`
+
+:::warning
+
+この設定を有効にする前に作成された Coordinator テーブルには、この設定に必要な追加の列がありません。既存の Coordinator テーブルに列を追加する方法の詳細については、[Coordinator の書き込みセットのロギング](../consensus-commit.mdx#coordinator-の書き込みセットのロギング)を参照してください。
+
+:::
+
 ##### `default_namespace_name`
 
 - **フィールド:** `scalar.db.default_namespace_name`
@@ -1879,7 +1891,7 @@ scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
 ##### `cluster.client.auth.userpass_cache.size`
 
 - **フィールド:** `scalar.db.cluster.client.auth.userpass_cache.size`
-- **説明:** クライアントがキャッシュする認証トークンの最大数。クライアントはユーザー名とパスワードのペアごとにトークンをキャッシュするため、リクエストのたびに認証する必要がありません。この設定は認証タイプが `userpass` の場合のみ適用されます。
+- **説明:** クライアントがキャッシュする認証トークンの最大数。クライアントはユーザー名とパスワードのペアごとにトークンをキャッシュするため、リクエストのたびに認証する必要がありません。キャッシュは、設定プロパティで設定されたクレデンシャルとプログラムで渡されたクレデンシャルの間で共有されます。この設定は認証タイプが `userpass` の場合のみ適用されます。
 - **デフォルト値:** `10000`
 
 ##### `cluster.client.auth.userpass_cache.expiration_margin_millis`
@@ -2048,7 +2060,7 @@ Spring Data JDBC for ScalarDB の設定方法の詳細については、[設定]
 #### `auth.userpass_cache.size`
 
 - **フィールド:** `scalar.db.sql.cluster_mode.auth.userpass_cache.size`
-- **説明:** クライアントがキャッシュする認証トークンの最大数。クライアントはユーザー名とパスワードのペアごとにトークンをキャッシュするため、リクエストのたびに認証する必要がありません。この設定は認証タイプが `userpass` の場合のみ適用されます。
+- **説明:** クライアントがキャッシュする認証トークンの最大数。クライアントはユーザー名とパスワードのペアごとにトークンをキャッシュするため、リクエストのたびに認証する必要がありません。キャッシュは、設定プロパティで設定されたクレデンシャルとプログラムで渡されたクレデンシャルの間で共有されます。この設定は認証タイプが `userpass` の場合のみ適用されます。
 - **デフォルト値:** `10000`
 
 #### `auth.userpass_cache.expiration_margin_millis`

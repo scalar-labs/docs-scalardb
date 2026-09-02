@@ -225,7 +225,7 @@ Create/Delete schemas in the storage defined in the config file
 java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator]
 ```
 
-`--coordinator` が指定されている場合は、[Coordinator テーブル](api-guide.mdx#coordinator-テーブルの操作を指定する)が作成されます。
+`--coordinator` が指定されている場合は、[Coordinator テーブル](api-guide.mdx#coordinator-テーブルの操作を指定する)が作成されます。[グループコミット](consensus-commit.mdx#グループコミット)または [Coordinator の書き込みセットのロギング](consensus-commit.mdx#coordinator-の書き込みセットのロギング)が有効になっている場合、このコマンドは、有効になっている各機能が必要とする追加の列を持つ Coordinator テーブルを作成します。
 
 :::note
 
@@ -360,6 +360,8 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
 :::
 
 `--coordinator` が指定されている場合は、Coordinator テーブルも修復されます。また、Cosmos DB for NoSQL を使用している場合は、このコマンドを実行すると、各テーブルにアタッチされているストアドプロシージャも修復されます。
+
+Coordinator テーブルを作成した後に[グループコミット](consensus-commit.mdx#グループコミット)または [Coordinator の書き込みセットのロギング](consensus-commit.mdx#coordinator-の書き込みセットのロギング)を有効にした場合、`--coordinator` を指定してこのコマンドを実行すると、有効になっている各機能が必要とする追加の列も追加されます。
 
 :::note
 

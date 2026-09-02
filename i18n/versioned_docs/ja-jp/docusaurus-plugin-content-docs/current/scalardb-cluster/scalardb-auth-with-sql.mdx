@@ -160,6 +160,127 @@ ScalarDB では最初、データを書き込むために `UPSERT` に対応す�
 | `scalar.db.sql.cluster_mode.username` | クライアントのユーザー名。 |         |
 | `scalar.db.sql.cluster_mode.password` | クライアントのパスワード。 |         |
 
+## クレデンシャルをプログラムで渡す
+
+クレデンシャルを提供する最も簡単な方法は、設定プロパティで指定することです。`userpass` 認証タイプの場合はユーザー名とパスワード、`oidc_jwt` 認証タイプの場合は JWT アクセストークンです。ただし、この方法ではクライアントを単一の ScalarDB ユーザーに固定し、プロパティで設定されたトークンは有効期限が切れてもリフレッシュできません。アプリケーションが実行時に異なる ScalarDB ユーザーとして認証する必要がある場合 (例: 1つのアプリケーションインスタンスが多数のエンドユーザーにサービスを提供する場合)、以下のセクションで説明するように、スレッドごと、トランザクションごと、または操作ごとにプログラムでクレデンシャルを渡すことができます。各メカニズムは両方の認証タイプで機能します。
+
+### スレッドごとにクレデンシャルを渡す
+
+クレデンシャルホルダーは、コードブロックの実行中に現在のスレッドのクレデンシャルを設定します。ブロック内のすべての ScalarDB Cluster 操作は、保持されたクレデンシャルで識別されたユーザーとして実行されます。
+
+クライアントの認証タイプがデフォルトの `userpass` の場合は `UserpassHolder` を使用します:
+
+```java
+import com.scalar.db.cluster.client.UserpassHolder;
+
+UserpassHolder.executeWithUserpass(username, password, () -> {
+    // このブロック内のすべての ScalarDB Cluster 操作は、指定されたユーザー名とパスワードで認証されたユーザーとして実行されます。
+});
+```
+
+クライアントの認証タイプが `oidc_jwt` の場合は `OidcJwtAccessTokenHolder` を使用します:
+
+```java
+import com.scalar.db.cluster.client.OidcJwtAccessTokenHolder;
+
+OidcJwtAccessTokenHolder.executeWithToken(jwtAccessToken, () -> {
+    // このブロック内のすべての ScalarDB Cluster 操作は、指定されたトークンからマッピングされたユーザーとして実行されます。
+});
+```
+
+ホルダーを使用する際は、以下の点に注意してください:
+
+- クレデンシャルは現在のスレッドにのみ設定されます。他のスレッドには影響しないため、複数のスレッドからホルダーを安全に同時使用できます。
+- クレデンシャルはリクエストごとに解決されます。そのため、ブロック内でトランザクションを開始した場合は、ブロック内でコミットまたはロールバックしてください。
+- 例外がスローされた場合でも、ブロックが完了するとクレデンシャルは自動的にクリアされます。
+- 同じホルダーのネストされた呼び出しはサポートされておらず、`IllegalStateException` をスローします。
+- 他の認証タイプのホルダーに設定されたクレデンシャルは無視されます。
+- ホルダーに設定されたクレデンシャルは、設定プロパティに設定されたクレデンシャルより優先されます。
+- `UserpassHolder` の場合、パスワードを持たないユーザーのパスワードは `null` になります。
+
+### オペレーション属性としてクレデンシャルを渡す
+
+オペレーション属性を使用して、特定のトランザクション、操作、または SQL ステートメントのクレデンシャルを渡すことができます。オペレーション属性の詳細については、[オペレーション属性](../api-guide.mdx#オペレーション属性)を参照してください。以下の属性キーは認証クレデンシャル用に予約されています:
+
+| キー                          | `AuthOperationAttributes` の定数     | 説明                                                                                                     |
+|------------------------------|--------------------------------------|----------------------------------------------------------------------------------------------------------|
+| `auth-type`                  | `TYPE`                               | 呼び出しの認証方法。値は `userpass` または `oidc_jwt` (大文字小文字を区別しない) である必要があります。   |
+| `auth-userpass-username`     | `USERPASS_USERNAME`                  | `auth-type` が `userpass` の場合のユーザー名。必須。                                                    |
+| `auth-userpass-password`     | `USERPASS_PASSWORD`                  | `auth-type` が `userpass` の場合のパスワード。パスワードを持たないユーザーはオプション。                  |
+| `auth-oidc-jwt-access-token` | `OIDC_JWT_ACCESS_TOKEN`              | `auth-type` が `oidc_jwt` の場合の JWT アクセストークン。必須。                                          |
+
+`com.scalar.db.cluster.client.AuthOperationAttributes` クラスはこれらのキーを定数として提供していますが、リテラル文字列として指定することもできます。
+
+以下のセクションで説明する場所で auth 属性を渡すことができます。例では `userpass` 認証タイプを使用しています。`oidc_jwt` の場合は、`auth-type` を `oidc_jwt` に設定し、ユーザー名とパスワードのキーの代わりに `auth-oidc-jwt-access-token` キーを使用して JWT アクセストークンを指定します。
+
+#### プリミティブインターフェースを使用したトランザクションの場合
+
+トランザクションマネージャーの `begin()` または `beginReadOnly()` メソッドに属性を渡します。トランザクション内のすべての操作は、指定されたユーザーとして認証されます。
+
+```java
+import com.scalar.db.cluster.client.AuthOperationAttributes;
+
+Map<String, String> attributes = new HashMap<>();
+attributes.put(AuthOperationAttributes.TYPE, "userpass");
+attributes.put(AuthOperationAttributes.USERPASS_USERNAME, "user1");
+attributes.put(AuthOperationAttributes.USERPASS_PASSWORD, "password1");
+
+DistributedTransaction transaction = manager.begin(attributes);
+```
+
+#### SQL インターフェースを使用したトランザクションの場合
+
+`SqlSession` の `begin()` または `beginReadOnly()` メソッドに属性を渡すか、`BEGIN` または `START TRANSACTION` ステートメントの `WITH` 句でキーを指定します。トランザクション内のすべてのステートメントは、指定されたユーザーとして認証されます。
+
+```sql
+BEGIN WITH 'auth-type' = 'userpass'
+  AND 'auth-userpass-username' = 'user1'
+  AND 'auth-userpass-password' = 'password1';
+```
+
+#### トランザクションマネージャーで直接実行される操作の場合
+
+トランザクションを開始せずにトランザクションマネージャーで直接実行する1回限りの操作の場合は、操作ビルダーの `attribute()` メソッドを使用して操作自体に属性を設定します。これは、`Get`、`Scan`、`Insert`、`Upsert`、`Update`、`Delete` など、`attribute()` メソッドをサポートする操作ビルダーで機能します。
+
+```java
+import com.scalar.db.cluster.client.AuthOperationAttributes;
+
+Insert insert = Insert.newBuilder()
+    .namespace("ns1")
+    .table("tbl")
+    .partitionKey(Key.ofInt("id", 1))
+    .textValue("col1", "a")
+    .attribute(AuthOperationAttributes.TYPE, "userpass")
+    .attribute(AuthOperationAttributes.USERPASS_USERNAME, "user1")
+    .attribute(AuthOperationAttributes.USERPASS_PASSWORD, "password1")
+    .build();
+
+manager.insert(insert);
+```
+
+#### トランザクション外で実行される SQL ステートメントの場合
+
+トランザクションを開始せずに実行する SQL ステートメントの場合は、ステートメントの `WITH` 句でキーを指定します。これは、プリペアドステートメントを含む `WITH` 句をサポートする任意のステートメントで機能します。
+
+```sql
+INSERT INTO ns1.tbl (id, col1) VALUES (1, 'a')
+  WITH 'auth-type' = 'userpass'
+  AND 'auth-userpass-username' = 'user1'
+  AND 'auth-userpass-password' = 'password1';
+```
+
+#### auth 属性の処理方法
+
+オペレーション属性としてクレデンシャルを渡す際は、以下の点に注意してください:
+
+- `auth-type` 属性が空でない値で存在する場合、指定されたクレデンシャルがその呼び出しに使用され、クレデンシャルホルダーによって現在のスレッドに設定されたクレデンシャルおよびクライアント設定プロパティに設定されたクレデンシャルより優先されます。
+- 上記の場所のいずれかで auth 属性を渡すと、クライアントはリクエストをクラスターに転送する前に属性を削除するため、クレデンシャルはサーバー側のログやエラーメッセージに表示されません。同じ属性マップまたは `WITH` 句内の他の属性は保持されます。
+- auth 属性は上記の場所でのみ認識されます。トランザクション内で実行される操作や SQL ステートメントなど、他の場所で指定した場合は、クレデンシャルとして解釈されず、通常のオペレーション属性としてクラスターに転送されます。
+- 不明な `auth-type` 値や必須属性の欠落などの無効な値は、リクエストが送信される前にクライアント側で `IllegalArgumentException` を引き起こします。
+- `executeBatch()` メソッドを使用して SQL ステートメントのバッチを実行する場合、最初のステートメントの `WITH` 句にある auth 属性のみが使用され、選択されたクレデンシャルがバッチ全体に適用されます。
+- 同様に、トランザクションマネージャーで複数の操作を1回の呼び出しで実行する場合 (例: `mutate()` メソッドを使用)、最初の操作の auth 属性のみが使用され、選択されたクレデンシャルがその呼び出しのすべての操作に適用されます。
+- 認証と認可が無効になっている場合 (`scalar.db.cluster.auth.enabled` が `false`)、auth 属性は無視され、操作は認証なしで実行されます。そのため、認証と認可が無効な環境にデプロイする場合でも、アプリケーションコードに属性を保持できます。
+
 ## ワイヤ暗号化
 
 認証と認可を有効にする場合は、ユーザー資格情報を保護するために、本番環境でワイヤ暗号化を有効にすることを強くお勧めします。ワイヤ暗号化の詳細については、[ワイヤ通信の暗号化](encrypt-wire-communications.mdx)を参照してください。
