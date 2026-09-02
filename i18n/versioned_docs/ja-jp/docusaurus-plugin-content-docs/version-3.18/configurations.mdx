@@ -359,10 +359,10 @@ ScalarDB には、複数のストレージ実装をサポートするストレ�
 SQLite3 を JDBC データベースとして使用している場合は、`scalar.db.contact_points` を次のように設定する必要があります。
 
 ```properties
-scalar.db.contact_points=jdbc:sqlite:<SQLITE_DB_FILE_PATH>?busy_timeout=10000
+scalar.db.contact_points=jdbc:sqlite:<SQLITE_DB_FILE_PATH>?busy_timeout=10000&journal_mode=WAL
 ```
 
-他の JDBC データベースとは異なり、[SQLite3 doesn't fully support concurrent access](https://www.sqlite.org/lang_transaction.html)。[`SQLITE_BUSY`](https://www.sqlite.org/rescode.html#busy) によって内部的に頻繁に発生するエラーを回避するには、[`busy_timeout`](https://www.sqlite.org/c3ref/busy_timeout.html) パラメータを設定することをお勧めします。
+他の JDBC データベースとは異なり、[SQLite3 doesn't fully support concurrent access](https://www.sqlite.org/lang_transaction.html)。[`SQLITE_BUSY`](https://www.sqlite.org/rescode.html#busy) によって内部的に頻繁に発生するエラーを回避するには、[`busy_timeout`](https://www.sqlite.org/c3ref/busy_timeout.html) パラメータを設定してください。また、[`journal_mode=WAL`](https://www.sqlite.org/wal.html) を設定して先行書き込みログ (WAL) を有効にすると、読み取りと書き込みを同時に実行でき、ロックの競合が軽減されます。SQLite3 は WAL モードでも書き込みをシリアライズするため、`busy_timeout` パラメータも引き続き設定しておいてください。
 
 **YugabyteDB**
 
