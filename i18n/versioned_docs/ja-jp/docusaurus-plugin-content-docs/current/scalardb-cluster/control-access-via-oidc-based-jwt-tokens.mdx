@@ -104,11 +104,20 @@ ABAC の詳細については、[ユーザーアクセスをきめ細かく制�
 
 :::note
 
-`OidcJwtAccessTokenHolder` を使用してプログラム的に JWT アクセストークンを渡すことができ、これは多くの OIDC ユーザーを処理する場合に推奨されるオプションです。あるいは、アクセストークンプロパティ (プリミティブインターフェースの場合は `scalar.db.cluster.client.auth.oidc_jwt.access_token`、SQL インターフェースの場合は `scalar.db.sql.cluster_mode.auth.oidc_jwt.access_token`) でトークンを提供することもでき、これは特に SQL CLI などのツールでテストする場合に簡単に開始できます。ただし、トークンは初期化時に設定されるため、リフレッシュはできません。
+`OidcJwtAccessTokenHolder` を使用してプログラム的に JWT アクセストークンを渡すことができ、これは多くの OIDC ユーザーを処理する場合に推奨されるオプションです。あるいは、アクセストークンプロパティ (プリミティブインターフェースの場合は `scalar.db.cluster.client.auth.oidc_jwt.access_token`、SQL インターフェースの場合は `scalar.db.sql.cluster_mode.auth.oidc_jwt.access_token`) でトークンを提供することもでき、これは特に SQL CLI などのツールでテストする場合に簡単に開始できます。ただし、トークンは初期化時に設定されるため、リフレッシュはできません。また、オペレーション属性を使用して、特定のトランザクション、操作、または SQL ステートメントにトークンを渡すこともできます。詳細については、[JWT アクセストークンをプログラムで渡す](#jwt-アクセストークンをプログラムで渡す)を参照してください。
 
 :::
 
 追加のクライアント側設定については、ScalarDB Cluster 設定の[プリミティブインターフェース](./scalardb-cluster-configurations.mdx#configurations-for-the-primitive-interface)および [SQL インターフェース](./scalardb-cluster-configurations.mdx#configurations-for-the-sql-interface)の設定を参照してください。
+
+## JWT アクセストークンをプログラムで渡す
+
+設定プロパティに JWT アクセストークンを設定する代わりに、以下の方法でプログラムで渡すことができます:
+
+- **スレッドごと:** `OidcJwtAccessTokenHolder` を使用して、コードブロックの実行中に現在のスレッドのトークンを設定します。
+- **トランザクション、操作、または SQL ステートメントごと:** auth 属性 `auth-type` と `auth-oidc-jwt-access-token` を使用します。
+
+どちらのメカニズムも `userpass` および `oidc_jwt` 認証タイプで同じように機能し、認証と認可ガイドの[クレデンシャルをプログラムで渡す](./scalardb-auth-with-sql.mdx#クレデンシャルをプログラムで渡す)で説明されています。`OidcJwtAccessTokenHolder` を使用した完全なアプリケーション例については、以下のチュートリアルの [7. Java クライアントでの接続](#7-java-クライアントでの接続)を参照してください。
 
 ## チュートリアル - OIDC と ABAC でアクセス制御
 

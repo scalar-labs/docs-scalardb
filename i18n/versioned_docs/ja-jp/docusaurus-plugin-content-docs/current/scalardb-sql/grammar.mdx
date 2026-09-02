@@ -950,7 +950,12 @@ abac_read_tag: ABAC_READ_TAG <abac read tag> FOR [POLICY] <abac policy name>
 
 - バインドマーカー (位置指定 `?` および名前指定 `:<name>`) に `<limit>` を指定できます。
 
-ScalarDB のデータベースからデータを取得する方法の詳細については、[Get 操作](../api-guide.mdx#get-操作)および [Scan 操作](../api-guide.mdx#操作)を参照してください。
+`WITH` 句:
+
+- `WITH` 句を使用してオペレーション属性と ABAC 読み取りタグを指定できます。オペレーション属性の詳細については、[オペレーション属性](../api-guide.mdx#オペレーション属性)を参照してください。ABAC タグの詳細については、[属性ベースアクセス制御 (ABAC)](../scalardb-cluster/authorize-with-abac.mdx)を参照してください。
+- ScalarDB Cluster で認証と認可が有効になっている場合、`WITH` 句で auth 属性を指定することで、トランザクション外で実行されるステートメントの認証クレデンシャルを渡すことができます。詳細については、[オペレーション属性としてクレデンシャルを渡す](../scalardb-cluster/scalardb-auth-with-sql.mdx#オペレーション属性としてクレデンシャルを渡す)を参照してください。
+
+ScalarDB のデータベースからデータを取得する方法の詳細については、[Get 操作](../api-guide.mdx#get-操作)および [Scan 操作](../api-guide.mdx#scan-操作)を参照してください。
 
 #### パーティションスキャンとインデックススキャンの例
 
@@ -1544,6 +1549,8 @@ abac_write_tag: ABAC_WRITE_TAG <abac write tag> FOR [POLICY] <abac policy name>
 
 - `INSERT` では完全な主キーを指定する必要があります。
 - バインドマーカー (位置 `?` および名前 `:<name>`) に `<literal>` を指定できます。リテラル文法については、[リテラル](#リテラル)セクションを参照してください。
+- `WITH` 句を使用してオペレーション属性を指定できます。オペレーション属性の詳細については、[オペレーション属性](../api-guide.mdx#オペレーション属性)を参照してください。
+- ScalarDB Cluster で認証と認可が有効になっている場合、`WITH` 句で auth 属性を指定することで、トランザクション外で実行されるステートメントの認証クレデンシャルを渡すことができます。詳細については、[オペレーション属性としてクレデンシャルを渡す](../scalardb-cluster/scalardb-auth-with-sql.mdx#オペレーション属性としてクレデンシャルを渡す)を参照してください。
 
 #### 例
 
@@ -1635,6 +1642,8 @@ abac_write_tag: ABAC_WRITE_TAG <abac write tag> FOR [POLICY] <abac policy name>
 
 - `UPSERT` では完全な主キーを指定する必要があります。
 - バインドマーカー (位置 `?` および名前 `:<name>`) に `<literal>` を指定できます。リテラル文法については、[リテラル](#リテラル)セクションを参照してください。
+- `WITH` 句を使用してオペレーション属性と ABAC 読み取りおよび書き込みタグを指定できます。オペレーション属性の詳細については、[オペレーション属性](../api-guide.mdx#オペレーション属性)を参照してください。ABAC タグの詳細については、[属性ベースアクセス制御 (ABAC)](../scalardb-cluster/authorize-with-abac.mdx)を参照してください。
+- ScalarDB Cluster で認証と認可が有効になっている場合、`WITH` 句で auth 属性を指定することで、トランザクション外で実行されるステートメントの認証クレデンシャルを渡すことができます。詳細については、[オペレーション属性としてクレデンシャルを渡す](../scalardb-cluster/scalardb-auth-with-sql.mdx#オペレーション属性としてクレデンシャルを渡す)を参照してください。
 
 #### 例
 
@@ -1831,6 +1840,11 @@ abac_write_tag: ABAC_WRITE_TAG <abac write tag> FOR [POLICY] <abac policy name>
 - `<pattern>` 内の `\` はデフォルトでエスケープ文字として機能します。
   - `ESCAPE` 句を指定してエスケープ文字を変更できます。
   - 空のエスケープ文字 `ESCAPE ''` を指定してエスケープ文字を無効にすることができます。
+
+`WITH` 句:
+
+- `WITH` 句を使用してオペレーション属性と ABAC 読み取りおよび書き込みタグを指定できます。オペレーション属性の詳細については、[オペレーション属性](../api-guide.mdx#オペレーション属性)を参照してください。ABAC タグの詳細については、[属性ベースアクセス制御 (ABAC)](../scalardb-cluster/authorize-with-abac.mdx)を参照してください。
+- ScalarDB Cluster で認証と認可が有効になっている場合、`WITH` 句で auth 属性を指定することで、トランザクション外で実行されるステートメントの認証クレデンシャルを渡すことができます。詳細については、[オペレーション属性としてクレデンシャルを渡す](../scalardb-cluster/scalardb-auth-with-sql.mdx#オペレーション属性としてクレデンシャルを渡す)を参照してください。
 
 #### 主キーを指定した例
 
@@ -2114,6 +2128,11 @@ abac_write_tag: ABAC_WRITE_TAG <abac write tag> FOR [POLICY] <abac policy name>
 - `<pattern>` 内の `\` はデフォルトでエスケープ文字として機能します。
   - `ESCAPE` 句を指定してエスケープ文字を変更できます。
   - 空のエスケープ文字 `ESCAPE ''` を指定してエスケープ文字を無効にすることができます。
+
+`WITH` 句:
+
+- `WITH` 句を使用してオペレーション属性と ABAC 読み取りおよび書き込みタグを指定できます。オペレーション属性の詳細については、[オペレーション属性](../api-guide.mdx#オペレーション属性)を参照してください。ABAC タグの詳細については、[属性ベースアクセス制御 (ABAC)](../scalardb-cluster/authorize-with-abac.mdx)を参照してください。
+- ScalarDB Cluster で認証と認可が有効になっている場合、`WITH` 句で auth 属性を指定することで、トランザクション外で実行されるステートメントの認証クレデンシャルを渡すことができます。詳細については、[オペレーション属性としてクレデンシャルを渡す](../scalardb-cluster/scalardb-auth-with-sql.mdx#オペレーション属性としてクレデンシャルを渡す)を参照してください。
 
 #### 主キーを指定した例
 
@@ -3685,6 +3704,8 @@ BEGIN [READ ONLY | READ WRITE]
 - `READ ONLY` を指定すると、トランザクションは読み取り専用モードで開始されます。
 - `READ WRITE` を指定すると、トランザクションは読み取り書き込みモードで開始されます。
 - `READ ONLY` または `READ WRITE` オプションを省略すると、デフォルトで読み取り書き込みトランザクションとして開始されます。
+- `WITH` 句を使用してトランザクションスコープのオペレーション属性と ABAC タグを指定できます。指定された属性とタグは、トランザクション内で発行されるすべての操作にマージされます。オペレーション属性の詳細については、[オペレーション属性](../api-guide.mdx#オペレーション属性)を参照してください。ABAC タグの詳細については、[属性ベースアクセス制御 (ABAC)](../scalardb-cluster/authorize-with-abac.mdx)を参照してください。
+- ScalarDB Cluster で認証と認可が有効になっている場合、`WITH` 句で auth 属性を指定することで、トランザクションの認証クレデンシャルを渡すことができます。詳細については、[オペレーション属性としてクレデンシャルを渡す](../scalardb-cluster/scalardb-auth-with-sql.mdx#オペレーション属性としてクレデンシャルを渡す)を参照してください。
 
 #### 例
 
@@ -3718,6 +3739,8 @@ START TRANSACTION [READ ONLY | READ WRITE]
 - `READ ONLY` を指定すると、トランザクションは読み取り専用モードで開始されます。
 - `READ WRITE` を指定すると、トランザクションは読み取り書き込みモードで開始されます。
 - `READ ONLY` または `READ WRITE` オプションを省略すると、デフォルトで読み取り書き込みトランザクションとして開始されます。
+- `WITH` 句を使用してトランザクションスコープのオペレーション属性と ABAC タグを指定できます。指定された属性とタグは、トランザクション内で発行されるすべての操作にマージされます。オペレーション属性の詳細については、[オペレーション属性](../api-guide.mdx#オペレーション属性)を参照してください。ABAC タグの詳細については、[属性ベースアクセス制御 (ABAC)](../scalardb-cluster/authorize-with-abac.mdx)を参照してください。
+- ScalarDB Cluster で認証と認可が有効になっている場合、`WITH` 句で auth 属性を指定することで、トランザクションの認証クレデンシャルを渡すことができます。詳細については、[オペレーション属性としてクレデンシャルを渡す](../scalardb-cluster/scalardb-auth-with-sql.mdx#オペレーション属性としてクレデンシャルを渡す)を参照してください。
 
 #### 例
 
