@@ -476,6 +476,46 @@ scalar.db.username=
 scalar.db.password=<content-of-service-account-key.json>
 ```
 
+**Amazon Aurora**
+
+Amazon Aurora を JDBC データベースとして使用している場合、`scalar.db.contact_points` に `jdbc:aws-wrapper:` プレフィックスを追加することで、[AWS Advanced JDBC Wrapper](https://github.com/aws/aws-advanced-jdbc-wrapper) 経由で接続できます。このラッパーはクラスタートポロジーを検出し、DNS の伝播を待たずにフェイルオーバー後に新しいライターへ再接続します。ScalarDB はラッパーをバンドルしているため、JAR ファイルを追加する必要はありません。
+
+Aurora PostgreSQL の場合、クラスターエンドポイントを次のように指定します。
+
+```properties
+scalar.db.storage=jdbc
+scalar.db.contact_points=jdbc:aws-wrapper:postgresql://<CLUSTER_ENDPOINT>:5432/<DATABASE_NAME>
+scalar.db.username=<USERNAME>
+scalar.db.password=<PASSWORD>
+```
+
+Aurora MySQL の場合、クラスターエンドポイントを次のように指定します。
+
+```properties
+scalar.db.storage=jdbc
+scalar.db.contact_points=jdbc:aws-wrapper:mysql://<CLUSTER_ENDPOINT>:3306/<DATABASE_NAME>
+scalar.db.username=<USERNAME>
+scalar.db.password=<PASSWORD>
+```
+
+ScalarDB は Aurora PostgreSQL と Aurora MySQL に対してのみこのプレフィックスをサポートしています。他のデータベースで使用した場合、ScalarDB は起動に失敗します。
+
+ラッパーを設定するには、接続 URL のクエリ文字列にラッパーのパラメーターを追加します。以下に説明する Aurora MySQL のパラメーター以外、ScalarDB 自身はデフォルト値を設定しないため、ラッパー自身のデフォルト値が適用されます。たとえば、フェイルオーバーのタイムアウトを短縮するには次のようにします。
+
+```properties
+scalar.db.contact_points=jdbc:aws-wrapper:postgresql://<CLUSTER_ENDPOINT>:5432/<DATABASE_NAME>?failoverTimeoutMs=60000
+```
+
+Aurora MySQL の場合、ScalarDB は MariaDB Connector/J を介して MySQL に接続するため、`permitMysqlScheme=true` と `wrapperTargetDriverDialect=mariadb-connector-j-3` を URL に自動的に追加します。これらのパラメーターを自分で設定した場合は、その値が使用されます。
+
+`commit()` の実行中にフェイルオーバーが発生した場合、ScalarDB は `UnknownTransactionStatusException` をスローします。再試行する前に、トランザクションが適用されたかどうかを確認してください。CRUD 操作中のフェイルオーバーは `CrudException` をスローします。これは通常通り処理できます。詳細については、[例外の処理方法](../api-guide.mdx#例外の処理方法)を参照してください。
+
+このサポートは以下の内容をカバーしていません。
+
+- **IAM データベース認証と Secrets Manager の統合:** これらに対応するラッパーのプラグインには、ScalarDB がバンドルしていない追加の JAR ファイルが必要です。
+- **読み取り/書き込みの分割:** ScalarDB は読み取り操作をリーダーインスタンスにルーティングしません。
+- **Aurora 以外の設定:** ScalarDB はラッパーを通じて、Aurora 以外の RDS デプロイメントや、PostgreSQL と MySQL 以外のエンジンをサポートしていません。ScalarDB はエンドポイントが Aurora クラスターに属しているかどうかをチェックしないため、Aurora 以外の RDS デプロイメントはエラーなしで起動します。
+
 :::
 </TabItem>
 <TabItem value="DynamoDB" label="DynamoDB">
