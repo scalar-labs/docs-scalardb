@@ -14,6 +14,38 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 このページには、ScalarDB 3.16 のリリースノートのリストが含まれています。
 
+## v3.16.7
+
+**発売日:** 2026年9月2日
+
+### まとめ
+
+このリリースでは、Cosmos DB のエラー処理と ScalarDB SQL における二相コミットトランザクションのスレッドプール管理を改善し、セキュリティの脆弱性に対処するために AWS SDK と grpc_health_probe をアップグレードしました。
+
+### Community edition
+
+#### 改善点
+
+- Cosmos DB のエラーメッセージに Cosmos DB の診断情報が含まれていたため、メッセージが過度に大きくなり、エラー情報が失われる可能性があった問題を修正しました。 ([#3816](https://github.com/scalar-labs/scalardb/pull/3816))
+
+#### バグの修正
+
+- AWS SDK をアップグレードしてセキュリティ問題を修正しました: [CVE-2026-54399](https://github.com/advisories/GHSA-hf6x-8p5f-cgmf "CVE-2026-54399") and [CVE-2026-54428](https://github.com/advisories/GHSA-v3jc-474w-2wm6 "CVE-2026-54428") ([#3838](https://github.com/scalar-labs/scalardb/pull/3838))
+
+### Enterprise edition
+
+#### 改善点
+
+##### ScalarDB SQL
+
+- 二段階コミットインターフェーストランザクション内のスレッドプール管理を改善し、Spring Data JDBC for ScalarDB での潜在的なスターベーション問題を回避しました。
+
+#### バグの修正
+
+##### ScalarDB Cluster
+
+- grpc_health_probe バイナリをアップグレードしてセキュリティ問題を修正しました: [CVE-2026-33818](https://github.com/advisories/GHSA-xc2p-8ggw-6cr5 "CVE-2026-33818"), [CVE-2026-39821](https://github.com/advisories/GHSA-w2q5-6q6x-x959 "CVE-2026-39821"), [CVE-2026-46600](https://github.com/advisories/GHSA-gg3m-vvp2-p2c5 "CVE-2026-46600"), [CVE-2026-56852](https://github.com/advisories/GHSA-jpjm-c3r5-q96r "CVE-2026-56852"), [CVE-2026-56853](https://github.com/advisories/GHSA-xphw-4f88-5f39 "CVE-2026-56853"), [CVE-2026-56858](https://github.com/advisories/GHSA-c974-w86c-vpfw "CVE-2026-56858"), [CVE-2026-56859](https://github.com/advisories/GHSA-76p8-fhrm-vpc7 "CVE-2026-56859"), [CVE-2026-56860](https://github.com/advisories/GHSA-25mv-j2qr-v5jq "CVE-2026-56860"), [CVE-2026-56862](https://github.com/advisories/GHSA-7qch-w8m5-g3h3 "CVE-2026-56862"), and [GHSA-hrxh-6v49-42gf](https://github.com/advisories/GHSA-hrxh-6v49-42gf "GHSA-hrxh-6v49-42gf")
+
 ## v3.16.6
 
 **リリース日:** 2026年8月2日

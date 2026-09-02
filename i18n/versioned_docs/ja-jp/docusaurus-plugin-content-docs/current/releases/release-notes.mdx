@@ -14,6 +14,42 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 このページには、ScalarDB 3.19 のリリースノートのリストが含まれています。
 
+## v3.19.1
+
+**発売日:** 2026年9月2日
+
+### まとめ
+
+このリリースでは、グローバルトランザクション API を更新し、ブランチが作業の結果を明示的に宣言することを必須とし、高速な Aurora フェイルオーバーのための AWS Advanced JDBC Wrapper のサポートを追加し、Cosmos DB のエラー処理と ScalarDB Cluster の属性ベースの認証メタデータキャッシュのリフレッシュを改善し、`join()` および `resume()` トランザクション API を非推奨にし、スキーマ操作中の競合エラーに対するリトライ処理を追加し、セキュリティの脆弱性に対処するために grpc_health_probe をアップグレードしました。
+
+### Community edition
+
+#### 改善点
+
+- `BranchTransaction.end()` を `BranchTransaction.end(BranchTransaction.Status)` に置き換え、グローバルトランザクションのブランチが自身の作業の結果を宣言することを必須にしました。既存の `end()` 呼び出しは `end(BranchTransaction.Status.SUCCESS)` に置き換え、失敗パスでは `end(BranchTransaction.Status.FAILURE)` を呼び出してください。 ([#3806](https://github.com/scalar-labs/scalardb/pull/3806))
+- AWS Advanced JDBC Wrapper のサポートを追加し、Aurora PostgreSQL および Aurora MySQL 向けの高速な Aurora フェイルオーバーを有効にしました。例外オーバーライドを指定して HikariCP を設定することは、結果が不明なトランザクションが確定的な失敗として報告される原因となるため、起動時に拒否されるようになりました。 ([#3805](https://github.com/scalar-labs/scalardb/pull/3805))
+- Cosmos DB のエラーメッセージに Cosmos DB の診断情報が含まれていたため、メッセージが過度に大きくなり、エラー情報が失われる可能性があった問題を修正しました。 ([#3816](https://github.com/scalar-labs/scalardb/pull/3816))
+- `DistributedTransactionManager.join()` および `DistributedTransactionManager.resume()` を、その実装とともに非推奨にしました。3.20.0 で削除される予定です。 ([#3817](https://github.com/scalar-labs/scalardb/pull/3817))
+
+#### バグの修正
+
+- Oracle で SERIALIZABLE 分離レベルを使用する場合の `ORA-08177` など、競合エラーによりスキーマ操作が失敗する可能性がある問題を修正しました。競合エラーは再試行されるようになりました。 ([#3820](https://github.com/scalar-labs/scalardb/pull/3820))
+
+### Enterprise edition
+
+#### 改善点
+
+##### ScalarDB Cluster
+
+- 属性ベースの認証メタデータキャッシュがリフレッシュされる際に発行されるクエリの数を削減し、各リフレッシュ後の最初のリクエストで発生するレイテンシスパイクを解消しました。
+- `BranchTransaction.end()` を `BranchTransaction.end(BranchTransaction.Status)` に置き換える ScalarDB Core の変更を採用し、グローバルトランザクションのブランチが自身の作業の結果を宣言することを必須にしました。既存の `end()` 呼び出しは `end(BranchTransaction.Status.SUCCESS)` に置き換え、失敗パスでは `end(BranchTransaction.Status.FAILURE)` を呼び出してください。
+
+#### バグの修正
+
+##### ScalarDB Cluster
+
+- grpc_health_probe バイナリをアップグレードしてセキュリティ問題を修正しました: [CVE-2026-33818](https://github.com/advisories/GHSA-xc2p-8ggw-6cr5 "CVE-2026-33818"), [CVE-2026-39821](https://github.com/advisories/GHSA-w2q5-6q6x-x959 "CVE-2026-39821"), [CVE-2026-46600](https://github.com/advisories/GHSA-gg3m-vvp2-p2c5 "CVE-2026-46600"), [CVE-2026-56852](https://github.com/advisories/GHSA-jpjm-c3r5-q96r "CVE-2026-56852"), [CVE-2026-56853](https://github.com/advisories/GHSA-xphw-4f88-5f39 "CVE-2026-56853"), [CVE-2026-56858](https://github.com/advisories/GHSA-c974-w86c-vpfw "CVE-2026-56858"), [CVE-2026-56859](https://github.com/advisories/GHSA-76p8-fhrm-vpc7 "CVE-2026-56859"), [CVE-2026-56860](https://github.com/advisories/GHSA-25mv-j2qr-v5jq "CVE-2026-56860"), [CVE-2026-56862](https://github.com/advisories/GHSA-7qch-w8m5-g3h3 "CVE-2026-56862"), and [GHSA-hrxh-6v49-42gf](https://github.com/advisories/GHSA-hrxh-6v49-42gf "GHSA-hrxh-6v49-42gf")
+
 ## v3.19.0
 
 **発売日:** 2026年8月2日
