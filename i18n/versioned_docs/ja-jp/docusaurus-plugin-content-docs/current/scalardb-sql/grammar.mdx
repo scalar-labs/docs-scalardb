@@ -1007,13 +1007,13 @@ SELECT c1, c2, c3, c4 FROM ns.tbl WHERE c4 = 100 LIMIT 10;
 -- With positional bind markers
 SELECT * FROM ns.tbl WHERE c1 = ? AND c2 > ? AND c2 <= ? ORDER BY c2 ASC, c3 DESC LIMIT ?;
 
--- With operations attributes
+-- With operation attributes
 SELECT * FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
 
 -- With an ABAC read tag
 SELECT * FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH ABAC_READ_TAG 'read_tag1' FOR POLICY policy1;
 
--- With operations attributes and an ABAC read tag
+-- With operation attributes and an ABAC read tag
 SELECT * FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2' AND ABAC_READ_TAG 'read_tag1' FOR POLICY policy1;
 ```
 
@@ -1119,7 +1119,7 @@ SelectStatement statement7 =
         .limit(BindMarker.positional())
         .build();
 
-// With operations attributes
+// With operation attributes
 SelectStatement statement8 =
     StatementBuilder.select()
         .from("ns", "tbl")
@@ -1140,7 +1140,7 @@ SelectStatement statement9 =
         .withAbacReadTag("read_tag1", "policy1")
         .build();
 
-// With operations attributes and an ABAC read tag
+// With operation attributes and an ABAC read tag
 SelectStatement statement10 =
     StatementBuilder.select()
         .from("ns", "tbl")
@@ -1538,13 +1538,10 @@ SelectStatement statement7 =
 ```sql
 INSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ...)]
   VALUES (<literal> [, <literal>] ...) [, (<literal> [, <literal>] ...)] ...
-  [WITH operation_attributes_or_abac_read_tags_or_abac_write_tags]
+  [WITH operation_attributes]
 
-operation_attributes_or_abac_read_tags_or_abac_write_tags: operation_attribute_or_abac_read_tag_or_abac_write_tag [AND operation_attribute_or_abac_read_tag_or_abac_write_tag] ...
-operation_attribute_or_abac_read_tag_or_abac_write_tag: operation_attribute | abac_read_tag | abac_write_tag
+operation_attributes: operation_attribute [AND operation_attribute] ...
 operation_attribute: <operation attribute name>=<operation attribute value>
-abac_read_tag: ABAC_READ_TAG <abac read tag> FOR [POLICY] <abac policy name>
-abac_write_tag: ABAC_WRITE_TAG <abac write tag> FOR [POLICY] <abac policy name>
 ```
 
 - `INSERT` では完全な主キーを指定する必要があります。
@@ -1565,6 +1562,9 @@ INSERT INTO tbl (c1, c2, c3, c4, c5) VALUES (?, ?, ?, ?, ?);
 
 -- Insert multiple records
 INSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100), (20, 'bbb', 4.56, 200);
+
+-- With operation attributes
+INSERT INTO ns.tbl (c1, c2, c3, c4, c5) VALUES (10, 'aaa', 1.23, 100, true) WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
 ```
 
 `INSERT` のステートメントオブジェクトを構築する例は次のとおりです。
@@ -1593,6 +1593,14 @@ InsertStatement statement4 = StatementBuilder.insertInto("ns", "tbl")
     .columns("c1", "c2", "c3", "c4", "c5")
     .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
     .values(Value.ofInt(20), Value.ofText("bbb"), Value.of(2.46F), Value.of(200L), Value.of(false))
+    .build();
+
+// With operation attributes
+InsertStatement statement5 = StatementBuilder.insertInto("ns", "tbl")
+    .columns("c1", "c2", "c3", "c4", "c5")
+    .values(Value.ofInt(10), Value.ofText("aaa"), Value.of(1.23F), Value.of(100L), Value.of(true))
+    .withAttribute("attribute1", "value1")
+    .withAttribute("attribute2", "value2")
     .build();
 ```
 
@@ -1659,13 +1667,13 @@ UPSERT INTO tbl (c1, c2, c3, c4, c5) VALUES (?, ?, ?, ?, ?);
 -- Upsert multiple records.
 UPSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100), (20, 'bbb', 4.56, 200);
 
--- With operations attributes
+-- With operation attributes
 UPSERT INTO ns.tbl (c1, c2, c3, c4, c5) VALUES (10, 'aaa', 1.23, 100, true) WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
 
 -- With an ABAC read tag and an ABAC write tag
 UPSERT INTO ns.tbl (c1, c2, c3, c4, c5) VALUES (10, 'aaa', 1.23, 100, true) WITH ABAC_READ_TAG 'read_tag1' FOR POLICY policy1 AND ABAC_WRITE_TAG 'write_tag1' FOR POLICY policy1;
 
--- With operations attributes and ABAC read and write tags
+-- With operation attributes and ABAC read and write tags
 UPSERT INTO ns.tbl (c1, c2, c3, c4, c5) VALUES (10, 'aaa', 1.23, 100, true) WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2' AND ABAC_READ_TAG 'read_tag1' FOR POLICY policy1 AND ABAC_WRITE_TAG 'write_tag1' FOR POLICY policy1;
 ```
 
@@ -1714,7 +1722,7 @@ UpsertStatement statement4 =
             Value.of(false))
         .build();
 
-// With operations attributes
+// With operation attributes
 UpsertStatement statement5 =
     StatementBuilder.upsertInto("ns", "tbl")
         .columns("c1", "c2", "c3", "c4", "c5")
@@ -1742,7 +1750,7 @@ UpsertStatement statement6 =
         .withAbacWriteTag("write_tag1", "policy1")
         .build();
 
-// With operations attributes and ABAC read and write tags
+// With operation attributes and ABAC read and write tags
 UpsertStatement statement7 =
     StatementBuilder.upsertInto("ns", "tbl")
         .columns("c1", "c2", "c3", "c4", "c5")
@@ -1870,13 +1878,13 @@ UPDATE ns.tbl SET c4 = 200, c5 = false WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.2
 -- With positional bind markers
 UPDATE ns.tbl SET c4 = ?, c5 = ? WHERE c1 = ? AND c2 = ? AND c3 = ?;
 
--- With operations attributes
+-- With operation attributes
 UPDATE ns.tbl SET c4 = 200, c5 = false WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
 
 -- With an ABAC read tag and an ABAC write tag
 UPDATE ns.tbl SET c4 = 200, c5 = false WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH ABAC_READ_TAG 'read_tag1' FOR POLICY policy1 AND ABAC_WRITE_TAG 'write_tag1' FOR POLICY policy1;
 
--- With operations attributes and ABAC read and write tags
+-- With operation attributes and ABAC read and write tags
 UPDATE ns.tbl SET c4 = 200, c5 = false WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2' AND ABAC_READ_TAG 'read_tag1' FOR POLICY policy1 AND ABAC_WRITE_TAG 'write_tag1' FOR POLICY policy1;
 ```
 
@@ -1905,7 +1913,7 @@ UpdateStatement statement2 =
         .and(Predicate.column("c3").isEqualTo(BindMarker.positional()))
         .build();
 
-// With operations attributes
+// With operation attributes
 UpdateStatement statement3 =
     StatementBuilder.update("ns", "tbl")
         .set(
@@ -1931,7 +1939,7 @@ UpdateStatement statement4 =
         .withAbacWriteTag("write_tag1", "policy1")
         .build();
 
-// With operations attributes and ABAC read and write tags
+// With operation attributes and ABAC read and write tags
 UpdateStatement statement5 =
     StatementBuilder.update("ns", "tbl")
         .set(
@@ -2158,13 +2166,13 @@ DELETE FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23;
 -- With positional bind markers
 DELETE FROM tbl WHERE c1 = ? AND c2 = ? AND c3 = ?;
 
--- With operations attributes
+-- With operation attributes
 DELETE FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
 
 -- With an ABAC read tag and an ABAC write tag
 DELETE FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH ABAC_READ_TAG 'read_tag1' FOR POLICY policy1 AND ABAC_WRITE_TAG 'write_tag1' FOR POLICY policy1;
 
--- With operations attributes and ABAC read and write tags
+-- With operation attributes and ABAC read and write tags
 DELETE FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2' AND ABAC_READ_TAG 'read_tag1' FOR POLICY policy1 AND ABAC_WRITE_TAG 'write_tag1' FOR POLICY policy1;
 ```
 
@@ -2187,7 +2195,7 @@ DeleteStatement statement2 =
         .and(Predicate.column("c3").isEqualTo(BindMarker.positional()))
         .build();
 
-// With operations attributes
+// With operation attributes
 DeleteStatement statement3 =
     StatementBuilder.deleteFrom("ns", "tbl")
         .where(Predicate.column("c1").isEqualTo(Value.of(10)))
@@ -2207,7 +2215,7 @@ DeleteStatement statement4 =
         .withAbacWriteTag("write_tag1", "policy1")
         .build();
 
-// With operations attributes and ABAC read and write tags
+// With operation attributes and ABAC read and write tags
 DeleteStatement statement5 =
     StatementBuilder.deleteFrom("ns", "tbl")
         .where(Predicate.column("c1").isEqualTo(Value.of(10)))
@@ -3699,6 +3707,13 @@ UseStatement statement = StatementBuilder.use("ns").build();
 
 ```sql
 BEGIN [READ ONLY | READ WRITE]
+  [WITH operation_attributes_or_abac_read_tags_or_abac_write_tags]
+
+operation_attributes_or_abac_read_tags_or_abac_write_tags: operation_attribute_or_abac_read_tag_or_abac_write_tag [AND operation_attribute_or_abac_read_tag_or_abac_write_tag] ...
+operation_attribute_or_abac_read_tag_or_abac_write_tag: operation_attribute | abac_read_tag | abac_write_tag
+operation_attribute: <operation attribute name>=<operation attribute value>
+abac_read_tag: ABAC_READ_TAG <abac read tag> FOR [POLICY] <abac policy name>
+abac_write_tag: ABAC_WRITE_TAG <abac write tag> FOR [POLICY] <abac policy name>
 ```
 
 - `READ ONLY` を指定すると、トランザクションは読み取り専用モードで開始されます。
@@ -3708,6 +3723,25 @@ BEGIN [READ ONLY | READ WRITE]
 - ScalarDB Cluster で認証と認可が有効になっている場合、`WITH` 句で auth 属性を指定することで、トランザクションの認証クレデンシャルを渡すことができます。詳細については、[オペレーション属性としてクレデンシャルを渡す](../scalardb-cluster/scalardb-auth-with-sql.mdx#オペレーション属性としてクレデンシャルを渡す)を参照してください。
 
 #### 例
+
+`BEGIN` の例は次のとおりです。
+
+```sql
+-- Begin a transaction
+BEGIN;
+
+-- Begin a transaction in read-only mode
+BEGIN READ ONLY;
+
+-- With operation attributes
+BEGIN WITH 'cc-transaction-isolation' = 'SNAPSHOT';
+
+-- With ABAC read and write tags
+BEGIN WITH ABAC_READ_TAG 'read_tag1' FOR POLICY policy1 AND ABAC_WRITE_TAG 'write_tag1' FOR POLICY policy1;
+
+-- With operation attributes and ABAC tags
+BEGIN READ ONLY WITH 'cc-transaction-isolation' = 'SNAPSHOT' AND ABAC_READ_TAG 'read_tag1' FOR POLICY policy1;
+```
 
 `BEGIN` のステートメントオブジェクトを構築する例は次のとおりです。
 
@@ -3720,6 +3754,27 @@ BeginStatement statement2 = StatementBuilder.begin().readOnly().build();
 
 // Begin a transaction in read-write mode.
 BeginStatement statement3 = StatementBuilder.begin().readWrite().build();
+
+// With operation attributes
+BeginStatement statement4 =
+    StatementBuilder.begin()
+        .withAttribute("cc-transaction-isolation", "SNAPSHOT")
+        .build();
+
+// With ABAC read and write tags
+BeginStatement statement5 =
+    StatementBuilder.begin()
+        .withAbacReadTag("read_tag1", "policy1")
+        .withAbacWriteTag("write_tag1", "policy1")
+        .build();
+
+// With operation attributes and ABAC tags
+BeginStatement statement6 =
+    StatementBuilder.begin()
+        .readOnly()
+        .withAttribute("cc-transaction-isolation", "SNAPSHOT")
+        .withAbacReadTag("read_tag1", "policy1")
+        .build();
 ```
 
 ### START TRANSACTION
@@ -3734,6 +3789,13 @@ BeginStatement statement3 = StatementBuilder.begin().readWrite().build();
 
 ```sql
 START TRANSACTION [READ ONLY | READ WRITE]
+  [WITH operation_attributes_or_abac_read_tags_or_abac_write_tags]
+
+operation_attributes_or_abac_read_tags_or_abac_write_tags: operation_attribute_or_abac_read_tag_or_abac_write_tag [AND operation_attribute_or_abac_read_tag_or_abac_write_tag] ...
+operation_attribute_or_abac_read_tag_or_abac_write_tag: operation_attribute | abac_read_tag | abac_write_tag
+operation_attribute: <operation attribute name>=<operation attribute value>
+abac_read_tag: ABAC_READ_TAG <abac read tag> FOR [POLICY] <abac policy name>
+abac_write_tag: ABAC_WRITE_TAG <abac write tag> FOR [POLICY] <abac policy name>
 ```
 
 - `READ ONLY` を指定すると、トランザクションは読み取り専用モードで開始されます。
@@ -3743,6 +3805,25 @@ START TRANSACTION [READ ONLY | READ WRITE]
 - ScalarDB Cluster で認証と認可が有効になっている場合、`WITH` 句で auth 属性を指定することで、トランザクションの認証クレデンシャルを渡すことができます。詳細については、[オペレーション属性としてクレデンシャルを渡す](../scalardb-cluster/scalardb-auth-with-sql.mdx#オペレーション属性としてクレデンシャルを渡す)を参照してください。
 
 #### 例
+
+`START TRANSACTION` の例は次のとおりです。
+
+```sql
+-- Start a transaction
+START TRANSACTION;
+
+-- Start a transaction in read-only mode
+START TRANSACTION READ ONLY;
+
+-- With operation attributes
+START TRANSACTION WITH 'cc-transaction-isolation' = 'SNAPSHOT';
+
+-- With ABAC read and write tags
+START TRANSACTION WITH ABAC_READ_TAG 'read_tag1' FOR POLICY policy1 AND ABAC_WRITE_TAG 'write_tag1' FOR POLICY policy1;
+
+-- With operation attributes and ABAC tags
+START TRANSACTION READ ONLY WITH 'cc-transaction-isolation' = 'SNAPSHOT' AND ABAC_READ_TAG 'read_tag1' FOR POLICY policy1;
+```
 
 `START TRANSACTION` のステートメントオブジェクトを構築する例は次のとおりです。
 
@@ -3755,6 +3836,27 @@ StartTransactionStatement statement2 = StatementBuilder.startTransaction().readO
 
 // Start a transaction in read-write mode.
 StartTransactionStatement statement3 = StatementBuilder.startTransaction().readWrite().build();
+
+// With operation attributes
+StartTransactionStatement statement4 =
+    StatementBuilder.startTransaction()
+        .withAttribute("cc-transaction-isolation", "SNAPSHOT")
+        .build();
+
+// With ABAC read and write tags
+StartTransactionStatement statement5 =
+    StatementBuilder.startTransaction()
+        .withAbacReadTag("read_tag1", "policy1")
+        .withAbacWriteTag("write_tag1", "policy1")
+        .build();
+
+// With operation attributes and ABAC tags
+StartTransactionStatement statement6 =
+    StatementBuilder.startTransaction()
+        .readOnly()
+        .withAttribute("cc-transaction-isolation", "SNAPSHOT")
+        .withAbacReadTag("read_tag1", "policy1")
+        .build();
 ```
 
 ### JOIN
