@@ -329,25 +329,25 @@ flowchart LR
 `SELECT` の場合:
 
 ```sql
-SELECT * FROM table_name WHERE ... WITH ABAC_READ_TAG '<READ_TAG>' FOR POLICY '<POLICY_NAME>';
+SELECT * FROM table_name WHERE ... WITH ABAC_READ_TAG '<READ_TAG>' FOR POLICY <POLICY_NAME>;
 ```
 
 `UPSERT` の場合:
 
 ```sql
-UPSERT INTO table_name (column1, column2, column3, ...) VALUES (value1, value2, value3, ...) WITH ABAC_READ_TAG '<READ_TAG>' FOR POLICY '<POLICY_NAME>';
+UPSERT INTO table_name (column1, column2, column3, ...) VALUES (value1, value2, value3, ...) WITH ABAC_READ_TAG '<READ_TAG>' FOR POLICY <POLICY_NAME>;
 ```
 
 `UPDATE` の場合:
 
 ```sql
-UPDATE table_name SET column1 = value1, column2 = value2, column3 = value3, ... WHERE ... WITH ABAC_READ_TAG '<READ_TAG>' FOR POLICY '<POLICY_NAME>';
+UPDATE table_name SET column1 = value1, column2 = value2, column3 = value3, ... WHERE ... WITH ABAC_READ_TAG '<READ_TAG>' FOR POLICY <POLICY_NAME>;
 ```
 
 `DELETE` の場合:
 
 ```sql
-DELETE FROM table_name WHERE ... WITH ABAC_READ_TAG '<READ_TAG>' FOR POLICY '<POLICY_NAME>';
+DELETE FROM table_name WHERE ... WITH ABAC_READ_TAG '<READ_TAG>' FOR POLICY <POLICY_NAME>;
 ```
 
 #### 書き込みタグを調整する
@@ -361,20 +361,32 @@ DELETE FROM table_name WHERE ... WITH ABAC_READ_TAG '<READ_TAG>' FOR POLICY '<PO
 `UPSERT` の場合:
 
 ```sql
-UPSERT INTO table_name (column1, column2, column3, ...) VALUES (value1, value2, value3, ...) WITH ABAC_WRITE_TAG '<WRITE_TAG>' FOR POLICY '<POLICY_NAME>';
+UPSERT INTO table_name (column1, column2, column3, ...) VALUES (value1, value2, value3, ...) WITH ABAC_WRITE_TAG '<WRITE_TAG>' FOR POLICY <POLICY_NAME>;
 ```
 
 `UPDATE` の場合:
 
 ```sql
-UPDATE table_name SET column1 = value1, column2 = value2, column3 = value3, ... WHERE ... WITH ABAC_WRITE_TAG '<WRITE_TAG>' FOR POLICY '<POLICY_NAME>';
+UPDATE table_name SET column1 = value1, column2 = value2, column3 = value3, ... WHERE ... WITH ABAC_WRITE_TAG '<WRITE_TAG>' FOR POLICY <POLICY_NAME>;
 ```
 
 `DELETE` の場合:
 
 ```sql
-DELETE FROM table_name WHERE ... WITH ABAC_WRITE_TAG '<WRITE_TAG>' FOR POLICY '<POLICY_NAME>';
+DELETE FROM table_name WHERE ... WITH ABAC_WRITE_TAG '<WRITE_TAG>' FOR POLICY <POLICY_NAME>;
 ```
+
+#### トランザクションレベルで読み取りタグと書き込みタグを設定する
+
+各オペレーションに読み取りタグや書き込みタグを指定する代わりに、`BEGIN` または `START TRANSACTION` の `WITH` 句を使用して、トランザクションの開始時に一度だけ指定できます。指定したタグはトランザクション内で発行されるすべてのオペレーションにマージされます。オペレーションに同じポリシーのタグがすでに設定されている場合は、オペレーション側のタグが優先されます。
+
+トランザクションレベルでタグを設定する構文は次のとおりです。
+
+```sql
+BEGIN WITH ABAC_READ_TAG '<READ_TAG>' FOR POLICY <POLICY_NAME> AND ABAC_WRITE_TAG '<WRITE_TAG>' FOR POLICY <POLICY_NAME>;
+```
+
+構文の詳細については、ScalarDB SQL 文法の [BEGIN](../scalardb-sql/grammar.mdx#begin) セクションを参照してください。
 
 #### 行タグを調整する
 
