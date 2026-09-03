@@ -688,6 +688,10 @@ operation_attribute: <operation attribute name>=<operation attribute value>
 
 - You can specify `<limit>` to a bind marker (positional `?` and named `:<name>`).
 
+`WITH` clause:
+
+- You can specify operation attributes by using the `WITH` clause. For details on operation attributes, see [Operation attributes](../api-guide.mdx#operation-attributes).
+
 For details about retrieving data from a database in ScalarDB, see [Get operation](../api-guide.mdx#get-operation) and [Scan operation](../api-guide.mdx#scan-operation).
 
 #### Examples of partition scans and index scans
@@ -739,7 +743,7 @@ SELECT c1, c2, c3, c4 FROM ns.tbl WHERE c4 = 100 LIMIT 10;
 -- With positional bind markers
 SELECT * FROM ns.tbl WHERE c1 = ? AND c2 > ? AND c2 <= ? ORDER BY c2 ASC, c3 DESC LIMIT ?;
 
--- With operations attributes
+-- With operation attributes
 SELECT * FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
 ```
 
@@ -845,7 +849,7 @@ SelectStatement statement7 =
         .limit(BindMarker.positional())
         .build();
 
-// With operations attributes
+// With operation attributes
 SelectStatement statement8 =
     StatementBuilder.select()
         .from("ns", "tbl")
@@ -1134,11 +1138,13 @@ INSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ..
   VALUES (<literal> [, <literal>] ...) [, (<literal> [, <literal>] ...)] ...
   [WITH operation_attributes]
 
-operation_attributes: <operation attribute name>=<operation attribute value> [AND <operation attribute name>=<operation attribute value>] ...
+operation_attributes: operation_attribute [AND operation_attribute] ...
+operation_attribute: <operation attribute name>=<operation attribute value>
 ```
 
 - You must specify a full primary key in `INSERT`.
 - You can specify `<literal>` to a bind marker (positional `?` and named `:<name>`). See the [Literal](#literal) section for the literal syntax.
+- You can specify operation attributes by using the `WITH` clause. For details on operation attributes, see [Operation attributes](../api-guide.mdx#operation-attributes).
 
 #### Examples
 
@@ -1227,6 +1233,7 @@ operation_attribute: <operation attribute name>=<operation attribute value>
 
 - You must specify a full primary key in `UPSERT`.
 - You can specify `<literal>` to a bind marker (positional `?` and named `:<name>`). See the [Literal](#literal) section for the literal syntax.
+- You can specify operation attributes by using the `WITH` clause. For details on operation attributes, see [Operation attributes](../api-guide.mdx#operation-attributes).
 
 #### Examples
 
@@ -1242,7 +1249,7 @@ UPSERT INTO tbl (c1, c2, c3, c4, c5) VALUES (?, ?, ?, ?, ?);
 -- Upsert multiple records.
 UPSERT INTO ns.tbl (c1, c2, c3, c4) VALUES (10, 'aaa', 1.23, 100), (20, 'bbb', 4.56, 200);
 
--- With operations attributes
+-- With operation attributes
 UPSERT INTO ns.tbl (c1, c2, c3, c4, c5) VALUES (10, 'aaa', 1.23, 100, true) WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
 ```
 
@@ -1291,7 +1298,7 @@ UpsertStatement statement4 =
             Value.of(false))
         .build();
 
-// With operations attributes
+// With operation attributes
 UpsertStatement statement5 =
     StatementBuilder.upsertInto("ns", "tbl")
         .columns("c1", "c2", "c3", "c4", "c5")
@@ -1385,6 +1392,10 @@ operation_attribute: <operation attribute name>=<operation attribute value>
   - You can change the escape character by specifying the `ESCAPE` clause.
   - You can disable the escape character by specifying an empty escape character, `ESCAPE ''`.
 
+`WITH` clause:
+
+- You can specify operation attributes by using the `WITH` clause. For details on operation attributes, see [Operation attributes](../api-guide.mdx#operation-attributes).
+
 #### Examples with the full primary key specified
 
 If you have the following table, for example:
@@ -1409,7 +1420,7 @@ UPDATE ns.tbl SET c4 = 200, c5 = false WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.2
 -- With positional bind markers
 UPDATE ns.tbl SET c4 = ?, c5 = ? WHERE c1 = ? AND c2 = ? AND c3 = ?;
 
--- With operations attributes
+-- With operation attributes
 UPDATE ns.tbl SET c4 = 200, c5 = false WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
 ```
 
@@ -1438,7 +1449,7 @@ UpdateStatement statement2 =
         .and(Predicate.column("c3").isEqualTo(BindMarker.positional()))
         .build();
 
-// With operations attributes
+// With operation attributes
 UpdateStatement statement3 =
     StatementBuilder.update("ns", "tbl")
         .set(
@@ -1631,6 +1642,10 @@ operation_attribute: <operation attribute name>=<operation attribute value>
   - You can change the escape character by specifying the `ESCAPE` clause.
   - You can disable the escape character by specifying an empty escape character, `ESCAPE ''`.
 
+`WITH` clause:
+
+- You can specify operation attributes by using the `WITH` clause. For details on operation attributes, see [Operation attributes](../api-guide.mdx#operation-attributes).
+
 #### Examples with the full primary key specified
 
 If you have the following table, for example:
@@ -1655,7 +1670,7 @@ DELETE FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23;
 -- With positional bind markers
 DELETE FROM tbl WHERE c1 = ? AND c2 = ? AND c3 = ?;
 
--- With operations attributes
+-- With operation attributes
 DELETE FROM ns.tbl WHERE c1 = 10 AND c2 = 'aaa' AND c3 = 1.23 WITH 'attribute1' = 'value1' AND 'attribute2' = 'value2';
 ```
 
@@ -1678,7 +1693,7 @@ DeleteStatement statement2 =
         .and(Predicate.column("c3").isEqualTo(BindMarker.positional()))
         .build();
 
-// With operations attributes
+// With operation attributes
 DeleteStatement statement3 =
     StatementBuilder.deleteFrom("ns", "tbl")
         .where(Predicate.column("c1").isEqualTo(Value.of(10)))
