@@ -913,6 +913,7 @@ Aggregate functions:
 
 `WITH` clause:
 
+- You can specify operation attributes by using the `WITH` clause. For details on operation attributes, see [Operation attributes](../api-guide.mdx#operation-attributes).
 - When authentication and authorization are enabled in ScalarDB Cluster, you can pass authentication credentials for a statement executed outside of a transaction by specifying the auth attributes in the `WITH` clause. For details, see [Passing credentials as operation attributes](../scalardb-cluster/scalardb-auth-with-sql.mdx#passing-credentials-as-operation-attributes).
 
 For details about retrieving data from a database in ScalarDB, see [Get operation](../api-guide.mdx#get-operation) and [Scan operation](../api-guide.mdx#scan-operation).
@@ -1473,7 +1474,8 @@ INSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ..
   VALUES (<literal> [, <literal>] ...) [, (<literal> [, <literal>] ...)] ...
   [WITH operation_attributes]
 
-operation_attributes: <operation attribute name>=<operation attribute value> [AND <operation attribute name>=<operation attribute value>] ...
+operation_attributes: operation_attribute [AND operation_attribute] ...
+operation_attribute: <operation attribute name>=<operation attribute value>
 ```
 
 - You must specify a full primary key in `INSERT`.
@@ -1579,6 +1581,7 @@ operation_attribute: <operation attribute name>=<operation attribute value>
 
 - You must specify a full primary key in `UPSERT`.
 - You can specify `<literal>` to a bind marker (positional `?` and named `:<name>`). See the [Literal](#literal) section for the literal syntax.
+- You can specify operation attributes by using the `WITH` clause. For details on operation attributes, see [Operation attributes](../api-guide.mdx#operation-attributes).
 - When authentication and authorization are enabled in ScalarDB Cluster, you can pass authentication credentials for a statement executed outside of a transaction by specifying the auth attributes in the `WITH` clause. For details, see [Passing credentials as operation attributes](../scalardb-cluster/scalardb-auth-with-sql.mdx#passing-credentials-as-operation-attributes).
 
 #### Examples
@@ -1740,6 +1743,7 @@ operation_attribute: <operation attribute name>=<operation attribute value>
 
 `WITH` clause:
 
+- You can specify operation attributes by using the `WITH` clause. For details on operation attributes, see [Operation attributes](../api-guide.mdx#operation-attributes).
 - When authentication and authorization are enabled in ScalarDB Cluster, you can pass authentication credentials for a statement executed outside of a transaction by specifying the auth attributes in the `WITH` clause. For details, see [Passing credentials as operation attributes](../scalardb-cluster/scalardb-auth-with-sql.mdx#passing-credentials-as-operation-attributes).
 
 #### Examples with the full primary key specified
@@ -1990,6 +1994,7 @@ operation_attribute: <operation attribute name>=<operation attribute value>
 
 `WITH` clause:
 
+- You can specify operation attributes by using the `WITH` clause. For details on operation attributes, see [Operation attributes](../api-guide.mdx#operation-attributes).
 - When authentication and authorization are enabled in ScalarDB Cluster, you can pass authentication credentials for a statement executed outside of a transaction by specifying the auth attributes in the `WITH` clause. For details, see [Passing credentials as operation attributes](../scalardb-cluster/scalardb-auth-with-sql.mdx#passing-credentials-as-operation-attributes).
 
 #### Examples with the full primary key specified
@@ -2820,11 +2825,16 @@ This command returns the following column:
 
 ```sql
 BEGIN [READ ONLY | READ WRITE]
+  [WITH operation_attributes]
+
+operation_attributes: operation_attribute [AND operation_attribute] ...
+operation_attribute: <operation attribute name>=<operation attribute value>
 ```
 
 - If you specify `READ ONLY`, the transaction will be started in read-only mode.
 - If you specify `READ WRITE`, the transaction will be started in read-write mode.
 - If you omit the `READ ONLY` or `READ WRITE` option, the transaction will be started as a read-write transaction by default.
+- You can specify transaction-scoped operation attributes by using the `WITH` clause. The specified attributes are merged into every operation issued within the transaction. For details on operation attributes, see [Operation attributes](../api-guide.mdx#operation-attributes).
 - When authentication and authorization are enabled in ScalarDB Cluster, you can pass authentication credentials for the transaction by specifying the auth attributes in the `WITH` clause. For details, see [Passing credentials as operation attributes](../scalardb-cluster/scalardb-auth-with-sql.mdx#passing-credentials-as-operation-attributes).
 
 #### Examples
@@ -2873,11 +2883,16 @@ This command returns the following column:
 
 ```sql
 START TRANSACTION [READ ONLY | READ WRITE]
+  [WITH operation_attributes]
+
+operation_attributes: operation_attribute [AND operation_attribute] ...
+operation_attribute: <operation attribute name>=<operation attribute value>
 ```
 
 - If you specify `READ ONLY`, the transaction will be started in read-only mode.
 - If you specify `READ WRITE`, the transaction will be started in read-write mode.
 - If you omit the `READ ONLY` or `READ WRITE` option, the transaction will be started as a read-write transaction by default.
+- You can specify transaction-scoped operation attributes by using the `WITH` clause. The specified attributes are merged into every operation issued within the transaction. For details on operation attributes, see [Operation attributes](../api-guide.mdx#operation-attributes).
 - When authentication and authorization are enabled in ScalarDB Cluster, you can pass authentication credentials for the transaction by specifying the auth attributes in the `WITH` clause. For details, see [Passing credentials as operation attributes](../scalardb-cluster/scalardb-auth-with-sql.mdx#passing-credentials-as-operation-attributes).
 
 #### Examples
