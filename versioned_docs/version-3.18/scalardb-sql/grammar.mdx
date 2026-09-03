@@ -911,6 +911,10 @@ Aggregate functions:
 
 - You can specify `<limit>` to a bind marker (positional `?` and named `:<name>`).
 
+`WITH` clause:
+
+- You can specify operation attributes by using the `WITH` clause. For details on operation attributes, see [Operation attributes](../api-guide.mdx#operation-attributes).
+
 For details about retrieving data from a database in ScalarDB, see [Get operation](../api-guide.mdx#get-operation) and [Scan operation](../api-guide.mdx#scan-operation).
 
 #### Examples of partition scans and index scans
@@ -1469,7 +1473,8 @@ INSERT INTO [<namespace name>.]<table name> [(<column name> [, <column name>] ..
   VALUES (<literal> [, <literal>] ...) [, (<literal> [, <literal>] ...)] ...
   [WITH operation_attributes]
 
-operation_attributes: <operation attribute name>=<operation attribute value> [AND <operation attribute name>=<operation attribute value>] ...
+operation_attributes: operation_attribute [AND operation_attribute] ...
+operation_attribute: <operation attribute name>=<operation attribute value>
 ```
 
 - You must specify a full primary key in `INSERT`.
@@ -1574,6 +1579,7 @@ operation_attribute: <operation attribute name>=<operation attribute value>
 
 - You must specify a full primary key in `UPSERT`.
 - You can specify `<literal>` to a bind marker (positional `?` and named `:<name>`). See the [Literal](#literal) section for the literal syntax.
+- You can specify operation attributes by using the `WITH` clause. For details on operation attributes, see [Operation attributes](../api-guide.mdx#operation-attributes).
 
 #### Examples
 
@@ -1731,6 +1737,10 @@ operation_attribute: <operation attribute name>=<operation attribute value>
 - `\` in `<pattern>` works as the escape character by default.
   - You can change the escape character by specifying the `ESCAPE` clause.
   - You can disable the escape character by specifying an empty escape character, `ESCAPE ''`.
+
+`WITH` clause:
+
+- You can specify operation attributes by using the `WITH` clause. For details on operation attributes, see [Operation attributes](../api-guide.mdx#operation-attributes).
 
 #### Examples with the full primary key specified
 
@@ -1977,6 +1987,10 @@ operation_attribute: <operation attribute name>=<operation attribute value>
 - `\` in `<pattern>` works as the escape character by default.
   - You can change the escape character by specifying the `ESCAPE` clause.
   - You can disable the escape character by specifying an empty escape character, `ESCAPE ''`.
+
+`WITH` clause:
+
+- You can specify operation attributes by using the `WITH` clause. For details on operation attributes, see [Operation attributes](../api-guide.mdx#operation-attributes).
 
 #### Examples with the full primary key specified
 
@@ -2806,11 +2820,16 @@ This command returns the following column:
 
 ```sql
 BEGIN [READ ONLY | READ WRITE]
+  [WITH operation_attributes]
+
+operation_attributes: operation_attribute [AND operation_attribute] ...
+operation_attribute: <operation attribute name>=<operation attribute value>
 ```
 
 - If you specify `READ ONLY`, the transaction will be started in read-only mode.
 - If you specify `READ WRITE`, the transaction will be started in read-write mode.
 - If you omit the `READ ONLY` or `READ WRITE` option, the transaction will be started as a read-write transaction by default.
+- You can specify transaction-scoped operation attributes by using the `WITH` clause. The specified attributes are merged into every operation issued within the transaction. For details on operation attributes, see [Operation attributes](../api-guide.mdx#operation-attributes).
 
 #### Examples
 
@@ -2858,11 +2877,16 @@ This command returns the following column:
 
 ```sql
 START TRANSACTION [READ ONLY | READ WRITE]
+  [WITH operation_attributes]
+
+operation_attributes: operation_attribute [AND operation_attribute] ...
+operation_attribute: <operation attribute name>=<operation attribute value>
 ```
 
 - If you specify `READ ONLY`, the transaction will be started in read-only mode.
 - If you specify `READ WRITE`, the transaction will be started in read-write mode.
 - If you omit the `READ ONLY` or `READ WRITE` option, the transaction will be started as a read-write transaction by default.
+- You can specify transaction-scoped operation attributes by using the `WITH` clause. The specified attributes are merged into every operation issued within the transaction. For details on operation attributes, see [Operation attributes](../api-guide.mdx#operation-attributes).
 
 #### Examples
 
