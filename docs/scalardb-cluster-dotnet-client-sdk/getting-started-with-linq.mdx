@@ -427,6 +427,12 @@ Read-only transactions are processed more efficiently than read transactions beg
 
 ### Begin a new transaction with the two-phase commit interface
 
+:::warning Deprecation notice
+
+The two-phase commit (2PC) interface is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
+
 ```c#
 await _myDbContext.BeginTwoPhaseCommitTransactionAsync();
 ```
@@ -439,6 +445,12 @@ var transactionId = _myDbContext.CurrentTransactionId;
 
 ### Join an existing transaction with the two-phase commit interface
 
+:::warning Deprecation notice
+
+The two-phase commit (2PC) interface is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
+
 ```c#
 await _myDbContext.JoinTwoPhaseCommitTransactionAsync(transactionId);
 ```
@@ -450,6 +462,12 @@ await _myDbContext.ResumeTransaction(transactionId);
 ```
 
 ### Resume an existing transaction with the two-phase commit interface
+
+:::warning Deprecation notice
+
+The two-phase commit (2PC) interface is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
 
 ```c#
 await _myDbContext.ResumeTwoPhaseCommitTransaction(transactionId);
@@ -475,11 +493,23 @@ await _myDbContext.RollbackTransactionAsync();
 
 ### Prepare a transaction with the two-phase commit interface for the commit
 
+:::warning Deprecation notice
+
+The two-phase commit (2PC) interface is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
+
 ```c#
 await _myDbContext.PrepareTransactionAsync();
 ```
 
 ### Validate a transaction with the two-phase commit interface before the commit
+
+:::warning Deprecation notice
+
+The two-phase commit (2PC) interface is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
 
 ```c#
 await _myDbContext.ValidateTransactionAsync();

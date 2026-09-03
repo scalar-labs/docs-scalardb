@@ -191,6 +191,12 @@ Scanning records without specifying a partition key (for example, <JavadocLink p
 
 ## Interfaces
 
+:::warning Deprecation notice
+
+The two-phase commit (2PC) interface is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
+
 The Consensus Commit protocol provides two interfaces: [a one-phase commit interface and a two-phase commit interface](scalardb-cluster/run-transactions-through-scalardb-cluster.mdx#run-transactions).
 
 The one-phase commit interface is a simple interface that provides only a single `commit` method, where all the phases of the atomic commitment protocol are executed in the method. On the other hand, the two-phase commit interface exposes each phase of the protocol with `prepare`, `validate`, and `commit` methods.
@@ -305,6 +311,12 @@ logger.info("The transaction state: {}", manager.getState(transaction.getId()));
 ```
 
 ### Using group commit with a two-phase commit interface is prohibited
+
+:::warning Deprecation notice
+
+The two-phase commit (2PC) interface is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
 
 The group commit feature manages all ongoing transactions in memory. If this feature is enabled with a two-phase commit interface, the information must be solely maintained by the coordinator service to prevent conflicts caused by participant services' inconsistent writes to the Coordinator table, which may contain different transaction distributions over groups.
 

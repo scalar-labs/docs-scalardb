@@ -147,6 +147,12 @@ The current public preview version has the following limitations, but they are g
 
 ### Architectural limitations
 
+:::warning Deprecation notice
+
+The two-phase commit (2PC) interface is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
+
 Remote replication has the following architectural limitations, which are inherently challenging to relax due to the architecture:
 
 - Only [transactions in read-only mode](../api-guide.mdx#begin-or-start-a-transaction-in-read-only-mode) with the [read-committed isolation level](../consensus-commit.mdx#isolation-levels) are permitted on backup sites until failover.
