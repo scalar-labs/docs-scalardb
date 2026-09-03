@@ -329,25 +329,25 @@ flowchart LR
 `SELECT` の場合:
 
 ```sql
-SELECT * FROM table_name WHERE ... WITH ABAC_READ_TAG '<READ_TAG>' FOR POLICY '<POLICY_NAME>';
+SELECT * FROM table_name WHERE ... WITH ABAC_READ_TAG '<READ_TAG>' FOR POLICY <POLICY_NAME>;
 ```
 
 `UPSERT` の場合:
 
 ```sql
-UPSERT INTO table_name (column1, column2, column3, ...) VALUES (value1, value2, value3, ...) WITH ABAC_READ_TAG '<READ_TAG>' FOR POLICY '<POLICY_NAME>';
+UPSERT INTO table_name (column1, column2, column3, ...) VALUES (value1, value2, value3, ...) WITH ABAC_READ_TAG '<READ_TAG>' FOR POLICY <POLICY_NAME>;
 ```
 
 `UPDATE` の場合:
 
 ```sql
-UPDATE table_name SET column1 = value1, column2 = value2, column3 = value3, ... WHERE ... WITH ABAC_READ_TAG '<READ_TAG>' FOR POLICY '<POLICY_NAME>';
+UPDATE table_name SET column1 = value1, column2 = value2, column3 = value3, ... WHERE ... WITH ABAC_READ_TAG '<READ_TAG>' FOR POLICY <POLICY_NAME>;
 ```
 
 `DELETE` の場合:
 
 ```sql
-DELETE FROM table_name WHERE ... WITH ABAC_READ_TAG '<READ_TAG>' FOR POLICY '<POLICY_NAME>';
+DELETE FROM table_name WHERE ... WITH ABAC_READ_TAG '<READ_TAG>' FOR POLICY <POLICY_NAME>;
 ```
 
 #### 書き込みタグを調整する
@@ -361,19 +361,19 @@ DELETE FROM table_name WHERE ... WITH ABAC_READ_TAG '<READ_TAG>' FOR POLICY '<PO
 `UPSERT` の場合:
 
 ```sql
-UPSERT INTO table_name (column1, column2, column3, ...) VALUES (value1, value2, value3, ...) WITH ABAC_WRITE_TAG '<WRITE_TAG>' FOR POLICY '<POLICY_NAME>';
+UPSERT INTO table_name (column1, column2, column3, ...) VALUES (value1, value2, value3, ...) WITH ABAC_WRITE_TAG '<WRITE_TAG>' FOR POLICY <POLICY_NAME>;
 ```
 
 `UPDATE` の場合:
 
 ```sql
-UPDATE table_name SET column1 = value1, column2 = value2, column3 = value3, ... WHERE ... WITH ABAC_WRITE_TAG '<WRITE_TAG>' FOR POLICY '<POLICY_NAME>';
+UPDATE table_name SET column1 = value1, column2 = value2, column3 = value3, ... WHERE ... WITH ABAC_WRITE_TAG '<WRITE_TAG>' FOR POLICY <POLICY_NAME>;
 ```
 
 `DELETE` の場合:
 
 ```sql
-DELETE FROM table_name WHERE ... WITH ABAC_WRITE_TAG '<WRITE_TAG>' FOR POLICY '<POLICY_NAME>';
+DELETE FROM table_name WHERE ... WITH ABAC_WRITE_TAG '<WRITE_TAG>' FOR POLICY <POLICY_NAME>;
 ```
 
 #### 行タグを調整する
