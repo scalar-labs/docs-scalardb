@@ -636,6 +636,61 @@ DistributedTransaction transaction = transactionManager.startReadOnly("<TRANSACT
 
 :::
 
+##### 属性を指定してトランザクションを開始またはスタートする
+
+トランザクションを開始またはスタートするときに、トランザクションスコープの属性のマップを指定できます。指定した属性はトランザクション内で発行されるすべてのオペレーションにマージされるため、トランザクション全体に一律に適用する設定を開始時に一度だけ指定できます。オペレーションにすでに同じ属性キーが設定されている場合は、オペレーション側の属性が優先されます。
+
+次のように属性を指定してトランザクションを開始またはスタートできます。
+
+```java
+// Specify attributes for the transaction.
+Map<String, String> attributes = ...;
+
+// Begin a transaction with attributes.
+DistributedTransaction transaction = transactionManager.begin(attributes);
+```
+
+```java
+// Start a transaction with attributes.
+DistributedTransaction transaction = transactionManager.start(attributes);
+```
+
+次のように、トランザクション ID と属性を一緒に指定することもできます。
+
+```java
+// Begin a transaction with attributes by specifying a transaction ID.
+DistributedTransaction transaction = transactionManager.begin("<TRANSACTION_ID>", attributes);
+```
+
+```java
+// Start a transaction with attributes by specifying a transaction ID.
+DistributedTransaction transaction = transactionManager.start("<TRANSACTION_ID>", attributes);
+```
+
+`beginReadOnly` メソッドと `startReadOnly` メソッドにも、属性を受け取るオーバーロードがあります。
+
+```java
+// Begin a transaction in read-only mode with attributes.
+DistributedTransaction transaction = transactionManager.beginReadOnly(attributes);
+```
+
+```java
+// Start a transaction in read-only mode with attributes.
+DistributedTransaction transaction = transactionManager.startReadOnly(attributes);
+```
+
+```java
+// Begin a transaction in read-only mode with attributes by specifying a transaction ID.
+DistributedTransaction transaction = transactionManager.beginReadOnly("<TRANSACTION_ID>", attributes);
+```
+
+```java
+// Start a transaction in read-only mode with attributes by specifying a transaction ID.
+DistributedTransaction transaction = transactionManager.startReadOnly("<TRANSACTION_ID>", attributes);
+```
+
+利用可能な属性の一覧については、[オペレーション属性](#オペレーション属性)を参照してください。
+
 #### トランザクションに参加する
 
 トランザクションに参加することは、トランザクションが複数のクライアントリクエストにまたがるステートフルアプリケーションで特に便利です。このようなシナリオでは、アプリケーションは最初のクライアントリクエスト中にトランザクションを開始できます。その後、後続のクライアントリクエストで、アプリケーションは `join()` メソッドを使用して進行中のトランザクションに参加できます。
@@ -1058,6 +1113,29 @@ List<Result> results = transaction.scan(scan);
 
 `WHERE` 句の詳細については、[`WHERE` 句を使用する](#where-句を使用する)を参照してください。
 
+###### 操作単位でクロスパーティションスキャンを有効にする
+
+上記の設定でクロスパーティションスキャンを全体的に有効にする代わりに、オペレーションにクロスパーティションスキャン属性を設定することで、特定のオペレーションに対して有効にできます。オペレーションに設定した場合、そのオペレーションについては対応する設定値よりも属性が優先されます。
+
+次の例では、特定のオペレーションに対してクロスパーティションスキャン、フィルタリング、および順序付けを有効にしています。
+
+```java
+// Enable cross-partition scan for this specific `Scan` operation.
+Scan scan =
+    Scan.newBuilder()
+        .namespace("ns")
+        .table("tbl")
+        .all()
+        .where(ConditionBuilder.column("c1").isNotEqualToInt(10))
+        .orderings(Scan.Ordering.asc("c3"))
+        .attribute(DatabaseOperationAttributes.CROSS_PARTITION_SCAN_ENABLED, "true")
+        .attribute(DatabaseOperationAttributes.CROSS_PARTITION_SCAN_FILTERING_ENABLED, "true")
+        .attribute(DatabaseOperationAttributes.CROSS_PARTITION_SCAN_ORDERING_ENABLED, "true")
+        .build();
+```
+
+これらの属性の詳細については、[クロスパーティションスキャン属性](#クロスパーティションスキャン属性)を参照してください。
+
 ##### `Put` 操作
 
 :::note
@@ -1470,7 +1548,9 @@ Scan scanUsingSpecifiedNamespace =
 
 ##### オペレーション属性
 
-オペレーション属性は、オペレーションに関する追加情報を保持するためのキーと値のペアです。以下のように、オペレーションビルダーの`attribute()`メソッドや`attributes()`メソッドを使って設定できます。
+オペレーション属性は、オペレーションに関する追加情報を保持するためのキーと値のペアです。オペレーション属性は、オペレーションビルダーの `attribute()` メソッドや `attributes()` メソッドを使用して個々のオペレーションにオペレーションスコープの属性として設定するか、トランザクションの開始時にトランザクションスコープの属性として設定できます。トランザクションスコープの属性は、そのトランザクション内のすべてのオペレーションにマージされます。同じ属性が両方のレベルで設定されている場合は、オペレーションスコープの値がトランザクションスコープの値よりも優先されます。トランザクションスコープの属性の詳細については、[属性を指定してトランザクションを開始またはスタートする](#属性を指定してトランザクションを開始またはスタートする)を参照してください。
+
+次の例は、個々のオペレーションにオペレーション属性を設定する方法を示しています。
 
 ```java
 // Set operation attributes in the `Get` operation.
@@ -1540,11 +1620,31 @@ Delete delete = Delete.newBuilder()
     .build();
 ```
 
-:::note
+次の属性が利用可能です。属性をサポートしていないオペレーションに属性を設定しても、効果はありません。
 
-ScalarDB では現在、利用可能なオペレーション属性はありません。
+###### クロスパーティションスキャン属性
+
+次の属性は、クロスパーティション `Scan` 操作 (パーティションキーを指定しない `Scan` 操作) に適用されます。オペレーションに設定した場合、そのオペレーションについては対応する `scalar.db.cross_partition_scan.*` の設定値よりも優先されます。設定の詳細については、[クロスパーティションスキャン設定](configurations.mdx#クロスパーティションスキャン設定)を参照してください。
+
+- **`db-cross-partition-scan-enabled`:** オペレーションでクロスパーティションスキャンを有効にするかどうか。値は `true` または `false` である必要があります。
+- **`db-cross-partition-scan-filtering-enabled`:** オペレーションでフィルタリングを伴うクロスパーティションスキャンを有効にするかどうか。値は `true` または `false` である必要があります。
+- **`db-cross-partition-scan-ordering-enabled`:** オペレーションで順序付けを伴うクロスパーティションスキャンを有効にするかどうか。値は `true` または `false` である必要があります。この属性は JDBC データベースでのみ利用できます。
+
+これらの属性を設定するには、<JavadocLink packageName="scalardb" path="com/scalar/db/api" className="DatabaseOperationAttributes" /> ユーティリティクラスを使用できます。
+
+###### Consensus Commit 属性
+
+次の属性は、[Consensus Commit](consensus-commit.mdx) で実行されるトランザクションに適用されます。
+
+- **`cc-transaction-isolation`:** トランザクションの分離レベル。値は `SNAPSHOT`、`SERIALIZABLE`、または `READ_COMMITTED` である必要があります。設定すると、そのトランザクションについて設定済みのデフォルトの分離レベルを上書きします。分離レベルの詳細については、[分離レベル](consensus-commit.mdx#分離レベル)を参照してください。
+
+:::warning
+
+他のオペレーション属性とは異なり、`cc-transaction-isolation` はトランザクション内のオペレーション単位で適用することはできません。この属性はトランザクションの開始時にのみ解釈されます。この属性を使用するには、[属性を指定してトランザクションを開始またはスタートする](#属性を指定してトランザクションを開始またはスタートする)ときに指定するか、[トランザクションを開始せずにトランザクションを実行する](#トランザクションを開始せずにトランザクションを実行する)場合はオペレーションに設定してください。後者の場合、ScalarDB は暗黙的に開始するトランザクションにその値を使用します。
 
 :::
+
+この属性を設定するには、<JavadocLink packageName="scalardb" path="com/scalar/db/transaction/consensuscommit" className="ConsensusCommitOperationAttributes" /> ユーティリティクラスを使用できます。
 
 #### トランザクションをコミットする
 
