@@ -237,7 +237,7 @@ docker compose up -d customer-service order-service
 }
 ```
 
-この時点では、`credit_total` は表示されません。これは、`credit_total` の現在の値が `0` であることを意味します。
+この時点では、`creditTotal` は表示されません。これは、`creditTotal` の現在の値が `0` であることを意味します。
 
 ### 注文の配置
 
@@ -253,7 +253,7 @@ docker compose up -d customer-service order-service
 ./gradlew :client:run --args="PlaceOrder 1 1:3,2:2" -q
 ```
 
-注文が成功したことを確認する `order_id` の UUID が異なる、以下のような出力が表示されます。
+注文が成功したことを確認する `orderId` の UUID が異なる、以下のような出力が表示されます。
 
 ```console
 {
@@ -263,13 +263,13 @@ docker compose up -d customer-service order-service
 
 ### 注文詳細の確認
 
-前のコマンドを実行した後に表示された `order_id` の UUID と `<ORDER_ID_UUID>` を置き換えて、次のコマンドを実行して注文の詳細を確認します。
+前のコマンドを実行した後に表示された `orderId` の UUID と `<ORDER_ID_UUID>` を置き換えて、次のコマンドを実行して注文の詳細を確認します。
 
 ```console
 ./gradlew :client:run --args="GetOrder <ORDER_ID_UUID>" -q
 ```
 
-`order_id` と `timestamp` の UUID が異なる、以下のような出力が表示されます。
+`orderId` の UUID と `timestamp` の値が異なる、以下のような出力が表示されます。
 
 ```console
 {
@@ -298,13 +298,13 @@ docker compose up -d customer-service order-service
 
 ### 別の注文の配置
 
-次のコマンドを実行して、顧客 ID `1` の `credit_total` の残り金額を使用してメロン1個の注文をします。
+次のコマンドを実行して、顧客 ID `1` の `creditTotal` の残り金額を使用してメロン1個の注文をします。
 
 ```console
 ./gradlew :client:run --args="PlaceOrder 1 5:1" -q
 ```
 
-注文が成功したことを確認する `order_id` の UUID が異なる、以下のような出力が表示されます。
+注文が成功したことを確認する `orderId` の UUID が異なる、以下のような出力が表示されます。
 
 ```console
 {
@@ -320,7 +320,7 @@ docker compose up -d customer-service order-service
 ./gradlew :client:run --args="GetOrders 1" -q
 ```
 
-タイムスタンプの降順で顧客 ID `1` のすべての注文の履歴を示す、`order_id` と `timestamp` の UUID が異なる以下のような出力が表示されます。
+顧客 ID `1` のすべての注文の履歴を示す、`orderId` の UUID と `timestamp` の値が異なる以下のような出力が表示されます。
 
 ```console
 {
@@ -368,7 +368,7 @@ docker compose up -d customer-service order-service
 ./gradlew :client:run --args="GetCustomerInfo 1" -q
 ```
 
-顧客 ID `1` が `credit_total` で `credit_limit` に達し、これ以上注文できないことを示す次の出力が表示されます。
+顧客 ID `1` が `creditTotal` で `creditLimit` に達し、これ以上注文できないことを示す次の出力が表示されます。
 
 ```console
 {
@@ -385,7 +385,7 @@ docker compose up -d customer-service order-service
 ./gradlew :client:run --args="PlaceOrder 1 3:1,4:1" -q
 ```
 
-`credit_total` 金額が `credit_limit` 金額を超えるため注文が失敗したことを示す次の出力が表示されます。
+`creditTotal` 金額が `creditLimit` 金額を超えるため注文が失敗したことを示す次の出力が表示されます。
 
 ```console
 io.grpc.StatusRuntimeException: FAILED_PRECONDITION: Credit limit exceeded
@@ -408,7 +408,7 @@ io.grpc.StatusRuntimeException: FAILED_PRECONDITION: Credit limit exceeded
 
 ### 支払いの実行
 
-注文を続けるには、顧客 ID `1` が支払いを行って `credit_total` 金額を減らす必要があります。
+注文を続けるには、顧客 ID `1` が支払いを行って `creditTotal` 金額を減らす必要があります。
 
 次のコマンドを実行して支払いを行います。
 
@@ -416,13 +416,13 @@ io.grpc.StatusRuntimeException: FAILED_PRECONDITION: Credit limit exceeded
 ./gradlew :client:run --args="Repayment 1 8000" -q
 ```
 
-次に、以下のコマンドを実行して顧客 ID `1` の `credit_total` 金額を確認します。
+次に、以下のコマンドを実行して顧客 ID `1` の `creditTotal` 金額を確認します。
 
 ```console
 ./gradlew :client:run --args="GetCustomerInfo 1" -q
 ```
 
-顧客 ID `1` に支払いが適用され、`credit_total` 金額が減ったことを示す次の出力が表示されます。
+顧客 ID `1` に支払いが適用され、`creditTotal` 金額が減ったことを示す次の出力が表示されます。
 
 ```console
 {
@@ -439,7 +439,7 @@ io.grpc.StatusRuntimeException: FAILED_PRECONDITION: Credit limit exceeded
 ./gradlew :client:run --args="PlaceOrder 1 3:1,4:1" -q
 ```
 
-注文が成功したことを確認する `order_id` の UUID が異なる、以下のような出力が表示されます。
+注文が成功したことを確認する `orderId` の UUID が異なる、以下のような出力が表示されます。
 
 ```console
 {
