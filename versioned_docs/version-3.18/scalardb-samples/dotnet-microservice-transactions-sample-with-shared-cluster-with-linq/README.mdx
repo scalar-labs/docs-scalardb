@@ -234,7 +234,7 @@ Check details about the order by running the following command, replacing `<ORDE
 dotnet run --project Client/Client.csproj GetOrder <ORDER_ID_UUID>
 ```
 
-You should see a similar output as below, with different UUIDs for `orderId` and `timestamp`:
+You should see a similar output as below, with a different UUID for `orderId` and a different value for `timestamp`:
 
 ```console
 { "order": { "orderId": "4b076074-797f-4fdb-b357-59531f0aec12", "timestamp": "63825948620680", "customerId": 1, "customerName": "Yamada Taro", "statement": [ { "itemId": 1, "itemName": "Apple", "price": 1000, "count": 3, "total": 3000 }, { "itemId": 2, "itemName": "Orange", "price": 2000, "count": 2, "total": 4000 } ], "total": 7000 } }
@@ -262,7 +262,7 @@ Get the history of all orders for customer ID `1` by running the following comma
 dotnet run --project Client/Client.csproj GetOrders 1
 ```
 
-You should see a similar output as below, with different UUIDs for `orderId` and `timestamp`, which shows the history of all orders for customer ID `1` in descending order by timestamp:
+You should see a similar output as below, with a different UUID for `orderId` and a different value for `timestamp`, which shows the history of all orders for customer ID `1`:
 
 ```console
 { "order": [ { "orderId": "4b076074-797f-4fdb-b357-59531f0aec12", "timestamp": "63825948620680", "customerId": 1, "customerName": "Yamada Taro", "statement": [ { "itemId": 1, "itemName": "Apple", "price": 1000, "count": 3, "total": 3000 }, { "itemId": 2, "itemName": "Orange", "price": 2000, "count": 2, "total": 4000 } ], "total": 7000 }, { "orderId": "6c7750c8-10ad-4f02-aa3c-e30621d95151", "timestamp": "63825948672045", "customerId": 1, "customerName": "Yamada Taro", "statement": [ { "itemId": 5, "itemName": "Melon", "price": 3000, "count": 1, "total": 3000 } ], "total": 3000 } ] }
