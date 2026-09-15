@@ -938,7 +938,7 @@ The following shows the authentication and authorization configurations for Scal
 #### `auth.cache_expiration_time_millis`
 
 - **Field:** `scalar.db.cluster.auth.cache_expiration_time_millis`
-- **Description:** Cache expiration time for authentication and authorization information in milliseconds.
+- **Description:** Cache expiration time for authentication and authorization information in milliseconds. Each cluster node caches this information separately, so if you update authentication and authorization information, for example, by revoking a privilege or dropping a user, you might need to wait until this expiration time is reached for the change to be applied on all cluster nodes.
 - **Default value:** `60000` (1 minute)
 
 #### `auth.auth_token_expiration_time_minutes`
@@ -1836,7 +1836,7 @@ scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
 
 The following shows the authentication and authorization configurations for the Java Client SDK when using the primitive interface.
 
-When you run applications or tools that use the Java Client SDK and the primitive interface (such as the [Schema Loader for Cluster](./developer-guide-for-scalardb-cluster-with-java-api.mdx#schema-loader-for-cluster) or [ScalarDB Benchmarking Tools](../scalardb-benchmarks/README.mdx)), you need to set the following configurations in your client-side `database.properties` file, especially if authentication and authorization are enabled on the cluster.
+When you run applications or tools that use the Java Client SDK and the primitive interface (such as the [Schema Loader for Cluster](./developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-schema-loader) or [ScalarDB Benchmarking Tools](../scalardb-benchmarks/README.mdx)), you need to set the following configurations in your client-side `database.properties` file, especially if authentication and authorization are enabled on the cluster.
 
 ##### `auth.enabled`
 
