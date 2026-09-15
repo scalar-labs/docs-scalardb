@@ -238,7 +238,7 @@ dotnet run --project Client/Client.csproj PlaceOrder 1 1:3,2:2
 dotnet run --project Client/Client.csproj GetOrder <ORDER_ID_UUID>
 ```
 
-以下のような出力が表示されます。`orderId` と `timestamp` は異なる UUID が表示されます:
+以下のような出力が表示されます。`orderId` の UUID と `timestamp` の値は異なります:
 
 ```console
 { "order": { "orderId": "4b076074-797f-4fdb-b357-59531f0aec12", "timestamp": "63825948620680", "customerId": 1, "customerName": "Yamada Taro", "statement": [ { "itemId": 1, "itemName": "Apple", "price": 1000, "count": 3, "total": 3000 }, { "itemId": 2, "itemName": "Orange", "price": 2000, "count": 2, "total": 4000 } ], "total": 7000 } }
@@ -266,7 +266,7 @@ dotnet run --project Client/Client.csproj PlaceOrder 1 5:1
 dotnet run --project Client/Client.csproj GetOrders 1
 ```
 
-以下のような出力が表示されます。`orderId` と `timestamp` は異なる UUID が表示され、顧客ID `1` のすべての注文の履歴がタイムスタンプの降順で表示されます:
+以下のような出力が表示されます。`orderId` の UUID と `timestamp` の値は異なり、顧客ID `1` のすべての注文の履歴が表示されます:
 
 ```console
 { "order": [ { "orderId": "4b076074-797f-4fdb-b357-59531f0aec12", "timestamp": "63825948620680", "customerId": 1, "customerName": "Yamada Taro", "statement": [ { "itemId": 1, "itemName": "Apple", "price": 1000, "count": 3, "total": 3000 }, { "itemId": 2, "itemName": "Orange", "price": 2000, "count": 2, "total": 4000 } ], "total": 7000 }, { "orderId": "6c7750c8-10ad-4f02-aa3c-e30621d95151", "timestamp": "63825948672045", "customerId": 1, "customerName": "Yamada Taro", "statement": [ { "itemId": 5, "itemName": "Melon", "price": 3000, "count": 1, "total": 3000 } ], "total": 3000 } ] }
