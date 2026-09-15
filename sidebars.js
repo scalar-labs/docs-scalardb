@@ -458,9 +458,15 @@ const sidebars = {
                   items: [
                     {
                       type: 'doc',
-                      key: 'develop-api-guide-en-us-3.19',
+                      key: 'develop-core-api-guide-en-us-3.19',
                       id: 'api-guide',
-                      label: 'API Guide',
+                      label: 'ScalarDB Core API Guide',
+                    },
+                    {
+                      type: 'doc',
+                      key: 'develop-cluster-api-guide-en-us-3.19',
+                      id: 'scalardb-cluster/api-guide',
+                      label: 'ScalarDB Cluster API Guide [NEW]',
                     },
                     {
                       type: 'doc',
