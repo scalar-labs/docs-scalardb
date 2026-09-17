@@ -2031,7 +2031,7 @@ public class Sample {
         // retry the transaction if it failed. How to identify a transaction status is delegated to users.
         return;
       } catch (TransactionException e) {
-        // For other exceptions, you can try retrying the transaction.
+        // For other exceptions, you can retry the transaction.
 
         // For `CrudConflictException`, `CommitConflictException`, and `TransactionNotFoundException`,
         // you can basically retry the transaction. However, for the other exceptions, the transaction
@@ -2058,7 +2058,7 @@ public class Sample {
 
 The `begin()` API could throw `TransactionException` or `TransactionNotFoundException`:
 
-- If you catch `TransactionException`, this exception indicates that the transaction has failed to begin due to transient or non-transient faults. You can try retrying the transaction, but you may not be able to begin the transaction due to non-transient faults.
+- If you catch `TransactionException`, this exception indicates that the transaction has failed to begin due to transient or non-transient faults. You can retry the transaction, but you may not be able to begin the transaction due to non-transient faults.
 - If you catch `TransactionNotFoundException`, this exception indicates that the transaction has failed to begin due to transient faults. In this case, you can retry the transaction.
 
 The `join()` API could also throw `TransactionNotFoundException`. You can handle this exception in the same way that you handle the exceptions for the `begin()` API.
@@ -2067,7 +2067,7 @@ The `join()` API could also throw `TransactionNotFoundException`. You can handle
 
 The APIs for CRUD operations (`get()`, `scan()`, `put()`, `delete()`, and `mutate()`) could throw `CrudException` or `CrudConflictException`:
 
-- If you catch `CrudException`, this exception indicates that the transaction CRUD operation has failed due to transient or non-transient faults. You can try retrying the transaction from the beginning, but the transaction may still fail if the cause is non-transient.
+- If you catch `CrudException`, this exception indicates that the transaction CRUD operation has failed due to transient or non-transient faults. You can retry the transaction from the beginning, but the transaction may still fail if the cause is non-transient.
 - If you catch `CrudConflictException`, this exception indicates that the transaction CRUD operation has failed due to transient faults (for example, a conflict error). In this case, you can retry the transaction from the beginning.
 
 ### `UnsatisfiedConditionException`
@@ -2080,7 +2080,7 @@ If you catch `UnsatisfiedConditionException`, this exception indicates that the 
 
 The `commit()` API could throw `CommitException`, `CommitConflictException`, or `UnknownTransactionStatusException`:
 
-- If you catch `CommitException`, this exception indicates that committing the transaction fails due to transient or non-transient faults. You can try retrying the transaction from the beginning, but the transaction may still fail if the cause is non-transient.
+- If you catch `CommitException`, this exception indicates that committing the transaction fails due to transient or non-transient faults. You can retry the transaction from the beginning, but the transaction may still fail if the cause is non-transient.
 - If you catch `CommitConflictException`, this exception indicates that committing the transaction has failed due to transient faults (for example, a conflict error). In this case, you can retry the transaction from the beginning.
 - If you catch `UnknownTransactionStatusException`, this exception indicates that the status of the transaction, whether it was successful or not, is unknown. In this case, you need to check if the transaction is committed successfully and retry the transaction if it has failed.
 
