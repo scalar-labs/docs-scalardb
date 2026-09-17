@@ -341,7 +341,7 @@ try {
   // the transaction is committed successfully or not and retry it if it failed. How to identify a
   // transaction status is delegated to users
 } catch (SqlException e) {
-  // For other exceptions, you can try retrying the transaction
+  // For other exceptions, you can retry the transaction
 
   // Rollback the transaction
   sqlSession.rollback();
@@ -357,7 +357,7 @@ In such a case, you need to check if the transaction is committed successfully o
 How to identify a transaction status is delegated to users.
 You may want to create a transaction status table and update it transactionally with other application data so that you can get the status of a transaction from the status table.
 
-If you catch another exception, you can try retrying the transaction.
+If you catch another exception, you can retry the transaction.
 For `TransactionRetryableException`, you can basically retry the transaction.
 However, for the other exceptions, the transaction may still fail if the cause of the exception is nontransient. 
 For such a case, you need to limit the number of retries and give up retrying.
@@ -417,7 +417,7 @@ try {
   // In such a case, you need to check if the transaction is committed successfully or not and
   // retry it if it failed. How to identify a transaction status is delegated to users
 } catch (SqlException e) {
-  // For other exceptions, you can try retrying the transaction
+  // For other exceptions, you can retry the transaction
     
   // Rollback the transaction
   sqlSession.rollback();
