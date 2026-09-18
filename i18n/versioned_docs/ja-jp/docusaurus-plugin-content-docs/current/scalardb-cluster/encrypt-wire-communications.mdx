@@ -16,6 +16,9 @@ ScalarDB Cluster は、トランスポート層セキュリティ (TLS) を使�
 
 * ScalarDB Cluster ノードとクライアント間の通信。
 * すべての ScalarDB Cluster ノード間の通信 (クラスターの内部通信)。
+* Transaction Coordinator とクライアント間の通信。
+* Transaction Coordinator と、Transaction Coordinator が2フェーズコミットを実行する対象の ScalarDB Cluster 間の通信。
+* すべての Transaction Coordinator ノード間の通信。
 
 この機能では、gRPC の TLS サポートが使用されます。詳細については、公式の gRPC [Security Policy](https://github.com/grpc/grpc-java/blob/master/SECURITY.md) を参照してください。
 
@@ -43,11 +46,37 @@ ScalarDB Cluster は、トランスポート層セキュリティ (TLS) を使�
 |-----------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|
 | `scalar.db.cluster.tls.ca_root_cert_pem`      | TLS 通信用のカスタム CA ルート証明書 (PEM データ)。                                                                                                                                                                                                                  |          |
 | `scalar.db.cluster.tls.ca_root_cert_path`     | TLS 通信用のカスタム CA ルート証明書 (ファイルパス)。                                                                                                                                                                                                                 |          |
-| `scalar.db.cluster.tls.override_authority`    | TLS 通信のカスタム権限。これは、実際に接続しているホストを変更するものではありません。これはテスト用ですが、DNS オーバーライドの代替としてテスト以外でも安全に使用できます。たとえば、`scalar.db.cluster.node.tls.cert_chain_path` に設定した証明書チェーンファイルで提示されるホスト名を指定できます。 |          |
+| `scalar.db.cluster.tls.override_authority`    | TLS 通信のカスタムオーソリティ。これは、実際に接続しているホストを変更するものではありません。これはテスト用ですが、DNS オーバーライドの代替としてテスト以外でも安全に使用できます。たとえば、`scalar.db.cluster.node.tls.cert_chain_path` に設定した証明書チェーンファイルで提示されるホスト名を指定できます。 |          |
 | `scalar.db.cluster.node.tls.cert_chain_path`  | TLS 通信に使用される証明書チェーンファイル。                                                                                                                                                                                                                          |          |
 | `scalar.db.cluster.node.tls.private_key_path` | TLS 通信に使用される秘密鍵ファイル。                                                                                                                                                                                                                          |          |
 
 証明機関 (CA) ルート証明書を指定するには、`scalar.db.cluster.tls.ca_root_cert_pem` または `scalar.db.cluster.tls.ca_root_cert_path` のいずれかを設定する必要があります。両方を設定すると、`scalar.db.cluster.tls.ca_root_cert_pem` が使用されます。
+
+### Transaction Coordinator の設定
+
+Transaction Coordinator でワイヤ暗号化を有効にするには、`scalar.db.cluster.tls.enabled` を `true` に設定する必要があります。
+
+| 名前                             | 説明                            | デフォルト |
+|---------------------------------|--------------------------------|-----------|
+| `scalar.db.cluster.tls.enabled` | ワイヤ暗号化 (TLS) が有効かどうか。 | `false`   |
+
+次の設定も設定する必要があります。
+
+| 名前                                                             | 説明                                                                                                                                                                                                                                                                                                                                                                    | デフォルト |
+|------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|---------|
+| `scalar.db.cluster.tls.ca_root_cert_pem`                         | TLS 通信用のカスタム CA ルート証明書 (PEM データ)。                                                                                                                                                                                                                                                                                                               |         |
+| `scalar.db.cluster.tls.ca_root_cert_path`                        | TLS 通信用のカスタム CA ルート証明書 (ファイルパス)。                                                                                                                                                                                                                                                                                                              |         |
+| `scalar.db.cluster.tls.override_authority`                       | TLS 通信のカスタムオーソリティ。これは、実際に接続しているホストを変更するものではありません。これはテスト用ですが、DNS オーバーライドの代替としてテスト以外でも安全に使用できます。たとえば、`scalar.db.cluster.transaction_coordinator.tls.cert_chain_path` に設定した証明書チェーンファイルで提示されるホスト名を指定できます。 |         |
+| `scalar.db.cluster.transaction_coordinator.tls.cert_chain_path`  | TLS 通信に使用される証明書チェーンファイル。                                                                                                                                                                                                                                                                                                                         |         |
+| `scalar.db.cluster.transaction_coordinator.tls.private_key_path` | TLS 通信に使用される秘密鍵ファイル。                                                                                                                                                                                                                                                                                                                          |         |
+
+CA ルート証明書を指定するには、`scalar.db.cluster.tls.ca_root_cert_pem` または `scalar.db.cluster.tls.ca_root_cert_path` のいずれかを設定する必要があります。両方を設定すると、`scalar.db.cluster.tls.ca_root_cert_pem` が使用されます。
+
+上記の設定は、Transaction Coordinator のすべての接続に適用されます。対象クラスターが異なる認証局によって署名されたサーバー証明書を提示する場合、または `scalar.db.cluster.tls.override_authority` に異なる値が必要な場合は、[`scalar.db.cluster.transaction_coordinator.clusters.<CLUSTER_ID>.<PROPERTY_NAME>`](./scalardb-cluster-configurations.mdx#clustertransaction_coordinatorclusterscluster_idproperty_name) を使用して、単一の対象クラスターの設定を上書きできます。たとえば、対象クラスター `cluster1` のみの CA ルート証明書を次のように指定できます:
+
+```properties
+scalar.db.cluster.transaction_coordinator.clusters.cluster1.tls.ca_root_cert_path=/path/to/cluster1-ca.pem
+```
 
 ### クライアントの設定
 
@@ -63,6 +92,12 @@ ScalarDB Cluster は、トランスポート層セキュリティ (TLS) を使�
 |--------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|----------|
 | `scalar.db.cluster.tls.ca_root_cert_pem`   | TLS 通信用のカスタム CA ルート証明書 (PEM データ)。                                                                                                                                                                                                                 |          |
 | `scalar.db.cluster.tls.ca_root_cert_path`  | TLS 通信用のカスタム CA ルート証明書 (ファイルパス)。                                                                                                                                                                                                                |          |
-| `scalar.db.cluster.tls.override_authority` | TLS 通信のカスタム権限。これは、実際に接続しているホストを変更するものではありません。これはテスト用ですが、DNS オーバーライドの代替としてテスト以外でも安全に使用できます。たとえば、`scalar.db.cluster.node.tls.cert_chain_path` に設定した証明書チェーンファイルで提示されるホスト名を指定できます。 |          |
+| `scalar.db.cluster.tls.override_authority` | TLS 通信のカスタムオーソリティ。これは、実際に接続しているホストを変更するものではありません。これはテスト用ですが、DNS オーバーライドの代替としてテスト以外でも安全に使用できます。たとえば、`scalar.db.cluster.node.tls.cert_chain_path` に設定した証明書チェーンファイルで提示されるホスト名を指定できます。 |          |
 
 CA ルート証明書を指定するには、`scalar.db.cluster.tls.ca_root_cert_pem` または `scalar.db.cluster.tls.ca_root_cert_path` のいずれかを設定する必要があります。両方を設定すると、`scalar.db.cluster.tls.ca_root_cert_pem` が使用されます。
+
+アプリケーションが ScalarDB Cluster と Transaction Coordinator の両方に接続する場合、上記の設定は両方の接続に適用されます。Transaction Coordinator がクラスターとは異なる認証局によって署名されたサーバー証明書を提示する場合は、[`scalar.db.cluster.client.transaction_coordinator.<PROPERTY_NAME>`](./scalardb-cluster-configurations.mdx#clusterclienttransaction_coordinatorproperty_name) を使用して、Transaction Coordinator への接続のみの設定を上書きできます。たとえば、Transaction Coordinator への接続のみの CA ルート証明書を次のように指定できます:
+
+```properties
+scalar.db.cluster.client.transaction_coordinator.tls.ca_root_cert_path=/path/to/transaction-coordinator-ca.pem
+```
