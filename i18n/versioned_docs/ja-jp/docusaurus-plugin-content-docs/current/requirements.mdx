@@ -710,7 +710,11 @@ ScalarDB Cluster は Core を使用してデータベースと対話するため
 
 ### 必要なポート
 
-ScalarDB Cluster では、以下のポートにアクセスできる必要があります。これらは、必要に応じて設定可能なデフォルトのポート番号です:
+以下のポートにアクセスできる必要があります。これらのデフォルトのポート番号は、必要に応じて対応するプロパティで設定できます。
+
+#### ScalarDB Cluster ノード
+
+ScalarDB Cluster では、以下のポートにアクセスできる必要があります:
 
 - 60053 (Administrative API / Transaction API / SQL API / 管理者サービス; `scalar.db.cluster.node.port` で設定可能)
 - 60054 (クラスターノード間の内部 gRPC 通信; `scalar.db.cluster.internal.node.port` で設定可能。このポートは、クラスターノード間でのみ到達可能である必要があり、通常はクライアントおよびパブリックネットワークからは制限されるべきです)
@@ -720,6 +724,20 @@ ScalarDB Cluster では、以下のポートにアクセスできる必要があ
 :::note
 
 `scalar.db.cluster.node.admin.port` を設定して管理者サービス (`pause`、`unpause`、`checkPaused`) を専用ポートで実行する場合、その専用ポートにもアクセスできる必要があります。この場合、管理者サービスのみがその専用ポートで実行され、`scalar.db.cluster.node.port` で指定されたポートでは実行されません。`scalar.db.cluster.node.port` で指定されたポートは、Administrative API、Transaction API、SQL API などの他の gRPC API にアクセスできるように引き続き維持される必要があります。
+
+:::
+
+#### Transaction Coordinator
+
+[Transaction Coordinator](./scalardb-cluster/scalardb-cluster-configurations.mdx#transaction-coordinator-の設定) をデプロイする場合、以下のポートにアクセスできる必要があります:
+
+- 60055 (Transaction API; `scalar.db.cluster.transaction_coordinator.port` で設定可能)
+- 9080 (メトリクス; `scalar.db.cluster.transaction_coordinator.prometheus_exporter_port` で設定可能)
+
+:::note
+
+- Transaction Coordinator ノードは、`scalar.db.cluster.transaction_coordinator.port` で指定されたポートを使用して互いに通信します。ScalarDB Cluster とは異なり、Transaction Coordinator には内部通信専用の別のポートがないため、このポートを Transaction Coordinator ノード間の通信に制限することはできません。
+- `scalar.db.cluster.transaction_coordinator.admin.port` を設定して管理者サービス (`pause`、`unpause`、`checkPaused`) を専用ポートで実行する場合、その専用ポートにもアクセスできる必要があります。この場合、管理者サービスのみがその専用ポートで実行され、`scalar.db.cluster.transaction_coordinator.port` で指定されたポートでは実行されません。Transaction API には、`scalar.db.cluster.transaction_coordinator.port` で指定されたポートが引き続きアクセス可能である必要があります。
 
 :::
 
