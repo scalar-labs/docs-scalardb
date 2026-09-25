@@ -150,9 +150,7 @@ admin.createTable("ns", "tbl", tableMetadata, options);
 
 <Tabs groupId="databases" queryString>
   <TabItem value="JDBC_databases" label="JDBC データベース" default>
-    | 名前       | 説明                             | デフォルト |
-    |------------|----------------------------------|------------|
-    | transaction-metadata-decoupling | Consensus Commitを使用している場合に、[トランザクションメタデータ分離](../consensus-commit.mdx#トランザクションメタデータ分離)を有効にします。これにより、トランザクションメタデータがアプリケーションデータとは別のテーブルで管理されます。 | false   |
+    使用可能なオプションはありません。
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     | 名前       | 説明                             | デフォルト |
@@ -523,8 +521,6 @@ admin.importTable("ns", "tbl", options, overrideColumnsType);
 :::warning
 
 Consensus Commitを使用している場合に、運用環境で ScalarDB にテーブルをインポートする場合は、データベーステーブルと ScalarDB メタデータテーブルにトランザクションメタデータ列が追加されるため、慎重に計画する必要があります。この場合、データベースと ScalarDB の間にはいくつかの違いがあり、いくつかの制限もあります。詳細については、[ScalarDB Schema Loader を使用して既存のテーブルを ScalarDB にインポートする](../schema-loader-import.mdx)を参照してください。
-
-また、`transaction-metadata-decoupling` オプションを `true` に指定することで、*トランザクションメタデータ分離*を有効にして、トランザクションメタデータをアプリケーションデータとは別のテーブルに保存することもできます。詳細については、[トランザクションメタデータ分離](../schema-loader.mdx#トランザクションメタデータ分離)を参照してください。
 
 :::
 
