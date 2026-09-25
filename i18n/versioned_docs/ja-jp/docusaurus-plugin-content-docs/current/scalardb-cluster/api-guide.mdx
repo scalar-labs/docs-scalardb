@@ -1,12 +1,11 @@
 ---
 tags:
-  - Community
   - Enterprise Standard
   - Enterprise Premium
 displayed_sidebar: docsJapanese
 ---
 
-# ScalarDB Java API ガイド
+# ScalarDB Cluster Java API ガイド
 
 import JavadocLink from '/src/theme/JavadocLink.js';
 import Tabs from '@theme/Tabs';
@@ -15,7 +14,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 <TranslationBanner />
 
-ScalarDB Java API は、主に Administrative API と Transaction API で設定されています。このガイドでは、どのような種類の API が存在するのか、それらの使用方法、例外の処理方法などの関連トピックについて簡単に説明します。
+ScalarDB Cluster Java API は、ScalarDB Core の一部である Administrative API と Transaction API に加えて、ScalarDB Cluster に固有の追加 API で構成されています。このガイドでは、どのような種類の API が存在するのか、それらの使用方法、例外の処理方法などの関連トピックについて説明します。
 
 ## Administrative API
 
@@ -25,14 +24,14 @@ ScalarDB Java API は、主に Administrative API と Transaction API で設定�
 
 Administrative API の呼び出しが基盤となるデータベースに書き込みを行う場合、複数の書き込み操作がトリガーされます。ただし、これらの操作はアトミックに実行されないため、呼び出しが途中で失敗した場合、一貫性のない状態が発生する可能性があります。この非一貫性の問題を解決するには、名前空間またはテーブルを修復してください。詳細については、以下のページを参照してください:
 
-- Java API を使用した[テーブルの修復](#テーブルを修復する)
-- ScalarDB Schema Loader を使用した[テーブルの修復](schema-loader.mdx#名前空間とテーブルを修復する)
+- Java API を使用した [名前空間の修復](#名前空間を修復する)と[テーブルの修復](#テーブルを修復する)
+- ScalarDB Schema Loader を使用した[名前空間とテーブルの修復](../schema-loader.mdx#名前空間とテーブルを修復する)
 
 :::
 
 :::note
 
-管理操作を実行する別の方法は、[Schema Loader](schema-loader.mdx) を使用することです。
+管理操作を実行する別の方法は、[Schema Loader](../schema-loader.mdx) を使用することです。
 
 :::
 
@@ -47,7 +46,7 @@ TransactionFactory transactionFactory = TransactionFactory.create("<CONFIGURATIO
 DistributedTransactionAdmin admin = transactionFactory.getTransactionAdmin();
 ```
 
-設定の詳細については、[ScalarDB 設定](configurations.mdx)を参照してください。
+設定の詳細については、[ScalarDB 設定](../configurations.mdx)を参照してください。
 
 すべての管理操作を実行したら、次のように `DistributedTransactionAdmin` インスタンスを閉じる必要があります。
 
@@ -97,7 +96,7 @@ admin.createNamespace("ns", options);
     | 名前                 | 説明                                                                                                     | デフォルト        |
     |----------------------|----------------------------------------------------------------------------------------------------------|-------------------|
     | replication-strategy | Cassandra レプリケーション戦略。`SimpleStrategy` または `NetworkTopologyStrategy` である必要があります。 | `SimpleStrategy`  |
-    | replication-factor   | Cassandra の複製係数。                                                                                   | 1                 |
+    | replication-factor   | Cassandra の複製係数。                                                                                   | 3                 |
   </TabItem>
   <TabItem value="Object_Storage" label="Object Storage">
     使用可能なオプションはありません。
@@ -126,7 +125,7 @@ TableMetadata tableMetadata =
         .build();
 ```
 
-ScalarDB のデータモデルの詳細については、[データをモデル化する](./data-modeling.mdx)を参照してください。
+ScalarDB のデータモデルの詳細については、[データをモデル化する](../data-modeling.mdx)を参照してください。
 
 次に、次のようにテーブルを作成します。
 
@@ -153,7 +152,7 @@ admin.createTable("ns", "tbl", tableMetadata, options);
   <TabItem value="JDBC_databases" label="JDBC データベース" default>
     | 名前       | 説明                             | デフォルト |
     |------------|----------------------------------|------------|
-    | transaction-metadata-decoupling | Consensus Commitを使用している場合に、[トランザクションメタデータ分離](./consensus-commit.mdx#トランザクションメタデータ分離)を有効にします。これにより、トランザクションメタデータがアプリケーションデータとは別のテーブルで管理されます。 | false   |
+    | transaction-metadata-decoupling | Consensus Commitを使用している場合に、[トランザクションメタデータ分離](../consensus-commit.mdx#トランザクションメタデータ分離)を有効にします。これにより、トランザクションメタデータがアプリケーションデータとは別のテーブルで管理されます。 | false   |
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     | 名前       | 説明                             | デフォルト |
@@ -194,7 +193,7 @@ admin.createIndex("ns", "tbl", "c5", options);
 
 :::warning
 
-Consensus Commit を使用している場合、非プライマリキー列で `createIndex()` を使用すると、コンパニオン before-image セカンダリインデックスも作成されます。詳細については、[インデックスベース読み取りの正確性](consensus-commit.mdx#インデックスベース読み取りの正確性)を参照してください。
+Consensus Commit を使用している場合、非プライマリキー列で `createIndex()` を使用すると、コンパニオン before-image セカンダリインデックスも作成されます。詳細については、[インデックスベース読み取りの正確性](../consensus-commit.mdx#インデックスベース読み取りの正確性)を参照してください。
 
 :::
 
@@ -366,7 +365,7 @@ admin.dropIndex("ns", "tbl", "c5", ifExists);
 
 :::warning
 
-Consensus Commit を使用している場合、`dropIndex()` はコンパニオン before-image セカンダリインデックスも削除します。詳細については、[インデックスベース読み取りの正確性](consensus-commit.mdx#インデックスベース読み取りの正確性)を参照してください。
+Consensus Commit を使用している場合、`dropIndex()` はコンパニオン before-image セカンダリインデックスも削除します。詳細については、[インデックスベース読み取りの正確性](../consensus-commit.mdx#インデックスベース読み取りの正確性)を参照してください。
 
 :::
 
@@ -452,7 +451,7 @@ admin.repairTable("ns", "tbl", tableMetadata, options);
 
 :::warning
 
-Consensus Commit を使用している場合、以前のバージョンから ScalarDB 3.16.5、3.17.3、または 3.18.0 にアップグレードした後、インデックスベース読み取りに必要なコンパニオン before-image セカンダリインデックスを作成するために、既存の各テーブルで `repairTable()` を実行する必要があります。詳細については、[インデックスベース読み取りの正確性](consensus-commit.mdx#インデックスベース読み取りの正確性)を参照してください。
+Consensus Commit を使用している場合、以前のバージョンから ScalarDB 3.16.5、3.17.3、または 3.18.0 にアップグレードした後、インデックスベース読み取りに必要なコンパニオン before-image セカンダリインデックスを作成するために、既存の各テーブルで `repairTable()` を実行する必要があります。詳細については、[インデックスベース読み取りの正確性](../consensus-commit.mdx#インデックスベース読み取りの正確性)を参照してください。
 
 :::
 
@@ -523,11 +522,386 @@ admin.importTable("ns", "tbl", options, overrideColumnsType);
 
 :::warning
 
-Consensus Commitを使用している場合に、運用環境で ScalarDB にテーブルをインポートする場合は、データベーステーブルと ScalarDB メタデータテーブルにトランザクションメタデータ列が追加されるため、慎重に計画する必要があります。この場合、データベースと ScalarDB の間にはいくつかの違いがあり、いくつかの制限もあります。詳細については、[ScalarDB Schema Loader を使用して既存のテーブルを ScalarDB にインポートする](./schema-loader-import.mdx)を参照してください。
+Consensus Commitを使用している場合に、運用環境で ScalarDB にテーブルをインポートする場合は、データベーステーブルと ScalarDB メタデータテーブルにトランザクションメタデータ列が追加されるため、慎重に計画する必要があります。この場合、データベースと ScalarDB の間にはいくつかの違いがあり、いくつかの制限もあります。詳細については、[ScalarDB Schema Loader を使用して既存のテーブルを ScalarDB にインポートする](../schema-loader-import.mdx)を参照してください。
 
-また、`transaction-metadata-decoupling` オプションを `true` に指定することで、*トランザクションメタデータ分離*を有効にして、トランザクションメタデータをアプリケーションデータとは別のテーブルに保存することもできます。詳細については、[トランザクションメタデータ分離](./schema-loader.mdx#トランザクションメタデータ分離)を参照してください。
+また、`transaction-metadata-decoupling` オプションを `true` に指定することで、*トランザクションメタデータ分離*を有効にして、トランザクションメタデータをアプリケーションデータとは別のテーブルに保存することもできます。詳細については、[トランザクションメタデータ分離](../schema-loader.mdx#トランザクションメタデータ分離)を参照してください。
 
 :::
+
+### 認証と認可 API
+
+ScalarDB Cluster は認証と認可をサポートしています。ユーザー、ロール、権限を Java を通じてプログラムで管理するには、<JavadocLink packageName="scalardb-cluster-java-client-sdk" path="com/scalar/db/cluster/client" className="ClusterClientTransactionAdmin" /> を使用します。これは <JavadocLink packageName="scalardb" path="com/scalar/db/api" className="AuthAdmin" /> を実装しています。
+
+ユーザー、ロール、権限などの認証と認可の概念については、[ユーザーの認証と認可](./scalardb-auth-with-sql.mdx)を参照してください。
+
+#### ユーザーを管理する
+
+次の操作により、ユーザーの作成、変更、取得ができます。
+
+ユーザーを作成または変更する際、`UserOption` 列挙型を使用して次のオプションを指定できます:
+
+| オプション     | 説明                                                                             |
+|----------------|----------------------------------------------------------------------------------|
+| `SUPERUSER`    | ユーザーをスーパーユーザーとして作成または設定します。                           |
+| `NO_SUPERUSER` | ユーザーを非スーパーユーザーとして作成または設定します。オプションを指定しない場合のデフォルトです。 |
+
+また、`AuthenticationMethod` 列挙型を使用して、ユーザーに対して1つ以上の認証方法を指定できます:
+
+| 認証方法   | 説明                               |
+|------------|------------------------------------|
+| `USERPASS` | ユーザー名とパスワードによる認証。 |
+| `OIDC`     | OpenID Connect (OIDC) 認証。       |
+
+##### ユーザーを作成する
+
+ユーザーは次のように作成できます。
+
+```java
+// Create a regular (non-superuser) user with a password.
+admin.createUser("username", "password");
+
+// Create a superuser.
+admin.createUser("username", "password", AuthAdmin.UserOption.SUPERUSER);
+
+// Create a user without a password for OIDC authentication.
+admin.createUser("username", null, ImmutableSet.of(AuthAdmin.AuthenticationMethod.OIDC));
+
+// Create a user with specific authentication methods.
+admin.createUser("username", "password", ImmutableSet.of(AuthAdmin.AuthenticationMethod.USERPASS, AuthAdmin.AuthenticationMethod.OIDC));
+```
+
+##### ユーザーを変更する
+
+既存のユーザーは次のように変更 (修正) できます。
+
+```java
+// Change the password of an existing user.
+admin.alterUser("username", "newpassword");
+
+// Remove the password of an existing user (pass an empty string to delete the password).
+admin.alterUser("username", "");
+
+// Promote an existing user to superuser.
+admin.alterUser("username", null, AuthAdmin.UserOption.SUPERUSER);
+
+// Change the authentication methods of an existing user.
+admin.alterUser("username", null, ImmutableSet.of(AuthAdmin.AuthenticationMethod.OIDC));
+```
+
+:::note
+
+`alterUser` にパスワードとして `null` を渡した場合、パスワードは変更されません。空の文字列を渡した場合、パスワードは削除されます。
+
+:::
+
+##### ユーザーを削除する
+
+ユーザーは次のように削除できます。
+
+```java
+admin.dropUser("username");
+```
+
+##### ユーザーを取得する
+
+既存のユーザーは次のように取得できます。
+
+```java
+Optional<AuthAdmin.User> user = admin.getUser("username");
+user.ifPresent(u -> {
+  System.out.println("Name: " + u.getName());
+  System.out.println("Superuser: " + u.isSuperuser());
+  System.out.println("Authentication methods: " + u.getAuthenticationMethods());
+});
+```
+
+##### すべてのユーザーを取得する
+
+すべてのユーザーは次のように取得できます。
+
+```java
+List<AuthAdmin.User> users = admin.getUsers();
+for (AuthAdmin.User user : users) {
+  System.out.println("Name: " + user.getName());
+  System.out.println("Superuser: " + user.isSuperuser());
+}
+```
+
+##### 現在のユーザーを取得する
+
+現在ログインしているユーザーは次のように取得できます。
+
+```java
+AuthAdmin.User currentUser = admin.getCurrentUser();
+System.out.println("Current user: " + currentUser.getName());
+System.out.println("Superuser: " + currentUser.isSuperuser());
+```
+
+#### ユーザーの権限を管理する
+
+次の操作により、ユーザーへの権限の付与、取り消し、確認ができます。
+
+`Privilege` 列挙型は、次の値を定義しています:
+
+| 権限       | 説明                                                |
+|------------|-----------------------------------------------------|
+| `READ`     | 読み取り操作 (`Get` および `Scan`)                  |
+| `WRITE`    | 書き込み操作 (`Put`、`Insert`、`Upsert`、`Update`)   |
+| `DELETE`   | 削除操作 (`Delete`)                                 |
+| `CREATE`   | テーブルおよびインデックスの作成                    |
+| `DROP`     | テーブルおよびインデックスの削除                    |
+| `TRUNCATE` | テーブルの切り捨て                                  |
+| `ALTER`    | テーブルの変更                                      |
+| `GRANT`    | テーブルに対する権限の付与および取り消し            |
+
+:::note
+
+これらの権限名は、[ScalarDB SQL の DCL](../scalardb-sql/grammar.mdx#dcl) で使用される SQL レベルの権限名 (`SELECT`、`INSERT`、`UPDATE` など) とは異なります。Java API を直接使用する場合は、上記の `Privilege` 列挙型の値を使用してください。
+
+:::
+
+##### ユーザーに権限を付与する
+
+名前空間内のすべてのテーブル、または特定のテーブルに対して、ユーザーに次のように権限を付与できます。
+
+```java
+// Grant READ and WRITE privileges to a user for all tables in a namespace.
+admin.grant("username", "namespace", AuthAdmin.Privilege.READ, AuthAdmin.Privilege.WRITE);
+
+// Grant READ and WRITE privileges to a user for a specific table.
+admin.grant("username", "namespace", "table", AuthAdmin.Privilege.READ, AuthAdmin.Privilege.WRITE);
+```
+
+##### ユーザーから権限を取り消す
+
+名前空間内のすべてのテーブル、または特定のテーブルについて、ユーザーから次のように権限を取り消すことができます。
+
+```java
+// Revoke READ privilege from a user for all tables in a namespace.
+admin.revoke("username", "namespace", AuthAdmin.Privilege.READ);
+
+// Revoke READ privilege from a user for a specific table.
+admin.revoke("username", "namespace", "table", AuthAdmin.Privilege.READ);
+```
+
+:::note
+
+権限は、付与されたスコープでのみ取り消すことができます。権限が付与されていないスコープで取り消しを行っても、エラーにはならず、単に何も起こりません (別のスコープで付与された権限が削除されることはありません)。
+
+たとえば、名前空間レベルで付与された `READ` 権限を特定のテーブルに対して取り消しても、効果はありません。[ユーザーが権限を持っているかどうかを確認する](#ユーザーが権限を持っているかどうかを確認する) で説明されているように、テーブルレベルの権限チェックでは名前空間レベルの権限も考慮されるため、テーブルスコープでの取り消しが行われた後も、名前空間全体への付与によってそのテーブルへのアクセスは引き続き許可されます。
+
+:::
+
+##### ユーザーの権限を取得する
+
+名前空間内のすべてのテーブル、または特定のテーブルについて、ユーザーが持つ権限を次のように取得できます。
+
+```java
+// Get privileges for a user for all tables in a namespace.
+Set<AuthAdmin.Privilege> nsPrivileges = admin.getPrivileges("username", "namespace");
+
+// Get privileges for a user for a specific table.
+Set<AuthAdmin.Privilege> tablePrivileges = admin.getPrivileges("username", "namespace", "table");
+```
+
+:::note
+
+`getPrivileges()` は、直接付与された権限のみを返します。ロールから継承された権限、テーブルに適用される名前空間レベルの権限、スーパーユーザーのアクセス権は含まれません。ユーザーの実効的なアクセス権を確認するには、`hasPrivilege()` を使用してください。
+
+:::
+
+##### ユーザーが権限を持っているかどうかを確認する
+
+名前空間または特定のテーブルについて、ユーザーが特定の権限を持っているかどうかを次のように確認できます。
+
+```java
+// Check if a user has READ privilege on the namespace.
+boolean hasNsPrivilege = admin.hasPrivilege("username", "namespace", AuthAdmin.Privilege.READ);
+
+// Check if a user has READ privilege for a specific table.
+boolean hasTablePrivilege = admin.hasPrivilege("username", "namespace", "table", AuthAdmin.Privilege.READ);
+```
+
+:::note
+
+特定のテーブルに対する権限を確認する場合、テーブルレベルと名前空間レベルの両方の権限 (ロールを介して推移的に付与された権限を含む) が考慮されます。名前空間に対する権限を確認する場合は、名前空間レベルの権限 (ロールを介して推移的に付与された権限を含む) のみが考慮されます。スーパーユーザーの場合、どの権限チェックでも常に `true` が返されます。
+
+:::
+
+#### ロールと権限を管理する
+
+次の操作により、ロールの作成、変更、取得、およびユーザーや他のロールへのロールの付与と取り消しができます。
+
+##### ロールを作成する
+
+ロールは次のように作成できます。
+
+```java
+admin.createRole("rolename");
+```
+
+##### ロールを削除する
+
+ロールは次のように削除できます。
+
+```java
+admin.dropRole("rolename");
+```
+
+##### ロールを取得する
+
+既存のロールは次のように取得できます。
+
+```java
+Optional<AuthAdmin.Role> role = admin.getRole("rolename");
+role.ifPresent(r -> {
+  System.out.println("Name: " + r.getName());
+  System.out.println("Granted roles: " + r.getGrantedRoles());
+});
+```
+
+##### すべてのロールを取得する
+
+すべてのロールは次のように取得できます。
+
+```java
+List<AuthAdmin.Role> roles = admin.getRoles();
+for (AuthAdmin.Role role : roles) {
+  System.out.println("Name: " + role.getName());
+}
+```
+
+##### ユーザーのロールを取得する
+
+ユーザーに付与されたロールは次のように取得できます。
+
+```java
+List<AuthAdmin.RoleForUser> roles = admin.getRolesForUser("username");
+for (AuthAdmin.RoleForUser role : roles) {
+  System.out.println("Role: " + role.getName());
+  System.out.println("Has admin option: " + role.hasAdminOptionOnUser());
+}
+```
+
+##### ユーザーにロールを付与する
+
+ロールは次のようにユーザーに付与できます。
+
+```java
+// Grant a role to a user without admin option.
+admin.grantRoleToUser("username", "rolename", false);
+
+// Grant a role to a user with admin option (the user can then grant this role to others).
+admin.grantRoleToUser("username", "rolename", true);
+```
+
+##### ユーザーからロールを取り消す
+
+ロールは次のようにユーザーから取り消すことができます。
+
+```java
+admin.revokeRoleFromUser("username", "rolename");
+```
+
+##### ロールに対するユーザーの admin オプションを取り消す
+
+ロール自体は取り消さずに、ユーザーの admin オプションのみを次のように取り消すことができます。
+
+```java
+admin.revokeAdminOptionFromUser("username", "rolename");
+```
+
+##### ロールの付与先ユーザーを取得する
+
+特定のロールが付与されているユーザーは次のように取得できます。
+
+```java
+List<AuthAdmin.GranteeUserRef> grantees = admin.getGranteeUsersForRole("rolename");
+for (AuthAdmin.GranteeUserRef grantee : grantees) {
+  System.out.println("User: " + grantee.getName());
+  System.out.println("Has admin option: " + grantee.hasAdminOption());
+}
+```
+
+##### ロールにメンバーロールを付与する
+
+ロールにメンバーロールを付与すると、そのロールを持つユーザーはメンバーロールの権限を継承します。次のように付与できます。
+
+```java
+// Grant a member role to a role without admin option.
+admin.grantRoleToRole("rolename", "memberrolename", false);
+
+// Grant a member role to a role with admin option.
+admin.grantRoleToRole("rolename", "memberrolename", true);
+```
+
+##### ロールからメンバーロールを取り消す
+
+メンバーロールは次のようにロールから取り消すことができます。
+
+```java
+admin.revokeRoleFromRole("rolename", "memberrolename");
+```
+
+##### 別のロールに対するロールの admin オプションを取り消す
+
+ロール間の付与について、admin オプションのみを次のように取り消すことができます。
+
+```java
+admin.revokeAdminOptionFromRole("rolename", "memberrolename");
+```
+
+##### ロールに権限を付与する
+
+名前空間内のすべてのテーブル、または特定のテーブルに対して、ロールに次のように権限を付与できます。
+
+```java
+// Grant READ and WRITE privileges to a role for all tables in a namespace.
+admin.grantPrivilegeToRole("rolename", "namespace", AuthAdmin.Privilege.READ, AuthAdmin.Privilege.WRITE);
+
+// Grant READ and WRITE privileges to a role for a specific table.
+admin.grantPrivilegeToRole("rolename", "namespace", "table", AuthAdmin.Privilege.READ, AuthAdmin.Privilege.WRITE);
+```
+
+##### ロールから権限を取り消す
+
+名前空間内のすべてのテーブル、または特定のテーブルについて、ロールから次のように権限を取り消すことができます。
+
+```java
+// Revoke READ privilege from a role for all tables in a namespace.
+admin.revokePrivilegeFromRole("rolename", "namespace", AuthAdmin.Privilege.READ);
+
+// Revoke READ privilege from a role for a specific table.
+admin.revokePrivilegeFromRole("rolename", "namespace", "table", AuthAdmin.Privilege.READ);
+```
+
+:::note
+
+権限は、付与されたスコープでのみ取り消すことができます。権限が付与されていないスコープで取り消しを行っても、エラーにはならず、単に何も起こりません (別のスコープで付与された権限が削除されることはありません)。
+
+たとえば、名前空間レベルで付与された `READ` 権限を特定のテーブルに対して取り消しても、効果はありません。[ユーザーが権限を持っているかどうかを確認する](#ユーザーが権限を持っているかどうかを確認する) で説明されているように、テーブルレベルの権限チェックでは名前空間レベルの権限も考慮されるため、テーブルスコープでの取り消しが行われた後も、名前空間全体への付与によってそのテーブルへのアクセスは引き続き許可されます。
+
+:::
+
+##### ロールの権限を取得する
+
+名前空間内のすべてのテーブル、または特定のテーブルについて、ロールが持つ権限を次のように取得できます。
+
+```java
+// Get privileges for a role for all tables in a namespace.
+Set<AuthAdmin.Privilege> nsPrivileges = admin.getRolePrivileges("rolename", "namespace");
+
+// Get privileges for a role for a specific table.
+Set<AuthAdmin.Privilege> tablePrivileges = admin.getRolePrivileges("rolename", "namespace", "table");
+```
+
+:::note
+
+`getRolePrivileges()` は、ロールに直接付与された権限のみを返します。メンバーロールから継承された権限や、テーブルに適用される名前空間レベルの権限は含まれません。
+
+:::
+
+これらの API からの失敗の処理の詳細については、[認証と認可の例外を処理する](#認証と認可の例外を処理する)を参照してください。
 
 ## Transaction API
 
@@ -1031,7 +1405,7 @@ Scan scan =
 List<Result> results = transaction.scan(scan);
 ```
 
-`where()` メソッドを使用して任意の条件を指定することもできます。詳細については、[`WHERE` 句を使用する](#where-句を使用する)を参照してください。
+`where()` メソッドを使用して任意の条件を指定することもできます。詳細については、[`WHERE` 句を使用する](#where-句を使用する-1)を参照してください。
 
 :::note
 
@@ -1041,7 +1415,7 @@ List<Result> results = transaction.scan(scan);
 
 ###### パーティションキーを指定せずにクロスパーティション `Scan` を実行し、テーブルのすべてのレコードを取得します
 
-ScalarDB プロパティファイルで次の設定を有効にすると、パーティションキーを指定せずに、すべてのパーティションにわたって `Scan` 操作 (クロスパーティションスキャン* と呼びます) を実行できます。
+ScalarDB プロパティファイルで次の設定を有効にすると、パーティションキーを指定せずに、すべてのパーティションにわたって `Scan` 操作 (*クロスパーティションスキャン* と呼びます) を実行できます。
 
 ```properties
 scalar.db.cross_partition_scan.enabled=true
@@ -1111,7 +1485,7 @@ Scan scan =
 List<Result> results = transaction.scan(scan);
 ```
 
-`WHERE` 句の詳細については、[`WHERE` 句を使用する](#where-句を使用する)を参照してください。
+`WHERE` 句の詳細については、[`WHERE` 句を使用する](#where-句を使用する-1)を参照してください。
 
 ###### 操作単位でクロスパーティションスキャンを有効にする
 
@@ -1624,7 +1998,7 @@ Delete delete = Delete.newBuilder()
 
 ###### クロスパーティションスキャン属性
 
-次の属性は、クロスパーティション `Scan` 操作 (パーティションキーを指定しない `Scan` 操作) に適用されます。オペレーションに設定した場合、そのオペレーションについては対応する `scalar.db.cross_partition_scan.*` の設定値よりも優先されます。設定の詳細については、[クロスパーティションスキャン設定](configurations.mdx#クロスパーティションスキャン設定)を参照してください。
+次の属性は、クロスパーティション `Scan` 操作 (パーティションキーを指定しない `Scan` 操作) に適用されます。オペレーションに設定した場合、そのオペレーションについては対応する `scalar.db.cross_partition_scan.*` の設定値よりも優先されます。設定の詳細については、[クロスパーティションスキャン設定](../configurations.mdx#クロスパーティションスキャン設定)を参照してください。
 
 - **`db-cross-partition-scan-enabled`:** オペレーションでクロスパーティションスキャンを有効にするかどうか。値は `true` または `false` である必要があります。
 - **`db-cross-partition-scan-filtering-enabled`:** オペレーションでフィルタリングを伴うクロスパーティションスキャンを有効にするかどうか。値は `true` または `false` である必要があります。
@@ -1634,9 +2008,9 @@ Delete delete = Delete.newBuilder()
 
 ###### Consensus Commit 属性
 
-次の属性は、[Consensus Commit](consensus-commit.mdx) で実行されるトランザクションに適用されます。
+次の属性は、[Consensus Commit](../consensus-commit.mdx) で実行されるトランザクションに適用されます。
 
-- **`cc-transaction-isolation`:** トランザクションの分離レベル。値は `SNAPSHOT`、`SERIALIZABLE`、または `READ_COMMITTED` である必要があります。設定すると、そのトランザクションについて設定済みのデフォルトの分離レベルを上書きします。分離レベルの詳細については、[分離レベル](consensus-commit.mdx#分離レベル)を参照してください。
+- **`cc-transaction-isolation`:** トランザクションの分離レベル。値は `SNAPSHOT`、`SERIALIZABLE`、または `READ_COMMITTED` である必要があります。設定すると、そのトランザクションについて設定済みのデフォルトの分離レベルを上書きします。分離レベルの詳細については、[分離レベル](../consensus-commit.mdx#分離レベル)を参照してください。
 
 :::warning
 
@@ -2119,3 +2493,16 @@ CRUD 操作の API (`get()`、`scan()`、`put()`、`delete()`、および `mutat
 サンプルコードでは、トランザクションは最大3回再試行され、再試行される前に100ミリ秒間スリープします。ただし、アプリケーションの要件に応じて、指数バックオフなどの再試行ポリシーを選択できます。
 
 :::
+
+### 認証と認可の例外を処理する
+
+認証と認可が有効になっている場合、現在のユーザーが認証されていないか、必要な権限を持っていないために操作が失敗することがあります。Administrative API と Transaction API はどちらも、次の4つの共通のメソッドを通じてこのような失敗を報告します。
+
+- `isAuthenticationError()` は、現在のユーザーが認証されていない場合に `true` を返します。
+- `isAuthorizationError()` は、現在のユーザーが必要な権限を持っていない場合に `true` を返します。
+- `isSuperuserRequired()` は、操作にスーパーユーザー権限が必要な場合に `true` を返します。
+- `getRequiredPrivilege()` は、権限不足が原因で失敗した場合に、その操作に必要な権限を返します。
+
+Administrative API では、これらのメソッドは `ExecutionException` にあります。Transaction API では、`TransactionException` およびそのサブクラスにあります。たとえば、現在のユーザーがテーブルに対する `READ` 権限を持っていない場合、`get()` は `CrudException` をスローし、この例外に対して `isAuthorizationError()` は `true` を返します。
+
+認証と認可のステータスコードの詳細については、[認証および認可エラーコード](./scalardb-auth-status-codes.mdx)を参照してください。
