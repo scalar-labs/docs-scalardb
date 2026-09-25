@@ -123,7 +123,7 @@ TableMetadata tableMetadata =
         .build();
 ```
 
-For details about the data model of ScalarDB, see [Data Model](design.mdx#data-model).
+For details about the data model of ScalarDB, see [Model Your Data](./data-modeling.mdx).
 
 Then, create a table as follows:
 
@@ -503,7 +503,7 @@ admin.importTable("ns", "tbl", options, overrideColumnsType);
 
 When using Consensus Commit, you should carefully plan to import a table to ScalarDB in production because it will add transaction metadata columns to your database tables and the ScalarDB metadata tables. In this case, there would also be several differences between your database and ScalarDB, as well as some limitations. For details, see [Importing Existing Tables to ScalarDB by Using ScalarDB Schema Loader](./schema-loader-import.mdx).
 
-You can also enable *transaction metadata decoupling* by specifying the `transaction-metadata-decoupling` option to `true` to store transaction metadata in a separate table from application data. For details, see [Transaction Metadata Decoupling](./schema-loader.mdx#transaction-metadata-decoupling).
+You can also enable *transaction metadata decoupling* by specifying the `transaction-metadata-decoupling` option to `true` to store transaction metadata in a separate table from application data. For details, see [Decoupling transaction metadata](./schema-loader.mdx#decoupling-transaction-metadata).
 
 :::
 
@@ -739,7 +739,7 @@ You can specify projections to choose which columns are returned.
 
 ###### Use the `WHERE` clause
 
-You can also specify arbitrary conditions by using the `where()` method. If the retrieved record does not match the conditions specified by the `where()` method, `Option.empty()` will be returned. As an argument of the `where()` method, you can specify a condition, an AND-wise condition set, or an OR-wise condition set. After calling the `where()` method, you can add more conditions or condition sets by using the `and()` method or `or()` method as follows:
+You can also specify arbitrary conditions by using the `where()` method. If the retrieved record does not match the conditions specified by the `where()` method, `Optional.empty()` will be returned. As an argument of the `where()` method, you can specify a condition, an AND-wise condition set, or an OR-wise condition set. After calling the `where()` method, you can add more conditions or condition sets by using the `and()` method or `or()` method as follows:
 
 ```java
 // Create a `Get` operation with condition sets.
@@ -1015,7 +1015,7 @@ You can't enable `scalar.db.cross_partition_scan.ordering` in non-JDBC databases
 
 :::
 
-You can call the `where()` and `ordering()` methods after calling the `all()` method to specify arbitrary conditions and orderings as follows:
+You can call the `where()` and `orderings()` methods after calling the `all()` method to specify arbitrary conditions and orderings as follows:
 
 ```java
 // Create a `Scan` operation with arbitrary conditions and orderings.
@@ -1712,7 +1712,7 @@ Upsert upsert =
 transactionManager.upsert(upsert);
 ```
 
-For details about the `Insert` operation, see [`Upsert` operation](#upsert-operation).
+For details about the `Upsert` operation, see [`Upsert` operation](#upsert-operation).
 
 #### Execute `Update` operation
 
@@ -1745,7 +1745,7 @@ For details about the `Update` operation, see [`Update` operation](#update-opera
 
 `Delete` is an operation to delete a record specified by a primary key.
 
-You need to create a `Delete` object first, and then you can execute the object by using the `transaction.delete()` method as follows:
+You need to create a `Delete` object first, and then you can execute the object by using the `transactionManager.delete()` method as follows:
 
 ```java
 // Create a `Delete` operation.
