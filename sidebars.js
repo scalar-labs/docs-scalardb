@@ -1592,9 +1592,15 @@ const sidebars = {
                   items: [
                     {
                       type: 'doc',
-                      key: 'develop-api-guide-ja-jp-3.19',
+                      key: 'develop-core-api-guide-ja-jp-3.19',
                       id: 'api-guide',
-                      label: 'API ガイド',
+                      label: 'ScalarDB Core API ガイド',
+                    },
+                    {
+                      type: 'doc',
+                      key: 'develop-cluster-api-guide-en-us-3.19',
+                      id: 'scalardb-cluster/api-guide',
+                      label: 'ScalarDB Cluster API ガイド [NEW]',
                     },
                     {
                       type: 'doc',
