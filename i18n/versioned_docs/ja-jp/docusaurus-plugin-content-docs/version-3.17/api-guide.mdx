@@ -126,7 +126,7 @@ TableMetadata tableMetadata =
         .build();
 ```
 
-ScalarDB のデータモデルの詳細については、[データモデル](design.mdx#データモデル)を参照してください。
+ScalarDB のデータモデルの詳細については、[データをモデル化する](./data-modeling.mdx)を参照してください。
 
 次に、次のようにテーブルを作成します。
 
@@ -761,7 +761,7 @@ Optional<Result> result = transaction.get(get);
 
 ###### `WHERE` 句を使用する
 
-`where()` メソッドを使用して任意の条件を指定することもできます。取得したレコードが `where()` メソッドで指定された条件と一致しない場合は、`Option.empty()` が返されます。`where()` メソッドの引数として、条件、AND 条件セット、または OR 条件セットを指定できます。`where()` メソッドを呼び出した後、次のように `and()` メソッドまたは `or()` メソッドを使用して、さらに条件または条件セットを追加できます。
+`where()` メソッドを使用して任意の条件を指定することもできます。取得したレコードが `where()` メソッドで指定された条件と一致しない場合は、`Optional.empty()` が返されます。`where()` メソッドの引数として、条件、AND 条件セット、または OR 条件セットを指定できます。`where()` メソッドを呼び出した後、次のように `and()` メソッドまたは `or()` メソッドを使用して、さらに条件または条件セットを追加できます。
 
 ```java
 // Create a `Get` operation with condition sets.
@@ -1037,7 +1037,7 @@ scalar.db.cross_partition_scan.ordering.enabled=true
 
 :::
 
-次のように、`all()` メソッドを呼び出した後に `where()` メソッドと `ordering()` メソッドを呼び出して、任意の条件と順序を指定できます。
+次のように、`all()` メソッドを呼び出した後に `where()` メソッドと `orderings()` メソッドを呼び出して、任意の条件と順序を指定できます。
 
 ```java
 // Create a `Scan` operation with arbitrary conditions and orderings.
@@ -1734,7 +1734,7 @@ Upsert upsert =
 transactionManager.upsert(upsert);
 ```
 
-`Insert` 操作の詳細については、[`Upsert` 操作](#upsert-操作)を参照してください。
+`Upsert` 操作の詳細については、[`Upsert` 操作](#upsert-操作)を参照してください。
 
 #### `Update` 操作の実行
 
@@ -1767,7 +1767,7 @@ transactionManager.update(update);
 
 `Delete` は、主キーで指定されたレコードを削除する操作です。
 
-まず `Delete` オブジェクトを作成し、次に以下のように `transaction.delete()` メソッドを使用してオブジェクトを実行する必要があります。
+まず `Delete` オブジェクトを作成し、次に以下のように `transactionManager.delete()` メソッドを使用してオブジェクトを実行する必要があります。
 
 ```java
 // Create a `Delete` operation.
