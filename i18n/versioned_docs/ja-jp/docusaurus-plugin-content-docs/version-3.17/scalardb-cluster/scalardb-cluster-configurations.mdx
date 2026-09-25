@@ -823,7 +823,7 @@ ScalarDB Cluster の認証と認可の設定は以下の通りです。
 #### `auth.cache_expiration_time_millis`
 
 - **フィールド:** `scalar.db.cluster.auth.cache_expiration_time_millis`
-- **説明:** 認証と認可情報のキャッシュ有効期限時間 (ミリ秒単位)。
+- **説明:** 認証と認可情報のキャッシュ有効期限時間 (ミリ秒単位)。各クラスターノードはこの情報を個別にキャッシュするため、権限の取り消しやユーザーの削除などによって認証と認可情報を更新した場合、変更がすべてのクラスターノードに反映されるまで、このキャッシュ有効期限に達するまで待つ必要がある場合があります。
 - **デフォルト値:** `60000` (1分)
 
 #### `auth.auth_token_expiration_time_minutes`
@@ -1704,7 +1704,7 @@ scalar.db.contact_points=direct-kubernetes:ns/scalardb-cluster
 
 以下は、プリミティブインターフェース使用時の Java Client SDK の認証と認可の設定です。
 
-プリミティブインターフェース使用時の Java Client SDK を使用するアプリケーションやツール([クラスター用 Schema Loader](./developer-guide-for-scalardb-cluster-with-java-api.mdx#クラスター用-schema-loader) や [ScalarDB ベンチマークツール](../scalardb-benchmarks/README.mdx)など) を実行する場合、特にクラスターで認証と認可が有効になっている場合は、クライアント側の `database.properties` ファイルに次の設定を行う必要があります。
+プリミティブインターフェース使用時の Java Client SDK を使用するアプリケーションやツール([クラスター用 Schema Loader](./developer-guide-for-scalardb-cluster-with-java-api.mdx#scalardb-cluster-schema-loader) や [ScalarDB ベンチマークツール](../scalardb-benchmarks/README.mdx)など) を実行する場合、特にクラスターで認証と認可が有効になっている場合は、クライアント側の `database.properties` ファイルに次の設定を行う必要があります。
 
 ##### `auth.enabled`
 
