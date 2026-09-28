@@ -110,6 +110,12 @@ You can also resume a transaction that has already been started as follows:
 var transaction = manager.Resume(transactionIdString);
 ```
 
+:::warning Deprecation notice
+
+The `Resume` method is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
+
 :::note
 
 The `Resume` method doesn't have an asynchronous version because it only creates a transaction object. Because of this, resuming a transaction by using the wrong ID is possible.

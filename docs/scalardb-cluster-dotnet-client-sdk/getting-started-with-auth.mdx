@@ -75,6 +75,12 @@ For details about settings files and other ways to configure the client, see [Cl
 
 You need to get a transaction manager or transaction admin object by using `TransactionFactory` as follows. Be sure to replace `<GET_TRANSACTION_MANAGER>` with `GetTransactionManager()`, `GetTwoPhaseCommitTransactionManager()`, `GetSqlTransactionManager()`, or `GetSqlTwoPhaseCommitTransactionManager()`.
 
+:::warning Deprecation notice
+
+The two-phase commit (2PC) interface is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
+
 ```c#
 // Pass the path to the settings file.
 var factory = TransactionFactory.Create("scalardb-options.json");
