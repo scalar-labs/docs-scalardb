@@ -2931,6 +2931,12 @@ StartTransactionStatement statement4 =
 
 ### JOIN
 
+:::warning Deprecation notice
+
+The `JOIN` command is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
+
 The `JOIN` command joins a transaction associated with the specified transaction ID.
 
 #### Grammar
@@ -2957,6 +2963,12 @@ JoinStatement statement = StatementBuilder.join("id").build();
 
 ### PREPARE
 
+:::warning Deprecation notice
+
+The two-phase commit (2PC) interface is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
+
 The `PREPARE` command prepares the current transaction.
 
 #### Grammar
@@ -2975,6 +2987,12 @@ PrepareStatement statement = StatementBuilder.prepare().build();
 ```
 
 ### VALIDATE
+
+:::warning Deprecation notice
+
+The two-phase commit (2PC) interface is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
 
 The `VALIDATE` command validates the current transaction.
 
@@ -3061,6 +3079,12 @@ SET MODE transaction_mode
 
 transaction_mode: TRANSACTION | TWO_PHASE_COMMIT_TRANSACTION
 ```
+
+:::warning Deprecation notice
+
+The `TWO_PHASE_COMMIT_TRANSACTION` transaction mode is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
 
 #### Examples
 
@@ -3190,6 +3214,12 @@ DescribeStatement statement2 = StatementBuilder.describe("tbl").build();
 
 ### SUSPEND
 
+:::warning Deprecation notice
+
+The `SUSPEND` command is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
+
 The `SUSPEND` command suspends the ongoing transaction in the current session.
 
 #### Grammar
@@ -3208,6 +3238,12 @@ SuspendStatement statement = StatementBuilder.suspend().build();
 ```
 
 ### RESUME
+
+:::warning Deprecation notice
+
+The `RESUME` command is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
 
 The `RESUME` command resumes the transaction associated with the specified transaction ID in the current session.
 

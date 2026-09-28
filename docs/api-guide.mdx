@@ -671,7 +671,13 @@ For the list of available attributes, see [Operation attributes](#operation-attr
 
 #### Join a transaction
 
-Joining a transaction is particularly useful in a stateful application where a transaction spans multiple client requests. In such a scenario, the application can start a transaction during the first client request. Then, in subsequent client requests, the application can join the ongoing transaction by using the `join()` method.
+:::warning Deprecation notice
+
+The `join()` method is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
+
+Joining a transaction is for a stateful application where a transaction spans multiple client requests. In such a scenario, the application can start a transaction during the first client request. Then, in subsequent client requests, the application can join the ongoing transaction by using the `join()` method.
 
 You can join an ongoing transaction that has already begun by specifying the transaction ID as follows:
 
@@ -692,7 +698,13 @@ tx.getId();
 
 #### Resume a transaction
 
-Resuming a transaction is particularly useful in a stateful application where a transaction spans multiple client requests. In such a scenario, the application can start a transaction during the first client request. Then, in subsequent client requests, the application can resume the ongoing transaction by using the `resume()` method.
+:::warning Deprecation notice
+
+The `resume()` method is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
+
+Resuming a transaction is for a stateful application where a transaction spans multiple client requests. In such a scenario, the application can start a transaction during the first client request. Then, in subsequent client requests, the application can resume the ongoing transaction by using the `resume()` method.
 
 You can resume an ongoing transaction that you have already begun by specifying a transaction ID as follows:
 
