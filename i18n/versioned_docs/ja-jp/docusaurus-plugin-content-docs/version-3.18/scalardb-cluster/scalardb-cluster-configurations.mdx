@@ -416,19 +416,19 @@ ScalarDB には、複数のストレージ実装をサポートするストレ�
     <h4>`jdbc.db2.variable_key_column_size`</h4>
 
     - **フィールド:** `scalar.db.jdbc.db2.variable_key_column_size`
-    - **説明:** IBM Db2 で主キーまたはセカンダリキーとして使用される場合の TEXT 列と BLOB 列の列サイズ。最小 64 バイト。
+    - **説明:** IBM Db2 で主キーまたはセカンダリキーとして使用される場合の `TEXT` 列と `BLOB` 列の列サイズ。最小 64 バイト。
     - **デフォルト値:** `128`
 
     <h4>`jdbc.db2.time_column.default_date_component`</h4>
 
     - **フィールド:** `scalar.db.jdbc.db2.time_column.default_date_component`
-    - **説明:** IBM Db2 で `TIME` データを格納するために使用される日付コンポーネントの値。ScalarDB の `TIME` 型データを格納するために IBM Db2 の TIMESTAMP 型が使用されるため (小数秒の精度を提供するため)、ScalarDB は比較と並べ替えを容易にするために、同じ日付コンポーネント値を持つ `TIME` データを保存します。
+    - **説明:** IBM Db2 で `TIME` データを格納するために使用される日付コンポーネントの値。ScalarDB の `TIME` 型データを格納するために IBM Db2 の `TIMESTAMP` 型が使用されるため (小数秒の精度を提供するため)、ScalarDB は比較と並べ替えを容易にするために、同じ日付コンポーネント値を持つ `TIME` データを保存します。
     - **デフォルト値:** `1970-01-01`
 
     <h4>`jdbc.spanner.time_column.default_date_component`</h4>
 
     - **フィールド:** `scalar.db.jdbc.spanner.time_column.default_date_component`
-    - **説明:** Spanner で `TIME` データを格納するために使用される日付コンポーネントの値。Spanner (PostgreSQL 構文) にはネイティブの TIME 型がないため、ScalarDB は比較と並べ替えを可能にするために、固定された日付コンポーネントを持つ Spanner `TIMESTAMP WITH TIME ZONE` データとして `TIME` データを保存します。
+    - **説明:** Spanner で `TIME` データを格納するために使用される日付コンポーネントの値。Spanner (PostgreSQL 構文) にはネイティブの `time` 型がないため、ScalarDB は比較と並べ替えを可能にするために、固定された日付コンポーネントを持つ Spanner `timestamp with time zone` データとして `TIME` データを保存します。
     - **デフォルト値:** `1970-01-01`
 
 :::note

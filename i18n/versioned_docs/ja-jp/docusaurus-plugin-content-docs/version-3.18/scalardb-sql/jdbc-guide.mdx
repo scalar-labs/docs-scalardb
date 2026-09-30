@@ -89,19 +89,19 @@ ScalarDB と JDBC 間のデータ型マッピングは次のとおりです。
 
 | ScalarDB タイプ | JDBC (Java) タイプ         |
 |--------------|-------------------------|
-| BOOLEAN      | boolean または Boolean     |
-| INT          | int または Integer         |
-| BIGINT       | long または Long           |
-| FLOAT        | float または Float         |
-| DOUBLE       | double または Double       |
-| TEXT         | String                  |
-| BLOB         | byte[] または java.sql.Blob |
-| DATE         | java.time.LocalDate     |
-| TIME         | java.time.LocalTime     |
-| TIMESTAMP    | java.time.LocalDateTime |
-| TIMESTAMPTZ  | java.time.Instant       |
+| `BOOLEAN`    | `boolean` または `Boolean`     |
+| `INT`        | `int` または `Integer`         |
+| `BIGINT`     | `long` または `Long`           |
+| `FLOAT`      | `float` または `Float`         |
+| `DOUBLE`     | `double` または `Double`       |
+| `TEXT`       | `String`                    |
+| `BLOB`       | `byte[]` または `java.sql.Blob` |
+| `DATE`       | `java.time.LocalDate`       |
+| `TIME`       | `java.time.LocalTime`       |
+| `TIMESTAMP`  | `java.time.LocalDateTime`   |
+| `TIMESTAMPTZ`| `java.time.Instant`         |
 
-BLOB 列の場合、書き込み時には `java.io.InputStream` も受け入れられます。以下の `PreparedStatement` の例を参照してください。
+`BLOB` 列の場合、書き込み時には `java.io.InputStream` も受け入れられます。以下の `PreparedStatement` の例を参照してください。
 
 各データ型の `java.sql.ResultSet` オブジェクトからデータを取得する方法は次のとおりです。
 
@@ -195,7 +195,7 @@ try (PreparedStatement preparedStatement = ...) {
 }
 ```
 
-BLOB 列の場合、ドライバーはストリームから直接書き込みをサポートしています。`setBytes(int, byte[])` と `setBlob(int, java.sql.Blob)` に加えて、以下のオーバーロードを使用できます：
+`BLOB` 列の場合、ドライバーはストリームから直接書き込みをサポートしています。`setBytes(int, byte[])` と `setBlob(int, java.sql.Blob)` に加えて、以下のオーバーロードを使用できます：
 
 - `setBlob(int, java.io.InputStream)` と `setBlob(int, java.io.InputStream, long)`：ストリームからバイトを読み取ります（長さ付きのオーバーロードは指定されたバイト数を正確に読み取ります）。
 - `setBinaryStream(int, java.io.InputStream)`、`setBinaryStream(int, java.io.InputStream, int)`、および `setBinaryStream(int, java.io.InputStream, long)`：同じパターンに従います。
