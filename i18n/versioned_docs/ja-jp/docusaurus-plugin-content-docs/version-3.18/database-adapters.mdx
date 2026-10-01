@@ -62,26 +62,26 @@ ScalarDB パーティションキーカラムとクラスタリングキーカ�
 
 | ScalarDB | MySQL、MariaDB、TiDB | PostgreSQL、YugabyteDB、AlloyDB | Oracle | Spanner (PostgreSQL 構文) | SQL Server | Db2 | SQLite |
 |----------|----------------------|------------------------|--------|-----------------------------|------------|-----|--------|
-| BOOLEAN | BOOLEAN | BOOLEAN | NUMBER(1) | BOOLEAN | BIT | BOOLEAN | BOOLEAN |
-| INT | INT | INT | NUMBER(10) | BIGINT | INT | INT | INT |
-| BIGINT | BIGINT | BIGINT | NUMBER(19) | BIGINT | BIGINT | BIGINT | BIGINT |
-| FLOAT | REAL | REAL | BINARY_FLOAT | FLOAT | FLOAT(24) | REAL | FLOAT |
-| DOUBLE | DOUBLE | DOUBLE PRECISION | BINARY_DOUBLE | DOUBLE PRECISION | FLOAT | DOUBLE | DOUBLE |
-| TEXT | LONGTEXT | TEXT | VARCHAR2(4000) | TEXT | VARCHAR(8000) | VARCHAR(32672) | TEXT |
-| BLOB | LONGBLOB | BYTEA | BLOB | BYTEA | VARBINARY(8000) | BLOB(2G) | BLOB |
-| DATE | DATE | DATE | DATE | DATE | DATE | DATE | INT |
-| TIME | TIME(6) | TIME | TIMESTAMP(6) | TIMESTAMP WITH TIME ZONE | TIME(6) | TIMESTAMP(6) | BIGINT |
-| TIMESTAMP | DATETIME(3) | TIMESTAMP | TIMESTAMP(3) | TIMESTAMP WITH TIME ZONE | DATETIME2(3) | TIMESTAMP(3) | BIGINT |
-| TIMESTAMPTZ | DATETIME(3) | TIMESTAMP WITH TIME ZONE | TIMESTAMP(3) WITH TIME ZONE | TIMESTAMP WITH TIME ZONE | DATETIMEOFFSET(3) | TIMESTAMP(3) | BIGINT |
+| `BOOLEAN` | `BOOLEAN` | `boolean` | `NUMBER(1)` | `boolean` | `bit` | `BOOLEAN` | `BOOLEAN` |
+| `INT` | `INT` | `int` | `NUMBER(10)` | `bigint` | `int` | `INT` | `INT` |
+| `BIGINT` | `BIGINT` | `bigint` | `NUMBER(19)` | `bigint` | `bigint` | `BIGINT` | `BIGINT` |
+| `FLOAT` | `REAL` | `real` | `BINARY_FLOAT` | `float` | `float(24)` | `REAL` | `FLOAT` |
+| `DOUBLE` | `DOUBLE` | `double precision` | `BINARY_DOUBLE` | `double precision` | `float` | `DOUBLE` | `DOUBLE` |
+| `TEXT` | `LONGTEXT` | `text` | `VARCHAR2(4000)` | `text` | `varchar(8000)` | `VARCHAR(32672)` | `TEXT` |
+| `BLOB` | `LONGBLOB` | `bytea` | `BLOB` | `bytea` | `varbinary(8000)` | `BLOB(2G)` | `BLOB` |
+| `DATE` | `DATE` | `date` | `DATE` | `date` | `date` | `DATE` | `INT` |
+| `TIME` | `TIME(6)` | `time` | `TIMESTAMP(6)` | `timestamp with time zone` | `time(6)` | `TIMESTAMP(6)` | `BIGINT` |
+| `TIMESTAMP` | `DATETIME(3)` | `timestamp` | `TIMESTAMP(3)` | `timestamp with time zone` | `datetime2(3)` | `TIMESTAMP(3)` | `BIGINT` |
+| `TIMESTAMPTZ` | `DATETIME(3)` | `timestamp with time zone` | `TIMESTAMP(3) WITH TIME ZONE` | `timestamp with time zone` | `datetimeoffset(3)` | `TIMESTAMP(3)` | `BIGINT` |
 
-TEXT または BLOB カラムがパーティションキー、クラスタリングキー、またはセカンダリインデックスキーとして使用される場合、一部のデータベースでは上記の既定の型ではなく、より小さな固定サイズの型を使用します。
+`TEXT` または `BLOB` カラムがパーティションキー、クラスタリングキー、またはセカンダリインデックスキーとして使用される場合、一部のデータベースでは上記の既定の型ではなく、より小さな固定サイズの型を使用します。
 
-| データベース | TEXT キーカラム型 | BLOB キーカラム型 |
+| データベース | `TEXT` キーカラム型 | `BLOB` キーカラム型 |
 |----------|---------------------|----------------------|
-| MySQL、MariaDB、TiDB | VARCHAR(*size*) | VARBINARY(*size*) |
-| PostgreSQL、YugabyteDB、AlloyDB | VARCHAR(10485760) | BYTEA (変換なし) |
-| Oracle | VARCHAR2(*size*) | キーとしてはサポートされていません |
-| Db2 | VARCHAR(*size*) | キーとしてはサポートされていません |
+| MySQL、MariaDB、TiDB | `VARCHAR(size)` | `VARBINARY(size)` |
+| PostgreSQL、YugabyteDB、AlloyDB | `varchar(10485760)` | `bytea` (変換なし) |
+| Oracle | `VARCHAR2(size)` | キーとしてはサポートされていません |
+| Db2 | `VARCHAR(size)` | キーとしてはサポートされていません |
 
 上記の表の *size* は既定では128で、以下のプロパティを通じてデータベースごとに設定できます。許可される最小値は64です。
 
@@ -97,19 +97,19 @@ JDBC アダプターを使用する場合、以下の制限事項が特定のデ
 
 **IBM Db2:**
 
-- BLOB は、パーティションキー、クラスタリングキー、セカンダリインデックスキー、またはクロスパーティションスキャンの並び替えカラムとして使用できません。
-- FLOAT / DOUBLE の最小値は、Java の MIN_VALUE ではなく、Float.MIN_NORMAL / Double.MIN_NORMAL です。
+- `BLOB` は、パーティションキー、クラスタリングキー、セカンダリインデックスキー、またはクロスパーティションスキャンの並び替えカラムとして使用できません。
+- `FLOAT` / `DOUBLE` の最小値は、Java の MIN_VALUE ではなく、Float.MIN_NORMAL / Double.MIN_NORMAL です。
 - パーティションキー、クラスタリングキー、またはセカンダリインデックスカラムの名前変更はサポートされていません (非キーカラムは名前変更可能)。
-- BLOB → TEXT への ALTER COLUMN TYPE はサポートされていません。
+- `BLOB` → `TEXT` への `ALTER COLUMN TYPE` はサポートされていません。
 
 **Oracle Database:**
 
-- BLOB は、パーティションキー、クラスタリングキー、セカンダリインデックスキー、Get または Scan 操作の条件カラム、またはクロスパーティションスキャンの並び替えカラムとして使用できません。
-- ALTER COLUMN TYPE は INT → BIGINT のみをサポートします。FLOAT → DOUBLE の拡張や TEXT への変換を含む、他のすべての変換は例外をスローします。
+- `BLOB` は、パーティションキー、クラスタリングキー、セカンダリインデックスキー、Get または Scan 操作の条件カラム、またはクロスパーティションスキャンの並び替えカラムとして使用できません。
+- `ALTER COLUMN TYPE` は `INT` → `BIGINT` のみをサポートします。`FLOAT` → `DOUBLE` の拡張や `TEXT` への変換を含む、他のすべての変換は例外をスローします。
 
 **YugabyteDB:**
 
-- FLOAT および DOUBLE は、パーティションキー、クラスタリングキー、またはセカンダリインデックスキーとして使用できません。
+- `FLOAT` および `DOUBLE` は、パーティションキー、クラスタリングキー、またはセカンダリインデックスキーとして使用できません。
 - インポートテーブルはサポートされていません。
 
 **SQLite:**
@@ -120,13 +120,13 @@ JDBC アダプターを使用する場合、以下の制限事項が特定のデ
 **TiDB:**
 
 - TiDB は SERIALIZABLE 分離レベルをサポートしていません。ScalarDB は代わりに REPEATABLE READ を使用します。
-- TiDB は BLOB から TEXT への ALTER COLUMN TYPE をサポートしていません。
+- TiDB は `BLOB` から `TEXT` への `ALTER COLUMN TYPE` をサポートしていません。
 
 **Spanner (PostgreSQL 構文):**
 
-- FLOAT カラムは、パーティションキー、クラスタリングキー、またはセカンダリインデックスキーとして使用できません。
+- `FLOAT` カラムは、パーティションキー、クラスタリングキー、またはセカンダリインデックスキーとして使用できません。
 - テーブルとカラムの名前変更はサポートされていません。
-- ALTER COLUMN TYPE は BLOB → TEXT 変換のみをサポートしています。
+- `ALTER COLUMN TYPE` は `BLOB` → `TEXT` 変換のみをサポートしています。
 - LIKE 式のエスケープ文字は `\` に固定されており、設定や無効化はできません。
 
 ## DynamoDBアダプター
@@ -151,30 +151,30 @@ ScalarDB は、スキーマで定義された各セカンダリインデック�
 
 | ScalarDB | DynamoDB | 備考 |
 |----------|----------|-------|
-| BOOLEAN | BOOL | |
-| INT | N (Number) | |
-| BIGINT | N (Number) | |
-| FLOAT | N (Number) | |
-| DOUBLE | N (Number) | |
-| TEXT | S (String) | |
-| BLOB | B (Binary) | |
-| DATE | N (Number) | エポック日 (1970-01-01 からの日数) として格納されます。 |
-| TIME | N (Number) | 日のナノ (午前0時からのナノ秒) として格納されます。 |
-| TIMESTAMP | N (Number) | エポック秒と秒のミリ秒のパック値として格納されます。 |
-| TIMESTAMPTZ | N (Number) | エポック秒と秒のミリ秒の UTC 時刻でのパック値として格納されます。 |
+| `BOOLEAN` | `BOOL` | |
+| `INT` | `N` (Number) | |
+| `BIGINT` | `N` (Number) | |
+| `FLOAT` | `N` (Number) | |
+| `DOUBLE` | `N` (Number) | |
+| `TEXT` | `S` (String) | |
+| `BLOB` | `B` (Binary) | |
+| `DATE` | `N` (Number) | エポック日 (1970-01-01 からの日数) として格納されます。 |
+| `TIME` | `N` (Number) | 日のナノ (午前0時からのナノ秒) として格納されます。 |
+| `TIMESTAMP` | `N` (Number) | エポック秒と秒のミリ秒のパック値として格納されます。 |
+| `TIMESTAMPTZ` | `N` (Number) | エポック秒と秒のミリ秒の UTC 時刻でのパック値として格納されます。 |
 
 各 ScalarDB データ型の強制値範囲については、[値範囲と精度](#値範囲と精度)を参照してください。
 
 ### 制限事項
 
 - 400KB の DynamoDB アイテムサイズ制限は、Consensus Commit によって追加されたトランザクションメタデータカラムを含む各 ScalarDB レコードに適用されます。
-- BLOB は、複合パーティションキーの最後のカラムを除き、パーティションキーまたはクラスタリングキーとして使用できません。
-- BOOLEAN はセカンダリインデックスキーとして使用できません。
-- BOOLEAN 条件変更は EQ、NE、IS NULL、IS NOT NULL に制限されます。
+- `BLOB` は、複合パーティションキーの最後のカラムを除き、パーティションキーまたはクラスタリングキーとして使用できません。
+- `BOOLEAN` はセカンダリインデックスキーとして使用できません。
+- `BOOLEAN` 条件変更は EQ、NE、IS NULL、IS NOT NULL に制限されます。
 - 単一のプライマリリージョンを指定する必要があります。非同期レプリケーションされた非プライマリリージョンからは読み取らないでください。
 - 非プライマリキーカラムでのクロスパーティションスキャン並び替えはサポートされていません。ScanAll で並び替えに依存しているユーザーはエラーが発生します。
 - ドロップカラム、リネームカラム、カラム型変更、テーブル名変更などのスキーマ進化 DDL はサポートされていません。
-- GSI が空のキーを許可しないため、セカンダリインデックスカラムを空の文字列または空の BLOB に設定することはできません。
+- GSI が空のキーを許可しないため、セカンダリインデックスカラムを空の文字列または空の `BLOB` に設定することはできません。
 
 ## Cosmos DB for NoSQL アダプター
 
@@ -204,28 +204,28 @@ Cosmos DB コンテナーは単一のパーティションキーパスのみを�
 
 | ScalarDB | Cosmos DB JSON 型 | 備考 |
 |----------|---------------------|-------|
-| BOOLEAN | boolean | |
-| INT | number | |
-| BIGINT | number | |
-| FLOAT | number | |
-| DOUBLE | number | |
-| TEXT | string | |
-| BLOB | string | Base64 エンコードされた文字列として格納されます。 |
-| DATE | number | エポック日 (1970-01-01 からの日数) として格納されます。 |
-| TIME | number | 日のナノ (午前0時からのナノ秒) として格納されます。 |
-| TIMESTAMP | number | エポック秒と秒のミリ秒のパック値として格納されます。 |
-| TIMESTAMPTZ | number | エポック秒と秒のミリ秒のUTC時刻でのパック値として格納されます。 |
+| `BOOLEAN` | `boolean` | |
+| `INT` | `number` | |
+| `BIGINT` | `number` | |
+| `FLOAT` | `number` | |
+| `DOUBLE` | `number` | |
+| `TEXT` | `string` | |
+| `BLOB` | `string` | Base64 エンコードされた文字列として格納されます。 |
+| `DATE` | `number` | エポック日 (1970-01-01 からの日数) として格納されます。 |
+| `TIME` | `number` | 日のナノ (午前0時からのナノ秒) として格納されます。 |
+| `TIMESTAMP` | `number` | エポック秒と秒のミリ秒のパック値として格納されます。 |
+| `TIMESTAMPTZ` | `number` | エポック秒と秒のミリ秒のUTC時刻でのパック値として格納されます。 |
 
 各 ScalarDB データ型の強制値範囲については、[値範囲と精度](#値範囲と精度)を参照してください。
 
 ### 制限事項
 
 - 2MB の Cosmos DB ドキュメントサイズ制限は、Consensus Commit によって追加されたトランザクションメタデータを含む各 ScalarDB レコードに適用されます。
-- BIGINT 値は -2^53 から 2^53 の範囲に制限されています。Cosmos DB は数値を内部的に倍精度浮動小数点数として保存するため、2^53 までの整数のみを正確に表すことができます。
-- BLOB はクラスタリングキーとして使用できません。
+- `BIGINT` 値は -2^53 から 2^53 の範囲に制限されています。Cosmos DB は数値を内部的に倍精度浮動小数点数として保存するため、2^53 までの整数のみを正確に表すことができます。
+- `BLOB` はクラスタリングキーとして使用できません。
 - パーティションキーカラムのテキスト値にはコロン (`:`) を含めてはいけません。
 - プライマリキーカラム値には以下の文字を含めてはいけません: `/`、`\`、`?`、`#`。これらの文字は [Cosmos DB リソース ID によって制限されています](https://learn.microsoft.com/ja-jp/dotnet/api/microsoft.azure.cosmos.databaseproperties.id?view=azure-dotnet#remarks)。
-- BLOB 条件変更は EQ、NE、IS NULL、IS NOT NULL に制限されます (CosmosOperationChecker によって強制)。GT/LT などの比較演算子は例外をスローします。
+- `BLOB` 条件変更は EQ、NE、IS NULL、IS NOT NULL に制限されます (CosmosOperationChecker によって強制)。GT/LT などの比較演算子は例外をスローします。
 - 整合性レベルは Strong または Bounded Staleness に設定する必要があります。詳細については、[データベース設定](database-configurations.mdx)を参照してください。
 - 単一リージョン書き込み設定を使用する必要があります。
 - 非プライマリキーカラムでのクロスパーティションスキャン並び替えはサポートされていません。ScanAll で並び替えに依存しているユーザーはエラーが発生します。
@@ -251,24 +251,24 @@ ScalarDB パーティションキーカラムは直接 Cassandra パーティシ
 
 | ScalarDB | Cassandra | 備考 |
 |----------|-----------|-------|
-| BOOLEAN | boolean | |
-| INT | int | |
-| BIGINT | bigint | |
-| FLOAT | float | |
-| DOUBLE | double | |
-| TEXT | text | |
-| BLOB | blob | |
-| DATE | date | |
-| TIME | time | |
-| TIMESTAMP | — | **サポートされていません。** 代わりに TIMESTAMPTZ を使用してください。 |
-| TIMESTAMPTZ | timestamp | Cassandra の `timestamp` 型は絶対時刻 (エポックベース) を格納し、ScalarDB の TIMESTAMPTZ (UTC 時間帯での日時) のセマンティクスと一致します。 |
+| `BOOLEAN` | `boolean` | |
+| `INT` | `int` | |
+| `BIGINT` | `bigint` | |
+| `FLOAT` | `float` | |
+| `DOUBLE` | `double` | |
+| `TEXT` | `text` | |
+| `BLOB` | `blob` | |
+| `DATE` | `date` | |
+| `TIME` | `time` | |
+| `TIMESTAMP` | — | **サポートされていません。** 代わりに `TIMESTAMPTZ` を使用してください。 |
+| `TIMESTAMPTZ` | `timestamp` | Cassandra の `timestamp` 型は絶対時刻 (エポックベース) を格納し、ScalarDB の `TIMESTAMPTZ` (UTC 時間帯での日時) のセマンティクスと一致します。 |
 
 各 ScalarDB データ型の強制値範囲については、[値範囲と精度](#値範囲と精度)を参照してください。
 
 ### 制限事項
 
-- TIMESTAMP データ型 (タイムゾーンなし) は Cassandra アダプターではサポートされていません。代わりに TIMESTAMPTZ を使用する必要があります。TIMESTAMP カラムを持つテーブルを作成しようとするとエラーが発生します。
-- 変更あたりの BLOB サイズは、既定で 16MB に制限されています (max_mutation_size で設定可能)。
+- `TIMESTAMP` データ型 (タイムゾーンなし) は Cassandra アダプターではサポートされていません。代わりに `TIMESTAMPTZ` を使用する必要があります。`TIMESTAMP` カラムを持つテーブルを作成しようとするとエラーが発生します。
+- 変更あたりの `BLOB` サイズは、既定で 16MB に制限されています (`max_mutation_size` で設定可能)。
 - 存在しないレコードで IS NULL 条件を使用した PutIf は NoMutationException をスローしません。他のすべてのアダプターとは異なり、サイレントに成功します。
 - 単一のプライマリクラスターを使用する必要があります。非同期レプリケーションされた非プライマリクラスターからは読み取らないでください。
 - Cassandra コミットログは、バッチまたはグループ同期モードに設定する必要があります。詳細については、[データベース設定](database-configurations.mdx)を参照してください。
@@ -296,7 +296,7 @@ ScalarDB パーティションキーカラムは直接 Cassandra パーティシ
 
 ### データ型のマッピング
 
-すべての ScalarDB データ型は、オブジェクトストレージに格納される際に JSON にシリアライズされます。マッピングは Cosmos DB アダプターと同じパターンに従います: 数値型と時間型は JSON 数値として格納され、TEXT は JSON 文字列として格納され、BOOLEAN は JSON ブール値として格納され、BLOB は Base64 エンコードされた文字列として格納されます。
+すべての ScalarDB データ型は、オブジェクトストレージに格納される際に JSON にシリアライズされます。マッピングは Cosmos DB アダプターと同じパターンに従います: 数値型と時間型は JSON 数値として格納され、`TEXT` は JSON 文字列として格納され、`BOOLEAN` は JSON ブール値として格納され、`BLOB` は Base64 エンコードされた文字列として格納されます。
 
 各 ScalarDB データ型の強制値範囲については、[値範囲と精度](#値範囲と精度)を参照してください。
 
@@ -304,8 +304,8 @@ ScalarDB パーティションキーカラムは直接 Cassandra パーティシ
 
 - プライマリキーテキスト値には `/` または `!` を含めることはできません。
 - セカンダリインデックスは全くサポートされていません。
-- BIGINT 値は -2^53 から 2^53 の範囲に制限されています。これは、数値が JSON 数値としてシリアライズされ、2^53 までの整数のみを正確に表すことができます。
-- 1.5 GiB を超える BLOB データは格納できません。
+- `BIGINT` 値は -2^53 から 2^53 の範囲に制限されています。これは、数値が JSON 数値としてシリアライズされ、2^53 までの整数のみを正確に表すことができます。
+- `BLOB` データは 1.5 GiB を超える場合は格納できません。
 - ストレージバケットまたはコンテナーには単一のリージョンを使用する必要があります。
 - 特定のストレージクラスのみがサポートされています: Amazon S3 の S3 Standard、Azure Blob Storage の Hot ティア、Google Cloud Storage の Standard。詳細については、[データベース設定](database-configurations.mdx)を参照してください。
 - すべてのデータが単一のバケットに格納されるため、名前空間の分離は物理的ではなく論理的です。
@@ -318,19 +318,19 @@ ScalarDB は、基盤となるデータベースのネイティブ機能に関�
 
 | データ型 | 範囲 | 精度 | 備考 |
 |-----------|-------|-----------|-------|
-| BOOLEAN | `true` または `false` | | |
-| INT | -2^31 to 2^31 - 1 | | |
-| BIGINT | -2^63 to 2^63 - 1 | | Cosmos DB for NoSQL およびオブジェクトストレージアダプターでは -2^53 から 2^53 に制限されています。 |
-| FLOAT | -3.4028235E+38 から 3.4028235E+38 | 約7桁の十進数 | |
-| DOUBLE | -1.7976931348623157E+308 から 1.7976931348623157E+308 | 約15桁の十進数 | |
-| TEXT | 無制限の長さ | | 最大サイズは基盤となるデータベースに依存します。 |
-| BLOB | 無制限の長さ | | 最大サイズは基盤となるデータベースに依存します。 |
-| DATE | 1000-01-01 から 9999-12-31 | 日 | |
-| TIME | 00:00:00.000000 から 23:59:59.999999 | マイクロ秒 | |
-| TIMESTAMP | 1000-01-01T00:00:00.000 から 9999-12-31T23:59:59.999 | ミリ秒 | タイムゾーンなし。 |
-| TIMESTAMPTZ | 1000-01-01T00:00:00.000Z から 9999-12-31T23:59:59.999Z | ミリ秒 | UTC時間帯で。 |
+| `BOOLEAN` | `true` または `false` | | |
+| `INT` | -2^31 to 2^31 - 1 | | |
+| `BIGINT` | -2^63 to 2^63 - 1 | | Cosmos DB for NoSQL およびオブジェクトストレージアダプターでは -2^53 から 2^53 に制限されています。 |
+| `FLOAT` | -3.4028235E+38 から 3.4028235E+38 | 約7桁の十進数 | |
+| `DOUBLE` | -1.7976931348623157E+308 から 1.7976931348623157E+308 | 約15桁の十進数 | |
+| `TEXT` | 無制限の長さ | | 最大サイズは基盤となるデータベースに依存します。 |
+| `BLOB` | 無制限の長さ | | 最大サイズは基盤となるデータベースに依存します。 |
+| `DATE` | 1000-01-01 から 9999-12-31 | 日 | |
+| `TIME` | 00:00:00.000000 から 23:59:59.999999 | マイクロ秒 | |
+| `TIMESTAMP` | 1000-01-01T00:00:00.000 から 9999-12-31T23:59:59.999 | ミリ秒 | タイムゾーンなし。 |
+| `TIMESTAMPTZ` | 1000-01-01T00:00:00.000Z から 9999-12-31T23:59:59.999Z | ミリ秒 | UTC時間帯で。 |
 
-TIMESTAMP はタイムゾーン情報なしの日付と時刻を表します。TIMESTAMPTZ は UTC 時間帯での日付と時刻を表します。似た名前にもかかわらず、これらの型は異なるセマンティクスを持ち、互換性がありません。
+`TIMESTAMP` はタイムゾーン情報なしの日付と時刻を表します。`TIMESTAMPTZ` は UTC 時間帯での日付と時刻を表します。似た名前にもかかわらず、これらの型は異なるセマンティクスを持ち、互換性がありません。
 
 ## 関連項目
 
