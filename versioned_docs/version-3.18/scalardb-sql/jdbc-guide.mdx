@@ -85,19 +85,19 @@ The data type mapping between ScalarDB and JDBC is as follows:
 
 | ScalarDB Type | JDBC (Java) Type        |
 |---------------|-------------------------|
-| BOOLEAN       | boolean or Boolean      |
-| INT           | int or Integer          |
-| BIGINT        | long or Long            |
-| FLOAT         | float or Float          |
-| DOUBLE        | double or Double        |
-| TEXT          | String                  |
-| BLOB          | byte[] or java.sql.Blob |
-| DATE          | java.time.LocalDate     |
-| TIME          | java.time.LocalTime     |
-| TIMESTAMP     | java.time.LocalDateTime |
-| TIMESTAMPTZ   | java.time.Instant       |
+| `BOOLEAN`     | `boolean` or `Boolean`       |
+| `INT`         | `int` or `Integer`          |
+| `BIGINT`      | `long` or `Long`            |
+| `FLOAT`       | `float` or `Float`          |
+| `DOUBLE`      | `double` or `Double`        |
+| `TEXT`        | `String`                    |
+| `BLOB`        | `byte[]` or `java.sql.Blob` |
+| `DATE`        | `java.time.LocalDate`       |
+| `TIME`        | `java.time.LocalTime`       |
+| `TIMESTAMP`   | `java.time.LocalDateTime`   |
+| `TIMESTAMPTZ` | `java.time.Instant`         |
 
-For BLOB columns, `java.io.InputStream` is also accepted when writing. See the `PreparedStatement` example below.
+For `BLOB` columns, `java.io.InputStream` is also accepted when writing. See the `PreparedStatement` example below.
 
 How to get the data from a `java.sql.ResultSet` object for each data type is as follows:
 
@@ -191,7 +191,7 @@ try (PreparedStatement preparedStatement = ...) {
 }
 ```
 
-For BLOB columns, the driver also supports writing directly from a stream. The following overloads are available in addition to `setBytes(int, byte[])` and `setBlob(int, java.sql.Blob)`:
+For `BLOB` columns, the driver also supports writing directly from a stream. The following overloads are available in addition to `setBytes(int, byte[])` and `setBlob(int, java.sql.Blob)`:
 
 - `setBlob(int, java.io.InputStream)` and `setBlob(int, java.io.InputStream, long)`, which reads bytes from the stream (the overload with a length reads exactly that many bytes).
 - `setBinaryStream(int, java.io.InputStream)`, `setBinaryStream(int, java.io.InputStream, int)`, and `setBinaryStream(int, java.io.InputStream, long)`, which follow the same pattern.
