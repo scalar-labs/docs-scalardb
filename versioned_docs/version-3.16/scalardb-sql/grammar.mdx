@@ -2556,7 +2556,7 @@ A text literal is a sequence of characters enclosed in single quotes `'`, such a
 
 ### Numeric
 
-Numeric literals include exact-value (INTEGER and BIGINT) and approximate-value (FLOAT and DOUBLE) literals.
+Numeric literals include exact-value (`INTEGER` and `BIGINT`) and approximate-value (`FLOAT` and `DOUBLE`) literals.
 
 An exact-value literal is a sequence of digits, such as `123` and `-5`.
 
@@ -2564,11 +2564,11 @@ An approximate-value literal is a sequence of digits with a decimal point, such 
 
 ### Date and time
 
-Date and time literals are text literals that follow a specific format to represents DATE, TIME, TIMESTAMP, and TIMESTAMPTZ values. 
+Date and time literals are text literals that follow a specific format to represent `DATE`, `TIME`, `TIMESTAMP`, and `TIMESTAMPTZ` values. 
 
-| ScalarDB type | Format                             | Note                                                                                                                                                                                                                  | Example                                                                       |
-|---------------|------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
-| DATE          | **'YYYY-MM-DD'**                   |                                                                                                                                                                                                                       | `'2024-05-19'`                                                                |
-| TIME          | **'HH:MM:[SS[.FFFFFF]]'**          | Seconds and fractional seconds are optional. Stores up to microsecond precision (6 digits). Extra fractional digits (up to 9) are silently truncated.                                                                 | `'12:34'`, `'12:34:56'`, `'12:34:56.789123'`                                  |
-| TIMESTAMP     | **'YYYY-MM-DD HH:MM:[SS[.FFF]]'**  | Seconds and fractional seconds are optional. Stores up to millisecond precision (3 digits). Extra fractional digits (up to 9) are silently truncated.                                                                 | `'2024-05-19 12:34'`, `'2024-05-19 12:34:56'`, `'2024-05-19 12:34:56.789'`    |
-| TIMESTAMPTZ   | **'YYYY-MM-DD HH:MM:[SS[.FFF]]Z'** | Seconds and fractional seconds are optional. Stores up to millisecond precision (3 digits). Extra fractional digits (up to 9) are silently truncated. A space before `Z` is also accepted for backward compatibility. | `'2024-05-19 12:34Z'`, `'2024-05-19 12:34:56Z'`, `'2024-05-19 12:34:56.789Z'` |
+| ScalarDB type | Format                             | Note                                                                                                                                                                                                                  | Example                                                                      |
+|---------------|------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------|
+| `DATE`          | **'YYYY-MM-DD'**                   |                                                                                                                                                                                                                       | `'2024-05-19'`                                                               |
+| `TIME`          | **'HH:MM:[SS[.FFFFFF]]'**          | Seconds and fractional seconds are optional. Stores up to microsecond precision (6 digits). Extra fractional digits (up to 9) are silently truncated.                                                                 | `'12:34'`, `'12:34:56'`, `'12:34:56.789123'`                                 |
+| `TIMESTAMP`     | **'YYYY-MM-DD HH:MM:[SS[.FFF]]'**  | Seconds and fractional seconds are optional. Stores up to millisecond precision (3 digits). Extra fractional digits (up to 9) are silently truncated.                                                                 | `'2024-05-19 12:34'`, `'2024-05-19 12:34:56'`, `'2024-05-19 12:34:56.789'`   |
+| `TIMESTAMPTZ`   | **'YYYY-MM-DD HH:MM:[SS[.FFF]]Z'** | Seconds and fractional seconds are optional. Stores up to millisecond precision (3 digits). Extra fractional digits (up to 9) are silently truncated. A space before `Z` is also accepted for backward compatibility. | `'2024-05-19 12:34Z'`, `'2024-05-19 12:34:56Z'`, `'2024-05-19 12:34:56.789Z'` |
