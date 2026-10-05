@@ -41,7 +41,7 @@ Data Loader を使用する前に、以下が必要です:
 2. 以下のコマンドを実行して、`<VERSION>` をバージョン番号に置き換えてインストールを確認します:
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar --help
+java -jar scalardb-data-loader-<X.Y.Z>.jar --help
 ```
 
 成功すると、利用可能なコマンドとオプションのリストが表示されます。
@@ -63,7 +63,7 @@ Data Loader は3つのファイル形式をサポートしています: JSON、J
     JSON ファイルをテーブルにインポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
 
     ```console
-    java -jar scalardb-data-loader-<VERSION>.jar import \
+    java -jar scalardb-data-loader-<X.Y.Z>.jar import \
       --config scalardb.properties \
       --namespace <NAMESPACE_NAME> \
       --table <TABLE_NAME> \
@@ -95,7 +95,7 @@ Data Loader は3つのファイル形式をサポートしています: JSON、J
     JSONL ファイルをテーブルにインポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
 
     ```console
-    java -jar scalardb-data-loader-<VERSION>.jar import \
+    java -jar scalardb-data-loader-<X.Y.Z>.jar import \
       --config scalardb.properties \
       --namespace <NAMESPACE_NAME> \
       --table <TABLE_NAME> \
@@ -118,7 +118,7 @@ Data Loader は3つのファイル形式をサポートしています: JSON、J
     CSV ファイルをテーブルにインポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
 
     ```console
-    java -jar scalardb-data-loader-<VERSION>.jar import \
+    java -jar scalardb-data-loader-<X.Y.Z>.jar import \
       --config scalardb.properties \
       --namespace <NAMESPACE_NAME> \
       --table <TABLE_NAME> \
@@ -153,7 +153,7 @@ CSV ファイルには、テーブルカラムに一致するカラム名を持�
 新しいレコードを挿入する代わりに既存のレコードを更新するには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar import \
+java -jar scalardb-data-loader-<X.Y.Z>.jar import \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -168,7 +168,7 @@ java -jar scalardb-data-loader-<VERSION>.jar import \
 制御ファイルを使用してカスタムフィールドマッピングでインポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar import \
+java -jar scalardb-data-loader-<X.Y.Z>.jar import \
   --config scalardb.properties \
   --file <FILE>.json \
   --control-file <CONTROL_FILE>.json
@@ -179,7 +179,7 @@ java -jar scalardb-data-loader-<VERSION>.jar import \
 カスタム区切り文字で CSV データをインポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar import \
+java -jar scalardb-data-loader-<X.Y.Z>.jar import \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -485,7 +485,7 @@ Data Loader は3つのエクスポート形式をサポートしています: JS
     テーブルを JSON 形式にエクスポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
 
     ```console
-    java -jar scalardb-data-loader-<VERSION>.jar export \
+    java -jar scalardb-data-loader-<X.Y.Z>.jar export \
       --config scalardb.properties \
       --namespace <NAMESPACE_NAME> \
       --table <TABLE_NAME> \
@@ -517,7 +517,7 @@ Data Loader は3つのエクスポート形式をサポートしています: JS
     テーブルを JSONL (JSON Lines) 形式にエクスポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
 
     ```console
-    java -jar scalardb-data-loader-<VERSION>.jar export \
+    java -jar scalardb-data-loader-<X.Y.Z>.jar export \
       --config scalardb.properties \
       --namespace <NAMESPACE_NAME> \
       --table <TABLE_NAME> \
@@ -539,7 +539,7 @@ Data Loader は3つのエクスポート形式をサポートしています: JS
     テーブルを CSV 形式にエクスポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
 
     ```console
-    java -jar scalardb-data-loader-<VERSION>.jar export \
+    java -jar scalardb-data-loader-<X.Y.Z>.jar export \
       --config scalardb.properties \
       --namespace <NAMESPACE_NAME> \
       --table <TABLE_NAME> \
@@ -573,7 +573,7 @@ Data Loader は3つのエクスポート形式をサポートしています: JS
 特定のファイルと形式にデータをエクスポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar export \
+java -jar scalardb-data-loader-<X.Y.Z>.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -586,19 +586,18 @@ java -jar scalardb-data-loader-<VERSION>.jar export \
 特定のカラムのみをエクスポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar export \
+java -jar scalardb-cluster-data-loader-<X.Y.Z>-all.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
-  --projection <COLUMN1>,<COLUMN2>,<COLUMN3>
+  --partition-key <KEY_NAME>=<VALUE>
 ```
 
-#### 特定のパーティションキーのデータをエクスポート
-
-特定のパーティションキーのデータをエクスポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
+  </TabItem>
+  <TabItem value="direct" label="データベース直接アクセス">
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar export \
+java -jar scalardb-data-loader-<X.Y.Z>.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -610,7 +609,7 @@ java -jar scalardb-data-loader-<VERSION>.jar export \
 行数制限でエクスポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar export \
+java -jar scalardb-data-loader-<X.Y.Z>.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \

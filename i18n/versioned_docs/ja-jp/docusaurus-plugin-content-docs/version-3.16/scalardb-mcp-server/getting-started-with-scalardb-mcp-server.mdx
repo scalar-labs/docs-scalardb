@@ -137,10 +137,10 @@ MCP クライアントに合った設定方法を選択してください。Clau
       <TabItem value="docker" label="Docker (推奨)" default>
         Docker イメージは [ScalarDB MCP Server コンテナレジストリ](https://github.com/scalar-labs/scalardb-mcp-server/pkgs/container/scalardb-mcp-server)から入手できます。
 
-        以下のコマンドを実行して、コンテナレジストリから Docker イメージをプルできます。 `<VERSION>` を使用したいバージョンに置き換えてください。
+        以下のコマンドを実行して、コンテナレジストリから Docker イメージをプルできます。 `<X.Y.Z>` を使用したいバージョンに置き換えてください。
 
         ```bash
-        docker pull ghcr.io/scalar-labs/scalardb-mcp-server:<VERSION>
+        docker pull ghcr.io/scalar-labs/scalardb-mcp-server:<X.Y.Z>
         ```
 
         #### ステップ 3: ScalarDB デプロイメントタイプの選択
@@ -152,7 +152,7 @@ MCP クライアントに合った設定方法を選択してください。Clau
             ```bash
             claude mcp add scalardb -- docker run --rm -i \
               --name scalardb-mcp-server \
-              ghcr.io/scalar-labs/scalardb-mcp-server:<VERSION> \
+              ghcr.io/scalar-labs/scalardb-mcp-server:<X.Y.Z> \
               --scalar.mcp.db.server.tool.mode=SQL \
               --scalar.db.transaction_manager=cluster \
               --scalar.db.contact_points=indirect:host.docker.internal \
@@ -210,7 +210,7 @@ Docker オプション:
             ```bash
             claude mcp add scalardb -- docker run --rm -i \
               --name scalardb-mcp-server \
-              ghcr.io/scalar-labs/scalardb-mcp-server:<VERSION> \
+              ghcr.io/scalar-labs/scalardb-mcp-server:<X.Y.Z> \
               --scalar.mcp.db.server.tool.mode=CRUD \
               --scalar.db.transaction_manager=consensus-commit \
               --scalar.db.storage=multi-storage \
@@ -257,7 +257,7 @@ Docker オプション:
 
             ```bash
             claude mcp add scalardb \
-              -- java -jar /path/to/scalardb-mcp-server-<VERSION>.jar \
+              -- java -jar /path/to/scalardb-mcp-server-<X.Y.Z>.jar \
               --scalar.mcp.db.server.tool.mode=SQL \
               --scalar.db.transaction_manager=cluster \
               --scalar.db.contact_points=indirect:localhost \
@@ -305,7 +305,7 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=
 
             ```bash
             claude mcp add scalardb \
-              -- java -jar /path/to/scalardb-mcp-server-<VERSION>.jar \
+              -- java -jar /path/to/scalardb-mcp-server-<X.Y.Z>.jar \
               --scalar.mcp.db.server.tool.mode=CRUD \
               --scalar.db.transaction_manager=consensus-commit \
               --scalar.db.storage=multi-storage \
@@ -343,10 +343,10 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=
       <TabItem value="docker" label="Docker (推奨)" default>
         Docker イメージは [ScalarDB MCP Server コンテナレジストリ](https://github.com/scalar-labs/scalardb-mcp-server/pkgs/container/scalardb-mcp-server)から入手できます。
 
-        以下のコマンドを実行して、コンテナレジストリから Docker イメージをプルできます。 `<VERSION>` を使用したいバージョンに置き換えてください。
+        以下のコマンドを実行して、コンテナレジストリから Docker イメージをプルできます。 `<X.Y.Z>` を使用したいバージョンに置き換えてください。
 
         ```bash
-        docker pull ghcr.io/scalar-labs/scalardb-mcp-server:<VERSION>
+        docker pull ghcr.io/scalar-labs/scalardb-mcp-server:<X.Y.Z>
         ```
 
         #### ステップ 3: ScalarDB デプロイメントタイプの選択
@@ -365,7 +365,7 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=
                     "-i",
                     "--rm",
                     "--name", "scalardb-mcp-server",
-                    "ghcr.io/scalar-labs/scalardb-mcp-server:<VERSION>",
+                    "ghcr.io/scalar-labs/scalardb-mcp-server:<X.Y.Z>",
                     "--scalar.db.transaction_manager=cluster",
                     "--scalar.db.contact_points=indirect:host.docker.internal",
                     "--scalar.db.contact_port=60053",
@@ -434,7 +434,7 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=
                     "-i",
                     "--rm",
                     "--name", "scalardb-mcp-server",
-                    "ghcr.io/scalar-labs/scalardb-mcp-server:<VERSION>",
+                    "ghcr.io/scalar-labs/scalardb-mcp-server:<X.Y.Z>",
                     "--scalar.mcp.db.server.tool.mode=CRUD",
                     "--scalar.db.transaction_manager=consensus-commit",
                     "--scalar.db.storage=multi-storage",
@@ -490,7 +490,7 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=
                   "command": "java",
                   "args": [
                     "-jar",
-                    "/path/to/scalardb-mcp-server-<VERSION>.jar",
+                    "/path/to/scalardb-mcp-server-<X.Y.Z>.jar",
                     "--scalar.mcp.db.server.tool.mode=SQL",
                     "--scalar.db.transaction_manager=cluster",
                     "--scalar.db.contact_points=indirect:localhost",
@@ -547,7 +547,7 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=
                   "command": "java",
                   "args": [
                     "-jar",
-                    "/path/to/scalardb-mcp-server-<VERSION>.jar",
+                    "/path/to/scalardb-mcp-server-<X.Y.Z>.jar",
                     "--scalar.mcp.db.server.tool.mode=CRUD",
                     "--scalar.db.transaction_manager=consensus-commit",
                     "--scalar.db.storage=multi-storage",
