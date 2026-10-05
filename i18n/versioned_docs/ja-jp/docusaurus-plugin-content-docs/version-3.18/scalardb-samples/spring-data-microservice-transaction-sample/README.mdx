@@ -197,18 +197,18 @@ docker-compose up -d cassandra mysql scalardb-cluster-node-for-customer-service 
 
 #### MySQL
 
-[`schema-for-customer-service.sql`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/schema-for-customer-service.sql) のスキーマを MySQL にロードするには、`<VERSION>` をダウンロードした ScalarDB Schema Loader のバージョンに置き換えて、次のコマンドを実行します。
+[`schema-for-customer-service.sql`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/schema-for-customer-service.sql) のスキーマを MySQL にロードするには、`<X.Y.Z>` をダウンロードした SQL CLI ツールのバージョンに置き換えて、次のコマンドを実行します。
 
 ```console
-java -jar scalardb-cluster-sql-cli-<VERSION>-all.jar --config scalardb-cluster-node-for-customer-service-client.properties --file schema-for-customer-service.sql
+java -jar scalardb-cluster-sql-cli-<X.Y.Z>-all.jar --config scalardb-cluster-node-for-customer-service-client.properties --file schema-for-customer-service.sql
 ```
 
 #### Cassandra
 
-[`schema-for-order-service.sql`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/schema-for-order-service.sql) のスキーマを Cassandra にロードするには、`<VERSION>` をダウンロードした ScalarDB Schema Loader のバージョンに置き換えて、次のコマンドを実行します。
+[`schema-for-order-service.sql`](https://github.com/scalar-labs/scalardb-samples/blob/main/spring-data-microservice-transaction-sample/schema-for-order-service.sql) のスキーマを Cassandra にロードするには、`<X.Y.Z>` をダウンロードした SQL CLI ツールのバージョンに置き換えて、次のコマンドを実行します。
 
 ```console
-java -jar scalardb-cluster-sql-cli-<VERSION>-all.jar --config scalardb-cluster-node-for-order-service-client.properties --file schema-for-order-service.sql
+java -jar scalardb-cluster-sql-cli-<X.Y.Z>-all.jar --config scalardb-cluster-node-for-order-service-client.properties --file schema-for-order-service.sql
 ```
 
 #### スキーマの詳細
