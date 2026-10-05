@@ -48,17 +48,17 @@ To set up Schema Loader for importing existing tables, see [Set up Schema Loader
 You can import an existing table in JDBC databases to ScalarDB by using the `--import` option and an import-specific schema file. To import tables, run the following command, replacing the contents in the angle brackets as described:
 
 ```console
-java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> --import
+java -jar scalardb-schema-loader-<X.Y.Z>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> --import
 ```
 
-- `<VERSION>`: Version of ScalarDB Schema Loader that you set up.
+- `<X.Y.Z>`: Version of ScalarDB Schema Loader that you set up.
 - `<PATH_TO_SCALARDB_PROPERTIES_FILE>`: Path to a properties file for ScalarDB. For a sample properties file, see [`database.properties`](https://github.com/scalar-labs/scalardb/blob/master/conf/database.properties).
 - `<PATH_TO_SCHEMA_FILE>`: Path to an import schema file. For a sample, see [Sample import schema file](#sample-import-schema-file).
 
 If you use the Consensus Commit transaction manager after importing existing tables, run the following command separately, replacing the contents in the angle brackets as described:
 
 ```console
-java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> --coordinator
+java -jar scalardb-schema-loader-<X.Y.Z>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> --coordinator
 ```
 
 ## Sample import schema file
