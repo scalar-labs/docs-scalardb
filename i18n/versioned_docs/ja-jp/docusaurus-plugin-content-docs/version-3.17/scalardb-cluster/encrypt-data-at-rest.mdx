@@ -159,7 +159,7 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
 
 ### ステップ 3. Docker Compose 設定ファイルを作成する
 
-次の設定ファイルを `docker-compose.yaml` として作成します。
+次の設定ファイルを `docker-compose.yaml` として作成します。`<X.Y.Z>` は使用したい ScalarDB Cluster のバージョンに置き換えてください。
 
 ```yaml
 services:
@@ -190,7 +190,7 @@ services:
 
   scalardb-cluster-standalone:
     container_name: "scalardb-cluster-node"
-    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:3.17.4"
+    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:<X.Y.Z>"
     ports:
       - 60053:60053
       - 9080:9080
@@ -236,7 +236,7 @@ ScalarDB Cluster が完全に起動するまでに数分かかる場合があり
 
 ### ステップ 7. ScalarDB Cluster に接続する
 
-ScalarDB Cluster に接続するために、このチュートリアルでは、ScalarDB Cluster に接続して SQL クエリを実行するツールである SQL CLI を使用します。SQL CLI は、[ScalarDB Releases ページ](https://github.com/scalar-labs/scalardb/releases)からダウンロードできます。
+ScalarDB Cluster に接続するために、このチュートリアルでは、ScalarDB Cluster に接続して SQL クエリを実行するツールである SQL CLI を使用します。使用している ScalarDB Cluster のバージョンに一致する SQL CLI を、[ScalarDB Releases ページ](https://github.com/scalar-labs/scalardb/releases)からダウンロードしてください。
 
 `scalardb-cluster-sql-cli.properties` という名前の設定ファイルを作成します。このファイルは、SQL CLI を使用して ScalarDB Cluster に接続するために使用されます。
 
@@ -245,10 +245,10 @@ scalar.db.sql.connection_mode=cluster
 scalar.db.sql.cluster_mode.contact_points=indirect:localhost
 ```
 
-次に、次のコマンドを実行して SQL CLI を起動します。
+次に、次のコマンドを実行して SQL CLI を起動します。`<X.Y.Z>` は事前にダウンロードしたバージョンに置き換えてください。
 
 ```console
-java -jar scalardb-cluster-sql-cli-3.17.4-all.jar --config scalardb-cluster-sql-cli.properties
+java -jar scalardb-cluster-sql-cli-<X.Y.Z>-all.jar --config scalardb-cluster-sql-cli.properties
 ```
 
 まず、ScalarDB トランザクション実行に必要な Coordinator テーブルを作成します。
