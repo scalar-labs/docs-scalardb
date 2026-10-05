@@ -66,7 +66,7 @@ scalar.db.analytics.server.metering.storage.path=/var/scalardb-analytics/meterin
 
 ### ScalarDB Analytics サーバーの起動
 
-設定ファイルを使用して ScalarDB Analytics サーバーを起動します: 
+設定ファイルを使用して ScalarDB Analytics サーバーを起動します。`<X.Y.Z>` は使用したい ScalarDB Analytics のバージョンに置き換えてください。利用可能なバージョンは [コンテナレジストリページ](https://github.com/scalar-labs/scalardb-analytics/pkgs/container/scalardb-analytics-server-byol) で確認できます。
 
 ```console
 docker run -d \
@@ -74,10 +74,8 @@ docker run -d \
   -p 11051:11051 \
   -p 11052:11052 \
   -v /path/to/scalardb-analytics-server.properties:/scalardb-analytics-server/server.properties \
-  ghcr.io/scalar-labs/scalardb-analytics-server:<VERSION>
+  ghcr.io/scalar-labs/scalardb-analytics-server:<X.Y.Z>
 ```
-
-`<VERSION>` を使用したい ScalarDB Analytics のバージョンに置き換えてください。利用可能なバージョンは [コンテナレジストリページ](https://github.com/scalar-labs/scalardb-analytics/pkgs/container/scalardb-analytics-server-byol) で確認できます。
 
 コンテナはデフォルトで `/scalardb-analytics-server/server.properties` の設定ファイルを使用します。
 
@@ -117,14 +115,12 @@ ScalarDB Analytics CLI は、ScalarDB Analytics サーバーと通信してカ�
 
 ### CLI のインストール
 
-`scalardb-analytics-cli` ツールはコンテナイメージとして利用可能です: 
+`scalardb-analytics-cli` ツールはコンテナイメージとして利用可能です。`<X.Y.Z>` を使用したい ScalarDB Analytics のバージョンに置き換えてください。利用可能なバージョンは [コンテナレジストリページ](https://github.com/scalar-labs/scalardb-analytics/pkgs/container/scalardb-analytics-cli) で確認できます。
 
 ```console
 # CLI イメージをプル
-docker pull ghcr.io/scalar-labs/scalardb-analytics-cli:<VERSION>
+docker pull ghcr.io/scalar-labs/scalardb-analytics-cli:<X.Y.Z>
 ```
-
-`<VERSION>` を使用したい ScalarDB Analytics のバージョンに置き換えてください。利用可能なバージョンは [コンテナレジストリページ](https://github.com/scalar-labs/scalardb-analytics/pkgs/container/scalardb-analytics-cli) で確認できます。
 
 CLI コマンドを実行するには、設定ファイルをコンテナにマウントする必要があります: 
 
@@ -132,7 +128,7 @@ CLI コマンドを実行するには、設定ファイルをコンテナにマ�
 # 例: カタログを一覧表示
 docker run --rm \
   -v $(pwd)/client.properties:/config/client.properties:ro \
-  ghcr.io/scalar-labs/scalardb-analytics-cli:<VERSION> \
+  ghcr.io/scalar-labs/scalardb-analytics-cli:<X.Y.Z> \
   -c /config/client.properties \
   catalog list
 ```
@@ -160,7 +156,7 @@ scalar.db.analytics.client.server.tls.override_authority=analytics.example.com
 便利のため、長い Docker コマンドを毎回入力することを避けるためにエイリアスを作成できます: 
 
 ```console
-alias scalardb-analytics-cli='docker run --rm -v $(pwd)/client.properties:/config/client.properties:ro ghcr.io/scalar-labs/scalardb-analytics-cli:<VERSION> -c /config/client.properties'
+alias scalardb-analytics-cli='docker run --rm -v $(pwd)/client.properties:/config/client.properties:ro ghcr.io/scalar-labs/scalardb-analytics-cli:<X.Y.Z> -c /config/client.properties'
 ```
 
 このエイリアスを使用すると、より簡単にコマンドを実行できます: 
