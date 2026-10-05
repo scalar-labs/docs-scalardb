@@ -127,18 +127,18 @@ docker-compose up -d mysql cassandra
 
 #### MySQL
 
-[`customer-service-schema.json`](https://github.com/scalar-labs/scalardb-samples/blob/main/microservice-transaction-sample/customer-service-schema.json) のスキーマを MySQL にロードするには、次のコマンドを実行します。`<VERSION>` は、ダウンロードした ScalarDB Schema Loader のバージョンに置き換えます。
+[`customer-service-schema.json`](https://github.com/scalar-labs/scalardb-samples/blob/main/microservice-transaction-sample/customer-service-schema.json) のスキーマを MySQL にロードするには、次のコマンドを実行します。`<X.Y.Z>` は、ダウンロードした ScalarDB Schema Loader のバージョンに置き換えます。
 
 ```console
-java -jar scalardb-schema-loader-<VERSION>.jar --config database-mysql.properties --schema-file customer-service-schema.json
+java -jar scalardb-schema-loader-<X.Y.Z>.jar --config database-mysql.properties --schema-file customer-service-schema.json
 ```
 
 #### Cassandra
 
-[`order-service-schema.json`](https://github.com/scalar-labs/scalardb-samples/blob/main/microservice-transaction-sample/order-service-schema.json) のスキーマを Cassandra にロードするには、次のコマンドを実行します。`<VERSION>` は、ダウンロードした ScalarDB Schema Loader のバージョンに置き換えます。
+[`order-service-schema.json`](https://github.com/scalar-labs/scalardb-samples/blob/main/microservice-transaction-sample/order-service-schema.json) のスキーマを Cassandra にロードするには、次のコマンドを実行します。`<X.Y.Z>` は、ダウンロードした ScalarDB Schema Loader のバージョンに置き換えます。
 
 ```console
-java -jar scalardb-schema-loader-<VERSION>.jar --config database-cassandra.properties --schema-file order-service-schema.json --coordinator
+java -jar scalardb-schema-loader-<X.Y.Z>.jar --config database-cassandra.properties --schema-file order-service-schema.json --coordinator
 ```
 
 #### Schema details

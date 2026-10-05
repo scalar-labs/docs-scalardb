@@ -51,17 +51,17 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 `--import` オプションとインポート固有のスキーマファイルを使用して、JDBC データベース内の既存のテーブルを ScalarDB にインポートできます。テーブルをインポートするには、次のコマンドを実行し、山括弧内の内容を説明に従って置き換えます。
 
 ```console
-java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> --import
+java -jar scalardb-schema-loader-<X.Y.Z>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> --import
 ```
 
-- `<VERSION>`: 設定した ScalarDB Schema Loader のバージョン。
+- `<X.Y.Z>`: 設定した ScalarDB Schema Loader のバージョン。
 - `<PATH_TO_SCALARDB_PROPERTIES_FILE>`: ScalarDB のプロパティファイルへのパス。サンプルのプロパティファイルについては、[`database.properties`](https://github.com/scalar-labs/scalardb/blob/master/conf/database.properties) を参照してください。
 - `<PATH_TO_SCHEMA_FILE>`: インポートスキーマファイルへのパス。サンプルについては、[サンプルインポートスキーマファイル](#サンプルインポートスキーマファイル)を参照してください。
 
 既存のテーブルをインポートした後に Consensus Commit トランザクションマネージャーを使用する場合は、次のコマンドを個別に実行し、説明に従って山括弧内の内容を置き換えます。
 
 ```console
-java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> --coordinator
+java -jar scalardb-schema-loader-<X.Y.Z>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> --coordinator
 ```
 
 ## サンプルインポートスキーマファイル

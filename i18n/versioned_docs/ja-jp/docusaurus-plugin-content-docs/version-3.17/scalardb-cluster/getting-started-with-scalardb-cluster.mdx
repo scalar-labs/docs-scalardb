@@ -114,13 +114,13 @@ cd scalardb-samples/scalardb-sample
 
 ### `build.gradle` を変更する
 
-ScalarDB Cluster を使用するには、任意のテキストエディターで `build.gradle` を開きます。次に、`dependencies` セクションから `com.scalar-labs:scalardb` の既存の依存関係を削除し、`dependencies` セクションに次の依存関係を追加します。
+ScalarDB Cluster を使用するには、任意のテキストエディターで `build.gradle` を開きます。次に、`dependencies` セクションから `com.scalar-labs:scalardb` の既存の依存関係を削除し、`dependencies` セクションに次の依存関係を追加します。`<X.Y.Z>` は使用したい ScalarDB Cluster Java Client SDK のバージョンに置き換えてください。
 
 ```gradle
 dependencies {
     ...
 
-    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.17.4'
+    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:<X.Y.Z>'
 }
 ```
 
@@ -166,12 +166,12 @@ scalar.db.contact_points=indirect:localhost
 
 サンプルアプリケーションのデータベーススキーマ (データを整理する方法) は、[`schema.json`](https://github.com/scalar-labs/scalardb-samples/tree/main/scalardb-sample/schema.json) ですでに定義されています。
 
-スキーマを適用するには、[ScalarDB リリース](https://github.com/scalar-labs/scalardb/releases/tag/v3.17.4)に移動し、ScalarDB Cluster Schema Loader を `scalardb-samples/scalardb-sample` フォルダーにダウンロードします。
+スキーマを適用するには、[ScalarDB リリース](https://github.com/scalar-labs/scalardb/releases)に移動し、使用している ScalarDB Cluster のバージョンに一致する ScalarDB Cluster Schema Loader を `scalardb-samples/scalardb-sample` フォルダーにダウンロードします。
 
-次に、次のコマンドを実行します。
+次に、次のコマンドを実行します。`<X.Y.Z>` は事前にダウンロードしたバージョンに置き換えてください。
 
 ```console
-java -jar scalardb-cluster-schema-loader-3.17.4-all.jar --config database.properties -f schema.json --coordinator
+java -jar scalardb-cluster-schema-loader-<X.Y.Z>-all.jar --config database.properties -f schema.json --coordinator
 ```
 
 #### スキーマの詳細
