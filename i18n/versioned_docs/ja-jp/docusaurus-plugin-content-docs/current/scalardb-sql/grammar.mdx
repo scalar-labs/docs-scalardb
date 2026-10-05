@@ -3861,6 +3861,12 @@ StartTransactionStatement statement6 =
 
 ### JOIN
 
+:::warning 非推奨の通知
+
+`JOIN` コマンドは ScalarDB 3.19 以降非推奨となり、将来のリリースで削除される予定です。
+
+:::
+
 `JOIN` コマンドは、指定されたトランザクション ID に関連付けられたトランザクションを結合します。
 
 #### 文法
@@ -3887,6 +3893,12 @@ JoinStatement statement = StatementBuilder.join("id").build();
 
 ### PREPARE
 
+:::warning 非推奨の通知
+
+2フェーズコミット (2PC) インターフェースは ScalarDB 3.19 以降非推奨となり、将来のリリースで削除される予定です。
+
+:::
+
 `PREPARE` コマンドは現在のトランザクションを準備します。
 
 #### 文法
@@ -3905,6 +3917,12 @@ PrepareStatement statement = StatementBuilder.prepare().build();
 ```
 
 ### VALIDATE
+
+:::warning 非推奨の通知
+
+2フェーズコミット (2PC) インターフェースは ScalarDB 3.19 以降非推奨となり、将来のリリースで削除される予定です。
+
+:::
 
 `VALIDATE` コマンドは現在のトランザクションを検証します。
 
@@ -3991,6 +4009,12 @@ SET MODE transaction_mode
 
 transaction_mode: TRANSACTION | TWO_PHASE_COMMIT_TRANSACTION
 ```
+
+:::warning 非推奨の通知
+
+`TWO_PHASE_COMMIT_TRANSACTION` トランザクションモードは ScalarDB 3.19 以降非推奨となり、将来のリリースで削除される予定です。
+
+:::
 
 #### 例
 
@@ -4114,6 +4138,12 @@ DescribeStatement statement2 = StatementBuilder.describe("tbl").build();
 
 ### SUSPEND
 
+:::warning 非推奨の通知
+
+`SUSPEND` コマンドは ScalarDB 3.19 以降非推奨となり、将来のリリースで削除される予定です。
+
+:::
+
 `SUSPEND` コマンドは、現在のセッションで進行中のトランザクションを一時停止します。
 
 #### 文法
@@ -4132,6 +4162,12 @@ SuspendStatement statement = StatementBuilder.suspend().build();
 ```
 
 ### RESUME
+
+:::warning 非推奨の通知
+
+`RESUME` コマンドは ScalarDB 3.19 以降非推奨となり、将来のリリースで削除される予定です。
+
+:::
 
 `RESUME` コマンドは、現在のセッションで指定されたトランザクション ID に関連付けられたトランザクションを再開します。
 

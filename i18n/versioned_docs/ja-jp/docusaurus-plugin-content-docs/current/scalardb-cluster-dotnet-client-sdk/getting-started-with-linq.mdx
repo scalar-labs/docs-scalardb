@@ -461,6 +461,12 @@ await _myDbContext.JoinTwoPhaseCommitTransactionAsync(transactionId);
 
 ### 既存のトランザクションを再開する
 
+:::warning 非推奨の通知
+
+`ResumeTransaction` メソッドは ScalarDB 3.19 以降非推奨となり、将来のリリースで削除される予定です。
+
+:::
+
 ```c#
 await _myDbContext.ResumeTransaction(transactionId);
 ```

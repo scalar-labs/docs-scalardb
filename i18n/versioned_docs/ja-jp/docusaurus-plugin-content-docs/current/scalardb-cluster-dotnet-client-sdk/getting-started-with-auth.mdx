@@ -78,6 +78,12 @@ SDK は OIDC JWT アクセストークンを更新しません。トークンは
 
 次のように `TransactionFactory` を使用して、トランザクションマネージャーまたはトランザクション管理オブジェクトを取得する必要があります。`<GET_TRANSACTION_MANAGER>` を `GetTransactionManager()`、`GetTwoPhaseCommitTransactionManager()`、`GetSqlTransactionManager()`、または `GetSqlTwoPhaseCommitTransactionManager()` に置き換えてください。
 
+:::warning 非推奨の通知
+
+2フェーズコミット (2PC) インターフェースは ScalarDB 3.19 以降非推奨となり、将来のリリースで削除される予定です。
+
+:::
+
 ```c#
 // Pass the path to the settings file.
 var factory = TransactionFactory.Create("scalardb-options.json");
