@@ -409,13 +409,13 @@ Select the embedding model that you want to use, and follow the instructions to 
 
 ### 2. Create the Docker Compose file
 
-Create the following configuration file as `docker-compose.yaml`.
+Create the following configuration file as `docker-compose.yaml`, replacing `<X.Y.Z>` with the version of ScalarDB Cluster that you want to use.
 
 ```yaml
 services:
   scalardb-cluster-standalone:
     container_name: "scalardb-cluster-node"
-    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:3.18.1"
+    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:<X.Y.Z>"
     ports:
       - 60053:60053
       - 9080:9080
@@ -441,22 +441,22 @@ Select your build tool, and follow the instructions to add the build dependency 
 
 <Tabs groupId="build_tools" queryString>
   <TabItem value="gradle" label="Gradle" default>
-    To add the build dependency for the ScalarDB Cluster Embedding Java Client SDK by using Gradle, add the following to `build.gradle` in your application:
+    To add the build dependency for the ScalarDB Cluster Embedding Java Client SDK by using Gradle, add the following to `build.gradle` in your application, replacing `<X.Y.Z>` with the version of the ScalarDB Cluster Embedding Java Client SDK that you want to use:
 
     ```gradle
     dependencies {
-      implementation 'com.scalar-labs:scalardb-cluster-embedding-java-client-sdk:3.18.1'
+      implementation 'com.scalar-labs:scalardb-cluster-embedding-java-client-sdk:<X.Y.Z>'
     }
     ```
   </TabItem>
   <TabItem value="maven" label="Maven">
-    To add the build dependency for the ScalarDB Cluster Embedding Java Client SDK by using Maven, add the following to `pom.xml` in your application:
+    To add the build dependency for the ScalarDB Cluster Embedding Java Client SDK by using Maven, add the following to `pom.xml` in your application, replacing `<X.Y.Z>` with the version of the ScalarDB Cluster Embedding Java Client SDK that you want to use:
 
     ```xml
     <dependency>
       <groupId>com.scalar-labs</groupId>
       <artifactId>scalardb-cluster-embedding-java-client-sdk</artifactId>
-      <version>3.18.1</version>
+      <version><X.Y.Z></version>
     </dependency>
     ```
   </TabItem>

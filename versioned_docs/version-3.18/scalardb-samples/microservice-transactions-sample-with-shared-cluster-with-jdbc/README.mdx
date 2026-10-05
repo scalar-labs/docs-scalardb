@@ -132,12 +132,12 @@ Starting the Docker container may take more than one minute depending on your de
 
 The database schema (the method in which the data will be organized) for the sample application has already been defined in [`schema.sql`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transaction-sample-with-shared-cluster-with-jdbc/schema.sql).
 
-To apply the schema, go to the [Releases](https://github.com/scalar-labs/scalardb/releases) of ScalarDB and download the SQL CLI tool (`scalardb-cluster-sql-cli-<VERSION>-all.jar`) for the version of ScalarDB Cluster that you want to use.
+To apply the schema, go to the [Releases](https://github.com/scalar-labs/scalardb/releases) of ScalarDB and download the SQL CLI tool (`scalardb-cluster-sql-cli-<X.Y.Z>-all.jar`) for the version of ScalarDB Cluster that you want to use.
 
-Then, run the following command, replacing `<VERSION>` with the version of the SQL CLI tool that you downloaded:
+Then, run the following command, replacing `<X.Y.Z>` with the version of the SQL CLI tool that you downloaded:
 
 ```console
-java -jar scalardb-cluster-sql-cli-<VERSION>-all.jar --config scalardb-cluster-sql-cli.properties --file schema.sql
+java -jar scalardb-cluster-sql-cli-<X.Y.Z>-all.jar --config scalardb-cluster-sql-cli.properties --file schema.sql
 ```
 
 #### Schema details
@@ -162,10 +162,10 @@ The Entity Relationship Diagram for the schema is as follows:
 
 To implement access control for each microservice, you need to create users for the services and grant privileges to them.
 
-Run the following command, replacing `<VERSION>` with the version of the SQL CLI tool that you downloaded:
+Run the following command, replacing `<X.Y.Z>` with the version of the SQL CLI tool that you downloaded:
 
 ```console
-java -jar scalardb-cluster-sql-cli-<VERSION>-all.jar --config scalardb-cluster-sql-cli.properties --file user-privileges.sql
+java -jar scalardb-cluster-sql-cli-<X.Y.Z>-all.jar --config scalardb-cluster-sql-cli.properties --file user-privileges.sql
 ```
 
 As shown in [`user-privileges.sql`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transaction-sample-with-shared-cluster-with-jdbc/user-privileges.sql), you create users for Customer Service and Order Service and grant privileges to them.
