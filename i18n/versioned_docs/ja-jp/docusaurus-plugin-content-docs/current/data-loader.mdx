@@ -254,12 +254,12 @@ ScalarDB Cluster と Data Loader を使用する前に、以下が必要です:
 <Tabs groupId="data_loader_setup" queryString>
   <TabItem value="Fat_JAR" label="Fat JAR" default>
 
-[ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) ページから **`scalardb-cluster-data-loader-<VERSION>-all.jar`** をダウンロードしてください。
+[ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) ページから **`scalardb-cluster-data-loader-<X.Y.Z>-all.jar`** をダウンロードしてください。
 
-以下のコマンドを実行して、`<VERSION>` をバージョン番号に置き換えてインストールを確認します:
+以下のコマンドを実行して、`<X.Y.Z>` をバージョン番号に置き換えてインストールを確認します:
 
 ```console
-java -jar scalardb-cluster-data-loader-<VERSION>-all.jar --help
+java -jar scalardb-cluster-data-loader-<X.Y.Z>-all.jar --help
 ```
 
 成功すると、利用可能なコマンドとオプションのリストが表示されます。
@@ -270,31 +270,31 @@ java -jar scalardb-cluster-data-loader-<VERSION>-all.jar --help
 以下のコマンドを実行して、[Scalar コンテナレジストリ](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-cluster-data-loader-cli)から Docker イメージを取得できます。角括弧内の内容を説明どおりに置き換えてください:
 
 ```console
-docker pull ghcr.io/scalar-labs/scalardb-cluster-data-loader-cli:<VERSION>
+docker pull ghcr.io/scalar-labs/scalardb-cluster-data-loader-cli:<X.Y.Z>
 ```
 
 コンテナを使用して Data Loader コマンドを実行できます。以下の例では、インストールを確認する方法を示しています:
 
 ```console
-docker run --rm ghcr.io/scalar-labs/scalardb-cluster-data-loader-cli:<VERSION> --help
+docker run --rm ghcr.io/scalar-labs/scalardb-cluster-data-loader-cli:<X.Y.Z> --help
 ```
 
 成功すると、利用可能なコマンドとオプションのリストが表示されます。
 
 :::note
 
-このドキュメントのすべてのコマンド例は JAR ファイルの構文を使用しています。`java -jar scalardb-cluster-data-loader-<VERSION>-all.jar` を Docker 等価コマンドに置き換え、ローカルファイルをボリュームとしてマウントすることで、コンテナで同じコマンドを実行できます。例:
+このドキュメントのすべてのコマンド例は JAR ファイルの構文を使用しています。`java -jar scalardb-cluster-data-loader-<X.Y.Z>-all.jar` を Docker 等価コマンドに置き換え、ローカルファイルをボリュームとしてマウントすることで、コンテナで同じコマンドを実行できます。例:
 
 ```console
 # JAR 構文
-java -jar scalardb-cluster-data-loader-<VERSION>-all.jar import \
+java -jar scalardb-cluster-data-loader-<X.Y.Z>-all.jar import \
   --config scalardb.properties --file data.json ...
 
 # Docker 等価コマンド
 docker run --rm \
   -v ./scalardb.properties:/scalardb.properties \
   -v ./data.json:/data.json \
-  ghcr.io/scalar-labs/scalardb-cluster-data-loader-cli:<VERSION> \
+  ghcr.io/scalar-labs/scalardb-cluster-data-loader-cli:<X.Y.Z> \
   import --config /scalardb.properties --file /data.json ...
 ```
 
@@ -311,12 +311,12 @@ docker run --rm \
 <Tabs groupId="data_loader_setup" queryString>
   <TabItem value="Fat_JAR" label="Fat JAR" default>
 
-[ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) ページから **`scalardb-data-loader-<VERSION>.jar`** をダウンロードしてください。
+[ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) ページから **`scalardb-data-loader-<X.Y.Z>.jar`** をダウンロードしてください。
 
-以下のコマンドを実行して、`<VERSION>` をバージョン番号に置き換えてインストールを確認します:
+以下のコマンドを実行して、`<X.Y.Z>` をバージョン番号に置き換えてインストールを確認します:
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar --help
+java -jar scalardb-data-loader-<X.Y.Z>.jar --help
 ```
 
 成功すると、利用可能なコマンドとオプションのリストが表示されます。
@@ -327,31 +327,31 @@ java -jar scalardb-data-loader-<VERSION>.jar --help
 以下のコマンドを実行して、[Scalar コンテナレジストリ](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-data-loader-cli)から Docker イメージを取得できます。角括弧内の内容を説明どおりに置き換えてください:
 
 ```console
-docker pull ghcr.io/scalar-labs/scalardb-data-loader-cli:<VERSION>
+docker pull ghcr.io/scalar-labs/scalardb-data-loader-cli:<X.Y.Z>
 ```
 
 コンテナを使用して Data Loader コマンドを実行できます。以下の例では、インストールを確認する方法を示しています:
 
 ```console
-docker run --rm ghcr.io/scalar-labs/scalardb-data-loader-cli:<VERSION> --help
+docker run --rm ghcr.io/scalar-labs/scalardb-data-loader-cli:<X.Y.Z> --help
 ```
 
 成功すると、利用可能なコマンドとオプションのリストが表示されます。
 
 :::note
 
-このドキュメントのすべてのコマンド例は JAR ファイルの構文を使用しています。`java -jar scalardb-data-loader-<VERSION>.jar` を Docker 等価コマンドに置き換え、ローカルファイルをボリュームとしてマウントすることで、コンテナで同じコマンドを実行できます。例:
+このドキュメントのすべてのコマンド例は JAR ファイルの構文を使用しています。`java -jar scalardb-data-loader-<X.Y.Z>.jar` を Docker 等価コマンドに置き換え、ローカルファイルをボリュームとしてマウントすることで、コンテナで同じコマンドを実行できます。例:
 
 ```console
 # JAR 構文
-java -jar scalardb-data-loader-<VERSION>.jar import \
+java -jar scalardb-data-loader-<X.Y.Z>.jar import \
   --config scalardb.properties --file data.json ...
 
 # Docker 等価コマンド
 docker run --rm \
   -v ./scalardb.properties:/scalardb.properties \
   -v ./data.json:/data.json \
-  ghcr.io/scalar-labs/scalardb-data-loader-cli:<VERSION> \
+  ghcr.io/scalar-labs/scalardb-data-loader-cli:<X.Y.Z> \
   import --config /scalardb.properties --file /data.json ...
 ```
 
@@ -383,7 +383,7 @@ Data Loader は3つのファイル形式をサポートしています: JSON、J
   <TabItem value="cluster" label="ScalarDB Cluster" default>
 
 ```console
-java -jar scalardb-cluster-data-loader-<VERSION>-all.jar import \
+java -jar scalardb-cluster-data-loader-<X.Y.Z>-all.jar import \
   --config scalardb.properties \
   --mode TRANSACTION \
   --namespace <NAMESPACE_NAME> \
@@ -396,7 +396,7 @@ java -jar scalardb-cluster-data-loader-<VERSION>-all.jar import \
   <TabItem value="direct" label="データベース直接アクセス">
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar import \
+java -jar scalardb-data-loader-<X.Y.Z>.jar import \
   --config scalardb.properties \
   --mode TRANSACTION \
   --namespace <NAMESPACE_NAME> \
@@ -436,7 +436,7 @@ java -jar scalardb-data-loader-<VERSION>.jar import \
   <TabItem value="cluster" label="ScalarDB Cluster" default>
 
 ```console
-java -jar scalardb-cluster-data-loader-<VERSION>-all.jar import \
+java -jar scalardb-cluster-data-loader-<X.Y.Z>-all.jar import \
   --config scalardb.properties \
   --mode TRANSACTION \
   --namespace <NAMESPACE_NAME> \
@@ -449,7 +449,7 @@ java -jar scalardb-cluster-data-loader-<VERSION>-all.jar import \
   <TabItem value="direct" label="データベース直接アクセス">
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar import \
+java -jar scalardb-data-loader-<X.Y.Z>.jar import \
   --config scalardb.properties \
   --mode TRANSACTION \
   --namespace <NAMESPACE_NAME> \
@@ -479,7 +479,7 @@ java -jar scalardb-data-loader-<VERSION>.jar import \
   <TabItem value="cluster" label="ScalarDB Cluster" default>
 
 ```console
-java -jar scalardb-cluster-data-loader-<VERSION>-all.jar import \
+java -jar scalardb-cluster-data-loader-<X.Y.Z>-all.jar import \
   --config scalardb.properties \
   --mode TRANSACTION \
   --namespace <NAMESPACE_NAME> \
@@ -492,7 +492,7 @@ java -jar scalardb-cluster-data-loader-<VERSION>-all.jar import \
   <TabItem value="direct" label="データベース直接アクセス">
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar import \
+java -jar scalardb-data-loader-<X.Y.Z>.jar import \
   --config scalardb.properties \
   --mode TRANSACTION \
   --namespace <NAMESPACE_NAME> \
@@ -543,7 +543,7 @@ CSV ファイルには、テーブルカラムに一致するカラム名を持�
   <TabItem value="cluster" label="ScalarDB Cluster" default>
 
 ```console
-java -jar scalardb-cluster-data-loader-<VERSION>-all.jar import \
+java -jar scalardb-cluster-data-loader-<X.Y.Z>-all.jar import \
   --config scalardb.properties \
   --mode TRANSACTION \
   --namespace <NAMESPACE_NAME> \
@@ -557,7 +557,7 @@ java -jar scalardb-cluster-data-loader-<VERSION>-all.jar import \
   <TabItem value="direct" label="データベース直接アクセス">
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar import \
+java -jar scalardb-data-loader-<X.Y.Z>.jar import \
   --config scalardb.properties \
   --mode TRANSACTION \
   --namespace <NAMESPACE_NAME> \
@@ -580,7 +580,7 @@ java -jar scalardb-data-loader-<VERSION>.jar import \
   <TabItem value="cluster" label="ScalarDB Cluster" default>
 
 ```console
-java -jar scalardb-cluster-data-loader-<VERSION>-all.jar import \
+java -jar scalardb-cluster-data-loader-<X.Y.Z>-all.jar import \
   --config scalardb.properties \
   --mode TRANSACTION \
   --file <FILE_PATH>.json \
@@ -592,7 +592,7 @@ java -jar scalardb-cluster-data-loader-<VERSION>-all.jar import \
   <TabItem value="direct" label="データベース直接アクセス">
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar import \
+java -jar scalardb-data-loader-<X.Y.Z>.jar import \
   --config scalardb.properties \
   --mode TRANSACTION \
   --file <FILE_PATH>.json \
@@ -611,7 +611,7 @@ java -jar scalardb-data-loader-<VERSION>.jar import \
   <TabItem value="cluster" label="ScalarDB Cluster" default>
 
 ```console
-java -jar scalardb-cluster-data-loader-<VERSION>-all.jar import \
+java -jar scalardb-cluster-data-loader-<X.Y.Z>-all.jar import \
   --config scalardb.properties \
   --mode TRANSACTION \
   --namespace <NAMESPACE_NAME> \
@@ -625,7 +625,7 @@ java -jar scalardb-cluster-data-loader-<VERSION>-all.jar import \
   <TabItem value="direct" label="データベース直接アクセス">
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar import \
+java -jar scalardb-data-loader-<X.Y.Z>.jar import \
   --config scalardb.properties \
   --mode TRANSACTION \
   --namespace <NAMESPACE_NAME> \
@@ -928,7 +928,7 @@ Data Loader は3つのエクスポート形式をサポートしています: JS
   <TabItem value="cluster" label="ScalarDB Cluster" default>
 
 ```console
-java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
+java -jar scalardb-cluster-data-loader-<X.Y.Z>-all.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -939,7 +939,7 @@ java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
   <TabItem value="direct" label="データベース直接アクセス">
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar export \
+java -jar scalardb-data-loader-<X.Y.Z>.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -977,7 +977,7 @@ java -jar scalardb-data-loader-<VERSION>.jar export \
   <TabItem value="cluster" label="ScalarDB Cluster" default>
 
 ```console
-java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
+java -jar scalardb-cluster-data-loader-<X.Y.Z>-all.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -988,7 +988,7 @@ java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
   <TabItem value="direct" label="データベース直接アクセス">
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar export \
+java -jar scalardb-data-loader-<X.Y.Z>.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -1016,7 +1016,7 @@ java -jar scalardb-data-loader-<VERSION>.jar export \
   <TabItem value="cluster" label="ScalarDB Cluster" default>
 
 ```console
-java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
+java -jar scalardb-cluster-data-loader-<X.Y.Z>-all.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -1027,7 +1027,7 @@ java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
   <TabItem value="direct" label="データベース直接アクセス">
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar export \
+java -jar scalardb-data-loader-<X.Y.Z>.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -1093,7 +1093,7 @@ scalar.db.cross_partition_scan.enabled=true
   <TabItem value="cluster" label="ScalarDB Cluster" default>
 
 ```console
-java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
+java -jar scalardb-cluster-data-loader-<X.Y.Z>-all.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -1105,7 +1105,7 @@ java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
   <TabItem value="direct" label="データベース直接アクセス">
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar export \
+java -jar scalardb-data-loader-<X.Y.Z>.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -1124,7 +1124,7 @@ java -jar scalardb-data-loader-<VERSION>.jar export \
   <TabItem value="cluster" label="ScalarDB Cluster" default>
 
 ```console
-java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
+java -jar scalardb-cluster-data-loader-<X.Y.Z>-all.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -1135,7 +1135,7 @@ java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
   <TabItem value="direct" label="データベース直接アクセス">
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar export \
+java -jar scalardb-data-loader-<X.Y.Z>.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -1153,7 +1153,7 @@ java -jar scalardb-data-loader-<VERSION>.jar export \
   <TabItem value="cluster" label="ScalarDB Cluster" default>
 
 ```console
-java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
+java -jar scalardb-cluster-data-loader-<X.Y.Z>-all.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -1164,7 +1164,7 @@ java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
   <TabItem value="direct" label="データベース直接アクセス">
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar export \
+java -jar scalardb-data-loader-<X.Y.Z>.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -1182,7 +1182,7 @@ java -jar scalardb-data-loader-<VERSION>.jar export \
   <TabItem value="cluster" label="ScalarDB Cluster" default>
 
 ```console
-java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
+java -jar scalardb-cluster-data-loader-<X.Y.Z>-all.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -1193,7 +1193,7 @@ java -jar scalardb-cluster-data-loader-<VERSION>-all.jar export \
   <TabItem value="direct" label="データベース直接アクセス">
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar export \
+java -jar scalardb-data-loader-<X.Y.Z>.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \

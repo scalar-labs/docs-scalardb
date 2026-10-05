@@ -169,10 +169,10 @@ ScalarDB Cluster は、バックエンドデータベースとして何らかの
    -n default
    ```
 
-5. ScalarDB Cluster のチャートバージョンを設定します。
+5. ScalarDB Cluster のチャートバージョンを設定します。`<X.Y.Z>` は使用したい ScalarDB Cluster のバージョンに置き換えてください。
 
    ```console
-   SCALAR_DB_CLUSTER_VERSION=3.19.0
+   SCALAR_DB_CLUSTER_VERSION=<X.Y.Z>
    SCALAR_DB_CLUSTER_CHART_VERSION=$(helm search repo scalar-labs/scalardb-cluster -l | grep -F "${SCALAR_DB_CLUSTER_VERSION}" | awk '{print $2}' | sort --version-sort -r | head -n 1)
    ```
 

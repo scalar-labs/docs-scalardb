@@ -41,12 +41,12 @@ Schema Loader で一般的な CLI オプションを指定するには、次の2
     次のコマンドを実行し、山括弧内の内容を説明に従って置き換えることで、[Scalar コンテナーレジストリ](https://github.com/orgs/scalar-labs/packages/container/package/scalardb-schema-loader) から Docker イメージを取得できます。
 
     ```console
-    docker run --rm -v <PATH_TO_YOUR_LOCAL_SCALARDB_PROPERTIES_FILE>:/scalardb.properties -v <PATH_TO_YOUR_LOCAL_SCHEMA_FILE>:/schema.json ghcr.io/scalar-labs/scalardb-schema-loader:<VERSION> --config /scalardb.properties --schema-file /schema.json <OTHER_COMMAND_ARGUMENTS>
+    docker run --rm -v <PATH_TO_YOUR_LOCAL_SCALARDB_PROPERTIES_FILE>:/scalardb.properties -v <PATH_TO_YOUR_LOCAL_SCHEMA_FILE>:/schema.json ghcr.io/scalar-labs/scalardb-schema-loader:<X.Y.Z> --config /scalardb.properties --schema-file /schema.json <OTHER_COMMAND_ARGUMENTS>
     ```
 
 :::note
 
-fat JAR やコンテナを使用する場合でも、同じコマンド引数を指定できます。[利用可能なコマンド](#利用可能なコマンド)セクションでは JAR が使用されていますが、`java -jar scalardb-schema-loader-<VERSION>.jar` を `docker run --rm -v <PATH_TO_YOUR_LOCAL_SCHEMA_FILE>:<PATH_TO_SCHEMA_FILE_DOCKER> [-v <PATH_TO_LOCAL_SCALARDB_PROPERTIES_FILE>:<PATH_TO_SCALARDB_PROPERTIES_FILE_IN_DOCKER>] ghcr.io/scalar-labs/scalardb-schema-loader:<VERSION>` に置き換えることで、コンテナを使用して同様にコマンドを実行できます。
+fat JAR やコンテナを使用する場合でも、同じコマンド引数を指定できます。[利用可能なコマンド](#利用可能なコマンド)セクションでは JAR が使用されていますが、`java -jar scalardb-schema-loader-<X.Y.Z>.jar` を `docker run --rm -v <PATH_TO_YOUR_LOCAL_SCHEMA_FILE>:<PATH_TO_SCHEMA_FILE_DOCKER> [-v <PATH_TO_LOCAL_SCALARDB_PROPERTIES_FILE>:<PATH_TO_SCALARDB_PROPERTIES_FILE_IN_DOCKER>] ghcr.io/scalar-labs/scalardb-schema-loader:<X.Y.Z>` に置き換えることで、コンテナを使用して同様にコマンドを実行できます。
 
 :::
   </TabItem>
@@ -63,7 +63,7 @@ fat JAR やコンテナを使用する場合でも、同じコマンド引数を
 プロパティファイルを使用する場合、次のコマンドを使用できます。
 
 ```console
-Usage: java -jar scalardb-schema-loader-<VERSION>.jar [-D] [--coordinator]
+Usage: java -jar scalardb-schema-loader-<X.Y.Z>.jar [-D] [--coordinator]
        [--no-backup] [--no-scaling] -c=<configPath>
        [--compaction-strategy=<compactionStrategy>] [-f=<schemaFile>]
        [--replication-factor=<replicaFactor>]
@@ -113,7 +113,7 @@ Create/Delete schemas in the storage defined in the config file
 <Tabs groupId="databases" queryString>
   <TabItem value="JDBC_databases" label="JDBC データベース" default>
     ```console
-    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --jdbc [-D]
+    Usage: java -jar scalardb-schema-loader-<X.Y.Z>.jar --jdbc [-D]
           -f=<schemaFile> -j=<url> -p=<password> -u=<user>
     Create/Delete JDBC schemas
       -A, --alter         Alter tables : it will add new columns and create/delete
@@ -134,7 +134,7 @@ Create/Delete schemas in the storage defined in the config file
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     ```console
-    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --dynamo [-D]
+    Usage: java -jar scalardb-schema-loader-<X.Y.Z>.jar --dynamo [-D]
           [--no-backup] [--no-scaling] [--endpoint-override=<endpointOverride>]
           -f=<schemaFile> -p=<awsSecKey> [-r=<ru>] --region=<awsRegion>
           -u=<awsKeyId>
@@ -162,7 +162,7 @@ Create/Delete schemas in the storage defined in the config file
   </TabItem>
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     ```console
-    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --cosmos [-D]
+    Usage: java -jar scalardb-schema-loader-<X.Y.Z>.jar --cosmos [-D]
           [--no-scaling] -f=<schemaFile> -h=<uri> -p=<key> [-r=<ru>]
     Create/Delete Cosmos DB schemas
       -A, --alter         Alter tables : it will add new columns and create/delete
@@ -184,7 +184,7 @@ Create/Delete schemas in the storage defined in the config file
   </TabItem>
   <TabItem value="Cassandra" label="Cassandra">
     ```console
-    Usage: java -jar scalardb-schema-loader-<VERSION>.jar --cassandra [-D]
+    Usage: java -jar scalardb-schema-loader-<X.Y.Z>.jar --cassandra [-D]
           [-c=<compactionStrategy>] -f=<schemaFile> -h=<hostIp>
           [-n=<replicationStrategy>] [-p=<password>] [-P=<port>]
           [-R=<replicationFactor>] [-u=<user>]
@@ -222,7 +222,7 @@ Create/Delete schemas in the storage defined in the config file
 プロパティファイルを使用して名前空間とテーブルを作成するには、山括弧内の内容を説明に従って置き換えて、次のコマンドを実行します。
 
 ```console
-java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator]
+java -jar scalardb-schema-loader-<X.Y.Z>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator]
 ```
 
 `--coordinator` が指定されている場合は、[Coordinator テーブル](api-guide.mdx#coordinator-テーブルの操作を指定する)が作成されます。[グループコミット](consensus-commit.mdx#グループコミット)または [Coordinator の書き込みセットのロギング](consensus-commit.mdx#coordinator-の書き込みセットのロギング)が有効になっている場合、このコマンドは、有効になっている各機能が必要とする追加の列を持つ Coordinator テーブルを作成します。
@@ -234,12 +234,12 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
 <Tabs groupId="databases" queryString>
   <TabItem value="JDBC_databases" label="JDBC データベース" default>
     ```console
-    java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE>
+    java -jar scalardb-schema-loader-<X.Y.Z>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE>
     ```
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     ```console
-    java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> [-r BASE_RESOURCE_UNIT]
+    java -jar scalardb-schema-loader-<X.Y.Z>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> [-r BASE_RESOURCE_UNIT]
     ```
 
     - `<REGION>` は、`ap-northeast-1` のような AWS リージョンを指定する文字列である必要があります。
@@ -247,7 +247,7 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
   </TabItem>
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     ```console
-    java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> [-r BASE_RESOURCE_UNIT]
+    java -jar scalardb-schema-loader-<X.Y.Z>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> [-r BASE_RESOURCE_UNIT]
     ```
 
     - `<COSMOS_DB_FOR_NOSQL_KEY>` では、主キーまたはセカンダリキーを使用できます。
@@ -255,7 +255,7 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
   </TabItem>
   <TabItem value="Cassandra" label="Cassandra">
     ```console
-    java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> [-n <NETWORK_STRATEGY>] [-R <REPLICATION_FACTOR>]
+    java -jar scalardb-schema-loader-<X.Y.Z>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> [-n <NETWORK_STRATEGY>] [-R <REPLICATION_FACTOR>]
     ```
 
     - `-P <CASSANDRA_PORT>` が指定されていない場合、デフォルトで `9042` になります。
@@ -274,7 +274,7 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
 既存のテーブルに新しい列を追加したり、セカンダリインデックスを作成または削除したりするには、次のコマンドを実行し、山括弧内の内容を説明に従って置き換えます。
 
 ```console
-java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> --alter
+java -jar scalardb-schema-loader-<X.Y.Z>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> --alter
 ```
 
 :::note
@@ -284,22 +284,22 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
 <Tabs groupId="databases" queryString>
   <TabItem value="JDBC_databases" label="JDBC データベース" default>
     ```console
-    java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> --alter
+    java -jar scalardb-schema-loader-<X.Y.Z>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> --alter
     ```
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     ```console
-    java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> --alter
+    java -jar scalardb-schema-loader-<X.Y.Z>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> --alter
     ```
   </TabItem>
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     ```console
-    java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> --alter
+    java -jar scalardb-schema-loader-<X.Y.Z>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> --alter
     ```
   </TabItem>
   <TabItem value="Cassandra" label="Cassandra">
     ```console
-    java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> --alter
+    java -jar scalardb-schema-loader-<X.Y.Z>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> --alter
     ```
   </TabItem>
 </Tabs>
@@ -311,7 +311,7 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
 プロパティファイルを使用してテーブルを削除できます。テーブルを削除するには、次のコマンドを実行し、山括弧内の内容を説明に従って置き換えます。
 
 ```console
-java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator] -D
+java -jar scalardb-schema-loader-<X.Y.Z>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator] -D
 ```
 
 `--coordinator` が指定されている場合は、Coordinator テーブルも削除されます。
@@ -323,22 +323,22 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
 <Tabs groupId="databases" queryString>
   <TabItem value="JDBC_databases" label="JDBC データベース" default>
     ```console
-    java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> -D
+    java -jar scalardb-schema-loader-<X.Y.Z>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> -D
     ```
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     ```console
-    java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> -D
+    java -jar scalardb-schema-loader-<X.Y.Z>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> -f <PATH_TO_SCHEMA_FILE> -D
     ```
   </TabItem>
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     ```console
-    java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> -D
+    java -jar scalardb-schema-loader-<X.Y.Z>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> -D
     ```
   </TabItem>
   <TabItem value="Cassandra" label="Cassandra">
     ```console
-    java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> -D
+    java -jar scalardb-schema-loader-<X.Y.Z>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> -D
     ```
   </TabItem>
 </Tabs>
@@ -350,7 +350,7 @@ java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPER
 プロパティファイルを使用して、名前空間とテーブルを修復できます。名前空間とテーブルを修復する理由は、名前空間またはテーブルが基盤となるストレージに存在するが、その ScalarDB メタデータが存在しない、またはその逆など、それらが不明な状態になる可能性があるためです。名前空間、テーブル、セカンダリインデックス、およびそれらのメタデータを修復するには、必要に応じてそれらを再作成する必要があります。それらを修復するには、次のコマンドを実行し、説明されているように山括弧内の内容を置き換えます。
 
 ```console
-java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator] --repair-all
+java -jar scalardb-schema-loader-<X.Y.Z>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator] --repair-all
 ```
 
 :::warning
@@ -370,22 +370,22 @@ Coordinator テーブルを作成した後に[グループコミット](consensu
 <Tabs groupId="databases" queryString>
   <TabItem value="JDBC_databases" label="JDBC データベース" default>
     ```console
-    java -jar scalardb-schema-loader-<VERSION>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> --repair-all
+    java -jar scalardb-schema-loader-<X.Y.Z>.jar --jdbc -j <JDBC_URL> -u <USER> -p <PASSWORD> -f <PATH_TO_SCHEMA_FILE> --repair-all
     ```
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     ```console
-    java -jar scalardb-schema-loader-<VERSION>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> [--no-backup] -f <PATH_TO_SCHEMA_FILE> --repair-all
+    java -jar scalardb-schema-loader-<X.Y.Z>.jar --dynamo -u <AWS_ACCESS_KEY_ID> -p <AWS_ACCESS_SECRET_KEY> --region <REGION> [--no-backup] -f <PATH_TO_SCHEMA_FILE> --repair-all
     ```
   </TabItem>
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     ```console
-    java -jar scalardb-schema-loader-<VERSION>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> --repair-all
+    java -jar scalardb-schema-loader-<X.Y.Z>.jar --cosmos -h <COSMOS_DB_FOR_NOSQL_ACCOUNT_URI> -p <COSMOS_DB_FOR_NOSQL_KEY> -f <PATH_TO_SCHEMA_FILE> --repair-all
     ```
   </TabItem>
   <TabItem value="Cassandra" label="Cassandra">
     ```console
-    java -jar scalardb-schema-loader-<VERSION>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> --repair-all
+    java -jar scalardb-schema-loader-<X.Y.Z>.jar --cassandra -h <CASSANDRA_IP> [-P <CASSANDRA_PORT>] [-u <CASSANDRA_USER>] [-p <CASSANDRA_PASSWORD>] -f <PATH_TO_SCHEMA_FILE> --repair-all
     ```
   </TabItem>
 </Tabs>
@@ -401,7 +401,7 @@ Coordinator テーブルを作成した後に[グループコミット](consensu
 ScalarDB 環境をアップグレードして、最新バージョンの ScalarDB API をサポートすることができます。通常、リリースノートに記載されているように、アプリケーション環境で使用する ScalarDB バージョンを更新した後、このコマンドを実行する必要があります。次のコマンドを実行するときは、説明されているように山括弧内の内容を必ず置き換えてください。
 
 ```console
-java -jar scalardb-schema-loader-<VERSION>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> --upgrade
+java -jar scalardb-schema-loader-<X.Y.Z>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> --upgrade
 ```
 
 ### サンプルスキーマファイル
@@ -623,11 +623,11 @@ ScalarDB は、既存のテーブルをデータテーブルと想定し、次�
 
 ## アプリケーションで Schema Loader を使用する
 
-[Maven Central Repository](https://mvnrepository.com/artifact/com.scalar-labs/scalardb-schema-loader) から Schema Loader のバージョンを確認できます。たとえば、Gradle では、`build.gradle` ファイルに次の依存関係を追加し、`<VERSION>` を使用する Schema Loader のバージョンに置き換えます。
+[Maven Central Repository](https://mvnrepository.com/artifact/com.scalar-labs/scalardb-schema-loader) から Schema Loader のバージョンを確認できます。たとえば、Gradle では、`build.gradle` ファイルに次の依存関係を追加し、`<X.Y.Z>` を使用する Schema Loader のバージョンに置き換えます。
 
 ```gradle
 dependencies {
-    implementation 'com.scalar-labs:scalardb-schema-loader:<VERSION>'
+    implementation 'com.scalar-labs:scalardb-schema-loader:<X.Y.Z>'
 }
 ```
 
