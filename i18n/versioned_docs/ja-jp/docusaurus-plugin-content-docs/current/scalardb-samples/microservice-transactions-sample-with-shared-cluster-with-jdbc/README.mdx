@@ -143,12 +143,12 @@ docker compose up -d mysql cassandra scalardb-cluster-node
 
 サンプルアプリケーションのデータベーススキーマ (データがどのように整理されるかの方法) は、すでに [`schema.sql`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transaction-sample-with-shared-cluster-with-jdbc/schema.sql) で定義されています。
 
-スキーマを適用するには、ScalarDB の[リリース](https://github.com/scalar-labs/scalardb/releases)に移動し、使用する ScalarDB Cluster のバージョンの SQL CLI ツール (`scalardb-cluster-sql-cli-<VERSION>-all.jar`) をダウンロードします。
+スキーマを適用するには、ScalarDB の[リリース](https://github.com/scalar-labs/scalardb/releases)に移動し、使用する ScalarDB Cluster のバージョンの SQL CLI ツール (`scalardb-cluster-sql-cli-<X.Y.Z>-all.jar`) をダウンロードします。
 
-次に、ダウンロードした SQL CLI ツールのバージョンと `<VERSION>` を置き換えて、次のコマンドを実行します。
+次に、ダウンロードした SQL CLI ツールのバージョンと `<X.Y.Z>` を置き換えて、次のコマンドを実行します。
 
 ```console
-java -jar scalardb-cluster-sql-cli-<VERSION>-all.jar --config scalardb-cluster-sql-cli.properties --file schema.sql
+java -jar scalardb-cluster-sql-cli-<X.Y.Z>-all.jar --config scalardb-cluster-sql-cli.properties --file schema.sql
 ```
 
 #### スキーマの詳細
@@ -173,10 +173,10 @@ java -jar scalardb-cluster-sql-cli-<VERSION>-all.jar --config scalardb-cluster-s
 
 各マイクロサービスのアクセス制御を実装するには、サービスのユーザーを作成し、権限を付与する必要があります。
 
-ダウンロードした SQL CLI ツールのバージョンと `<VERSION>` を置き換えて、次のコマンドを実行します。
+ダウンロードした SQL CLI ツールのバージョンと `<X.Y.Z>` を置き換えて、次のコマンドを実行します。
 
 ```console
-java -jar scalardb-cluster-sql-cli-<VERSION>-all.jar --config scalardb-cluster-sql-cli.properties --file user-privileges.sql
+java -jar scalardb-cluster-sql-cli-<X.Y.Z>-all.jar --config scalardb-cluster-sql-cli.properties --file user-privileges.sql
 ```
 
 [`user-privileges.sql`](https://github.com/scalar-labs/scalardb-samples/tree/main/microservice-transaction-sample-with-shared-cluster-with-jdbc/user-privileges.sql) に示されているように、Customer Service と Order Service のユーザーを作成し、権限を付与します。

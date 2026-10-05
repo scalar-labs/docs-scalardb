@@ -180,7 +180,7 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
 
 ### 2. Docker Compose ファイルの作成
 
-`docker-compose.yaml` という名前の設定ファイルを作成し、以下の設定を追加します。
+`docker-compose.yaml` という名前の設定ファイルを作成し、以下の設定を追加します。`<X.Y.Z>` は使用したい ScalarDB Cluster のバージョンに置き換えてください。
 
 ```yaml
 services:
@@ -215,7 +215,7 @@ services:
 
   scalardb-cluster-standalone:
     container_name: "scalardb-cluster-node"
-    image: "ghcr.io/scalar-labs/scalardb-cluster-node-with-abac-byol-premium:3.19.0"
+    image: "ghcr.io/scalar-labs/scalardb-cluster-node-with-abac-byol-premium:<X.Y.Z>"
     ports:
       - 60053:60053
       - 9080:9080
@@ -248,7 +248,7 @@ docker compose ps
 
 ### 4. ABAC ポリシーの設定と OIDC ユーザーの作成
 
-ScalarDB Cluster に接続するため、このチュートリアルでは SQL CLI を使用します。SQL CLI は ScalarDB Cluster に接続して SQL クエリを実行するツールです。SQL CLI は [ScalarDB リリースページ](https://github.com/scalar-labs/scalardb/releases)からダウンロードできます。
+ScalarDB Cluster に接続するため、このチュートリアルでは SQL CLI を使用します。SQL CLI は ScalarDB Cluster に接続して SQL クエリを実行するツールです。使用している ScalarDB Cluster のバージョンに一致する SQL CLI を [ScalarDB リリースページ](https://github.com/scalar-labs/scalardb/releases)からダウンロードしてください。
 
 `scalardb-cluster-sql-cli.properties` という名前の設定ファイルを作成し、以下の設定を追加します。
 
@@ -260,10 +260,10 @@ scalar.db.sql.cluster_mode.contact_points=indirect:localhost
 scalar.db.cluster.auth.enabled=true
 ```
 
-以下のコマンドを実行して SQL CLI を開始します。プロンプトが表示されたら、ユーザー名とパスワードをそれぞれ `admin` と `admin` として入力します。
+以下のコマンドを実行して SQL CLI を開始します。`<X.Y.Z>` は事前にダウンロードしたバージョンに置き換えてください。プロンプトが表示されたら、ユーザー名とパスワードをそれぞれ `admin` と `admin` として入力します。
 
 ```console
-java -jar scalardb-cluster-sql-cli-3.19.0-all.jar --config scalardb-cluster-sql-cli.properties
+java -jar scalardb-cluster-sql-cli-<X.Y.Z>-all.jar --config scalardb-cluster-sql-cli.properties
 ```
 
 次に、以下の SQL 文を実行して ABAC ポリシーを設定し、OIDC ユーザーを作成します。
@@ -642,12 +642,12 @@ Java コードで OIDC プロバイダーから JWT アクセストークンを�
 
 #### ビルド設定
 
-ScalarDB Cluster Java Client SDK をプロジェクトの依存関係に追加します。例えば、Gradle の場合:
+ScalarDB Cluster Java Client SDK をプロジェクトの依存関係に追加します。`<X.Y.Z>` は使用したいバージョンに置き換えてください。例えば、Gradle の場合:
 
 ```groovy
 dependencies {
-    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:3.19.0'
-    implementation 'com.scalar-labs:scalardb-sql-jdbc:3.19.0'
+    implementation 'com.scalar-labs:scalardb-cluster-java-client-sdk:<X.Y.Z>'
+    implementation 'com.scalar-labs:scalardb-sql-jdbc:<X.Y.Z>'
 }
 ```
 

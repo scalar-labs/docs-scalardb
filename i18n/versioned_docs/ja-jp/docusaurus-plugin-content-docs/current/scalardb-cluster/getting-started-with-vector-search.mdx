@@ -412,14 +412,14 @@ scalar.db.embedding.models.model2.open-ai.api_key=<API_KEY>
 
 ### 2. Docker Compose ファイルを作成する
 
-以下の設定ファイルを `docker-compose.yaml` として作成してください。
+以下の設定ファイルを `docker-compose.yaml` として作成してください。`<X.Y.Z>` は使用したい ScalarDB Cluster のバージョンに置き換えてください。
 
 ```yaml
 services:
 
   scalardb-cluster-standalone:
     container_name: "scalardb-cluster-node"
-    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:3.19.0"
+    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:<X.Y.Z>"
     ports:
       - 60053:60053
       - 9080:9080
@@ -445,22 +445,22 @@ ScalarDB Cluster Embedding Java Client SDK ライブラリは [Maven Central Rep
 
 <Tabs groupId="build_tools" queryString>
   <TabItem value="gradle" label="Gradle" default>
-    ScalarDB Cluster Embedding Java Client SDK のビルド依存関係を Gradle を使用して追加するには、アプリケーションの `build.gradle` に次の内容を追加します。
+    ScalarDB Cluster Embedding Java Client SDK のビルド依存関係を Gradle を使用して追加するには、アプリケーションの `build.gradle` に次の内容を追加します。`<X.Y.Z>` は使用したい ScalarDB Cluster Embedding Java Client SDK のバージョンに置き換えてください。
 
     ```gradle
     dependencies {
-      implementation 'com.scalar-labs:scalardb-cluster-embedding-java-client-sdk:3.19.0'
+      implementation 'com.scalar-labs:scalardb-cluster-embedding-java-client-sdk:<X.Y.Z>'
     }
     ```
   </TabItem>
   <TabItem value="maven" label="Maven">
-    ScalarDB Cluster Embedding Java Client SDK のビルド依存関係を Maven を使用して追加するには、アプリケーションの `pom.xml` に次の内容を追加します。
+    ScalarDB Cluster Embedding Java Client SDK のビルド依存関係を Maven を使用して追加するには、アプリケーションの `pom.xml` に次の内容を追加します。`<X.Y.Z>` は使用したい ScalarDB Cluster Embedding Java Client SDK のバージョンに置き換えてください。
 
     ```xml
     <dependency>
       <groupId>com.scalar-labs</groupId>
       <artifactId>scalardb-cluster-embedding-java-client-sdk</artifactId>
-      <version>3.19.0</version>
+      <version><X.Y.Z></version>
     </dependency>
     ```
   </TabItem>
