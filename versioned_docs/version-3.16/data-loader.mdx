@@ -122,20 +122,31 @@ Data Loader supports three file formats: JSON, JSONL (JSON Lines), and CSV. The 
       --format CSV
     ```
 
+    This command imports the CSV file into the specified table using default settings (INSERT mode, automatic field mapping).
 
-```console
-java -jar scalardb-cluster-data-loader-<X.Y.Z>-all.jar import \
-  --config scalardb.properties \
-  --mode TRANSACTION \
-  --namespace <NAMESPACE_NAME> \
-  --table <TABLE_NAME> \
-  --file <FILE_PATH>.json \
-  --format JSON \
-  --import-mode UPDATE
-```
+    **Example CSV file format:**
 
+    ```csv
+    id,name,price
+    1,Product A,100
+    2,Product B,200
+    ```
+
+:::note
+
+The CSV file must include a header row with column names that match your table columns. If your CSV file doesn't have a header row, use the `--header` flag to specify column names.
+
+:::
   </TabItem>
-  <TabItem value="direct" label="Direct database access">
+</Tabs>
+
+### Common import scenarios
+
+This section describes common import scenarios.
+
+#### Update existing records instead of inserting new ones
+
+To update existing records instead of inserting new ones, run the following command, replacing the contents of the angle brackets as described:
 
 ```console
 java -jar scalardb-data-loader-<X.Y.Z>.jar import \
