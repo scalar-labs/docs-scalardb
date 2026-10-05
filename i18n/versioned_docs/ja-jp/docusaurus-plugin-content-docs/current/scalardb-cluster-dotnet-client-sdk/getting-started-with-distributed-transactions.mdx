@@ -69,6 +69,12 @@ var transaction = await manager.BeginAsync();
 var transaction = manager.Resume(transactionIdString);
 ```
 
+:::warning 非推奨の通知
+
+`Resume` メソッドは ScalarDB 3.19 以降非推奨となり、将来のリリースで削除される予定です。
+
+:::
+
 :::note
 
 `Resume` メソッドはトランザクションオブジェクトを作成するだけなので、非同期バージョンはありません。このため、間違った ID を使用してトランザクションを再開する可能性があります。
