@@ -225,7 +225,7 @@ To create catalogs and register data sources on the ScalarDB Analytics server, u
 
 ### Set up a Pod for the CLI tool
 
-Create a manifest file for the CLI tool Pod.
+Create a manifest file for the CLI tool Pod, replacing `<X.Y.Z>` with the ScalarDB Analytics version you want to use.
 
 ```shell
 cat <<EOF > analytics-server-cli.yaml
@@ -236,7 +236,7 @@ metadata:
 spec:
   containers:
     - name: analytics-server-cli
-      image: ghcr.io/scalar-labs/scalardb-analytics-cli:3.18.0
+      image: ghcr.io/scalar-labs/scalardb-analytics-cli:<X.Y.Z>
       command: ['sleep']
       args: ['inf']
   restartPolicy: Never
