@@ -38,7 +38,7 @@ Data Loader を使用する前に、以下が必要です:
 ## Data Loader のセットアップ
 
 1. [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) ページから最新の Data Loader リリースをダウンロードします。
-2. 以下のコマンドを実行して、`<VERSION>` をバージョン番号に置き換えてインストールを確認します:
+2. 以下のコマンドを実行して、`<X.Y.Z>` をバージョン番号に置き換えてインストールを確認します:
 
 ```console
 java -jar scalardb-data-loader-<X.Y.Z>.jar --help
@@ -586,15 +586,16 @@ java -jar scalardb-data-loader-<X.Y.Z>.jar export \
 特定のカラムのみをエクスポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
 
 ```console
-java -jar scalardb-cluster-data-loader-<X.Y.Z>-all.jar export \
+java -jar scalardb-data-loader-<X.Y.Z>.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
-  --partition-key <KEY_NAME>=<VALUE>
+  --projection <COLUMN1>,<COLUMN2>,<COLUMN3>
 ```
 
-  </TabItem>
-  <TabItem value="direct" label="データベース直接アクセス">
+#### 特定のパーティションキーのデータをエクスポート
+
+特定のパーティションキーのデータをエクスポートするには、以下のコマンドを実行し、角括弧内の内容を説明どおりに置き換えます:
 
 ```console
 java -jar scalardb-data-loader-<X.Y.Z>.jar export \
