@@ -154,7 +154,7 @@ scalar.db.cluster.node.licensing.license_check_cert_pem=<LICENSE_CHECK_CERT_PEM>
 
 ### Step 3. Create the Docker Compose configuration file
 
-Create the following configuration file as `docker-compose.yaml`.
+Create the following configuration file as `docker-compose.yaml`, replacing `<X.Y.Z>` with the version of ScalarDB Cluster that you want to use.
 
 ```yaml
 services:
@@ -185,7 +185,7 @@ services:
 
   scalardb-cluster-standalone:
     container_name: "scalardb-cluster-node"
-    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:3.16.6"
+    image: "ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium:<X.Y.Z>"
     ports:
       - 60053:60053
       - 9080:9080
@@ -231,7 +231,7 @@ It may take a few minutes for ScalarDB Cluster to fully start.
 
 ### Step 7. Connect to ScalarDB Cluster
 
-To connect to ScalarDB Cluster, this tutorial uses the SQL CLI, a tool for connecting to ScalarDB Cluster and executing SQL queries. You can download the SQL CLI from the [ScalarDB releases page](https://github.com/scalar-labs/scalardb/releases).
+To connect to ScalarDB Cluster, this tutorial uses the SQL CLI, a tool for connecting to ScalarDB Cluster and executing SQL queries. Download the version of the SQL CLI that matches the version of ScalarDB Cluster that you're using from the [ScalarDB releases page](https://github.com/scalar-labs/scalardb/releases).
 
 Create a configuration file named `scalardb-cluster-sql-cli.properties`. This file will be used to connect to ScalarDB Cluster by using the SQL CLI.
 
@@ -240,10 +240,10 @@ scalar.db.sql.connection_mode=cluster
 scalar.db.sql.cluster_mode.contact_points=indirect:localhost
 ```
 
-Then, start the SQL CLI by running the following command.
+Then, start the SQL CLI by running the following command, replacing `<X.Y.Z>` with the version that you previously downloaded.
 
 ```console
-java -jar scalardb-cluster-sql-cli-3.16.6-all.jar --config scalardb-cluster-sql-cli.properties
+java -jar scalardb-cluster-sql-cli-<X.Y.Z>-all.jar --config scalardb-cluster-sql-cli.properties
 ```
 
 To begin, create the Coordinator tables required for ScalarDB transaction execution.
