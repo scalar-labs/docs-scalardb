@@ -63,7 +63,7 @@ For production deployments, configure metering storage to use object storage (fo
 
 ### Start the ScalarDB Analytics server
 
-Start the ScalarDB Analytics server with your configuration:
+Start the ScalarDB Analytics server with your configuration, replacing `<X.Y.Z>` with the ScalarDB Analytics version you want to use. You can find available versions at the [container registry page](https://github.com/scalar-labs/scalardb-analytics/pkgs/container/scalardb-analytics-server-byol).
 
 ```console
 docker run -d \
@@ -71,10 +71,8 @@ docker run -d \
   -p 11051:11051 \
   -p 11052:11052 \
   -v /path/to/scalardb-analytics-server.properties:/scalardb-analytics-server/server.properties \
-  ghcr.io/scalar-labs/scalardb-analytics-server:<VERSION>
+  ghcr.io/scalar-labs/scalardb-analytics-server:<X.Y.Z>
 ```
-
-Replace `<VERSION>` with the ScalarDB Analytics version you want to use. You can find available versions at the [container registry page](https://github.com/scalar-labs/scalardb-analytics/pkgs/container/scalardb-analytics-server-byol).
 
 The container uses the configuration file at `/scalardb-analytics-server/server.properties` by default.
 
@@ -114,14 +112,12 @@ For details, see the [ScalarDB Analytics CLI Command Reference](./reference-cli-
 
 ### Install the CLI
 
-The `scalardb-analytics-cli` tool is available as a container image:
+The `scalardb-analytics-cli` tool is available as a container image. Replace `<X.Y.Z>` with the ScalarDB Analytics version you want to use. Available versions can be found at the [container registry page](https://github.com/scalar-labs/scalardb-analytics/pkgs/container/scalardb-analytics-cli).
 
 ```console
 # Pull the CLI image
-docker pull ghcr.io/scalar-labs/scalardb-analytics-cli:<VERSION>
+docker pull ghcr.io/scalar-labs/scalardb-analytics-cli:<X.Y.Z>
 ```
-
-Replace `<VERSION>` with the ScalarDB Analytics version you want to use. Available versions can be found at the [container registry page](https://github.com/scalar-labs/scalardb-analytics/pkgs/container/scalardb-analytics-cli).
 
 To run CLI commands, you'll need to mount your configuration file into the container:
 
@@ -129,7 +125,7 @@ To run CLI commands, you'll need to mount your configuration file into the conta
 # Example: List catalogs
 docker run --rm \
   -v $(pwd)/client.properties:/config/client.properties:ro \
-  ghcr.io/scalar-labs/scalardb-analytics-cli:<VERSION> \
+  ghcr.io/scalar-labs/scalardb-analytics-cli:<X.Y.Z> \
   -c /config/client.properties \
   catalog list
 ```
@@ -157,7 +153,7 @@ For detailed configuration options, see [ScalarDB Analytics Configurations](./co
 For convenience, you can create an alias to avoid typing the long Docker command each time:
 
 ```console
-alias scalardb-analytics-cli='docker run --rm -v $(pwd)/client.properties:/config/client.properties:ro ghcr.io/scalar-labs/scalardb-analytics-cli:<VERSION> -c /config/client.properties'
+alias scalardb-analytics-cli='docker run --rm -v $(pwd)/client.properties:/config/client.properties:ro ghcr.io/scalar-labs/scalardb-analytics-cli:<X.Y.Z> -c /config/client.properties'
 ```
 
 With this alias, you can run commands more simply:

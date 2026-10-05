@@ -22,7 +22,7 @@ import Link from '@docusaurus/Link';
 */}
 
 export const baseCommand = (extraFlags) =>
-  `java -jar scalardb-schema-loader-<VERSION>.jar --config database.properties --schema-file schema.json --coordinator${extraFlags ? ' ' + extraFlags : ''}`;
+  `java -jar scalardb-schema-loader-<X.Y.Z>.jar --config database.properties --schema-file schema.json --coordinator${extraFlags ? ' ' + extraFlags : ''}`;
 
 export const loaderCommand = (extraFlags) => (
   <CodeBlock language="console">{baseCommand(extraFlags)}</CodeBlock>

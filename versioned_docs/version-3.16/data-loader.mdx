@@ -34,10 +34,10 @@ Before using Data Loader, make sure you have the following:
 ## Set up Data Loader
 
 1. Download the latest Data Loader release from the [ScalarDB Releases](https://github.com/scalar-labs/scalardb/releases) page.
-2. Verify the installation by running the following command, replacing `<VERSION>` with the version number:
+2. Verify the installation by running the following command, replacing `<X.Y.Z>` with the version number:
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar --help
+java -jar scalardb-data-loader-<X.Y.Z>.jar --help
 ```
 
 If successful, you'll see the list of available commands and options.
@@ -59,7 +59,7 @@ Data Loader supports three file formats: JSON, JSONL (JSON Lines), and CSV. The 
     To import a JSON file into your table, run the following command, replacing the contents of the angle brackets as described:
 
     ```console
-    java -jar scalardb-data-loader-<VERSION>.jar import \
+    java -jar scalardb-data-loader-<X.Y.Z>.jar import \
       --config scalardb.properties \
       --namespace <NAMESPACE_NAME> \
       --table <TABLE_NAME> \
@@ -91,7 +91,7 @@ Data Loader supports three file formats: JSON, JSONL (JSON Lines), and CSV. The 
     To import a JSONL file into your table, run the following command, replacing the contents of the angle brackets as described:
 
     ```console
-    java -jar scalardb-data-loader-<VERSION>.jar import \
+    java -jar scalardb-data-loader-<X.Y.Z>.jar import \
       --config scalardb.properties \
       --namespace <NAMESPACE_NAME> \
       --table <TABLE_NAME> \
@@ -114,7 +114,7 @@ Data Loader supports three file formats: JSON, JSONL (JSON Lines), and CSV. The 
     To import a CSV file into your table, run the following command, replacing the contents of the angle brackets as described:
 
     ```console
-    java -jar scalardb-data-loader-<VERSION>.jar import \
+    java -jar scalardb-data-loader-<X.Y.Z>.jar import \
       --config scalardb.properties \
       --namespace <NAMESPACE_NAME> \
       --table <TABLE_NAME> \
@@ -122,34 +122,23 @@ Data Loader supports three file formats: JSON, JSONL (JSON Lines), and CSV. The 
       --format CSV
     ```
 
-    This command imports the CSV file into the specified table using default settings (INSERT mode, automatic field mapping).
-
-    **Example CSV file format:**
-
-    ```csv
-    id,name,price
-    1,Product A,100
-    2,Product B,200
-    ```
-
-:::note
-
-The CSV file must include a header row with column names that match your table columns. If your CSV file doesn't have a header row, use the `--header` flag to specify column names.
-
-:::
-  </TabItem>
-</Tabs>
-
-### Common import scenarios
-
-This section describes common import scenarios.
-
-#### Update existing records instead of inserting new ones
-
-To update existing records instead of inserting new ones, run the following command, replacing the contents of the angle brackets as described:
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar import \
+java -jar scalardb-cluster-data-loader-<X.Y.Z>-all.jar import \
+  --config scalardb.properties \
+  --mode TRANSACTION \
+  --namespace <NAMESPACE_NAME> \
+  --table <TABLE_NAME> \
+  --file <FILE_PATH>.json \
+  --format JSON \
+  --import-mode UPDATE
+```
+
+  </TabItem>
+  <TabItem value="direct" label="Direct database access">
+
+```console
+java -jar scalardb-data-loader-<X.Y.Z>.jar import \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -164,7 +153,7 @@ If your source file fields don't match your table column names, you can use a co
 To import with custom field mapping using a control file, run the following command, replacing the contents of the angle brackets as described:
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar import \
+java -jar scalardb-data-loader-<X.Y.Z>.jar import \
   --config scalardb.properties \
   --file <FILE>.json \
   --control-file <CONTROL_FILE>.json
@@ -175,7 +164,7 @@ java -jar scalardb-data-loader-<VERSION>.jar import \
 To import CSV data with a custom delimiter, run the following command, replacing the contents of the angle brackets as described
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar import \
+java -jar scalardb-data-loader-<X.Y.Z>.jar import \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -481,7 +470,7 @@ Data Loader supports three export formats: JSON, JSONL (JSON Lines), and CSV. Th
     To export a table to JSON format, run the following command, replacing the contents of the angle brackets as described:
 
     ```console
-    java -jar scalardb-data-loader-<VERSION>.jar export \
+    java -jar scalardb-data-loader-<X.Y.Z>.jar export \
       --config scalardb.properties \
       --namespace <NAMESPACE_NAME> \
       --table <TABLE_NAME> \
@@ -513,7 +502,7 @@ Data Loader supports three export formats: JSON, JSONL (JSON Lines), and CSV. Th
     To export a table to JSONL (JSON Lines) format, run the following command, replacing the contents of the angle brackets as described:
 
     ```console
-    java -jar scalardb-data-loader-<VERSION>.jar export \
+    java -jar scalardb-data-loader-<X.Y.Z>.jar export \
       --config scalardb.properties \
       --namespace <NAMESPACE_NAME> \
       --table <TABLE_NAME> \
@@ -535,7 +524,7 @@ Data Loader supports three export formats: JSON, JSONL (JSON Lines), and CSV. Th
     To export a table to CSV format, run the following command, replacing the contents of the angle brackets as described:
 
     ```console
-    java -jar scalardb-data-loader-<VERSION>.jar export \
+    java -jar scalardb-data-loader-<X.Y.Z>.jar export \
       --config scalardb.properties \
       --namespace <NAMESPACE_NAME> \
       --table <TABLE_NAME> \
@@ -569,7 +558,7 @@ The following are some common data-exporting scenarios.
 To export data to a specific file and format, run the following command, replacing the contents of the angle brackets as described:
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar export \
+java -jar scalardb-data-loader-<X.Y.Z>.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -582,7 +571,7 @@ java -jar scalardb-data-loader-<VERSION>.jar export \
 To export specific columns only, run the following command, replacing the contents of the angle brackets as described:
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar export \
+java -jar scalardb-data-loader-<X.Y.Z>.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -594,7 +583,7 @@ java -jar scalardb-data-loader-<VERSION>.jar export \
 To export data for a specific partition key, run the following command, replacing the contents of the angle brackets as described:
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar export \
+java -jar scalardb-data-loader-<X.Y.Z>.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
@@ -606,7 +595,7 @@ java -jar scalardb-data-loader-<VERSION>.jar export \
 To export with a row limit, run the following command, replacing the contents of the angle brackets as described:
 
 ```console
-java -jar scalardb-data-loader-<VERSION>.jar export \
+java -jar scalardb-data-loader-<X.Y.Z>.jar export \
   --config scalardb.properties \
   --namespace <NAMESPACE_NAME> \
   --table <TABLE_NAME> \
