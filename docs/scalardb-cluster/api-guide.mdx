@@ -11,7 +11,7 @@ import JavadocLink from '/src/theme/JavadocLink.js';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-The ScalarDB Cluster Java API is composed of the Administrative API and Transaction API, which are part of ScalarDB Core, as well as additional APIs specific to ScalarDB Cluster. This guide explains what kinds of APIs exist, how to use them, and related topics like how to handle exceptions.
+The ScalarDB Cluster Java API is composed of the Administrative API and Transaction API, which are part of ScalarDB Core, as well as additional APIs specific to ScalarDB Cluster, such as the Microservice Transaction API. This guide explains what kinds of APIs exist, how to use them, and related topics like how to handle exceptions.
 
 ## Administrative API
 
@@ -898,7 +898,7 @@ Set<AuthAdmin.Privilege> tablePrivileges = admin.getRolePrivileges("rolename", "
 
 :::
 
-For details about handling failures from these APIs, see [Handle authentication and authorization exceptions](#handle-authentication-and-authorization-exceptions).
+For details about handling failures from these APIs, see [Authentication and authorization exceptions](#authentication-and-authorization-exceptions).
 
 ## Transaction API
 
@@ -967,7 +967,7 @@ When you specify a transaction ID, make sure you specify a unique ID (for exampl
 
 ##### Begin or start a transaction in read-only mode
 
-You can also begin or start a transaction in read-only mode. In this case, the transaction will not allow any write operations, and it will be optimized for read operations.
+You can also begin or start a transaction in read-only mode. In this case, the transaction will not allow any write operations, and ScalarDB may optimize it for read operations.
 
 :::note
 
@@ -2369,6 +2369,331 @@ List<Result> scanResult = batchResults.get(1).getScanResult(); // Result of the 
 
 For details about the Batch operation, see [Batch operation](#batch-operation).
 
+## Microservice Transaction API
+
+This section explains how to execute a transaction that spans multiple processes by using the Microservice Transaction API in ScalarDB. The API consists of the `GlobalTransactionManager`, `GlobalTransaction`, and `BranchTransaction` interfaces.
+
+A global transaction is a single transaction that is made up of one or more branches. Each branch runs in its own process (for example, one process per microservice) and executes CRUD operations on its own data. The transaction is begun once, each branch joins it by using the transaction ID, and the transaction is then committed or rolled back as a whole, so the work of all the branches either takes effect together or not at all.
+
+A global transaction has two kinds of handles:
+
+- **`GlobalTransaction`:** The overall handle that drives the outcome of the transaction. This handle does not execute CRUD operations.
+- **`BranchTransaction`:** The handle for one branch of the transaction, which executes the CRUD operations for that branch.
+
+For more details, see the <JavadocLink packageName="scalardb" path="com/scalar/db/api" className="GlobalTransactionManager" />, <JavadocLink packageName="scalardb" path="com/scalar/db/api" className="GlobalTransaction" />, and <JavadocLink packageName="scalardb" path="com/scalar/db/api" className="BranchTransaction" /> pages in the Javadoc.
+
+### Get a `GlobalTransactionManager` instance
+
+You first need to get a `GlobalTransactionManager` instance to execute global transactions. Every process that takes part in a global transaction needs its own instance.
+
+To get a `GlobalTransactionManager` instance, you can use `TransactionFactory` as follows:
+
+```java
+TransactionFactory transactionFactory = TransactionFactory.create("<CONFIGURATION_FILE_PATH>");
+GlobalTransactionManager transactionManager = transactionFactory.getGlobalTransactionManager();
+```
+
+After you have executed all global transactions, you should close the `GlobalTransactionManager` instance as follows:
+
+```java
+transactionManager.close();
+```
+
+### Execute global transactions
+
+This subsection explains how to execute a global transaction. One process begins the transaction, each process begins its own branch and executes CRUD operations in it, each branch is ended, and then the process that began the transaction commits or rolls it back.
+
+#### Begin or start a global transaction
+
+Only one process begins the global transaction, and that same process later commits or rolls it back. The other processes only begin their own branches.
+
+You can begin a global transaction as follows:
+
+```java
+// Begin a global transaction.
+GlobalTransaction globalTransaction = transactionManager.begin();
+```
+
+Or, you can start a global transaction as follows:
+
+```java
+// Start a global transaction.
+GlobalTransaction globalTransaction = transactionManager.start();
+```
+
+ScalarDB generates the transaction ID for you. Because every branch needs that ID, you should read it by using `getId()` and pass it to the other processes as follows:
+
+```java
+// Get the ID of the global transaction.
+String transactionId = globalTransaction.getId();
+```
+
+##### Begin or start a global transaction in read-only mode
+
+You can also begin or start a global transaction in read-only mode. In this case, the transaction will not allow any write operations, and ScalarDB may optimize it for read operations.
+
+:::note
+
+Using read-only transactions for read-only operations is strongly recommended to improve performance and reduce resource usage.
+
+:::
+
+You can begin or start a global transaction in read-only mode as follows:
+
+```java
+// Begin a global transaction in read-only mode.
+GlobalTransaction globalTransaction = transactionManager.beginReadOnly();
+```
+
+```java
+// Start a global transaction in read-only mode.
+GlobalTransaction globalTransaction = transactionManager.startReadOnly();
+```
+
+##### Begin or start a global transaction with attributes
+
+You can specify a map of transaction-scoped attributes when beginning or starting a global transaction. The specified attributes are merged into every operation issued within the transaction, so configuration that should apply uniformly across the whole transaction can be specified once at begin time. If an operation already has the same attribute key, the attribute on the operation takes precedence.
+
+You can begin or start a global transaction with attributes as follows:
+
+```java
+// Specify attributes for the global transaction.
+Map<String, String> attributes = ...;
+
+// Begin a global transaction with attributes.
+GlobalTransaction globalTransaction = transactionManager.begin(attributes);
+```
+
+```java
+// Start a global transaction with attributes.
+GlobalTransaction globalTransaction = transactionManager.start(attributes);
+```
+
+The `beginReadOnly` and `startReadOnly` methods also have overloads that accept attributes:
+
+```java
+// Begin a global transaction in read-only mode with attributes.
+GlobalTransaction globalTransaction = transactionManager.beginReadOnly(attributes);
+```
+
+```java
+// Start a global transaction in read-only mode with attributes.
+GlobalTransaction globalTransaction = transactionManager.startReadOnly(attributes);
+```
+
+For the list of available attributes, see [Operation attributes](#operation-attributes).
+
+#### Begin or start a branch
+
+Each process that executes CRUD operations in the global transaction begins its own branch by specifying the ID of the global transaction.
+
+You can begin a branch as follows:
+
+```java
+// Begin a branch of the global transaction.
+BranchTransaction branch = transactionManager.beginBranch("<TRANSACTION_ID>");
+```
+
+Or, you can start a branch as follows:
+
+```java
+// Start a branch of the global transaction.
+BranchTransaction branch = transactionManager.startBranch("<TRANSACTION_ID>");
+```
+
+:::note
+
+The process that begins the global transaction also needs to begin a branch if it executes CRUD operations, since the `GlobalTransaction` handle does not execute CRUD operations.
+
+:::
+
+To get the ID of the global transaction that a branch belongs to, you can use `getId()` as follows:
+
+```java
+// Get the ID of the global transaction that this branch belongs to.
+String transactionId = branch.getId();
+```
+
+##### Begin or start a branch with attributes
+
+You can specify a map of per-branch attributes when beginning or starting a branch. The specified attributes are attached to every operation issued on that branch. If an operation already has the same attribute key, the attribute on the operation takes precedence. Likewise, if the same attribute key is also specified for the global transaction, the per-branch attribute takes precedence. In other words, the narrower scope always takes precedence.
+
+You can begin or start a branch with attributes as follows:
+
+```java
+// Specify attributes for the branch.
+Map<String, String> attributes = ...;
+
+// Begin a branch with attributes.
+BranchTransaction branch = transactionManager.beginBranch("<TRANSACTION_ID>", attributes);
+```
+
+```java
+// Start a branch with attributes.
+BranchTransaction branch = transactionManager.startBranch("<TRANSACTION_ID>", attributes);
+```
+
+For the list of available attributes, see [Operation attributes](#operation-attributes).
+
+#### Implement CRUD operations in a branch
+
+The CRUD operations for `BranchTransaction` are the same as the operations for `DistributedTransaction`. For details, see [Implement CRUD operations](#implement-crud-operations).
+
+Close every `Scanner` object that you obtain from a branch before you end the branch. For details, see [End a branch](#end-a-branch).
+
+#### End a branch
+
+After a branch has executed its last CRUD operation, you need to end the branch, declaring the outcome of its work. Ending a branch does not commit the transaction, since the outcome is still driven by the global transaction.
+
+If the work of the branch succeeded, you can end the branch as follows:
+
+```java
+// End the branch, declaring that its work succeeded.
+branch.end(BranchTransaction.Status.SUCCESS);
+```
+
+If the work of the branch failed, you can end the branch as follows:
+
+```java
+// End the branch, declaring that its work failed.
+branch.end(BranchTransaction.Status.FAILURE);
+```
+
+:::warning
+
+When ending a branch, keep the following in mind:
+
+- The process that runs a branch must end it exactly once, on both the success path and the failure path. A process that also drives the outcome of the transaction is not exempt, since committing or rolling back the transaction only reaches the branches that the same `GlobalTransactionManager` instance began.
+- `BranchTransaction.Status.SUCCESS` rejects a branch that has already been ended, and requires that every `Scanner` object that you obtained from the branch has been closed. Otherwise, ending the branch throws `IllegalStateException`.
+- `BranchTransaction.Status.FAILURE` is lenient so that you can call it from a `catch` clause. Ending a branch that has already been ended does nothing, and an open `Scanner` object is accepted.
+- Close every `Scanner` object that you obtained from the branch before you end the branch. Do not close one after ending the branch. If you use a try-with-resources statement, end the branch after the block exits, since the `Scanner` object is not closed until then. A `Scanner` object that is left open is closed when the transaction is rolled back.
+- Executing a CRUD operation on a branch that has already been ended throws `IllegalStateException`, whichever outcome you declared.
+
+:::
+
+#### Commit a global transaction
+
+After all the branches have ended, the process that began the global transaction commits it to make the writes of all the branches durable as a whole.
+
+You can commit a global transaction as follows:
+
+```java
+// Commit a global transaction.
+globalTransaction.commit();
+```
+
+:::warning
+
+Commit a global transaction only after every branch has ended with `BranchTransaction.Status.SUCCESS`. If a branch ended with `BranchTransaction.Status.FAILURE`, roll back the transaction instead.
+
+ScalarDB does not detect a violation of this rule. No error is raised when you commit after a branch has ended with `BranchTransaction.Status.FAILURE`, and if you commit while a branch is still working, that branch's partial work may be committed: the commit proceeds with the writes that have been staged so far, and an operation that arrives late is rejected without stopping a commit that is already in flight.
+
+:::
+
+#### Roll back or abort a global transaction
+
+If an error occurs when executing a global transaction, you can roll back or abort the transaction. Doing so discards the writes of all its branches. However, it does not end the branches. Each process that began a branch must still end it with `BranchTransaction.Status.FAILURE`.
+
+You can roll back a global transaction as follows:
+
+```java
+// Roll back a global transaction.
+globalTransaction.rollback();
+```
+
+Or, you can abort a global transaction as follows:
+
+```java
+// Abort a global transaction.
+globalTransaction.abort();
+```
+
+For details about how to handle exceptions in ScalarDB, see [How to handle exceptions](#how-to-handle-exceptions).
+
+### Execute a global transaction across processes
+
+This subsection shows how the pieces fit together when a global transaction spans two processes.
+
+The first process begins the global transaction, works on its own branch, passes the transaction ID to the second process, and then commits the transaction:
+
+```java
+// In a method that declares throws TransactionException (or wider).
+TransactionFactory transactionFactory = TransactionFactory.create("<CONFIGURATION_FILE_PATH>");
+GlobalTransactionManager transactionManager = transactionFactory.getGlobalTransactionManager();
+
+// Begin a global transaction.
+GlobalTransaction globalTransaction = transactionManager.begin();
+
+BranchTransaction branch = null;
+try {
+  // Execute CRUD operations in this process's own branch, and then end the branch.
+  branch = transactionManager.beginBranch(globalTransaction.getId());
+  Optional<Result> result = branch.get(...);
+  branch.insert(...);
+  branch.end(BranchTransaction.Status.SUCCESS);
+
+  // Pass the transaction ID to the second process, for example, in an RPC call, and wait until
+  // its branch has executed its CRUD operations and has been ended.
+  callSecondProcess(globalTransaction.getId());
+
+  // Commit the global transaction as a whole.
+  globalTransaction.commit();
+} catch (UnknownTransactionStatusException e) {
+  // The status of the global transaction, whether it was committed or not, is unknown. Check
+  // whether it was committed before deciding how to proceed, and do not roll it back blindly.
+} catch (Exception e) {
+  // End this process's own branch, declaring that its work failed.
+  if (branch != null) {
+    try {
+      branch.end(BranchTransaction.Status.FAILURE);
+    } catch (CrudException ex) {
+      // Ending the branch failed. The global transaction is rolled back below, so you don't need
+      // to do anything further. You can simply log the occurrence here.
+    }
+  }
+
+  // Roll back the global transaction, which discards the writes of all its branches.
+  try {
+    globalTransaction.rollback();
+  } catch (RollbackException ex) {
+    // Rolling back the global transaction failed. Since the transaction should eventually recover,
+    // you don't need to do anything further. You can simply log the occurrence here.
+  }
+}
+```
+
+The second process begins a branch by using the transaction ID that it received, and executes only CRUD operations. Committing and rolling back stay with the first process:
+
+```java
+// In a method that declares throws TransactionException (or wider).
+TransactionFactory transactionFactory = TransactionFactory.create("<CONFIGURATION_FILE_PATH>");
+GlobalTransactionManager transactionManager = transactionFactory.getGlobalTransactionManager();
+
+// Begin a branch of the global transaction by using the transaction ID that was received.
+BranchTransaction branch = transactionManager.beginBranch(transactionId);
+
+try {
+  // Execute CRUD operations in the branch, and then end the branch.
+  Optional<Result> result = branch.get(...);
+  branch.insert(...);
+  branch.end(BranchTransaction.Status.SUCCESS);
+} catch (Exception e) {
+  // End the branch, declaring that its work failed.
+  try {
+    branch.end(BranchTransaction.Status.FAILURE);
+  } catch (CrudException ex) {
+    // Ending the branch failed. The process that began the global transaction rolls it back, so
+    // you don't need to do anything further. You can simply log the occurrence here.
+  }
+
+  throw e;
+}
+
+// Return to the caller, which commits or rolls back the global transaction.
+```
+
+If a CRUD operation in the branch fails, end the branch with `BranchTransaction.Status.FAILURE` and let the exception propagate to the process that began the global transaction so that it can roll the transaction back.
+
 ## How to handle exceptions
 
 When executing a transaction, you will also need to handle exceptions properly.
@@ -2378,6 +2703,75 @@ When executing a transaction, you will also need to handle exceptions properly.
 If you don't handle exceptions properly, you may face anomalies or data inconsistency.
 
 :::
+
+### Exceptions
+
+This section describes each exception that the APIs described in this guide can throw and what the exception indicates.
+
+#### `TransactionException` and `TransactionNotFoundException`
+
+The `begin()`, `beginReadOnly()`, and `beginBranch()` APIs could throw `TransactionException` or `TransactionNotFoundException`:
+
+- If you catch `TransactionException`, this exception indicates that the transaction has failed to begin due to transient or non-transient faults. You can retry the transaction, but you may not be able to begin the transaction due to non-transient faults.
+- If you catch `TransactionNotFoundException`, this exception indicates that the transaction has failed to begin due to transient faults. In this case, you can retry the transaction.
+
+The `start()`, `startReadOnly()`, and `startBranch()` methods are aliases of `begin()`, `beginReadOnly()`, and `beginBranch()`, respectively, so they throw the same exceptions as the methods that they are aliases of.
+
+#### `CrudException` and `CrudConflictException`
+
+The APIs for CRUD operations (`get()`, `scan()`, `put()`, `delete()`, and `mutate()`) could throw `CrudException` or `CrudConflictException`:
+
+- If you catch `CrudException`, this exception indicates that the transaction CRUD operation has failed due to transient or non-transient faults. You can retry the transaction from the beginning, but the transaction may still fail if the cause is non-transient.
+- If you catch `CrudConflictException`, this exception indicates that the transaction CRUD operation has failed due to transient faults (for example, a conflict error). In this case, you can retry the transaction from the beginning.
+
+The `end(Status)` API could also throw these exceptions. You can handle them in the same way that you handle the exceptions for the CRUD operations.
+
+#### `UnsatisfiedConditionException`
+
+The APIs for mutation operations (`put()`, `delete()`, and `mutate()`) could also throw `UnsatisfiedConditionException`.
+
+If you catch `UnsatisfiedConditionException`, this exception indicates that the condition for the mutation operation is not met. You can handle this exception according to your application requirements.
+
+#### `CommitException`, `CommitConflictException`, and `UnknownTransactionStatusException`
+
+The `commit()` API could throw `CommitException`, `CommitConflictException`, or `UnknownTransactionStatusException`:
+
+- If you catch `CommitException`, this exception indicates that committing the transaction fails due to transient or non-transient faults. You can retry the transaction from the beginning, but the transaction may still fail if the cause is non-transient.
+- If you catch `CommitConflictException`, this exception indicates that committing the transaction has failed due to transient faults (for example, a conflict error). In this case, you can retry the transaction from the beginning.
+- If you catch `UnknownTransactionStatusException`, this exception indicates that the status of the transaction, whether it was successful or not, is unknown. In this case, you need to check if the transaction is committed successfully and retry the transaction if it has failed.
+
+How to identify a transaction status is delegated to users. You may want to create a transaction status table and update it transactionally with other application data so that you can get the status of a transaction from the status table.
+
+#### `RollbackException` and `AbortException`
+
+The `rollback()` API could throw `RollbackException`, and the `abort()` API, which is an alias of `rollback()`, could throw `AbortException`. Both exceptions indicate that rolling back the transaction failed due to transient or non-transient faults.
+
+If you catch either exception, the transaction should eventually recover, so you don't need to do anything further. You can simply log the occurrence.
+
+#### Authentication and authorization exceptions
+
+When authentication and authorization are enabled, an operation can fail because the current user isn't authenticated or doesn't have the required privilege. The Administrative API, Transaction API, and Microservice Transaction API report such failures through the same four methods:
+
+- `isAuthenticationError()` returns `true` if the current user isn't authenticated.
+- `isAuthorizationError()` returns `true` if the current user doesn't have the required privilege.
+- `isSuperuserRequired()` returns `true` if the operation requires superuser privileges.
+- `getRequiredPrivilege()` returns the privilege that the operation requires, if the failure was caused by a missing privilege.
+
+For the Administrative API, these methods are on `ExecutionException`. For the Transaction API and the Microservice Transaction API, they are on `TransactionException` and its subclasses. For example, if the current user doesn't have the `READ` privilege on a table, `get()` throws `CrudException` for which `isAuthorizationError()` returns `true`.
+
+For details about authentication and authorization status codes, see [Authentication and Authorization Error Codes](./scalardb-auth-status-codes.mdx).
+
+### Examples
+
+In the following examples, for `UnknownTransactionStatusException`, the transaction is not retried because the application must check if the transaction was successful to avoid potential duplicate operations. For other exceptions, the transaction is retried because the cause of the exception is transient or non-transient. If the cause of the exception is transient, the transaction may succeed if you retry it. However, if the cause of the exception is non-transient, the transaction will still fail even if you retry it. In such a case, you will exhaust the number of retries.
+
+:::note
+
+In the following examples, the transaction is attempted three times maximum and sleeps for 100 milliseconds before each retry. But you can choose a retry policy, such as exponential backoff, according to your application requirements.
+
+:::
+
+#### Transaction API example
 
 The following sample code shows how to handle exceptions:
 
@@ -2392,8 +2786,8 @@ public class Sample {
 
     while (true) {
       if (retryCount++ > 0) {
-        // Retry the transaction three times maximum.
-        if (retryCount >= 3) {
+        // Attempt the transaction three times maximum.
+        if (retryCount > 3) {
           // Throw the last exception if the number of retries exceeds the maximum.
           throw lastException;
         }
@@ -2410,7 +2804,7 @@ public class Sample {
         // Execute CRUD operations in the transaction.
         Optional<Result> result = transaction.get(...);
         List<Result> results = transaction.scan(...);
-        transaction.put(...);
+        transaction.insert(...);
         transaction.delete(...);
 
         // Commit the transaction.
@@ -2459,59 +2853,140 @@ public class Sample {
 }
 ```
 
-### `TransactionException` and `TransactionNotFoundException`
+#### Microservice Transaction API example
 
-The `begin()` API could throw `TransactionException` or `TransactionNotFoundException`:
+The following sample code shows how to handle exceptions when executing a global transaction. Because the outcome of the transaction is driven by the `GlobalTransaction` handle, the transaction is rolled back through that handle and not through a branch:
 
-- If you catch `TransactionException`, this exception indicates that the transaction has failed to begin due to transient or non-transient faults. You can retry the transaction, but you may not be able to begin the transaction due to non-transient faults.
-- If you catch `TransactionNotFoundException`, this exception indicates that the transaction has failed to begin due to transient faults. In this case, you can retry the transaction.
+```java
+public class Sample {
+  public static void main(String[] args) throws Exception {
+    TransactionFactory factory = TransactionFactory.create("<CONFIGURATION_FILE_PATH>");
+    GlobalTransactionManager transactionManager = factory.getGlobalTransactionManager();
 
-The `join()` API could also throw `TransactionNotFoundException`. You can handle this exception in the same way that you handle the exceptions for the `begin()` API.
+    int retryCount = 0;
+    TransactionException lastException = null;
 
-### `CrudException` and `CrudConflictException`
+    while (true) {
+      if (retryCount++ > 0) {
+        // Attempt the transaction three times maximum.
+        if (retryCount > 3) {
+          // Throw the last exception if the number of retries exceeds the maximum.
+          throw lastException;
+        }
 
-The APIs for CRUD operations (`get()`, `scan()`, `put()`, `delete()`, and `mutate()`) could throw `CrudException` or `CrudConflictException`:
+        // Sleep 100 milliseconds before retrying the transaction.
+        TimeUnit.MILLISECONDS.sleep(100);
+      }
 
-- If you catch `CrudException`, this exception indicates that the transaction CRUD operation has failed due to transient or non-transient faults. You can retry the transaction from the beginning, but the transaction may still fail if the cause is non-transient.
-- If you catch `CrudConflictException`, this exception indicates that the transaction CRUD operation has failed due to transient faults (for example, a conflict error). In this case, you can retry the transaction from the beginning.
+      GlobalTransaction globalTransaction = null;
+      BranchTransaction branch = null;
+      try {
+        // Begin a global transaction.
+        globalTransaction = transactionManager.begin();
 
-### `UnsatisfiedConditionException`
+        // Execute CRUD operations in this process's own branch, and then end the branch.
+        branch = transactionManager.beginBranch(globalTransaction.getId());
+        Optional<Result> result = branch.get(...);
+        branch.insert(...);
+        branch.delete(...);
+        branch.end(BranchTransaction.Status.SUCCESS);
 
-The APIs for mutation operations (`put()`, `delete()`, and `mutate()`) could also throw `UnsatisfiedConditionException`.
+        // Let the other processes execute CRUD operations in their own branches and end them.
+        callOtherProcesses(globalTransaction.getId());
 
-If you catch `UnsatisfiedConditionException`, this exception indicates that the condition for the mutation operation is not met. You can handle this exception according to your application requirements.
+        // Commit the global transaction.
+        globalTransaction.commit();
+      } catch (UnsatisfiedConditionException e) {
+        // You need to handle `UnsatisfiedConditionException` only if a mutation operation specifies a condition.
+        // This exception indicates the condition for the mutation operation is not met.
 
-### `CommitException`, `CommitConflictException`, and `UnknownTransactionStatusException`
+        // End this process's own branch, declaring that its work failed.
+        if (branch != null) {
+          try {
+            branch.end(BranchTransaction.Status.FAILURE);
+          } catch (CrudException ex) {
+            // Ending the branch failed. The global transaction is rolled back below, so you don't
+            // need to do anything further. You can simply log the occurrence here.
+          }
+        }
 
-The `commit()` API could throw `CommitException`, `CommitConflictException`, or `UnknownTransactionStatusException`:
+        try {
+          globalTransaction.rollback();
+        } catch (RollbackException ex) {
+          // Rolling back the global transaction failed. Since the transaction should eventually recover,
+          // you don't need to do anything further. You can simply log the occurrence here.
+        }
 
-- If you catch `CommitException`, this exception indicates that committing the transaction fails due to transient or non-transient faults. You can retry the transaction from the beginning, but the transaction may still fail if the cause is non-transient.
-- If you catch `CommitConflictException`, this exception indicates that committing the transaction has failed due to transient faults (for example, a conflict error). In this case, you can retry the transaction from the beginning.
-- If you catch `UnknownTransactionStatusException`, this exception indicates that the status of the transaction, whether it was successful or not, is unknown. In this case, you need to check if the transaction is committed successfully and retry the transaction if it has failed.
+        // You can handle the exception here, according to your application requirements.
 
-How to identify a transaction status is delegated to users. You may want to create a transaction status table and update it transactionally with other application data so that you can get the status of a transaction from the status table.
+        return;
+      } catch (UnknownTransactionStatusException e) {
+        // If you catch `UnknownTransactionStatusException` when committing the global transaction,
+        // it indicates that the status of the transaction, whether it was successful or not, is unknown.
+        // In such a case, you need to check if the transaction is committed successfully or not and
+        // retry the transaction if it failed. How to identify a transaction status is delegated to users.
+        return;
+      } catch (TransactionException e) {
+        // For other exceptions, you can retry the global transaction.
 
-### Notes about some exceptions
+        // For `CrudConflictException`, `CommitConflictException`, and `TransactionNotFoundException`,
+        // you can basically retry the transaction. However, for the other exceptions, the transaction
+        // will still fail if the cause of the exception is non-transient. In such a case, you will
+        // exhaust the number of retries.
 
-Although not illustrated in the sample code, the `resume()` API could also throw `TransactionNotFoundException`. This exception indicates that the transaction associated with the specified ID was not found and/or the transaction might have expired. In either case, you can retry the transaction from the beginning since the cause of this exception is basically transient.
+        // End this process's own branch, declaring that its work failed.
+        if (branch != null) {
+          try {
+            branch.end(BranchTransaction.Status.FAILURE);
+          } catch (CrudException ex) {
+            // Ending the branch failed. The global transaction is rolled back below, so you don't
+            // need to do anything further. You can simply log the occurrence here.
+          }
+        }
 
-In the sample code, for `UnknownTransactionStatusException`, the transaction is not retried because the application must check if the transaction was successful to avoid potential duplicate operations. For other exceptions, the transaction is retried because the cause of the exception is transient or non-transient. If the cause of the exception is transient, the transaction may succeed if you retry it. However, if the cause of the exception is non-transient, the transaction will still fail even if you retry it. In such a case, you will exhaust the number of retries.
+        if (globalTransaction != null) {
+          try {
+            globalTransaction.rollback();
+          } catch (RollbackException ex) {
+            // Rolling back the global transaction failed. The transaction should eventually recover,
+            // so you don't need to do anything further. You can simply log the occurrence here.
+          }
+        }
+
+        lastException = e;
+      } catch (Exception e) {
+        // The call to the other processes can fail with an exception that ScalarDB does not define,
+        // such as an RPC failure. Retrying does not necessarily help in that case, so this sample
+        // code cleans up and propagates the exception instead.
+
+        // End this process's own branch, declaring that its work failed.
+        if (branch != null) {
+          try {
+            branch.end(BranchTransaction.Status.FAILURE);
+          } catch (CrudException ex) {
+            // Ending the branch failed. The global transaction is rolled back below, so you don't
+            // need to do anything further. You can simply log the occurrence here.
+          }
+        }
+
+        if (globalTransaction != null) {
+          try {
+            globalTransaction.rollback();
+          } catch (RollbackException ex) {
+            // Rolling back the global transaction failed. The transaction should eventually recover,
+            // so you don't need to do anything further. You can simply log the occurrence here.
+          }
+        }
+
+        throw e;
+      }
+    }
+  }
+}
+```
 
 :::note
 
-In the sample code, the transaction is retried three times maximum and sleeps for 100 milliseconds before it is retried. But you can choose a retry policy, such as exponential backoff, according to your application requirements.
+Retrying a global transaction means retrying it from the beginning in every process that takes part in it, since rolling back the transaction discards the writes of all its branches.
 
 :::
-
-### Handle authentication and authorization exceptions
-
-When authentication and authorization are enabled, an operation can fail because the current user isn't authenticated or doesn't have the required privilege. Both the Administrative API and the Transaction API report such failures through the same four methods:
-
-- `isAuthenticationError()` returns `true` if the current user isn't authenticated.
-- `isAuthorizationError()` returns `true` if the current user doesn't have the required privilege.
-- `isSuperuserRequired()` returns `true` if the operation requires superuser privileges.
-- `getRequiredPrivilege()` returns the privilege that the operation requires, if the failure was caused by a missing privilege.
-
-For the Administrative API, these methods are on `ExecutionException`. For the Transaction API, they are on `TransactionException` and its subclasses. For example, if the current user doesn't have the `READ` privilege on a table, `get()` throws `CrudException` for which `isAuthorizationError()` returns `true`.
-
-For details about authentication and authorization status codes, see [Authentication and Authorization Error Codes](./scalardb-auth-status-codes.mdx).
