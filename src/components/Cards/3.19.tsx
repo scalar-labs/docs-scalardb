@@ -26,18 +26,18 @@ const recentFeatures = [
       // To add a label, use the format ['label1', 'label2'].
       {
         cell: 0, // First cell
-        links: ['scalardb-cluster/control-access-via-oidc-based-jwt-tokens'],
-        labels: ['Control User Access via OIDC-Based JWT Access Tokens']
+        links: ['docs/en-us/scalardb-cluster/api-guide/#microservice-transaction-api'],
+        labels: ['Microservice Transaction API [NEW]']
       },
       {
         cell: 1, // Second cell
-        links: ['scalardb-analytics/authentication-and-authorization'],
-        labels: ['Authenticate and Authorize Users in ScalarDB Analytics']
+        links: ['scalardb-samples/microservice-transaction-sample-with-cluster/README'],
+        labels: ['Run Microservice Transactions Samples Through Cluster [NEW]']
       },
       {
         cell: 2, // Third cell
-        links: ['consensus-commit#transaction-metadata-decoupling'],
-        labels: ['Transaction Metadata Decoupling']
+        links: ['scalardb-cluster/control-access-via-oidc-based-jwt-tokens'],
+        labels: ['Control User Access via OIDC-Based JWT Access Tokens']
       }
     ]
   }

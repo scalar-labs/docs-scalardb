@@ -280,7 +280,12 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalardb-samples/spring-data-microservice-transaction-sample/README',
-                  label: 'Use Spring Data JDBC to Run Microservice Transactions Samples',
+                  label: 'Use Spring Data JDBC to Run Microservice Transactions Samples [NEW]',
+                },
+                {
+                  type: 'doc',
+                  id: 'scalardb-samples/microservice-transaction-sample-with-cluster/README',
+                  label: 'Run Microservice Transactions Samples Through Cluster',
                 },
                 {
                   type: 'doc',
