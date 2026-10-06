@@ -574,7 +574,7 @@ When you specify a transaction ID, make sure you specify a unique ID (for exampl
 
 ##### Begin or start a transaction in read-only mode
 
-You can also begin or start a transaction in read-only mode. In this case, the transaction will not allow any write operations, and it will be optimized for read operations.
+You can also begin or start a transaction in read-only mode. In this case, the transaction will not allow any write operations, and ScalarDB may optimize it for read operations.
 
 :::note
 
@@ -1986,6 +1986,60 @@ If you don't handle exceptions properly, you may face anomalies or data inconsis
 
 :::
 
+### Exceptions
+
+This section describes each exception that the APIs described in this guide can throw and what the exception indicates.
+
+#### `TransactionException` and `TransactionNotFoundException`
+
+The `begin()` and `beginReadOnly()` APIs could throw `TransactionException` or `TransactionNotFoundException`:
+
+- If you catch `TransactionException`, this exception indicates that the transaction has failed to begin due to transient or non-transient faults. You can retry the transaction, but you may not be able to begin the transaction due to non-transient faults.
+- If you catch `TransactionNotFoundException`, this exception indicates that the transaction has failed to begin due to transient faults. In this case, you can retry the transaction.
+
+The `start()` and `startReadOnly()` methods are aliases of `begin()` and `beginReadOnly()`, respectively, so they throw the same exceptions as the methods that they are aliases of.
+
+#### `CrudException` and `CrudConflictException`
+
+The APIs for CRUD operations (`get()`, `scan()`, `put()`, `delete()`, and `mutate()`) could throw `CrudException` or `CrudConflictException`:
+
+- If you catch `CrudException`, this exception indicates that the transaction CRUD operation has failed due to transient or non-transient faults. You can retry the transaction from the beginning, but the transaction may still fail if the cause is non-transient.
+- If you catch `CrudConflictException`, this exception indicates that the transaction CRUD operation has failed due to transient faults (for example, a conflict error). In this case, you can retry the transaction from the beginning.
+
+#### `UnsatisfiedConditionException`
+
+The APIs for mutation operations (`put()`, `delete()`, and `mutate()`) could also throw `UnsatisfiedConditionException`.
+
+If you catch `UnsatisfiedConditionException`, this exception indicates that the condition for the mutation operation is not met. You can handle this exception according to your application requirements.
+
+#### `CommitException`, `CommitConflictException`, and `UnknownTransactionStatusException`
+
+The `commit()` API could throw `CommitException`, `CommitConflictException`, or `UnknownTransactionStatusException`:
+
+- If you catch `CommitException`, this exception indicates that committing the transaction fails due to transient or non-transient faults. You can retry the transaction from the beginning, but the transaction may still fail if the cause is non-transient.
+- If you catch `CommitConflictException`, this exception indicates that committing the transaction has failed due to transient faults (for example, a conflict error). In this case, you can retry the transaction from the beginning.
+- If you catch `UnknownTransactionStatusException`, this exception indicates that the status of the transaction, whether it was successful or not, is unknown. In this case, you need to check if the transaction is committed successfully and retry the transaction if it has failed.
+
+How to identify a transaction status is delegated to users. You may want to create a transaction status table and update it transactionally with other application data so that you can get the status of a transaction from the status table.
+
+#### `RollbackException` and `AbortException`
+
+The `rollback()` API could throw `RollbackException`, and the `abort()` API, which is an alias of `rollback()`, could throw `AbortException`. Both exceptions indicate that rolling back the transaction failed due to transient or non-transient faults.
+
+If you catch either exception, the transaction should eventually recover, so you don't need to do anything further. You can simply log the occurrence.
+
+### Examples
+
+In the following examples, for `UnknownTransactionStatusException`, the transaction is not retried because the application must check if the transaction was successful to avoid potential duplicate operations. For other exceptions, the transaction is retried because the cause of the exception is transient or non-transient. If the cause of the exception is transient, the transaction may succeed if you retry it. However, if the cause of the exception is non-transient, the transaction will still fail even if you retry it. In such a case, you will exhaust the number of retries.
+
+:::note
+
+In the following examples, the transaction is attempted three times maximum and sleeps for 100 milliseconds before each retry. But you can choose a retry policy, such as exponential backoff, according to your application requirements.
+
+:::
+
+#### Transaction API example
+
 The following sample code shows how to handle exceptions:
 
 ```java
@@ -1999,8 +2053,8 @@ public class Sample {
 
     while (true) {
       if (retryCount++ > 0) {
-        // Retry the transaction three times maximum.
-        if (retryCount >= 3) {
+        // Attempt the transaction three times maximum.
+        if (retryCount > 3) {
           // Throw the last exception if the number of retries exceeds the maximum.
           throw lastException;
         }
@@ -2017,7 +2071,7 @@ public class Sample {
         // Execute CRUD operations in the transaction.
         Optional<Result> result = transaction.get(...);
         List<Result> results = transaction.scan(...);
-        transaction.put(...);
+        transaction.insert(...);
         transaction.delete(...);
 
         // Commit the transaction.
@@ -2065,47 +2119,3 @@ public class Sample {
   }
 }
 ```
-
-### `TransactionException` and `TransactionNotFoundException`
-
-The `begin()` API could throw `TransactionException` or `TransactionNotFoundException`:
-
-- If you catch `TransactionException`, this exception indicates that the transaction has failed to begin due to transient or non-transient faults. You can retry the transaction, but you may not be able to begin the transaction due to non-transient faults.
-- If you catch `TransactionNotFoundException`, this exception indicates that the transaction has failed to begin due to transient faults. In this case, you can retry the transaction.
-
-The `join()` API could also throw `TransactionNotFoundException`. You can handle this exception in the same way that you handle the exceptions for the `begin()` API.
-
-### `CrudException` and `CrudConflictException`
-
-The APIs for CRUD operations (`get()`, `scan()`, `put()`, `delete()`, and `mutate()`) could throw `CrudException` or `CrudConflictException`:
-
-- If you catch `CrudException`, this exception indicates that the transaction CRUD operation has failed due to transient or non-transient faults. You can retry the transaction from the beginning, but the transaction may still fail if the cause is non-transient.
-- If you catch `CrudConflictException`, this exception indicates that the transaction CRUD operation has failed due to transient faults (for example, a conflict error). In this case, you can retry the transaction from the beginning.
-
-### `UnsatisfiedConditionException`
-
-The APIs for mutation operations (`put()`, `delete()`, and `mutate()`) could also throw `UnsatisfiedConditionException`.
-
-If you catch `UnsatisfiedConditionException`, this exception indicates that the condition for the mutation operation is not met. You can handle this exception according to your application requirements.
-
-### `CommitException`, `CommitConflictException`, and `UnknownTransactionStatusException`
-
-The `commit()` API could throw `CommitException`, `CommitConflictException`, or `UnknownTransactionStatusException`:
-
-- If you catch `CommitException`, this exception indicates that committing the transaction fails due to transient or non-transient faults. You can retry the transaction from the beginning, but the transaction may still fail if the cause is non-transient.
-- If you catch `CommitConflictException`, this exception indicates that committing the transaction has failed due to transient faults (for example, a conflict error). In this case, you can retry the transaction from the beginning.
-- If you catch `UnknownTransactionStatusException`, this exception indicates that the status of the transaction, whether it was successful or not, is unknown. In this case, you need to check if the transaction is committed successfully and retry the transaction if it has failed.
-
-How to identify a transaction status is delegated to users. You may want to create a transaction status table and update it transactionally with other application data so that you can get the status of a transaction from the status table.
-
-### Notes about some exceptions
-
-Although not illustrated in the sample code, the `resume()` API could also throw `TransactionNotFoundException`. This exception indicates that the transaction associated with the specified ID was not found and/or the transaction might have expired. In either case, you can retry the transaction from the beginning since the cause of this exception is basically transient.
-
-In the sample code, for `UnknownTransactionStatusException`, the transaction is not retried because the application must check if the transaction was successful to avoid potential duplicate operations. For other exceptions, the transaction is retried because the cause of the exception is transient or non-transient. If the cause of the exception is transient, the transaction may succeed if you retry it. However, if the cause of the exception is non-transient, the transaction will still fail even if you retry it. In such a case, you will exhaust the number of retries.
-
-:::note
-
-In the sample code, the transaction is retried three times maximum and sleeps for 100 milliseconds before it is retried. But you can choose a retry policy, such as exponential backoff, according to your application requirements.
-
-:::

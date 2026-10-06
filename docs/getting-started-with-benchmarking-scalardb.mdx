@@ -118,17 +118,11 @@ Before running benchmarks, configure ScalarDB with the performance parameters th
 
 ### Choose a deployment pattern
 
-:::warning Deprecation notice
-
-The two-phase commit (2PC) interface is deprecated as of ScalarDB 3.19 and will be removed in a future release.
-
-:::
-
 Choose a deployment pattern based on how your application uses ScalarDB. ScalarDB supports the following deployment patterns:
 
 - **ScalarDB Core (embedded):** The application or benchmark program embeds ScalarDB as a library. This pattern is the simplest to set up because it requires no separate server infrastructure. Use this pattern when you want to benchmark ScalarDB without the overhead of a cluster deployment.
-- **ScalarDB Cluster with a single cluster:** A single ScalarDB Cluster instance serves the application. This is the most common deployment pattern when using ScalarDB Cluster. Use this pattern for most benchmarking scenarios because it is simpler to manage and requires fewer resources. In microservice use cases, this pattern is called the *shared cluster pattern*, where all services share the single cluster instance and use the one-phase commit interface.
-- **ScalarDB Cluster with multiple clusters:** Each application or service has its own dedicated ScalarDB Cluster instance. Transactions that span multiple clusters use the two-phase commit interface, which adds complexity to transaction handling and error recovery but provides stronger resource isolation. Use this pattern only if you specifically need to evaluate cross-cluster transaction performance with the two-phase commit interface. In microservice use cases, this pattern is called the *separated cluster pattern*.
+- **ScalarDB Cluster with a single cluster:** A single ScalarDB Cluster instance serves the application. This is the most common deployment pattern when using ScalarDB Cluster. Use this pattern for most benchmarking scenarios because it is simpler to manage and requires fewer resources. In microservice use cases, this pattern is called the *shared-cluster pattern*, where all services share the single-cluster instance.
+- **ScalarDB Cluster with multiple clusters:** Each application or service has its own dedicated ScalarDB Cluster instance. Transactions that span multiple clusters need to be coordinated across those instances, which adds deployment and operational overhead but provides stronger resource isolation. Use this pattern only if you specifically need to evaluate cross-cluster transaction performance. In microservice use cases, this pattern is called the *separated-cluster pattern*.
 
 For details on microservice deployment patterns, see [ScalarDB Cluster deployment patterns for microservices](./scalardb-cluster/deployment-patterns-for-microservices.mdx).
 
@@ -197,6 +191,12 @@ Do not weaken the isolation level solely to improve benchmark throughput. If you
 #### Group commit
 
 Group commit batches multiple transactions' coordinator state writes into a single operation, which is particularly beneficial when the coordinator table resides in a remote or high-latency storage backend. Group commit is incompatible with the two-phase commit interface.
+
+:::warning Deprecation notice
+
+The two-phase commit (2PC) interface is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
 
 | Property | Default | Description |
 |----------|---------|-------------|
