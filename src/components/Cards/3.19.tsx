@@ -26,12 +26,12 @@ const recentFeatures = [
       // To add a label, use the format ['label1', 'label2'].
       {
         cell: 0, // First cell
-        links: ['docs/en-us/scalardb-cluster/api-guide/#microservice-transaction-api'],
+        links: ['scalardb-cluster/api-guide/#microservice-transaction-api'],
         labels: ['Microservice Transaction API [NEW]']
       },
       {
         cell: 1, // Second cell
-        links: ['scalardb-samples/microservice-transaction-sample-with-cluster/README'],
+        links: ['scalardb-samples/microservice-transaction-sample-with-cluster/'],
         labels: ['Run Microservice Transactions Samples Through Cluster [NEW]']
       },
       {
