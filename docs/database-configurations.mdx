@@ -6,7 +6,7 @@ tags:
 displayed_sidebar: docsEnglish
 ---
 
-# Configurations for the Underlying Databases of ScalarDB
+# Configure Databases for ScalarDB
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
@@ -15,9 +15,7 @@ This document explains how to configure the underlying databases of ScalarDB to 
 
 ## General requirements for the underlying databases
 
-ScalarDB requires each underlying database to provide certain capabilities to run transactions and analytics on the databases. This document explains the general requirements and how to configure each database to achieve the requirements.
-
-### Transactions
+ScalarDB requires each underlying database to provide certain capabilities to run transactions on the databases. This document explains the general requirements and how to configure each database to achieve the requirements.
 
 ScalarDB requires each underlying database to provide at least the following capabilities to run transactions on the databases:
 
@@ -25,31 +23,13 @@ ScalarDB requires each underlying database to provide at least the following cap
 - Durability of written database records.
 - Ability to store arbitrary data beside application data in each database record.
 
-### Analytics
-
-ScalarDB requires each underlying database to provide the following capability to run analytics on the databases:
-
-- Ability to return only committed records.
-
-:::note
-
-You need to have database accounts that have enough privileges to access the databases through ScalarDB since ScalarDB runs on the underlying databases not only for CRUD operations but also for performing operations like creating or altering schemas, tables, or indexes. ScalarDB basically requires a fully privileged account to access the underlying databases.
-
-:::
-
-## How to configure databases to achieve the general requirements
+## Configure databases to achieve the general requirements
 
 Select your database for details on how to configure it to achieve the general requirements.
 
 <Tabs groupId="databases" queryString>
   <TabItem value="JDBC_databases" label="JDBC databases" default>
-    <h4>Transactions</h4>
-
     - Use a single primary server or synchronized multi-primary servers for all operations (no read operations on read replicas that are asynchronously replicated from a primary database).
-    - Use read-committed or stricter isolation levels.
-
-    <h4>Analytics</h4>
-
     - Use read-committed or stricter isolation levels.
   </TabItem>
   <TabItem value="NoSQL_databases" label="NoSQL databases">
@@ -88,8 +68,6 @@ Select your database for details on how to configure it to achieve the general r
     </Tabs>
   </TabItem>
   <TabItem value="Object_Storage" label="Object Storage">
-    <h4>Transactions</h4>
-
     - Use a single region for all operations. For Blob Storage, use a single primary region.
     - Choose the following storage classes or access tiers for each storage:
       - **S3**: [S3 Standard](https://aws.amazon.com/s3/storage-classes/)
@@ -144,6 +122,6 @@ Since DynamoDB stores data in multiple availability zones by default, you don't 
   </TabItem>
   <TabItem value="Object_Storage" label="Object Storage">
     - Configure a lifecycle rule to delete incomplete multipart uploads as described in [Configuring a bucket lifecycle configuration to delete incomplete multipart uploads](https://docs.aws.amazon.com/AmazonS3/latest/userguide/mpu-abort-incomplete-mpu-lifecycle-config.html) when using S3.
-    - For schema design recommendations specific to object storage, see [Database Adapters](database-adapters.mdx#key-and-index-mapping-4).
+    - For schema design recommendations specific to object storage, see [Key and index mapping for the object storage adapter](database-adapters.mdx#key-and-index-mapping-4).
   </TabItem>
 </Tabs>
