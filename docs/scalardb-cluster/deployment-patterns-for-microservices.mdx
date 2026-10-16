@@ -103,7 +103,7 @@ In addition, the separated-cluster pattern requires an additional component. The
 
 Moreover, the level of resource isolation is different. Microservices should be well-isolated for better maintainability and development efficiency, but the shared-cluster pattern brings weaker resource isolation. Weak resource isolation might also bring weak security. However, security risks can be mitigated by using the security features of ScalarDB Cluster, like authentication and authorization.
 
-Similarly, there is a difference in how systems are administrated. Specifically, in the shared-cluster pattern, a team must be tasked with managing a ScalarDB Cluster instance on behalf of the other teams. Typically, the central data team can manage it, but issues may arise if no such team exists. With the separated-cluster pattern, administration is more balanced but has a similar issue for the Coordinator table. The issue can be addressed by having a microservice for coordination and making a team manage the microservice.
+Similarly, there is a difference in how systems are administrated. Specifically, in the shared-cluster pattern, a team must be tasked with managing a ScalarDB Cluster instance on behalf of the other teams. Typically, the central data team can manage it, but issues may arise if no such team exists. With the separated-cluster pattern, administration is more balanced but has a similar issue for the Transaction Coordinator and the Coordinator table, which the microservices share. The issue can be addressed by making a team manage the Transaction Coordinator together with the Coordinator table.
 
 The following is a summary of the pros and cons of the patterns.
 
@@ -120,7 +120,7 @@ The following is a summary of the pros and cons of the patterns.
 
 - **Pros:**
   - Better resource isolation.
-  - More balanced administration. (A team manages one microservice and one ScalarDB Cluster instance. Also, a team must be tasked with managing the Coordinator table.)
+  - More balanced administration. (A team manages one microservice and one ScalarDB Cluster instance. Also, a team must be tasked with managing the Transaction Coordinator and the Coordinator table.)
 - **Cons:**
   - More components to deploy and operate because it requires the Transaction Coordinator in addition to several ScalarDB Cluster instances. (Backup operations for databases can also be complex.)
   - The database that holds the Coordinator table must be reachable from the Transaction Coordinator and from every ScalarDB Cluster instance.
