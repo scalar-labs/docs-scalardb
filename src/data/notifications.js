@@ -36,6 +36,17 @@ const notificationsList = [
   },
   {
     message: {
+      en: 'Create an application that uses the Microservice Transaction API',
+      ja: 'Microservice Transaction API を使用するアプリケーションを作成する'
+    },
+    url: {
+      en: 'scalardb-samples/microservice-transaction-sample-with-cluster?utm_source=docs-site&utm_medium=notifications',
+      ja: 'scalardb-samples/microservice-transaction-sample-with-cluster?utm_source=docs-site&utm_medium=notifications'
+    },
+    unread: true
+  },
+  {
+    message: {
       en: 'Control user access via OIDC-based JWT access tokens',
       ja: 'OIDC ベースの JWT アクセストークンを用いてユーザーアクセスを制御する'
     },
@@ -75,17 +86,6 @@ const notificationsList = [
     url: {
       en: 'scalardb-mcp-server/getting-started-with-scalardb-mcp-server?utm_source=docs-site&utm_medium=notifications',
       ja: 'scalardb-mcp-server/getting-started-with-scalardb-mcp-server?utm_source=docs-site&utm_medium=notifications'
-    },
-    unread: true
-  },
-  {
-    message: {
-      en: 'Replicate data for high availability',
-      ja: '高可用性のためのデータレプリケーションを行う'
-    },
-    url: {
-      en: 'scalardb-cluster/remote-replication?utm_source=docs-site&utm_medium=notifications',
-      ja: 'scalardb-cluster/remote-replication?utm_source=docs-site&utm_medium=notifications'
     },
     unread: true
   }
