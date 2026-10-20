@@ -14,7 +14,7 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 <TranslationBanner />
 
-ScalarDB Cluster Java API は、ScalarDB Core の一部である Administrative API と Transaction API に加えて、ScalarDB Cluster に固有の追加 API で構成されています。このガイドでは、どのような種類の API が存在するのか、それらの使用方法、例外の処理方法などの関連トピックについて説明します。
+ScalarDB Cluster Java API は、ScalarDB Core の一部である Administrative API と Transaction API に加えて、Microservice Transaction API などの ScalarDB Cluster に固有の追加 API で構成されています。このガイドでは、どのような種類の API が存在するのか、それらの使用方法、例外の処理方法などの関連トピックについて説明します。
 
 ## Administrative API
 
@@ -901,7 +901,7 @@ Set<AuthAdmin.Privilege> tablePrivileges = admin.getRolePrivileges("rolename", "
 
 :::
 
-これらの API からの失敗の処理の詳細については、[認証と認可の例外を処理する](#認証と認可の例外を処理する)を参照してください。
+これらの API からの失敗の処理の詳細については、[認証と認可の例外](#認証と認可の例外)を参照してください。
 
 ## Transaction API
 
@@ -970,7 +970,7 @@ DistributedTransaction transaction = transactionManager.start("<TRANSACTION_ID>"
 
 ##### 読み取り専用モードでトランザクションを開始またはスタートする
 
-読み取り専用モードでトランザクションを開始またはスタートすることもできます。この場合、トランザクションでは書き込み操作は許可されず、読み取り操作に最適化されます。
+読み取り専用モードでトランザクションを開始またはスタートすることもできます。この場合、トランザクションでは書き込み操作は許可されず、ScalarDB がそれを読み取り操作に最適化する可能性があります。
 
 :::note
 
@@ -2372,6 +2372,331 @@ List<Result> scanResult = batchResults.get(1).getScanResult(); // Result of the 
 
 Batch 操作の詳細については、[Batch 操作](#batch-操作)を参照してください。
 
+## Microservice Transaction API
+
+このセクションでは、ScalarDB の Microservice Transaction API を使用して複数のプロセスにまたがるトランザクションを実行する方法について説明します。この API は、`GlobalTransactionManager`、`GlobalTransaction`、および `BranchTransaction` インターフェースで構成されています。
+
+グローバルトランザクションは、1つ以上のブランチから構成される単一のトランザクションです。各ブランチは独自のプロセス (例: マイクロサービスごとに1つのプロセス) で実行され、独自のデータに対して CRUD 操作を実行します。トランザクションは1回だけ開始され、各ブランチはトランザクション ID を使用してそれに参加し、その後トランザクション全体としてコミットまたはロールバックされます。これにより、すべてのブランチの作業が一緒に反映されるか、まったく反映されないかのどちらかになります。
+
+グローバルトランザクションには2種類のハンドルがあります:
+
+- **`GlobalTransaction`:** トランザクションの結果を制御する全体的なハンドルです。このハンドルは CRUD 操作を実行しません。
+- **`BranchTransaction`:** トランザクションの1つのブランチのハンドルで、そのブランチの CRUD 操作を実行します。
+
+詳細については、Javadoc の <JavadocLink packageName="scalardb" path="com/scalar/db/api" className="GlobalTransactionManager" />、<JavadocLink packageName="scalardb" path="com/scalar/db/api" className="GlobalTransaction" />、および <JavadocLink packageName="scalardb" path="com/scalar/db/api" className="BranchTransaction" /> ページを参照してください。
+
+### `GlobalTransactionManager` インスタンスの取得
+
+グローバルトランザクションを実行するには、まず `GlobalTransactionManager` インスタンスを取得する必要があります。グローバルトランザクションに参加するすべてのプロセスは、独自のインスタンスが必要です。
+
+`GlobalTransactionManager` インスタンスを取得するには、次のように `TransactionFactory` を使用します:
+
+```java
+TransactionFactory transactionFactory = TransactionFactory.create("<CONFIGURATION_FILE_PATH>");
+GlobalTransactionManager transactionManager = transactionFactory.getGlobalTransactionManager();
+```
+
+すべてのグローバルトランザクションを実行した後は、次のように `GlobalTransactionManager` インスタンスをクローズする必要があります:
+
+```java
+transactionManager.close();
+```
+
+### グローバルトランザクションの実行
+
+このサブセクションでは、グローバルトランザクションの実行方法について説明します。1つのプロセスがトランザクションを開始し、各プロセスが独自のブランチを開始して CRUD 操作を実行し、各ブランチが終了されてから、トランザクションを開始したプロセスがコミットまたはロールバックします。
+
+#### グローバルトランザクションの開始
+
+グローバルトランザクションを開始するのは1つのプロセスだけで、そのプロセスが後でコミットまたはロールバックします。他のプロセスは自分のブランチのみを開始します。
+
+次のようにグローバルトランザクションを開始できます:
+
+```java
+// Begin a global transaction.
+GlobalTransaction globalTransaction = transactionManager.begin();
+```
+
+または、次のようにグローバルトランザクションをスタートすることもできます:
+
+```java
+// Start a global transaction.
+GlobalTransaction globalTransaction = transactionManager.start();
+```
+
+ScalarDB がトランザクション ID を生成します。すべてのブランチがその ID を必要とするため、`getId()` を使用して読み取り、他のプロセスに渡す必要があります:
+
+```java
+// Get the ID of the global transaction.
+String transactionId = globalTransaction.getId();
+```
+
+##### 読み取り専用モードでグローバルトランザクションを開始する
+
+読み取り専用モードでグローバルトランザクションを開始することもできます。この場合、トランザクションでは書き込み操作は許可されず、ScalarDB がそれを読み取り操作に最適化する可能性があります。
+
+:::note
+
+パフォーマンスを向上させ、リソース使用量を削減するために、読み取り専用操作には読み取り専用トランザクションを使用することを強く推奨します。
+
+:::
+
+次のように読み取り専用モードでグローバルトランザクションを開始またはスタートできます:
+
+```java
+// Begin a global transaction in read-only mode.
+GlobalTransaction globalTransaction = transactionManager.beginReadOnly();
+```
+
+```java
+// Start a global transaction in read-only mode.
+GlobalTransaction globalTransaction = transactionManager.startReadOnly();
+```
+
+##### 属性を指定してグローバルトランザクションを開始する
+
+グローバルトランザクションを開始するときに、トランザクションスコープの属性のマップを指定できます。指定した属性はトランザクション内で発行されるすべての操作にマージされるため、トランザクション全体に一律に適用する設定を開始時に一度だけ指定できます。操作にすでに同じ属性キーが設定されている場合は、操作側の属性が優先されます。
+
+次のように属性を指定してグローバルトランザクションを開始またはスタートできます:
+
+```java
+// Specify attributes for the global transaction.
+Map<String, String> attributes = ...;
+
+// Begin a global transaction with attributes.
+GlobalTransaction globalTransaction = transactionManager.begin(attributes);
+```
+
+```java
+// Start a global transaction with attributes.
+GlobalTransaction globalTransaction = transactionManager.start(attributes);
+```
+
+`beginReadOnly` および `startReadOnly` メソッドにも、属性を受け取るオーバーロードがあります:
+
+```java
+// Begin a global transaction in read-only mode with attributes.
+GlobalTransaction globalTransaction = transactionManager.beginReadOnly(attributes);
+```
+
+```java
+// Start a global transaction in read-only mode with attributes.
+GlobalTransaction globalTransaction = transactionManager.startReadOnly(attributes);
+```
+
+使用可能な属性のリストについては、[オペレーション属性](#オペレーション属性)を参照してください。
+
+#### ブランチの開始
+
+グローバルトランザクションで CRUD 操作を実行する各プロセスは、グローバルトランザクションの ID を指定して独自のブランチを開始します。
+
+次のようにブランチを開始できます:
+
+```java
+// Begin a branch of the global transaction.
+BranchTransaction branch = transactionManager.beginBranch("<TRANSACTION_ID>");
+```
+
+または、次のようにブランチをスタートすることもできます:
+
+```java
+// Start a branch of the global transaction.
+BranchTransaction branch = transactionManager.startBranch("<TRANSACTION_ID>");
+```
+
+:::note
+
+グローバルトランザクションを開始したプロセスも CRUD 操作を実行する場合は、ブランチを開始する必要があります。`GlobalTransaction` ハンドルは CRUD 操作を実行しないためです。
+
+:::
+
+ブランチが属するグローバルトランザクションの ID を取得するには、次のように `getId()` を使用します:
+
+```java
+// Get the ID of the global transaction that this branch belongs to.
+String transactionId = branch.getId();
+```
+
+##### 属性を指定してブランチを開始する
+
+ブランチを開始するときに、ブランチスコープの属性のマップを指定できます。指定した属性はそのブランチで発行されるすべての操作に付与されます。操作にすでに同じ属性キーが設定されている場合は、操作側の属性が優先されます。同様に、グローバルトランザクションに同じ属性キーが指定されている場合は、ブランチレベルの属性が優先されます。つまり、より狭いスコープが常に優先されます。
+
+次のように属性を指定してブランチを開始またはスタートできます:
+
+```java
+// Specify attributes for the branch.
+Map<String, String> attributes = ...;
+
+// Begin a branch with attributes.
+BranchTransaction branch = transactionManager.beginBranch("<TRANSACTION_ID>", attributes);
+```
+
+```java
+// Start a branch with attributes.
+BranchTransaction branch = transactionManager.startBranch("<TRANSACTION_ID>", attributes);
+```
+
+使用可能な属性のリストについては、[オペレーション属性](#オペレーション属性)を参照してください。
+
+#### ブランチでの CRUD 操作の実装
+
+`BranchTransaction` の CRUD 操作は、`DistributedTransaction` の操作と同じです。詳細については、[CRUD 操作を実装する](#crud-操作を実装する)を参照してください。
+
+ブランチを終了する前に、ブランチから取得したすべての `Scanner` オブジェクトをクローズしてください。詳細については、[ブランチの終了](#ブランチの終了)を参照してください。
+
+#### ブランチの終了
+
+ブランチが最後の CRUD 操作を実行した後、ブランチを終了して作業の結果を宣言する必要があります。ブランチを終了してもトランザクションはコミットされません。結果はグローバルトランザクションによって制御されます。
+
+ブランチの作業が成功した場合は、次のようにブランチを終了できます:
+
+```java
+// End the branch, declaring that its work succeeded.
+branch.end(BranchTransaction.Status.SUCCESS);
+```
+
+ブランチの作業が失敗した場合は、次のようにブランチを終了できます:
+
+```java
+// End the branch, declaring that its work failed.
+branch.end(BranchTransaction.Status.FAILURE);
+```
+
+:::warning
+
+ブランチを終了するときは、次の点に注意してください:
+
+- ブランチを実行するプロセスは、成功パスと失敗パスの両方で、ブランチをちょうど1回終了する必要があります。トランザクションの結果も制御するプロセスも例外ではありません。コミットまたはロールバックは、同じ `GlobalTransactionManager` インスタンスが開始したブランチにのみ反映されるためです。
+- `BranchTransaction.Status.SUCCESS` は、すでに終了したブランチを拒否し、ブランチから取得したすべての `Scanner` オブジェクトがクローズされていることを要求します。そうでない場合、ブランチの終了は `IllegalStateException` をスローします。
+- `BranchTransaction.Status.FAILURE` は、`catch` 句から呼び出せるよう寛容です。すでに終了したブランチを終了しても何もしません。また、開いている `Scanner` オブジェクトも許可されます。
+- ブランチから取得したすべての `Scanner` オブジェクトを、ブランチを終了する前にクローズしてください。ブランチを終了した後にクローズしないでください。try-with-resources 文を使用する場合、`Scanner` オブジェクトはブロックが終了したときにのみクローズされるため、ブランチはその後に終了する必要があります。開いたままの `Scanner` オブジェクトは、トランザクションがロールバックされるときにクローズされます。
+- すでに終了したブランチに対して CRUD 操作を実行すると、宣言した結果に関わらず `IllegalStateException` をスローします。
+
+:::
+
+#### グローバルトランザクションのコミット
+
+すべてのブランチが終了した後、グローバルトランザクションを開始したプロセスがトランザクションをコミットして、すべてのブランチの書き込みを全体として永続化します。
+
+次のようにグローバルトランザクションをコミットできます:
+
+```java
+// Commit a global transaction.
+globalTransaction.commit();
+```
+
+:::warning
+
+すべてのブランチが `BranchTransaction.Status.SUCCESS` で終了した後にのみ、グローバルトランザクションをコミットしてください。ブランチが `BranchTransaction.Status.FAILURE` で終了した場合は、代わりにトランザクションをロールバックしてください。
+
+ScalarDB はこのルールの違反を検出しません。ブランチが `BranchTransaction.Status.FAILURE` で終了した後にコミットしてもエラーは発生しません。また、ブランチがまだ作業中の状態でコミットすると、そのブランチの部分的な作業がコミットされる可能性があります。コミットはそれまでにステージングされた書き込みで進行し、後から到着した操作はすでに進行中のコミットを停止させることなく拒否されます。
+
+:::
+
+#### グローバルトランザクションのロールバックまたはアボート
+
+グローバルトランザクションの実行中にエラーが発生した場合、トランザクションをロールバックまたはアボートできます。これにより、すべてのブランチの書き込みが破棄されます。ただし、ブランチは終了されません。ブランチを開始した各プロセスは、`BranchTransaction.Status.FAILURE` でブランチを終了する必要があります。
+
+次のようにグローバルトランザクションをロールバックできます:
+
+```java
+// Roll back a global transaction.
+globalTransaction.rollback();
+```
+
+または、次のようにグローバルトランザクションをアボートすることもできます:
+
+```java
+// Abort a global transaction.
+globalTransaction.abort();
+```
+
+ScalarDB での例外の処理方法の詳細については、[例外の処理方法](#例外の処理方法)を参照してください。
+
+### 複数のプロセスにまたがるグローバルトランザクションの実行
+
+このサブセクションでは、グローバルトランザクションが2つのプロセスにまたがる場合に各要素を組み合わせる方法を示します。
+
+最初のプロセスはグローバルトランザクションを開始し、独自のブランチで作業を行い、トランザクション ID を2番目のプロセスに渡し、その後トランザクションをコミットします:
+
+```java
+// In a method that declares throws TransactionException (or wider).
+TransactionFactory transactionFactory = TransactionFactory.create("<CONFIGURATION_FILE_PATH>");
+GlobalTransactionManager transactionManager = transactionFactory.getGlobalTransactionManager();
+
+// Begin a global transaction.
+GlobalTransaction globalTransaction = transactionManager.begin();
+
+BranchTransaction branch = null;
+try {
+  // Execute CRUD operations in this process's own branch, and then end the branch.
+  branch = transactionManager.beginBranch(globalTransaction.getId());
+  Optional<Result> result = branch.get(...);
+  branch.insert(...);
+  branch.end(BranchTransaction.Status.SUCCESS);
+
+  // Pass the transaction ID to the second process, for example, in an RPC call, and wait until
+  // its branch has executed its CRUD operations and has been ended.
+  callSecondProcess(globalTransaction.getId());
+
+  // Commit the global transaction as a whole.
+  globalTransaction.commit();
+} catch (UnknownTransactionStatusException e) {
+  // The status of the global transaction, whether it was committed or not, is unknown. Check
+  // whether it was committed before deciding how to proceed, and do not roll it back blindly.
+} catch (Exception e) {
+  // End this process's own branch, declaring that its work failed.
+  if (branch != null) {
+    try {
+      branch.end(BranchTransaction.Status.FAILURE);
+    } catch (CrudException ex) {
+      // Ending the branch failed. The global transaction is rolled back below, so you don't need
+      // to do anything further. You can simply log the occurrence here.
+    }
+  }
+
+  // Roll back the global transaction, which discards the writes of all its branches.
+  try {
+    globalTransaction.rollback();
+  } catch (RollbackException ex) {
+    // Rolling back the global transaction failed. Since the transaction should eventually recover,
+    // you don't need to do anything further. You can simply log the occurrence here.
+  }
+}
+```
+
+2番目のプロセスは、受信したトランザクション ID を使用してブランチを開始し、CRUD 操作のみを実行します。コミットとロールバックは最初のプロセスに委ねられます:
+
+```java
+// In a method that declares throws TransactionException (or wider).
+TransactionFactory transactionFactory = TransactionFactory.create("<CONFIGURATION_FILE_PATH>");
+GlobalTransactionManager transactionManager = transactionFactory.getGlobalTransactionManager();
+
+// Begin a branch of the global transaction by using the transaction ID that was received.
+BranchTransaction branch = transactionManager.beginBranch(transactionId);
+
+try {
+  // Execute CRUD operations in the branch, and then end the branch.
+  Optional<Result> result = branch.get(...);
+  branch.insert(...);
+  branch.end(BranchTransaction.Status.SUCCESS);
+} catch (Exception e) {
+  // End the branch, declaring that its work failed.
+  try {
+    branch.end(BranchTransaction.Status.FAILURE);
+  } catch (CrudException ex) {
+    // Ending the branch failed. The process that began the global transaction rolls it back, so
+    // you don't need to do anything further. You can simply log the occurrence here.
+  }
+
+  throw e;
+}
+
+// Return to the caller, which commits or rolls back the global transaction.
+```
+
+ブランチの CRUD 操作が失敗した場合は、`BranchTransaction.Status.FAILURE` でブランチを終了し、例外をグローバルトランザクションを開始したプロセスに伝播させて、そのプロセスがトランザクションをロールバックできるようにしてください。
+
 ## 例外の処理方法
 
 トランザクションを実行するときは、例外も適切に処理する必要があります。
@@ -2381,6 +2706,75 @@ Batch 操作の詳細については、[Batch 操作](#batch-操作)を参照し
 例外を適切に処理しないと、異常やデータの不整合が発生する可能性があります。
 
 :::
+
+### 例外
+
+このセクションでは、このガイドで説明する API がスローする可能性のある各例外と、その例外が示す内容について説明します。
+
+#### `TransactionException` および `TransactionNotFoundException`
+
+`begin()`、`beginReadOnly()`、および `beginBranch()` API は `TransactionException` または `TransactionNotFoundException` をスローする可能性があります:
+
+- `TransactionException` をキャッチした場合、この例外は、一時的または非一時的障害が原因でトランザクションを開始できなかったことを示します。トランザクションを再試行することはできますが、非一時的障害が原因でトランザクションを開始できない可能性があります。
+- `TransactionNotFoundException` をキャッチした場合、この例外は、一時的障害が原因でトランザクションを開始できなかったことを示します。この場合、トランザクションを再試行できます。
+
+`start()`、`startReadOnly()`、および `startBranch()` メソッドは、それぞれ `begin()`、`beginReadOnly()`、および `beginBranch()` のエイリアスであるため、エイリアス元のメソッドと同じ例外をスローします。
+
+#### `CrudException` および `CrudConflictException`
+
+CRUD 操作の API (`get()`、`scan()`、`put()`、`delete()`、および `mutate()`) は、`CrudException` または `CrudConflictException` をスローする可能性があります:
+
+- `CrudException` をキャッチした場合、この例外は、一時的または非一時的障害が原因でトランザクション CRUD 操作が失敗したことを示します。トランザクションを最初から再試行できますが、原因が非一時的である場合は、トランザクションが失敗する可能性があります。
+- `CrudConflictException` をキャッチした場合、この例外は、一時的な障害 (競合エラーなど) が原因でトランザクション CRUD 操作が失敗したことを示します。この場合、トランザクションを最初から再試行できます。
+
+`end(Status)` API もこれらの例外をスローする可能性があります。CRUD 操作の例外と同じ方法で処理できます。
+
+#### `UnsatisfiedConditionException`
+
+ミューテーション操作の API (`put()`、`delete()`、および `mutate()`) も `UnsatisfiedConditionException` をスローする可能性があります。
+
+`UnsatisfiedConditionException` をキャッチした場合、この例外はミューテーション操作の条件が満たされていないことを示します。この例外は、アプリケーションの要件に従って処理できます。
+
+#### `CommitException`、`CommitConflictException`、および `UnknownTransactionStatusException`
+
+`commit()` API は `CommitException`、`CommitConflictException`、または `UnknownTransactionStatusException` をスローする可能性があります:
+
+- `CommitException` をキャッチした場合、この例外は、一時的または非一時的障害が原因でトランザクションのコミットが失敗したことを示します。トランザクションを最初から再試行できますが、原因が非一時的である場合はトランザクションが失敗する可能性があります。
+- `CommitConflictException` をキャッチした場合、この例外は、一時的な障害 (競合エラーなど) が原因でトランザクションのコミットが失敗したことを示します。この場合、トランザクションを最初から再試行できます。
+- `UnknownTransactionStatusException` をキャッチした場合、この例外は、トランザクションのステータス (成功したかどうか) が不明であることを示します。この場合、トランザクションが正常にコミットされたかどうかを確認し、失敗した場合はトランザクションを再試行する必要があります。
+
+トランザクションステータスを識別する方法は、ユーザーに委任されています。トランザクションステータステーブルを作成し、他のアプリケーションデータとアトミックに更新すると、ステータステーブルからトランザクションのステータスを取得できるようにすることができます。
+
+#### `RollbackException` および `AbortException`
+
+`rollback()` API は `RollbackException` をスローする可能性があり、`rollback()` のエイリアスである `abort()` API は `AbortException` をスローする可能性があります。どちらの例外も、トランザクションのロールバックが一時的または非一時的障害により失敗したことを示します。
+
+どちらの例外をキャッチした場合も、トランザクションは最終的に回復するため、これ以上何もする必要はありません。発生したことをログに記録するだけでよいです。
+
+#### 認証と認可の例外
+
+認証と認可が有効になっている場合、現在のユーザーが認証されていないか、必要な権限を持っていないために操作が失敗することがあります。Administrative API、Transaction API、および Microservice Transaction API はすべて、次の4つの共通のメソッドを通じてこのような失敗を報告します:
+
+- `isAuthenticationError()` は、現在のユーザーが認証されていない場合に `true` を返します。
+- `isAuthorizationError()` は、現在のユーザーが必要な権限を持っていない場合に `true` を返します。
+- `isSuperuserRequired()` は、操作にスーパーユーザー権限が必要な場合に `true` を返します。
+- `getRequiredPrivilege()` は、権限不足が原因で失敗した場合に、その操作に必要な権限を返します。
+
+Administrative API では、これらのメソッドは `ExecutionException` にあります。Transaction API と Microservice Transaction API では、`TransactionException` およびそのサブクラスにあります。たとえば、現在のユーザーがテーブルに対する `READ` 権限を持っていない場合、`get()` は `CrudException` をスローし、この例外に対して `isAuthorizationError()` は `true` を返します。
+
+認証と認可のステータスコードの詳細については、[認証および認可エラーコード](./scalardb-auth-status-codes.mdx)を参照してください。
+
+### 例
+
+以下の例では、`UnknownTransactionStatusException` の場合、重複操作の可能性を回避するためにアプリケーションがトランザクションが成功したかどうかを確認する必要があるため、トランザクションは再試行されません。その他の例外の場合、例外の原因が一時的または非一時的であるため、トランザクションは再試行されます。例外の原因が一時的な場合、再試行するとトランザクションが成功する可能性があります。ただし、例外の原因が非一時的である場合、再試行してもトランザクションは失敗します。このような場合、再試行回数を使い果たします。
+
+:::note
+
+以下の例では、トランザクションは最大3回試行され、再試行ごとに100ミリ秒間スリープします。ただし、アプリケーションの要件に応じて、指数バックオフなどの再試行ポリシーを選択できます。
+
+:::
+
+#### Transaction API の例
 
 次のサンプルコードは、例外を処理する方法を示しています。
 
@@ -2395,8 +2789,8 @@ public class Sample {
 
     while (true) {
       if (retryCount++ > 0) {
-        // Retry the transaction three times maximum.
-        if (retryCount >= 3) {
+        // Attempt the transaction three times maximum.
+        if (retryCount > 3) {
           // Throw the last exception if the number of retries exceeds the maximum.
           throw lastException;
         }
@@ -2413,7 +2807,7 @@ public class Sample {
         // Execute CRUD operations in the transaction.
         Optional<Result> result = transaction.get(...);
         List<Result> results = transaction.scan(...);
-        transaction.put(...);
+        transaction.insert(...);
         transaction.delete(...);
 
         // Commit the transaction.
@@ -2462,59 +2856,140 @@ public class Sample {
 }
 ```
 
-### `TransactionException` および `TransactionNotFoundException`
+#### Microservice Transaction API の例
 
-`begin()` API は `TransactionException` または `TransactionNotFoundException` をスローする可能性があります:
+次のサンプルコードは、グローバルトランザクションを実行するときに例外を処理する方法を示しています。トランザクションの結果は `GlobalTransaction` ハンドルによって制御されるため、トランザクションはブランチではなくそのハンドルを通じてロールバックされます:
 
-- `TransactionException` をキャッチした場合、この例外は、一時的または非一時的障害が原因でトランザクションを開始できなかったことを示します。トランザクションを再試行することはできますが、非一時的障害が原因でトランザクションを開始できない可能性があります。
-- `TransactionNotFoundException` をキャッチした場合、この例外は、一時的障害が原因でトランザクションを開始できなかったことを示します。この場合、トランザクションを再試行できます。
+```java
+public class Sample {
+  public static void main(String[] args) throws Exception {
+    TransactionFactory factory = TransactionFactory.create("<CONFIGURATION_FILE_PATH>");
+    GlobalTransactionManager transactionManager = factory.getGlobalTransactionManager();
 
-`join()` API も `TransactionNotFoundException` をスローする可能性があります。この例外は、`begin()` API の例外を処理するのと同じ方法で処理できます。
+    int retryCount = 0;
+    TransactionException lastException = null;
 
-### `CrudException` および `CrudConflictException`
+    while (true) {
+      if (retryCount++ > 0) {
+        // Attempt the transaction three times maximum.
+        if (retryCount > 3) {
+          // Throw the last exception if the number of retries exceeds the maximum.
+          throw lastException;
+        }
 
-CRUD 操作の API (`get()`、`scan()`、`put()`、`delete()`、および `mutate()`) は、`CrudException` または `CrudConflictException` をスローする可能性があります:
+        // Sleep 100 milliseconds before retrying the transaction.
+        TimeUnit.MILLISECONDS.sleep(100);
+      }
 
-- `CrudException` をキャッチした場合、この例外は、一時的または非一時的障害が原因でトランザクション CRUD 操作が失敗したことを示します。トランザクションを最初から再試行できますが、原因が非一時的である場合は、トランザクションが失敗する可能性があります。
-- `CrudConflictException` をキャッチした場合、この例外は、一時的な障害 (競合エラーなど) が原因でトランザクション CRUD 操作が失敗したことを示します。この場合、トランザクションを最初から再試行できます。
+      GlobalTransaction globalTransaction = null;
+      BranchTransaction branch = null;
+      try {
+        // Begin a global transaction.
+        globalTransaction = transactionManager.begin();
 
-### `UnsatisfiedConditionException`
+        // Execute CRUD operations in this process's own branch, and then end the branch.
+        branch = transactionManager.beginBranch(globalTransaction.getId());
+        Optional<Result> result = branch.get(...);
+        branch.insert(...);
+        branch.delete(...);
+        branch.end(BranchTransaction.Status.SUCCESS);
 
-ミューテーション操作の API (`put()`、`delete()`、および `mutate()`) も `UnsatisfiedConditionException` をスローする可能性があります。
+        // Let the other processes execute CRUD operations in their own branches and end them.
+        callOtherProcesses(globalTransaction.getId());
 
-`UnsatisfiedConditionException` をキャッチした場合、この例外はミューテーション操作の条件が満たされていないことを示します。この例外は、アプリケーションの要件に従って処理できます。
+        // Commit the global transaction.
+        globalTransaction.commit();
+      } catch (UnsatisfiedConditionException e) {
+        // You need to handle `UnsatisfiedConditionException` only if a mutation operation specifies a condition.
+        // This exception indicates the condition for the mutation operation is not met.
 
-### `CommitException`、`CommitConflictException`、および `UnknownTransactionStatusException`
+        // End this process's own branch, declaring that its work failed.
+        if (branch != null) {
+          try {
+            branch.end(BranchTransaction.Status.FAILURE);
+          } catch (CrudException ex) {
+            // Ending the branch failed. The global transaction is rolled back below, so you don't
+            // need to do anything further. You can simply log the occurrence here.
+          }
+        }
 
-`commit()` API は `CommitException`、`CommitConflictException`、または `UnknownTransactionStatusException` をスローする可能性があります。
+        try {
+          globalTransaction.rollback();
+        } catch (RollbackException ex) {
+          // Rolling back the global transaction failed. Since the transaction should eventually recover,
+          // you don't need to do anything further. You can simply log the occurrence here.
+        }
 
-- `CommitException` をキャッチした場合、この例外は、一時的または非一時的障害が原因でトランザクションのコミットが失敗したことを示します。トランザクションを最初から再試行できますが、原因が非一時的である場合はトランザクションが失敗する可能性があります。
-- `CommitConflictException` をキャッチした場合、この例外は、一時的な障害 (競合エラーなど) が原因でトランザクションのコミットが失敗したことを示します。この場合、トランザクションを最初から再試行できます。
-- `UnknownTransactionStatusException` をキャッチした場合、この例外は、トランザクションのステータス (成功したかどうか) が不明であることを示します。この場合、トランザクションが正常にコミットされたかどうかを確認し、失敗した場合はトランザクションを再試行する必要があります。
+        // You can handle the exception here, according to your application requirements.
 
-トランザクションステータスを識別する方法は、ユーザーに委任されています。トランザクションステータステーブルを作成し、他のアプリケーションデータとアトミックに更新すると、ステータステーブルからトランザクションのステータスを取得できるようにすることができます。
+        return;
+      } catch (UnknownTransactionStatusException e) {
+        // If you catch `UnknownTransactionStatusException` when committing the global transaction,
+        // it indicates that the status of the transaction, whether it was successful or not, is unknown.
+        // In such a case, you need to check if the transaction is committed successfully or not and
+        // retry the transaction if it failed. How to identify a transaction status is delegated to users.
+        return;
+      } catch (TransactionException e) {
+        // For other exceptions, you can retry the global transaction.
 
-### 一部の例外に関する注意
+        // For `CrudConflictException`, `CommitConflictException`, and `TransactionNotFoundException`,
+        // you can basically retry the transaction. However, for the other exceptions, the transaction
+        // will still fail if the cause of the exception is non-transient. In such a case, you will
+        // exhaust the number of retries.
 
-サンプルコードには示されていませんが、`resume()` API は `TransactionNotFoundException` をスローする可能性もあります。この例外は、指定された ID に関連付けられたトランザクションが見つからなかったか、トランザクションの有効期限が切れた可能性があることを示します。いずれの場合も、この例外の原因は基本的に一時的なものであるため、トランザクションを最初から再試行できます。
+        // End this process's own branch, declaring that its work failed.
+        if (branch != null) {
+          try {
+            branch.end(BranchTransaction.Status.FAILURE);
+          } catch (CrudException ex) {
+            // Ending the branch failed. The global transaction is rolled back below, so you don't
+            // need to do anything further. You can simply log the occurrence here.
+          }
+        }
 
-サンプルコードでは、`UnknownTransactionStatusException` の場合、重複操作の可能性を回避するためにアプリケーションがトランザクションが成功したかどうかを確認する必要があるため、トランザクションは再試行されません。その他の例外の場合、例外の原因が一時的または非一時的であるため、トランザクションは再試行されます。例外の原因が一時的な場合、再試行するとトランザクションが成功する可能性があります。ただし、例外の原因が非一時的である場合、再試行してもトランザクションは失敗します。このような場合、再試行回数を使い果たします。
+        if (globalTransaction != null) {
+          try {
+            globalTransaction.rollback();
+          } catch (RollbackException ex) {
+            // Rolling back the global transaction failed. The transaction should eventually recover,
+            // so you don't need to do anything further. You can simply log the occurrence here.
+          }
+        }
+
+        lastException = e;
+      } catch (Exception e) {
+        // The call to the other processes can fail with an exception that ScalarDB does not define,
+        // such as an RPC failure. Retrying does not necessarily help in that case, so this sample
+        // code cleans up and propagates the exception instead.
+
+        // End this process's own branch, declaring that its work failed.
+        if (branch != null) {
+          try {
+            branch.end(BranchTransaction.Status.FAILURE);
+          } catch (CrudException ex) {
+            // Ending the branch failed. The global transaction is rolled back below, so you don't
+            // need to do anything further. You can simply log the occurrence here.
+          }
+        }
+
+        if (globalTransaction != null) {
+          try {
+            globalTransaction.rollback();
+          } catch (RollbackException ex) {
+            // Rolling back the global transaction failed. The transaction should eventually recover,
+            // so you don't need to do anything further. You can simply log the occurrence here.
+          }
+        }
+
+        throw e;
+      }
+    }
+  }
+}
+```
 
 :::note
 
-サンプルコードでは、トランザクションは最大3回再試行され、再試行される前に100ミリ秒間スリープします。ただし、アプリケーションの要件に応じて、指数バックオフなどの再試行ポリシーを選択できます。
+グローバルトランザクションを再試行するということは、そのトランザクションに参加するすべてのプロセスで最初から再試行することを意味します。トランザクションをロールバックすると、すべてのブランチの書き込みが破棄されるためです。
 
 :::
-
-### 認証と認可の例外を処理する
-
-認証と認可が有効になっている場合、現在のユーザーが認証されていないか、必要な権限を持っていないために操作が失敗することがあります。Administrative API と Transaction API はどちらも、次の4つの共通のメソッドを通じてこのような失敗を報告します。
-
-- `isAuthenticationError()` は、現在のユーザーが認証されていない場合に `true` を返します。
-- `isAuthorizationError()` は、現在のユーザーが必要な権限を持っていない場合に `true` を返します。
-- `isSuperuserRequired()` は、操作にスーパーユーザー権限が必要な場合に `true` を返します。
-- `getRequiredPrivilege()` は、権限不足が原因で失敗した場合に、その操作に必要な権限を返します。
-
-Administrative API では、これらのメソッドは `ExecutionException` にあります。Transaction API では、`TransactionException` およびそのサブクラスにあります。たとえば、現在のユーザーがテーブルに対する `READ` 権限を持っていない場合、`get()` は `CrudException` をスローし、この例外に対して `isAuthorizationError()` は `true` を返します。
-
-認証と認可のステータスコードの詳細については、[認証および認可エラーコード](./scalardb-auth-status-codes.mdx)を参照してください。
