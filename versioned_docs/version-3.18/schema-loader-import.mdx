@@ -224,15 +224,15 @@ The following table shows the supported data types in each JDBC database and the
     | `bit`            | `BOOLEAN`     |                            |
     | `char`           | `TEXT`        | See warning [1](#1) below. |
     | `date`           | `DATE`        |                            |
-    | `datetime`       | `TIMESTAMP`   |
+    | `datetime`       | `TIMESTAMP`   |                            |
     | `datetime2`      | `TIMESTAMP`   |                            |
+    | `datetimeoffset` | `TIMESTAMPTZ` |                            |
     | `float`          | `DOUBLE`      |                            |
     | `image`          | `BLOB`        | See warning [6](#6) below. |
     | `int`            | `INT`         |                            |
     | `nchar`          | `TEXT`        | See warning [1](#1) below. |
     | `ntext`          | `TEXT`        |                            |
     | `nvarchar`       | `TEXT`        | See warning [1](#1) below. |
-    | `offsetdatetime` | `TIMESTAMPTZ` |                            |
     | `real`           | `FLOAT`       |                            |
     | `smalldatetime`  | `TIMESTAMP`   |                            |
     | `smallint`       | `INT`         | See warning [1](#1) below. |
@@ -301,7 +301,7 @@ The following table shows the supported data types in each JDBC database and the
     | `double precision`         | `DOUBLE`                                 |                            |
     | `real`                     | `FLOAT`                                  |                            |
     | `text`                     | `TEXT`                                   |                            |
-    | `timestamp with time zone` | `TIMESTAMPTZ` (default), `TIME`, `TIMESTAMP` | See warning [6](#6) below. |
+    | `timestamp with time zone` | `TIMESTAMPTZ` (default), `TIME`, `TIMESTAMP` | See warning [5](#5) below. |
 
     Data types not listed above are not supported. The following are some common data types that are not supported:
 
@@ -327,7 +327,7 @@ The following table shows the supported data types in each JDBC database and the
     <a name="3"></a>ScalarDB does not support Oracle `FLOAT` columns that have a higher precision than `DOUBLE` in ScalarDB.
   </li>
   <li>
-    <a name="4"></a>ScalarDB does not support Oracle `NUMERIC(p, s)` columns (`p` is precision and `s` is scale) when `p` is larger than 18 due to the maximum size of the data type in ScalarDB. Note that ScalarDB maps the column to `BIGINT` if `s` is zero; otherwise ScalarDB will map the column to `DOUBLE`. For the latter case, be aware that round-up or round-off can happen in the underlying database since the floating-point value will be cast to a fixed-point value.
+    <a name="4"></a>ScalarDB does not support Oracle `NUMBER(p, s)` columns (`p` is precision and `s` is scale) when `p` is larger than 18 due to the maximum size of the data type in ScalarDB. Note that ScalarDB maps the column to `BIGINT` if `s` is zero; otherwise ScalarDB will map the column to `DOUBLE`. For the latter case, be aware that round-up or round-off can happen in the underlying database since the floating-point value will be cast to a fixed-point value.
   </li>
   <li>
     <a name="5"></a>The underlying storage type can be mapped to several ScalarDB data types. To override the default mapping, use the `override-columns-type` field in the import schema file. For an example, see [Sample import schema file](#sample-import-schema-file).
