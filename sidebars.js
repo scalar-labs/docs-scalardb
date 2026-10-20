@@ -274,6 +274,11 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
+                  id: 'scalardb-samples/microservice-transaction-sample-with-cluster/README',
+                  label: 'Run Microservice Transactions Samples Through Cluster [NEW]',
+                },
+                {
+                  type: 'doc',
                   id: 'scalardb-samples/spring-data-multi-storage-transaction-sample/README',
                   label: 'Use Spring Data JDBC to Run Multi-Storage Transactions Samples',
                 },
@@ -281,11 +286,6 @@ const sidebars = {
                   type: 'doc',
                   id: 'scalardb-samples/spring-data-microservice-transaction-sample/README',
                   label: 'Use Spring Data JDBC to Run Microservice Transactions Samples',
-                },
-                {
-                  type: 'doc',
-                  id: 'scalardb-samples/microservice-transaction-sample-with-cluster/README',
-                  label: 'Run Microservice Transactions Samples Through Cluster [NEW]',
                 },
                 {
                   type: 'doc',
@@ -1415,6 +1415,11 @@ const sidebars = {
                 },
                 {
                   type: 'doc',
+                  id: 'scalardb-samples/microservice-transaction-sample-with-cluster/README',
+                  label: 'クラスタでのマイクロサービストランザクション [NEW]',
+                },
+                {
+                  type: 'doc',
                   id: 'scalardb-samples/spring-data-multi-storage-transaction-sample/README',
                   label: 'Spring Data JDBC によるマルチストレージトランザクション',
                 },
@@ -1426,7 +1431,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalardb-samples/microservice-transactions-sample-with-shared-cluster-with-jdbc/README',
-                  label: 'JDBC を使用した共有クラスタでのマイクロサービストランザクション [NEW]',
+                  label: 'JDBC を使用した共有クラスタでのマイクロサービストランザクション',
                 },
                 {
                   type: 'doc',

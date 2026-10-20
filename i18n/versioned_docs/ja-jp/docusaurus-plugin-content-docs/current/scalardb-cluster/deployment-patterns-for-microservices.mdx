@@ -129,6 +129,8 @@ flowchart LR
   - 複数の ScalarDB Cluster インスタンスがあるため、リソース使用量が増加します。
 
 
+実際の動作例については、[Microservice Transaction API を使用してマイクロサービストランザクションをサポートするアプリケーションを作成する](../scalardb-samples/microservice-transaction-sample-with-cluster/README.mdx)を参照してください。このサンプルは、1つのアプリケーションコードを両方のパターンで実行します。
+
 ## どのパターンを選択するか
 
 どちらのパターンもすべてのシステムに対して適切なデフォルトではないため、上記の長所と短所を要件と照らし合わせてパターンを選択してください。分離クラスターパターンを選択する場合は、チームが Transaction Coordinator を運用でき、Coordinator テーブルを保持するデータベースをすべての ScalarDB Cluster インスタンスから到達可能な状態に維持できることを確認してください。Transaction Coordinator とそのトランザクションに参加する ScalarDB Cluster インスタンスの設定方法の詳細については、[Transaction Coordinator の設定](./scalardb-cluster-configurations.mdx#transaction-coordinator-の設定)を参照してください。
@@ -147,3 +149,4 @@ ScalarDB は、CRUD、SQL、Spring Data JDBC などのいくつかの API を提
 
 - [ScalarDB Cluster Java API ガイド](./api-guide.mdx)
 - [Transaction Coordinator の設定](./scalardb-cluster-configurations.mdx#transaction-coordinator-の設定)
+- [Microservice Transaction API を使用してマイクロサービストランザクションをサポートするアプリケーションを作成する](../scalardb-samples/microservice-transaction-sample-with-cluster/README.mdx)
