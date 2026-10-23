@@ -2537,7 +2537,7 @@ privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER 
 ```
 
 - You must grant `INSERT` and `UPDATE` privileges together.
-- To grant a role the `UPDATE` or `DELETE` privilege, the target role must have the `SELECT` privilege.
+- To grant a user the `UPDATE` or `DELETE` privilege, the target user must have the `SELECT` privilege or you must grant `SELECT` in the same statement. Only privileges granted directly to the user on the same table or namespace count. Privileges that the user has through roles don't, and neither do namespace-level privileges when the statement targets a table.  
 - If you specify the `WITH GRANT OPTION` option or the `GRANT OPTION` privilege, any user who has the role can grant privileges to other users or roles.
 
 #### Examples
@@ -2599,7 +2599,7 @@ privilege: SELECT | INSERT | UPDATE | DELETE | CREATE | DROP | TRUNCATE | ALTER 
 ```
 
 - You must revoke `INSERT` and `UPDATE` privileges together.
-- If the target role has the `UPDATE` or `DELETE` privilege, you cannot revoke the `SELECT` privilege from it.
+- If the target user has the `UPDATE` or `DELETE` privilege, you cannot revoke the `SELECT` privilege from them unless you revoke those privileges in the same statement. Only privileges granted directly to the user on the same table or namespace are considered. Privileges that the user has through roles aren't, and neither are namespace-level privileges when the statement targets a table.  
 
 #### Examples
 
@@ -2656,7 +2656,10 @@ GRANT ROLE <role name> [, <role name>] ... TO [USER] <username> [, <username>] .
 GRANT ROLE <role name> [, <role name>] ... TO ROLE <role name> [, <role name>] ... [WITH ADMIN OPTION]
 ```
 
-- If you specify the `WITH ADMIN OPTION` option, the grantee can grant the role to other users or roles.
+- If you specify the `WITH ADMIN OPTION` option, the grantee can grant the role to other users or roles. If the grantee is a role, all users who have that role, directly or through a role hierarchy, can also grant the role to other users or roles.
+- Granting a role that is already granted doesn't raise an error. If you grant it again with `WITH ADMIN OPTION`, the admin option is added.
+- You can't grant a role to another role if doing so would create a cycle in the role hierarchy.
+- Superusers, or users who have the admin option for the role, can grant the role. For details, see [Roles](../scalardb-cluster/scalardb-auth-with-sql.mdx#roles).
 
 #### Examples
 

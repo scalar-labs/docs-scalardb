@@ -51,7 +51,16 @@ Only superusers can create or drop roles. Users who have the `GRANT` privilege c
 
 When a role is granted to a user, the user can use all privileges granted to that role. If the role has other roles granted to it (role hierarchy), the user can also use the privileges from those roles.
 
-When granting a role, you can optionally specify `WITH ADMIN OPTION` to allow the grantee to grant the same role to others.
+When granting a role, you can optionally specify `WITH ADMIN OPTION` to allow the grantee to grant the same role to others. If the grantee is a role, all users who have that role, directly or through a role hierarchy, can also grant the same role to others. The admin option applies only to the role itself. It doesn't allow the grantee to grant privileges to the role.
+
+The following rules also apply to roles:
+
+- Granting a role that is already granted to a user or role doesn't raise an error. If you grant it again with `WITH ADMIN OPTION`, the admin option is added. Granting it again without `WITH ADMIN OPTION` doesn't remove an existing admin option. To remove the admin option, use `REVOKE ADMIN OPTION`.
+- You can't grant a role to another role if doing so would create a cycle in the role hierarchy.
+- When you drop a role, the role is also removed from all users and roles that it was granted to, and all privileges granted to the role are deleted.
+- When you drop a user, the privileges granted directly to the user and the user's role grants are also removed. The roles themselves are not deleted.
+
+To manage roles by using the Java API instead of SQL, see [Manage roles and privileges](./api-guide.mdx#manage-roles-and-privileges).
 
 ## Privileges
 
