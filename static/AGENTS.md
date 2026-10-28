@@ -20,15 +20,15 @@ Use the published documentation as the primary source for documented ScalarDB be
 
 Use these resources according to the question:
 
-- **Latest English documentation:** https://scalardb.scalar-labs.com/docs/latest/ — default starting point for current guidance.
-- **Features and edition availability:** https://scalardb.scalar-labs.com/docs/latest/features — verify which capabilities and components are available in each edition.
-- **Release support policy:** https://scalardb.scalar-labs.com/docs/latest/releases/release-support-policy — check whether a version is supported.
-- **Release notes:** https://scalardb.scalar-labs.com/docs/latest/releases/release-notes — check changes introduced in releases.
-- **`llms.txt`:** https://scalardb.scalar-labs.com/llms.txt — discover links to the latest English documentation pages.
-- **`llms-full.txt`:** https://scalardb.scalar-labs.com/llms-full.txt — get broad context from a build-generated snapshot of the latest English documentation, including front matter and a directory tree.
-- **Sitemap:** https://scalardb.scalar-labs.com/sitemap.xml — discover published English documentation URLs, including older versions.
-- **Source repository:** https://github.com/scalar-labs/scalardb — consult source code when the question specifically requires source-level verification.
+- **Latest English documentation:** https://scalardb.scalar-labs.com/docs/latest/ — Default starting point for current guidance.
+- **Features and edition availability:** https://scalardb.scalar-labs.com/docs/latest/features — Verify which capabilities and components are available in each edition.
+- **Release support policy:** https://scalardb.scalar-labs.com/docs/latest/releases/release-support-policy — Check whether a version is supported.
+- **Release notes:** https://scalardb.scalar-labs.com/docs/latest/releases/release-notes — Check changes introduced in releases.
 - **Roadmap:** https://scalardb.scalar-labs.com/docs/latest/roadmap — Review planned work; roadmap items are not guarantees.
+- **`llms.txt`:** https://scalardb.scalar-labs.com/llms.txt — Discover links to the latest English documentation pages.
+- **`llms-full.txt`:** https://scalardb.scalar-labs.com/llms-full.txt — Get broad context from a build-generated snapshot of the latest English documentation, including front matter and a directory tree.
+- **Sitemap:** https://scalardb.scalar-labs.com/sitemap.xml — Discover published English documentation URLs, including older versions.
+- **Source repository:** https://github.com/scalar-labs/scalardb — Consult source code when the question specifically requires source-level verification.
 
 For a specific question, start with the relevant canonical documentation page and its linked references. For broad discovery, use `llms.txt` to find relevant pages, then read those pages. Use `llms-full.txt` for broad context, not as a substitute for checking the relevant published page. Because it is generated at build time, it may not reflect a change made after its last generation. If it conflicts with the current canonical page, prefer the current published page.
 
@@ -62,13 +62,13 @@ Japanese documentation is available under `/ja-jp/docs/<version>/` for versions 
 
 Use the site's navigation, search, and cross-links to find the most relevant page for the question. As a general guide:
 
-- **Concepts and architecture:** look for overview, design, and feature documentation.
-- **Getting started and tutorials:** start with the Quickstart section and relevant getting-started guides.
-- **How-to guidance:** consult the Develop, Deploy, Manage, and Migrate sections.
-- **Configuration:** use the configuration reference for the relevant component and version.
-- **API details:** use the relevant API guide and matching Javadocs.
-- **Troubleshooting:** consult the Troubleshoot section and the status-code reference for the relevant component. If a user provides an error code, search for that exact code.
-- **Version changes:** consult release notes for the relevant release and the release support policy for support status.
+- **Concepts and architecture:** Understand ScalarDB components, design, and how features work.
+- **Getting started and tutorials:** Follow initial setup steps and learn through guided examples.
+- **How-to guides:** Complete specific tasks, such as deploying or configuring ScalarDB.
+- **Configuration reference:** Verify property names, defaults, constraints, and applicability.
+- **API reference:** Check API signatures and behavior using the relevant API guide or matching Javadocs.
+- **Troubleshooting:** Investigate errors, known limitations, and recommended resolutions.
+- **Release notes and support policy:** Understand changes between versions and whether a release is supported.
 
 For configuration and API questions, use the reference for the correct component and version. For version changes, consult the release notes and release support policy.
 
@@ -110,5 +110,5 @@ For further help:
 
 - **Product bug reports and feature requests:** https://github.com/scalar-labs/scalardb/issues
 - **Enterprise support:** https://www.scalar-labs.com/support
-- **Licensing questions:** https://www.scalar-labs.com/contact
-- **Documentation errors:** use the "Edit this page" link on the relevant page or open an issue at https://github.com/scalar-labs/docs-scalardb
+- **Licensing questions:** https://www.scalar-labs.com/contact-us
+- **Documentation errors:** Use the "Edit this page" link on the relevant page or open an issue at https://github.com/scalar-labs/docs-scalardb
