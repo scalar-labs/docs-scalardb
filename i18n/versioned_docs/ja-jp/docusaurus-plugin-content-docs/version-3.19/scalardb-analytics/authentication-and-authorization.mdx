@@ -1,0 +1,380 @@
+---
+tags:
+  - Enterprise Option
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Analytics でユーザーを認証と認可する
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+ScalarDB Analytics は、リソースレベルのアクセス制御でユーザーを認証と認可することができます。カタログ、データソース、ネームスペース、テーブルに対してユーザーを作成し、権限を付与または取り消すことができます。権限をグループ化するためにロールを作成し、ユーザーにロールを付与することもできます。このガイドでは、ScalarDB Analytics で認証と認可を使用する方法について説明します。
+
+## 認証
+
+ScalarDB Analytics は、設定された認証バックエンドに対してユーザー名とパスワードを検証してユーザーを認証します。認証に成功すると、サーバーはアクセストークンを発行し、クライアントは後続のリクエストでこのトークンを使用します。各ユーザーは一度に1つのアクティブなアクセストークンのみを持つことができます。再度認証すると、以前のトークンは無効化されます。
+
+### 認証バックエンド
+
+ScalarDB Analytics は、以下の認証バックエンドをサポートしています:
+
+- **Internal:** ユーザー認証情報を ScalarDB Analytics 内で直接管理します。ユーザーは `user register` CLI コマンドを使用して登録され、パスワードは (ハッシュ化されて) ScalarDB Analytics メタデータデータベースに格納されます。これがデフォルトバックエンドです。
+- **ScalarDB Cluster:** 認証情報の検証を外部の ScalarDB Cluster インスタンスに委任します。ユーザーが初回ログインする際、ScalarDB Analytics は対応するユーザーレコードを自動的に作成します (just-in-time プロビジョニング)。このバックエンドでは、ユーザーライフサイクルが ScalarDB Cluster で管理されるため、`user register` および `user unregister` コマンドは使用できません。
+
+認証バックエンドは、`scalar.db.analytics.server.auth.password.backend` サーバープロパティを使用して設定できます。詳細については、[設定](#設定)を参照してください。
+
+### ユーザー
+
+ユーザーは、ScalarDB Analytics で認証を行い、割り当てられた権限に基づいて操作を実行できるエンティティです。ユーザーは、ユーザー名とパスワードで ScalarDB Analytics にログインし、必要な権限を持っている場合に操作を実行できます。
+
+認証と認可は、2つのタイプのユーザーをサポートしています:
+
+- **スーパーユーザー:** このタイプのユーザーは、すべての権限を持ちます。スーパーユーザーのみが、カタログを作成し、ユーザーとロールを管理できます。
+- **通常のユーザー:** このタイプのユーザーは、最初は権限を持っていないため、スーパーユーザーまたはカタログレベルの管理者権限を持つユーザーによって権限を付与される必要があります。
+
+### 初期管理ユーザー
+
+認証と認可を有効にすると、ScalarDB Analytics は初期管理ユーザーを作成し、そのユーザーに組み込みのスーパーユーザーロールを割り当てます。動作は認証バックエンドによって異なります。
+
+#### Internal バックエンド
+
+サーバーの起動時に、ScalarDB Analytics は `scalar.db.analytics.server.auth.initial_admin_username` で指定されたユーザーを、`scalar.db.analytics.server.auth.password.internal.initial_admin_password` で指定されたパスワードで作成し、そのユーザーに SUPERADMIN ロールを割り当てます。この割り当ては、SUPERADMIN ロールにまだ割り当てられているユーザーがいない場合にのみ実行されます。このユーザーでログインして、必要に応じて他のユーザーを作成できます。
+
+#### ScalarDB Cluster バックエンド
+
+サーバーは起動時にユーザーを作成しません。代わりに、`scalar.db.analytics.server.auth.initial_admin_username` で指定されたユーザーが初回ログインする際、ScalarDB Analytics は just-in-time プロビジョニングを通じてそのユーザーを自動的に登録し、SUPERADMIN ロールを割り当てます。この割り当ては、SUPERADMIN ロールにまだ割り当てられているユーザーがいない場合にのみ実行されます。他のユーザーも初回ログイン時にプロビジョニングされますが、SUPERADMIN ロールは割り当てられません。
+
+### ユーザー管理
+
+Internal バックエンドを使用する場合は、CLI を使用してユーザーを登録・削除できます:
+
+```console
+scalardb-analytics-cli user register -u alice -p
+scalardb-analytics-cli user unregister -u alice
+```
+
+以下のコマンドは、認証バックエンドに関係なく使用できます:
+
+```console
+scalardb-analytics-cli user list
+scalardb-analytics-cli user describe -u alice
+```
+
+## 認可
+
+ScalarDB Analytics は、ロールと権限を通じてリソースレベルのアクセス制御を提供します。このセクションでは、ロール、権限、アクセス制御の管理方法について説明します。
+
+### ロール
+
+ロールは、ユーザーに付与できる権限の名前付きコレクションです。ロールを使用することで、各ユーザーに個別の権限を付与するのではなく、複数のユーザーの権限を便利に管理できます。
+
+スーパーユーザーのみが、ロールを作成、削除、または一覧表示できます。スーパーユーザーのみが、ユーザーにロールを割り当てたり、ロール割り当てを削除したりできます。
+
+#### SUPERADMIN ロール
+
+SUPERADMIN は、サーバーの起動時に自動的に作成される組み込みロールです。SUPERADMIN ロールに割り当てられたユーザーは、すべてのアクセス制御チェックをバイパスし、任意の操作を実行できます。API レスポンスでは、SUPERADMIN ロールに割り当てられたユーザーは `is_superuser` オプションが `true` に設定されて表されます。
+
+#### ロール管理
+
+以下の CLI コマンドを使用してロールを管理できます:
+
+```console
+scalardb-analytics-cli role create -n analyst
+scalardb-analytics-cli role delete -n analyst
+scalardb-analytics-cli role list
+scalardb-analytics-cli role grant -r analyst -u alice
+scalardb-analytics-cli role revoke -r analyst -u alice
+```
+
+### 権限
+
+ScalarDB Analytics は、リソースレベルのアクセス制御を使用します。権限は特定のリソースに対して付与され、そのリソースタイプに関連する操作に適用されます。CLI を通じて権限を付与または取り消す際、リソースタイプをサブコマンドとして指定し、権限レベルを `-p` オプションで指定します。
+
+有効な `-p` 値は、リソースタイプによって異なります:
+
+- **Catalog:** `read`、`write`、または `admin`
+- **Data source:** `read` または `admin`
+- **Namespace:** `read`
+- **Table:** `read`
+
+以下の権限が使用できます:
+
+| 権限                 | リソースタイプ | `-p` 値 | 説明                                                                                |
+|:--------------------|:--------------|:--------|:-----------------------------------------------------------------------------------|
+| `CATALOG_READ`      | Catalog       | `read`  | カタログメタデータを読み取る。                                                        |
+| `CATALOG_WRITE`     | Catalog       | `write` | カタログ内のリソースを作成または変更する (例: データソースの登録)。                      |
+| `CATALOG_ADMIN`     | Catalog       | `admin` | カタログを削除し、カタログ内のリソースに対する権限を管理する。                         |
+| `DATA_SOURCE_READ`  | Data source   | `read`  | データソースメタデータを読み取る。                                                    |
+| `DATA_SOURCE_ADMIN` | Data source   | `admin` | データソースを削除する。                                                             |
+| `NAMESPACE_READ`    | Namespace     | `read`  | ネームスペースメタデータを読み取る。                                                   |
+| `TABLE_READ`        | Table         | `read`  | テーブルメタデータを読み取る。                                                        |
+
+#### リソース階層
+
+ScalarDB Analytics のリソースは階層で構成されています。階層のより上位レベルで付与された権限は、そのレベル以下のすべてのリソースに適用されます。
+
+```
+System (SUPERADMIN のみ)
+  └── Catalog
+        └── Data source
+              └── Namespace
+                    └── Table
+```
+
+上位レベルで付与された権限は、そのレベル以下のすべてのリソースに伝播されます。たとえば、カタログに対して `CATALOG_READ` を付与すると、そのカタログ内のすべてのデータソース、ネームスペース、テーブルのメタデータを読み取ることができます。ただし、各操作に必要な具体的な権限は個別に定義されています。詳細については、[各タイプの操作に必要な権限](#各タイプの操作に必要な権限)を参照してください。
+
+#### 直接付与とロールベース付与
+
+権限は、2つの方法で付与できます:
+
+- **直接付与:** 特定のユーザーに対して、特定のリソースに対する権限を直接付与します。
+- **ロールベース付与:** 特定のリソースに対してロールに権限を付与します。そのロールに割り当てられたすべてのユーザーが権限を受け取ります。
+
+ユーザーの有効な権限は、直接付与されたすべての権限と、割り当てられたロールからのすべての権限の和集合です。
+
+#### 権限管理
+
+リソースタイプ、対象リソース、権限レベルを指定して、権限を付与および取り消すことができます。権限は、ユーザー (`--user`) またはロール (`--role`) に付与できます。
+
+ユーザーに権限を付与:
+
+```console
+scalardb-analytics-cli permission grant catalog --catalog my_catalog --user alice -p read
+```
+
+ロールに権限を付与:
+
+```console
+scalardb-analytics-cli permission grant catalog --catalog my_catalog --role analyst -p read
+```
+
+データソース、ネームスペース、テーブルについては、親リソースを指定します:
+
+```console
+scalardb-analytics-cli permission grant data-source \
+  --catalog my_catalog --data-source my_ds --user alice -p read
+
+scalardb-analytics-cli permission grant namespace \
+  --catalog my_catalog --data-source my_ds --namespace my_ns --user alice -p read
+
+scalardb-analytics-cli permission grant table \
+  --catalog my_catalog --data-source my_ds --namespace my_ns --table my_tbl \
+  --user alice -p read
+```
+
+権限を取り消す:
+
+```console
+scalardb-analytics-cli permission revoke catalog --catalog my_catalog --user alice -p read
+```
+
+ユーザーの有効な権限を一覧表示:
+
+```console
+scalardb-analytics-cli permission list -u alice
+```
+
+カタログに対して `CATALOG_ADMIN` を持つユーザーは、そのカタログ内の任意のリソースに対する権限を付与および取り消すことができます。スーパーユーザーは、すべてのリソースに対する権限を管理できます。
+
+#### 各タイプの操作に必要な権限
+
+以下の表は、各操作の認可要件を満たす権限を示しています。リソース階層を含む操作については、システムは対象リソースから開始してカタログレベルまで各レベルでの権限をチェックします。任意のレベルでのマッチで十分です。
+
+:::note
+
+[ScalarDB 認可委任](#scalardb-認可委任)が有効になっている場合、ScalarDB データソース (ScalarDB Cluster が管理するデータベース) のネームスペースレベルおよびテーブルレベルの認可は、以下の表に記載された権限ではなく ScalarDB Cluster に委任されます。
+
+:::
+
+| 操作                           | 満たす権限                                                                                                                               |
+|:-------------------------------|:---------------------------------------------------------------------------------------------------------------------------------------|
+| カタログの作成                  | SUPERADMIN のみ                                                                                                                         |
+| カタログの検索                  | そのカタログの `CATALOG_READ` または `CATALOG_ADMIN`                                                                                     |
+| カタログの一覧表示              | カタログの検索と同様 (結果はフィルタリングされます)                                                                                        |
+| カタログの初期化                | そのカタログの `CATALOG_WRITE` または `CATALOG_ADMIN`                                                                                    |
+| カタログの削除                  | そのカタログの `CATALOG_ADMIN`                                                                                                          |
+| データソースの登録              | 親カタログの `CATALOG_WRITE` または `CATALOG_ADMIN`                                                                                      |
+| データソースの検索              | そのデータソースの `DATA_SOURCE_READ` または `DATA_SOURCE_ADMIN`、または親カタログの `CATALOG_READ` または `CATALOG_ADMIN`               |
+| データソースの一覧表示          | データソースの検索と同様 (結果はフィルタリングされます)                                                                                     |
+| データソースの削除              | そのデータソースの `DATA_SOURCE_ADMIN`、または親カタログの `CATALOG_ADMIN`                                                               |
+| ネームスペースの説明            | そのネームスペースの `NAMESPACE_READ`、親データソースの `DATA_SOURCE_READ` または `DATA_SOURCE_ADMIN`、または親カタログの `CATALOG_READ` または `CATALOG_ADMIN` |
+| ネームスペースの一覧表示        | ネームスペースの説明と同様 (結果はフィルタリングされます)                                                                                   |
+| テーブルの説明                  | そのテーブルの `TABLE_READ`、親ネームスペースの `NAMESPACE_READ`、親データソースの `DATA_SOURCE_READ` または `DATA_SOURCE_ADMIN`、または親カタログの `CATALOG_READ` または `CATALOG_ADMIN` |
+| テーブルの一覧表示              | テーブルの説明と同様 (結果はフィルタリングされます)                                                                                         |
+| ユーザーの登録または削除        | SUPERADMIN のみ                                                                                                                         |
+| ロールの作成、削除、または一覧表示 | SUPERADMIN のみ                                                                                                                         |
+| ロールの付与または取り消し        | SUPERADMIN のみ                                                                                                                         |
+| 権限の付与または取り消し        | 対象カタログの `CATALOG_ADMIN`、または SUPERADMIN                                                                                        |
+| 権限の一覧表示                  | そのリソースに対応する読み取り操作と同様                                                                                                    |
+
+### ScalarDB 認可委任
+
+ScalarDB Cluster を認証バックエンドとして使用する場合、ScalarDB データソース (ScalarDB Cluster が管理するデータベース) のネームスペースレベルおよびテーブルレベルの認可をオプションで ScalarDB Cluster に委任できます。これにより、ScalarDB Cluster の権限システムが ScalarDB データのアクセス制御の単一信頼できるソースとなり、2つの場所で権限を管理する必要がなくなります。
+
+#### 委任の動作
+
+認可委任が有効になっている場合、ScalarDB Analytics は ScalarDB データソースでのネームスペースおよびテーブル操作について、独自のアクセス制御エントリではなく ScalarDB Cluster の権限 (具体的には `READ` 権限) をチェックします。カタログレベルおよびデータソースレベルの認可は、委任設定に関係なく ScalarDB Analytics アクセス制御の下に留まります。
+
+#### 前提条件
+
+ScalarDB 認可委任を使用するには、以下の条件を満たす必要があります:
+
+- 認証バックエンドが `scalardb-cluster` に設定されている必要があります。
+- `scalar.db.analytics.server.auth.password.scalardb_cluster.acl_delegation` プロパティが `true` に設定されている必要があります。
+- ユーザーが ScalarDB Cluster バックエンド経由で認証されている必要があります。
+
+#### リソースレベル別認可責任
+
+以下の表は、認可委任が有効または無効の場合に、各リソースレベルでどのシステムが認可を担当するかを示しています。
+
+| リソースレベル                        | 委任有効            | 委任無効             |
+|:-----------------------------------|:-------------------|:--------------------|
+| Catalog                            | ScalarDB Analytics | ScalarDB Analytics  |
+| Data source                        | ScalarDB Analytics | ScalarDB Analytics  |
+| Namespace (ScalarDB Cluster が管理) | ScalarDB Cluster   | ScalarDB Analytics  |
+| Table (ScalarDB Cluster が管理)     | ScalarDB Cluster   | ScalarDB Analytics  |
+| Namespace (ScalarDB Cluster 管理外) | ScalarDB Analytics | ScalarDB Analytics  |
+| Table (ScalarDB Cluster 管理外)     | ScalarDB Analytics | ScalarDB Analytics  |
+
+:::note
+
+ScalarDB データソースのみが認可委任をサポートします。他のデータソースタイプは常に ScalarDB Analytics アクセス制御を使用します。
+
+:::
+
+## 設定
+
+このセクションでは、認証と認可で使用できる設定について説明します。
+
+### ScalarDB Analytics サーバー設定
+
+認証と認可を有効にするには、`scalar.db.analytics.server.auth.enabled` を `true` に設定する必要があります。
+
+#### `enabled`
+
+- **フィールド:** `scalar.db.analytics.server.auth.enabled`
+- **説明:** 認証と認可が有効かどうか。
+- **デフォルト値:** `false`
+
+以下の設定も設定できます:
+
+#### `initial_admin_username`
+
+- **フィールド:** `scalar.db.analytics.server.auth.initial_admin_username`
+- **説明:** SUPERADMIN ロールが割り当てられる初期管理ユーザーのユーザー名。
+- **デフォルト値:** なし
+
+#### `password.backend`
+
+- **フィールド:** `scalar.db.analytics.server.auth.password.backend`
+- **説明:** 使用する認証バックエンド (`internal` または `scalardb-cluster`)。
+- **デフォルト値:** `internal`
+
+#### `password.token_ttl_seconds`
+
+- **フィールド:** `scalar.db.analytics.server.auth.password.token_ttl_seconds`
+- **説明:** アクセストークンの有効期間 (秒)。
+- **デフォルト値:** `86400`
+
+#### `password.internal.initial_admin_password`
+
+- **フィールド:** `scalar.db.analytics.server.auth.password.internal.initial_admin_password`
+- **説明:** 管理ユーザーの初期パスワード。`auth.password.backend` が `internal` に設定されている場合にのみ使用されます。
+- **デフォルト値:** なし
+
+認証バックエンドとして `scalardb-cluster` を使用する場合、以下の設定も設定できます:
+
+#### `password.scalardb_cluster.host`
+
+- **フィールド:** `scalar.db.analytics.server.auth.password.scalardb_cluster.host`
+- **説明:** ScalarDB Cluster インスタンスのホスト名または IP アドレス。
+- **デフォルト値:** `localhost`
+
+#### `password.scalardb_cluster.port`
+
+- **フィールド:** `scalar.db.analytics.server.auth.password.scalardb_cluster.port`
+- **説明:** ScalarDB Cluster インスタンスのポート番号。
+- **デフォルト値:** `60053`
+
+#### `password.scalardb_cluster.deadline_millis`
+
+- **フィールド:** `scalar.db.analytics.server.auth.password.scalardb_cluster.deadline_millis`
+- **説明:** ScalarDB Cluster への認証リクエストの gRPC デッドライン (ミリ秒)。
+- **デフォルト値:** `5000`
+
+#### `password.scalardb_cluster.acl_delegation`
+
+- **フィールド:** `scalar.db.analytics.server.auth.password.scalardb_cluster.acl_delegation`
+- **説明:** ScalarDB データソースのネームスペースレベルおよびテーブルレベルの認可を ScalarDB Cluster に委任するかどうか。詳細については、[ScalarDB 認可委任](#scalardb-認可委任)を参照してください。
+- **デフォルト値:** `false`
+
+#### `password.scalardb_cluster.tls.enabled`
+
+- **フィールド:** `scalar.db.analytics.server.auth.password.scalardb_cluster.tls.enabled`
+- **説明:** ScalarDB Cluster への接続で TLS を有効にするかどうか。
+- **デフォルト値:** `false`
+
+#### `password.scalardb_cluster.tls.ca_root_cert_path`
+
+- **フィールド:** `scalar.db.analytics.server.auth.password.scalardb_cluster.tls.ca_root_cert_path`
+- **説明:** ScalarDB Cluster サーバー証明書を検証するための CA ルート証明書ファイルへのパス。
+- **デフォルト値:** なし
+
+#### `password.scalardb_cluster.tls.override_authority`
+
+- **フィールド:** `scalar.db.analytics.server.auth.password.scalardb_cluster.tls.override_authority`
+- **説明:** ScalarDB Cluster 接続の TLS 検証用のサーバー権限をオーバーライド。
+- **デフォルト値:** なし
+
+### CLI クライアント設定
+
+ScalarDB Analytics サーバーで認証するには、プロパティファイルまたは環境変数を使用してクライアント認証情報を設定します。
+
+#### `username`
+
+- **フィールド:** `scalar.db.analytics.client.auth.username`
+- **説明:** ScalarDB Analytics サーバーでの認証用のユーザー名。
+- **デフォルト値:** なし
+
+#### `password`
+
+- **フィールド:** `scalar.db.analytics.client.auth.password`
+- **説明:** ScalarDB Analytics サーバーでの認証用のパスワード。
+- **デフォルト値:** なし
+
+環境変数を使用して認証情報を設定することもできます。環境変数は設定ファイルプロパティよりも優先されます。
+
+#### `SCALAR_DB_ANALYTICS_CLIENT_AUTH_USERNAME`
+
+- **説明:** 認証用のユーザー名。
+
+#### `SCALAR_DB_ANALYTICS_CLIENT_AUTH_PASSWORD`
+
+- **説明:** 認証用のパスワード。
+
+### Spark 設定
+
+Spark アプリケーションを ScalarDB Analytics サーバーで認証するには、Spark 設定に以下のプロパティを追加します。`<catalog-name>` をカタログの名前に置き換えてください。
+
+#### `username`
+
+- **フィールド:** `spark.sql.catalog.<catalog-name>.server.auth.username`
+- **説明:** Spark アプリケーションを ScalarDB Analytics サーバーで認証するためのユーザー名。
+- **デフォルト値:** なし
+
+#### `password`
+
+- **フィールド:** `spark.sql.catalog.<catalog-name>.server.auth.password`
+- **説明:** Spark アプリケーションを ScalarDB Analytics サーバーで認証するためのパスワード。
+- **デフォルト値:** なし
+
+## ワイヤー暗号化
+
+認証と認可を有効にした場合は、転送中のユーザー認証情報を保護するために TLS も有効にする必要があります。TLS 設定の詳細については、[ScalarDB Analytics の設定](configurations.mdx)を参照してください。
+
+## 次のステップ
+
+- [ScalarDB Analytics の設定](configurations.mdx) - 利用可能なすべての設定オプションを表示
+- [ScalarDB Analytics カタログの作成](create-scalardb-analytics-catalog.mdx) - カタログの作成とデータソースの追加方法を学ぶ

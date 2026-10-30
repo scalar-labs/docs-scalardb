@@ -275,7 +275,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalardb-samples/microservice-transaction-sample-with-cluster/README',
-                  label: 'Run Microservice Transactions Samples Through Cluster [NEW]',
+                  label: 'Run Microservice Transactions Samples Through Cluster',
                 },
                 {
                   type: 'doc',
@@ -471,7 +471,7 @@ const sidebars = {
                       type: 'doc',
                       key: 'develop-cluster-api-guide-en-us-3.19',
                       id: 'scalardb-cluster/api-guide',
-                      label: 'ScalarDB Cluster API Guide [NEW]',
+                      label: 'ScalarDB Cluster API Guide',
                     },
                     {
                       type: 'doc',
@@ -1096,7 +1096,7 @@ const sidebars = {
             {
               "type": "doc",
               "id": "scalardb-analytics/scalardb-analytics-status-codes",
-              "label": "ScalarDB Analytics [NEW]",
+              "label": "ScalarDB Analytics",
             },
           ],
         },
@@ -1416,7 +1416,7 @@ const sidebars = {
                 {
                   type: 'doc',
                   id: 'scalardb-samples/microservice-transaction-sample-with-cluster/README',
-                  label: 'クラスタでのマイクロサービストランザクション [NEW]',
+                  label: 'クラスタでのマイクロサービストランザクション',
                 },
                 {
                   type: 'doc',
@@ -1610,7 +1610,7 @@ const sidebars = {
                       type: 'doc',
                       key: 'develop-cluster-api-guide-en-us-3.19',
                       id: 'scalardb-cluster/api-guide',
-                      label: 'ScalarDB Cluster API ガイド [NEW]',
+                      label: 'ScalarDB Cluster API ガイド',
                     },
                     {
                       type: 'doc',
@@ -2235,7 +2235,7 @@ const sidebars = {
             {
               "type": "doc",
               "id": "scalardb-analytics/scalardb-analytics-status-codes",
-              "label": "ScalarDB Analytics [NEW]",
+              "label": "ScalarDB Analytics",
             },
           ],
         },

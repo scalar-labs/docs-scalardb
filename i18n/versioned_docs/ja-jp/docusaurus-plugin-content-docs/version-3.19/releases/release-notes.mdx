@@ -1,0 +1,147 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB 3.19 リリースノート
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+このページには、ScalarDB 3.19 のリリースノートのリストが含まれています。
+
+## v3.19.1
+
+**発売日:** 2026年9月2日
+
+### まとめ
+
+このリリースでは、グローバルトランザクション API を更新し、ブランチが作業の結果を明示的に宣言することを必須とし、高速な Aurora フェイルオーバーのための AWS Advanced JDBC Wrapper のサポートを追加し、Cosmos DB のエラー処理と ScalarDB Cluster の属性ベースの認証メタデータキャッシュのリフレッシュを改善し、`join()` および `resume()` トランザクション API を非推奨にし、スキーマ操作中の競合エラーに対するリトライ処理を追加し、セキュリティの脆弱性に対処するために grpc_health_probe をアップグレードしました。
+
+### Community edition
+
+#### 改善点
+
+- `BranchTransaction.end()` を `BranchTransaction.end(BranchTransaction.Status)` に置き換え、グローバルトランザクションのブランチが自身の作業の結果を宣言することを必須にしました。既存の `end()` 呼び出しは `end(BranchTransaction.Status.SUCCESS)` に置き換え、失敗パスでは `end(BranchTransaction.Status.FAILURE)` を呼び出してください。 ([#3806](https://github.com/scalar-labs/scalardb/pull/3806))
+- AWS Advanced JDBC Wrapper のサポートを追加し、Aurora PostgreSQL および Aurora MySQL 向けの高速な Aurora フェイルオーバーを有効にしました。例外オーバーライドを指定して HikariCP を設定することは、結果が不明なトランザクションが確定的な失敗として報告される原因となるため、起動時に拒否されるようになりました。 ([#3805](https://github.com/scalar-labs/scalardb/pull/3805))
+- Cosmos DB のエラーメッセージに Cosmos DB の診断情報が含まれていたため、メッセージが過度に大きくなり、エラー情報が失われる可能性があった問題を修正しました。 ([#3816](https://github.com/scalar-labs/scalardb/pull/3816))
+- `DistributedTransactionManager.join()` および `DistributedTransactionManager.resume()` を、その実装とともに非推奨にしました。3.20.0 で削除される予定です。 ([#3817](https://github.com/scalar-labs/scalardb/pull/3817))
+
+#### バグの修正
+
+- Oracle で SERIALIZABLE 分離レベルを使用する場合の `ORA-08177` など、競合エラーによりスキーマ操作が失敗する可能性がある問題を修正しました。競合エラーは再試行されるようになりました。 ([#3820](https://github.com/scalar-labs/scalardb/pull/3820))
+
+### Enterprise edition
+
+#### 改善点
+
+##### ScalarDB Cluster
+
+- 属性ベースの認証メタデータキャッシュがリフレッシュされる際に発行されるクエリの数を削減し、各リフレッシュ後の最初のリクエストで発生するレイテンシスパイクを解消しました。
+- `BranchTransaction.end()` を `BranchTransaction.end(BranchTransaction.Status)` に置き換える ScalarDB Core の変更を採用し、グローバルトランザクションのブランチが自身の作業の結果を宣言することを必須にしました。既存の `end()` 呼び出しは `end(BranchTransaction.Status.SUCCESS)` に置き換え、失敗パスでは `end(BranchTransaction.Status.FAILURE)` を呼び出してください。
+
+#### バグの修正
+
+##### ScalarDB Cluster
+
+- grpc_health_probe バイナリをアップグレードしてセキュリティ問題を修正しました: [CVE-2026-33818](https://github.com/advisories/GHSA-xc2p-8ggw-6cr5 "CVE-2026-33818"), [CVE-2026-39821](https://github.com/advisories/GHSA-w2q5-6q6x-x959 "CVE-2026-39821"), [CVE-2026-46600](https://github.com/advisories/GHSA-gg3m-vvp2-p2c5 "CVE-2026-46600"), [CVE-2026-56852](https://github.com/advisories/GHSA-jpjm-c3r5-q96r "CVE-2026-56852"), [CVE-2026-56853](https://github.com/advisories/GHSA-xphw-4f88-5f39 "CVE-2026-56853"), [CVE-2026-56858](https://github.com/advisories/GHSA-c974-w86c-vpfw "CVE-2026-56858"), [CVE-2026-56859](https://github.com/advisories/GHSA-76p8-fhrm-vpc7 "CVE-2026-56859"), [CVE-2026-56860](https://github.com/advisories/GHSA-25mv-j2qr-v5jq "CVE-2026-56860"), [CVE-2026-56862](https://github.com/advisories/GHSA-7qch-w8m5-g3h3 "CVE-2026-56862"), and [GHSA-hrxh-6v49-42gf](https://github.com/advisories/GHSA-hrxh-6v49-42gf "GHSA-hrxh-6v49-42gf")
+
+## v3.19.0
+
+**発売日:** 2026年8月2日
+
+### まとめ
+
+このリリースでは、Consensus Commit の回復機能として、書き込みセットのログ記録、トランザクションの完了、および単一レコード回復の API を追加し、コーディネーターの状態レコードがクリーンアップされる際の回復の正確性を改善しました。また、属性ベースの認証、OpenTelemetry サポート、分離クラスターデプロイメント向けのトランザクションコーディネーターノード、およびクラスタークライアント SDK でのグローバルトランザクション API サポートを追加しました。さらに、`repairTable`、アクティブトランザクション管理、クラスターのアップグレードと認証の動作、SQL SELECT の実行を改善し、Consensus Commit、クラスターのロールバック/一時停止、SQL ステートメントキャッシュに関するいくつかの問題を修正しました。
+
+### Community edition
+
+#### 機能強化
+
+- オプトイン設定 `scalar.db.consensus_commit.coordinator.write_set_logging.enabled` を追加しました。有効にすると、コーディネーターテーブルに `tx_write_set` 列が追加され、コミット/アボート時に値が設定されます。これにより、事前トランザクション回復のための基盤が整います。既存のコーディネーターテーブルは、設定を有効にして `Admin.repairCoordinatorTables()` を実行することで移行できます。 ([#3570](https://github.com/scalar-labs/scalardb/pull/3570) [#3593](https://github.com/scalar-labs/scalardb/pull/3593))
+- コミットされたトランザクションのレコードごとのコミット後回復を完了し、コーディネーターの状態行を削除する `DistributedTransactionManager#finishTransaction(String)` API を追加しました。トランザクションが完了した場合 (または既に完了していた場合) は `true` を返し、書き込みセットがないためトランザクションが適用できない場合 (例えば、`commit()` ではなく `rollback()` / `abort()` で終了したトランザクション) は `false` を返します。完了に失敗した場合は `TransactionException` がスローされます。これは Consensus Commit トランザクションマネージャー固有の低レベル操作 API です。ほとんどのアプリケーションは直接呼び出すべきではなく、高度なユースケースを対象としています。呼び出し元は、基礎となるトランザクションのライフサイクルとこのメソッドを直接呼び出す際の影響を理解していることが求められます。 ([#3567](https://github.com/scalar-labs/scalardb/pull/3567))
+- クラッシュしたトランザクションによってコミットされていない状態に残された単一のレコードを回復するための `DistributedTransactionManager#recoverRecord` API を追加しました。これは Consensus Commit トランザクションマネージャー固有の低レベル操作 API です。ほとんどのアプリケーションは直接呼び出すべきではなく、高度なユースケースを対象としています。呼び出し元は、基礎となるトランザクションのライフサイクルとこのメソッドを直接呼び出す際の影響を理解していることが求められます。 ([#3617](https://github.com/scalar-labs/scalardb/pull/3617))
+
+#### 改善点
+
+- メタデータが既に最新の状態の場合にテーブルのメタデータの再書き込みをスキップする (Cosmos DB の場合は、コンテナーのインデックスポリシーが既に一致する場合にその更新もスキップする) ように `repairTable` を改善し、不要な書き込みを回避するようにしました。 ([#3613](https://github.com/scalar-labs/scalardb/pull/3613))
+- コーディネーターの状態レコードがクリーンアップ (例えば `finishTransaction` による) によって削除された場合でも、Consensus Commit の回復パスと読み取りパスが正確に動作するように修正しました。これにより、古い読み取り、不正なアボート、グループコミットの lazy recovery 中のクラッシュを防ぎます。 ([#3650](https://github.com/scalar-labs/scalardb/pull/3650))
+- アクティブトランザクション管理によって追跡されるアクティブトランザクションの数に設定可能な制限 (`scalar.db.active_transaction_management.max_active_transactions`、デフォルト 10000) を追加しました。これは Window-TinyLFU エビクションを使用した Caffeine キャッシュによって支えられており、長時間実行中のトランザクションが使用中に削除されないように、すべてのトランザクション操作でアイドルタイマーをリフレッシュします。 ([#3673](https://github.com/scalar-labs/scalardb/pull/3673))
+
+#### バグの修正
+
+- Spanner (エミュレーター、omni、クラウドインスタンス) に接続するために、既にサポートされている `jdbc:cloudspanner` パターンに加えて、`jdbc:spanner` で始まる接続文字列を受け入れるようになりました。 ([#3559](https://github.com/scalar-labs/scalardb/pull/3559))
+- 同じインデックス値を持つ別のレコードが同時に削除および挿入されている場合に、セカンダリインデックスを使用した `Get` 操作が `IllegalArgumentException` で失敗する可能性がある Consensus Commit の問題を修正しました。 ([#3607](https://github.com/scalar-labs/scalardb/pull/3607))
+- 読み取り専用でのコーディネーター書き込み省略が無効で、コーディネーターのグループコミットが有効な場合に、読み取り専用トランザクションが失敗する可能性がある Consensus Commit の問題を修正しました。 ([#3614](https://github.com/scalar-labs/scalardb/pull/3614))
+- コーディネーターのグループコミット機能が有効になっている場合に、`DistributedTransactionManager.rollback(String)` / `abort(String)` を使用して ID でインフライトのグループコミットされたトランザクションをアボートすると、その操作が失われる可能性があるバグを修正しました。 ([#3619](https://github.com/scalar-labs/scalardb/pull/3619))
+- lazy recovery 中に書き込みトランザクションが同時にコミットされたレコードの読み取りが、古い (コミット前の) 値を返す可能性がある Consensus Commit トランザクションマネージャーの問題を修正しました。 ([#3621](https://github.com/scalar-labs/scalardb/pull/3621))
+
+### Enterprise edition
+
+#### 機能強化
+
+##### ScalarDB Cluster
+
+- 属性ベースの認証を追加しました。
+- OpenTelemetry サポートを追加しました。
+- ワンフェーズトランザクションインターフェースを使用するアプリケーションに代わって ScalarDB クラスター間で二相コミットを駆動する、新しい分離クラスターデプロイメントパターン向けのトランザクションコーディネーターノードを追加しました。
+
+##### ScalarDB SQL
+
+- Spring Boot の自動設定に対する自動設定の順序を明示的に宣言するために、`ScalarDbJdbcConfiguration` に `@AutoConfigureBefore` を追加しました。
+
+#### 改善点
+
+##### ScalarDB Cluster
+
+- ScalarDB Cluster は、アップグレード後に必要なコンパニオン before-image セカンダリインデックスを作成するために、ノード起動時に認証および ABAC システムメタデータテーブルを修復するようになりました。これにより、以前のバージョンからアップグレードされたデプロイメントは、手動で `repairTable()` を実行することなく、自動的にこれらのインデックスを取得できます。
+- TLS が無効になっているが CA ルート証明書のパスが設定されている場合に、クラスターノードの起動に失敗する問題を修正しました。
+- ScalarDB Cluster クライアント SDK でグローバルトランザクション API のサポートを追加しました。アプリケーションは `GlobalTransactionManager` を使用して、マイクロサービストランザクションなどの複数のプロセスにまたがる単一のトランザクションを実行できるようになりました。この場合、トランザクションコーディネーターがアプリケーションに代わって二相コミットを駆動します。同じアプリケーションコードは、単一の ScalarDB Cluster 内のトランザクションにも機能し、設定のみで切り替えられます。
+- キャッシュされたトークンの有効期限が切れる直前に ScalarDB Cluster クライアントが再認証するよう、userpass 認証トークンキャッシュに設定可能な有効期限マージンを追加しました。これにより、トークンの有効期限近くで発生する不正な認証エラーを削減します。
+- オペレーターがラベルセレクターで選択できるように、自己暗号化用のデータ暗号化キーを格納する Kubernetes シークレットに固定ラベルを追加しました。
+
+##### ScalarDB SQL
+
+- ワンショット SELECT ステートメントおよび SELECT のみのバッチに対する読み取り専用最適化を有効にしました。
+
+#### バグの修正
+
+##### ScalarDB Cluster
+
+- クラスターのリクエスト転送ホップ制限を超えた `rollback` が失敗を表面化する代わりにサイレントに成功として報告されるバグを修正しました。これにより、lazy recovery までレコードが prepared 状態のままになる可能性がありました。
+- **一時停止 RPC に `ABORTED` が新たに追加されました。** 以前はすべての一時停止の失敗は `FAILED_PRECONDITION` でしたが、別の管理リクエストとのレース競合による失敗は `ABORTED` となりました。これにより、一時停止を単純に再試行できます。すべての一時停止の失敗には、ステータストレーラーに `google.rpc.ErrorInfo` の詳細が含まれ、`domain` は `com.scalar.db.cluster.admin` に、`reason` は結果に設定されます。これにより、呼び出し元はステータスコードや説明テキストのマッチングなしに結果を区別できます。特に、失敗した一時停止から回復するために一時停止解除を行う呼び出し元は、`reason` が `TIMED_OUT_STILL_PAUSED` の場合はその一時停止解除をスキップする必要があります。これは、サーバーが以前のリクエストによって依然として一時停止されているためです。
+- Bouncy Castle ライブラリおよび grpc_health_probe バイナリをアップグレードしてセキュリティ問題を修正しました: [CVE-2025-14813](https://github.com/advisories/GHSA-574f-3g2m-x479 "CVE-2025-14813"), [CVE-2026-5598](https://github.com/advisories/GHSA-p93r-85wp-75v3 "CVE-2026-5598"), [CVE-2026-25681](https://github.com/advisories/GHSA-w9p8-pvxh-rxpj "CVE-2026-25681"), [CVE-2026-27136](https://github.com/advisories/GHSA-m9x8-m34x-fj9q "CVE-2026-27136"), [CVE-2026-27145](https://github.com/advisories/GHSA-4279-q6mj-392r "CVE-2026-27145"), [CVE-2026-33811](https://github.com/advisories/GHSA-497x-jcxf-m478 "CVE-2026-33811"), CVE-2026-33814, [CVE-2026-39820](https://github.com/advisories/GHSA-p9h5-jm8x-mjm5 "CVE-2026-39820"), [CVE-2026-39821](https://github.com/advisories/GHSA-w2q5-6q6x-x959 "CVE-2026-39821"), [CVE-2026-39822](https://github.com/advisories/GHSA-xcgv-8mv7-v8c7 "CVE-2026-39822"), [CVE-2026-39836](https://github.com/advisories/GHSA-8g2r-hhvj-mv99 "CVE-2026-39836"), [CVE-2026-42499](https://github.com/advisories/GHSA-xq5j-9r39-c3vf "CVE-2026-42499"), and [CVE-2026-42504](https://github.com/advisories/GHSA-h524-452v-82p9 "CVE-2026-42504")
+
+##### ScalarDB SQL
+
+- パラメーター化された SQL 用のキャッシュスロットを非パラメーター化 DML ステートメントが占有するステートメントキャッシュの不具合を修正しました。キャッシュ適格性は、解析された SQL 内のバインドマーカーの存在に基づいて正しく制御されるようになりました。
+
+### Enterprise Options
+
+#### ScalarDB Analytics
+
+:::warning 破壊的変更
+
+- `user` / `internal-backend` / `role` / `permission` CLI コマンドを再設計しました：`user register` は `user create` + `user link` に置き換わり、`user unregister` は `user delete` + `user unlink` (+ `internal-backend create`) に置き換わります。`--username` は `--user` / `--backend-user` に分割され、パスワードは `--password` / `--password-stdin` でのみ受け入れられるようになり、`data-source delete` は `data-source unregister` に名前変更されました。
+
+:::
+
+##### 機能強化
+
+- 統一されたエラーコードシステム (`DB-ANALYTICS-NNNNN`)：サーバー側と SDK エラーは、機械可読なエラーコードと構造化メタデータを含む単一の `AnalyticsException` として報告され、gRPC 上で構造化 `AnalyticsError` の詳細として伝播されます。
+- ScalarDB Spark データソースのフィルタプッシュダウン、列削除、リミットプッシュダウンにより、選択的クエリのデータ転送を削減します。
+- Spark コネクタで環境変数 (`SCALAR_DB_ANALYTICS_CLIENT_AUTH_USERNAME` / `SCALAR_DB_ANALYTICS_CLIENT_AUTH_PASSWORD`) を使用して認証認証情報を設定できるようになりました。
+
+##### 改善点
+
+- spark-sql CLI のカタログエラーについて、生のスタックトレースの代わりにクリーンなエラーメッセージを表示するようになりました。
+- CLI コマンドの Catalog JSON 出力から内部 `tenantId` フィールドを削除しました。
+- Spring Boot を 3.5.x から 4.0.4 にアップグレードしました。
+
+##### バグの修正
+
+- ジョブを含まない実行またはステージを含まないジョブを報告する際のメータリングサーバーの `NullPointerException` を修正しました。
