@@ -750,6 +750,11 @@ const sidebars = {
           items: [
             {
               type: 'doc',
+              id: 'network-requirements',
+              label: 'Network Requirements',
+            },
+            {
+              type: 'doc',
               id: 'scalardb-cluster/deployment-patterns-for-microservices',
               label: 'ScalarDB Cluster Deployment Patterns for Microservices',
             },
