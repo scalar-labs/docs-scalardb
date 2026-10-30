@@ -1,0 +1,510 @@
+---
+tags:
+  - Enterprise Option
+displayed_sidebar: docsEnglish
+---
+
+# ScalarDB Analytics Error Codes
+
+This page provides a list of error codes in ScalarDB Analytics.
+
+## Error code classes and descriptions
+
+| Class                | Description                            |
+|:---------------------|:---------------------------------------|
+| `DB-ANALYTICS-1xxxx` | Errors for the user error category |
+| `DB-ANALYTICS-3xxxx` | Errors for the internal error category |
+| `DB-ANALYTICS-4xxxx` | Errors for the client error category |
+
+## `DB-ANALYTICS-1xxxx` status codes
+
+The following are status codes and messages for the user error category.
+
+### `DB-ANALYTICS-10000`
+
+**Message**
+
+```markdown
+Authentication failed
+```
+
+**Cause**
+
+The provided credentials are invalid or the user does not exist.
+
+**Action**
+
+Verify the credentials, then retry. Contact your administrator if you cannot recover the credentials.
+
+### `DB-ANALYTICS-10001`
+
+**Message**
+
+```markdown
+Authentication token has expired
+```
+
+**Cause**
+
+The access token issued during authentication has reached its expiry time.
+
+**Action**
+
+Re-authenticate to obtain a new token, then retry the request.
+
+### `DB-ANALYTICS-10002`
+
+**Message**
+
+```markdown
+Authentication token is invalid
+```
+
+**Cause**
+
+The token is malformed, was revoked, or was not issued by this server.
+
+**Action**
+
+Authenticate again with valid credentials to obtain a new token, then retry. Contact your administrator if the token continues to be rejected.
+
+### `DB-ANALYTICS-10003`
+
+**Message**
+
+```markdown
+Access denied
+```
+
+**Cause**
+
+The authenticated user lacks the required role or permission for the requested action on the resource.
+
+**Action**
+
+Ask your administrator to grant the required role (e.g. SUPERADMIN, CATALOG_ADMIN) or the specific permission on the resource, then retry.
+
+### `DB-ANALYTICS-10100`
+
+**Message**
+
+```markdown
+Catalog already exists
+```
+
+**Cause**
+
+A catalog with the given name has already been created in this Analytics instance.
+
+**Action**
+
+Choose a different catalog name, or use the existing catalog instead of creating a new one.
+
+### `DB-ANALYTICS-10101`
+
+**Message**
+
+```markdown
+Data source already exists
+```
+
+**Cause**
+
+A data source with the given name has already been registered in the catalog.
+
+**Action**
+
+Choose a different data source name, or use the existing data source instead of registering a new one.
+
+### `DB-ANALYTICS-10102`
+
+**Message**
+
+```markdown
+Namespace already exists
+```
+
+**Cause**
+
+A namespace with the given name already exists in the catalog for the data source.
+
+**Action**
+
+The namespace is already registered in the catalog for this data source. Use the existing registration, or refresh it if the registration is outdated.
+
+### `DB-ANALYTICS-10103`
+
+**Message**
+
+```markdown
+Table already exists
+```
+
+**Cause**
+
+A table with the given name already exists in the namespace.
+
+**Action**
+
+The table is already registered in the catalog for this namespace. Use the existing registration, or refresh it if the registration is outdated.
+
+### `DB-ANALYTICS-10104`
+
+**Message**
+
+```markdown
+Role already exists
+```
+
+**Cause**
+
+A role with the given name has already been created.
+
+**Action**
+
+Choose a different role name, or use the existing role instead of creating a new one.
+
+### `DB-ANALYTICS-10105`
+
+**Message**
+
+```markdown
+User already exists
+```
+
+**Cause**
+
+A user with the given user id has already been registered.
+
+**Action**
+
+Choose a different user id, or use the existing user instead of registering a new one.
+
+### `DB-ANALYTICS-10106`
+
+**Message**
+
+```markdown
+Role already assigned to user
+```
+
+**Cause**
+
+The role is already assigned to the user.
+
+**Action**
+
+No action is required if the assignment is intended. Otherwise, choose a different role.
+
+### `DB-ANALYTICS-10107`
+
+**Message**
+
+```markdown
+Permission already granted to role
+```
+
+**Cause**
+
+The permission is already granted to the role on the resource.
+
+**Action**
+
+No action is required if the grant is intended. Otherwise, choose a different permission or resource.
+
+### `DB-ANALYTICS-10200`
+
+**Message**
+
+```markdown
+Catalog is not empty
+```
+
+**Cause**
+
+The catalog still contains data sources or other dependent entities.
+
+**Action**
+
+Delete the data sources within the catalog before deleting the catalog, or use a cascading delete if supported.
+
+### `DB-ANALYTICS-10201`
+
+**Message**
+
+```markdown
+Data source is not empty
+```
+
+**Cause**
+
+The data source still contains namespaces or tables.
+
+**Action**
+
+Delete the namespaces and tables within the data source before deleting the data source.
+
+### `DB-ANALYTICS-10202`
+
+**Message**
+
+```markdown
+Built-in entity cannot be modified
+```
+
+**Cause**
+
+The target is a built-in (system-managed) entity that cannot be modified or deleted.
+
+**Action**
+
+Do not modify the built-in entity. Create a new custom entity instead if you need different behavior.
+
+### `DB-ANALYTICS-10203`
+
+**Message**
+
+```markdown
+User is not empty
+```
+
+**Cause**
+
+The user still has linked backend users, role assignments, or direct permission grants.
+
+**Action**
+
+Remove the linked backend users, role assignments, and permission grants before deleting the user, or use a cascading delete.
+
+### `DB-ANALYTICS-10300`
+
+**Message**
+
+```markdown
+Data source authentication failed
+```
+
+**Cause**
+
+The credentials configured for the data source were rejected by the underlying database.
+
+**Action**
+
+Update the data source credentials with valid values, then retry.
+
+### `DB-ANALYTICS-10301`
+
+**Message**
+
+```markdown
+Data source is unreachable
+```
+
+**Cause**
+
+Analytics could not establish a network connection to the data source.
+
+**Action**
+
+Verify the data source endpoint, network connectivity, and that the underlying database is running, then retry.
+
+### `DB-ANALYTICS-10400`
+
+**Message**
+
+```markdown
+Invalid argument
+```
+
+**Cause**
+
+One or more arguments do not satisfy the validation rules (format, range, or required field).
+
+**Action**
+
+Inspect the metadata for the offending field and provide a valid value, then retry.
+
+## `DB-ANALYTICS-3xxxx` status codes
+
+The following are status codes and messages for the internal error category.
+
+### `DB-ANALYTICS-30000`
+
+**Message**
+
+```markdown
+Analytics database connection failed
+```
+
+**Cause**
+
+Analytics could not connect to its internal database (e.g. catalog metadata store).
+
+**Action**
+
+Retry the request. If the failure persists, check the Analytics database health and contact your administrator.
+
+### `DB-ANALYTICS-30002`
+
+**Message**
+
+```markdown
+ScalarDB Cluster is unavailable
+```
+
+**Cause**
+
+Analytics could not reach the ScalarDB Cluster (network failure, deadline exceeded, or the cluster is down).
+
+**Action**
+
+Retry the request. If the failure persists, check the ScalarDB Cluster health and contact your administrator.
+
+### `DB-ANALYTICS-30100`
+
+**Message**
+
+```markdown
+Persisted data is inconsistent with the expected schema
+```
+
+**Cause**
+
+Analytics encountered persisted data that does not match the expected schema or format.
+
+**Action**
+
+This indicates an internal data integrity issue. Contact your administrator with the error details.
+
+### `DB-ANALYTICS-30101`
+
+**Message**
+
+```markdown
+ScalarDB Cluster backend token has expired
+```
+
+**Cause**
+
+The token Analytics uses to authenticate to the ScalarDB Cluster has expired.
+
+**Action**
+
+Re-authenticate to refresh the backend token. The SDK normally handles this automatically.
+
+### `DB-ANALYTICS-30102`
+
+**Message**
+
+```markdown
+ScalarDB privilege check failed
+```
+
+**Cause**
+
+Analytics could not complete the privilege check against the ScalarDB Cluster.
+
+**Action**
+
+Verify that the ScalarDB Cluster is reachable and configured correctly. Contact your administrator if the failure persists.
+
+### `DB-ANALYTICS-30103`
+
+**Message**
+
+```markdown
+Internal error
+```
+
+**Cause**
+
+Analytics encountered an unexpected internal error.
+
+**Action**
+
+Contact your administrator with the error details so the unexpected failure can be investigated.
+
+### `DB-ANALYTICS-30104`
+
+**Message**
+
+```markdown
+Analytics database operation failed
+```
+
+**Cause**
+
+An operation on the Analytics internal database failed (e.g. a constraint violation or an unexpected query/write error). The operation is not known to be safe to retry.
+
+**Action**
+
+Inspect the error details. Contact your administrator if the failure persists.
+
+## `DB-ANALYTICS-4xxxx` status codes
+
+The following are status codes and messages for the client error category.
+
+### `DB-ANALYTICS-40000`
+
+**Message**
+
+```markdown
+The Analytics server could not be reached
+```
+
+**Cause**
+
+The request did not reach the server, or the server returned no structured error (e.g. network failure or the server is down).
+
+**Action**
+
+Verify the server endpoint and network connectivity, then retry. Contact your administrator if the failure persists.
+
+### `DB-ANALYTICS-40001`
+
+**Message**
+
+```markdown
+The request to the Analytics server timed out
+```
+
+**Cause**
+
+The request did not complete before its deadline expired.
+
+**Action**
+
+Retry the request. If timeouts persist, check server health and network latency, or increase the request deadline.
+
+### `DB-ANALYTICS-40002`
+
+**Message**
+
+```markdown
+Unexpected client-side error
+```
+
+**Cause**
+
+The SDK encountered an unexpected error while issuing the request or processing the response, with no structured server error available.
+
+**Action**
+
+Retry the request. Contact your administrator with the error details if the failure persists.
+
+### `DB-ANALYTICS-40003`
+
+**Message**
+
+```markdown
+The server returned an error code that this client does not recognize
+```
+
+**Cause**
+
+The server is likely newer than this client SDK and returned an error code not known to this version.
+
+**Action**
+
+Upgrade the client SDK to a version compatible with the server. See the server_error_code metadata for the original code, and contact your administrator if the problem persists.
+

@@ -1,0 +1,69 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsEnglish
+---
+
+# ScalarDB Cluster Standalone Mode
+
+import StorageSetupTabs from '../components/_getting-started-setup-storage.mdx';
+import WarningLicenseKeyContact from '../components/_warning-license-key-contact.mdx';
+  
+Instead of setting up a Kubernetes cluster and deploying ScalarDB Cluster on top of it by using a Helm Chart, you can run ScalarDB Cluster in standalone mode, which simplifies development and testing processes. A primary use case for this would be when you want to start ScalarDB Cluster in standalone mode via Docker on your local machine and use it for development and testing.
+
+To run ScalarDB Cluster in standalone mode, you need to set the `scalar.db.cluster.node.standalone_mode.enabled` property to `true`:
+
+```properties
+scalar.db.cluster.node.standalone_mode.enabled=true
+```
+
+## Run ScalarDB Cluster in standalone mode on Docker Compose
+
+This section explains how to start ScalarDB Cluster in standalone mode on Docker Compose.
+
+<WarningLicenseKeyContact product="ScalarDB Cluster" />
+
+### Clone the ScalarDB samples repository
+
+Open **Terminal**, then clone the ScalarDB samples repository by running the following command:
+
+```console
+git clone https://github.com/scalar-labs/scalardb-samples
+```
+
+Then, go to the directory that contains the necessary files by running the following command:
+
+```console
+cd scalardb-samples/scalardb-cluster-standalone-mode/
+```
+
+### Set up your database for ScalarDB Cluster
+
+Follow the instructions below to configure your database for ScalarDB Cluster. 
+
+For a list of databases that ScalarDB supports, see [Databases](../requirements.mdx#databases).
+
+<StorageSetupTabs mode="cluster" />
+
+### Set the license key
+
+Set the license key (trial license or commercial license) for the ScalarDB Clusters in the configuration file `scalardb-cluster-node.properties`. For details, see [How to Configure a Product License Key](../scalar-licensing/index.mdx).
+
+### Start ScalarDB Cluster in standalone mode
+
+To start ScalarDB Cluster in standalone mode, run the following command:
+
+:::note
+
+If you want to change other configurations for ScalarDB Cluster, update the `scalardb-cluster-node.properties` file before running the command below.
+
+:::
+
+```console
+docker compose up -d scalardb-cluster-node
+```
+
+## Client configurations for the ScalarDB Cluster Java API
+
+You can use the `indirect` client mode to connect to ScalarDB Cluster in standalone mode. For details about client configurations for the ScalarDB Cluster Java API, see [Developer Guide for ScalarDB Cluster with the Java API](developer-guide-for-scalardb-cluster-with-java-api.mdx).

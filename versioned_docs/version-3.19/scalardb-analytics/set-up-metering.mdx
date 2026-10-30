@@ -1,0 +1,262 @@
+---
+tags:
+  - Enterprise Option
+displayed_sidebar: docsEnglish
+---
+
+# Set Up Usage Metering in ScalarDB Analytics
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import WarningLicenseKeyContact from "../components/_warning-license-key-contact.mdx";
+
+The ScalarDB Analytics server measures how much compute your analytical workloads consume and persists this usage data so that it can be used for licensing and billing. This guide explains what ScalarDB Analytics meters and shows you how to configure an object storage backend so that the server can store metering data reliably in production.
+
+<WarningLicenseKeyContact product="ScalarDB Analytics" />
+
+## How metering works
+
+ScalarDB Analytics meters the amount of CPU time that Spark executors spend running queries that access ScalarDB Analytics catalogs. Queries that do not use ScalarDB Analytics are not metered.
+
+Metering data flows through the following components:
+
+1. A listener registered in your Spark application collects execution metrics as queries run.
+2. The listener sends the metrics to the metering service that runs inside the ScalarDB Analytics server.
+3. The server aggregates the metrics and persists them to a storage backend.
+
+For production deployments, you should use object storage as the storage backend so that metering data survives server restarts and is not lost. ScalarDB Analytics supports Amazon S3, Google Cloud Storage, and Azure Blob Storage.
+
+:::note
+
+The local filesystem is also available as a storage backend, but it is intended for development and testing only. Because metering data is written to the server's local disk, it is lost if the server's storage is not persistent. Use object storage for production.
+
+:::
+
+## Prerequisites
+
+Before you begin, ensure you have the following:
+
+- ScalarDB Analytics 3.18.0 or later. Earlier versions use a different storage implementation whose permission requirements differ from those described in this guide.
+- A ScalarDB Analytics server. For instructions on setting up a server, see [Create a ScalarDB Analytics Catalog](./create-scalardb-analytics-catalog.mdx).
+- A Spark environment configured to run analytical queries. For instructions, see [Run Analytical Queries Through ScalarDB Analytics](./run-analytical-queries.mdx).
+- An account with one of the supported cloud providers (AWS, Google Cloud, or Azure) with permissions to create a bucket or container and manage access to it.
+
+## Step 1: Set up object storage for metering data
+
+The ScalarDB Analytics server does not create the bucket or container automatically, so you must create it in advance and grant the server the permissions it needs. The server only writes, reads, and lists metering objects. It never deletes objects, so you do not need to grant delete permissions.
+
+Select your cloud provider and follow the corresponding instructions.
+
+<Tabs groupId="cloud" queryString>
+  <TabItem value="aws-s3" label="Amazon S3" default>
+
+1. Create an S3 bucket in the region where your ScalarDB Analytics server runs.
+
+```console
+aws s3 mb s3://<BUCKET_NAME> --region <REGION>
+```
+
+2. Grant the server the minimum permissions required to store metering data. You can grant these permissions in the AWS Management Console or by attaching a policy document. The server needs the following permissions:
+
+   - **`s3:PutObject` and `s3:GetObject`** on objects in the bucket (`arn:aws:s3:::<BUCKET_NAME>/*`), for writing and reading metering data.
+   - **`s3:ListBucket`** on the bucket (`arn:aws:s3:::<BUCKET_NAME>`), for listing metering data.
+
+   The following policy document grants these permissions:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "MeteringObjectAccess",
+      "Effect": "Allow",
+      "Action": [
+        "s3:PutObject",
+        "s3:GetObject"
+      ],
+      "Resource": "arn:aws:s3:::<BUCKET_NAME>/*"
+    },
+    {
+      "Sid": "MeteringBucketList",
+      "Effect": "Allow",
+      "Action": "s3:ListBucket",
+      "Resource": "arn:aws:s3:::<BUCKET_NAME>"
+    }
+  ]
+}
+```
+
+:::tip
+
+If you set a prefix for metering data, you can narrow the scope further by using `arn:aws:s3:::<BUCKET_NAME>/<PREFIX>/*` as the object resource and adding an `s3:prefix` condition to the `s3:ListBucket` statement.
+
+:::
+
+3. Grant the policy to the identity that the server uses to access S3. You can provide credentials in either of the following ways:
+
+   - **IAM role (recommended):** Attach the policy to the IAM role that the server runs as, such as an Amazon EC2 instance profile, an Amazon EKS IAM roles for service accounts (IRSA) role, or an Amazon ECS task role. In this case, leave the access key properties unset, and the server resolves credentials from the default AWS credential provider chain. Make sure the AWS Region is available to the server through the environment (for example, by setting the `AWS_REGION` environment variable).
+   - **Access keys:** Attach the policy to an IAM user and provide its access key ID and secret access key to the server through the storage properties shown in Step 2.
+
+  </TabItem>
+  <TabItem value="gcs" label="Google Cloud Storage">
+
+1. Create a Cloud Storage bucket in the location where your ScalarDB Analytics server runs.
+
+```console
+gcloud storage buckets create gs://<BUCKET_NAME> --location=<LOCATION>
+```
+
+2. Grant the service account that the server uses access to the bucket. The server needs the `storage.objects.get`, `storage.objects.create`, and `storage.objects.list` permissions. The `roles/storage.objectUser` predefined role, named **Storage Object User** in the Google Cloud console, includes these permissions.
+
+```console
+gcloud storage buckets add-iam-policy-binding gs://<BUCKET_NAME> \
+  --member="serviceAccount:<SERVICE_ACCOUNT_EMAIL>" \
+  --role="roles/storage.objectUser"
+```
+
+:::tip
+
+`roles/storage.objectUser` also grants `storage.objects.delete`, which the server does not use. If you want to grant only the exact permissions the server needs, create a custom role that includes just `storage.objects.get`, `storage.objects.create`, and `storage.objects.list`, and grant that role instead.
+
+:::
+
+3. Make the service account's credentials available to the server. Google Cloud Storage uses Application Default Credentials (ADC). Set the `GOOGLE_APPLICATION_CREDENTIALS` environment variable to the path of a service account key file, or use Workload Identity when running on Google Kubernetes Engine (GKE). The access key properties are not used for Google Cloud Storage.
+
+  </TabItem>
+  <TabItem value="azureblob" label="Azure Blob Storage">
+
+1. Create a blob container in an existing storage account.
+
+```console
+az storage container create \
+  --name <CONTAINER_NAME> \
+  --account-name <ACCOUNT_NAME>
+```
+
+2. Get an access key for the storage account. The server authenticates to Azure Blob Storage by using the storage account name and an account key.
+
+```console
+az storage account keys list --account-name <ACCOUNT_NAME>
+```
+
+:::caution
+
+An account key grants full access to the entire storage account, not just the metering container. To limit the blast radius, use a storage account that is dedicated to metering data.
+
+:::
+
+  </TabItem>
+</Tabs>
+
+## Step 2: Configure the metering service
+
+Add the metering storage properties to your ScalarDB Analytics server configuration file (for example, `scalardb-analytics-server.properties`). The properties differ depending on your cloud provider.
+
+<Tabs groupId="cloud" queryString>
+  <TabItem value="aws-s3" label="Amazon S3" default>
+
+```properties
+scalar.db.analytics.server.metering.storage.provider=aws-s3
+scalar.db.analytics.server.metering.storage.containerName=<BUCKET_NAME>
+
+# Set the following only when using access keys instead of an IAM role
+scalar.db.analytics.server.metering.storage.accessKeyId=<ACCESS_KEY_ID>
+scalar.db.analytics.server.metering.storage.secretAccessKey=<SECRET_ACCESS_KEY>
+```
+
+  </TabItem>
+  <TabItem value="gcs" label="Google Cloud Storage">
+
+```properties
+scalar.db.analytics.server.metering.storage.provider=google-cloud-storage
+scalar.db.analytics.server.metering.storage.containerName=<BUCKET_NAME>
+```
+
+:::note
+
+Google Cloud Storage resolves credentials through Application Default Credentials, so the access key properties are not required. Provide credentials through the environment as described in Step 1.
+
+:::
+
+  </TabItem>
+  <TabItem value="azureblob" label="Azure Blob Storage">
+
+For Azure Blob Storage, set `accessKeyId` to the storage account name and `secretAccessKey` to the account key.
+
+```properties
+scalar.db.analytics.server.metering.storage.provider=azureblob
+scalar.db.analytics.server.metering.storage.containerName=<CONTAINER_NAME>
+scalar.db.analytics.server.metering.storage.accessKeyId=<ACCOUNT_NAME>
+scalar.db.analytics.server.metering.storage.secretAccessKey=<ACCOUNT_KEY>
+```
+
+  </TabItem>
+</Tabs>
+
+You can optionally set `scalar.db.analytics.server.metering.storage.prefix` to store all metering objects under a common prefix within the bucket or container.
+
+The metering service listens on a dedicated gRPC port. Configure it together with the rest of your server settings if you need to change it from the default.
+
+```properties
+scalar.db.analytics.server.metering.port=11052  # default
+```
+
+For the complete list of server properties, including the metadata database, TLS, and license settings, see [ScalarDB Analytics Configurations](./configurations.mdx). After updating the configuration, restart the ScalarDB Analytics server so that the new storage settings take effect.
+
+## Step 3: Configure the Spark client
+
+For the server to receive metering data, your Spark application must register the metering listener and connect to the metering service. Add the following settings to your Spark configuration file (for example, `spark-defaults.conf`).
+
+```properties
+spark.extraListeners                                     com.scalar.db.analytics.spark.metering.ScalarDbAnalyticsListener
+spark.sql.catalog.<CATALOG_NAME>.server.host             <SERVER_HOST>
+spark.sql.catalog.<CATALOG_NAME>.server.metering.port    11052
+```
+
+Replace `<CATALOG_NAME>` with the name of the catalog you created on the ScalarDB Analytics server, and `<SERVER_HOST>` with the hostname of the server. If TLS is enabled on the server, also configure the client-side TLS settings for the catalog. For the complete list of Spark settings, see [ScalarDB Analytics Configurations](./configurations.mdx).
+
+:::important
+
+The metering listener registration is required. If the listener is not registered, or if the Spark application cannot reach the metering service, catalog initialization fails and queries cannot run.
+
+:::
+
+## Verify the metering setup
+
+To confirm that the metering storage backend is configured correctly, run an analytical query that accesses a ScalarDB Analytics catalog from your Spark application, and then check that the server persisted the metering data.
+
+After the query completes, list the contents of your bucket or container. If the storage backend is configured correctly and the server has the required permissions, you will see metering objects.
+
+<Tabs groupId="cloud" queryString>
+  <TabItem value="aws-s3" label="Amazon S3" default>
+
+```console
+aws s3 ls s3://<BUCKET_NAME>/ --recursive
+```
+
+  </TabItem>
+  <TabItem value="gcs" label="Google Cloud Storage">
+
+```console
+gcloud storage ls --recursive gs://<BUCKET_NAME>/
+```
+
+  </TabItem>
+  <TabItem value="azureblob" label="Azure Blob Storage">
+
+```console
+az storage blob list --container-name <CONTAINER_NAME> --account-name <ACCOUNT_NAME> --output table
+```
+
+  </TabItem>
+</Tabs>
+
+If no metering objects appear, check the ScalarDB Analytics server logs for storage-related errors, such as permission or configuration failures, and correct the storage settings from Step 1 and Step 2.
+
+## Next steps
+
+Continue with these related tasks:
+
+- [Create a ScalarDB Analytics Catalog](./create-scalardb-analytics-catalog.mdx)
+- [Run Analytical Queries Through ScalarDB Analytics](./run-analytical-queries.mdx)
+- [ScalarDB Analytics Configurations](./configurations.mdx)

@@ -78,8 +78,14 @@ const config = {
               },
               */
              current: { // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
-                label: '3.19',
+                label: '3.20',
                 path: 'latest', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
+                banner: 'none',
+                className: '3.20.0',
+              },
+              '3.19': { // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
+                label: '3.19',
+                path: '3.19', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
                 banner: 'none',
                 className: '3.19.1',
               },
@@ -443,7 +449,7 @@ const config = {
       announcementBar: {
         id: 'new_version',
         content:
-          'Announcing the release of ScalarDB 3.19!🚀 For details on what\'s included in this new version, see the <a target="_self" href="/docs/latest/releases/release-notes?utm_source=docs-site&utm_medium=announcementbar">release notes</a>.',
+          'Announcing the release of ScalarDB 3.20!🚀 For details on what\'s included in this new version, see the <a target="_self" href="/docs/latest/releases/release-notes?utm_source=docs-site&utm_medium=announcementbar">release notes</a>.',
           // and <a target="_blank" href="XXX?utm_source=docs-site&utm_medium=announcementbar">blog post</a>.',
         backgroundColor: '#2673BB',
         textColor: '#FFFFFF',
