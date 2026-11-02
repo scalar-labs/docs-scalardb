@@ -14,6 +14,61 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 このページには、ScalarDB 3.17 のリリースノートのリストが含まれています。
 
+## v3.17.6
+
+**発売日:** 2026年10月30日
+
+### まとめ
+
+このリリースでは、SQL Server 2025 のサポートを追加し、SQL Server 2017 のサポートを終了しました。また、Consensus Commit におけるトランザクションの信頼性とエラー処理を改善し、ストレージアダプター操作の正確性と信頼性を向上させ、リソース管理を改善しました。さらに、認証および認可の修正、依存関係のアップグレード、脆弱性の緩和によってセキュリティを強化し、ScalarDB SQL におけるデータ比較と集計の問題に対処しました。
+
+### Community edition
+
+#### 改善点
+
+- JDBC データベースでの単一の put または delete 操作において、ロック待機タイムアウトやシリアライゼーション失敗などの競合エラーが再試行可能として分類されなかった問題を修正しました。その結果、Consensus Commit は、コミット中のそのような競合を `CommitException` や `UnknownTransactionStatusException` ではなく `CommitConflictException` として報告できるようになりました。 ([#3852](https://github.com/scalar-labs/scalardb/pull/3852))
+- Consensus Commit のレコードリカバリーを修正し、基盤となるストレージによって報告された競合エラーを再試行し、解消されない競合は競合として報告することで、トランザクションを再試行できるようにしました。 ([#3853](https://github.com/scalar-labs/scalardb/pull/3853))
+- SQL Server 2025 のサポートを追加し、SQL Server 2017 のサポートを終了しました。 ([#3998](https://github.com/scalar-labs/scalardb/pull/3998))
+- テーブルのインポートで、TEXT の照合順序に従えない列タイプ (SQL Server の `nchar`、`nvarchar`、`text`、`ntext`、Oracle の `NCHAR`、`NVARCHAR2`、Db2 の `GRAPHIC`、`VARGRAPHIC`、`DBCLOB`) を拒否するように変更しました。 ([#4051](https://github.com/scalar-labs/scalardb/pull/4051))
+- SQL Server JDBC ドライバーを 13.6.0 にアップグレードし、1582年10月15日より前の日付の TIMESTAMPTZ 値が SQL Server に最大10日ずれて保存される問題を修正しました。以前のバージョンの ScalarDB によって SQL Server に保存された、1582年10月15日より前の日付の TIMESTAMPTZ 値は、書き込まれた値より最大10日早い値として読み取られます。そのようなデータがある場合は、ずれを解消するために移行することを検討してください。 ([#3971](https://github.com/scalar-labs/scalardb/pull/3971))
+- S3 および Cloud Storage アダプターを改善し、テーブルの切り詰めまたは削除時に、一時的なエラーで失敗したオブジェクトの削除を再試行するようにしました。 ([#4077](https://github.com/scalar-labs/scalardb/pull/4077))
+- すべてのコンテナイメージの cacerts から影響を受ける emSign ルート CA を削除することで、[CVE-2026-91403](https://github.com/advisories/GHSA-9h75-rf66-wh3r "CVE-2026-91403") および [CVE-2026-114820](https://github.com/advisories/GHSA-255q-pwv4-fjj7 "CVE-2026-114820") (eMudhra CA の侵害) を緩和し、ScalarDB Schema Loader および ScalarDB Data Loader CLI コンテナイメージのベースイメージを Java 8 (Eclipse Temurin 8) から Java 21 (Eclipse Temurin 21) に更新しました。イメージにはデフォルトで JVM オプションが設定されていないため、この変更の影響を受けるのは、Java 8 固有の JVM オプション (例: `JAVA_TOOL_OPTIONS` を介した `-XX:+PrintGCDateStamps`) を渡しているユーザーのみです。そのようなオプションを渡すと、JVM の起動に失敗するようになります。 ([#4112](https://github.com/scalar-labs/scalardb/pull/4112))
+
+#### バグの修正
+
+- Cloud Storage アダプターの get 操作が同時書き込みを処理できるように修正しました。 ([#3851](https://github.com/scalar-labs/scalardb/pull/3851))
+- スキャナーが開いたままの Consensus Commit トランザクションをロールバックする際 (期限切れまたは削除されたトランザクションの自動ロールバックを含む)、IllegalArgumentException で失敗し、残りのスキャナーが開いたままになり、グループコミットスロットが解放されない可能性がある問題を修正しました。 ([#3867](https://github.com/scalar-labs/scalardb/pull/3867))
+- Cassandra アダプターを修正し、条件付き書き込みによって適用された更新が、同じレコードに対する直前の非条件付き書き込みと同じミリ秒内に実行された場合に、暗黙的に破棄されることがなくなりました。アダプターは、書き込みタイムスタンプをサーバーから取得し、パーティションに対するすべてのリクエストを同じレプリカに送信するようになりました。 ([#3890](https://github.com/scalar-labs/scalardb/pull/3890))
+- Consensus Commit が条件付きミューテーションの無効な条件を拒否せずに受け入れていた問題を修正しました。 ([#3871](https://github.com/scalar-labs/scalardb/pull/3871))
+- DynamoDB で、AWS SDK が再試行した単一の条件付き書き込みが、実際には適用されていたにもかかわらず未適用として報告される可能性がある問題を修正しました。そのような書き込みは、結果が不明であるものとして報告されるようになりました。また、DynamoDB 操作の一部の失敗が `ExecutionException` ではなく、チェックされない AWS SDK 例外としてスローされる問題も修正しました。 ([#3922](https://github.com/scalar-labs/scalardb/pull/3922))
+- Cassandra、Cosmos DB、DynamoDB、および Object Storage で、`!=`、`<`、または `<=` 演算子を持つスキャン条件が NULL の列値によって満たされる問題を修正しました。また、Cassandra、DynamoDB、および Consensus Commit の `PutIf` または `DeleteIf`、ならびに Consensus Commit の `UpdateIf` で、`!=` 条件が NULL の列値によって満たされる問題も修正しました。 ([#3930](https://github.com/scalar-labs/scalardb/pull/3930))
+- DynamoDB の `repairTable()` が、既存のグローバルセカンダリインデックスに対してオートスケーリングを有効にしない問題を修正しました。たとえば、`createTable()` または `createIndex()` がオートスケーリングを有効にする前に失敗した場合 (Application Auto Scaling の権限が不足していた場合など) です。また、`repairTable()` は、テーブルの既存のオートスケーリング範囲を、指定された、またはデフォルトのリクエストユニットにリセットするのではなく、維持するようになりました。そのため、`--ru` を指定せずに repair を実行しても、Coordinator テーブルを含む既存のテーブルの容量が下がらなくなりました。既存のテーブルのオートスケーリング範囲を変更するには、AWS コンソールまたは CLI を使用してください。オートスケーリングを有効にした `createTable()` または `createIndex()` が以前に失敗した場合は、アップグレード後に、そのインデックスを含むスキーマと、作成時と同じリクエストユニットを指定して、`repairTable()` を再度実行してください。`repairTable()` (または `--repair-all` を指定した Schema Loader) を以前に `--ru` なし、またはより小さいリクエストユニットで実行した場合は、`repairTable()` が既存のテーブルの範囲を変更しなくなったため、Coordinator テーブルを含む既存のテーブルのオートスケーリング範囲を確認し、AWS コンソールまたは CLI で復元してください。 ([#3949](https://github.com/scalar-labs/scalardb/pull/3949))
+- Amazon S3 を使用する Object Storage アダプターで、AWS SDK が再試行した条件付き書き込みが、実際には適用されていたにもかかわらず競合として報告される可能性がある問題を修正しました。そのような書き込みは、結果が不明であるものとして報告されるようになりました。 ([#3958](https://github.com/scalar-labs/scalardb/pull/3958))
+- Azure Blob Storage を使用する Object Storage アダプターで、Azure SDK が再試行した条件付き書き込みが、実際には適用されていたにもかかわらず競合として報告される可能性がある問題を修正しました。そのような書き込みは、結果が不明であるものとして報告されるようになりました。 ([#3964](https://github.com/scalar-labs/scalardb/pull/3964))
+- Google Cloud Storage を使用する Object Storage アダプターで、Cloud Storage クライアントが再試行した削除が、実際には適用されていたにもかかわらず競合として報告される可能性がある問題を修正しました。そのような削除は一度だけ送信されるようになり、条件が満たされない場合以外の失敗は、結果が不明であるものとして報告されるようになりました。 ([#3965](https://github.com/scalar-labs/scalardb/pull/3965))
+- アクティブなトランザクション管理がリクエストをまたいでスキャナーを保持している間に、クライアントがアクティブなスキャナーを放棄した場合、トランザクション外で開かれたスキャナーが閉じられない問題を修正しました。そのようなスキャナーは、データベース接続や開いているデータベーストランザクションなど、トランザクションとストレージのリソースを保持し続けていました。現在は、そのようなスキャナーは、アクティブなトランザクションの有効期限の間使用されなかった場合、またはアクティブなトランザクションの最大数を超える数のそのようなスキャナーが開いている場合に閉じられます。 ([#3992](https://github.com/scalar-labs/scalardb/pull/3992))
+- Netty ライブラリと Jackson ライブラリをアップグレードしてセキュリティ問題を修正しました: [CVE-2026-75595](https://github.com/advisories/GHSA-c4c3-7fpv-j4q5 "CVE-2026-75595")、[CVE-2026-89407](https://github.com/advisories/GHSA-p6pp-m3f8-5c89 "CVE-2026-89407")、[CVE-2026-89425](https://github.com/advisories/GHSA-7hhh-6rmp-j9qf "CVE-2026-89425")、[CVE-2026-68497](https://github.com/advisories/GHSA-q4xh-88c3-wmh7 "CVE-2026-68497")、[CVE-2026-91776](https://github.com/advisories/GHSA-wv8q-qhhj-9h54 "CVE-2026-91776")、および [CVE-2026-91777](https://github.com/advisories/GHSA-cxp5-3px4-pw24 "CVE-2026-91777") ([#3996](https://github.com/scalar-labs/scalardb/pull/3996))
+- Amazon S3 および Google Cloud Storage を使用する Object Storage アダプターで、テーブルの切り詰めまたは削除が、テーブルの一部のオブジェクトが削除されないまま成功する可能性がある問題を修正しました。そのような失敗は、エラーとして報告されるようになりました。 ([#4043](https://github.com/scalar-labs/scalardb/pull/4043))
+- S3 アダプターで、`scalar.db.s3.multipart_upload_max_concurrency` オプションが、マルチパートアップロードだけでなく、すべての S3 操作の同時リクエスト数を制限していた問題を修正しました。 ([#4061](https://github.com/scalar-labs/scalardb/pull/4061))
+
+### Enterprise edition
+
+#### バグの修正
+
+##### ScalarDB Cluster
+
+- 認証が有効な場合に、クライアントが、認証トークンの有効期限切れまたは失効後、あるいは READ 権限の失効後も、開いているスキャナーからの読み取りを続けられる問題を修正しました。スキャナーからのフェッチ時に READ 権限が再確認されるようになりました。OIDC クライアントの場合、スキャン中に JWT の有効期限が切れると、get や scan と同様に、次のフェッチで認証エラーが発生するようになりました。`OidcJwtAccessTokenHolder` を介して JWT を提供するクライアントは、新しい JWT を設定してスキャンを続行できます。
+- `associated_data_required` が有効で、プロジェクションにすべての主キー列が含まれていない場合に、暗号化された列を持つテーブルに対するバッチ `Get` および `Scan` 操作が `IllegalStateException` で失敗する問題を修正しました。
+- Jackson、Netty、および Bouncy Castle ライブラリをアップグレードしてセキュリティ問題を修正しました: [CVE-2026-8763](https://github.com/advisories/GHSA-9pwp-9qqc-pr26 "CVE-2026-8763")、[CVE-2026-13506](https://github.com/advisories/GHSA-qp49-qgx5-5m26 "CVE-2026-13506")、[CVE-2026-68497](https://github.com/advisories/GHSA-q4xh-88c3-wmh7 "CVE-2026-68497")、[CVE-2026-75595](https://github.com/advisories/GHSA-c4c3-7fpv-j4q5 "CVE-2026-75595")、[CVE-2026-89407](https://github.com/advisories/GHSA-p6pp-m3f8-5c89 "CVE-2026-89407")、[CVE-2026-89425](https://github.com/advisories/GHSA-7hhh-6rmp-j9qf "CVE-2026-89425")、[CVE-2026-91776](https://github.com/advisories/GHSA-wv8q-qhhj-9h54 "CVE-2026-91776")、および [CVE-2026-91777](https://github.com/advisories/GHSA-cxp5-3px4-pw24 "CVE-2026-91777")
+- grpc_health_probe バイナリをアップグレードしてセキュリティ問題を修正しました: [CVE-2026-56851](https://github.com/advisories/GHSA-gx9w-9qq8-m485 "CVE-2026-56851")、[CVE-2026-78667](https://github.com/advisories/GHSA-f4xw-m386-m277 "CVE-2026-78667")、CVE-2026-78669、[CVE-2026-84304](https://github.com/advisories/GHSA-vp52-pcj8-j9qc "CVE-2026-84304")、[CVE-2026-84445](https://github.com/advisories/GHSA-2v4p-qf9q-27wj "CVE-2026-84445")、および [CVE-2026-97031](https://github.com/advisories/GHSA-hq7w-2xrq-wp2j "CVE-2026-97031")
+- `direct-kubernetes` クライアントモードで ScalarDB Cluster クライアントを閉じる際に、スレッドと Kubernetes API サーバーへの接続が残される問題を修正しました。クライアントを繰り返し作成して閉じるアプリケーション (ScalarDB SQL JDBC ドライバー経由の場合を含む) では、最終的に新しいスレッドを作成できなくなる可能性がありました。
+- すべてのコンテナイメージの cacerts から影響を受ける emSign ルート CA を削除することで、[CVE-2026-91403](https://github.com/advisories/GHSA-9h75-rf66-wh3r "CVE-2026-91403") および [CVE-2026-114820](https://github.com/advisories/GHSA-255q-pwv4-fjj7 "CVE-2026-114820") (eMudhra CA の侵害)を緩和しました。
+
+##### ScalarDB SQL
+
+- ScalarDB SQL が自身で評価する BLOB の比較 (`ORDER BY`、`HAVING` の範囲条件、および結合後の `WHERE` の範囲条件) で、`0x80` 以上のバイトが `0x00` から `0x7F` までのバイトより小さいものとして扱われる問題を修正しました。
+- `FLOAT` 列および `DOUBLE` 列に対する `MIN` と `MAX` が、値に `NaN`、または `0.0` と `-0.0` の両方が含まれる場合に、行の順序に依存した結果を返す問題を修正しました。
+
 ## v3.17.5
 
 **発売日:** 2026年9月2日
