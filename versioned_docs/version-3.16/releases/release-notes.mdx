@@ -10,6 +10,49 @@ displayed_sidebar: docsEnglish
 
 This page includes a list of release notes for ScalarDB 3.16.
 
+## v3.16.8
+
+**Release date:** October 30, 2026
+
+### Summary
+
+This release adds support for SQL Server 2025 and drops support for SQL Server 2017. It also improves transaction reliability and error handling in Consensus Commit, fixes various issues in storage adapters, and enhances resource management. Additionally, this release strengthens security through authentication and authorization fixes, dependency upgrades, and vulnerability mitigations.
+
+### Community edition
+
+#### Improvements
+
+- Fixed an issue where a conflict error, such as a lock wait timeout or a serialization failure, in a single put or delete operation on JDBC databases was not classified as retriable. As a result, Consensus Commit can now report such a conflict during commit as `CommitConflictException` instead of `CommitException` or `UnknownTransactionStatusException`. ([#3852](https://github.com/scalar-labs/scalardb/pull/3852))
+- Fixed the Consensus Commit record recovery to retry conflict errors reported by the underlying storage, and to report a conflict that persists as a conflict so that the transaction can be retried. ([#3853](https://github.com/scalar-labs/scalardb/pull/3853))
+- Added support for SQL Server 2025 and dropped support for SQL Server 2017. ([#3998](https://github.com/scalar-labs/scalardb/pull/3998))
+- Changed table import to reject column types that can't follow the TEXT collation order: SQL Server `nchar`, `nvarchar`, `text`, and `ntext`; Oracle `NCHAR` and `NVARCHAR2`; and Db2 `GRAPHIC`, `VARGRAPHIC`, and `DBCLOB`. ([#4051](https://github.com/scalar-labs/scalardb/pull/4051))
+- Upgraded the SQL Server JDBC driver to 13.6.0 and fixed TIMESTAMPTZ values dated before October 15, 1582, being stored up to 10 days off in SQL Server. TIMESTAMPTZ values dated before October 15, 1582, that were stored in SQL Server by a previous ScalarDB version are read back up to 10 days earlier than the value that was written. If you have such data, consider migrating it to remove the offset. ([#3971](https://github.com/scalar-labs/scalardb/pull/3971))
+- Mitigate [CVE-2026-91403](https://github.com/advisories/GHSA-9h75-rf66-wh3r "CVE-2026-91403") and [CVE-2026-114820](https://github.com/advisories/GHSA-255q-pwv4-fjj7 "CVE-2026-114820") (eMudhra CA compromise) by removing the affected emSign root CAs from the cacerts of all container images, and update the base image of the ScalarDB Schema Loader and ScalarDB Data Loader CLI container images from Java 8 (Eclipse Temurin 8) to Java 21 (Eclipse Temurin 21). The images set no JVM options by default, so this affects only users who pass Java 8-specific JVM options (for example, `-XX:+PrintGCDateStamps` through `JAVA_TOOL_OPTIONS`), which now make the JVM fail to start. ([#4112](https://github.com/scalar-labs/scalardb/pull/4112))
+
+#### Bug fixes
+
+- Fixed an issue where rolling back a Consensus Commit transaction with an open scanner, including the automatic rollback of an expired or evicted transaction, could fail with an IllegalArgumentException and leave the remaining scanners open and the group commit slot unreleased. ([#3867](https://github.com/scalar-labs/scalardb/pull/3867))
+- Fixed the Cassandra adapter so that an update applied by a conditional write is no longer silently discarded when it runs in the same millisecond as a preceding non-conditional write to the same record. The adapter now takes write timestamps from the server and sends every request for a partition to the same replica. ([#3890](https://github.com/scalar-labs/scalardb/pull/3890))
+- Fixed an issue where Consensus Commit accepted invalid conditions on conditional mutations instead of rejecting them. ([#3871](https://github.com/scalar-labs/scalardb/pull/3871))
+- Fixed an issue in DynamoDB where a single conditional write that the AWS SDK retried could be reported as not applied, even though the write had been applied. Such a write is now reported as having an unknown outcome. Also fixed an issue where some failures in DynamoDB operations were thrown as unchecked AWS SDK exceptions instead of `ExecutionException`. ([#3922](https://github.com/scalar-labs/scalardb/pull/3922))
+- Fixed an issue where a scan condition with the `!=`, `<`, or `<=` operator was satisfied by a NULL column value in Cassandra, Cosmos DB, DynamoDB, and Object Storage. Also fixed an issue where a `!=` condition was satisfied by a NULL column value in `PutIf` or `DeleteIf` in Cassandra, DynamoDB, and Consensus Commit, and in `UpdateIf` in Consensus Commit. ([#3930](https://github.com/scalar-labs/scalardb/pull/3930))
+- Fixed an issue where `repairTable()` on DynamoDB did not enable auto-scaling for existing global secondary indexes, for example after `createTable()` or `createIndex()` failed before enabling auto-scaling (such as when Application Auto Scaling permissions were missing). `repairTable()` now also keeps the existing auto-scaling range of a table instead of resetting it to the given or default request unit, so running repair without `--ru` no longer lowers the capacity of existing tables, including the Coordinator table. To change the auto-scaling range of an existing table, use the AWS console or CLI. If `createTable()` or `createIndex()` with auto-scaling enabled failed before, run `repairTable()` again after upgrading, with the schema that includes the index and the same request unit as at creation. If `repairTable()` (or Schema Loader with `--repair-all`) was run before without `--ru` or with a smaller request unit, check the auto-scaling range of existing tables, including the Coordinator table, and restore it with the AWS console or CLI, because `repairTable()` no longer changes the range of existing tables. ([#3949](https://github.com/scalar-labs/scalardb/pull/3949))
+- Changed the error code for dropping a namespace that contains non-ScalarDB tables from `DB-CORE-10216` to `DB-CORE-10249` so that it matches the error code in other versions. ([#3955](https://github.com/scalar-labs/scalardb/pull/3955))
+- Fixed an issue where a scanner opened outside a transaction was never closed if a client abandoned it while active transaction management kept it across requests. Such a scanner kept its transaction and storage resources, for example, a database connection and an open database transaction. Now, such a scanner is closed when it has not been used for the active transaction expiration time, or when more such scanners than the maximum number of active transactions are open. ([#3992](https://github.com/scalar-labs/scalardb/pull/3992))
+- Upgraded the Netty and Jackson libraries to fix security issues: [CVE-2026-75595](https://github.com/advisories/GHSA-c4c3-7fpv-j4q5 "CVE-2026-75595"), [CVE-2026-89407](https://github.com/advisories/GHSA-p6pp-m3f8-5c89 "CVE-2026-89407"), [CVE-2026-89425](https://github.com/advisories/GHSA-7hhh-6rmp-j9qf "CVE-2026-89425"), [CVE-2026-68497](https://github.com/advisories/GHSA-q4xh-88c3-wmh7 "CVE-2026-68497"), [CVE-2026-91776](https://github.com/advisories/GHSA-wv8q-qhhj-9h54 "CVE-2026-91776"), and [CVE-2026-91777](https://github.com/advisories/GHSA-cxp5-3px4-pw24 "CVE-2026-91777") ([#3996](https://github.com/scalar-labs/scalardb/pull/3996))
+
+### Enterprise edition
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Fixed an issue where, with authentication enabled, a client could keep reading from an open scanner after its auth token had expired or been revoked, or after its READ privilege had been revoked. Fetching from a scanner now re-checks the READ privilege. For OIDC clients, a JWT that expires during a scan now causes an authentication error at the next fetch, as with get and scan; a client that supplies the JWT through `OidcJwtAccessTokenHolder` can set a fresh JWT and continue the scan.
+- Upgraded the Jackson, Netty, and Bouncy Castle libraries to fix security issues: [CVE-2026-8763](https://github.com/advisories/GHSA-9pwp-9qqc-pr26 "CVE-2026-8763"), [CVE-2026-13506](https://github.com/advisories/GHSA-qp49-qgx5-5m26 "CVE-2026-13506"), [CVE-2026-68497](https://github.com/advisories/GHSA-q4xh-88c3-wmh7 "CVE-2026-68497"), [CVE-2026-75595](https://github.com/advisories/GHSA-c4c3-7fpv-j4q5 "CVE-2026-75595"), [CVE-2026-89407](https://github.com/advisories/GHSA-p6pp-m3f8-5c89 "CVE-2026-89407"), [CVE-2026-89425](https://github.com/advisories/GHSA-7hhh-6rmp-j9qf "CVE-2026-89425"), [CVE-2026-91776](https://github.com/advisories/GHSA-wv8q-qhhj-9h54 "CVE-2026-91776"), and [CVE-2026-91777](https://github.com/advisories/GHSA-cxp5-3px4-pw24 "CVE-2026-91777")
+- Upgraded the grpc_health_probe binary to fix security issues: [CVE-2026-56851](https://github.com/advisories/GHSA-gx9w-9qq8-m485 "CVE-2026-56851"), [CVE-2026-78667](https://github.com/advisories/GHSA-f4xw-m386-m277 "CVE-2026-78667"), CVE-2026-78669, [CVE-2026-84304](https://github.com/advisories/GHSA-vp52-pcj8-j9qc "CVE-2026-84304"), [CVE-2026-84445](https://github.com/advisories/GHSA-2v4p-qf9q-27wj "CVE-2026-84445"), and [CVE-2026-97031](https://github.com/advisories/GHSA-hq7w-2xrq-wp2j "CVE-2026-97031")
+- Fixed an issue where closing a ScalarDB Cluster client in the `direct-kubernetes` client mode left behind a thread and a connection to the Kubernetes API server. An application that repeatedly created and closed clients, including through the ScalarDB SQL JDBC driver, could eventually fail to create new threads.
+- Mitigate [CVE-2026-91403](https://github.com/advisories/GHSA-9h75-rf66-wh3r "CVE-2026-91403") and [CVE-2026-114820](https://github.com/advisories/GHSA-255q-pwv4-fjj7 "CVE-2026-114820") (eMudhra CA compromise) by removing the affected emSign root CAs from the cacerts of all container images
+
 ## v3.16.7
 
 **Release date:** September 2, 2026
