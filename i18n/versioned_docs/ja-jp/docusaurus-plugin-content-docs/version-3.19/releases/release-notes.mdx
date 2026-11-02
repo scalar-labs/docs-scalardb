@@ -63,7 +63,6 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 - OIDC JWT の検証を修正し、JWKS 取得のレート制限が使い果たされた場合に、内部エラーではなく認証失敗として報告されるようにしました。
 - グローバルトランザクション API を修正し、`GlobalTransactionManager.begin` に渡される認証属性が、begin、および開始者のコミットとロールバックの資格情報を選択するようにし、トランザクション属性としてクラスターに転送されないようにしました。
-- null
 - グローバルトランザクション API の Transaction Coordinator によるバッキングを修正し、1つの `GlobalTransactionManager` で同時に開かれている同じトランザクションのブランチが、それぞれ独自の資格情報で実行されるようにしました。以前は、そのようなブランチが別のブランチの資格情報またはデフォルトの資格情報で実行される可能性がありました。
 
 #### バグの修正

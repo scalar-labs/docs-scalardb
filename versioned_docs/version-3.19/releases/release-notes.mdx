@@ -59,7 +59,6 @@ This release adds support for SQL Server 2025 and drops support for SQL Server 2
 
 - Fixed OIDC JWT validation so that an exhausted JWKS retrieval rate limit is reported as an authentication failure instead of an internal error.
 - Fixed the Global Transaction API so that the auth attributes passed to `GlobalTransactionManager.begin` choose the credential for the begin and the initiator's commit and rollback, and are no longer forwarded to the cluster as transaction attributes.
-- null
 - Fixed the Transaction Coordinator backing of the Global Transaction API so that branches of the same transaction that are open at the same time in one `GlobalTransactionManager` each run as their own credential. Previously, such a branch could run as another branch's credential or as the default credential.
 
 #### Bug fixes
