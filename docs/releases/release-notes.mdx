@@ -6,19 +6,23 @@ tags:
 displayed_sidebar: docsEnglish
 ---
 
-# ScalarDB 3.19 Release Notes
+# ScalarDB 3.20 Release Notes
 
-This page includes a list of release notes for ScalarDB 3.19.
+This page includes a list of release notes for ScalarDB 3.20.
 
-## v3.19.1
+## v3.20.0
 
-**Release date:** September 2, 2026
+**Release date:** October 30, 2026
 
 ### Summary
 
-This release updates the Global Transaction API to require branches to explicitly declare their outcome, adds support for the AWS Advanced JDBC Wrapper for fast Aurora failover, improves Cosmos DB error handling and ScalarDB Cluster's attribute-based access control metadata cache refresh, deprecates the `join()` and `resume()` transaction APIs, adds retry handling for conflict errors during schema operations, and upgrades grpc_health_probe to address security vulnerabilities.
+This release introduces global transaction support for ScalarDB SQL on ScalarDB Cluster, enabling transactions that span multiple processes and microservices. It also adds PostgreSQL wire protocol support, allowing applications and tools that use PostgreSQL drivers to connect to ScalarDB Cluster. Additionally, this release improves transaction performance and reliability in Consensus Commit, simplifies transaction lifecycle management, removes legacy transaction APIs, and enhances the correctness and reliability of storage adapter operations. It also adds support for SQL Server 2025, drops support for SQL Server 2017, and strengthens security through authentication and authorization fixes and vulnerability mitigations.
 
 ### Community edition
+
+#### Enhancements
+
+- Consensus Commit now runs consecutive Get operations in a batch in parallel. You can configure this with `scalar.db.consensus_commit.parallel_batch_get.enabled` and `scalar.db.consensus_commit.parallel_batch_get.max_concurrency_per_batch`. ([#4053](https://github.com/scalar-labs/scalardb/pull/4053))
 
 #### Improvements
 
@@ -26,12 +30,56 @@ This release updates the Global Transaction API to require branches to explicitl
 - Added support for the AWS Advanced JDBC Wrapper, which enables fast Aurora failover for Aurora PostgreSQL and Aurora MySQL. Configuring HikariCP with an exception override is now rejected at startup, since it would cause a transaction with an unknown outcome to be reported as a definite failure. ([#3805](https://github.com/scalar-labs/scalardb/pull/3805))
 - Fixed an issue where the error message for a Cosmos DB error was excessively large because it included the Cosmos DB diagnostics, which could cause the error information to be lost. ([#3816](https://github.com/scalar-labs/scalardb/pull/3816))
 - Deprecated `DistributedTransactionManager.join()` and `DistributedTransactionManager.resume()`, along with their implementations, for removal in 3.20.0. ([#3817](https://github.com/scalar-labs/scalardb/pull/3817))
+- Allowed updating and deleting records that a scanner has already returned, so applications can mutate rows while iterating a scanner instead of buffering the whole result with `scan()`. Inserting into the scanned range remains disallowed. ([#3850](https://github.com/scalar-labs/scalardb/pull/3850))
+- Fixed an issue where a conflict error, such as a lock wait timeout or a serialization failure, in a single put or delete operation on JDBC databases was not classified as retriable. As a result, Consensus Commit can now report such a conflict during commit as `CommitConflictException` instead of `CommitException` or `UnknownTransactionStatusException`. ([#3852](https://github.com/scalar-labs/scalardb/pull/3852))
+- Fixed the Consensus Commit record recovery to retry conflict errors reported by the underlying storage, and to report a conflict that persists as a conflict so that the transaction can be retried. ([#3853](https://github.com/scalar-labs/scalardb/pull/3853))
+- Fixed an issue where a write operation that creates a record kept failing for a key that holds a record of a transaction that did not finish. Such a record is now recovered when the write fails, so that a retry succeeds. ([#3868](https://github.com/scalar-labs/scalardb/pull/3868))
+- Improved the performance of committing and rolling back a transaction. The records to roll back are now read in parallel, and, when asynchronous commit or rollback is enabled, committing and rolling back the records no longer run on the thread of the transaction. ([#3888](https://github.com/scalar-labs/scalardb/pull/3888))
+- Removed `DistributedTransactionManager.join()` and `DistributedTransactionManager.resume()`, which were deprecated in 3.19.0. Renamed `scalar.db.active_transaction_management.enabled` to `scalar.db.two_phase_commit.active_transaction_management.enabled`, which now applies only to the two-phase commit coordinator and participant. Changed the default of `scalar.db.active_transaction_management.expiration_time_millis` from `-1` to `60000`. ([#3889](https://github.com/scalar-labs/scalardb/pull/3889))
+- New Cosmos DB containers created by ScalarDB use partition key definition V2, including the metadata and namespaces containers. Existing containers keep their current partition key definition, even when their tables are repaired. To move an existing container to V2, copy its data to a new container. ([#3870](https://github.com/scalar-labs/scalardb/pull/3870))
+- Improved the performance of checking whether a table exists. `tableExists()` now reads only the metadata of the specified table instead of listing the tables in the namespace, so its cost no longer grows with the number of tables. As a result, on DynamoDB, a table that has no ScalarDB metadata is no longer reported as existing. Also fixed an issue in which `getTableMetadata()` for DynamoDB and Cosmos DB threw an exception instead of returning `null` when the ScalarDB metadata table or container did not exist. On these storages, a "table not found" error can therefore now also mean that the metadata table or container itself does not exist. If such a table is visible in the AWS console or the Azure portal, verify that `scalar.db.system_namespace_name` (and, on DynamoDB, the namespace prefix) match across all configurations before running `repairTable()`. ([#3947](https://github.com/scalar-labs/scalardb/pull/3947))
+- Changed a commit to end the transaction whatever its outcome, so you no longer need to roll back a transaction after a failed commit. A rollback or an abort after a commit, whether the commit succeeded or failed, now does nothing instead of rolling back again or throwing `IllegalStateException`. ([#3966](https://github.com/scalar-labs/scalardb/pull/3966))
+- Upgraded the SQL Server JDBC driver to 13.6.0 and fixed TIMESTAMPTZ values dated before October 15, 1582, being stored up to 10 days off in SQL Server. TIMESTAMPTZ values dated before October 15, 1582, that were stored in SQL Server by a previous ScalarDB version are read back up to 10 days earlier than the value that was written. If you have such data, consider migrating it to remove the offset. ([#3971](https://github.com/scalar-labs/scalardb/pull/3971))
+- Added support for SQL Server 2025 and dropped support for SQL Server 2017. ([#3998](https://github.com/scalar-labs/scalardb/pull/3998))
+- Changed upserts in the JDBC adapter to send each column value once, which allows larger BLOB values on MySQL and MariaDB. ([#4040](https://github.com/scalar-labs/scalardb/pull/4040))
+- Changed table import to reject column types that can't follow the TEXT collation order: SQL Server `nchar`, `nvarchar`, `text`, and `ntext`; Oracle `NCHAR` and `NVARCHAR2`; and Db2 `GRAPHIC`, `VARGRAPHIC`, and `DBCLOB`. ([#4051](https://github.com/scalar-labs/scalardb/pull/4051))
+- Added `BranchTransaction.getGlobalTransactionId()`, which returns the ID of the global transaction that a branch belongs to. `BranchTransaction.getId()` now represents the ID of the branch itself, so use `getGlobalTransactionId()` when you need the ID of the global transaction. `getId()` may return the same ID as `getGlobalTransactionId()`, so do not use it to tell the branches of a global transaction apart. ([#4059](https://github.com/scalar-labs/scalardb/pull/4059))
+- Fixed an issue where a mutation condition using `LIKE` or `NOT_LIKE` passed operation validation and then failed in the storage with an `AssertionError`. Such a condition is now rejected with an `IllegalArgumentException`. ([#4072](https://github.com/scalar-labs/scalardb/pull/4072))
+- Changed the order of TEXT values that ScalarDB compares itself to Unicode code point order, which matches binary collations on UTF-8 data. Previously, supplementary characters (U+10000 and above) were ordered before characters in U+E000 to U+FFFF. For SQL Server, string parameters are now sent as `VARCHAR` so that range scans on TEXT columns follow the column's collation. ([#4075](https://github.com/scalar-labs/scalardb/pull/4075))
+- Improved the S3 and Cloud Storage adapters to retry deleting objects that failed on transient errors when truncating or dropping tables. ([#4077](https://github.com/scalar-labs/scalardb/pull/4077))
+- Mitigate [CVE-2026-91403](https://github.com/advisories/GHSA-9h75-rf66-wh3r "CVE-2026-91403") and [CVE-2026-114820](https://github.com/advisories/GHSA-255q-pwv4-fjj7 "CVE-2026-114820") (eMudhra CA compromise) by removing the affected emSign root CAs from the cacerts of all container images, and update the base image of the ScalarDB Schema Loader and ScalarDB Data Loader CLI container images from Java 8 (Eclipse Temurin 8) to Java 21 (Eclipse Temurin 21). The images set no JVM options by default, so this affects only users who pass Java 8-specific JVM options (for example, `-XX:+PrintGCDateStamps` through `JAVA_TOOL_OPTIONS`), which now make the JVM fail to start. ([#4112](https://github.com/scalar-labs/scalardb/pull/4112))
 
 #### Bug fixes
 
 - Fixed an issue where schema operations could fail with a conflict error, such as `ORA-08177` on Oracle when using the SERIALIZABLE isolation level. Conflict errors are now retried. ([#3820](https://github.com/scalar-labs/scalardb/pull/3820))
+- Fixed the get operation in the Cloud Storage adapter to handle concurrent writes. ([#3851](https://github.com/scalar-labs/scalardb/pull/3851))
+- Fixed an issue where rolling back a Consensus Commit transaction with an open scanner, including the automatic rollback of an expired or evicted transaction, could fail with an IllegalArgumentException and leave the remaining scanners open and the group commit slot unreleased. ([#3867](https://github.com/scalar-labs/scalardb/pull/3867))
+- Fixed the Cassandra adapter so that an update applied by a conditional write is no longer silently discarded when it runs in the same millisecond as a preceding non-conditional write to the same record. The adapter now takes write timestamps from the server and sends every request for a partition to the same replica. ([#3890](https://github.com/scalar-labs/scalardb/pull/3890))
+- Fixed an issue where Consensus Commit accepted invalid conditions on conditional mutations instead of rejecting them. ([#3871](https://github.com/scalar-labs/scalardb/pull/3871))
+- Fixed an issue in DynamoDB where a single conditional write that the AWS SDK retried could be reported as not applied, even though the write had been applied. Such a write is now reported as having an unknown outcome. Also fixed an issue where some failures in DynamoDB operations were thrown as unchecked AWS SDK exceptions instead of `ExecutionException`. ([#3922](https://github.com/scalar-labs/scalardb/pull/3922))
+- Fixed an issue where committing a transaction could report a conflict and roll back its already-committed records when its Coordinator state write was retried and `finishTransaction` was called for the transaction concurrently. The commit now reports an unknown transaction status instead. ([#3923](https://github.com/scalar-labs/scalardb/pull/3923))
+- Fixed an issue where a scan condition with the `!=`, `<`, or `<=` operator was satisfied by a NULL column value in Cassandra, Cosmos DB, DynamoDB, and Object Storage. Also fixed an issue where a `!=` condition was satisfied by a NULL column value in `PutIf` or `DeleteIf` in Cassandra, DynamoDB, and Consensus Commit, and in `UpdateIf` in Consensus Commit. ([#3930](https://github.com/scalar-labs/scalardb/pull/3930))
+- Fixed an issue where `repairTable()` on DynamoDB did not enable auto-scaling for existing global secondary indexes, for example after `createTable()` or `createIndex()` failed before enabling auto-scaling (such as when Application Auto Scaling permissions were missing). `repairTable()` now also keeps the existing auto-scaling range of a table instead of resetting it to the given or default request unit, so running repair without `--ru` no longer lowers the capacity of existing tables, including the Coordinator table. To change the auto-scaling range of an existing table, use the AWS console or CLI. If `createTable()` or `createIndex()` with auto-scaling enabled failed before, run `repairTable()` again after upgrading, with the schema that includes the index and the same request unit as at creation. If `repairTable()` (or Schema Loader with `--repair-all`) was run before without `--ru` or with a smaller request unit, check the auto-scaling range of existing tables, including the Coordinator table, and restore it with the AWS console or CLI, because `repairTable()` no longer changes the range of existing tables. ([#3949](https://github.com/scalar-labs/scalardb/pull/3949))
+- Fixed an issue in the Object Storage adapter with Amazon S3 where a conditional write that the AWS SDK retried could be reported as a conflict, even though the write had been applied. Such a write is now reported as having an unknown outcome. ([#3958](https://github.com/scalar-labs/scalardb/pull/3958))
+- Fixed an issue in the Object Storage adapter with Azure Blob Storage where a conditional write that the Azure SDK retried could be reported as a conflict, even though the write had been applied. Such a write is now reported as having an unknown outcome. ([#3964](https://github.com/scalar-labs/scalardb/pull/3964))
+- Fixed an issue in the Object Storage adapter with Google Cloud Storage where a deletion that the Cloud Storage client retried could be reported as a conflict, even though the deletion had been applied. Such a deletion is now sent only once, and a failure of it other than an unsatisfied condition is reported as having an unknown outcome. ([#3965](https://github.com/scalar-labs/scalardb/pull/3965))
+- Fixed an issue where a scanner opened outside a transaction was never closed if a client abandoned it while active transaction management kept it across requests. Such a scanner kept its transaction and storage resources, for example, a database connection and an open database transaction. Now, such a scanner is closed when it has not been used for the active transaction expiration time, or when more such scanners than the maximum number of active transactions are open. ([#3992](https://github.com/scalar-labs/scalardb/pull/3992))
+- Fixed an issue in the Object Storage adapter with Amazon S3 and Google Cloud Storage where truncating or dropping a table could succeed while leaving some of the table's objects undeleted. Such a failure is now reported as an error. ([#4043](https://github.com/scalar-labs/scalardb/pull/4043))
+- Fixed an issue where the `scalar.db.s3.multipart_upload_max_concurrency` option limited the number of concurrent requests of all S3 operations, not only multipart uploads, in the S3 adapter. ([#4061](https://github.com/scalar-labs/scalardb/pull/4061))
 
 ### Enterprise edition
+
+#### Enhancements
+
+##### ScalarDB Cluster
+
+- Added support for global transactions to ScalarDB SQL on ScalarDB Cluster. With the new `GLOBAL_TRANSACTION` mode of `SqlSession` and the JDBC driver, applications can run a single transaction that spans multiple processes, such as microservice transactions: one process begins a global transaction, and each process runs a branch of it with `BEGIN BRANCH` and `END BRANCH`. The Transaction Coordinator drives two-phase commit across ScalarDB Clusters on their behalf when `scalar.db.sql.enabled` is set to `true` on it. The same application code also works for transactions within a single ScalarDB Cluster, with only configuration selecting which.
+- Added support for the PostgreSQL wire protocol to ScalarDB Cluster. When `scalar.db.postgres.enabled` is set to `true`, each node accepts PostgreSQL connections on the port specified by `scalar.db.postgres.port` (`5432` by default), so psql, PostgreSQL drivers such as the PostgreSQL JDBC driver, and other PostgreSQL tools can run SQL on ScalarDB Cluster. When authentication is enabled, clients log in as ScalarDB Cluster users with their passwords or with OIDC access tokens sent as passwords, and ScalarDB Cluster enforces those users' privileges as it does for other clients. By using `scalar.db.postgres.auth`, you can allow only passwords (`userpass`) or only OIDC access tokens (`oidc_jwt`). With authentication enabled, connections must use TLS by default, and the node's TLS certificate and private key are used unless others are specified.
+
+##### ScalarDB SQL
+
+- Added support for referencing a joined table's column in the WHERE clause of a SELECT statement with a JOIN.
+- Fixed `Connection.rollback()` in the JDBC driver to throw `SQLException` when the rollback fails. Previously, it threw an unchecked ScalarDB SQL exception as is. `Connection.commit()` now throws `SQLNonTransientException` with the SQLState `SDB01`, instead of `SQLException` with `SDB99`, when no transaction is in progress, for example in auto-commit mode. Also fixed the JDBC driver so that a failure to create a connection, for example because the default namespace does not exist, no longer prevents the cached session factory from expiring.
 
 #### Improvements
 
@@ -39,105 +87,41 @@ This release updates the Global Transaction API to require branches to explicitl
 
 - Reduced the number of queries issued when the attribute-based access control metadata caches are refreshed, which removes a latency spike on the first request after each refresh.
 - Adopted the ScalarDB Core change that replaced `BranchTransaction.end()` with `BranchTransaction.end(BranchTransaction.Status)`, which requires a branch of a global transaction to declare the outcome of its work. Replace existing `end()` calls with `end(BranchTransaction.Status.SUCCESS)`, and call `end(BranchTransaction.Status.FAILURE)` on failure paths.
+- Fixed OIDC JWT validation so that an exhausted JWKS retrieval rate limit is reported as an authentication failure instead of an internal error.
+- Removed `ClusterClientTransactionManager.join()`, `ClusterClientTransactionManager.resume()`, and `ClusterClientSqlTransactionManager.resume()`, which were deprecated in 3.19.0. Removed the `SINGLETON` cluster client mode (`singleton:` contact points), which was for internal use.
+- Fixed the Global Transaction API so that the auth attributes passed to `GlobalTransactionManager.begin` choose the credential for the begin and the initiator's commit and rollback, and are no longer forwarded to the cluster as transaction attributes.
+- Fixed an issue where a transaction or a transaction participant's context could remain in a cluster node's memory indefinitely when its rollback or another terminal operation was rejected because the authentication token had expired. Also, a cluster pause no longer waits for the transaction expiration when an in-flight transaction's commit fails.
+- Changed the Rollback RPC so that rolling back a transaction that the cluster node does not know, such as one that has already ended, succeeds instead of returning a `NOT_FOUND` error.
+- Simplified how the associated data of encrypted columns is generated. The generated values are unchanged.
+- Changed a commit to end the transaction whatever its outcome, so you no longer need to roll back a transaction after a failed commit. A rollback or an abort after a commit, whether the commit succeeded or failed, now does nothing and sends no request to the cluster.
+- Fixed the Transaction Coordinator backing of the Global Transaction API so that branches of the same transaction that are open at the same time in one `GlobalTransactionManager` each run as their own credential. Previously, such a branch could run as another branch's credential or as the default credential.
+
+##### ScalarDB GraphQL
+
+- Removed two-phase commit support: the `@twoPhaseCommit` directive and the `prepare`, `validate` and `commit` mutation fields are gone, along with the `GraphQlFactory` constructor parameter for the two-phase commit transaction manager. This surface was not deprecated in an earlier release. The `@transaction` directive and the `abort` and `rollback` mutation fields are unaffected.
+- Added a `GraphQlServer` constructor that takes a `ResumableDistributedTransactionManager` and a `DistributedTransactionAdmin` for embedding. The `GraphQlFactory` and `TransactionInstrumentation` constructors now take a `ResumableDistributedTransactionManager` instead of a `DistributedTransactionManager`. The behavior of the `@transaction` directive does not change.
+- Changed a commit to end the transaction whatever its outcome, so you no longer need to abort a transaction after a failed commit. An `abort` or a `rollback` of a transaction that has already ended, for example by a commit, whether the commit succeeded or failed, now returns `true` instead of an error.
+
+##### ScalarDB SQL
+
+- Removed `SqlTransactionManager.join()`, `SqlTransactionManager.resume()`, `SqlSession.join()`, `SqlSession.suspend()`, `SqlSession.resume()`, `StatementBuilder.join()`, `StatementBuilder.suspend()`, `StatementBuilder.resume()`, and the `JOIN`, `SUSPEND`, and `RESUME` statements, which were deprecated in 3.19.0. Removed `begin()`, `commit()`, `rollback()`, `join()`, `resume()`, and `suspend()` from `ScalarDbRepositoryImpl` in the Spring Data integration. Also removed the same methods from `ScalarDbJdbcAggregateTemplate`, whose public constructors no longer take a `NamedParameterJdbcOperations`.
+- Changed a commit to end the transaction whatever its outcome, so you no longer need to roll back a transaction after a failed commit. A rollback or an abort after a commit, whether the commit succeeded or failed, now does nothing. A statement or a commit on a transaction that has already ended now fails with `IllegalStateException` in every connection mode.
+- Changed DDL and DCL statements to be rejected while a transaction is in progress. Previously, such a statement took effect immediately and was not rolled back with the transaction. Commit or roll back the transaction before executing DDL or DCL.
+- Changed the order of TEXT values that ScalarDB SQL compares itself, in `ORDER BY`, `MIN`, `MAX`, and range conditions in `HAVING` and in `WHERE` after a join, to Unicode code point order, which matches binary collations on UTF-8 data. Previously, characters above U+FFFF were ordered before characters in U+E000 to U+FFFF.
 
 #### Bug fixes
 
 ##### ScalarDB Cluster
 
 - Upgraded the grpc_health_probe binary to fix security issues: [CVE-2026-33818](https://github.com/advisories/GHSA-xc2p-8ggw-6cr5 "CVE-2026-33818"), [CVE-2026-39821](https://github.com/advisories/GHSA-w2q5-6q6x-x959 "CVE-2026-39821"), [CVE-2026-46600](https://github.com/advisories/GHSA-gg3m-vvp2-p2c5 "CVE-2026-46600"), [CVE-2026-56852](https://github.com/advisories/GHSA-jpjm-c3r5-q96r "CVE-2026-56852"), [CVE-2026-56853](https://github.com/advisories/GHSA-xphw-4f88-5f39 "CVE-2026-56853"), [CVE-2026-56858](https://github.com/advisories/GHSA-c974-w86c-vpfw "CVE-2026-56858"), [CVE-2026-56859](https://github.com/advisories/GHSA-76p8-fhrm-vpc7 "CVE-2026-56859"), [CVE-2026-56860](https://github.com/advisories/GHSA-25mv-j2qr-v5jq "CVE-2026-56860"), [CVE-2026-56862](https://github.com/advisories/GHSA-7qch-w8m5-g3h3 "CVE-2026-56862"), and [GHSA-hrxh-6v49-42gf](https://github.com/advisories/GHSA-hrxh-6v49-42gf "GHSA-hrxh-6v49-42gf")
-
-## v3.19.0
-
-**Release date:** August 2, 2026
-
-### Summary
-
-This release adds Consensus Commit recovery capabilities, including write-set logging, transaction finishing, and single-record recovery APIs, and improves recovery correctness when Coordinator state records are cleaned up. It also adds attribute-based authentication, OpenTelemetry support, the Transaction Coordinator node for Separated Cluster deployments, and Global Transaction API support in the Cluster client SDK. In addition, this release improves `repairTable`, active transaction management, Cluster upgrade and authentication behavior, and SQL SELECT execution, while fixing several Consensus Commit, Cluster rollback/pause, and SQL statement cache issues.
-
-### Community edition
-
-#### Enhancements
-
-- Added an opt-in `scalar.db.consensus_commit.coordinator.write_set_logging.enabled` configuration that, when enabled, adds a `tx_write_set` column to the Coordinator table and populates it on commit/abort. This lays the groundwork for proactive transaction recovery. Existing Coordinator tables can be migrated by enabling the config and running `Admin.repairCoordinatorTables()`. ([#3570](https://github.com/scalar-labs/scalardb/pull/3570) [#3593](https://github.com/scalar-labs/scalardb/pull/3593))
-- Added the `DistributedTransactionManager#finishTransaction(String)` API, which completes per-record post-commit recovery for a committed transaction and removes its Coordinator state row. It returns `true` when the transaction was finished (or was already finished) and `false` when the transaction is not applicable because it carries no write set (for example, a transaction terminated via `rollback()` / `abort()` rather than `commit()`); a `TransactionException` is thrown when finishing fails. Note that this is a low-level operational API specific to the Consensus Commit transaction manager. Most applications should not call it directly; it is intended for advanced use cases. Callers are expected to understand the underlying transaction lifecycle and the implications of invoking this method directly. ([#3567](https://github.com/scalar-labs/scalardb/pull/3567))
-- Added the `DistributedTransactionManager#recoverRecord` API for recovering a single record left in an uncommitted state by a crashed transaction. Note that this is a low-level operational API specific to the Consensus Commit transaction manager. Most applications should not call it directly; it is intended for advanced use cases. Callers are expected to understand the underlying transaction lifecycle and the implications of invoking this method directly. ([#3617](https://github.com/scalar-labs/scalardb/pull/3617))
-
-#### Improvements
-
-- Improved `repairTable` to skip rewriting a table's metadata when it is already up to date (and, for Cosmos DB, to skip updating the container indexing policy when it already matches), avoiding unnecessary writes. ([#3613](https://github.com/scalar-labs/scalardb/pull/3613))
-- Fixed the Consensus Commit recovery and read paths to stay correct when Coordinator state records are removed by cleanup (for example, by `finishTransaction`), preventing stale reads, spurious aborts, and a crash during group-commit lazy recovery. ([#3650](https://github.com/scalar-labs/scalardb/pull/3650))
-- Added a configurable limit on the number of active transactions tracked by active transaction management (`scalar.db.active_transaction_management.max_active_transactions`, default 10000), backed by a Caffeine cache with Window-TinyLFU eviction, and refreshed the idle timer on every transaction operation so long-running transactions are not reaped while still in use. ([#3673](https://github.com/scalar-labs/scalardb/pull/3673))
-
-#### Bug fixes
-
-- Accepts connection string starting with `jdbc:spanner` to connect to Spanner (emulator, omni, and cloud instance) in addition to the already supported `jdbc:cloudspanner` pattern. ([#3559](https://github.com/scalar-labs/scalardb/pull/3559))
-- Fixed an issue in Consensus Commit where a `Get` operation using a secondary index could fail with an `IllegalArgumentException` when another record with the same indexed value was concurrently being deleted and inserted. ([#3607](https://github.com/scalar-labs/scalardb/pull/3607))
-- Fixed an issue in Consensus Commit where a read-only transaction could fail when coordinator write omission on read-only was disabled and coordinator group commit was enabled. ([#3614](https://github.com/scalar-labs/scalardb/pull/3614))
-- Fixed a bug where aborting an in-flight, group-committed transaction by ID via `DistributedTransactionManager.rollback(String)` / `abort(String)` could be lost when the Coordinator group commit feature was enabled. ([#3619](https://github.com/scalar-labs/scalardb/pull/3619))
-- Fixed an issue in the Consensus Commit transaction manager where a read could return a stale (pre-commit) value for a record whose writing transaction committed concurrently during lazy recovery. ([#3621](https://github.com/scalar-labs/scalardb/pull/3621))
-
-### Enterprise edition
-
-#### Enhancements
-
-##### ScalarDB Cluster
-
-- Added attribute-based authentication.
-- Added OpenTelemetry support.
-- Added the Transaction Coordinator node for the new Separated Cluster deployment pattern, which drives two-phase commit across ScalarDB Clusters on behalf of applications using the one-phase transaction interface.
+- Fixed an issue where a user whose authentication methods did not include `USERPASS` could log in with username/password authentication. If such a user needs username/password authentication, add `USERPASS` to the user's authentication methods and, unless passwordless login is intended, set a password. The fix takes full effect after all nodes in the cluster have been upgraded.
+- Fixed an issue where, with authentication enabled, a client could keep reading from an open scanner after its auth token had expired or been revoked, or after its READ privilege had been revoked. Fetching from a scanner now re-checks the READ privilege. For OIDC clients, a JWT that expires during a scan now causes an authentication error at the next fetch, as with get and scan; a client that supplies the JWT through `OidcJwtAccessTokenHolder` can set a fresh JWT and continue the scan.
+- Fixed an issue where batch `Get` and `Scan` operations on tables with encrypted columns failed with `IllegalStateException` when `associated_data_required` was enabled and their projections did not include all primary key columns.
+- Upgraded the grpc_health_probe binary to fix security issues: [CVE-2026-56851](https://github.com/advisories/GHSA-gx9w-9qq8-m485 "CVE-2026-56851"), [CVE-2026-78667](https://github.com/advisories/GHSA-f4xw-m386-m277 "CVE-2026-78667"), CVE-2026-78669, [CVE-2026-84304](https://github.com/advisories/GHSA-vp52-pcj8-j9qc "CVE-2026-84304"), [CVE-2026-84445](https://github.com/advisories/GHSA-2v4p-qf9q-27wj "CVE-2026-84445"), and [CVE-2026-97031](https://github.com/advisories/GHSA-hq7w-2xrq-wp2j "CVE-2026-97031")
+- Fixed an issue where closing a ScalarDB Cluster client in the `direct-kubernetes` client mode left behind a thread and a connection to the Kubernetes API server. An application that repeatedly created and closed clients, including through the ScalarDB SQL JDBC driver, could eventually fail to create new threads.
+- Mitigate [CVE-2026-91403](https://github.com/advisories/GHSA-9h75-rf66-wh3r "CVE-2026-91403") and [CVE-2026-114820](https://github.com/advisories/GHSA-255q-pwv4-fjj7 "CVE-2026-114820") (eMudhra CA compromise) by removing the affected emSign root CAs from the cacerts of all container images
 
 ##### ScalarDB SQL
 
-- Added `@AutoConfigureBefore` to `ScalarDbJdbcConfiguration` to explicitly declare auto-configuration ordering relative to Spring Boot's auto-configs.
-
-#### Improvements
-
-##### ScalarDB Cluster
-
-- ScalarDB Cluster now repairs its authentication and ABAC system metadata tables at node startup to create the companion before-image secondary indexes required after upgrading, so deployments upgraded from an earlier version gain them automatically without a manual `repairTable()`.
-- Fixed an issue where a cluster node failed to start when TLS was disabled but a CA root certificate path was still configured.
-- Added support for the Global Transaction API on the ScalarDB Cluster client SDK. Applications can now use `GlobalTransactionManager` to run a single transaction that spans multiple processes, such as microservice transactions, where the Transaction Coordinator drives two-phase commit on their behalf. The same application code also works for transactions within a single ScalarDB Cluster, with only configuration selecting which.
-- Added a configurable expiration margin to the userpass auth-token cache so the ScalarDB Cluster client re-authenticates shortly before a cached token expires, reducing spurious authentication errors near token expiration.
-- Added a fixed label to the Kubernetes Secrets that store data encryption keys for self encryption so that operators can select them with a label selector.
-
-##### ScalarDB SQL
-
-- Enabled the read-only optimization for one-shot SELECT statements and SELECT-only batches.
-
-#### Bug fixes
-
-##### ScalarDB Cluster
-
-- Fixed a bug where a `rollback` that exceeded the cluster's request-forwarding hop limit was silently reported as successful instead of surfacing the failure, which could leave records prepared until lazy recovery.
-- **`ABORTED` is new on the pause RPC.** Every pause failure was previously `FAILED_PRECONDITION`. A failure caused by losing a race with another admin request is now `ABORTED`, which means the pause can simply be retried. Every pause failure also carries a `google.rpc.ErrorInfo` detail in the status trailers, with `domain` set to `com.scalar.db.cluster.admin` and `reason` set to the outcome, so a caller can tell the outcomes apart without matching on the status code or the description text. In particular, a caller that unpauses to recover from a failed pause must skip that unpause when the reason is `TIMED_OUT_STILL_PAUSED`, because the server is still paused by an earlier request.
-- Upgraded the Bouncy Castle library and the grpc_health_probe binary to fix security issues: [CVE-2025-14813](https://github.com/advisories/GHSA-574f-3g2m-x479 "CVE-2025-14813"), [CVE-2026-5598](https://github.com/advisories/GHSA-p93r-85wp-75v3 "CVE-2026-5598"), [CVE-2026-25681](https://github.com/advisories/GHSA-w9p8-pvxh-rxpj "CVE-2026-25681"), [CVE-2026-27136](https://github.com/advisories/GHSA-m9x8-m34x-fj9q "CVE-2026-27136"), [CVE-2026-27145](https://github.com/advisories/GHSA-4279-q6mj-392r "CVE-2026-27145"), [CVE-2026-33811](https://github.com/advisories/GHSA-497x-jcxf-m478 "CVE-2026-33811"), CVE-2026-33814, [CVE-2026-39820](https://github.com/advisories/GHSA-p9h5-jm8x-mjm5 "CVE-2026-39820"), [CVE-2026-39821](https://github.com/advisories/GHSA-w2q5-6q6x-x959 "CVE-2026-39821"), [CVE-2026-39822](https://github.com/advisories/GHSA-xcgv-8mv7-v8c7 "CVE-2026-39822"), [CVE-2026-39836](https://github.com/advisories/GHSA-8g2r-hhvj-mv99 "CVE-2026-39836"), [CVE-2026-42499](https://github.com/advisories/GHSA-xq5j-9r39-c3vf "CVE-2026-42499"), and [CVE-2026-42504](https://github.com/advisories/GHSA-h524-452v-82p9 "CVE-2026-42504")
-
-##### ScalarDB SQL
-
-- Fixed a statement cache regression where non-parameterized DML statements occupied cache slots intended for parameterized SQL. Cache eligibility is now correctly gated on the presence of bind markers in the parsed SQL.
-
-### Enterprise Options
-
-#### ScalarDB Analytics
-
-:::warning Backward-incompatible changes
-
-- Redesigned `user` / `internal-backend` / `role` / `permission` CLI commands: `user register` is replaced by `user create` + `user link` and `user unregister` by `user delete` + `user unlink` (+ `internal-backend create`), `--username` is split into `--user` / `--backend-user`, passwords are accepted only via `--password` / `--password-stdin`, and `data-source delete` is renamed to `data-source unregister`.
-
-:::
-
-##### Enhancements
-
-- Unified error code system (`DB-ANALYTICS-NNNNN`): server-side and SDK errors are reported as a single `AnalyticsException` carrying a machine-readable error code and structured metadata, propagated over gRPC as structured `AnalyticsError` details.
-- Filter push down, column pruning, and limit push down for the ScalarDB Spark data source, reducing data transfer for selective queries.
-- Configure authentication credentials via environment variables (`SCALAR_DB_ANALYTICS_CLIENT_AUTH_USERNAME` / `SCALAR_DB_ANALYTICS_CLIENT_AUTH_PASSWORD`) in the Spark connector.
-
-##### Improvements
-
-- Display clean error messages instead of raw stack traces for catalog errors in the spark-sql CLI.
-- Removed the internal `tenantId` field from Catalog JSON output in CLI commands.
-- Upgraded Spring Boot from 3.5.x to 4.0.4.
-
-##### Bug fixes
-
-- Fixed a `NullPointerException` in the metering server when reporting an execution that contains no jobs, or a job that contains no stages.
+- Fixed BLOB comparisons that ScalarDB SQL evaluates itself, in `ORDER BY` and in range conditions in `HAVING` and in `WHERE` after a join, treating bytes from `0x80` up as smaller than `0x00` to `0x7F`.
+- Fixed `MIN` and `MAX` on `FLOAT` and `DOUBLE` columns returning a result that depended on row order when the values included `NaN`, or both `0.0` and `-0.0`.

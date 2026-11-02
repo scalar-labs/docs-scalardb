@@ -1,0 +1,112 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ScalarDB Cluster .NET Client SDK を使用した認証と認可をはじめよう
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<TranslationBanner />
+
+ScalarDB Cluster .NET Client SDK は [認証と認可](../scalardb-cluster/scalardb-auth-with-sql.mdx)をサポートしており、これにより ScalarDB Cluster へのリクエストを認証および認可できます。
+
+## SDK をインストールする
+
+ScalarDB Cluster と同じメジャーバージョンとマイナーバージョンの [SDK](https://www.nuget.org/packages/ScalarDB.Client) を .NET プロジェクトにインストールします。組み込みの NuGet パッケージマネージャーを使用してこれを行うことができます。`<MAJOR>.<MINOR>` を使用しているバージョンに置き換えます。
+
+```console
+dotnet add package ScalarDB.Client --version '<MAJOR>.<MINOR>.*'
+```
+
+## 設定ファイルで資格情報を設定する
+
+設定ファイルで資格情報を設定し、山括弧内の内容を置き換えてください。ScalarDB Cluster は2つの認証タイプをサポートしています。ユーザー名とパスワードによる認証と、OpenID Connect (OIDC) プロバイダーが発行した JWT アクセストークンを使用する認証です。使用する認証タイプのタブを選択してください。
+
+<Tabs groupId="auth-type" queryString>
+  <TabItem value="userpass" label="ユーザー名とパスワード" default>
+
+ユーザー名とパスワードで認証するには、次のように `Username` と `Password` を設定します。
+
+```json
+{
+  "ScalarDbOptions": {
+    "Address": "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
+    "HopLimit": 10,
+    "AuthEnabled": true,
+    "Username": "<USERNAME>",
+    "Password": "<PASSWORD>"
+  }
+}
+```
+
+  </TabItem>
+  <TabItem value="oidc-jwt" label="OIDC JWT アクセストークン">
+
+ユーザー名とパスワードの代わりに OIDC JWT アクセストークンで認証するには、次のように `AuthType` を `OidcJwt` に設定し、`AuthOidcJwtAccessToken` に OIDC プロバイダーが発行した有効なアクセストークンを設定します。
+
+```json
+{
+  "ScalarDbOptions": {
+    "Address": "http://<HOSTNAME_OR_IP_ADDRESS>:<PORT>",
+    "HopLimit": 10,
+    "AuthEnabled": true,
+    "AuthType": "OidcJwt",
+    "AuthOidcJwtAccessToken": "<OIDC_JWT_ACCESS_TOKEN>"
+  }
+}
+```
+
+`OidcJwt` を使用する場合、`Username` と `Password` は必要ありません。OIDC JWT アクセストークンを受け入れるように ScalarDB Cluster を設定する方法と、OIDC プロバイダーからトークンを取得する方法の詳細については、[OIDC ベースの JWT アクセストークンを用いてユーザーアクセスを制御する](../scalardb-cluster/control-access-via-oidc-based-jwt-tokens.mdx)を参照してください。
+
+:::note
+
+SDK は OIDC JWT アクセストークンを更新しません。トークンは `TransactionFactory` の作成時に設定されるため、その後は更新できません。トークンの有効期限が切れたり無効になったりすると、認証エラーがアプリケーションに伝播されます。新しいトークンを使用するには、有効なトークンを取得し、そのトークンを使用して新しい `TransactionFactory` とトランザクションマネージャーを作成してください。
+
+:::
+
+  </TabItem>
+</Tabs>
+
+設定ファイルやクライアントを設定するその他の方法の詳細については、[クライアント設定](common-reference.mdx#クライアント設定)を参照してください。
+
+## トランザクションマネージャーを取得する
+
+次のように `TransactionFactory` を使用して、トランザクションマネージャーまたはトランザクション管理オブジェクトを取得する必要があります。`<GET_TRANSACTION_MANAGER>` を `GetTransactionManager()`、`GetTwoPhaseCommitTransactionManager()`、`GetSqlTransactionManager()`、または `GetSqlTwoPhaseCommitTransactionManager()` に置き換えてください。
+
+:::warning 非推奨の通知
+
+2フェーズコミット (2PC) インターフェースは ScalarDB 3.19 以降非推奨となり、将来のリリースで削除される予定です。
+
+:::
+
+```c#
+// Pass the path to the settings file.
+var factory = TransactionFactory.Create("scalardb-options.json");
+
+// To get a transaction manager
+using var manager = factory.<GET_TRANSACTION_MANAGER>();
+
+// To get a transaction admin
+using var admin = factory.GetTransactionAdmin();
+```
+
+提供された資格情報を使用して `TransactionFactory` から作成されたトランザクションマネージャーまたはトランザクション管理オブジェクトは、ScalarDB Cluster に自動的にログインし、通信できます。
+
+## ワイヤ暗号化
+
+[ワイヤ暗号化](../scalardb-cluster/scalardb-auth-with-sql.mdx#ワイヤ暗号化) もサポートされています。次のように `Address` を `https` で始まる URL に設定することで有効にできます。
+
+```json
+{
+  "ScalarDbOptions": {
+    "Address": "https://<HOSTNAME_OR_IP_ADDRESS>:<PORT>"
+  }
+}
+```
+
+設定ファイルやクライアントを設定するその他の方法の詳細については、[クライアント設定](common-reference.mdx#クライアント設定)を参照してください。
