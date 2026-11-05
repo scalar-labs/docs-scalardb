@@ -313,18 +313,6 @@ Set<String> tables = admin.getNamespaceTableNames("ns");
 TableMetadata tableMetadata = admin.getTableMetadata("ns", "tbl");
 ```
 
-### 名前空間を修復する
-
-名前空間が不明な状態の場合 (たとえば、名前空間が基盤となるストレージに存在するが ScalarDB メタデータが存在しない、またはその逆)、このメソッドは必要に応じて名前空間とそのメタデータを再作成します。
-
-名前空間は次のように修復できます。
-
-```java
-// Repair the namespace "ns" with options.
-Map<String, String> options = ...;
-admin.repairNamespace("ns", options);
-```
-
 ### テーブルを修復する
 
 テーブルが不明な状態の場合 (テーブルは基盤となるストレージに存在するが ScalarDB メタデータは存在しない、またはその逆)、このメソッドは必要に応じてテーブル、そのセカンダリインデックス、およびそのメタデータを再作成します。
@@ -346,16 +334,6 @@ admin.repairTable("ns", "tbl", tableMetadata, options);
 Consensus Commit を使用している場合、以前のバージョンから ScalarDB 3.16.5、3.17.3、または 3.18.0 にアップグレードした後、インデックスベース読み取りに必要なコンパニオン before-image セカンダリインデックスを作成するために、既存の各テーブルで `repairTable()` を実行する必要があります。詳細については、[インデックスベース読み取りの正確性](consensus-commit.mdx#インデックスベース読み取りの正確性)を参照してください。
 
 :::
-
-### 最新の ScalarDB API をサポートするように環境をアップグレードする
-
-ScalarDB API の最新バージョンをサポートするように ScalarDB 環境をアップグレードできます。通常、リリースノートに記載されているように、アプリケーション環境が使用する ScalarDB バージョンを更新した後、このメソッドを実行する必要があります。
-
-```java
-// Upgrade the ScalarDB environment.
-Map<String, String> options = ...;
-admin.upgrade(options);
-```
 
 ### Coordinator テーブルの操作を指定する
 

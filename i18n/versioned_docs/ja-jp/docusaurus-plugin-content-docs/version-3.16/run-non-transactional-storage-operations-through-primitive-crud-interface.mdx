@@ -407,18 +407,6 @@ Set<String> tables = admin.getNamespaceTableNames("ns");
 TableMetadata tableMetadata = admin.getTableMetadata("ns", "tbl");
 ```
 
-#### 名前空間を修復する
-
-名前空間が不明な状態の場合 (名前空間が基盤となるストレージに存在するが ScalarDB メタデータが存在しない、またはその逆)、このメソッドは必要に応じて名前空間とそのメタデータを再作成します。
-
-名前空間は次のように修復できます。
-
-```java
-// Repair the namespace "ns" with options.
-Map<String, String> options = ...;
-    admin.repairNamespace("ns", options);
-```
-
 #### テーブルを修復する
 
 テーブルが不明な状態の場合 (テーブルは基盤となるストレージに存在するが ScalarDB メタデータは存在しない、またはその逆)、このメソッドは必要に応じてテーブル、そのセカンダリインデックス、およびそのメタデータを再作成します。
@@ -433,16 +421,6 @@ TableMetadata tableMetadata =
         .build();
 Map<String, String> options = ...;
 admin.repairTable("ns", "tbl", tableMetadata, options);
-```
-
-#### 最新の ScalarDB API をサポートするように環境をアップグレードする
-
-ScalarDB API の最新バージョンをサポートするように ScalarDB 環境をアップグレードできます。通常、リリースノートに記載されているように、アプリケーション環境が使用する ScalarDB バージョンを更新した後、このメソッドを実行する必要があります。
-
-```java
-// Upgrade the ScalarDB environment.
-Map<String, String> options = ...;
-admin.upgrade(options);
 ```
 
 ### CRUD 操作を実装する
