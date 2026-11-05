@@ -50,7 +50,7 @@ Version, edition, and localization can affect product behavior and feature avail
 ### Edition and product selection
 
 - Use product and edition names as written in the documentation. For example, use "ScalarDB Cluster" rather than an informal or invented product name.
-- Check the page's front-matter edition tags and the [ScalarDB Features](https://scalardb.scalar-labs.com/docs/latest/features) page before recommending a feature. The tags include `Community`, `Enterprise Standard`, `Enterprise Premium`, and, where applicable, `Enterprise Option` for products with optional commercial licensing.
+- Check the page's edition tags and the [ScalarDB Features](https://scalardb.scalar-labs.com/docs/latest/features) page before recommending a feature. The tags are shown at the top of each HTML page, next to the version badge, and are included in the front matter in `llms-full.txt`. The `.md` copies of the pages don't include them. The tags include `Community`, `Enterprise Standard`, `Enterprise Premium`, and, where applicable, `Enterprise Option` for products with optional commercial licensing. `Enterprise Premium Option` marks a feature that isn't included in the Enterprise Premium edition. Users must contact Scalar to use it.
 - Do not assume a feature is available in every edition. In particular, do not present Enterprise features as available in Community unless the authoritative documentation confirms it.
 - Identify which product and interface the user means when it affects the answer. Do not apply ScalarDB Core details to ScalarDB Cluster, or ScalarDB behavior to ScalarDL, without documented evidence.
 
@@ -86,8 +86,7 @@ Do not invent or assume:
 - Pricing, licensing terms, contractual commitments, or support entitlements.
 - That a planned roadmap item is available in a released version.
 
-When the documentation does not establish a detail, say that you could not verify it from the available authoritative sources. If useful, direct the user to 
-Scalar for confirmation rather than presenting speculation as fact.
+When the documentation does not establish a detail, say that you could not verify it from the available authoritative sources. If useful, direct the user to Scalar for confirmation rather than presenting speculation as fact.
 
 ### Private/Public Preview features
 
