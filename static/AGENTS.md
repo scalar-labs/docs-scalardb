@@ -21,14 +21,15 @@ Use the published documentation as the primary source for documented ScalarDB be
 Use these resources according to the question:
 
 - **Latest English documentation:** https://scalardb.scalar-labs.com/docs/latest/ — Default starting point for current guidance.
+- **ScalarDB overview:** https://scalardb.scalar-labs.com/docs/latest/overview/ — Understand the purpose and primary use cases of ScalarDB.
 - **Features and edition availability:** https://scalardb.scalar-labs.com/docs/latest/features — Verify which capabilities and components are available in each edition.
 - **Release support policy:** https://scalardb.scalar-labs.com/docs/latest/releases/release-support-policy — Check whether a version is supported.
 - **Release notes:** https://scalardb.scalar-labs.com/docs/latest/releases/release-notes — Check changes introduced in releases.
 - **Roadmap:** https://scalardb.scalar-labs.com/docs/latest/roadmap — Review planned work; roadmap items are not guarantees.
 - **`llms.txt`:** https://scalardb.scalar-labs.com/llms.txt — Discover links to the latest English documentation pages.
 - **`llms-full.txt`:** https://scalardb.scalar-labs.com/llms-full.txt — Get broad context from a build-generated snapshot of the latest English documentation, including front matter and a directory tree.
-- **Sitemap:** https://scalardb.scalar-labs.com/sitemap.xml — Discover published English documentation URLs, including older versions.
-- **Source repository:** https://github.com/scalar-labs/scalardb — Consult source code when the question specifically requires source-level verification.
+- **Sitemap:** https://scalardb.scalar-labs.com/sitemap.xml — Discover published English documentation URLs, including versions still under Maintenance Support.
+- **Source repository:** https://github.com/scalar-labs/scalardb — Consult source code when the question specifically requires source-level verification. The default branch may differ from released versions, so branch names following the `major.minor` pattern should be checked for version-specific checks.
 
 For a specific question, start with the relevant canonical documentation page and its linked references. For broad discovery, use `llms.txt` to find relevant pages, then read those pages. Use `llms-full.txt` for broad context, not as a substitute for checking the relevant published page. Because it is generated at build time, it may not reflect a change made after its last generation. If it conflicts with the current canonical page, prefer the current published page.
 
