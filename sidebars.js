@@ -751,7 +751,7 @@ const sidebars = {
             {
               type: 'doc',
               id: 'network-requirements',
-              label: 'Network Requirements',
+              label: 'Network Requirements [NEW]',
             },
             {
               type: 'doc',
