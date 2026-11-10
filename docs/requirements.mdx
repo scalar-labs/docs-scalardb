@@ -102,13 +102,13 @@ Only Linux, UNIX, and Windows versions of Db2 are supported. The z/OS version is
 </TabItem>
 <TabItem value="SQL_Server" label="SQL Server">
 
-|      Version      | SQL Server 2022 | SQL Server 2019 | SQL Server 2017 |
-| :---------------- | :-------------- | :-------------- | :-------------- |
-| **ScalarDB 3.19** | ✅               | ✅               | ✅               |
-| **ScalarDB 3.18** | ✅               | ✅               | ✅               |
-| **ScalarDB 3.17** | ✅               | ✅               | ✅               |
-| **ScalarDB 3.16** | ✅               | ✅               | ✅               |
-| **ScalarDB 3.15** | ✅               | ✅               | ✅               |
+|      Version      | SQL Server 2025 | SQL Server 2022 | SQL Server 2019 | SQL Server 2017 |
+| :---------------- | :-------------- | :-------------- | :-------------- | :-------------- |
+| **ScalarDB 3.19** | ✅               | ✅               | ✅               | ❌               |
+| **ScalarDB 3.18** | ✅               | ✅               | ✅               | ❌               |
+| **ScalarDB 3.17** | ✅               | ✅               | ✅               | ❌               |
+| **ScalarDB 3.16** | ✅               | ✅               | ✅               | ❌               |
+| **ScalarDB 3.15** | ❌               | ✅               | ✅               | ✅               |
 
 </TabItem>
 <TabItem value="SQLite" label="SQLite">
@@ -468,7 +468,12 @@ If you're using PostgreSQL, the following database privilege must be granted.
 If you're using SQL Server, the following database permissions must be granted.
 
 <Tabs groupId="sqlserver-versions" queryString>
-  <TabItem value="sqlserver-2022" label="SQL Server 2022" default>
+  <TabItem value="sqlserver-2025" label="SQL Server 2025" default>
+    - `CREATE SCHEMA`
+    - `CREATE TABLE`
+    - `CREATE VIEW`
+  </TabItem>
+  <TabItem value="sqlserver-2022" label="SQL Server 2022">
     - `CREATE SCHEMA`
     - `CREATE TABLE`
     - `CREATE VIEW`
