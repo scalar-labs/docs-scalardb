@@ -146,7 +146,7 @@ ScalarDB が未処理のリクエストを排出し、新しいリクエスト�
   <TabItem value="Cosmos_DB_for_NoSQL" label="Cosmos DB for NoSQL">
     [Azure portal を使用してアカウントを復元する](https://docs.microsoft.com/ja-jp/azure/cosmos-db/restore-account-continuous-backup#restore-account-portal)については、Azure の公式ドキュメントに従ってください。バックアップを復元した後、復元されたデータベースの [既定の整合性レベルを構成する](https://learn.microsoft.com/ja-jp/azure/cosmos-db/nosql/how-to-manage-consistency#configure-the-default-consistency-level)を `STRONG` に設定します。さらに、前述のように、一時停止期間の中間時点を復元ポイントとして使用する必要があります。
 
-    ScalarDB は、ScalarDB Schema Loader を使用してスキーマを作成するときにインストールされるストアドプロシージャを使用して、Cosmos DB アダプターを実装します。ただし、Cosmos DB の PITR 機能では、ストアドプロシージャは復元されません。このため、復元後にすべてのテーブルに必要なストアドプロシージャを再インストールする必要があります。これは、ScalarDB Schema Loader を `--repair-all` オプションとともに使用することで実行できます。詳細については、[名前空間とテーブルを修復する](schema-loader.mdx#名前空間とテーブルを修復する)を参照してください。
+    ScalarDB は、ScalarDB Schema Loader を使用してスキーマを作成するときにインストールされるストアドプロシージャを使用して、Cosmos DB アダプターを実装します。ただし、Cosmos DB の PITR 機能では、ストアドプロシージャは復元されません。このため、復元後にすべてのテーブルに必要なストアドプロシージャを再インストールする必要があります。これは、ScalarDB Schema Loader を `--repair-all` オプションとともに使用することで実行できます。詳細については、[テーブルを修復する](schema-loader.mdx#テーブルを修復する)を参照してください。
   </TabItem>
   <TabItem value="DynamoDB" label="DynamoDB">
     [DynamoDB テーブルを特定の時点に復元](https://docs.aws.amazon.com/ja_jp/amazondynamodb/latest/developerguide/PointInTimeRecovery.Tutorial.html)については、公式の AWS ドキュメントに従ってください。ただし、テーブルはエイリアスを使用してのみ復元できることに注意してください。このため、エイリアスを使用してテーブルを復元し、元のテーブルを削除して、エイリアスを元の名前に変更し、同じ名前のテーブルを復元する必要があります。
