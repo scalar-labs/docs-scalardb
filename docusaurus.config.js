@@ -81,7 +81,7 @@ const config = {
                 label: '3.20',
                 path: 'latest', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
                 banner: 'none',
-                className: '3.20.0',
+                className: '3.20.1',
               },
               '3.19': { // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
                 label: '3.19',
