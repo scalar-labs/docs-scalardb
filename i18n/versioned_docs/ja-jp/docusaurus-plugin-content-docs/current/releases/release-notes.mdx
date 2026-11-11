@@ -178,3 +178,40 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 - ScalarDB SQL 自身が評価する BLOB の比較 (`ORDER BY`、`HAVING` の範囲条件、および結合後の `WHERE` の範囲条件) で、`0x80` 以上のバイトが `0x00` から `0x7F` のバイトよりも小さいものとして扱われていた問題を修正しました。
 - `FLOAT` および `DOUBLE` 列に対する `MIN` と `MAX` が、値に `NaN` が含まれる場合、または `0.0` と `-0.0` の両方が含まれる場合に、行の順序に依存した結果を返す問題を修正しました。
+
+### ScalarDB Analytics
+
+このリリースには、多くの改善点、セキュリティ問題の修正、およびバグ修正が含まれています。
+
+:::warning 破壊的変更
+
+- データソース登録時に、ソースタイプがサポートされていないために除外された列を報告するようになりました。`RegisterResponse` はスキップされた列ごとに1つの `warnings` エントリを持ち、Java SDK の `DataSourceClient.register` は登録されたデータソースとスキップされた列を持つ `RegisterDataSourceResult` を返し、CLI の `data-source register` は登録されたデータソースの後にそれらを stderr に出力します (https://github.com/scalar-labs/scalardb-analytics/pull/56)
+- サーバーイメージの `/scalardb-analytics-server` および CLI イメージの `/scalardb-analytics-cli` 以下のアプリケーションファイルは root が所有するようになったため、ランタイムユーザーはこれらのディレクトリ内のイメージ提供ファイルを変更したり、ファイルを作成したりできなくなりました。イメージ自身のアプリケーションディレクトリに書き込むデプロイメントは、書き込み可能なボリュームまたは他の書き込み可能な場所を使用する必要があります。これらのディレクトリ以下を含む既存のバインドマウントおよびボリュームは、それぞれの権限を保持し、UID/GID 201 がアクセスできる場合は移動する必要はありません (https://github.com/scalar-labs/scalardb-analytics/pull/73)
+- サーバー配布物の `without-licensing` を `app` に、対応するイメージを `ghcr.io/scalar-labs/scalardb-analytics-server-without-licensing` から `ghcr.io/scalar-labs/scalardb-analytics-server` にそれぞれ変更しました (https://github.com/scalar-labs/scalardb-analytics/pull/2)
+- `com.scalar.db.analytics.spark.ScalarDbAnalyticsCatalog` は、使用量計測サービスや計測用 Spark リスナーを必要としなくなりました。サーバーイメージはポート 11051 のみを公開します (https://github.com/scalar-labs/scalardb-analytics/pull/2)
+- CLI の `permission list` は、リソースタイプ、権限レベル、カタログ、データソース、名前空間、およびテーブル名の形式で各権限を表示するようになりました。これにより、従来の生の権限名とリソース ID ではなく、`permission grant` が受け取る形式で表示されます。gRPC のレスポンスおよび Java SDK の `EffectivePermission` もリソース名を保持します (https://github.com/scalar-labs/scalardb-analytics/pull/58)
+- スキーマ内の名前空間、テーブル、列、または列型の名前に制御文字 (Unicode カテゴリ Cc、改行や ESC など) または双方向書式文字 (U+202A から U+202E、U+2066 から U+2069) が含まれている場合、データソースの登録はそのままの名前で登録するのではなく、`DB-ANALYTICS-10401` で失敗するようになりました。エラーはフィールドとそのパスを示し、文字はエスケープされます。印刷可能な Unicode 名は従来通り受け入れられます (https://github.com/scalar-labs/scalardb-analytics/pull/60)
+
+:::
+
+#### 機能強化
+
+- CLI にデフォルトカタログを追加しました。クライアント構成の `scalar.db.analytics.client.default.catalog` または `SCALAR_DB_ANALYTICS_CLIENT_DEFAULT_CATALOG` で設定します。`data-source`、`namespace`、`table` コマンドおよびデータソース、名前空間、またはテーブルに対する `permission grant`/`revoke` は、`--catalog` が省略された場合にこれを使用します。`--catalog` は引き続き優先されます (https://github.com/scalar-labs/scalardb-analytics/pull/62)
+
+#### 改善点
+
+- サーバーおよび CLI のイメージを強化しました: ベースイメージと `grpc_health_probe` イメージをダイジェストで固定し、nologin シェルを持つ `scalardb` ユーザーを作成しました (https://github.com/scalar-labs/scalardb-analytics/pull/73)
+- サーバーイメージを `eclipse-temurin:21-jdk-noble` (Ubuntu 24.04) から `eclipse-temurin:21.0.13_9-jdk-resolute` (Ubuntu 26.04) に、CLI イメージを `eclipse-temurin:21-jre-noble` から `eclipse-temurin:21.0.13_9-jre-resolute` に移行しました。Eclipse Temurin 21.0.13+9 には eMudhra の修正が含まれており、更新された信頼ストアは侵害された中間証明書を署名したルート証明書を削除します (https://github.com/scalar-labs/scalardb-analytics/pull/73)
+- MySQL データソースに対して MySQL Connector/J を MariaDB Connector/J に置き換えました (https://github.com/scalar-labs/scalardb-analytics/pull/2)
+- MySQL データソースプロバイダーにオプションの `sslMode` フィールドを追加しました。MariaDB Connector/J のデフォルトである `disable` ではなく `trust` がデフォルトとなるため、デフォルトの `caching_sha2_password` プラグインを使用する MySQL 8.x アカウントは、MySQL 8.0 がデフォルトで有効にする TLS 上で認証できます。TLS が無効になっている MySQL サーバーでは、`sslMode` を明示的に `disable` に設定してください (https://github.com/scalar-labs/scalardb-analytics/pull/2)
+- CLI およびサーバー配布物に統合されたサードパーティ通知を含め、サーバー配布物には Oracle JDBC 再配布条件を含めました (https://github.com/scalar-labs/scalardb-analytics/pull/2)
+- CLI およびサーバー配布物に Apache License 2.0 の本文を含めるようにしました。これにより、公開されたコンテナイメージは宣言されたライセンスを保持します (https://github.com/scalar-labs/scalardb-analytics/pull/2)
+- Spark アセンブリ成果物に統合されたサードパーティ通知および Oracle JDBC 再配布条件を含め、以前は衝突によってそこに配置されていた個別のサードパーティ `META-INF/LICENSE` および `NOTICE` ファイルの出荷を停止しました (https://github.com/scalar-labs/scalardb-analytics/pull/2)
+- ScalarDB Analytics を Apache License 2.0 または商用ライセンスのいずれかで利用できるようにしました (https://github.com/scalar-labs/scalardb-analytics/pull/2)
+- リポジトリの README を、公開プロジェクトの範囲、ソースビルド、および公式ドキュメントへのリンクに沿って書き直しました (https://github.com/scalar-labs/scalardb-analytics/pull/2)
+
+#### バグの修正
+
+- ACL デリゲーションが有効な場合、ScalarDB データソースの名前空間またはテーブルに対する Analytics 権限の付与を拒否するようにしました。これらのリソースの認可は ScalarDB Cluster に委譲されるため、付与は保存されても実際には適用されませんでしたが、現在は `DB-ANALYTICS-10204` (`RESOURCE_UNDER_ACL_DELEGATION`) で失敗するようになりました。このような権限の取り消しは引き続き可能です (https://github.com/scalar-labs/scalardb-analytics/pull/57)
+- 認証が有効で `scalar.db.analytics.server.auth.password.backend=scalardb-cluster` の場合にサーバーが起動しない問題を修正しました。そのバックエンドでは、`user create --backend-user` は内部バックエンドユーザーを作成するためログインできず、`DB-ANALYTICS-10400` (`INVALID_ARGUMENT`) で失敗するようになりました。ユーザーは ScalarDB Cluster で作成し、`user link` でリンクしてください (https://github.com/scalar-labs/scalardb-analytics/pull/72)
+- DynamoDB テーブルに対して `CACHE TABLE` または `cache()` でキャッシュしたデータが、その後テーブルを再度読み込むクエリで使用されず、DynamoDB から読み込まれていた問題を修正しました (https://github.com/scalar-labs/scalardb-analytics/pull/61)
