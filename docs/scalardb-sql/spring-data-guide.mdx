@@ -315,7 +315,7 @@ Spring Data JDBC for ScalarDB can throw the following exceptions.
 - com.scalar.db.sql.springdata.exception.ScalarDbUnknownTransactionStateException
   - This is a subclass of `ScalarDbNonTransientException` and the transaction should not be retried as well
   - This is thrown when a transaction commit fails and the final state is unknown
-  - Whether the transaction is actually committed or not needs to be decided by the application side (e.g. check if the target record is expectedly updated)
+  - Whether the transaction is actually committed or not needs to be decided by the application side (e.g. check if the target record is updated as expected)
 
 These exceptions include the transaction ID, which can be useful for troubleshooting purposes.
 
