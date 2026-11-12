@@ -1,0 +1,221 @@
+---
+tags:
+  - Community
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsJapanese
+---
+
+# ネットワーク要件
+
+import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
+
+<TranslationBanner />
+
+ScalarDB をデプロイする前に、通常はファイアウォールルールを設定して、クライアント、ScalarDB コンポーネント、およびその他の Scalar 製品間で必要なネットワークトラフィックが許可されるようにする必要があります。このページでは、ScalarDB Cluster の機能ごとに整理された、許可が必要な接続の一覧を、各接続の方向、デフォルトポート、ユースケースとともに示します。
+
+:::note
+
+以下のテーブルに記載されているポート番号はデフォルト値です。設定でデフォルトポートを変更している場合は、ファイアウォールルールの設定時にカスタムポート番号を使用してください。
+
+:::
+
+## ScalarDB Core に関連する接続
+
+ScalarDB Cluster をデプロイするのではなく、ScalarDB Core をアプリケーションにライブラリとして埋め込む場合は、以下の接続を許可する必要があります。
+
+| 接続元                   | 接続先                | ポート (デフォルト) | ユースケース例                                                            |
+|:------------------------|:---------------------|:-----------------|:-----------------------------------------------------------------------|
+| クライアントアプリケーション | バックエンドデータベース | データベースによる   | Coordinator テーブルのトランザクションメタデータを含む読み取り/書き込みリクエスト |
+
+Coordinator テーブルの詳細については、[Consensus Commit プロトコル](consensus-commit.mdx)を参照してください。
+
+## ScalarDB Cluster に関連する接続
+
+ScalarDB Cluster をデプロイする場合は、以下の接続を許可する必要があります。
+
+| 接続元                                | 接続先                     | ポート (デフォルト) | ユースケース例                                                            |
+|:-------------------------------------|:--------------------------|:-----------------|:-----------------------------------------------------------------------|
+| クライアント (ユーザーアプリケーション)    | ScalarDB Cluster ノード    | 60053/TCP        | トランザクションの実行                                                     |
+| ScalarDB Cluster ノード               | ScalarDB Cluster ノード    | 60053/TCP        | クラスター内部でのトランザクションリクエストのルーティング                       |
+| Scalar Admin for Kubernetes          | ScalarDB Cluster ノード    | 60053/TCP        | バックアップ操作のための一時停止/再開リクエストの実行                           |
+| Scalar Admin for Kubernetes          | Kubernetes API サーバー     | 443/TCP         | Pod、Service、Deployment 情報の取得                                       |
+| クライアント (モニタリングツール)         | ScalarDB Cluster ノード     | 9080/TCP        | ScalarDB Cluster ノードのメトリクス収集                                    |
+| ScalarDB Cluster ノード               | バックエンドデータベース       | データベースによる | バックエンドデータベースへの読み取り/書き込みリクエスト                          |
+| ScalarDB Cluster ノード               | Kubernetes API サーバー     | 443/TCP         | クラスターノードを検出するための Endpoints リソースの監視                       |
+| クライアント (direct-kubernetes モード) | Kubernetes API サーバー     | 443/TCP         | 接続先のクラスターノード IP アドレスの解決                                    |
+| ScalarDB Cluster ノード               | クラスター DNS (Kubernetes) | 53/UDP、53/TCP   | DNS を通じたホスト名解決                                                  |
+
+:::note
+
+以下のプロパティを設定することで、これらのデフォルトポートを変更できます:
+
+- `scalar.db.cluster.node.port`: Administrative API、Transaction API、SQL API、および管理者サービス (デフォルト: `60053`)
+- `scalar.db.graphql.port`: GraphQL インターフェース (デフォルト: `8080`)
+- `scalar.db.cluster.node.prometheus_exporter_port`: メトリクス (デフォルト: `9080`)
+
+`scalar.db.cluster.node.admin.port` を設定して、管理者サービス (`pause`、`unpause`、`checkPaused`) を専用ポートで実行する場合、そのポートにもアクセスできる必要があります。この場合、管理者サービスのみがそのポートで実行され、`scalar.db.cluster.node.port` は他の gRPC API のために引き続きアクセス可能である必要があります。
+
+:::
+
+<details id="envoy-related-connections">
+  <summary>非推奨 – Envoy に関連する接続</summary>
+
+:::caution
+
+パフォーマンス上の理由から、ScalarDB Cluster の前に Envoy を使用することは非推奨になっています。
+
+:::
+
+ScalarDB Cluster の前に Envoy を使用する場合、前のテーブルのクライアントから ScalarDB Cluster ノードへの接続の代わりに、以下の接続を許可する必要があります。
+
+| 接続元                             | 接続先                       | ポート (デフォルト) | ユースケース例         |
+|:----------------------------------|:----------------------------|:-----------------|:--------------------|
+| クライアント (ユーザーアプリケーション) | Envoy (ScalarDB Cluster 用) | 60053/TCP         | トランザクションの実行 |
+| Envoy (ScalarDB Cluster 用)       | ScalarDB Cluster ノード      | 60053/TCP         | トランザクションの実行 |
+
+さらに、ScalarDB Cluster の前に Envoy を使用する場合は、以下の接続も許可する必要があります。
+
+| 接続元                        | 接続先                       | ポート (デフォルト) | ユースケース例                        |
+|:-----------------------------|:----------------------------|:-----------------|:-----------------------------------|
+| クライアント (モニタリングツール) | Envoy (ScalarDB Cluster 用) | 9001/TCP          | Envoy のメトリクス収集                |
+| kubelet                      | Envoy (ScalarDB Cluster 用) | 9001/TCP          | Kubernetes ヘルスチェックプローブの実行 |
+| Envoy (ScalarDB Cluster 用)  | クラスター DNS (Kubernetes)  | 53/UDP、53/TCP     | DNS を通じたホスト名解決               |
+
+</details>
+
+### 認証と認可に関連する接続
+
+OIDC ベースの JWT アクセストークンを認証に使用する場合は、以下の接続を許可する必要があります。
+
+| 接続元                  | 接続先    | ポート (デフォルト) | ユースケース例                                                                  |
+|:-----------------------|:---------|:-----------------|:-----------------------------------------------------------------------------|
+| ScalarDB Cluster ノード | OIDC IdP | IdP によって異なる | JWT アクセストークンを検証するための OpenID プロバイダーメタデータおよび JWK セットの取得 |
+
+詳細については、[OIDC ベースの JWT アクセストークンを用いてユーザーアクセスを制御する](scalardb-cluster/control-access-via-oidc-based-jwt-tokens.mdx)を参照してください。
+
+### 暗号化に関連する接続
+
+列の値を暗号化する場合は、使用する暗号化キーのストレージタイプに応じて、以下の接続を許可する必要があります。
+
+| 接続元                  | 接続先                  | ポート (デフォルト)            | ユースケース例                                                                    |
+|:-----------------------|:-----------------------|:----------------------------|:-------------------------------------------------------------------------------|
+| ScalarDB Cluster ノード | HashiCorp Vault        | `vault.address` によって異なる | 書き込み前の列の値の暗号化 (`type=vault`)                                          |
+| ScalarDB Cluster ノード | Kubernetes API サーバー | 443/TCP                      | Kubernetes シークレットとして保存されたデータ暗号化キーの読み取り/書き込み (`type=self`) |
+
+詳細については、[保存データの暗号化](scalardb-cluster/encrypt-data-at-rest.mdx)を参照してください。
+
+### GraphQL インターフェースに関連する接続
+
+GraphQL インターフェースを使用する場合は、以下の接続を許可する必要があります。
+
+| 接続元                             | 接続先                  | ポート (デフォルト) | ユースケース例         |
+|:----------------------------------|:-----------------------|:-----------------|:--------------------|
+| クライアント (ユーザーアプリケーション) | ScalarDB Cluster ノード | 8080/TCP          | GraphQL クエリの実行 |
+
+詳細については、[ScalarDB Cluster GraphQL をはじめよう](scalardb-cluster/getting-started-with-scalardb-cluster-graphql.mdx)を参照してください。
+
+### OpenTelemetry に関連する接続
+
+OpenTelemetry を使用してメトリクスとトレースをエクスポートする場合は、以下の接続を許可する必要があります。
+
+| 接続元                  | 接続先                                    | ポート (デフォルト)             | ユースケース例                        |
+|:-----------------------|:-----------------------------------------|:-----------------------------|:-----------------------------------|
+| ScalarDB Cluster ノード | OTLP エンドポイント (メトリクス用 Collector) | エンドポイント URL によって異なる | トランザクションのメトリクスのエクスポート |
+| ScalarDB Cluster ノード | OTLP エンドポイント (トレース用 Collector)   | エンドポイント URL によって異なる | トランザクションのトレースのエクスポート   |
+
+### リモートレプリケーションに関連する接続
+
+高可用性のためにリモートレプリケーションを使用する場合は、以下の接続を許可する必要があります。
+
+| 接続元                               | 接続先                               | ポート (デフォルト)      | ユースケース例                                       |
+|:------------------------------------|:------------------------------------|:----------------------|:--------------------------------------------------|
+| ScalarDB Cluster ノード (プライマリ)  | Coordinator データベース               | データベースによって異なる | トランザクション状態の書き込み                         |
+| ScalarDB Cluster ノード (プライマリ)  | レプリケーションデータベース              | データベースによって異なる | prepare フェーズ前のトランザクションログの書き込み       |
+| ScalarDB Cluster ノード (バックアップ) | Coordinator データベース              | データベースによって異なる | 適用前にトランザクションがコミットされたかどうかの確認      |
+| ScalarDB Cluster ノード (バックアップ) | レプリケーションデータベース             | データベースによって異なる | トランザクションログの取得とバックアップデータベースへの適用 |
+| ScalarDB Cluster ノード (バックアップ) | ScalarDB Cluster ノード (バックアップ) | 60054/TCP             | 別のノードにキャッシュされた Coordinator 状態の読み取り   |
+| クライアント (Replication CLI)        | ScalarDB Cluster ノード              | 60053/TCP             | レプリケーション状態の取得                             |
+
+:::note
+
+以下のプロパティを設定することで、このデフォルトポートを変更できます:
+
+- `scalar.db.cluster.internal.node.port`: 他のノードにキャッシュされた Coordinator 状態の読み取り (デフォルト: `60054`)。このポートはクラスターノード間でのみアクセス可能である必要があり、通常はクライアントおよびパブリックネットワークからは制限されるべきです。
+
+:::
+
+詳細については、[高可用性のためのデータレプリケーション](scalardb-cluster/remote-replication.mdx)を参照してください。
+
+### Transaction Coordinator に関連する接続
+
+複数の ScalarDB Cluster インスタンスにわたる2フェーズコミットトランザクションを管理するために [Transaction Coordinator](scalardb-cluster/scalardb-cluster-configurations.mdx#transaction-coordinator-の設定) をデプロイする場合は、以下の接続を許可する必要があります。
+
+| 接続元                             | 接続先                              | ポート (デフォルト)      | ユースケース例                                                              |
+|:----------------------------------|:----------------------------------|:-----------------------|:-------------------------------------------------------------------------|
+| クライアント (ユーザーアプリケーション) | Transaction Coordinator ノード      | 60055/TCP             | トランザクション管理リクエストの実行                                           |
+| Transaction Coordinator ノード     | Transaction Coordinator ノード      | 60055/TCP             | Transaction Coordinator クラスター内部でのトランザクションリクエストのルーティング |
+| Transaction Coordinator ノード     | ScalarDB Cluster ノード             | 60053/TCP             | ScalarDB Cluster ノード (参加者) へのトランザクション管理リクエストの送信         |
+| Transaction Coordinator ノード     | バックエンドデータベース               | データベースによって異なる | Coordinator テーブルへのトランザクションメタデータの読み取り/書き込み              |
+| Transaction Coordinator ノード     | Kubernetes API サーバー             | 443/TCP               | Transaction Coordinator ノードを検出するための Endpoints リソースの監視         |
+| Scalar Admin for Kubernetes       | Transaction Coordinator ノード      | 60055/TCP             | バックアップ操作のための一時停止/再開リクエストの実行                             |
+| クライアント (モニタリングツール)      | Transaction Coordinator ノード      | 9080/TCP              | Transaction Coordinator ノードのメトリクス収集                               |
+| Transaction Coordinator ノード     | クラスター DNS (Kubernetes)         | 53/UDP、53/TCP         | DNS を通じたホスト名解決                                                     |
+
+:::note
+
+以下のプロパティを設定することで、これらのデフォルトポートを変更できます:
+
+- `scalar.db.cluster.transaction_coordinator.port`: Transaction API (デフォルト: `60055`)
+- `scalar.db.cluster.transaction_coordinator.prometheus_exporter_port`: メトリクス (デフォルト: `9080`)
+
+Transaction Coordinator ノードは、クライアントが使用するのと同じポート (`scalar.db.cluster.transaction_coordinator.port` で指定) を使って互いに通信します。そのため、このポートを Transaction Coordinator ノード間の通信のみに制限することはできません。
+
+`scalar.db.cluster.transaction_coordinator.admin.port` を設定して管理者サービス (`pause`、`unpause`、`checkPaused`) を専用ポートで実行する場合、そのポートにもアクセスできる必要があります。この場合、管理者サービスのみがそのポートで実行され、`scalar.db.cluster.transaction_coordinator.port` は Transaction API のために引き続きアクセス可能である必要があります。
+
+:::
+
+<details>
+  <summary>非推奨 – Transaction Coordinator の Envoy に関連する接続</summary>
+
+:::caution
+
+パフォーマンス上の理由から、ScalarDB Cluster の前に Envoy を使用することは非推奨になっています。
+
+:::
+
+ScalarDB Cluster の前に Envoy を使用する場合は、[ScalarDB Cluster に関連する接続](#scalardb-cluster-に関連する接続)のテーブルにあるクライアントから ScalarDB Cluster ノードへの接続の代わりに、[Envoy に関連する接続](#envoy-related-connections)で説明されている接続を許可する必要があります。
+
+Transaction Coordinator の参加者リクエストのために ScalarDB Cluster の前に Envoy を使用する場合は、前のテーブルの Transaction Coordinator ノードから ScalarDB Cluster ノードへの接続の代わりに、以下の接続を許可する必要があります。
+
+| 接続元                         | 接続先                       | ポート (デフォルト) | ユースケース例                                                      |
+|:------------------------------|:----------------------------|:-----------------|:-----------------------------------------------------------------|
+| Transaction Coordinator ノード | Envoy (ScalarDB Cluster 用) | 60053/TCP        | ScalarDB Cluster ノード (参加者) へのトランザクション管理リクエストの送信 |
+
+</details>
+
+### ベクトル検索インターフェースに関連する接続
+
+埋め込みのためにベクトル検索インターフェースを使用する場合は、以下の接続を許可する必要があります。
+
+| 接続元                  | 接続先                 | ポート (デフォルト)      | ユースケース例                         |
+|:-----------------------|:----------------------|:----------------------|:------------------------------------|
+| ScalarDB Cluster ノード | 埋め込みモデルプロバイダー | プロバイダーによって異なる | 指定されたテキストの埋め込みベクトルの生成 |
+| ScalarDB Cluster ノード | ベクトルストア           | ストアによって異なる     | ベクトルデータの読み取り/書き込み         |
+
+詳細については、[ScalarDB Cluster でベクトル検索をはじめよう](scalardb-cluster/getting-started-with-vector-search.mdx)を参照してください。
+
+## ScalarDB Analytics に関連する接続
+
+ScalarDB Analytics を使用する場合は、以下の接続を許可する必要があります。
+
+| 接続元                             | 接続先                               | ポート (デフォルト) | ユースケース例                    |
+|:----------------------------------|:------------------------------------|:-----------------|:-------------------------------|
+| クライアント (ユーザーアプリケーション) | ScalarDB Analytics カタログサービス    | 11051/TCP        | カタログメタデータのクエリ          |
+| クライアント (ユーザーアプリケーション) | ScalarDB Analytics メータリングサービス | 11052/TCP        | 使用状況メータリングデータのレポート |
+
+:::note
+
+ScalarDB Analytics に対して Apache Spark が使用するポートは、Spark クラスターのデプロイ方法によって異なります。許可が必要なポートの詳細については、Spark サービスプロバイダーのドキュメントを参照してください。
+
+:::
