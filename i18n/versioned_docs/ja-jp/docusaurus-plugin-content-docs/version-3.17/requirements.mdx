@@ -653,13 +653,9 @@ ScalarDB Cluster は gRPC を使用するため、proto ファイルから生成
 
 ScalarDB Cluster は Core を使用してデータベースと対話するため、データベースの要件は Core と同じです。詳細については、[データベース](#データベース)を参照してください。
 
-### 必要なポート
+### ネットワーク
 
-ScalarDB Cluster では、以下のポートにアクセスできる必要があります。これらは、必要に応じて設定可能なデフォルトのポート番号です:
-
-- 60053 (Administrative API / Transaction API / SQL API / ポーズ operation)
-- 8080 (GraphQL)
-- 9080 (メトリクス)
+ScalarDB Cluster でアクセス可能にする必要があるポートがあります。許可が必要な接続とポートの一覧については、[ScalarDB Cluster のネットワーク要件](./network-requirements.mdx#scalardb-cluster-に関連する接続)を参照してください。
 
 ### Kubernetes
 
@@ -852,13 +848,9 @@ ScalarDB Core および Cluster で**管理されていない**データベー�
 
 ScalarDB Analytics サーバーは ScalarDB Core を使用してカタログ情報を管理するため、ScalarDB Core の[データベース権限要件](#データベース権限要件)に従ってデータベースユーザーを ScalarDB Analytics サーバー用に設定する必要があります。
 
-### 必要なポート
+### ネットワーク
 
-ScalarDB Analytics では、以下のポートにアクセスできる必要があります。これらは、必要に応じて設定可能なデフォルトのポート番号です:
-
-- 11051 (カタログサービス)
-- 11052 (メータリングサービス)
-- Apache Spark が使用するポート番号は、Spark クラスターのデプロイ方法によって異なります。アクセス可能にする必要があるポートの詳細については、Spark サービスプロバイダーのドキュメントを参照してください。
+ScalarDB Analytics でアクセス可能にする必要があるポートがあります。許可が必要な接続とポートの一覧については、[ScalarDB Analytics のネットワーク要件](./network-requirements.mdx#scalardb-analytics-に関連する接続)を参照してください。
 
 ### Kubernetes
 
