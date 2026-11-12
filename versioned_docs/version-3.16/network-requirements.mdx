@@ -80,16 +80,6 @@ In addition, if you use Envoy in front of ScalarDB Cluster, you must allow the f
 
 </details>
 
-### Authentication and authorization–related connections
-
-If you use OIDC-based JWT access tokens for authentication, you must allow the following connection.
-
-| From                  | To       | Port (default) | Use case example                                                                   |
-|:----------------------|:---------|:---------------|:-----------------------------------------------------------------------------------|
-| ScalarDB Cluster Node | OIDC IdP | Depends on IdP | Fetching the OpenID provider metadata and the JWK Set to verify a JWT access token |
-
-For more details, see [Control User Access via OIDC-Based JWT Access Tokens](scalardb-cluster/control-access-via-oidc-based-jwt-tokens.mdx).
-
 ### Encryption-related connections
 
 If you encrypt column values, you must allow the following connections, depending on the encryption key storage type you use.
