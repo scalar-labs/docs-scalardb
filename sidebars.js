@@ -1894,6 +1894,11 @@ const sidebars = {
           items: [
             {
               type: 'doc',
+              id: 'network-requirements',
+              label: 'ネットワーク要件 [NEW]',
+            },
+            {
+              type: 'doc',
               id: 'scalardb-cluster/deployment-patterns-for-microservices',
               label: 'マイクロサービスにおける ScalarDB Cluster のデプロイパターン',
             },
