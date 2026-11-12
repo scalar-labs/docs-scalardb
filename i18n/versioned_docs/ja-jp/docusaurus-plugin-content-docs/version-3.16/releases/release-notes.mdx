@@ -14,6 +14,53 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 
 このページには、ScalarDB 3.16 のリリースノートのリストが含まれています。
 
+## v3.16.9
+
+**発売日:** 2026年11月11日
+
+### まとめ
+
+このリリースでは、Schema Loader でスキーマファイルなしに Coordinator テーブルとレプリケーションテーブルを修復できるようになりました。また、JDBC データベースでの条件付き put とテーブルインポートの問題、ScalarDB Cluster および ScalarDB SQL における BLOB 値に関するデータの正確性の問題、ScalarDB SQL における SQL 解析の問題を修正しました。さらに、依存関係のアップグレードと脆弱性の修正により、セキュリティを強化しました。
+
+### Community edition
+
+#### 改善点
+
+- Schema Loader で `--coordinator` または `--replication-tables` を指定した場合、`--repair-all` のスキーマファイルを省略可能にし、テーブルスキーマを再適用せずに Coordinator テーブルとレプリケーションテーブルを修復できるようにしました。また、スキーマファイル、`--coordinator`、`--replication-tables` のいずれも指定せずに `--repair-all` を実行した場合は、エラーで失敗するのではなく、何も行わずに正常終了するようになりました。 ([#4183](https://github.com/scalar-labs/scalardb/pull/4183))
+
+#### バグの修正
+
+- プライマリキーの値のみを指定する条件付き put (`PutIfExists` または `PutIf`) が、JDBC データベースで SQL エラーにより失敗する問題を修正しました。Spanner では、プライマリキー列のみを持つテーブルに対するこのような put は引き続き失敗します。 ([#4129](https://github.com/scalar-labs/scalardb/pull/4129))
+- ScalarDB Schema Loader および ScalarDB Data Loader CLI コンテナイメージのベースイメージを Eclipse Temurin 21.0.13_9 に更新することで、[CVE-2026-91403](https://github.com/advisories/GHSA-9h75-rf66-wh3r "CVE-2026-91403") および [CVE-2026-114820](https://github.com/advisories/GHSA-255q-pwv4-fjj7 "CVE-2026-114820") (eMudhra CA の侵害) を修正しました。このベースイメージは、侵害された emSign ルート CA を信頼しなくなりました。 ([#4143](https://github.com/scalar-labs/scalardb/pull/4143))
+- Guava ライブラリをアップグレードしてセキュリティ問題を修正しました: [CVE-2026-102554](https://github.com/advisories/GHSA-xxph-c9ww-hj94 "CVE-2026-102554") ([#4144](https://github.com/scalar-labs/scalardb/pull/4144))
+- ScalarDB をライブラリとして使用するアプリケーションは、Netty と Jackson のバージョンを自身で管理していない限り、修正済みのバージョンを取得するようになりました。以前は、これらのライブラリの脆弱性の修正 (たとえば、Netty の [CVE-2026-75595](https://github.com/advisories/GHSA-c4c3-7fpv-j4q5 "CVE-2026-75595")、Jackson の [CVE-2026-89407](https://github.com/advisories/GHSA-p6pp-m3f8-5c89 "CVE-2026-89407")、[CVE-2026-89425](https://github.com/advisories/GHSA-7hhh-6rmp-j9qf "CVE-2026-89425")、[CVE-2026-68497](https://github.com/advisories/GHSA-q4xh-88c3-wmh7 "CVE-2026-68497")、[CVE-2026-91776](https://github.com/advisories/GHSA-wv8q-qhhj-9h54 "CVE-2026-91776")、[CVE-2026-91777](https://github.com/advisories/GHSA-cxp5-3px4-pw24 "CVE-2026-91777")) は、ScalarDB 自身のビルドとコンテナイメージにのみ適用されていました。その結果、これらのアプリケーションの Jackson は 2.22 にアップグレードされます。ScalarDB のバージョンによっては、Maven でビルドされたアプリケーションは、以前は `jackson-databind` 2.7 や Netty 4.1.94 など、はるかに古いバージョンを取得していました。このリリースでは、Netty の [CVE-2026-73508](https://github.com/advisories/GHSA-mfg7-5gfp-c4w3 "CVE-2026-73508") も修正しました。この脆弱性は、これらのアプリケーションだけでなく、Schema Loader および Data Loader CLI イメージにも影響していました。 ([#4146](https://github.com/scalar-labs/scalardb/pull/4146))
+- Oracle、MySQL、MariaDB、または TiDB からテーブルをインポートする際に、プライマリキー列がテーブルのプライマリキーの順序ではなく、列名のアルファベット順で登録される問題を修正しました。この修正後にインポートされたテーブルでは、Data Loader のエクスポート用の `--partition-key` を含め、テーブルのプライマリキーの順序でキーを指定してください。この修正前にインポートされたテーブルは、既存の順序が維持されます。 ([#4175](https://github.com/scalar-labs/scalardb/pull/4175))
+- Micrometer (`micrometer-core`、`micrometer-observation`、`micrometer-commons`) を 1.15.12 にアップグレードし、[CVE-2026-40983](https://github.com/advisories/GHSA-w737-wx49-qj23 "CVE-2026-40983") および [CVE-2026-40984](https://github.com/advisories/GHSA-g3pr-3p32-fp23 "CVE-2026-40984") を修正しました。ScalarDB はこれらを直接宣言し、これらを取り込むライブラリから除外するようになったため、ScalarDB をライブラリとして使用するアプリケーションも、Micrometer のバージョンを自身で管理していない限り、修正済みのバージョンを取得します。 ([#4192](https://github.com/scalar-labs/scalardb/pull/4192))
+
+### Enterprise edition
+
+#### バグの修正
+
+##### ScalarDB Cluster
+
+- すべての ScalarDB Cluster コンテナイメージのベースイメージを Eclipse Temurin 21.0.13_9 に、UBI ベースのノードイメージについては `java-21-openjdk` 21.0.13.0.9 にも更新することで、[CVE-2026-91403](https://github.com/advisories/GHSA-9h75-rf66-wh3r "CVE-2026-91403") および [CVE-2026-114820](https://github.com/advisories/GHSA-255q-pwv4-fjj7 "CVE-2026-114820") (eMudhra CA の侵害) を修正しました。これらのイメージは、侵害された emSign ルート CA を信頼しなくなりました。
+- grpc_health_probe バイナリをアップグレードしてセキュリティ問題を修正しました: [CVE-2026-116587](https://github.com/advisories/GHSA-mgcc-cww5-fp2q "CVE-2026-116587")
+- Guava ライブラリをアップグレードしてセキュリティ問題を修正しました: [CVE-2026-102554](https://github.com/advisories/GHSA-xxph-c9ww-hj94 "CVE-2026-102554")
+- ScalarDB Cluster クライアントが、`ByteBuffer` としてバインドされた BLOB 値を送信するたびにバッファの末尾まで読み取っていたため、2回目以降 (たとえば、ステートメントが再実行または再試行された場合、同じバッファが複数のバインドマーカーにバインドされた場合、バッチ内のステートメントが同じ値を共有している場合) は、値が空の BLOB として送信される問題を修正しました。その結果、エラーなしに空の BLOB が書き込まれたり、BLOB 列が空の BLOB と比較されたりする可能性がありました。クライアントは、バッファの位置を変更せずにバイトをコピーするようになりました。この修正では、すでに影響を受けたデータは修復されません。
+- Java クライアント SDK および組み込み Java クライアント SDK の Bouncy Castle (`bcprov-jdk18on`、`bcpkix-jdk18on`、`bcutil-jdk18on`) を 1.86 にアップグレードし、[CVE-2025-14813](https://github.com/advisories/GHSA-574f-3g2m-x479 "CVE-2025-14813")、[CVE-2026-0636](https://github.com/advisories/GHSA-c3fc-8qff-9hwx "CVE-2026-0636")、[CVE-2026-5588](https://github.com/advisories/GHSA-wg6q-6289-32hp "CVE-2026-5588")、[CVE-2026-5598](https://github.com/advisories/GHSA-p93r-85wp-75v3 "CVE-2026-5598")、[CVE-2026-8763](https://github.com/advisories/GHSA-9pwp-9qqc-pr26 "CVE-2026-8763")、および [CVE-2026-13506](https://github.com/advisories/GHSA-qp49-qgx5-5m26 "CVE-2026-13506") を修正しました。これらの SDK を使用するアプリケーションは、Bouncy Castle のバージョンを自身で管理していない限り、修正済みのバージョンを取得するようになりました。以前は、修正済みのバージョンは ScalarDB Cluster 自身のビルドと、BYOL 以外のコンテナイメージにのみ適用されており、BYOL コンテナイメージは依存関係が取り込んだ Bouncy Castle 1.70 のクラスをロードしていました。BYOL コンテナイメージも修正済みのバージョンを使用するようになりました。
+- Java クライアント SDK または組み込み Java クライアント SDK を使用し、Maven でビルドするアプリケーションは、すべての Jackson アーティファクトで同じバージョンを取得するようになりました。以前は、`jackson-dataformat-cbor` など一部のアーティファクトが、SDK の他の依存関係が要求する古いバージョンになる場合がありました。組み込み Java クライアント SDK は、Jackson をコンパイル時の依存関係として公開しなくなりました。アプリケーションが Jackson を直接使用しており、SDK が提供することに依存していた場合は、アプリケーションのビルドで Jackson を宣言してください。
+
+##### ScalarDB GraphQL
+
+- Guava ライブラリをアップグレードしてセキュリティ問題を修正しました: [CVE-2026-102554](https://github.com/advisories/GHSA-xxph-c9ww-hj94 "CVE-2026-102554")
+
+##### ScalarDB SQL
+
+- Guava ライブラリをアップグレードしてセキュリティ問題を修正しました: [CVE-2026-102554](https://github.com/advisories/GHSA-xxph-c9ww-hj94 "CVE-2026-102554")
+- `byte[]` から作成された BLOB 値の `Value.hashCode()` を修正し、`equals()` と一貫するようにしました。この不一致により、主キー列またはインデックス付き列に対する同じ BLOB 等価条件をすべての `OR` グループで繰り返す `SELECT`、`UPDATE`、または `DELETE` ステートメントが、効率の悪いスキャンで計画されたり、クロスパーティションスキャンのフィルタリングが有効になっていない場合に失敗するクロスパーティションスキャンとして計画されたりする可能性がありました。
+- 誤った BLOB 値が暗黙的に書き込まれたり比較されたりする可能性がある2つのバグを修正しました。ダイレクトモードでは、`BoundStatement.setBlob()`、`Value.ofBlob()`、`Value.of()`、または JDBC の `setObject()` メソッドを通じて `ByteBuffer` としてバインドされた BLOB 値が、使用されるたびにバッファの末尾まで読み取られていたため、複数の行を更新する `UPDATE` ステートメントや、再実行されたステートメントが、空の BLOB を書き込んだり、BLOB 列を空の BLOB と比較したりしていました。JDBC ドライバーでは、`setBytes()` と `setObject()` がアプリケーションの配列またはバッファへの参照を保持していたため、バッチの各行で1つの配列またはバッファを再利用すると、すべての行に最後の内容が書き込まれていました。ScalarDB SQL は、これらの値を使用する際に、アプリケーションのバッファまたは配列を読み取る代わりにコピーするようになりました。この修正では、すでに影響を受けたデータは修復されません。
+- SQL パーサーが一部の SQL を誤って解釈するバグを修正しました。読み取れない文字を破棄していたため、`INSERT INTO ns.té` がテーブル `ns.t` に対して実行され、バッククォートまたは角括弧で囲まれた名前が受け入れられていました。また、`5AND` のように、数値の直後にスペースなしで単語が続く場合に、数値と単語として読み取り、終了していないブロックコメントをステートメントの残りの部分とともに無視していました。ScalarDB Cluster では、このような SQL により、トランザクション外のステートメントが、`WITH` 句の資格情報ではなく、クライアント設定の資格情報で実行される可能性がありました。このような SQL は構文エラーとして拒否されるようになり、`--` は、SQL 標準と同様に、後に続く内容に関係なく行コメントを開始するようになりました。コメント `/*!*/` によって、パーサーが次の `*/` までの SQL をスキップすることはなくなりました。これにより、`DELETE` ステートメントがすべての行を削除する可能性がありました。
+
 ## v3.16.8
 
 **発売日:** 2026年10月30日
