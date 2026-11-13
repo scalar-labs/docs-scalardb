@@ -580,6 +580,8 @@ admin.alterUser("username", null, ImmutableSet.of(AuthAdmin.AuthenticationMethod
 admin.dropUser("username");
 ```
 
+ユーザーを削除すると、ScalarDB Cluster はそのユーザーに直接付与されていた権限を削除し、ユーザーのロール付与も削除します。ロール自体は削除されません。
+
 ##### ユーザーを取得する
 
 既存のユーザーは次のように取得できます。
@@ -710,6 +712,26 @@ boolean hasTablePrivilege = admin.hasPrivilege("username", "namespace", "table",
 
 次の操作により、ロールの作成、変更、取得、およびユーザーや他のロールへのロールの付与と取り消しができます。
 
+ロールは権限の名前付きコレクションです。ロールをユーザーに付与すると、そのユーザーはロールのすべての権限を使用できます。ロールを別のロールに付与すると、受け取るロールは付与されたロールのすべての権限を継承し、ロール階層を構築できます。ロールの詳細については、[ロール](./scalardb-auth-with-sql.mdx#ロール)を参照してください。
+
+ロールをユーザーまたは別のロールに付与する際、*admin オプション*を指定することもできます。あるロールの admin オプションを持つユーザーは、そのロールを他のユーザーやロールに付与でき、また取り消すことができます。admin オプション付きでロールを別のロールに付与した場合、受け取るロールを直接またはロール階層を通じて持つすべてのユーザーも、その付与されたロールの admin オプションを持ちます。admin オプションはロール自体にのみ適用されます。admin オプションがあるだけでは、そのロールに権限を付与することはできません。
+
+次の表は、各ロール関連操作を実行できるユーザーを示しています。
+
+| 操作                                                                                              | 実行できるユーザー                                                                                   |
+|---------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+| `createRole()`、`dropRole()`                                                                      | スーパーユーザー                                                                                     |
+| `grantRoleToUser()`、`revokeRoleFromUser()`、`revokeAdminOptionFromUser()`                        | スーパーユーザー、または `roleName` で指定されたロールの admin オプションを持つユーザー              |
+| `grantRoleToRole()`、`revokeRoleFromRole()`、`revokeAdminOptionFromRole()`                        | スーパーユーザー、または `memberRoleName` で指定されたロールの admin オプションを持つユーザー        |
+| `grantPrivilegeToRole()`、`revokePrivilegeFromRole()`                                             | スーパーユーザー、または `GRANT` 権限と付与または取り消す権限を持つユーザー                         |
+| `getRole()`、`getRoles()`、`getRolesForUser()`、`getGranteeUsersForRole()`、`getRolePrivileges()` | 認証済みの任意のユーザー                                                                             |
+
+:::note
+
+現在のユーザーが認証済みであっても要件を満たさない場合、操作は `isAuthorizationError()` が `true` を返す `ExecutionException` をスローします。詳細については、[認証と認可の例外](#認証と認可の例外)を参照してください。
+
+:::
+
 ##### ロールを作成する
 
 ロールは次のように作成できます。
@@ -717,6 +739,8 @@ boolean hasTablePrivilege = admin.hasPrivilege("username", "namespace", "table",
 ```java
 admin.createRole("rolename");
 ```
+
+ロールがすでに存在する場合、`IllegalArgumentException` がスローされます。
 
 ##### ロールを削除する
 
@@ -726,26 +750,34 @@ admin.createRole("rolename");
 admin.dropRole("rolename");
 ```
 
+ロールを削除すると、ScalarDB Cluster はそのロールが付与されていたすべてのユーザーおよびロールからそのロールを削除し、そのロールに付与されていたすべての権限を削除します。ロールが存在しない場合、`IllegalArgumentException` がスローされます。
+
 ##### ロールを取得する
 
-既存のロールは次のように取得できます。
+既存のロール (そのロールに付与されているロールを含む) は次のように取得できます。
 
 ```java
 Optional<AuthAdmin.Role> role = admin.getRole("rolename");
 role.ifPresent(r -> {
   System.out.println("Name: " + r.getName());
-  System.out.println("Granted roles: " + r.getGrantedRoles());
+  for (AuthAdmin.GrantedRoleRef grantedRole : r.getGrantedRoles()) {
+    System.out.println("Granted role: " + grantedRole.getName());
+    System.out.println("Has admin option: " + grantedRole.hasAdminOption());
+  }
 });
 ```
 
 ##### すべてのロールを取得する
 
-すべてのロールは次のように取得できます。
+すべてのロール (各ロールに付与されているロールを含む) は次のように取得できます。
 
 ```java
 List<AuthAdmin.Role> roles = admin.getRoles();
 for (AuthAdmin.Role role : roles) {
   System.out.println("Name: " + role.getName());
+  for (AuthAdmin.GrantedRoleRef grantedRole : role.getGrantedRoles()) {
+    System.out.println("  Granted role: " + grantedRole.getName() + " (admin option: " + grantedRole.hasAdminOption() + ")");
+  }
 }
 ```
 
@@ -772,6 +804,12 @@ admin.grantRoleToUser("username", "rolename", false);
 // Grant a role to a user with admin option (the user can then grant this role to others).
 admin.grantRoleToUser("username", "rolename", true);
 ```
+
+:::note
+
+すでにユーザーに付与されているロールを再度付与してもエラーにはなりません。ロールが以前 admin オプションなしで付与されており、admin オプション付きで再度付与した場合、admin オプションが追加されます。admin オプションなしで再度付与しても、既存の admin オプションは削除されません。admin オプションを削除するには、[`revokeAdminOptionFromUser()`](#ロールに対するユーザーの-admin-オプションを取り消す)を使用してください。
+
+:::
 
 ##### ユーザーからロールを取り消す
 
@@ -813,6 +851,12 @@ admin.grantRoleToRole("rolename", "memberrolename", false);
 admin.grantRoleToRole("rolename", "memberrolename", true);
 ```
 
+:::note
+
+ユーザーへのロール付与と同様に、すでにロールに付与されているメンバーロールを再度付与してもエラーにはなりません。admin オプション付きで再度付与すると admin オプションが追加されます。付与によってロール階層にサイクルが生じる場合 (例: `role_b` がすでに `role_a` に付与されているときに `role_a` を `role_b` に付与しようとした場合)、操作は失敗します。
+
+:::
+
 ##### ロールからメンバーロールを取り消す
 
 メンバーロールは次のようにロールから取り消すことができます。
@@ -840,6 +884,12 @@ admin.grantPrivilegeToRole("rolename", "namespace", AuthAdmin.Privilege.READ, Au
 // Grant READ and WRITE privileges to a role for a specific table.
 admin.grantPrivilegeToRole("rolename", "namespace", "table", AuthAdmin.Privilege.READ, AuthAdmin.Privilege.WRITE);
 ```
+
+:::note
+
+スーパーユーザー以外のユーザーが付与できるのは、自分が持つ権限のみであり、`GRANT` 権限も必要です。ロールの admin オプションがあるだけでは、そのロールに権限を付与することはできません。
+
+:::
 
 ##### ロールから権限を取り消す
 
@@ -879,7 +929,28 @@ Set<AuthAdmin.Privilege> tablePrivileges = admin.getRolePrivileges("rolename", "
 
 :::
 
-これらの API からの失敗の処理の詳細については、[認証と認可の例外を処理する](#認証と認可の例外を処理する)を参照してください。
+##### 例: ロールを使用して権限を管理する
+
+次の例では、ロールを作成し、ロールに権限を付与してから、そのロールをユーザーに付与します。この例では、ユーザー `user1` とテーブル `ns.tbl` がすでに存在することを前提としています。スーパーユーザーとしてこの例を実行してください。
+
+```java
+// Create a role.
+admin.createRole("analyst");
+
+// Grant privileges to the role.
+admin.grantPrivilegeToRole("analyst", "ns", "tbl", AuthAdmin.Privilege.READ);
+
+// Grant the role to a user.
+admin.grantRoleToUser("user1", "analyst", false);
+
+// Confirm that the user has the READ privilege on the table through the role.
+boolean canRead = admin.hasPrivilege("user1", "ns", "tbl", AuthAdmin.Privilege.READ); // true
+
+// Revoke the role from the user. The user loses the privileges that were provided by the role.
+admin.revokeRoleFromUser("user1", "analyst");
+```
+
+これらの API からの失敗の処理の詳細については、[認証と認可の例外](#認証と認可の例外)を参照してください。
 
 ## Transaction API
 
