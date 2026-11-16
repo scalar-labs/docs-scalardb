@@ -11,6 +11,12 @@ ScalarDB Cluster is a clustering solution for [ScalarDB](../overview.mdx) that c
 
 ## Why ScalarDB Cluster?
 
+:::warning Deprecation notice
+
+The two-phase commit (2PC) interface is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
+
 When executing a transaction that spans multiple client requests, such as in microservice transactions, all requests for the transaction must be processed on the same server due to the stateful nature of transaction processing. However, in a distributed environment, routing requests to the same server isn't straightforward because a service typically runs on multiple servers (or hosts) for scalability and availability. In this scenario, all requests within a transaction must be routed to the same server, while different transactions should be distributed to ensure load balancing.
 
 To address this challenge, a routing mechanism such as session affinity (also known as sticky sessions) needs to be configured. This strategy ensures that requests within a transaction are consistently routed to the same server. Alternatively, you can leverage a bidirectional-streaming RPC by using gRPC. However, it's important to note that implementing these configurations typically requires significant time and effort. In addition, specific configuration adjustments may be required depending on the load balancer product you are using.
