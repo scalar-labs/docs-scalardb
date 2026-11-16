@@ -32,6 +32,8 @@ jobs:
           python3 -m pip install --user gitingest
       - name: Build website
         run: npm run build
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
 
       - name: Upload Build Artifact
         uses: actions/upload-pages-artifact@v3
