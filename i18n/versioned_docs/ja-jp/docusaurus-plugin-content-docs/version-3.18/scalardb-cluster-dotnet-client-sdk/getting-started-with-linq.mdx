@@ -431,6 +431,12 @@ await _myDbContext.BeginReadOnlyTransactionAsync();
 
 ### 2フェーズコミットインターフェースで新しいトランザクションを開始する
 
+:::warning 非推奨のお知らせ
+
+ツーフェーズコミット (2PC) インターフェースは、ScalarDB 3.19 以降、非推奨となり、将来のリリースで削除される予定です。
+
+:::
+
 ```c#
 await _myDbContext.BeginTwoPhaseCommitTransactionAsync();
 ```
@@ -443,6 +449,12 @@ var transactionId = _myDbContext.CurrentTransactionId;
 
 ### 2フェーズコミットインターフェースを使用して既存のトランザクションに参加する
 
+:::warning 非推奨のお知らせ
+
+ツーフェーズコミット (2PC) インターフェースは、ScalarDB 3.19 以降、非推奨となり、将来のリリースで削除される予定です。
+
+:::
+
 ```c#
 await _myDbContext.JoinTwoPhaseCommitTransactionAsync(transactionId);
 ```
@@ -454,6 +466,12 @@ await _myDbContext.ResumeTransaction(transactionId);
 ```
 
 ### 2フェーズコミットインターフェースを使用して既存のトランザクションを再開する
+
+:::warning 非推奨のお知らせ
+
+ツーフェーズコミット (2PC) インターフェースは、ScalarDB 3.19 以降、非推奨となり、将来のリリースで削除される予定です。
+
+:::
 
 ```c#
 await _myDbContext.ResumeTwoPhaseCommitTransaction(transactionId);
@@ -479,11 +497,23 @@ await _myDbContext.RollbackTransactionAsync();
 
 ### コミット用の2フェーズコミットインターフェースを使用してトランザクションを準備する
 
+:::warning 非推奨のお知らせ
+
+ツーフェーズコミット (2PC) インターフェースは、ScalarDB 3.19 以降、非推奨となり、将来のリリースで削除される予定です。
+
+:::
+
 ```c#
 await _myDbContext.PrepareTransactionAsync();
 ```
 
 ### コミット前に2フェーズコミットインターフェースでトランザクションを検証する
+
+:::warning 非推奨のお知らせ
+
+ツーフェーズコミット (2PC) インターフェースは、ScalarDB 3.19 以降、非推奨となり、将来のリリースで削除される予定です。
+
+:::
 
 ```c#
 await _myDbContext.ValidateTransactionAsync();
