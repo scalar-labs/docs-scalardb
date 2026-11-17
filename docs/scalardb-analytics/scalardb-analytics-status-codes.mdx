@@ -276,6 +276,22 @@ The user still has linked backend users, role assignments, or direct permission 
 
 Remove the linked backend users, role assignments, and permission grants before deleting the user, or use a cascading delete.
 
+### `DB-ANALYTICS-10204`
+
+**Message**
+
+```markdown
+Resource is under ACL delegation
+```
+
+**Cause**
+
+Authorization for the resource is delegated to ScalarDB Cluster, so Analytics permissions granted on it would be ignored.
+
+**Action**
+
+Grant the corresponding privilege in ScalarDB Cluster instead.
+
 ### `DB-ANALYTICS-10300`
 
 **Message**
@@ -323,6 +339,22 @@ One or more arguments do not satisfy the validation rules (format, range, or req
 **Action**
 
 Inspect the metadata for the offending field and provide a valid value, then retry.
+
+### `DB-ANALYTICS-10401`
+
+**Message**
+
+```markdown
+Data source schema contains a prohibited character
+```
+
+**Cause**
+
+A namespace, table, column, or column type name in the data source schema contains a control character (such as a line break or ESC) or a bidirectional formatting character, which could alter logs or terminal output.
+
+**Action**
+
+Rename the object identified by the field and path in the metadata, or correct the name in the manual schema, then retry. The value in the metadata shows the prohibited characters escaped.
 
 ## `DB-ANALYTICS-3xxxx` status codes
 
@@ -507,4 +539,3 @@ The server is likely newer than this client SDK and returned an error code not k
 **Action**
 
 Upgrade the client SDK to a version compatible with the server. See the server_error_code metadata for the original code, and contact your administrator if the problem persists.
-
