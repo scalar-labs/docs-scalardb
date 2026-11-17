@@ -102,28 +102,12 @@ Zero bytes may not occur in string parameters
 Mixing positional values and named values is not allowed
 ```
 
-### `DB-SQL-10011`
-
-**メッセージ**
-
-```markdown
-Preparing a transaction is supported only in two-phase commit transaction mode
-```
-
-### `DB-SQL-10012`
-
-**メッセージ**
-
-```markdown
-Validating a transaction is supported only in two-phase commit transaction mode
-```
-
 ### `DB-SQL-10013`
 
 **メッセージ**
 
 ```markdown
-The previous transaction is still in progress. Commit, roll back, or suspend the previous transaction first
+The previous transaction is still in progress. Commit or roll back the previous transaction first
 ```
 
 ### `DB-SQL-10014`
@@ -350,14 +334,6 @@ Multiple SQLs are not allowed
 The column %s is ambiguous
 ```
 
-### `DB-SQL-10042`
-
-**メッセージ**
-
-```markdown
-The column %s cannot be specified in the %s clause. Only the columns in the table %s can be specified in the %s clause
-```
-
 ### `DB-SQL-10043`
 
 **メッセージ**
@@ -574,14 +550,6 @@ Cannot issue mutation DML SQLs such as INSERT, UPDATE or DELETE with executeQuer
 Cannot issue SELECT SQLs with executeUpdate()
 ```
 
-### `DB-SQL-10070`
-
-**メッセージ**
-
-```markdown
-The TWO_PHASE_COMMIT_TRANSACTION mode is not supported in the current transaction manager
-```
-
 ### `DB-SQL-10071`
 
 **メッセージ**
@@ -636,22 +604,6 @@ Unmatched column type. The type of the column %s should be %s, but a TIMESTAMPTZ
 
 ```markdown
 The policy %s does not exist
-```
-
-### `DB-SQL-10078`
-
-**メッセージ**
-
-```markdown
-Beginning a transaction in read-only mode is not supported in two-phase commit transaction mode
-```
-
-### `DB-SQL-10079`
-
-**メッセージ**
-
-```markdown
-Starting a transaction in read-only mode is not supported in two-phase commit transaction mode
 ```
 
 ### `DB-SQL-10080`
@@ -828,4 +780,163 @@ The start position for Blob.position() must be >= 1. start: %d
 
 ```markdown
 The InputStream has fewer bytes than the declared length. declared: %d
+```
+### `DB-SQL-10103`
+
+**メッセージ**
+
+```markdown
+The transaction is not active. Status: %s
+```
+
+### `DB-SQL-10104`
+
+**メッセージ**
+
+```markdown
+The column %s cannot be specified in the ORDER BY clause of a statement without aggregation. Only the columns in the table %s can be specified there
+```
+
+### `DB-SQL-10105`
+
+**メッセージ**
+
+```markdown
+DDL and DCL statements are not allowed while a transaction is in progress, including a global transaction or a branch, because they are not executed transactionally. Finish the transaction first
+```
+
+### `DB-SQL-10106`
+
+**メッセージ**
+
+```markdown
+Global transactions are not supported in the direct connection mode
+```
+
+### `DB-SQL-10107`
+
+**メッセージ**
+
+```markdown
+A DML statement requires a branch in the GLOBAL_TRANSACTION mode. Begin a branch first
+```
+
+### `DB-SQL-10108`
+
+**メッセージ**
+
+```markdown
+Branches are not available in the TRANSACTION mode. Use the GLOBAL_TRANSACTION mode
+```
+
+### `DB-SQL-10109`
+
+**メッセージ**
+
+```markdown
+A branch is already in progress in this session. End the branch first
+```
+
+### `DB-SQL-10110`
+
+**メッセージ**
+
+```markdown
+The transaction ID does not match the global transaction that this session holds. Specified: %s; Held: %s
+```
+
+### `DB-SQL-10111`
+
+**メッセージ**
+
+```markdown
+A transaction ID is required to begin a branch in a session that does not hold a global transaction
+```
+
+### `DB-SQL-10112`
+
+**メッセージ**
+
+```markdown
+A branch has not begun
+```
+
+### `DB-SQL-10113`
+
+**メッセージ**
+
+```markdown
+COMMIT is not allowed in a session that holds only a branch, because COMMIT does not end a branch. End the branch instead; the initiator of the global transaction commits it
+```
+
+### `DB-SQL-10114`
+
+**メッセージ**
+
+```markdown
+Invalid BEGIN BRANCH statement. The syntax is BEGIN BRANCH ['transaction_id' | ? | :name] [WITH attributes]
+```
+
+### `DB-SQL-10115`
+
+**メッセージ**
+
+```markdown
+Invalid END BRANCH statement. The syntax is END BRANCH [WITH SUCCESS | WITH FAILURE]
+```
+
+### `DB-SQL-10116`
+
+**メッセージ**
+
+```markdown
+The transaction ID of a BEGIN BRANCH statement must be a non-null TEXT value
+```
+
+### `DB-SQL-10117`
+
+**メッセージ**
+
+```markdown
+An unbound bind marker is still in the transaction ID of the BEGIN BRANCH statement
+```
+
+### `DB-SQL-10118`
+
+**メッセージ**
+
+```markdown
+This SQL session factory has already been closed
+```
+
+### `DB-SQL-10119`
+
+**メッセージ**
+
+```markdown
+Auto-commit mode is not allowed in the GLOBAL_TRANSACTION mode. A connection in the mode is always in manual-commit mode
+```
+
+### `DB-SQL-10120`
+
+**メッセージ**
+
+```markdown
+SET MODE GLOBAL_TRANSACTION is not allowed in auto-commit mode. Call setAutoCommit(false) first
+```
+
+### `DB-SQL-10121`
+
+**メッセージ**
+
+```markdown
+The branch has already been ended. Transaction ID: %s
+```
+
+### `DB-SQL-10122`
+
+**メッセージ**
+
+```markdown
+The value of a key column must not be null. Column: %s
 ```
