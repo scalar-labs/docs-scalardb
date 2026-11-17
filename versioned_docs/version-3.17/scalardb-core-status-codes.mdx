@@ -1639,6 +1639,14 @@ The size of a BLOB column value exceeds the maximum allowed size of %d bytes. Co
 The column definition must be specified since %s is specified as a secondary index
 ```
 
+### `DB-CORE-10304`
+
+**Message**
+
+```markdown
+The condition is not properly specified. Table: %s; Expressions: %s
+```
+
 ## `DB-CORE-2xxxx` status codes
 
 The following are status codes and messages for the concurrency error category.
@@ -1873,6 +1881,14 @@ Before-image index recovery retry limit exceeded. Transaction ID: %s
 
 ```markdown
 Records that need recovery were found during the before-image index check when closing the scanner. Transaction ID: %s
+```
+
+### `DB-CORE-20032`
+
+**Message**
+
+```markdown
+A conflict occurred when recovering records. Details: %s
 ```
 
 ## `DB-CORE-3xxxx` status codes
@@ -2365,6 +2381,14 @@ Creating the virtual table failed. Virtual table: %s; Left source table: %s; Rig
 
 ```markdown
 Getting the virtual table information failed. Table: %s
+```
+
+### `DB-CORE-30070`
+
+**Message**
+
+```markdown
+The mutation may have been applied because the AWS SDK retried the request, so its outcome is unknown. Details: %s
 ```
 
 ## `DB-CORE-4xxxx` status codes
