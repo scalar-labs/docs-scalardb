@@ -632,7 +632,7 @@ The specified consistency level is not supported. Consistency level: %s
 **メッセージ**
 
 ```markdown
-Cannot encode a Text value that contains '\\u0000'
+Cannot encode a Text value that contains '\u0000'
 ```
 
 ### `DB-CORE-10081`
@@ -1795,6 +1795,30 @@ Branches are not supported by this coordinator-only global transaction manager b
 Some scanners were not closed. All scanners must be closed before ending the branch. Transaction ID: %s
 ```
 
+### `DB-CORE-10302`
+
+**メッセージ**
+
+```markdown
+The RDB engine is not supported with the AWS Advanced JDBC Wrapper. Only Aurora PostgreSQL and Aurora MySQL are supported. JDBC connection URL: %s
+```
+
+### `DB-CORE-10303`
+
+**メッセージ**
+
+```markdown
+The HikariCP exceptionOverrideClassName setting is not supported. ScalarDB determines whether a failed commit left the transaction in an unknown state by checking whether the connection survived, which relies on HikariCP discarding a connection that reports a connection exception. An override that keeps such a connection alive would make an unknown outcome be reported as a definite failure, which the caller is told is safe to retry. Configured class: %s
+```
+
+### `DB-CORE-10304`
+
+**メッセージ**
+
+```markdown
+The condition is not properly specified. Table: %s; Expressions: %s
+```
+
 ## `DB-CORE-2xxxx` ステータスコード
 
 以下は、同時実行エラーカテゴリのステータスコードとメッセージです。
@@ -2045,6 +2069,14 @@ Resolving an uncommitted record exceeded the retry limit during recovery. Transa
 
 ```markdown
 A transaction associated with the specified transaction ID is not found. The transaction might have expired
+```
+
+### `DB-CORE-20032`
+
+**メッセージ**
+
+```markdown
+A conflict occurred when recovering records. Details: %s
 ```
 
 ## `DB-CORE-3xxxx` ステータスコード
@@ -2555,6 +2587,14 @@ Finishing the transaction failed. Transaction ID: %s; Details: %s
 Recovering the record failed. Table: %s; Partition Key: %s; Clustering Key: %s; Details: %s
 ```
 
+### `DB-CORE-30070`
+
+**メッセージ**
+
+```markdown
+The mutation may have been applied because the AWS SDK retried the request, so its outcome is unknown. Details: %s
+```
+
 ## `DB-CORE-4xxxx` ステータスコード
 
 以下は、不明なトランザクションステータスエラーカテゴリのステータスコードとメッセージです。
@@ -2597,4 +2637,11 @@ Aborting state failed with NoMutationException, but the coordinator status does 
 
 ```markdown
 One-phase committing records failed. Details: %s
+```
+### `DB-CORE-40006`
+
+**メッセージ**
+
+```markdown
+The committing state in the coordinator conflicted after the write was retried. An earlier attempt may have been applied, so the transaction may have been committed. Details: %s
 ```
