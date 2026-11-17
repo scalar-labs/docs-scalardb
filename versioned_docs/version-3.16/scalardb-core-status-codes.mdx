@@ -1119,7 +1119,7 @@ The storage does not support mutations across multiple namespaces. Storage: %s; 
 Mutations across multiple storages are not allowed. Mutations: %s
 ```
 
-### `DB-CORE-10216`
+### `DB-CORE-10249`
 
 **Message**
 
@@ -1173,6 +1173,14 @@ Conditions on indexed columns in cross-partition scan operations are not allowed
 
 ```markdown
 The column definition must be specified since %s is specified as a secondary index
+```
+
+### `DB-CORE-10304`
+
+**Message**
+
+```markdown
+The condition is not properly specified. Table: %s; Expressions: %s
 ```
 
 ## `DB-CORE-2xxxx` status codes
@@ -1401,6 +1409,14 @@ Before-image index recovery retry limit exceeded. Transaction ID: %s
 
 ```markdown
 Records that need recovery were found during the before-image index check when closing the scanner. Transaction ID: %s
+```
+
+### `DB-CORE-20032`
+
+**Message**
+
+```markdown
+A conflict occurred when recovering records. Details: %s
 ```
 
 ## `DB-CORE-3xxxx` status codes
@@ -1821,6 +1837,14 @@ Recovering records failed. Details: %s
 
 ```markdown
 Committing records failed. Details: %s
+```
+
+### `DB-CORE-30070`
+
+**Message**
+
+```markdown
+The mutation may have been applied because the AWS SDK retried the request, so its outcome is unknown. Details: %s
 ```
 
 ## `DB-CORE-4xxxx` status codes
