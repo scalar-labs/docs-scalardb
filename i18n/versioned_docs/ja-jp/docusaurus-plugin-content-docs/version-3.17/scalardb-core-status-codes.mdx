@@ -640,7 +640,7 @@ The specified consistency level is not supported. Consistency level: %s
 **メッセージ**
 
 ```markdown
-Cannot encode a Text value that contains '\\u0000'
+Cannot encode a Text value that contains '\u0000'
 ```
 
 ### `DB-CORE-10081`
@@ -1643,6 +1643,14 @@ The size of a BLOB column value exceeds the maximum allowed size of %d bytes. Co
 The column definition must be specified since %s is specified as a secondary index
 ```
 
+### `DB-CORE-10304`
+
+**メッセージ**
+
+```markdown
+The condition is not properly specified. Table: %s; Expressions: %s
+```
+
 ## `DB-CORE-2xxxx` ステータスコード
 
 以下は、同時実行エラーカテゴリのステータスコードとメッセージです。
@@ -1877,6 +1885,14 @@ Before-image index recovery retry limit exceeded. Transaction ID: %s
 
 ```markdown
 Records that need recovery were found during the before-image index check when closing the scanner. Transaction ID: %s
+```
+
+### `DB-CORE-20032`
+
+**メッセージ**
+
+```markdown
+A conflict occurred when recovering records. Details: %s
 ```
 
 ## `DB-CORE-3xxxx` ステータスコード
@@ -2369,6 +2385,14 @@ Creating the virtual table failed. Virtual table: %s; Left source table: %s; Rig
 
 ```markdown
 Getting the virtual table information failed. Table: %s
+```
+
+### `DB-CORE-30070`
+
+**メッセージ**
+
+```markdown
+The mutation may have been applied because the AWS SDK retried the request, so its outcome is unknown. Details: %s
 ```
 
 ## `DB-CORE-4xxxx` ステータスコード
