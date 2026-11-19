@@ -42,7 +42,7 @@ while (true)
 {
     if (retryCount++ > 0)
     {
-        // Retry the transaction three times maximum in this sample code
+        // Attempt the transaction three times maximum in this sample code
         if (retryCount > 3)
             // Throw the last exception if the number of retries exceeds the maximum
             throw lastException!;
@@ -142,7 +142,7 @@ public class Item
 
 :::note
 
-In the sample code, the transaction is retried a maximum of three times and sleeps for 100 milliseconds before it is retried. You can choose a retry policy, such as exponential backoff, according to your application requirements.
+In the sample code, the transaction is attempted a maximum of three times and sleeps for 100 milliseconds before each retry. You can choose a retry policy, such as exponential backoff, according to your application requirements.
 
 :::
 

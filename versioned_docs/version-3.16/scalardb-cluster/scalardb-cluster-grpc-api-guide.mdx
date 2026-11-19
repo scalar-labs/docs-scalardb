@@ -117,6 +117,12 @@ In the case of `Commit`, the situation is equivalent to `UNKNOWN_TRANSACTION_STA
 
 ## How to use the `TwoPhaseCommitTransaction` service
 
+:::warning Deprecation notice
+
+The two-phase commit (2PC) interface is deprecated as of ScalarDB 3.19 and will be removed in a future release.
+
+:::
+
 The `TwoPhaseCommitTransaction` service provides the following RPCs:
 
 - `Begin`: Begins a transaction.
@@ -210,7 +216,7 @@ The `DistributedTransactionAdmin` service provides the following RPCs:
 - `CreateIndex`: Creates an index.
 - `DropIndex`: Drops an index.
 - `IndexExists`: Returns whether the specified index exists or not.
-- `RepairTable`: Repairs a namespace that may be in an unknown state.
+- `RepairTable`: Repairs a table that may be in an unknown state.
 - `AddNewColumnToTable`: Adds a new column to a table.
 - `CreateCoordinatorTables`: Creates the Coordinator tables.
 - `DropCoordinatorTables`: Drops the Coordinator tables.

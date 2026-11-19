@@ -22,10 +22,10 @@ ScalarDB Cluster Java API は、ScalarDB Core の一部である Administrative 
 
 :::warning
 
-Administrative API の呼び出しが基盤となるデータベースに書き込みを行う場合、複数の書き込み操作がトリガーされます。ただし、これらの操作はアトミックに実行されないため、呼び出しが途中で失敗した場合、一貫性のない状態が発生する可能性があります。この非一貫性の問題を解決するには、名前空間またはテーブルを修復してください。詳細については、以下のページを参照してください:
+Administrative API の呼び出しが基盤となるデータベースに書き込みを行う場合、複数の書き込み操作がトリガーされます。ただし、これらの操作はアトミックに実行されないため、呼び出しが途中で失敗した場合、一貫性のない状態が発生する可能性があります。この非一貫性の問題を解決するには、テーブルを修復してください。詳細については、以下のページを参照してください:
 
-- Java API を使用した [名前空間の修復](#名前空間を修復する)と[テーブルの修復](#テーブルを修復する)
-- ScalarDB Schema Loader を使用した[名前空間とテーブルの修復](../schema-loader.mdx#名前空間とテーブルを修復する)
+- Java API を使用した[テーブルの修復](#テーブルを修復する)
+- ScalarDB Schema Loader を使用した[テーブルの修復](../schema-loader.mdx#テーブルを修復する)
 
 :::
 
@@ -327,9 +327,9 @@ admin.alterColumnDataType("ns", "tbl", "c6", DataType.BIGINT);
 
 - 列がパーティションキー、クラスタリングキー、またはセカンダリインデックスキーの一部である場合。
 - テーブルが非 JDBC データベース上または SQLite 上にある場合。
-- INT から BIGINT、FLOAT から DOUBLE、および任意のデータから TEXT への変換以外の変換が指定されている場合。
-- Oracle の場合、INT から BIGINT 以外の変換が指定されている場合。
-- Db2 および TiDB の場合、BLOB から TEXT への変換が指定されている場合。
+- `INT` から `BIGINT`、`FLOAT` から `DOUBLE`、および任意のデータから `TEXT` への変換以外の変換が指定されている場合。
+- Oracle の場合、`INT` から `BIGINT` 以外の変換が指定されている場合。
+- Db2 および TiDB の場合、`BLOB` から `TEXT` への変換が指定されている場合。
 
 :::
 
@@ -421,18 +421,6 @@ Set<String> tables = admin.getNamespaceTableNames("ns");
 TableMetadata tableMetadata = admin.getTableMetadata("ns", "tbl");
 ```
 
-### 名前空間を修復する
-
-名前空間が不明な状態の場合 (たとえば、名前空間が基盤となるストレージに存在するが ScalarDB メタデータが存在しない、またはその逆)、このメソッドは必要に応じて名前空間とそのメタデータを再作成します。
-
-名前空間は次のように修復できます。
-
-```java
-// Repair the namespace "ns" with options.
-Map<String, String> options = ...;
-admin.repairNamespace("ns", options);
-```
-
 ### テーブルを修復する
 
 テーブルが不明な状態の場合 (テーブルは基盤となるストレージに存在するが ScalarDB メタデータは存在しない、またはその逆)、このメソッドは必要に応じてテーブル、そのセカンダリインデックス、およびそのメタデータを再作成します。
@@ -454,16 +442,6 @@ admin.repairTable("ns", "tbl", tableMetadata, options);
 Consensus Commit を使用している場合、以前のバージョンから ScalarDB 3.16.5、3.17.3、または 3.18.0 にアップグレードした後、インデックスベース読み取りに必要なコンパニオン before-image セカンダリインデックスを作成するために、既存の各テーブルで `repairTable()` を実行する必要があります。詳細については、[インデックスベース読み取りの正確性](../consensus-commit.mdx#インデックスベース読み取りの正確性)を参照してください。
 
 :::
-
-### 最新の ScalarDB API をサポートするように環境をアップグレードする
-
-ScalarDB API の最新バージョンをサポートするように ScalarDB 環境をアップグレードできます。通常、リリースノートに記載されているように、アプリケーション環境が使用する ScalarDB バージョンを更新した後、このメソッドを実行する必要があります。
-
-```java
-// Upgrade the ScalarDB environment.
-Map<String, String> options = ...;
-admin.upgrade(options);
-```
 
 ### Coordinator テーブルの操作を指定する
 
@@ -602,6 +580,8 @@ admin.alterUser("username", null, ImmutableSet.of(AuthAdmin.AuthenticationMethod
 admin.dropUser("username");
 ```
 
+ユーザーを削除すると、ScalarDB Cluster はそのユーザーに直接付与されていた権限を削除し、ユーザーのロール付与も削除します。ロール自体は削除されません。
+
 ##### ユーザーを取得する
 
 既存のユーザーは次のように取得できます。
@@ -732,6 +712,26 @@ boolean hasTablePrivilege = admin.hasPrivilege("username", "namespace", "table",
 
 次の操作により、ロールの作成、変更、取得、およびユーザーや他のロールへのロールの付与と取り消しができます。
 
+ロールは権限の名前付きコレクションです。ロールをユーザーに付与すると、そのユーザーはロールのすべての権限を使用できます。ロールを別のロールに付与すると、受け取るロールは付与されたロールのすべての権限を継承し、ロール階層を構築できます。ロールの詳細については、[ロール](./scalardb-auth-with-sql.mdx#ロール)を参照してください。
+
+ロールをユーザーまたは別のロールに付与する際、*admin オプション*を指定することもできます。あるロールの admin オプションを持つユーザーは、そのロールを他のユーザーやロールに付与でき、また取り消すことができます。admin オプション付きでロールを別のロールに付与した場合、受け取るロールを直接またはロール階層を通じて持つすべてのユーザーも、その付与されたロールの admin オプションを持ちます。admin オプションはロール自体にのみ適用されます。admin オプションがあるだけでは、そのロールに権限を付与することはできません。
+
+次の表は、各ロール関連操作を実行できるユーザーを示しています。
+
+| 操作                                                                                              | 実行できるユーザー                                                                                   |
+|---------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+| `createRole()`、`dropRole()`                                                                      | スーパーユーザー                                                                                     |
+| `grantRoleToUser()`、`revokeRoleFromUser()`、`revokeAdminOptionFromUser()`                        | スーパーユーザー、または `roleName` で指定されたロールの admin オプションを持つユーザー              |
+| `grantRoleToRole()`、`revokeRoleFromRole()`、`revokeAdminOptionFromRole()`                        | スーパーユーザー、または `memberRoleName` で指定されたロールの admin オプションを持つユーザー        |
+| `grantPrivilegeToRole()`、`revokePrivilegeFromRole()`                                             | スーパーユーザー、または `GRANT` 権限と付与または取り消す権限を持つユーザー                         |
+| `getRole()`、`getRoles()`、`getRolesForUser()`、`getGranteeUsersForRole()`、`getRolePrivileges()` | 認証済みの任意のユーザー                                                                             |
+
+:::note
+
+現在のユーザーが認証済みであっても要件を満たさない場合、操作は `isAuthorizationError()` が `true` を返す `ExecutionException` をスローします。詳細については、[認証と認可の例外](#認証と認可の例外)を参照してください。
+
+:::
+
 ##### ロールを作成する
 
 ロールは次のように作成できます。
@@ -739,6 +739,8 @@ boolean hasTablePrivilege = admin.hasPrivilege("username", "namespace", "table",
 ```java
 admin.createRole("rolename");
 ```
+
+ロールがすでに存在する場合、`IllegalArgumentException` がスローされます。
 
 ##### ロールを削除する
 
@@ -748,26 +750,34 @@ admin.createRole("rolename");
 admin.dropRole("rolename");
 ```
 
+ロールを削除すると、ScalarDB Cluster はそのロールが付与されていたすべてのユーザーおよびロールからそのロールを削除し、そのロールに付与されていたすべての権限を削除します。ロールが存在しない場合、`IllegalArgumentException` がスローされます。
+
 ##### ロールを取得する
 
-既存のロールは次のように取得できます。
+既存のロール (そのロールに付与されているロールを含む) は次のように取得できます。
 
 ```java
 Optional<AuthAdmin.Role> role = admin.getRole("rolename");
 role.ifPresent(r -> {
   System.out.println("Name: " + r.getName());
-  System.out.println("Granted roles: " + r.getGrantedRoles());
+  for (AuthAdmin.GrantedRoleRef grantedRole : r.getGrantedRoles()) {
+    System.out.println("Granted role: " + grantedRole.getName());
+    System.out.println("Has admin option: " + grantedRole.hasAdminOption());
+  }
 });
 ```
 
 ##### すべてのロールを取得する
 
-すべてのロールは次のように取得できます。
+すべてのロール (各ロールに付与されているロールを含む) は次のように取得できます。
 
 ```java
 List<AuthAdmin.Role> roles = admin.getRoles();
 for (AuthAdmin.Role role : roles) {
   System.out.println("Name: " + role.getName());
+  for (AuthAdmin.GrantedRoleRef grantedRole : role.getGrantedRoles()) {
+    System.out.println("  Granted role: " + grantedRole.getName() + " (admin option: " + grantedRole.hasAdminOption() + ")");
+  }
 }
 ```
 
@@ -794,6 +804,12 @@ admin.grantRoleToUser("username", "rolename", false);
 // Grant a role to a user with admin option (the user can then grant this role to others).
 admin.grantRoleToUser("username", "rolename", true);
 ```
+
+:::note
+
+すでにユーザーに付与されているロールを再度付与してもエラーにはなりません。ロールが以前 admin オプションなしで付与されており、admin オプション付きで再度付与した場合、admin オプションが追加されます。admin オプションなしで再度付与しても、既存の admin オプションは削除されません。admin オプションを削除するには、[`revokeAdminOptionFromUser()`](#ロールに対するユーザーの-admin-オプションを取り消す)を使用してください。
+
+:::
 
 ##### ユーザーからロールを取り消す
 
@@ -835,6 +851,12 @@ admin.grantRoleToRole("rolename", "memberrolename", false);
 admin.grantRoleToRole("rolename", "memberrolename", true);
 ```
 
+:::note
+
+ユーザーへのロール付与と同様に、すでにロールに付与されているメンバーロールを再度付与してもエラーにはなりません。admin オプション付きで再度付与すると admin オプションが追加されます。付与によってロール階層にサイクルが生じる場合 (例: `role_b` がすでに `role_a` に付与されているときに `role_a` を `role_b` に付与しようとした場合)、操作は失敗します。
+
+:::
+
 ##### ロールからメンバーロールを取り消す
 
 メンバーロールは次のようにロールから取り消すことができます。
@@ -862,6 +884,12 @@ admin.grantPrivilegeToRole("rolename", "namespace", AuthAdmin.Privilege.READ, Au
 // Grant READ and WRITE privileges to a role for a specific table.
 admin.grantPrivilegeToRole("rolename", "namespace", "table", AuthAdmin.Privilege.READ, AuthAdmin.Privilege.WRITE);
 ```
+
+:::note
+
+スーパーユーザー以外のユーザーが付与できるのは、自分が持つ権限のみであり、`GRANT` 権限も必要です。ロールの admin オプションがあるだけでは、そのロールに権限を付与することはできません。
+
+:::
 
 ##### ロールから権限を取り消す
 
@@ -901,7 +929,28 @@ Set<AuthAdmin.Privilege> tablePrivileges = admin.getRolePrivileges("rolename", "
 
 :::
 
-これらの API からの失敗の処理の詳細については、[認証と認可の例外を処理する](#認証と認可の例外を処理する)を参照してください。
+##### 例: ロールを使用して権限を管理する
+
+次の例では、ロールを作成し、ロールに権限を付与してから、そのロールをユーザーに付与します。この例では、ユーザー `user1` とテーブル `ns.tbl` がすでに存在することを前提としています。スーパーユーザーとしてこの例を実行してください。
+
+```java
+// Create a role.
+admin.createRole("analyst");
+
+// Grant privileges to the role.
+admin.grantPrivilegeToRole("analyst", "ns", "tbl", AuthAdmin.Privilege.READ);
+
+// Grant the role to a user.
+admin.grantRoleToUser("user1", "analyst", false);
+
+// Confirm that the user has the READ privilege on the table through the role.
+boolean canRead = admin.hasPrivilege("user1", "ns", "tbl", AuthAdmin.Privilege.READ); // true
+
+// Revoke the role from the user. The user loses the privileges that were provided by the role.
+admin.revokeRoleFromUser("user1", "analyst");
+```
+
+これらの API からの失敗の処理の詳細については、[認証と認可の例外](#認証と認可の例外)を参照してください。
 
 ## Transaction API
 
@@ -2480,7 +2529,7 @@ CRUD 操作の API (`get()`、`scan()`、`put()`、`delete()`、および `mutat
 - `CommitConflictException` をキャッチした場合、この例外は、一時的な障害 (競合エラーなど) が原因でトランザクションのコミットが失敗したことを示します。この場合、トランザクションを最初から再試行できます。
 - `UnknownTransactionStatusException` をキャッチした場合、この例外は、トランザクションのステータス (成功したかどうか) が不明であることを示します。この場合、トランザクションが正常にコミットされたかどうかを確認し、失敗した場合はトランザクションを再試行する必要があります。
 
-トランザクションステータスを識別する方法は、ユーザーに委任されています。トランザクションステータステーブルを作成し、他のアプリケーションデータを使用してトランザクション的に更新して、ステータステーブルからトランザクションのステータスを取得できるようにすることができます。
+トランザクションステータスを識別する方法は、ユーザーに委任されています。トランザクションステータステーブルを作成し、他のアプリケーションデータとアトミックに更新すると、ステータステーブルからトランザクションのステータスを取得できるようにすることができます。
 
 ### 一部の例外に関する注意
 

@@ -10,16 +10,13 @@ import TranslationBanner from '/src/components/_translation-ja-jp.mdx';
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import StorageSetupTabs from '../components/_getting-started-setup-storage.mdx';
+import WarningLicenseKeyContact from '../components/_warning-license-key-contact.mdx';
 
 <TranslationBanner />
 
 このガイドでは、ScalarDB プロパティファイルを設定する方法と、ScalarDB Cluster SQL を使用して1フェーズまたは2フェーズのコミットインターフェイスを介してトランザクションを実行するためのスキーマを作成する方法について説明します。
 
-:::warning
-
-ScalarDB Cluster のライセンスキー (試用ライセンスまたは商用ライセンス) が必要です。ライセンスキーをお持ちでない場合は、[お問い合わせ](https://www.scalar-labs.com/contact)ください。
-
-:::
+<WarningLicenseKeyContact product="ScalarDB Cluster" />
 
 ## 準備
 
@@ -103,7 +100,7 @@ ScalarDB Cluster Data Loader は、ScalarDB Cluster でデータのインポー�
 
 :::note
 
-2フェーズコミットインターフェースでトランザクションを実行する方法に関するドキュメントは近日公開予定です。
+JDBC における 2PC インターフェースのサポートは ScalarDB 3.19 以降、非推奨となり、将来のリリースで削除される予定です。したがって、追加のドキュメントは予定されていません。
 
 :::
   </TabItem>
@@ -114,7 +111,7 @@ ScalarDB Cluster Data Loader は、ScalarDB Cluster でデータのインポー�
 
 :::note
 
-2フェーズコミットインターフェースでトランザクションを実行する方法に関するドキュメントは近日公開予定です。
+Java における 2PC インターフェースのサポートは ScalarDB 3.19 以降、非推奨となり、将来のリリースで削除される予定です。したがって、追加のドキュメントは予定されていません。
 
 :::
 
@@ -127,6 +124,12 @@ ScalarDB Cluster Data Loader は、ScalarDB Cluster でデータのインポー�
   <TabItem value="NET_LINQ" label=".NET (LINQ)">
     <h3>1フェーズまたは2フェーズコミットインターフェイス</h3>
 
+:::warning 非推奨のお知らせ
+
+2フェーズコミット (2PC) インターフェースは、ScalarDB 3.19 以降、非推奨となり、将来のリリースで削除される予定です。
+
+:::
+
     1フェーズまたは2フェーズコミットインターフェイスを使用してトランザクションを実行する方法の詳細については、[ScalarDB Cluster .NET Client SDK での LINQ をはじめよう](../scalardb-cluster-dotnet-client-sdk/getting-started-with-linq.mdx#トランザクションの管理)を参照してください。
   </TabItem>
   <TabItem value="NET_SQL" label=".NET (SQL)">
@@ -136,7 +139,7 @@ ScalarDB Cluster Data Loader は、ScalarDB Cluster でデータのインポー�
 
 :::note
 
-2フェーズコミットインターフェースでトランザクションを実行する方法に関するドキュメントは近日公開予定です。今のところは、[ScalarDB Cluster .NET Client SDK の2フェーズコミットインターフェイスを使用した分散トランザクションをはじめよう](../scalardb-cluster-dotnet-client-sdk/getting-started-with-two-phase-commit-transactions.mdx) を参照してください。
+.NET (SQL) における 2PC インターフェースのサポートは ScalarDB 3.19 以降、非推奨となり、将来のリリースで削除される予定です。したがって、追加のドキュメントは予定されていません。
 
 :::
   </TabItem>

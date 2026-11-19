@@ -230,13 +230,13 @@ java -jar scalardb-schema-loader-<X.Y.Z>.jar --config <PATH_TO_SCALARDB_PROPERTI
     | `date`           | `DATE`        |                                    |
     | `datetime`       | `TIMESTAMP`   |                                    |
     | `datetime2`      | `TIMESTAMP`   |                                    |
+    | `datetimeoffset` | `TIMESTAMPTZ` |                                    |
     | `float`          | `DOUBLE`      |                                    |
     | `image`          | `BLOB`        | 下記の警告 [6](#6) を参照してください。 |
     | `int`            | `INT`         |                                    |
     | `nchar`          | `TEXT`        | 下記の警告 [1](#1) を参照してください。 |
     | `ntext`          | `TEXT`        |                                    |
     | `nvarchar`       | `TEXT`        | 下記の警告 [1](#1) を参照してください。 |
-    | `offsetdatetime` | `TIMESTAMPTZ` |                                    |
     | `real`           | `FLOAT`       |                                    |
     | `smalldatetime`  | `TIMESTAMP`   |                                    |
     | `smallint`       | `INT`         | 下記の警告 [1](#1) を参照してください。 |
@@ -305,7 +305,7 @@ java -jar scalardb-schema-loader-<X.Y.Z>.jar --config <PATH_TO_SCALARDB_PROPERTI
     | `double precision`         | `DOUBLE`                                 |                                    |
     | `real`                     | `FLOAT`                                  |                                    |
     | `text`                     | `TEXT`                                   |                                    |
-    | `timestamp with time zone` | `TIMESTAMPTZ` (default), `TIME`, `TIMESTAMP` | 下記の警告 [6](#6) を参照してください。 |
+    | `timestamp with time zone` | `TIMESTAMPTZ` (default), `TIME`, `TIMESTAMP` | 下記の警告 [5](#5) を参照してください。 |
 
     上記にリストされていないデータ型はサポートされていません。以下は、サポートされていない一般的なデータ型の例です:
 
@@ -331,7 +331,7 @@ java -jar scalardb-schema-loader-<X.Y.Z>.jar --config <PATH_TO_SCALARDB_PROPERTI
     <a name="3"></a>ScalarDB は、ScalarDB の `DOUBLE` よりも精度の高い Oracle `FLOAT` 列をサポートしていません。
   </li>
   <li>
-    <a name="4"></a>ScalarDB では、ScalarDB のデータ型の最大サイズにより、`p` が18より大きい場合、Oracle の `NUMERIC(p, s)` 列 (`p` は精度、`s` はスケール) をサポートしません。`s` が0の場合、ScalarDB は列を `BIGINT` にマッピングします。それ以外の場合は、ScalarDB は列を `DOUBLE` にマッピングします。後者の場合、浮動小数点値が固定小数点値にキャストされるため、基になるデータベースで切り上げまたは切り捨てが発生する可能性があることに注意してください。
+    <a name="4"></a>ScalarDB では、ScalarDB のデータ型の最大サイズにより、`p` が18より大きい場合、Oracle の `NUMBER(p, s)` 列 (`p` は精度、`s` はスケール) をサポートしません。`s` が0の場合、ScalarDB は列を `BIGINT` にマッピングします。それ以外の場合は、ScalarDB は列を `DOUBLE` にマッピングします。後者の場合、浮動小数点値が固定小数点値にキャストされるため、基になるデータベースで切り上げまたは切り捨てが発生する可能性があることに注意してください。
   </li>
   <li>
     <a name="5"></a>基盤となるストレージ型は、いくつかの ScalarDB データ型にマップできます。デフォルトのマッピングをオーバーライドするには、インポートスキーマファイルの `override-columns-type` フィールドを使用します。例については、[サンプルインポートスキーマファイル](#サンプルインポートスキーマファイル)を参照してください。

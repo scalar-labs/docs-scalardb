@@ -10,14 +10,11 @@ displayed_sidebar: docsEnglish
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 import StorageSetupTabs from '../components/_getting-started-setup-storage.mdx';
+import WarningLicenseKeyContact from '../components/_warning-license-key-contact.mdx';
 
 This guide explains how to configure your ScalarDB properties file and create schemas to run transactions through a one-phase or a two-phase commit interface by using ScalarDB Cluster.
 
-:::warning
-
-You need to have a license key (trial license or commercial license) for ScalarDB Cluster. If you don't have a license key, please [contact us](https://www.scalar-labs.com/contact).
-
-:::
+<WarningLicenseKeyContact product="ScalarDB Cluster" />
 
 ## Preparation
 
@@ -92,12 +89,6 @@ ScalarDB Cluster Data Loader is a utility for importing and exporting data with 
 ## Run transactions
 
 You can run transactions by using a one-phase or a two-phase commit interface. Select your method for running transactions.
-
-:::note
-
-If you are building a monolithic application, you should use the one-phase commit interface. However, if you are building a microservice application, see [ScalarDB Cluster Deployment Patterns for Microservices](./deployment-patterns-for-microservices.mdx) to decide which interface to use.
-
-:::
 
 <Tabs groupId="interfaces" queryString>
   <TabItem value="Java" label="Java" default>

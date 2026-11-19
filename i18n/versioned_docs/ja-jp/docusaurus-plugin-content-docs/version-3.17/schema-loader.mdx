@@ -87,21 +87,16 @@ Create/Delete schemas in the storage defined in the config file
                       Path to the schema json file
       --no-backup     Disable continuous backup (supported in DynamoDB)
       --no-scaling    Disable auto-scaling (supported in DynamoDB, Cosmos DB)
-      --repair-all    Repair namespaces and tables that are in an unknown
-                        state: it re-creates namespaces, tables, secondary
-                        indexes, and their metadata if necessary.
+      --repair-all    Repair tables : it repairs the table metadata of
+                               existing tables. When using Cosmos DB, it
+                               additionally repairs stored procedure attached
+                               to each table
       --replication-factor=<replicaFactor>
                       The replication factor (supported in Cassandra)
       --replication-strategy=<replicationStrategy>
                       The replication strategy, must be SimpleStrategy or
                         NetworkTopologyStrategy (supported in Cassandra)
       --ru=<ru>       Base resource unit (supported in DynamoDB, Cosmos DB)
-      --upgrade       Upgrades the ScalarDB environment to support the latest
-                        version of the ScalarDB API. Typically, as indicated in
-                        the release notes, you will need to run this command
-                        after updating the ScalarDB version that your
-                        application environment uses.
-
 ```
 
 サンプルのプロパティファイルについては、[`database.properties`](https://github.com/scalar-labs/scalardb/blob/master/conf/database.properties) を参照してください。
@@ -345,9 +340,9 @@ java -jar scalardb-schema-loader-<X.Y.Z>.jar --config <PATH_TO_SCALARDB_PROPERTI
 
 :::
 
-### 名前空間とテーブルを修復する
+### テーブルを修復する
 
-プロパティファイルを使用して、名前空間とテーブルを修復できます。名前空間とテーブルを修復する理由は、名前空間またはテーブルが基盤となるストレージに存在するが、その ScalarDB メタデータが存在しない、またはその逆など、それらが不明な状態になる可能性があるためです。名前空間、テーブル、セカンダリインデックス、およびそれらのメタデータを修復するには、必要に応じてそれらを再作成する必要があります。それらを修復するには、次のコマンドを実行し、説明されているように山括弧内の内容を置き換えます。
+プロパティファイルを使用して、テーブルを修復できます。テーブルを修復する理由は、テーブルが基盤となるストレージに存在するが、その ScalarDB メタデータが存在しない、またはその逆など、不明な状態になる可能性があるためです。テーブル、セカンダリインデックス、およびそれらのメタデータを修復するには、必要に応じてそれらを再作成する必要があります。それらを修復するには、次のコマンドを実行し、説明されているように山括弧内の内容を置き換えます。
 
 ```console
 java -jar scalardb-schema-loader-<X.Y.Z>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> -f <PATH_TO_SCHEMA_FILE> [--coordinator] --repair-all
@@ -359,7 +354,7 @@ java -jar scalardb-schema-loader-<X.Y.Z>.jar --config <PATH_TO_SCALARDB_PROPERTI
 
 :::
 
-`--coordinator` が指定されている場合は、Coordinator テーブルも修復されます。また、Cosmos DB for NoSQL を使用している場合は、このコマンドを実行すると、各テーブルにアタッチされているストアドプロシージャも修復されます。
+`--coordinator` が指定されている場合は、Coordinator テーブルも修復されます。Coordinator の名前空間またはテーブルが存在しない場合は、再作成されます。また、Cosmos DB for NoSQL を使用している場合は、このコマンドを実行すると、各テーブルにアタッチされているストアドプロシージャも修復されます。
 
 :::note
 
@@ -393,14 +388,6 @@ java -jar scalardb-schema-loader-<X.Y.Z>.jar --config <PATH_TO_SCALARDB_PROPERTI
 ### テーブルのインポート
 
 `--import` オプションとインポート固有のスキーマファイルを使用して、JDBC データベース内の既存のテーブルを ScalarDB にインポートできます。詳細については、[ScalarDB Schema Loader を使用して既存のテーブルを ScalarDB にインポートする](./schema-loader-import.mdx)を参照してください。
-
-### 環境をアップグレードして最新の ScalarDB API をサポートする
-
-ScalarDB 環境をアップグレードして、最新バージョンの ScalarDB API をサポートすることができます。通常、リリースノートに記載されているように、アプリケーション環境で使用する ScalarDB バージョンを更新した後、このコマンドを実行する必要があります。次のコマンドを実行するときは、説明されているように山括弧内の内容を必ず置き換えてください。
-
-```console
-java -jar scalardb-schema-loader-<X.Y.Z>.jar --config <PATH_TO_SCALARDB_PROPERTIES_FILE> --upgrade
-```
 
 ### サンプルスキーマファイル
 
@@ -629,12 +616,9 @@ dependencies {
 }
 ```
 
-### 使用例
+### テーブルの作成、変更、修復、または削除
 
-`SchemaLoader` クラスを使用すると、CLI と同じコマンドを実行できます。
-
-- スキーマで定義されているテーブルを作成、変更、削除、または修復するには、必要に応じて ScalarDB プロパティファイル、スキーマ、および追加のオプションを渡すことができます。
-- 環境をアップグレードするには、必要に応じて ScalarDB プロパティと追加のオプションを渡すことができます。
+Schema Loader を使用して、スキーマで定義されているテーブルを作成、変更、削除、または修復できます。そのためには、次に示すように、必要に応じて ScalarDB プロパティファイル、スキーマ、および追加のオプションを渡すことができます。
 
 ```java
 public class SchemaLoaderSample {
@@ -661,10 +645,8 @@ public class SchemaLoaderSample {
     Map<String, String> indexCreationOptions = new HashMap<>();
     indexCreationOptions.put(DynamoAdmin.NO_SCALING, "true");
 
-    Map<String, String> reparationOptions = new HashMap<>();
-    reparationOptions.put(DynamoAdmin.NO_BACKUP, "true");
-
-    Map<String, String> upgradeOptions = new HashMap<>(tableCreationOptions);
+    Map<String, String> tableReparationOptions = new HashMap<>();
+    tableReparationOptions.put(DynamoAdmin.NO_BACKUP, "true");
 
     // Create tables.
     SchemaLoader.load(configFilePath, schemaFilePath, tableCreationOptions, createCoordinatorTables);
@@ -672,14 +654,11 @@ public class SchemaLoaderSample {
     // Alter tables.
     SchemaLoader.alterTables(configFilePath, alteredSchemaFilePath, indexCreationOptions);
 
-    // Repair namespaces and tables.
-    SchemaLoader.repairAll(configFilePath, schemaFilePath, reparationOptions, repairCoordinatorTables);
+    // Repair tables.
+    SchemaLoader.repairTables(configFilePath, schemaFilePath, tableReparationOptions, repairCoordinatorTables);
 
     // Delete tables.
     SchemaLoader.unload(configFilePath, schemaFilePath, deleteCoordinatorTables);
-
-    // Upgrade the environment
-    SchemaLoader.upgrade(configFilePath, upgradeOptions);
 
     return 0;
   }
@@ -695,8 +674,8 @@ SchemaLoader.load(configFilePath, serializedSchemaJson, tableCreationOptions, cr
 // Alter tables.
 SchemaLoader.alterTables(configFilePath, serializedAlteredSchemaFilePath, indexCreationOptions);
 
-// Repair namespaces and tables.
-SchemaLoader.repairAll(configFilePath, serializedSchemaJson, reparationOptions, repairCoordinatorTables);
+// Repair tables.
+SchemaLoader.repairTables(configFilePath, serializedSchemaJson, tableReparationOptions, repairCoordinatorTables);
 
 // Delete tables.
 SchemaLoader.unload(configFilePath, serializedSchemaJson, deleteCoordinatorTables);
@@ -711,14 +690,11 @@ SchemaLoader.load(properties, serializedSchemaJson, tableCreationOptions, create
 // Alter tables.
 SchemaLoader.alterTables(properties, serializedAlteredSchemaFilePath, indexCreationOptions);
 
-// Repair namespaces and tables.
-SchemaLoader.repairAll(properties, serializedSchemaJson, reparationOptions, repairCoordinatorTables);
+// Repair tables.
+SchemaLoader.repairTables(properties, serializedSchemaJson, tableReparationOptions, repairCoordinatorTables);
 
 // Delete tables.
 SchemaLoader.unload(properties, serializedSchemaJson, deleteCoordinatorTables);
-
-// Upgrade the environment
-SchemaLoader.upgrade(properties, upgradeOptions);
 ```
 
 ### テーブルのインポート

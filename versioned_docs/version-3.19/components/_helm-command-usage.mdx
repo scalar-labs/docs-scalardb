@@ -1,0 +1,106 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+
+<h3>Prerequisites</h3>
+
+1. Add the Scalar Helm Chart repository and update it to the latest version by using the `helm repo add` command and `helm repo update` command as follows:
+
+   <CodeBlock language="console">helm repo add scalar-labs https://scalar-labs.github.io/helm-charts</CodeBlock>
+
+   <CodeBlock language="console">helm repo update</CodeBlock>
+
+1. Decide on the version of the ScalarDB product (strictly, the corresponding chart version) that you will deploy or upgrade. You can check the version by running the following command:
+
+   <CodeBlock language="console">helm search repo scalar-labs/&lt;CHART_NAME&gt; -l</CodeBlock>
+
+   :::tip
+
+   In this document (when you deploy the {props.productName}), run the following command:
+
+   <CodeBlock language="console">helm search repo scalar-labs/{props.helmChartName} -l</CodeBlock>
+
+   :::
+
+   For example, you should see a similar output as below:
+
+   <CodeBlock language="console">NAME                        CHART VERSION   APP VERSION
+   scalar-labs/&lt;CHART_NAME&gt;    1.9.0           3.16.1
+   scalar-labs/&lt;CHART_NAME&gt;    1.8.1           3.16.1
+   scalar-labs/&lt;CHART_NAME&gt;    1.8.0           3.16.0
+   scalar-labs/&lt;CHART_NAME&gt;    1.7.6           3.15.5
+   scalar-labs/&lt;CHART_NAME&gt;    1.7.5           3.15.5
+   scalar-labs/&lt;CHART_NAME&gt;    1.7.4           3.15.5
+   scalar-labs/&lt;CHART_NAME&gt;    1.7.3           3.15.4
+   scalar-labs/&lt;CHART_NAME&gt;    1.7.2           3.15.3
+   scalar-labs/&lt;CHART_NAME&gt;    1.7.1           3.15.2
+   scalar-labs/&lt;CHART_NAME&gt;    1.7.0           3.15.1
+   scalar-labs/&lt;CHART_NAME&gt;    1.6.4           3.14.4
+   scalar-labs/&lt;CHART_NAME&gt;    1.6.3           3.14.3
+   scalar-labs/&lt;CHART_NAME&gt;    1.6.2           3.14.2
+   scalar-labs/&lt;CHART_NAME&gt;    1.6.1           3.14.1
+   scalar-labs/&lt;CHART_NAME&gt;    1.6.0           3.14.0</CodeBlock>
+
+   :::note
+
+   - `APP VERSION` means the version of the ScalarDB product itself. First, check this version to decide which version of the ScalarDB product you will deploy or upgrade.
+   - After checking the version under `APP VERSION` and deciding which version of the ScalarDB product you will deploy or upgrade, note the corresponding version under `CHART VERSION`.
+   - If there are several of the same versions under `APP VERSION`, note the latest version under `CHART VERSION`.
+   - For example:
+     - If you want to deploy the ScalarDB product 3.16.1, note `1.9.0` as `CHART VERSION`.
+     - If you want to deploy the ScalarDB product 3.15.5, note `1.7.6` as `CHART VERSION`.
+     - If you want to deploy the ScalarDB product 3.14.4, note `1.6.4` as `CHART VERSION`.
+
+   :::
+
+<h3>Deploy, upgrade, or uninstall</h3>
+
+<Tabs groupId="operations" queryString>
+  <TabItem value="deploy" label="Deploy" default>
+  Deploy the {props.productName} by using the `helm install` command as follows:
+
+  <CodeBlock language="console">helm install &lt;RELEASE_NAME&gt; scalar-labs/{props.helmChartName} -f {props.helmChartName}.yaml --namespace &lt;KUBERNETES_NAMESPACE&gt; --version &lt;CHART_VERSION&gt;</CodeBlock>
+
+  :::note
+
+  - Change `<RELEASE_NAME>` to the arbitrary (unique) name of your deployment.
+  - For the `--namespace` option, change `<KUBERNETES_NAMESPACE>` to the name of the Kubernetes namespace that you want to deploy the {props.productName} to.
+  - For the `--version` option, change `<CHART_VERSION>` to the version that you noted in the previous step.
+
+  :::
+  </TabItem>
+  <TabItem value="upgrade" label="Upgrade">
+  Upgrade the existing {props.productName} deployment by using the `helm upgrade` command as follows:
+
+  <CodeBlock language="console">helm upgrade &lt;RELEASE_NAME&gt; scalar-labs/{props.helmChartName} -f {props.helmChartName}.yaml --namespace &lt;KUBERNETES_NAMESPACE&gt; --version &lt;CHART_VERSION&gt;</CodeBlock>
+
+  :::note
+
+  - Change `<RELEASE_NAME>` to the arbitrary (unique) name of the deployment that you want to upgrade.
+  - For the `--namespace` option, change `<KUBERNETES_NAMESPACE>` to the name of the Kubernetes namespace that you want to upgrade the {props.productName} of.
+  - For the `--version` option, change `<CHART_VERSION>` to the version that you noted in the previous step.
+
+  :::
+
+  :::important
+
+  Downgrading the version of the {props.productName} is not supported. When specifying a version number, you can do only the following:
+  
+    - Specify the same version as the existing deployment. For example, you might do this when updating configurations.
+    - Specify a version that is greater than the existing deployment. For example, you might do this when upgrading the version of the {props.productName}.
+
+  :::
+  </TabItem>
+  <TabItem value="uninstall" label="Uninstall">
+  Uninstall the existing {props.productName} deployment by using the `helm uninstall` command as follows:
+
+  <CodeBlock language="console">helm uninstall &lt;RELEASE_NAME&gt; --namespace &lt;KUBERNETES_NAMESPACE&gt;</CodeBlock>
+
+  :::note
+
+  - Change `<RELEASE_NAME>` to the arbitrary (unique) name of the deployment that you want to uninstall.
+  - For the `--namespace` option, change `<KUBERNETES_NAMESPACE>` to the name of the Kubernetes namespace that you want to uninstall the {props.productName} of.
+
+  :::
+  </TabItem>
+</Tabs>

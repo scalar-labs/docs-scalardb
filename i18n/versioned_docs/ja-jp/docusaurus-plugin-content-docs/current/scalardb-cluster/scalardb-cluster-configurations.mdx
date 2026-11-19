@@ -1759,6 +1759,61 @@ LogApplier 設定は、レプリケーションデータがどのように処理
 - **説明:** コーディネーターステートキャッシュ内のエントリの最大数。このキャッシュは、Coordinator データベースへのルックアップを最適化するためにトランザクション状態を保存します。
 - **デフォルト値:** `1000`
 
+### OpenTelemetry 設定
+
+以下の設定は、OpenTelemetry Protocol (OTLP) over HTTP を使用して、ScalarDB Cluster ノードからテレメトリデータ (トレースとメトリクス) をエクスポートするために使用できます。
+
+テレメトリデータをエクスポートするには、`scalar.db.cluster.node.opentelemetry.enabled` を `true` に設定し、エクスポートするテレメトリデータの種類ごとにエンドポイントを指定します。受信したいテレメトリデータの種類のエンドポイントのみを指定する必要があります。たとえば、トレースのみをエクスポートする場合は、`scalar.db.cluster.node.opentelemetry.traces.endpoint` のみを指定します。
+
+:::note
+
+- OpenTelemetry を有効にしても、エンドポイントを指定しない場合、テレメトリデータはエクスポートされません。
+- ログのエクスポートはまだ実装されていません。将来のバージョンでサポートを予定しています。ScalarDB Cluster のログを確認するには、コンテナの stdout を監視してください。
+
+:::
+
+#### `cluster.node.opentelemetry.enabled`
+
+- **フィールド:** `scalar.db.cluster.node.opentelemetry.enabled`
+- **説明:** OpenTelemetry が有効かどうか。`false` に設定されている場合、エンドポイントを指定しても、テレメトリデータはエクスポートされません。
+- **デフォルト値:** `false`
+
+#### `cluster.node.opentelemetry.service_name`
+
+- **フィールド:** `scalar.db.cluster.node.opentelemetry.service_name`
+- **説明:** オブザーバビリティバックエンドで ScalarDB Cluster を識別するサービス名。この値は、`service.name` リソース属性としてすべてのエクスポートされたテレメトリデータに付加されます。
+- **デフォルト値:** `scalardb-cluster-node`
+
+#### `cluster.node.opentelemetry.traces.endpoint`
+
+- **フィールド:** `scalar.db.cluster.node.opentelemetry.traces.endpoint`
+- **説明:** トレースをエクスポートする OTLP HTTP エンドポイント (例: `http://otel-collector:4318/v1/traces`)。指定しない場合、トレースはエクスポートされません。
+- **デフォルト値:** empty
+
+#### `cluster.node.opentelemetry.metrics.endpoint`
+
+- **フィールド:** `scalar.db.cluster.node.opentelemetry.metrics.endpoint`
+- **説明:** メトリクスをエクスポートする OTLP HTTP エンドポイント (例: `http://otel-collector:4318/v1/metrics`)。指定しない場合、メトリクスはエクスポートされません。
+- **デフォルト値:** empty
+
+#### `cluster.node.opentelemetry.metrics.export_interval_seconds`
+
+- **フィールド:** `scalar.db.cluster.node.opentelemetry.metrics.export_interval_seconds`
+- **説明:** メトリクスをエクスポートする間隔 (秒)。この値は正の数である必要があります。`0` または負の数を指定した場合、デフォルト値が使用されます。
+- **デフォルト値:** `60`
+
+#### `cluster.node.opentelemetry.storage_health_check.enabled`
+
+- **フィールド:** `scalar.db.cluster.node.opentelemetry.storage_health_check.enabled`
+- **説明:** バックエンドストレージの定期的なヘルスチェックが有効かどうか。ヘルスチェックの結果はメトリクスとしてエクスポートされます。ヘルスチェックは、OpenTelemetry が有効で `scalar.db.cluster.node.opentelemetry.metrics.endpoint` が指定されている場合にのみ実行されます。
+- **デフォルト値:** `true`
+
+#### `cluster.node.opentelemetry.storage_health_check.interval_seconds`
+
+- **フィールド:** `scalar.db.cluster.node.opentelemetry.storage_health_check.interval_seconds`
+- **説明:** バックエンドストレージのヘルスチェックの間隔 (秒)。
+- **デフォルト値:** `30`
+
 ## その他の ScalarDB Cluster 設定
 
 ScalarDB Cluster で使用できる追加の設定は以下の通りです。
@@ -1835,7 +1890,7 @@ Transaction Coordinator を使用するデプロイメントパターンの詳�
 Transaction Coordinator はクライアントを認証せず、独自の認証と認可の設定を持ちません。クライアントがトランザクションを開始または参加するときに提示する認証トークンを対象クラスターに転送し、対象クラスターが認証と認可を実行します。そのため、`scalar.db.cluster.auth.enabled` は Transaction Coordinator に影響しません。Transaction Coordinator へのネットワークアクセスは、対象クラスターへのアクセスを制限するのと同じ方法で制限してください。
 
 :::
-
+`scalar.db.default_namespace_name`
 ### ScalarDB Cluster と共有する設定
 
 以下のセクションで説明する Transaction Coordinator 固有の設定に加えて、Transaction Coordinator は ScalarDB Cluster と同じ方法で設定される以下の設定を使用します。

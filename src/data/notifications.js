@@ -25,6 +25,28 @@ const notificationsList = [
   // },
   {
     message: {
+      en: 'Blog post: ScalarDB 3.19 has been released!',
+      ja: 'ブログ記事: ScalarDB 3.19 をリリースしました！'
+    },
+    url: {
+      en: 'https://medium.com/scalar-engineering/scalardb-3-19-has-been-released-8f6cc4ef8fec?utm_source=docs-site&utm_medium=notifications',
+      ja: 'https://medium.com/scalar-engineering-ja/scalardb-3-19-%E3%82%92%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E3%81%97%E3%81%BE%E3%81%97%E3%81%9F-5251bfbd990d?utm_source=docs-site&utm_medium=notifications'
+    },
+    unread: true
+  },
+  {
+    message: {
+      en: 'Create an application that uses the Microservice Transaction API',
+      ja: 'Microservice Transaction API を使用するアプリケーションを作成する'
+    },
+    url: {
+      en: 'scalardb-samples/microservice-transaction-sample-with-cluster?utm_source=docs-site&utm_medium=notifications',
+      ja: 'scalardb-samples/microservice-transaction-sample-with-cluster?utm_source=docs-site&utm_medium=notifications'
+    },
+    unread: true
+  },
+  {
+    message: {
       en: 'Control user access via OIDC-based JWT access tokens',
       ja: 'OIDC ベースの JWT アクセストークンを用いてユーザーアクセスを制御する'
     },
@@ -64,17 +86,6 @@ const notificationsList = [
     url: {
       en: 'scalardb-mcp-server/getting-started-with-scalardb-mcp-server?utm_source=docs-site&utm_medium=notifications',
       ja: 'scalardb-mcp-server/getting-started-with-scalardb-mcp-server?utm_source=docs-site&utm_medium=notifications'
-    },
-    unread: true
-  },
-  {
-    message: {
-      en: 'Replicate data for high availability',
-      ja: '高可用性のためのデータレプリケーションを行う'
-    },
-    url: {
-      en: 'scalardb-cluster/remote-replication?utm_source=docs-site&utm_medium=notifications',
-      ja: 'scalardb-cluster/remote-replication?utm_source=docs-site&utm_medium=notifications'
     },
     unread: true
   }

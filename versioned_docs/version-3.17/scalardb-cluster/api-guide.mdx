@@ -19,10 +19,10 @@ This section explains how to execute administrative operations programmatically 
 
 :::warning
 
-When an Administrative API call writes to the underlying databases, it triggers several write operations. However, these operations are not executed atomically, meaning that if the call fails midway, you may encounter inconsistent states. To resolve this inconsistency issue, you can repair the namespace or table. For details, see the following pages:
+When an Administrative API call writes to the underlying databases, it triggers several write operations. However, these operations are not executed atomically, meaning that if the call fails midway, you may encounter inconsistent states. To resolve this inconsistency issue, you can repair the table. For details, see the following pages:
 
-- [Repair a namespace](#repair-a-namespace) and [Repair a table](#repair-a-table) by using the Java API
-- [Repair namespaces and tables](../schema-loader.mdx#repair-namespaces-and-tables) by using ScalarDB Schema Loader
+- [Repair a table](#repair-a-table) by using the Java API
+- [Repair tables](../schema-loader.mdx#repair-tables) by using ScalarDB Schema Loader
 
 :::
 
@@ -324,9 +324,9 @@ You cannot alter a column data type of a table in the following cases:
 
 - The column is part of the partition key, clustering key, or secondary index key.
 - The table is on a non-JDBC database or on SQLite.
-- The conversions other than from INT to BIGINT, FLOAT to DOUBLE, and from any data to TEXT are specified.
-- For Oracle, the conversions except for from INT to BIGINT are specified.
-- For Db2 and TiDB, the conversion from BLOB to TEXT is specified.
+- The conversions other than from `INT` to `BIGINT`, `FLOAT` to `DOUBLE`, and from any data to `TEXT` are specified.
+- For Oracle, the conversions except for from `INT` to `BIGINT` are specified.
+- For Db2 and TiDB, the conversion from `BLOB` to `TEXT` is specified.
 
 :::
 
@@ -418,18 +418,6 @@ You can get table metadata as follows:
 TableMetadata tableMetadata = admin.getTableMetadata("ns", "tbl");
 ```
 
-### Repair a namespace
-
-If a namespace is in an unknown state, such as the namespace exists in the underlying storage but not its ScalarDB metadata or vice versa, this method will re-create the namespace and its metadata if necessary.
-
-You can repair the namespace as follows:
-
-```java
-// Repair the namespace "ns" with options.
-Map<String, String> options = ...;
-admin.repairNamespace("ns", options);
-```
-
 ### Repair a table
 
 If a table is in an unknown state, such as the table exists in the underlying storage but not its ScalarDB metadata or vice versa, this method will re-create the table, its secondary indexes, and their metadata if necessary.
@@ -451,16 +439,6 @@ admin.repairTable("ns", "tbl", tableMetadata, options);
 When using Consensus Commit, after upgrading to ScalarDB 3.16.5, 3.17.3, or 3.18.0 from an earlier version, you must run `repairTable()` on each existing table to create the companion before-image secondary indexes that index-based reads require. For details, see [Correctness of index-based reads](../consensus-commit.mdx#correctness-of-index-based-reads).
 
 :::
-
-### Upgrade the environment to support the latest ScalarDB API
-
-You can upgrade the ScalarDB environment to support the latest version of the ScalarDB API. Typically, as indicated in the release notes, you will need to run this method after updating the ScalarDB version that your application environment uses.
-
-```java
-// Upgrade the ScalarDB environment.
-Map<String, String> options = ...;
-admin.upgrade(options);
-```
 
 ### Specify operations for the Coordinator table
 
@@ -582,6 +560,8 @@ You can drop (delete) a user as follows:
 ```java
 admin.dropUser("username");
 ```
+
+When you drop a user, ScalarDB Cluster also deletes the privileges that were granted directly to the user and removes the user's role grants. The roles themselves are not deleted.
 
 ##### Get a user
 
@@ -712,6 +692,26 @@ When checking a privilege on a specific table, both table-level and namespace-le
 
 The following operations let you create, modify, and retrieve roles, as well as grant and revoke roles to users and other roles.
 
+A role is a named collection of privileges. When you grant a role to a user, the user can use all privileges of the role. When you grant a role to another role, the receiving role inherits all privileges of the granted role, which lets you build a role hierarchy. For more details about roles, see [Roles](./scalardb-auth-with-sql.mdx#roles).
+
+When you grant a role to a user or another role, you can also specify the *admin option*. A user who has the admin option for a role can grant that role to other users and roles, and can revoke it from them. If you grant a role to another role with the admin option, all users who have the receiving role, directly or through a role hierarchy, also have the admin option for the granted role. The admin option applies only to the role itself. It doesn't allow the user to grant privileges to the role.
+
+The following table shows who can execute each role-related operation.
+
+| Operation                                                                                         | Who can execute it                                                                                   |
+|---------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------|
+| `createRole()`, `dropRole()`                                                                      | Superusers                                                                                           |
+| `grantRoleToUser()`, `revokeRoleFromUser()`, `revokeAdminOptionFromUser()`                        | Superusers, or users who have the admin option for the role specified by `roleName`                  |
+| `grantRoleToRole()`, `revokeRoleFromRole()`, `revokeAdminOptionFromRole()`                        | Superusers, or users who have the admin option for the role specified by `memberRoleName`            |
+| `grantPrivilegeToRole()`, `revokePrivilegeFromRole()`                                             | Superusers, or users who have the `GRANT` privilege and the privilege that is granted or revoked     |
+| `getRole()`, `getRoles()`, `getRolesForUser()`, `getGranteeUsersForRole()`, `getRolePrivileges()` | Any authenticated user                                                                               |
+
+:::note
+
+If the current user is authenticated but doesn't meet the requirements, the operation throws `ExecutionException` for which `isAuthorizationError()` returns `true`. For details, see [Authentication and authorization exceptions](#authentication-and-authorization-exceptions).
+
+:::
+
 ##### Create a role
 
 You can create a role as follows:
@@ -719,6 +719,8 @@ You can create a role as follows:
 ```java
 admin.createRole("rolename");
 ```
+
+If the role already exists, `IllegalArgumentException` is thrown.
 
 ##### Drop a role
 
@@ -728,26 +730,34 @@ You can drop (delete) a role as follows:
 admin.dropRole("rolename");
 ```
 
+When you drop a role, ScalarDB Cluster also removes the role from all users and roles that it was granted to, and deletes all privileges that were granted to the role. If the role doesn't exist, `IllegalArgumentException` is thrown.
+
 ##### Get a role
 
-You can get an existing role as follows:
+You can get an existing role, including the roles that are granted to it, as follows:
 
 ```java
 Optional<AuthAdmin.Role> role = admin.getRole("rolename");
 role.ifPresent(r -> {
   System.out.println("Name: " + r.getName());
-  System.out.println("Granted roles: " + r.getGrantedRoles());
+  for (AuthAdmin.GrantedRoleRef grantedRole : r.getGrantedRoles()) {
+    System.out.println("Granted role: " + grantedRole.getName());
+    System.out.println("Has admin option: " + grantedRole.hasAdminOption());
+  }
 });
 ```
 
 ##### Get all roles
 
-You can get all roles as follows:
+You can get all roles, including the roles that are granted to each role, as follows:
 
 ```java
 List<AuthAdmin.Role> roles = admin.getRoles();
 for (AuthAdmin.Role role : roles) {
   System.out.println("Name: " + role.getName());
+  for (AuthAdmin.GrantedRoleRef grantedRole : role.getGrantedRoles()) {
+    System.out.println("  Granted role: " + grantedRole.getName() + " (admin option: " + grantedRole.hasAdminOption() + ")");
+  }
 }
 ```
 
@@ -774,6 +784,12 @@ admin.grantRoleToUser("username", "rolename", false);
 // Grant a role to a user with admin option (the user can then grant this role to others).
 admin.grantRoleToUser("username", "rolename", true);
 ```
+
+:::note
+
+Granting a role that is already granted to the user doesn't raise an error. If the role was previously granted without the admin option and you grant it again with the admin option, the admin option is added. Granting a role again without the admin option doesn't remove an existing admin option. To remove the admin option, use [`revokeAdminOptionFromUser()`](#revoke-admin-option-from-a-user-for-a-role).
+
+:::
 
 ##### Revoke a role from a user
 
@@ -815,6 +831,12 @@ admin.grantRoleToRole("rolename", "memberrolename", false);
 admin.grantRoleToRole("rolename", "memberrolename", true);
 ```
 
+:::note
+
+As with granting a role to a user, granting a member role that is already granted to the role doesn't raise an error, and granting it again with the admin option adds the admin option. If the grant would create a cycle in the role hierarchy (for example, granting `role_a` to `role_b` when `role_b` is already granted to `role_a`), the operation fails.
+
+:::
+
 ##### Revoke a member role from a role
 
 You can revoke a member role from a role as follows:
@@ -842,6 +864,12 @@ admin.grantPrivilegeToRole("rolename", "namespace", AuthAdmin.Privilege.READ, Au
 // Grant READ and WRITE privileges to a role for a specific table.
 admin.grantPrivilegeToRole("rolename", "namespace", "table", AuthAdmin.Privilege.READ, AuthAdmin.Privilege.WRITE);
 ```
+
+:::note
+
+Users who aren't superusers can grant only privileges that they have, and they must also have the `GRANT` privilege. Having the admin option for a role doesn't allow a user to grant privileges to that role.
+
+:::
 
 ##### Revoke privileges from a role
 
@@ -881,7 +909,28 @@ Set<AuthAdmin.Privilege> tablePrivileges = admin.getRolePrivileges("rolename", "
 
 :::
 
-For details about handling failures from these APIs, see [Handle authentication and authorization exceptions](#handle-authentication-and-authorization-exceptions).
+##### Example: Manage privileges by using roles
+
+The following example creates a role, grants privileges to the role, and then grants the role to a user. This example assumes that the user `user1` and the table `ns.tbl` already exist. Run this example as a superuser.
+
+```java
+// Create a role.
+admin.createRole("analyst");
+
+// Grant privileges to the role.
+admin.grantPrivilegeToRole("analyst", "ns", "tbl", AuthAdmin.Privilege.READ);
+
+// Grant the role to a user.
+admin.grantRoleToUser("user1", "analyst", false);
+
+// Confirm that the user has the READ privilege on the table through the role.
+boolean canRead = admin.hasPrivilege("user1", "ns", "tbl", AuthAdmin.Privilege.READ); // true
+
+// Revoke the role from the user. The user loses the privileges that were provided by the role.
+admin.revokeRoleFromUser("user1", "analyst");
+```
+
+For details about handling failures from these APIs, see [Authentication and authorization exceptions](#authentication-and-authorization-exceptions).
 
 ## Transaction API
 

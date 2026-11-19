@@ -325,9 +325,9 @@ You cannot alter a column data type of a table in the following cases:
 
 - The column is part of the partition key, clustering key, or secondary index key.
 - The table is on a non-JDBC database or on SQLite.
-- The conversions other than from INT to BIGINT, FLOAT to DOUBLE, and from any data to TEXT are specified.
-- For Oracle, the conversions except for from INT to BIGINT are specified.
-- For Db2 and TiDB, the conversion from BLOB to TEXT is specified.
+- The conversions other than from `INT` to `BIGINT`, `FLOAT` to `DOUBLE`, and from any data to `TEXT` are specified.
+- For Oracle, the conversions except for from `INT` to `BIGINT` are specified.
+- For Db2 and TiDB, the conversion from `BLOB` to `TEXT` is specified.
 
 :::
 
@@ -426,7 +426,9 @@ TableMetadata tableMetadata = admin.getTableMetadata("ns", "tbl");
 ```
 ### Repair a table
 
-You can repair the table metadata of an existing table as follows:
+If a table is in an unknown state, such as the table exists in the underlying storage but not its ScalarDB metadata or vice versa, this method will re-create the table, its secondary indexes, and their metadata if necessary.
+
+You can repair the table as follows:
 
 ```java
 // Repair the table "ns.tbl" with options.
