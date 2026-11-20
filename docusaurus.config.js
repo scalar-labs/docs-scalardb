@@ -104,7 +104,7 @@ const config = {
               "3.16": {
                 label: '3.16',
                 path: '3.16',
-                banner: 'none',
+                banner: 'unmaintained',
                 className: '3.16.9',
               },
               "3.15": {
