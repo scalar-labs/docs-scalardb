@@ -10,6 +10,41 @@ displayed_sidebar: docsEnglish
 
 This page includes a list of release notes for ScalarDB 3.19.
 
+## v3.19.4
+
+**Release date:** November 26, 2026
+
+### Summary
+
+This release fixes an issue in the Cosmos DB adapter where puts and deletes could fail or be applied incorrectly, and an issue in JDBC databases where creating or dropping a secondary index or renaming a column reset the collation of a TEXT column. It also rejects importing tables that have generated or auto-increment columns in JDBC databases, because transactions could fail to roll back or recover the records in such tables, and reduces the time required to close a transaction manager when group commit is enabled. Additionally, this release fixes an issue in ScalarDB Cluster where a long authentication pepper weakened or disabled password verification.
+
+:::warning Backward-incompatible changes
+
+- **ScalarDB Cluster with authentication enabled fails to start if `scalar.db.cluster.auth.pepper` is longer than 32 bytes in UTF-8.** If your pepper is longer than 32 bytes, change it and set the passwords of all users again before you upgrade. For the steps, see the ScalarDB Cluster bug fix below.
+- **Importing a table that has a generated column or an auto-increment column in JDBC databases now fails.** To import such a table, remove the attribute from the column beforehand.
+
+:::
+
+### Community edition
+
+#### Improvements
+
+- Reduced the time required to close a transaction manager when group commit for the Coordinator table is enabled. ([#4274](https://github.com/scalar-labs/scalardb/pull/4274))
+
+#### Bug fixes
+
+- Importing a table that has a generated column or an auto-increment column (for example, `AUTO_INCREMENT`, `IDENTITY`, or `AUTO_RANDOM`) in JDBC databases now fails. Previously, such a table could be imported, but transactions could fail to roll back or recover the records in it. To import such a table, remove the attribute from the column beforehand, for example, by running `ALTER TABLE tbl MODIFY id INT NOT NULL` in MySQL or `ALTER TABLE tbl ALTER COLUMN id DROP IDENTITY` in PostgreSQL. ([#4246](https://github.com/scalar-labs/scalardb/pull/4246))
+- Fixed an issue where creating or dropping a secondary index on a TEXT column reset the column's collation to the default on MySQL, MariaDB, TiDB, PostgreSQL and YugabyteDB, and where renaming a column did the same on MySQL, MariaDB and TiDB. On MySQL 8.0.3 and later, MariaDB and TiDB, renaming a column also keeps attributes such as `NOT NULL` and `DEFAULT`. ([#4241](https://github.com/scalar-labs/scalardb/pull/4241))
+- Fixed an issue in the Cosmos DB adapter where the stored procedure for mutations read only the first page of a query result. When Cosmos DB returned an empty page with a continuation, a put with `PutIf` or `PutIfExists` or a delete with a condition could fail with `NoMutationException` even though the condition was satisfied, a put with `PutIfNotExists` could overwrite an existing record, and a put without a condition could lose the columns that were not specified. To apply this fix to existing tables, including the Coordinator tables, repair them after upgrading, for example, with the `--repair-all` option of Schema Loader (add the `--coordinator` option to repair the Coordinator tables). ([#4256](https://github.com/scalar-labs/scalardb/pull/4256))
+
+### Enterprise edition
+
+#### Bug fixes
+
+##### ScalarDB Cluster
+
+- Fixed a bug where a long value of `scalar.db.cluster.auth.pepper` weakened or disabled password verification. ScalarDB Cluster hashes the pepper followed by the password with bcrypt, and bcrypt uses only the first 72 bytes of its input, so with an N-byte pepper, only the first 72 minus N bytes of a password were verified, and with a pepper of 72 bytes or more, a login with any password succeeded. With this fix, when authentication is enabled, ScalarDB Cluster fails to start if the pepper is longer than 32 bytes in UTF-8, and creating a user or changing a password fails if the password is longer than 72 bytes minus the length of the pepper in UTF-8 (72 bytes if no pepper is set). Logging in with an existing password is not changed: for an existing password longer than this limit, only the bytes within the limit are verified until the password is set again. If your pepper is longer than 32 bytes, change it and set the passwords of all users again before you upgrade, because changing the pepper invalidates all existing passwords. First, log in as a superuser with a client and keep that client running; it keeps using its auth token until the token expires (one day by default). Second, set a new pepper of 32 bytes or less on all nodes and restart them. Third, use that client to set the passwords of all users again with `ALTER USER`, starting with the superuser so that you can log in again if that client stops. For example, to set the password of the initial user, run `ALTER USER "admin" WITH PASSWORD '<NEW_PASSWORD>';`. After that, upgrade. If you skip the first step, no user with a password can log in after the pepper is changed; to recover, restart the nodes with the old pepper.
+
 ## v3.19.3
 
 **Release date:** November 11, 2026

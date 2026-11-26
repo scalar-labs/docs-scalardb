@@ -81,25 +81,25 @@ const config = {
                 label: '3.20',
                 path: 'latest', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
                 banner: 'none',
-                className: '3.20.1',
+                className: '3.20.2',
               },
               '3.19': { // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
                 label: '3.19',
                 path: '3.19', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
                 banner: 'none',
-                className: '3.19.3',
+                className: '3.19.4',
               },
              "3.18": { // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
                 label: '3.18',
                 path: '3.18', // When a new version is released and this is no longer the current version, change this to the version number and then delete this comment.
                 banner: 'none',
-                className: '3.18.4',
+                className: '3.18.5',
               },
               "3.17": {
                 label: '3.17',
                 path: '3.17',
                 banner: 'none',
-                className: '3.17.7',
+                className: '3.17.8',
               },
               "3.16": {
                 label: '3.16',
