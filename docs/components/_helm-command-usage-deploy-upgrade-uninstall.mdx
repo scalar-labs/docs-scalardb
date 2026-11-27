@@ -1,0 +1,53 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+
+<Tabs groupId="operations" queryString>
+  <TabItem value="deploy" label="Deploy" default>
+  Deploy {props.productName} by using the `helm install` command as follows:
+
+  <CodeBlock language="console">helm install &lt;RELEASE_NAME&gt; {props.helmRepoName}/{props.helmChartName} -f {props.helmChartName}.yaml --namespace &lt;{props.namespacePlaceHolder}&gt; --version &lt;CHART_VERSION&gt;</CodeBlock>
+
+  :::note
+
+  - Change `<RELEASE_NAME>` to the arbitrary (unique) name of your deployment.
+  - For the `--namespace` option, change <code>\<{props.namespacePlaceHolder}\></code> to the name of the Kubernetes namespace that you want to deploy {props.productName} to.
+  - For the `--version` option, change `<CHART_VERSION>` to the version that you noted in the previous step.
+
+  :::
+  </TabItem>
+  <TabItem value="upgrade" label="Upgrade">
+  Upgrade the existing deployment of {props.productName} by using the `helm upgrade` command as follows:
+
+  <CodeBlock language="console">helm upgrade &lt;RELEASE_NAME&gt; {props.helmRepoName}/{props.helmChartName} -f {props.helmChartName}.yaml --namespace &lt;{props.namespacePlaceHolder}&gt; --version &lt;CHART_VERSION&gt;</CodeBlock>
+
+  :::note
+
+  - Change `<RELEASE_NAME>` to the arbitrary (unique) name of the deployment that you want to upgrade.
+  - For the `--namespace` option, change <code>\<{props.namespacePlaceHolder}\></code> to the name of the Kubernetes namespace that you want to upgrade {props.productName} of.
+  - For the `--version` option, change `<CHART_VERSION>` to the version that you noted in the previous step.
+
+  :::
+
+  :::important
+
+  Downgrading the version of {props.productName} is not supported. When specifying a version number, you can do only the following:
+  
+  - Specify the same version as the existing deployment. For example, you might do this when updating configurations.
+  - Specify a version that is greater than the existing deployment. For example, you might do this when upgrading the version of {props.productName}.
+
+  :::
+  </TabItem>
+  <TabItem value="uninstall" label="Uninstall">
+  Uninstall the existing deployment of {props.productName} by using the `helm uninstall` command as follows:
+
+  <CodeBlock language="console">helm uninstall &lt;RELEASE_NAME&gt; --namespace &lt;{props.namespacePlaceHolder}&gt;</CodeBlock>
+
+  :::note
+
+  - Change `<RELEASE_NAME>` to the arbitrary (unique) name of the deployment that you want to uninstall.
+  - For the `--namespace` option, change <code>\<{props.namespacePlaceHolder}\></code> to the name of the Kubernetes namespace that you want to uninstall {props.productName} of.
+
+  :::
+  </TabItem>
+</Tabs>

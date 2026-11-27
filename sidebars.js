@@ -704,6 +704,11 @@ const sidebars = {
           collapsible: true,
           items: [
             {
+              "type": "doc",
+              "id": "scalardb-cluster/deploy-scalardb-cluster",
+              "label": "Deploy ScalarDB Cluster [NEW]"
+            },
+            {
               type: 'doc',
               id: 'scalardb-cluster/setup-scalardb-cluster-on-kubernetes-by-using-helm-chart',
               label: 'Deploy ScalarDB Cluster Locally',
@@ -775,28 +780,8 @@ const sidebars = {
               items: [
                 {
                   type: 'doc',
-                  id: 'helm-charts/getting-started-scalar-helm-charts',
-                  label: 'Use Scalar Helm Charts',
-                },
-                {
-                  type: 'doc',
-                  id: 'helm-charts/getting-started-scalardb-cluster-tls',
-                  label: 'ScalarDB Cluster with TLS by Using a Helm Chart',
-                },
-                {
-                  type: 'doc',
-                  id: 'helm-charts/getting-started-scalardb-cluster-tls-cert-manager',
-                  label: 'ScalarDB Cluster with TLS by Using cert-manager and a Helm Chart',
-                },
-                {
-                  type: 'doc',
                   id: 'helm-charts/getting-started-monitoring',
                   label: 'Prometheus Operator for Monitoring by Using a Helm Chart',
-                },
-                {
-                  type: 'doc',
-                  id: 'helm-charts/getting-started-logging',
-                  label: 'Loki Stack for Logging by Using a Helm Chart',
                 },
               ],
             },
@@ -854,11 +839,6 @@ const sidebars = {
                   id: 'scalar-kubernetes/CreateBastionServer',
                   label: 'Create a Bastion Server',
                 },
-                {
-                  type: 'doc',
-                  id: 'helm-charts/how-to-deploy-scalardb-cluster',
-                  label: 'Deploy ScalarDB Cluster by Using a Helm Chart',
-                },
               ],
             },
             {
@@ -900,11 +880,6 @@ const sidebars = {
                   type: 'doc',
                   id: 'helm-charts/mount-files-or-volumes-on-scalar-pods',
                   label: 'Mount Files or Volumes on ScalarDB Pods',
-                },
-                {
-                  type: 'doc',
-                  id: 'helm-charts/use-secret-for-credentials',
-                  label: 'Use Secret Resources',
                 },
               ],
             },
