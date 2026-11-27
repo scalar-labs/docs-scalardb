@@ -1,0 +1,27 @@
+1. Install minikube by following the [**1 Installation** section of the official minikube documentation](https://minikube.sigs.k8s.io/docs/start/). Installing the latest version of minikube is recommended.
+
+1. Run the [`minikube start`](https://minikube.sigs.k8s.io/docs/commands/start/) command to start a Kubernetes cluster, replacing the contents of the angle brackets as described.
+
+    ```console
+    minikube start --kubernetes-version=<KUBERNETES_VERSION>
+    ```
+
+    :::note
+
+    You must specify the supported version of Kubernetes. You can see the supported Kubernetes version on the [Requirements](../requirements#kubernetes) page.
+
+    :::
+
+1. Check if the Kubernetes cluster is running.
+
+    ```console
+    kubectl get node
+    ```
+
+    You can see the `STATUS` is `Ready` as follows:
+
+    ```console
+    $ kubectl get node
+    NAME       STATUS   ROLES           AGE   VERSION
+    minikube   Ready    control-plane   65m   vX.YY.Z
+    ```

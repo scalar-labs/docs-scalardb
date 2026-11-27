@@ -1,0 +1,55 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+
+After deploying or upgrading ScalarDB Cluster, you should check the following points:
+
+1. Check if the pod status is `Running`, replacing the contents in the angle brackets as described.
+
+    <CodeBlock language="console">
+    {`${props.clientCli} get pod -n <${props.namespacePlaceHolder}>`}
+    </CodeBlock>
+
+    For example, you can see `Running` in the `STATUS` column and `1/1` in the `READY` column as follows:
+
+    <CodeBlock language="console">
+    {`$ ${props.clientCli} get pod -n default
+    NAME                                     READY   STATUS    RESTARTS   AGE
+    scalardb-cluster-node-5cbb9c6f94-7vr6d   1/1     Running   0          30s
+    scalardb-cluster-node-5cbb9c6f94-ql86r   1/1     Running   0          30s
+    scalardb-cluster-node-5cbb9c6f94-vpklh   1/1     Running   0          30s`}
+    </CodeBlock>
+
+1. Check if the service is exposed, replacing the contents in the angle brackets as described.
+
+    <CodeBlock language="console">
+    {`${props.clientCli} get svc -n <${props.namespacePlaceHolder}>`}
+    </CodeBlock>
+
+    <Tabs groupId="connectivity" queryString>
+      <TabItem value="external-k8s" label={`Access from outside the ${props.k8sDistroName} cluster`} default>
+      If you set `scalardbCluster.service.type` to `LoadBalancer` in **Create a custom values file**, you'll see the IP address in the `EXTERNAL-IP` column for the service with the suffix `-endpoint`, for example, as follows:
+
+      <CodeBlock language="console">
+      {`$ ${props.clientCli} get svc -n default
+      NAME                        TYPE           CLUSTER-IP       EXTERNAL-IP   PORT(S)           AGE
+      kubernetes                  ClusterIP      10.96.0.1        <none>        443/TCP           6m33s
+      scalardb-cluster-endpoint   LoadBalancer   10.110.171.160   127.0.0.1     60053:30768/TCP   3m57s
+      scalardb-cluster-headless   ClusterIP      None             <none>        60053/TCP         3m57s
+      scalardb-cluster-metrics    ClusterIP      10.109.90.225    <none>        9080/TCP          3m57s`}
+      </CodeBlock>
+
+      </TabItem>
+      <TabItem value="internal-k8s" label={`Access from inside the ${props.k8sDistroName} cluster`}>
+      If you set `scalardbCluster.service.type` to `ClusterIP` in **Create a custom values file**, you'll see the IP address in the `CLUSTER-IP` column for the service with the suffix `-endpoint`, for example, as follows:
+
+      <CodeBlock language="console">
+      {`$ ${props.clientCli} get svc -n default
+      NAME                        TYPE        CLUSTER-IP       EXTERNAL-IP   PORT(S)     AGE
+      kubernetes                  ClusterIP   10.96.0.1        <none>        443/TCP     9m54s
+      scalardb-cluster-endpoint   ClusterIP   10.110.171.160   <none>        60053/TCP   7m18s
+      scalardb-cluster-headless   ClusterIP   None             <none>        60053/TCP   7m18s
+      scalardb-cluster-metrics    ClusterIP   10.109.90.225    <none>        9080/TCP    7m18s`}
+      </CodeBlock>
+      </TabItem>
+    </Tabs>

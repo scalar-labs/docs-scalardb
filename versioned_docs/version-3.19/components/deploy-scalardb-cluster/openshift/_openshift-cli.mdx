@@ -1,0 +1,40 @@
+import PrerequisitesForOpenShiftCli from './_prerequisites-for-openshift-cli.mdx';
+import DeployOpenShiftCli from './_deploy-openshift-cli.mdx';
+import CreateOpenShiftProjectCli from './_create-openshift-project-cli.mdx';
+import DeployDatabase from '../common/_deploy-databases.mdx';
+import CreateCustomValuesForOpenShift from './_create-custom-values-for-openshift.mdx';
+import CreateSecret from '../common/_create-secret.mdx';
+import HelmCommandUsage from '../common/_scalardb-cluster-helm-command-usage.mdx';
+import CheckYourDeployment from '../common/_check-your-deployment.mdx';
+
+<h3>Prerequisites</h3>
+
+<PrerequisitesForOpenShiftCli />
+
+<h3>Deploy an OpenShift cluster</h3>
+
+<DeployOpenShiftCli />
+
+<h3>Create an OpenShift project</h3>
+
+<CreateOpenShiftProjectCli />
+
+<h3>Deploy a backend database</h3>
+
+<DeployDatabase />
+
+<h3>Create a custom values file</h3>
+
+<CreateCustomValuesForOpenShift />
+
+<h3>Create a secret</h3>
+
+<CreateSecret clientCli="oc" namespacePlaceHolder="OPENSHIFT_PROJECT" />
+
+<h3>Deploy ScalarDB Cluster by using a Helm Chart</h3>
+
+<HelmCommandUsage helmRepoName="openshift-helm-charts" helmRepoUrl="https://charts.openshift.io/" namespacePlaceHolder="OPENSHIFT_PROJECT" productName="ScalarDB Cluster" helmChartName="scalardb-cluster" />
+
+<h3>Check your deployment</h3>
+
+<CheckYourDeployment clientCli="oc" namespacePlaceHolder="OPENSHIFT_PROJECT" k8sDistroName="OpenShift" />

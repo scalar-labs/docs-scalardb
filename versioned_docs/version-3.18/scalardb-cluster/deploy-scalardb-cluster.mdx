@@ -1,0 +1,76 @@
+---
+tags:
+  - Enterprise Standard
+  - Enterprise Premium
+displayed_sidebar: docsEnglish
+---
+
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import Minikube from '../components/deploy-scalardb-cluster/minikube/_minikube.mdx';
+import OpenShift from '../components/deploy-scalardb-cluster/openshift/_openshift.mdx';
+
+# Deploy ScalarDB Cluster
+
+This guide helps you configure and deploy ScalarDB Cluster across different platforms by providing a comprehensive overview of supported deployment options. You can choose from various combinations of platforms and pricing models for the approach that fits your environment and requirements.
+
+## Choose a platform and pricing model
+
+ScalarDB Cluster supports the following platform and pricing model types:
+
+1. Platform
+   - Amazon Elastic Kubernetes Service (EKS)
+   - Azure Kubernetes Service (AKS)
+   - Google Kubernetes Engine (GKE)
+   - Red Hat OpenShift (OpenShift)
+   - minikube for development purposes only
+   - Other platforms
+1. Pricing model
+   - Pay as you go (PAYG)
+   - Bring your own license (BYOL)
+
+Before proceeding, decide your preferred combination of platform and pricing model.
+
+<details>
+<summary>Matrix of supported combinations</summary>
+
+| Platform       | Pricing model |
+|----------------|---------------|
+| EKS            | PAYG + BYOL   |
+| AKS            | BYOL          |
+| GKE            | PAYG + BYOL   |
+| OpenShift      | BYOL          |
+| minikube       | BYOL          |
+| Other platform | [Contact us](https://www.scalar-labs.com/contact) |
+
+</details>
+
+Select the tabs below based on the matrix of supported combinations for how you want to deploy ScalarDB Cluster:
+
+<Tabs groupId="platform" queryString>
+  <TabItem value="eks" label="EKS" default>
+    If you want to deploy ScalarDB Cluster on AWS, please refer to [Deploy ScalarDB Cluster on Amazon Elastic Kubernetes Service (EKS)](scalar-kubernetes/ManualDeploymentGuideScalarDBClusterOnEKS.mdx).
+  </TabItem>
+  <TabItem value="aks" label="AKS">
+    AKS is supported. A deployment guide is coming soon.
+  </TabItem>
+  <TabItem value="gke" label="GKE">
+    If you want to deploy ScalarDB Cluster on Google Cloud, please refer to [Deploy ScalarDB Cluster Through Google Cloud Marketplace](./deploy-scalardb-cluster-google-cloud-marketplace.mdx).
+  </TabItem>
+  <TabItem value="openshift" label="OpenShift">
+    <OpenShift />
+  </TabItem>
+  <TabItem value="minikube" label="minikube">
+
+:::note
+
+minikube is intended for development and testing purposes only. Do not use minikube in production environments.
+
+:::
+
+    <Minikube />
+  </TabItem>
+  <TabItem value="other" label="Other platform">
+    If you want to use other platforms, please [contact us](https://www.scalar-labs.com/contact).
+  </TabItem>
+</Tabs>

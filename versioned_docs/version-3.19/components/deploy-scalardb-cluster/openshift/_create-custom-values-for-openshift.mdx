@@ -1,0 +1,52 @@
+import SetContainerImageConfigurationsForOpenShift from './_set-container-image-configurations-for-openshift.mdx';
+import SetMembershipConfigurations from '../common/_set-membership-configurations.mdx';
+import SetLicenseConfigurations from '../common/_set-license-configurations.mdx';
+import SetDatabaseConfigurations from '../common/_set-database-configurations.mdx';
+import SetServiceConfigurations from '../common/_set-service-configurations.mdx';
+import SetSecretNameConfigurations from '../common/_set-secret-name-configurations.mdx';
+import SetOptionalConfigurations from '../common/_set-optional-configurations.mdx';
+import ExampleCustomValues from '../common/_example-custom-values.mdx';
+
+Create your custom values file `scalardb-cluster.yaml` based on your environment and your decisions in the previous steps.
+
+<h4>Set the required configurations</h4>
+
+1. Set the container image configurations.
+
+    <SetContainerImageConfigurationsForOpenShift />
+
+1. Set the membership configurations.
+
+    <SetMembershipConfigurations />
+
+1. Set the license configurations.
+
+    <SetLicenseConfigurations />
+
+1. Set the database configurations.
+
+    Based on the backend databases you chose in **Deploy a backend database**, set the database configurations in `scalardbCluster.scalardbClusterNodeProperties`. Select one of the following databases to see an example of these configurations. Also, please replace the contents in the angle brackets as described.
+
+    <SetDatabaseConfigurations />
+
+    :::note
+
+    In a later step, you will need to create a Kubernetes secret and set the configuration `scalardbCluster.secretName`.
+
+    :::
+
+1. Set the service configurations.
+
+    <SetServiceConfigurations k8sDistroName="OpenShift" />
+
+1. Set the secret name configurations.
+
+    <SetSecretNameConfigurations />
+
+<h4>Set the optional configurations</h4>
+
+<SetOptionalConfigurations />
+
+<h4>Example</h4>
+
+<ExampleCustomValues imageRepository="registry.connect.redhat.com/scalar-labs/scalardb-cluster-node-ubi-byol-premium" />

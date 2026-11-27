@@ -1,0 +1,15 @@
+1. Deploy OpenShift by following the [official OpenShift documentation](https://docs.redhat.com/en/documentation/openshift_container_platform/4.21/html-single/installation_overview/index). You can also use an OpenShift managed service.
+
+1. Check if the OpenShift cluster is running.
+
+    ```console
+    oc get node
+    ```
+
+    The OpenShift cluster is running if `STATUS` is `Ready` as follows:
+
+    ```console
+    $ oc get node
+    NAME   STATUS   ROLES                         AGE   VERSION
+    crc    Ready    control-plane,master,worker   77d   vX.Y.Z
+    ```

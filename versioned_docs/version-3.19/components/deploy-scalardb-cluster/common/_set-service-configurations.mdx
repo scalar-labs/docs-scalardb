@@ -1,0 +1,25 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+Based on the connectivity of ScalarDB Cluster, you need to set `scalardbCluster.service.type`. Select one of the following types of connections to see an example of this configuration.
+
+<Tabs groupId="connectivity" queryString>
+  <TabItem value="external-k8s" label={`Access from outside the ${props.k8sDistroName} cluster`} default>
+  If your application accesses ScalarDB Cluster from outside the {props.k8sDistroName} cluster, set `scalardbCluster.service.type` to `LoadBalancer`.
+
+  ```yaml
+  scalardbCluster:
+    service:
+      type: "LoadBalancer"
+  ```
+  </TabItem>
+  <TabItem value="internal-k8s" label={`Access from inside the ${props.k8sDistroName} cluster`}>
+  If your application accesses ScalarDB Cluster from inside the {props.k8sDistroName} cluster, set `scalardbCluster.service.type` to `ClusterIP`.
+
+  ```yaml
+  scalardbCluster:
+    service:
+      type: "ClusterIP"
+  ```
+  </TabItem>
+</Tabs>
