@@ -1,0 +1,62 @@
+import SetContainerImageConfigurations from '../common/_set-container-image-configurations.mdx';
+import SetMembershipConfigurations from '../common/_set-membership-configurations.mdx';
+import SetLicenseConfigurations from '../common/_set-license-configurations.mdx';
+import SetDatabaseConfigurations from '../common/_set-database-configurations.mdx';
+import SetServiceConfigurations from '../common/_set-service-configurations.mdx';
+import SetSecretNameConfigurations from '../common/_set-secret-name-configurations.mdx';
+import SetOptionalConfigurations from '../common/_set-optional-configurations.mdx';
+import ExampleCustomValues from '../common/_example-custom-values.mdx';
+
+Create your custom values file `scalardb-cluster.yaml` based on your environment and your decisions in the previous steps.
+
+<h4>Set the required configurations</h4>
+
+1. Set the container image configurations.
+
+    <SetContainerImageConfigurations pricingModel="byol" />
+
+1. Set the membership configurations.
+
+    <SetMembershipConfigurations />
+
+1. Set the license configurations.
+
+    <SetLicenseConfigurations />
+
+1. Set the database configurations.
+
+    If you deployed the PostgreSQL pod by following **Deploy a backend database**, set the following configurations, replacing the contents in the angle brackets as described.
+
+      ```yaml
+      scalardbCluster:
+        scalardbClusterNodeProperties: |
+          scalar.db.storage=jdbc
+          scalar.db.contact_points=jdbc:postgresql://postgresql-scalardb-cluster:5432/postgres
+          scalar.db.username=${env:SCALAR_DB_USERNAME}
+          scalar.db.password=${env:SCALAR_DB_PASSWORD}
+      ```
+
+    :::note
+
+    - In a later step, you will need to create a Kubernetes secret and set the configuration `scalardbCluster.secretName`.
+    - If you chose a different database in **Deploy a backend database**, set the database configurations in `scalardbCluster.scalardbClusterNodeProperties`. Select one of the following databases to see an example of these configurations. Also, please replace the contents in the angle brackets as described.
+
+    <SetDatabaseConfigurations />
+
+    :::
+
+1. Set the service configurations.
+
+    <SetServiceConfigurations k8sDistroName="Kubernetes" />
+
+1. Set the secret name configurations.
+
+    <SetSecretNameConfigurations />
+
+<h4>Set the optional configurations</h4>
+
+<SetOptionalConfigurations />
+
+<h4>Example</h4>
+
+<ExampleCustomValues imageRepository="ghcr.io/scalar-labs/scalardb-cluster-node-byol-premium" />

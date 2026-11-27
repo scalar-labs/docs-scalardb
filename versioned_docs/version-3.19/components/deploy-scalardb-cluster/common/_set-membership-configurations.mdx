@@ -1,0 +1,9 @@
+You must always set the following three properties if you deploy ScalarDB Cluster in a Kubernetes environment by using Scalar Helm Chart. These properties are fixed values. Since the properties don't depend on individual environments, you can set the same values by copying the following values and pasting them in `scalardbCluster.scalardbClusterNodeProperties`.
+
+```yaml
+scalardbCluster:
+  scalardbClusterNodeProperties: |
+    scalar.db.cluster.membership.type=KUBERNETES
+    scalar.db.cluster.membership.kubernetes.endpoint.namespace_name=${env:SCALAR_DB_CLUSTER_MEMBERSHIP_KUBERNETES_ENDPOINT_NAMESPACE_NAME}
+    scalar.db.cluster.membership.kubernetes.endpoint.name=${env:SCALAR_DB_CLUSTER_MEMBERSHIP_KUBERNETES_ENDPOINT_NAME}
+```

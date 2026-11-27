@@ -1,0 +1,51 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+
+1. Add the Scalar Helm Chart repository and update it to the latest version by using the `helm repo add` command and `helm repo update` command as follows:
+
+   <CodeBlock language="console">helm repo add {props.helmRepoName} {props.helmRepoUrl}</CodeBlock>
+
+   <CodeBlock language="console">helm repo update {props.helmRepoName}</CodeBlock>
+
+1. Decide on the version of {props.productName} (strictly, the corresponding chart version) that you will deploy or upgrade. You can check the version by running the following command:
+
+   <CodeBlock language="console">helm search repo {props.helmRepoName}/&lt;CHART_NAME&gt; -l</CodeBlock>
+
+   :::tip
+
+   In this document (when you deploy {props.productName}), run the following command:
+
+   <CodeBlock language="console">helm search repo {props.helmRepoName}/{props.helmChartName} -l</CodeBlock>
+
+   :::
+
+   For example, you should see a similar output as below:
+
+   <CodeBlock language="console">NAME                        CHART VERSION   APP VERSION
+   {props.helmRepoName}/&lt;CHART_NAME&gt;    1.9.0           3.16.1
+   {props.helmRepoName}/&lt;CHART_NAME&gt;    1.8.1           3.16.1
+   {props.helmRepoName}/&lt;CHART_NAME&gt;    1.8.0           3.16.0
+   {props.helmRepoName}/&lt;CHART_NAME&gt;    1.7.6           3.15.5
+   {props.helmRepoName}/&lt;CHART_NAME&gt;    1.7.5           3.15.5
+   {props.helmRepoName}/&lt;CHART_NAME&gt;    1.7.4           3.15.5
+   {props.helmRepoName}/&lt;CHART_NAME&gt;    1.7.3           3.15.4
+   {props.helmRepoName}/&lt;CHART_NAME&gt;    1.7.2           3.15.3
+   {props.helmRepoName}/&lt;CHART_NAME&gt;    1.7.1           3.15.2
+   {props.helmRepoName}/&lt;CHART_NAME&gt;    1.7.0           3.15.1
+   {props.helmRepoName}/&lt;CHART_NAME&gt;    1.6.4           3.14.4
+   {props.helmRepoName}/&lt;CHART_NAME&gt;    1.6.3           3.14.3
+   {props.helmRepoName}/&lt;CHART_NAME&gt;    1.6.2           3.14.2
+   {props.helmRepoName}/&lt;CHART_NAME&gt;    1.6.1           3.14.1
+   {props.helmRepoName}/&lt;CHART_NAME&gt;    1.6.0           3.14.0</CodeBlock>
+
+   :::note
+
+   - `APP VERSION` means the version of {props.productName} itself. First, check this version to decide which version of {props.productName} you will deploy or upgrade.
+   - After checking the version under `APP VERSION` and deciding which version of {props.productName} you will deploy or upgrade, use the corresponding version under `CHART VERSION`.
+   - If there are several of the same versions under `APP VERSION`, use the latest version under `CHART VERSION`. For example:
+     - If you want to deploy {props.productName} 3.16.1, use `1.9.0` as `CHART VERSION`.
+     - If you want to deploy {props.productName} 3.15.5, use `1.7.6` as `CHART VERSION`.
+     - If you want to deploy {props.productName} 3.14.4, use `1.6.4` as `CHART VERSION`.
+
+   :::
