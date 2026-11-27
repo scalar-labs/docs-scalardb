@@ -1,0 +1,49 @@
+import Prerequisites from '../common/_prerequisites.mdx';
+import DeployMinikube from './_deploy-minikube.mdx';
+import CreateKubernetesNamespace from '../common/_create-kubernetes-namespace.mdx';
+import DeployDatabaseForMinikube from './_deploy-databases-for-minikube.mdx';
+import CreateCustomValuesForMinikube from './_create-custom-values-for-minikube.mdx';
+import CreateSecret from '../common/_create-secret.mdx';
+import HelmCommandUsage from '../common/_scalardb-cluster-helm-command-usage.mdx';
+import ExposeServiceForMinikube from './_expose-service-for-minikube.mdx';
+import CheckYourDeployment from '../common/_check-your-deployment.mdx';
+
+<h2>Deploy ScalarDB Cluster on minikube for development and testing purposes</h2>
+
+This section describes how to deploy ScalarDB Cluster on minikube for development and testing purposes.
+
+<h3>Prerequisites</h3>
+
+<Prerequisites />
+
+<h3>Deploy a Kubernetes cluster</h3>
+
+<DeployMinikube />
+
+<h3>Create a Kubernetes namespace</h3>
+
+<CreateKubernetesNamespace />
+
+<h3>Deploy a backend database</h3>
+
+<DeployDatabaseForMinikube />
+
+<h3>Create a custom values file</h3>
+
+<CreateCustomValuesForMinikube />
+
+<h3>Create a secret</h3>
+
+<CreateSecret clientCli="kubectl" namespacePlaceHolder="KUBERNETES_NAMESPACE" />
+
+<h3>Deploy ScalarDB Cluster by using a Helm Chart</h3>
+
+<HelmCommandUsage helmRepoName="scalar-labs" helmRepoUrl="https://scalar-labs.github.io/helm-charts" namespacePlaceHolder="KUBERNETES_NAMESPACE" productName="ScalarDB Cluster" helmChartName="scalardb-cluster" />
+
+<h3>Expose a service</h3>
+
+<ExposeServiceForMinikube />
+
+<h3>Check your deployment</h3>
+
+<CheckYourDeployment clientCli="kubectl" namespacePlaceHolder="KUBERNETES_NAMESPACE" k8sDistroName="Kubernetes" />
