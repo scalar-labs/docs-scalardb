@@ -1,0 +1,22 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+import CodeBlock from '@theme/CodeBlock';
+
+Based on which edition and pricing model you want to use, set the container image configuration to `scalardbCluster.image.repository`. Select one of the following editions to see an example of this configuration.
+
+<Tabs groupId="editions" queryString>
+  <TabItem value="standard" label="Standard" default>
+    <CodeBlock language="yaml">
+{`scalardbCluster:
+  image:
+    repository: "ghcr.io/scalar-labs/scalardb-cluster-node-${props.pricingModel}-standard"`}
+    </CodeBlock>
+  </TabItem>
+  <TabItem value="premium" label="Premium">
+    <CodeBlock language="yaml">
+{`scalardbCluster:
+  image:
+    repository: "ghcr.io/scalar-labs/scalardb-cluster-node-${props.pricingModel}-premium"`}
+    </CodeBlock>
+  </TabItem>
+</Tabs>

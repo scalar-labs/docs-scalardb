@@ -1,0 +1,48 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs groupId="databases" queryString>
+  <TabItem value="jdbc" label="JDBC databases" default>
+  ```yaml
+  scalardbCluster:
+    scalardbClusterNodeProperties: |
+      scalar.db.storage=jdbc
+      scalar.db.contact_points=<JDBC_URL>
+      scalar.db.username=${env:SCALAR_DB_USERNAME}
+      scalar.db.password=${env:SCALAR_DB_PASSWORD}
+  ```
+  </TabItem>
+  <TabItem value="dynamodb" label="DynamoDB">
+  ```yaml
+  scalardbCluster:
+    scalardbClusterNodeProperties: |
+      scalar.db.storage=dynamo
+      scalar.db.contact_points=<AWS_REGION>
+      # Access key
+      scalar.db.username=${env:SCALAR_DB_USERNAME}
+      # Secret access key
+      scalar.db.password=${env:SCALAR_DB_PASSWORD}
+  ```
+  </TabItem>
+  <TabItem value="cosmosdb" label="Cosmos DB for NoSQL">
+  ```yaml
+  scalardbCluster:
+    scalardbClusterNodeProperties: |
+      scalar.db.storage=cosmos
+      # Cosmos DB for NoSQL URI
+      scalar.db.contact_points=${env:SCALAR_DB_USERNAME}
+      # Cosmos DB for NoSQL key
+      scalar.db.password=${env:SCALAR_DB_PASSWORD}
+  ```
+  </TabItem>
+  <TabItem value="cassandra" label="Cassandra">
+  ```yaml
+  scalardbCluster:
+    scalardbClusterNodeProperties: |
+      scalar.db.storage=cassandra
+      scalar.db.contact_points=<COMMA_SEPARATED_CONTACT_POINTS>
+      scalar.db.username=${env:SCALAR_DB_USERNAME}
+      scalar.db.password=${env:SCALAR_DB_PASSWORD}
+  ```
+  </TabItem>
+</Tabs>
