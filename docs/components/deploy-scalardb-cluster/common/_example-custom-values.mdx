@@ -1,0 +1,29 @@
+import CodeBlock from '@theme/CodeBlock';
+
+All of the configurations above go into a single `scalardb-cluster.yaml` file. When multiple steps set `scalardbCluster.scalardbClusterNodeProperties`, combine all the property lines under one `scalardbClusterNodeProperties` block. For example:
+
+<CodeBlock language="yaml">
+{`scalardbCluster:
+  # Image configurations
+  image:
+    repository: "${props.imageRepository}"
+  # Properties
+  scalardbClusterNodeProperties: |
+    # Membership configurations
+    scalar.db.cluster.membership.type=KUBERNETES
+    scalar.db.cluster.membership.kubernetes.endpoint.namespace_name=\$\{env:SCALAR_DB_CLUSTER_MEMBERSHIP_KUBERNETES_ENDPOINT_NAMESPACE_NAME\}
+    scalar.db.cluster.membership.kubernetes.endpoint.name=\$\{env:SCALAR_DB_CLUSTER_MEMBERSHIP_KUBERNETES_ENDPOINT_NAME\}
+    # License configurations
+    scalar.db.cluster.node.licensing.license_key=<YOUR_LICENSE_KEY>
+    scalar.db.cluster.node.licensing.license_check_cert_pem=<CERTIFICATE>
+    # Database configurations
+    scalar.db.storage=jdbc
+    scalar.db.contact_points=<JDBC_URL>
+    scalar.db.username=\$\{env:SCALAR_DB_USERNAME\}
+    scalar.db.password=\$\{env:SCALAR_DB_PASSWORD\}
+  # Service configurations
+  service:
+    type: "LoadBalancer"
+  # Secret configurations
+  secretName: "scalardb-cluster-credentials"`}
+</CodeBlock>

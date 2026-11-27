@@ -1,0 +1,22 @@
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+<Tabs groupId="connectivity" queryString>
+  <TabItem value="external-k8s" label="Access from outside the Kubernetes cluster" default>
+    If you set `scalardbCluster.service.type` to `LoadBalancer` in **Create a custom values file**, you need to run the `minikube tunnel` command to expose the service to access the ScalarDB Cluster deployment from outside minikube.
+
+    ```console
+    minikube tunnel
+    ```
+
+:::note
+
+You need to run the `minikube tunnel` command in another terminal since you must keep the `minikube tunnel` command running.
+
+:::
+
+  </TabItem>
+  <TabItem value="internal-k8s" label="Access from inside the Kubernetes cluster">
+    If you set `scalardbCluster.service.type` to `ClusterIP` in **Create a custom values file**, you don't need to run any commands since you won't be exposing the service outside of minikube.
+  </TabItem>
+</Tabs>
