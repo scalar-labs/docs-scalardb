@@ -1,0 +1,28 @@
+You can use a PostgreSQL container deployed in the Kubernetes cluster for testing in the minikube environment. You can deploy a PostgreSQL pod as follows:
+
+1. Add the Bitnami Helm Chart repository.
+
+    ```console
+    helm repo add bitnami https://charts.bitnami.com/bitnami
+    ```
+
+1. Update the Helm Chart repository to keep it up-to-date.
+
+    ```console
+    helm repo update bitnami
+    ```
+
+1. Deploy a PostgreSQL pod by using the `helm install` command, replacing the contents in the angle brackets as described.
+
+    ```console
+    helm install postgresql-scalardb-cluster bitnami/postgresql \
+      --set auth.postgresPassword=postgres \
+      --set primary.persistence.enabled=false \
+      -n <KUBERNETES_NAMESPACE>
+    ```
+
+    :::note
+
+    You can use other databases for testing. You can see the supported backend databases for ScalarDB Cluster on the [Requirements](../requirements#databases-1) page.
+
+    :::
